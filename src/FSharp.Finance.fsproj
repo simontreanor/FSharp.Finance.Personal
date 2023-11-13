@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Util.fs" />
+    <Compile Include="General.fs" />
+    <Compile Include="UnitPeriod.fs" />
+    <Compile Include="Schedule.fs" />
+    <Compile Include="Apr.fs" />
+    <Compile Include="Amortisation.fs" />
+    <Compile Include="Formatting.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Interactive.Formatting" Version="1.0.0-beta.23562.1" />
+  </ItemGroup>
+</Project>
