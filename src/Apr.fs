@@ -4,6 +4,7 @@ open System
 
 module Apr =
 
+    [<Struct>]
     type AprCalculationMethod =
         | UsActuarial
         | UnitedStatesRule
@@ -11,11 +12,13 @@ module Apr =
     let annualPercentageRate unitPeriodRate unitPeriodsPerYear =
         unitPeriodRate * unitPeriodsPerYear
 
+    [<Struct>]
     type TransferType =
         | Advance
         | Payment
 
     /// an advance or a payment
+    [<Struct>]
     type Transfer = {
         TransferType: TransferType
         Date: DateTime

@@ -65,7 +65,7 @@ module Amortisation =
 
     [<Struct>]
     type ProductFees =
-        | Percentage of Percentage:decimal * Cap:decimal option
+        | Percentage of Percentage:decimal * Cap:decimal voption
         | Simple of Simple:decimal
 
     [<Struct>]
@@ -90,9 +90,9 @@ module Amortisation =
     let parametersInfo p = 
         let calculateProductFees principal productFees =
             match productFees with
-            | Percentage (percentage, Some cap) ->
+            | Percentage (percentage, ValueSome cap) ->
                 Math.Min(Math.Floor(principal * percentage * 100m) / 100m, cap)
-            | Percentage (percentage, None) ->
+            | Percentage (percentage, ValueNone) ->
                 Math.Floor(principal * percentage * 100m) / 100m
             | Simple simple -> simple
         let allProductFees = calculateProductFees p.Principal p.ProductFees
@@ -216,7 +216,7 @@ module Amortisation =
         calculate p payments 1 (p.Principal + (parametersInfo p).AllProductFees) 0m 0m
 
     /// calculate amortisation schedule detailing how loan and its constituent elements (principal, product fees, interest and penalty charges) are paid off over time
-    let calculateSchedule (p: Parameters) (ir: IntermediateResult) (payments: Payment array) (startDate: DateTime option) =
+    let calculateSchedule (p: Parameters) (ir: IntermediateResult) (payments: Payment array) (startDate: DateTime voption) =
         let pi = parametersInfo p
         let iri = intermediateResultInfo ir
         let maxRepaymentDay = payments |> Array.maxBy(fun r -> r.Day) |> fun r -> r.Day
@@ -264,7 +264,7 @@ module Amortisation =
                     0m, 0m
 
             {
-                Date = startDate |> Option.map(fun dt -> dt.AddDays (float payment.Day)) |> Option.defaultValue payment.Date
+                Date = startDate |> ValueOption.map(fun dt -> dt.AddDays (float payment.Day)) |> ValueOption.defaultValue payment.Date
                 Day = payment.Day
                 Advance = 0m
                 Payments = [| actualRepayment |]
@@ -280,7 +280,7 @@ module Amortisation =
                 InterestBalance = asi.InterestBalance + newInterest - interestPortion + carriedInterest
                 PenaltyChargesBalance = asi.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges
             }
-        ) { Date = (startDate |> Option.defaultValue DateTime.Today); Day = 0; Advance = p.Principal; Payments = [||]; NewInterest = 0m; NewPenaltyCharges = 0m; PrincipalPortion = 0m; ProductFeesPortion = 0m; InterestPortion = 0m; PenaltyChargesPortion = 0m; ProductFeesRefund = 0m; PrincipalBalance = p.Principal; ProductFeesBalance = pi.AllProductFees; InterestBalance = 0m; PenaltyChargesBalance = 0m }
+        ) { Date = (startDate |> ValueOption.defaultValue DateTime.Today); Day = 0; Advance = p.Principal; Payments = [||]; NewInterest = 0m; NewPenaltyCharges = 0m; PrincipalPortion = 0m; ProductFeesPortion = 0m; InterestPortion = 0m; PenaltyChargesPortion = 0m; ProductFeesRefund = 0m; PrincipalBalance = p.Principal; ProductFeesBalance = pi.AllProductFees; InterestBalance = 0m; PenaltyChargesBalance = 0m }
 
     let createRegularScheduleInfo p =
         let pi = parametersInfo p
@@ -311,6 +311,6 @@ module Amortisation =
         {
             Parameters = p
             IntermediateResult = intermediateResult
-            Items = calculateSchedule p intermediateResult payments (Some p.StartDate)
+            Items = calculateSchedule p intermediateResult payments (ValueSome p.StartDate)
         }
         |> scheduleInfo

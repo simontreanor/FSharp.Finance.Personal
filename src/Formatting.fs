@@ -7,7 +7,7 @@ module Formatting =
     open System.Text.RegularExpressions
 
     let outputListToHtml fileName limit list =
-        Formatter.ListExpansionLimit <- limit |> Option.defaultValue 200
+        Formatter.ListExpansionLimit <- limit |> ValueOption.defaultValue 200
         let formatter = Formatter.GetPreferredFormatterFor(typeof<TabularData.TabularDataResource>, Formatter.DefaultMimeType)
         let trd = TabularData.TabularDataResourceFormatter.ToTabularDataResource list
         let writer = new StringWriter()

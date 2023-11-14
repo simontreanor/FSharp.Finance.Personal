@@ -5,7 +5,7 @@ open Amortisation
 
 let amortisationScheduleInfo =
     let principal = 1200m
-    let productFees = Percentage (1.8947m, None)
+    let productFees = Percentage (1.8947m, ValueNone)
     let annualInterestRate = 0.0995m
     let startDate = DateTime.Today
     let unitPeriodConfig = UnitPeriod.Weekly(2, DateTime.Today.AddDays(15.))
@@ -14,6 +14,6 @@ let amortisationScheduleInfo =
     |> createRegularScheduleInfo
 
 amortisationScheduleInfo.Schedule.Items
-|> Formatting.outputListToHtml "Output.md" (Some 180)
+|> Formatting.outputListToHtml "Output.md" (ValueSome 180)
 
 exit 0
