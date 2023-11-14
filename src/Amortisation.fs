@@ -101,7 +101,7 @@ module Amortisation =
                     x.Items
                     |> Array.filter(fun asi -> asi.PaymentsTotal > 0m)
                     |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = asi.Date; Apr.Amount = asi.PaymentsTotal })
-                Apr.calculate precision advanceAmount advanceDate payments
+                Apr.calculate Apr.UsActuarial precision advanceAmount advanceDate payments
             member x.ProductFeesRefund = x.Items |> Array.sumBy(fun asi -> asi.ProductFeesRefund)
             member x.EffectiveAnnualInterestRate = (x.InterestTotal / (x.PrincipalTotal + x.ProductFeesTotal - x.ProductFeesRefund)) * (365m / decimal x.IntermediateResult.LoanTermDays)
             member x.EffectiveDailyInterestRate = (x.InterestTotal / (x.PrincipalTotal + x.ProductFeesTotal - x.ProductFeesRefund)) * (1m / decimal x.IntermediateResult.LoanTermDays)

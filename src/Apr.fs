@@ -4,6 +4,10 @@ open System
 
 module Apr =
 
+    type AprCalculationMethod =
+        | UsActuarial
+        | UnitedStatesRule
+
     let annualPercentageRate unitPeriodRate unitPeriodsPerYear =
         unitPeriodRate * unitPeriodsPerYear
 
@@ -169,7 +173,11 @@ module Apr =
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and
     /// advance date are all the same
-    let calculate (precision: int) advanceAmount advanceDate payments =
-        let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
-        generalEquation advanceDate advanceDate advances payments
-        |> fun apr -> Math.Round(apr, precision)
+    let calculate method (precision: int) advanceAmount advanceDate payments =
+        match method with
+        | UsActuarial ->
+            let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
+            generalEquation advanceDate advanceDate advances payments
+            |> fun apr -> Math.Round(apr, precision)
+        | UnitedStatesRule ->
+            failwith "Not yet implemented"
