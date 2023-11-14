@@ -45,7 +45,7 @@ module UnitPeriod =
                 |> Array.sort
                 |> Array.distinct
                 |> Array.windowed 2
-                |> Array.map ((fun a -> (a[0].Date - a[1].Date).TotalDays) >> int >> normalise >> fst)
+                |> Array.map ((fun a -> (a[1].Date - a[0].Date).TotalDays) >> int >> normalise >> fst)
             let commonPeriodLengths = periodLengths |> commonLengths
             if commonPeriodLengths |> Array.isEmpty then
                 periodLengths
