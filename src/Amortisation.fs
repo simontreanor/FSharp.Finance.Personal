@@ -303,6 +303,7 @@ module Amortisation =
     [<Struct>]
     type Output =
         | UnitPeriodsOnly
+        | UnitPeriodsWithInterestCalculatedDaily
         | IntersperseDays
 
     let createRegularScheduleInfo output p =
@@ -327,6 +328,7 @@ module Amortisation =
         let interspersedDays =
             match output with
             | UnitPeriodsOnly -> roughPayments
+            | UnitPeriodsWithInterestCalculatedDaily
             | IntersperseDays ->
                 [| 1 .. maxRepaymentDay |]
                 |> Array.map(fun i -> 
@@ -348,11 +350,17 @@ module Amortisation =
         let payments =
             interspersedDays
             |> Array.mapi(fun i p -> { p with Amount = if finalPaymentIndex = i then iri.FinalPayment elif p.Amount > 0m then iri.SinglePayment else 0m })
+
+        let filterOutput =
+            match output with
+            | UnitPeriodsWithInterestCalculatedDaily ->
+                Array.filter(fun si -> si.Advance > 0m || si.Payments |> Array.isEmpty |> not)
+                >> Array.map(fun si -> { si with NewInterest = si.InterestPortion })
+            | _ -> id
+
         {
             Parameters = p
             IntermediateResult = intermediateResult
-            Items = calculateSchedule p intermediateResult payments (ValueSome p.StartDate)
+            Items = calculateSchedule p intermediateResult payments (ValueSome p.StartDate) |> filterOutput
         }
         |> scheduleInfo
-
-// to-do: create version of schedule with daily rather than periodical items

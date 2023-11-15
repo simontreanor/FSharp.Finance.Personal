@@ -42,6 +42,27 @@ module AmortisationTests =
         actual |> should equal expected
 
     [<Fact>]
+    let ``Biweekly schedule with long first period (unit-periods with daily interest)`` () =
+        let actual = createRegularScheduleInfo UnitPeriodsWithInterestCalculatedDaily parameters1
+        let schedule = { Parameters = parameters1; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
+        let expected = {
+            Schedule = schedule
+            AdvancesTotal = 1200m
+            PaymentsTotal = 3554.81m
+            PrincipalTotal = 1200m
+            ProductFeesTotal = 2273.64m
+            InterestTotal = 81.17m
+            PenaltyChargesTotal = 0m   
+            ProductFeesRefund = 0m   
+            FinalPaymentDate = DateTime(2024, 04, 18)
+            FinalPaymentDateCount = 11
+            Apr = 6.23645811m
+            EffectiveAnnualInterestRate = 0.0550265019013242964245742404m
+            EffectiveDailyInterestRate = 0.0001507575394556830039029431m
+        }
+        actual |> should equal expected
+
+    [<Fact>]
     let ``Biweekly schedule with long first period (interspersed days)`` () =
         let actual = createRegularScheduleInfo IntersperseDays parameters1
         let schedule = { Parameters = parameters1; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
