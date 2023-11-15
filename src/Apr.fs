@@ -138,14 +138,14 @@ module Apr =
 
     ///(b)(8) General equation.
     let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
-        let advanceDates = advances |> Array.map(fun a -> a.Date)
-        let paymentDates = payments |> Array.map(fun p -> p.Date)
+        let advanceDates = advances |> Array.map _.Date
+        let paymentDates = payments |> Array.map _.Date
         let term = transactionTerm consummationDate firstFinanceChargeEarnedDate (paymentDates |> Array.last) (advanceDates |> Array.last)
         let unitPeriod = UnitPeriod.nearest term advanceDates paymentDates
         let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
         let roughUnitPeriodRate =
-            let paymentAverage = payments |> Array.averageBy(fun p -> p.Amount)
-            let advanceTotal = advances |> Array.sumBy(fun a -> a.Amount)
+            let paymentAverage = payments |> Array.averageBy _.Amount
+            let advanceTotal = advances |> Array.sumBy _.Amount
             let paymentCount = payments |> Array.length |> decimal
             ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
         let unitPeriodRate =
