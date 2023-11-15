@@ -53,12 +53,12 @@ module Schedule =
             transferDates
             |> Array.chunkBySize 2
             |> Array.transpose
-            |> Array.map (Array.maxBy(fun dt -> dt.Day) >> (fun dt -> dt.Day))
+            |> Array.map (Array.maxBy _.Day >> _.Day)
             |> fun days -> SemiMonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay days[0], TrackingDay days[1])
             |> SemiMonthly
         | Month multiple ->
             transferDates
-            |> Array.maxBy(fun dt -> dt.Day)
-            |> fun dt -> dt.Day
+            |> Array.maxBy _.Day
+            |> _.Day
             |> fun day -> multiple, MonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay day)
             |> Monthly

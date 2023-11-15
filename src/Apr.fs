@@ -34,7 +34,7 @@ module Apr =
     /// shall be determined by dividing the number of days between the 2 given dates by the number of days per unit-period. If the 
     /// unit-period is a day, the number of unit-periods per year shall be 365. [...]
     let dailyUnitPeriods termStart transfers =
-        let transferDates = transfers |> Array.map(fun t -> t.Date)
+        let transferDates = transfers |> Array.map _.Date
         let offset = daysBetween termStart (transferDates |> Array.head)
         transfers
         |> Array.mapi(fun i t -> t, { Quotient = decimal i + offset; Remainder = 0m })
@@ -57,7 +57,7 @@ module Apr =
     ///
     /// > (B) The remaining number of days divided by 365 if the remaining interval is not equal to a whole number of months.
     let monthlyUnitPeriods (multiple: int) termStart transfers =
-        let transferDates = transfers |> Array.map(fun t -> t.Date)
+        let transferDates = transfers |> Array.map _.Date
         let transferCount = transfers |> Array.length
         let frequency = transferDates |> Schedule.detect Schedule.Reverse (UnitPeriod.Month 1)
         let schedule = Schedule.generate ((transferCount + 1) * multiple) Schedule.Reverse frequency |> Array.filter(fun dt -> dt >= termStart)
@@ -85,7 +85,7 @@ module Apr =
     /// fraction of a unit-period shall be determined by dividing such number of days by 15 in the case of a semimonthly unit-period 
     /// [...]. If the unit-period is a semimonth, the number of unit-periods per year shall be 24. [...]
     let semiMonthlyUnitPeriods termStart transfers =
-        let transferDates = transfers |> Array.map(fun t -> t.Date)
+        let transferDates = transfers |> Array.map _.Date
         let transferCount = transfers |> Array.length
         let frequency = transferDates |> Schedule.detect Schedule.Reverse UnitPeriod.SemiMonth
         let schedule = Schedule.generate (transferCount + 2) Schedule.Reverse frequency |> Array.filter(fun dt -> dt >= termStart)
@@ -105,7 +105,7 @@ module Apr =
     /// per unit-period. [...] If the unit-period is a week or a multiple of a week, the number of unit-periods per year shall be 
     /// 52 divided by the number of weeks per unit-period.
     let weeklyUnitPeriods (multiple: int) termStart transfers =
-        let transferDates = transfers |> Array.map(fun t -> t.Date)
+        let transferDates = transfers |> Array.map _.Date
         let dr  = (daysBetween termStart (transferDates |> Array.head)) / (7m * decimal multiple) |> fun d -> divRem d 1m
         transfers
         |> Array.mapi(fun i t ->
