@@ -64,7 +64,7 @@ module Apr =
         let scheduleCount = schedule |> Array.length
         let lastWholeMonthBackIndex = 0
         let lastWholeUnitPeriodBackIndex = (scheduleCount - 1) % multiple
-        let offset = (scheduleCount - 1) - ((transferCount - 1) * multiple) |> fun i -> Math.Floor(decimal i / decimal multiple) |> int
+        let offset = (scheduleCount - 1) - ((transferCount - 1) * multiple) |> fun i -> Decimal.Floor(decimal i / decimal multiple) |> int
         [| 0 .. (transferCount - 1) |]
         |> Array.map(fun i ->
             let wholeUnitPeriods = decimal (i + offset)
@@ -166,7 +166,7 @@ module Apr =
             Array.unfold(fun i -> //The percentage rate of finance charge per unit-period, expressed as a decimal equivalent.
                 let aa = eq |> Array.sumBy(fun (a, e, q) -> a / ((1m + (e * i)) * ((1m + i) ** q)))
                 let pp = ft |> Array.sumBy(fun (p, f, t) -> p / ((1m + (f * i)) * ((1m + i) ** t)))
-                if Math.Round(pp - aa, 10) = 0m then
+                if Decimal.Round(pp - aa, 10) = 0m then
                     None
                 else
                     Some (i, i * ((pp / aa) ** 2m))
@@ -181,6 +181,6 @@ module Apr =
         | UsActuarial ->
             let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
             generalEquation advanceDate advanceDate advances payments
-            |> fun apr -> Math.Round(apr, precision)
+            |> fun apr -> Decimal.Round(apr, precision)
         | UnitedStatesRule ->
             failwith "Not yet implemented"

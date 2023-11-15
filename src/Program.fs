@@ -11,7 +11,7 @@ let amortisationScheduleInfo =
     let unitPeriodConfig = UnitPeriod.Weekly(2, DateTime.Today.AddDays(15.))
     let paymentCount = 11 // to-do: restore function to determine this based on max loan length?
     { Principal = principal; ProductFees = productFees; AnnualInterestRate = annualInterestRate; StartDate = startDate; UnitPeriodConfig = unitPeriodConfig; PaymentCount = paymentCount }
-    |> createRegularScheduleInfo
+    |> createRegularScheduleInfo UnitPeriodsOnly
 
 amortisationScheduleInfo.Schedule.Items
 |> Formatting.outputListToHtml "Output.md" (ValueSome 180)

@@ -23,12 +23,12 @@ module Amortisation =
     [<Struct>]
     type PaymentInfo = {
         Payment: Payment
-        AllPenaltyCharges: decimal
+        PenaltyChargesTotal: decimal
     }
 
     let paymentInfo p = {
         Payment = p
-        AllPenaltyCharges = p.PenaltyCharges |> ValueOption.map (Array.sumBy(function LatePayment m | InsufficientFunds m -> m)) |> ValueOption.defaultValue 0m
+        PenaltyChargesTotal = p.PenaltyCharges |> ValueOption.map (Array.sumBy(function LatePayment m | InsufficientFunds m -> m)) |> ValueOption.defaultValue 0m
     }
  
     /// detail of a loan repayment with apportionment of a repayment to principal, product fees, interest balances and penalty charges
@@ -81,7 +81,7 @@ module Amortisation =
     [<Struct>]
     type ParametersInfo = {
         Parameters: Parameters
-        AllProductFees: decimal
+        ProductFeesTotal: decimal
         ProductFeesPercentage: decimal
         DailyInterestRate: decimal
         InitialBalance: decimal
@@ -91,17 +91,17 @@ module Amortisation =
         let calculateProductFees principal productFees =
             match productFees with
             | Percentage (percentage, ValueSome cap) ->
-                Math.Min(Math.Floor(principal * percentage * 100m) / 100m, cap)
+                Decimal.Min(Decimal.Floor(principal * percentage * 100m) / 100m, cap)
             | Percentage (percentage, ValueNone) ->
-                Math.Floor(principal * percentage * 100m) / 100m
+                Decimal.Floor(principal * percentage * 100m) / 100m
             | Simple simple -> simple
-        let allProductFees = calculateProductFees p.Principal p.ProductFees
+        let productFeesTotal = calculateProductFees p.Principal p.ProductFees
         {
             Parameters = p
-            AllProductFees = allProductFees
-            ProductFeesPercentage = allProductFees / p.Principal
+            ProductFeesTotal = productFeesTotal
+            ProductFeesPercentage = productFeesTotal / p.Principal
             DailyInterestRate = p.AnnualInterestRate / 365m
-            InitialBalance = p.Principal + allProductFees
+            InitialBalance = p.Principal + productFeesTotal
         }
 
     [<Struct>]
@@ -123,14 +123,14 @@ module Amortisation =
 
     let intermediateResultInfo ir =
         let pi = parametersInfo ir.Parameters
-        let paymentTotal = ir.Parameters.Principal + pi.AllProductFees + ir.InterestTotal + ir.PenaltyChargesTotal
-        let singlePayment = Math.Round(paymentTotal / decimal ir.Parameters.PaymentCount, 2)
+        let paymentTotal = ir.Parameters.Principal + pi.ProductFeesTotal + ir.InterestTotal + ir.PenaltyChargesTotal
+        let singlePayment = paymentTotal / decimal ir.Parameters.PaymentCount |> roundMoney
         {
             IntermediateResult = ir
             LoanTermDays = ir.RoughPayments |> Array.maxBy(fun p -> p.Day) |> fun p -> p.Day
             PaymentTotal = paymentTotal
             SinglePayment = singlePayment
-            FinalPayment = Math.Round(pi.InitialBalance + ir.InterestTotal - (singlePayment *  decimal (ir.Parameters.PaymentCount - 1)), 2)
+            FinalPayment = pi.InitialBalance + ir.InterestTotal - (singlePayment *  decimal (ir.Parameters.PaymentCount - 1)) |> roundMoney
         }
 
     [<Struct>]
@@ -188,7 +188,7 @@ module Amortisation =
             EffectiveAnnualInterestRate = (interestTotal / (principalTotal + productFeesTotal - productFeesRefund)) * (365m / decimal iri.LoanTermDays)
             EffectiveDailyInterestRate = (interestTotal / (principalTotal + productFeesTotal - productFeesRefund)) * (1m / decimal iri.LoanTermDays)
             FinalPaymentDate = s.Items |> Array.maxBy(fun asi -> asi.Date) |> fun asi -> asi.Date
-            FinalPaymentCount = s.Items |> Array.length
+            FinalPaymentCount = s.Items |> Array.length |> (+) -1
         }
 
     /// calculate total interest due on a regular schedule
@@ -198,38 +198,55 @@ module Amortisation =
         let rec calculate (p: Parameters) (payments: Payment array) day (principalBalance: decimal) interestBalance (accumulatedInterest: decimal) =
             let pi = parametersInfo p
             if day > loanTermDays then
-                if Math.Abs principalBalance < 0.00001m then
-                    Math.Round(accumulatedInterest, 2)
+                if Decimal.Abs principalBalance < 0.00001m then
+                    accumulatedInterest |> roundMoney
                 else
                     let payments' = payments |> Array.mapi(fun i r ->
                         { Index = i; Date = r.Date; Day = r.Day; Amount = r.Amount + (principalBalance / decimal p.PaymentCount); Interval = r.Interval; PenaltyCharges = r.PenaltyCharges }
                     )
-                    calculate p payments' 1 (p.Principal + pi.AllProductFees) 0m 0m
+                    calculate p payments' 1 (p.Principal + pi.ProductFeesTotal) 0m 0m
             else
                 let interest = principalBalance * pi.DailyInterestRate
                 let principalRepayment, interestRepayment =
                     payments
                     |> Array.tryPick(fun r -> if r.Day = day then Some r.Amount else None)
-                    |> Option.map(fun r -> (interestBalance + interest) |> fun interestToPay -> Math.Max(0m, r - interestToPay), interestToPay)
+                    |> Option.map(fun r -> (interestBalance + interest) |> fun interestToPay -> Decimal.Max(0m, r - interestToPay), interestToPay)
                     |> Option.defaultValue (0m, 0m)
                 calculate p payments (day + 1) (principalBalance - principalRepayment) (interestBalance + interest - interestRepayment) (accumulatedInterest + interest)
-        calculate p payments 1 (p.Principal + (parametersInfo p).AllProductFees) 0m 0m
+        calculate p payments 1 (p.Principal + (parametersInfo p).ProductFeesTotal) 0m 0m
 
     /// calculate amortisation schedule detailing how loan and its constituent elements (principal, product fees, interest and penalty charges) are paid off over time
     let calculateSchedule (p: Parameters) (ir: IntermediateResult) (payments: Payment array) (startDate: DateTime voption) =
         let pi = parametersInfo p
         let iri = intermediateResultInfo ir
         let maxRepaymentDay = payments |> Array.maxBy(fun r -> r.Day) |> fun r -> r.Day
+        let advance = {
+            Date = (startDate |> ValueOption.defaultValue DateTime.Today)
+            Day = 0
+            Advance = p.Principal |> roundMoney
+            Payments = [||]
+            NewInterest = 0m |> roundMoney
+            NewPenaltyCharges = 0m |> roundMoney
+            PrincipalPortion = 0m |> roundMoney
+            ProductFeesPortion = 0m |> roundMoney
+            InterestPortion = 0m |> roundMoney
+            PenaltyChargesPortion = 0m |> roundMoney
+            ProductFeesRefund = 0m |> roundMoney
+            PrincipalBalance = p.Principal |> roundMoney
+            ProductFeesBalance = pi.ProductFeesTotal |> roundMoney
+            InterestBalance = 0m |> roundMoney
+            PenaltyChargesBalance = 0m |> roundMoney
+        }
         payments
         |> Array.scan(fun asi payment ->
-            let newPenaltyCharges = (paymentInfo payment).AllPenaltyCharges
+            let newPenaltyCharges = (paymentInfo payment).PenaltyChargesTotal
             let penaltyChargesPortion = newPenaltyCharges + asi.PenaltyChargesBalance
 
-            let newInterest = Math.Round((asi.PrincipalBalance + asi.ProductFeesBalance) * pi.DailyInterestRate * decimal payment.Interval, 2)
+            let newInterest = (asi.PrincipalBalance + asi.ProductFeesBalance) * pi.DailyInterestRate * decimal payment.Interval |> roundMoney
             let interestPortion = newInterest + asi.InterestBalance
             
-            let productFeesDue = Math.Min(pi.AllProductFees, Math.Round(pi.AllProductFees * decimal payment.Day / decimal iri.LoanTermDays, 2))
-            let productFeesRemaining = pi.AllProductFees - productFeesDue
+            let productFeesDue = Decimal.Min(pi.ProductFeesTotal, pi.ProductFeesTotal * decimal payment.Day / decimal iri.LoanTermDays |> roundMoney)
+            let productFeesRemaining = pi.ProductFeesTotal - productFeesDue
             let settlementFigure = asi.PrincipalBalance + asi.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
             let isSettlement = (payment.Amount > settlementFigure && payment.Day <> iri.LoanTermDays) || (payment.Day = iri.LoanTermDays && payment.Day = maxRepaymentDay)
 
@@ -246,14 +263,14 @@ module Amortisation =
                     0m, 0m, 0m
                 else
                     if isSettlement then
-                        let cabFeePayment = asi.ProductFeesBalance - productFeesRemaining
+                        let cabFeePayment = asi.ProductFeesBalance - productFeesRemaining |> roundMoney
                         actualRepayment - penaltyChargesPortion - interestPortion - cabFeePayment, cabFeePayment, productFeesRemaining
                     else
-                        let principalPayment = Math.Round((actualRepayment - penaltyChargesPortion - interestPortion) / (1m + pi.ProductFeesPercentage), 2)
+                        let principalPayment = (actualRepayment - penaltyChargesPortion - interestPortion) / (1m + pi.ProductFeesPercentage) |> roundMoney
                         principalPayment, actualRepayment - penaltyChargesPortion - interestPortion - principalPayment, 0m
                         
-            let principalPortion = Math.Min(asi.PrincipalBalance, principalPortion)
-            let productFeesPortion = Math.Min(asi.ProductFeesBalance, cabFeePortion)
+            let principalPortion = Decimal.Min(asi.PrincipalBalance, principalPortion)
+            let productFeesPortion = Decimal.Min(asi.ProductFeesBalance, cabFeePortion)
 
             let carriedPenaltyCharges, carriedInterest =
                 if penaltyChargesPortion > actualRepayment then
@@ -266,27 +283,33 @@ module Amortisation =
             {
                 Date = startDate |> ValueOption.map(fun dt -> dt.AddDays (float payment.Day)) |> ValueOption.defaultValue payment.Date
                 Day = payment.Day
-                Advance = 0m
-                Payments = [| actualRepayment |]
-                NewInterest = newInterest
-                NewPenaltyCharges = newPenaltyCharges
-                PrincipalPortion = principalPortion
-                ProductFeesPortion = productFeesPortion
-                InterestPortion = interestPortion - carriedInterest
-                PenaltyChargesPortion = penaltyChargesPortion - carriedPenaltyCharges
-                ProductFeesRefund = productFeesRefund
-                PrincipalBalance = asi.PrincipalBalance - principalPortion
-                ProductFeesBalance = asi.ProductFeesBalance - productFeesPortion - productFeesRefund
-                InterestBalance = asi.InterestBalance + newInterest - interestPortion + carriedInterest
-                PenaltyChargesBalance = asi.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges
+                Advance = 0m |> roundMoney
+                Payments = [| actualRepayment |> roundMoney |]
+                NewInterest = newInterest |> roundMoney
+                NewPenaltyCharges = newPenaltyCharges |> roundMoney
+                PrincipalPortion = principalPortion |> roundMoney
+                ProductFeesPortion = productFeesPortion |> roundMoney
+                InterestPortion = interestPortion - carriedInterest |> roundMoney
+                PenaltyChargesPortion = penaltyChargesPortion - carriedPenaltyCharges |> roundMoney
+                ProductFeesRefund = productFeesRefund |> roundMoney
+                PrincipalBalance = asi.PrincipalBalance - principalPortion |> roundMoney
+                ProductFeesBalance = asi.ProductFeesBalance - productFeesPortion - productFeesRefund |> roundMoney
+                InterestBalance = asi.InterestBalance + newInterest - interestPortion + carriedInterest |> roundMoney
+                PenaltyChargesBalance = asi.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges |> roundMoney
             }
-        ) { Date = (startDate |> ValueOption.defaultValue DateTime.Today); Day = 0; Advance = p.Principal; Payments = [||]; NewInterest = 0m; NewPenaltyCharges = 0m; PrincipalPortion = 0m; ProductFeesPortion = 0m; InterestPortion = 0m; PenaltyChargesPortion = 0m; ProductFeesRefund = 0m; PrincipalBalance = p.Principal; ProductFeesBalance = pi.AllProductFees; InterestBalance = 0m; PenaltyChargesBalance = 0m }
+        ) advance
 
-    let createRegularScheduleInfo p =
+    [<Struct>]
+    type Output =
+        | UnitPeriodsOnly
+        | IntersperseDays
+
+    let createRegularScheduleInfo output p =
         let pi = parametersInfo p
         let paymentDates = Schedule.generate p.PaymentCount Schedule.Forward p.UnitPeriodConfig
         let termLength = ((paymentDates |> Array.last).Date - p.StartDate.Date).TotalDays
-        let roughPayment = Math.Round((p.Principal + pi.AllProductFees) * (1m + (p.AnnualInterestRate * decimal termLength / 365m)) / decimal p.PaymentCount, 2)
+
+        let roughPayment = (p.Principal + pi.ProductFeesTotal) * (1m + (p.AnnualInterestRate * decimal termLength / 365m)) / decimal p.PaymentCount |> roundMoney
         let roughPayments =
             paymentDates
             |> Array.mapi(fun i dt -> {
@@ -297,16 +320,33 @@ module Amortisation =
                 Interval = (dt.Date - (if i = 0 then p.StartDate else paymentDates[i - 1]).Date).TotalDays |> int
                 PenaltyCharges = ValueNone
             })
+
+        let zeroPayment i = { Index = i; Date = p.StartDate.AddDays(float i); Day = i; Amount = 0m; Interval = 1; PenaltyCharges = ValueNone }
+        let maxRepaymentDay = roughPayments |> Array.maxBy(fun r -> r.Day) |> fun r -> r.Day
+        let interspersedDays =
+            match output with
+            | UnitPeriodsOnly -> roughPayments
+            | IntersperseDays ->
+                [| 1 .. maxRepaymentDay |]
+                |> Array.collect(fun i -> 
+                    roughPayments
+                    |> Array.filter(fun r -> r.Day = i)
+                    |> fun pp ->
+                        match pp with
+                        | [||] -> [| zeroPayment i |]
+                        | _ -> pp
+                )
+
         let finalPaymentIndex = paymentDates |> Array.length |> (+) -1
         let intermediateResult = {
             Parameters = p
-            RoughPayments = roughPayments
-            InterestTotal = calculateInterestTotal p roughPayments
+            RoughPayments = interspersedDays
+            InterestTotal = calculateInterestTotal p interspersedDays
             PenaltyChargesTotal = 0m
         }
         let iri = intermediateResultInfo intermediateResult
         let payments =
-            roughPayments
+            interspersedDays
             |> Array.mapi(fun i p -> { p with Amount = if finalPaymentIndex = i then iri.FinalPayment else iri.SinglePayment })
         {
             Parameters = p
@@ -314,3 +354,5 @@ module Amortisation =
             Items = calculateSchedule p intermediateResult payments (ValueSome p.StartDate)
         }
         |> scheduleInfo
+
+// to-do: create version of schedule with daily rather than periodical items

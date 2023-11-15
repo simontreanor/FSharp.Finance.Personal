@@ -27,7 +27,7 @@ module UnitPeriod =
     /// coerce a length to the nearest unit-period
     let normalise length =
         all
-        |> Array.minBy(fun (days, _) -> Math.Abs(days - length))
+        |> Array.minBy(fun (days, _) -> Int32.Abs(days - length))
 
     let commonLengths (lengths: int array) =
         lengths
@@ -37,7 +37,7 @@ module UnitPeriod =
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
         if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) = 1 then
-            Math.Min(term.TotalDays, 365)
+            Int32.Min(term.TotalDays, 365)
             |> NoInterval
         else
             let periodLengths =
