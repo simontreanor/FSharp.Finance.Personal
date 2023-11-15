@@ -153,7 +153,7 @@ module Amortisation =
             PenaltyChargesTotal: decimal
             ProductFeesRefund: decimal
             FinalPaymentDate: DateTime
-            FinalPaymentCount: int
+            FinalPaymentDateCount: int
             Apr: decimal
             EffectiveAnnualInterestRate: decimal
             EffectiveDailyInterestRate: decimal
@@ -188,7 +188,7 @@ module Amortisation =
             EffectiveAnnualInterestRate = (interestTotal / (principalTotal + productFeesTotal - productFeesRefund)) * (365m / decimal iri.LoanTermDays)
             EffectiveDailyInterestRate = (interestTotal / (principalTotal + productFeesTotal - productFeesRefund)) * (1m / decimal iri.LoanTermDays)
             FinalPaymentDate = s.Items |> Array.maxBy _.Date |> _.Date
-            FinalPaymentCount = s.Items |> Array.length |> (+) -1
+            FinalPaymentDateCount = s.Items |> Array.filter(fun si -> si.Payments |> Array.isEmpty |> not) |> Array.length
         }
 
     /// calculate total interest due on a regular schedule
@@ -251,7 +251,7 @@ module Amortisation =
             let settlementFigure = asi.PrincipalBalance + asi.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
             let isSettlement = (payment.Amount > settlementFigure && payment.Day <> iri.LoanTermDays) || (payment.Day = iri.LoanTermDays && payment.Day = maxRepaymentDay)
 
-            let actualRepayment =
+            let actualPayment =
                 if asi.PrincipalBalance = 0m then
                     0m
                 elif isSettlement then
@@ -260,24 +260,24 @@ module Amortisation =
                     payment.Amount
 
             let principalPortion, cabFeePortion, productFeesRefund =
-                if (penaltyChargesPortion > actualRepayment) || (penaltyChargesPortion + interestPortion > actualRepayment) then
+                if (penaltyChargesPortion > actualPayment) || (penaltyChargesPortion + interestPortion > actualPayment) then
                     0m, 0m, 0m
                 else
                     if isSettlement then
                         let cabFeePayment = asi.ProductFeesBalance - productFeesRemaining |> roundMoney
-                        actualRepayment - penaltyChargesPortion - interestPortion - cabFeePayment, cabFeePayment, productFeesRemaining
+                        actualPayment - penaltyChargesPortion - interestPortion - cabFeePayment, cabFeePayment, productFeesRemaining
                     else
-                        let principalPayment = (actualRepayment - penaltyChargesPortion - interestPortion) / (1m + pi.ProductFeesPercentage) |> roundMoney
-                        principalPayment, actualRepayment - penaltyChargesPortion - interestPortion - principalPayment, 0m
+                        let principalPayment = (actualPayment - penaltyChargesPortion - interestPortion) / (1m + pi.ProductFeesPercentage) |> roundMoney
+                        principalPayment, actualPayment - penaltyChargesPortion - interestPortion - principalPayment, 0m
                         
             let principalPortion = Decimal.Min(asi.PrincipalBalance, principalPortion)
             let productFeesPortion = Decimal.Min(asi.ProductFeesBalance, cabFeePortion)
 
             let carriedPenaltyCharges, carriedInterest =
-                if penaltyChargesPortion > actualRepayment then
-                    penaltyChargesPortion - actualRepayment, interestPortion
-                elif penaltyChargesPortion + interestPortion > actualRepayment then
-                    0m, interestPortion - (actualRepayment - penaltyChargesPortion)
+                if penaltyChargesPortion > actualPayment then
+                    penaltyChargesPortion - actualPayment, interestPortion
+                elif penaltyChargesPortion + interestPortion > actualPayment then
+                    0m, interestPortion - (actualPayment - penaltyChargesPortion)
                 else
                     0m, 0m
 
@@ -285,7 +285,7 @@ module Amortisation =
                 Date = startDate |> ValueOption.map(fun dt -> dt.AddDays (float payment.Day)) |> ValueOption.defaultValue payment.Date
                 Day = payment.Day
                 Advance = 0m |> roundMoney
-                Payments = [| actualRepayment |> roundMoney |]
+                Payments = if actualPayment > 0m then [| actualPayment |> roundMoney |] else [||]
                 NewInterest = newInterest |> roundMoney
                 NewPenaltyCharges = newPenaltyCharges |> roundMoney
                 PrincipalPortion = principalPortion |> roundMoney
@@ -329,16 +329,15 @@ module Amortisation =
             | UnitPeriodsOnly -> roughPayments
             | IntersperseDays ->
                 [| 1 .. maxRepaymentDay |]
-                |> Array.collect(fun i -> 
+                |> Array.map(fun i -> 
                     roughPayments
-                    |> Array.filter (fun dt -> dt.Day = i)
-                    |> fun pp ->
-                        match pp with
-                        | [||] -> [| zeroPayment i |]
-                        | _ -> pp
+                    |> Array.tryFind (fun p -> p.Day = i)
+                    |> function
+                        | Some p -> { p with Index = i; Interval = 1 }
+                        | None -> zeroPayment i
                 )
 
-        let finalPaymentIndex = paymentDates |> Array.length |> (+) -1
+        let finalPaymentIndex = interspersedDays |> Array.length |> (+) -1
         let intermediateResult = {
             Parameters = p
             RoughPayments = interspersedDays
@@ -348,7 +347,7 @@ module Amortisation =
         let iri = intermediateResultInfo intermediateResult
         let payments =
             interspersedDays
-            |> Array.mapi(fun i p -> { p with Amount = if finalPaymentIndex = i then iri.FinalPayment else iri.SinglePayment })
+            |> Array.mapi(fun i p -> { p with Amount = if finalPaymentIndex = i then iri.FinalPayment elif p.Amount > 0m then iri.SinglePayment else 0m })
         {
             Parameters = p
             IntermediateResult = intermediateResult

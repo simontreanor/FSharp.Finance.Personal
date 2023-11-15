@@ -22,4 +22,6 @@ module Util =
         |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1m
 
     /// rounds decimals to 2 places, to represent exact money values
-    let roundMoney m = Decimal.Round(m, 2, MidpointRounding.AwayFromZero)
+    let roundMoney m =
+        divRem (m * 100m) 1m
+        |> fun dr -> (if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1m) / 100m

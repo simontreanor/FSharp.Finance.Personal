@@ -17,3 +17,5 @@ amortisationScheduleInfo.Schedule.Items
 |> Formatting.outputListToHtml "Output.md" (ValueSome 180)
 
 exit 0
+
+// to-do: investigate the effect of rounding on the results - also the last payment should be less than the level payments
