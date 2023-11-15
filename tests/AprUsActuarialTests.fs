@@ -68,7 +68,7 @@ module AprUsActuarialTests =
         let advances = [| { TransferType = Advance; Date = consummationDate; Amount = advanceAmount } |]
         let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = regularPaymentAmount })
         let payments' = Array.concat [| [| firstPayment |]; payments |]
-        generalEquation consummationDate firstFinanceChargeEarnedDate advances payments' |> fun apr -> Math.Round(apr, 10)
+        generalEquation consummationDate firstFinanceChargeEarnedDate advances payments' |> fun apr -> Decimal.Round(apr, 10)
         |> (*) 100m |> roundTo 2
 
     [<Fact>]
@@ -116,7 +116,7 @@ module AprUsActuarialTests =
         let advances = [| { TransferType = Advance; Date = consummationDate; Amount = advanceAmount } |]
         let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = regularPaymentAmount })
         let payments' = Array.concat [| [| firstPayment |]; payments; [| lastPayment |] |]
-        generalEquation consummationDate firstFinanceChargeEarnedDate advances payments' |> fun apr -> Math.Round(apr, 10)
+        generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> (*) 100m |> roundTo 2
 
     [<Fact>]

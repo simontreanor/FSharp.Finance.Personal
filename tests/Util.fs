@@ -15,7 +15,7 @@ module Util =
     /// 
     /// (tolerance is 0.125 percentage points of the expected value)
     let checkTolerance (decimalPlaces: int) (expectedApr: decimal) (actualApr: decimal) =
-        let variance = Math.Abs(Math.Round(actualApr, decimalPlaces) - Math.Round(expectedApr, decimalPlaces))
+        let variance = Decimal.Abs(Decimal.Round(actualApr, decimalPlaces) - Decimal.Round(expectedApr, decimalPlaces))
         if variance = 0m then
             Exact actualApr
         elif variance <= 0.125m then

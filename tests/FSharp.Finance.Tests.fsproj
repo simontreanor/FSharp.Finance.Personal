@@ -12,6 +12,7 @@
     <Compile Include="Util.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
+    <Compile Include="AmortisationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
