@@ -10,12 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Util.fs" />
+    <Compile Include="Formatting.fs" />
     <Compile Include="General.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Schedule.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="Amortisation.fs" />
-    <Compile Include="Formatting.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
