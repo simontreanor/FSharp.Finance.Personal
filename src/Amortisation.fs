@@ -125,7 +125,7 @@ module Amortisation =
     let intermediateResultInfo ir =
         let pi = parametersInfo ir.Parameters
         let paymentTotal = ir.Parameters.Principal + pi.ProductFeesTotal + ir.InterestTotal + ir.PenaltyChargesTotal
-        let singlePayment = decimal paymentTotal / decimal ir.Parameters.PaymentCount |> Cent.ceiling
+        let singlePayment = decimal paymentTotal / decimal ir.Parameters.PaymentCount |> Cent.round
         {
             IntermediateResult = ir
             MaxPaymentDay = ir.RoughPayments |> Array.maxBy _.Day |> _.Day
@@ -194,14 +194,13 @@ module Amortisation =
 
     /// calculate total interest due on a regular schedule
     [<TailCall>]
-    let calculateInterestTotal (p: Parameters) (roughPayments: Payment array) =
-        let maxPaymentDay = roughPayments |> Array.maxBy _.Day |> _.Day
+    let calculateInterestTotal (p: Parameters) maxPaymentDay (roughPayments: Payment array) =
         // note that inside this function, "principal" refers to (principal + product fees) together
         let rec calculate (p: Parameters) (roughPayments: Payment array) (day: int<Day>) (principalBalance: decimal) (interestBalance: decimal) (accumulatedInterest: decimal) =
             let pi = parametersInfo p
             if day > maxPaymentDay then
                 if Decimal.Abs principalBalance < 0.001m then
-                    accumulatedInterest |> Cent.ceiling
+                    accumulatedInterest |> Cent.round
                 else
                     let roughPayments' = roughPayments |> Array.mapi(fun i r ->
                         { Index = i; Date = r.Date; Day = r.Day; Amount = r.Amount + principalBalance / decimal p.PaymentCount; Interval = r.Interval; PenaltyCharges = r.PenaltyCharges }
@@ -221,7 +220,6 @@ module Amortisation =
     let calculateSchedule (p: Parameters) (ir: IntermediateResult) (payments: Payment array) (startDate: DateTime voption) =
         let pi = parametersInfo p
         let iri = intermediateResultInfo ir
-        let maxRepaymentDay = payments |> Array.maxBy _.Day |> _.Day
         let advance = {
             Date = (startDate |> ValueOption.defaultValue DateTime.Today)
             Day = 0<Day>
@@ -250,7 +248,7 @@ module Amortisation =
             let productFeesDue = Cent.min pi.ProductFeesTotal (decimal pi.ProductFeesTotal * decimal payment.Day / decimal iri.MaxPaymentDay |> Cent.round)
             let productFeesRemaining = pi.ProductFeesTotal - productFeesDue
             let settlementFigure = asi.PrincipalBalance + asi.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
-            let isSettlement = (Cent.ceiling payment.Amount > settlementFigure && payment.Day <> iri.MaxPaymentDay) || (payment.Day = iri.MaxPaymentDay && payment.Day = maxRepaymentDay)
+            let isSettlement = (Cent.round payment.Amount > settlementFigure && payment.Day <> iri.MaxPaymentDay) || (payment.Day = iri.MaxPaymentDay && payment.Day = iri.MaxPaymentDay)
 
             let actualPayment =
                 if asi.PrincipalBalance = 0<Cent> then
@@ -258,7 +256,7 @@ module Amortisation =
                 elif isSettlement then
                     settlementFigure
                 else
-                    Cent.ceiling payment.Amount
+                    Cent.round payment.Amount
 
             let principalPortion, cabFeePortion, productFeesRefund =
                 if (penaltyChargesPortion > actualPayment) || (penaltyChargesPortion + interestPortion > actualPayment) then
@@ -344,7 +342,7 @@ module Amortisation =
         let intermediateResult = {
             Parameters = p
             RoughPayments = roughPayments'
-            InterestTotal = calculateInterestTotal p roughPayments'
+            InterestTotal = calculateInterestTotal p maxPaymentDay roughPayments'
             PenaltyChargesTotal = 0<Cent>
         }
         let iri = intermediateResultInfo intermediateResult

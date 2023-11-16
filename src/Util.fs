@@ -27,7 +27,6 @@ module Util =
 
     [<RequireQualifiedAccess>]
     module Cent =
-        let ceiling (m: decimal) = int (Decimal.Ceiling m) * 1<Cent>
         let max (c1: int<Cent>) (c2: int<Cent>) = Int32.Max(int c1, int c2) * 1<Cent>
         let min (c1: int<Cent>) (c2: int<Cent>) = Int32.Min(int c1, int c2) * 1<Cent>
         let round (m: decimal) = int (Decimal.Round(m, 0, MidpointRounding.ToEven)) * 1<Cent>
