@@ -42,7 +42,7 @@ module AprActuarialTestsExtra =
                 Principal = principal
                 PaymentAmount = paymentAmount
                 PaymentDates = ssi.PaymentDates
-                ExpectedApr = Percent.fromDecimal ssi.ExpectedApr
+                ExpectedApr = ssi.ExpectedApr * 1m<Percent>
                 ActualApr = actualApr
             }
         )
