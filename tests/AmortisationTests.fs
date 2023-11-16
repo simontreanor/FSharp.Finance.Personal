@@ -5,7 +5,6 @@ open Xunit
 open FsUnit.Xunit
 
 open FSharp.Finance
-open System.ComponentModel.Design
 
 module AmortisationTests =
 

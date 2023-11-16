@@ -4,6 +4,7 @@ open System
 
 module UnitPeriod =
 
+    /// interval between payments
     [<Struct>]
     type UnitPeriod =
         | NoInterval of UnitPeriodDays:int // cf. (b)(5)(vii)
@@ -12,6 +13,7 @@ module UnitPeriod =
         | SemiMonth
         | Month of MonthMultiple:int
 
+    /// all unit-periods, excluding unlikely ones (opinionated!)
     let all =
         [|
             [| 1, Day |]
@@ -29,6 +31,7 @@ module UnitPeriod =
         all
         |> Array.minBy(fun (days, _) -> Int32.Abs(days - length))
 
+    /// lengths that occur more than once
     let commonLengths (lengths: int array) =
         lengths
         |> Array.countBy id
@@ -76,9 +79,11 @@ module UnitPeriod =
     [<Struct>]
     type TrackingDay = TrackingDay of int
 
+    /// settings for a semi-monthly payment config, where day 1 is in the first half of the month (1st to 15th) and day 2 in the second half (16th to 31st)
     [<Struct>]
     type SemiMonthlyConfig = SemiMonthlyConfig of Year:int * Month:int * Day1:TrackingDay * Day2:TrackingDay
 
+    /// settings for a monthly payment config, where day is the day of the month to track
     [<Struct>]
     type MonthlyConfig = MonthlyConfig of Year:int * Month:int * Day:TrackingDay
 
@@ -106,6 +111,7 @@ module UnitPeriod =
         | Monthly (_, MonthlyConfig (_, _, TrackingDay day)) as f when day >= 1 && day <= 31 -> f
         | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
+    /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxLoanLength: int<Duration>) (startDate: DateTime) (config: Config) =
         let offset y m td = (DateTime(y, m, Int32.Min(DateTime.DaysInMonth(y, m), td)) - startDate).TotalDays |> fun f -> int f * 1<Duration>
         match config with

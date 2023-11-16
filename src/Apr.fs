@@ -5,20 +5,23 @@ open Util
 
 module Apr =
 
+    /// the calculation method used to determine the APR
     [<Struct>]
     type AprCalculationMethod =
         | UsActuarial
         | UnitedStatesRule
 
+    /// basic calculation to determine the APR
     let annualPercentageRate unitPeriodRate unitPeriodsPerYear =
         unitPeriodRate * unitPeriodsPerYear
 
+    /// whether a transfer is an advance or a payment
     [<Struct>]
     type TransferType =
         | Advance
         | Payment
 
-    /// an advance or a payment
+    /// details of an advance or a payment
     [<Struct>]
     type Transfer = {
         TransferType: TransferType
@@ -137,7 +140,7 @@ module Apr =
     /// overrides existing power function to take and return decimals
     let inline ( ** ) (var1: decimal) (var2: decimal) = decimal (Math.Pow(double var1, double var2))
 
-    ///(b)(8) General equation.
+    /// (b)(8) General equation.
     let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
         let advanceDates = advances |> Array.map _.Date
         let paymentDates = payments |> Array.map _.Date

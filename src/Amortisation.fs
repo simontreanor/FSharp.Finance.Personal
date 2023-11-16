@@ -4,6 +4,7 @@ open System
 
 module Amortisation =
 
+    /// the type and amount of penalty charge
     [<Struct>]
     type PenaltyCharge =
         | LatePayment of LatePayment:int<Cent>
@@ -20,18 +21,20 @@ module Amortisation =
         PenaltyCharges: PenaltyCharge array voption
     }
 
+    /// extra information on a payment
     [<Struct>]
     type PaymentInfo = {
         Payment: Payment
         PenaltyChargesTotal: int<Cent>
     }
 
+    /// calculate extra information on a payment
     let paymentInfo p = {
         Payment = p
         PenaltyChargesTotal = p.PenaltyCharges |> ValueOption.map (Array.sumBy(function LatePayment m | InsufficientFunds m -> m)) |> ValueOption.defaultValue 0<Cent>
     }
  
-    /// detail of a repayment with apportionment of a repayment to principal, product fees, interest balances and penalty charges
+    /// detail of a repayment with apportionment of a repayment to principal, product fees, interest and penalty charges
     [<Struct>]
     type ScheduleItem =
         {
@@ -52,22 +55,26 @@ module Amortisation =
             PenaltyChargesBalance: int<Cent>
         }
 
+    /// extra information on a schedule item
     [<Struct>]
     type ScheduleItemInfo = {
         ScheduleItem: ScheduleItem
         PaymentsTotal: int<Cent>
     }
 
-    let scheduleItemInfo si= {
+    /// calculate extra information on a schedule item
+    let scheduleItemInfo si = {
         ScheduleItem = si
         PaymentsTotal = si.Payments |> Array.sum
     }
 
+    /// the type and amount of any product fees, taking into account any constraints
     [<Struct>]
     type ProductFees =
         | Percentage of Percentage:decimal<Percent> * Cap:int<Cent> voption
         | Simple of Simple:int<Cent>
 
+    /// parameters for calculating an amortisation schedule
     [<Struct>]
     type Parameters = {
         Principal: int<Cent>
@@ -78,6 +85,7 @@ module Amortisation =
         PaymentCount: int
     }
 
+    /// extra information on parameters
     [<Struct>]
     type ParametersInfo = {
         Parameters: Parameters
@@ -87,6 +95,7 @@ module Amortisation =
         InitialBalance: int<Cent>
     }
 
+    /// calculate extra information on parameters
     let parametersInfo p = 
         let calculateProductFees (principal: int<Cent>) productFees =
             match productFees with
@@ -105,6 +114,7 @@ module Amortisation =
             InitialBalance = p.Principal + productFeesTotal
         }
 
+    /// intermediate result used in calculating an amortisation schedule
     [<Struct>]
     type IntermediateResult = {
         Parameters: Parameters
@@ -113,6 +123,7 @@ module Amortisation =
         PenaltyChargesTotal: int<Cent>
     }
 
+    /// extra information on intermedate result
     [<Struct>]
     type IntermediateResultInfo = {
         IntermediateResult: IntermediateResult
@@ -122,6 +133,7 @@ module Amortisation =
         FinalPayment: int<Cent>
     }
 
+    /// calculate extra information on the intermedate result
     let intermediateResultInfo ir =
         let pi = parametersInfo ir.Parameters
         let paymentTotal = ir.Parameters.Principal + pi.ProductFeesTotal + ir.InterestTotal + ir.PenaltyChargesTotal
@@ -134,6 +146,7 @@ module Amortisation =
             FinalPayment = pi.InitialBalance + ir.InterestTotal - (singlePayment * (ir.Parameters.PaymentCount - 1))
         }
 
+    /// an amortisation schedule, itemising how principal, product fees, interest and penalty charges are paid off
     [<Struct>]
     type Schedule =
         {
@@ -142,6 +155,7 @@ module Amortisation =
             Items: ScheduleItem array
         }
 
+    /// extra information on the amortisation schedule
     [<Struct>]
     type ScheduleInfo =
         {
@@ -160,6 +174,7 @@ module Amortisation =
             EffectiveDailyInterestRate: decimal<Percent>
         }
 
+    /// calculate extra information on the amortisation schedule
     let scheduleInfo s =
         let iri = intermediateResultInfo s.IntermediateResult
         let paymentsTotal si = si |> scheduleItemInfo |> _.PaymentsTotal
@@ -299,12 +314,17 @@ module Amortisation =
             }
         ) advance
 
+    /// options on how often interest is capitalised
     [<Struct>]
     type Output =
+        /// interest is capitalised only every unit-period
         | UnitPeriodsOnly
+        /// interest is capitalised daily but summed every unit-period
         | UnitPeriodsWithDailyInterest
+        /// interest is capitalised daily
         | IntersperseDays
 
+    /// generates an amortisation schedule based on the output options and parameters
     let createRegularScheduleInfo output p =
         let pi = parametersInfo p
         let paymentDates = Schedule.generate p.PaymentCount Schedule.Forward p.UnitPeriodConfig

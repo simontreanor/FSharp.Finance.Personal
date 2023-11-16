@@ -6,6 +6,7 @@ module Formatting =
     open System.IO
     open System.Text.RegularExpressions
 
+    /// creates a formatted HTML table from an IEnumerable
     let outputListToHtml fileName limit list =
         Formatter.ListExpansionLimit <- limit |> ValueOption.defaultValue 200
         Formatter.RecursionLimit <- 1

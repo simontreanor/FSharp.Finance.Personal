@@ -5,6 +5,7 @@ open System
 [<AutoOpen>]
 module Util =
 
+    /// holds the result of a devision, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {
         Quotient: decimal
@@ -25,12 +26,16 @@ module Util =
     [<Measure>]
     type Cent
 
+    /// utility functions for base currency unit values
     [<RequireQualifiedAccess>]
     module Cent =
+        /// max of two cent values
         let max (c1: int<Cent>) (c2: int<Cent>) = Int32.Max(int c1, int c2) * 1<Cent>
+        /// min of two cent values
         let min (c1: int<Cent>) (c2: int<Cent>) = Int32.Min(int c1, int c2) * 1<Cent>
+        /// round a decimal value to whole cents
         let round (m: decimal) = int (Decimal.Round(m, 0, MidpointRounding.ToEven)) * 1<Cent>
-        /// lower to the base current unit
+        /// lower to the base currency unit
         let fromDecimal (m: decimal) = round (m * 100m)
         /// raise to the standard currency unit
         let toDecimal (c: int<Cent>) = decimal c / 100m
@@ -39,10 +44,14 @@ module Util =
     [<Measure>]
     type Percent
 
+    /// utility functions for percent values
     [<RequireQualifiedAccess>]
     module Percent =
+        /// create a percent value from a decimal
         let fromDecimal (m: decimal) = m * 100m<Percent>
+        /// round a percent value to two decimal places
         let round (places: int) (p: decimal<Percent>) = Decimal.Round(decimal p, places, MidpointRounding.ToEven) * 1m<Percent>
+        /// convert a percent value to a decimal
         let toDecimal (p: decimal<Percent>) = p / 100m<Percent>
 
     /// an offset from the start date
