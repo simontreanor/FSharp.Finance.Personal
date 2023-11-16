@@ -9,7 +9,8 @@ let amortisationScheduleInfo =
     let annualInterestRate = 9.95m<Percent>
     let startDate = DateTime.Today
     let unitPeriodConfig = UnitPeriod.Weekly(2, DateTime.Today.AddDays(15.))
-    let paymentCount = 11 // to-do: restore function to determine this based on max loan length?
+    let maxLoanLength = 180<Duration>
+    let paymentCount = UnitPeriod.maxPaymentCount maxLoanLength startDate unitPeriodConfig
     { Principal = principal; ProductFees = productFees; AnnualInterestRate = annualInterestRate; StartDate = startDate; UnitPeriodConfig = unitPeriodConfig; PaymentCount = paymentCount }
     |> createRegularScheduleInfo UnitPeriodsOnly
 

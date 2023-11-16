@@ -105,3 +105,13 @@ module UnitPeriod =
             when day2 >= 1 && day2 <= 15 && day1 >= 16 && day1 <= 31 && ((day1 < 31 && day1 - day2 = 15) || (day1 = 31 && day2 = 15)) -> f
         | Monthly (_, MonthlyConfig (_, _, TrackingDay day)) as f when day >= 1 && day <= 31 -> f
         | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
+
+    let maxPaymentCount (maxLoanLength: int<Duration>) (startDate: DateTime) (config: Config) =
+        let offset y m td = (DateTime(y, m, Int32.Min(DateTime.DaysInMonth(y, m), td)) - startDate).TotalDays |> fun f -> int f * 1<Duration>
+        match config with
+        | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
+        | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
+        | (Weekly (multiple, dt)) -> (maxLoanLength - offset dt.Year dt.Month dt.Day) / (multiple * 7)
+        | SemiMonthly (SemiMonthlyConfig (y, m, TrackingDay d1, _)) -> (maxLoanLength - offset y m d1) / 15
+        | (Monthly (multiple, MonthlyConfig (y, m, TrackingDay d))) -> (maxLoanLength - offset y m d) / (multiple * 30)
+        |> int

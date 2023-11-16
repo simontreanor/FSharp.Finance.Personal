@@ -17,7 +17,8 @@ module AmortisationTests =
         let annualInterestRate = 9.95m<Percent>
         let startDate = DateTime(2023, 11, 15)
         let unitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-        let paymentCount = 11 // to-do: restore function to determine this based on max loan length?
+        let maxLoanLength = 180<Duration>
+        let paymentCount = UnitPeriod.maxPaymentCount maxLoanLength startDate unitPeriodConfig
         { Principal = principal; ProductFees = productFees; AnnualInterestRate = annualInterestRate; StartDate = startDate; UnitPeriodConfig = unitPeriodConfig; PaymentCount = paymentCount }
 
     [<Fact>]

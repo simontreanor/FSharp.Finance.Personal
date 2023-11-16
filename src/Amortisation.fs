@@ -31,7 +31,7 @@ module Amortisation =
         PenaltyChargesTotal = p.PenaltyCharges |> ValueOption.map (Array.sumBy(function LatePayment m | InsufficientFunds m -> m)) |> ValueOption.defaultValue 0<Cent>
     }
  
-    /// detail of a loan repayment with apportionment of a repayment to principal, product fees, interest balances and penalty charges
+    /// detail of a repayment with apportionment of a repayment to principal, product fees, interest balances and penalty charges
     [<Struct>]
     type ScheduleItem =
         {
@@ -216,7 +216,7 @@ module Amortisation =
                 calculate p roughPayments (day + 1<Day>) (principalBalance - principalRepayment) (interestBalance + interest - interestRepayment) (accumulatedInterest + interest)
         calculate p roughPayments 1<Day> (p.Principal + (parametersInfo p).ProductFeesTotal |> decimal) 0m 0m
 
-    /// calculate amortisation schedule detailing how loan and its constituent elements (principal, product fees, interest and penalty charges) are paid off over time
+    /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
     let calculateSchedule (p: Parameters) (ir: IntermediateResult) (payments: Payment array) (startDate: DateTime voption) =
         let pi = parametersInfo p
         let iri = intermediateResultInfo ir
