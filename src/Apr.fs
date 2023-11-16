@@ -1,6 +1,7 @@
 namespace FSharp.Finance
 
 open System
+open Util
 
 module Apr =
 
@@ -22,7 +23,7 @@ module Apr =
     type Transfer = {
         TransferType: TransferType
         Date: DateTime
-        Amount: decimal
+        Amount: int<Cent>
     }
 
     /// (b)(5)(i) The number of days between 2 dates shall be the number of 24-hour intervals between any point in time on the first 
@@ -144,8 +145,8 @@ module Apr =
         let unitPeriod = UnitPeriod.nearest term advanceDates paymentDates
         let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
         let roughUnitPeriodRate =
-            let paymentAverage = payments |> Array.averageBy _.Amount
-            let advanceTotal = advances |> Array.sumBy _.Amount
+            let paymentAverage = payments |> Array.averageBy (_.Amount >> Cent.toDecimal)
+            let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
             let paymentCount = payments |> Array.length |> decimal
             ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
         let unitPeriodRate =
@@ -164,8 +165,8 @@ module Apr =
                     tr.Amount, f, t
                 )
             Array.unfold(fun i -> //The percentage rate of finance charge per unit-period, expressed as a decimal equivalent.
-                let aa = eq |> Array.sumBy(fun (a, e, q) -> a / ((1m + (e * i)) * ((1m + i) ** q)))
-                let pp = ft |> Array.sumBy(fun (p, f, t) -> p / ((1m + (f * i)) * ((1m + i) ** t)))
+                let aa = eq |> Array.sumBy(fun (a, e, q) -> Cent.toDecimal a / ((1m + (e * i)) * ((1m + i) ** q)))
+                let pp = ft |> Array.sumBy(fun (p, f, t) -> Cent.toDecimal p / ((1m + (f * i)) * ((1m + i) ** t)))
                 if Decimal.Round(pp - aa, 10) = 0m then
                     None
                 else
@@ -181,6 +182,6 @@ module Apr =
         | UsActuarial ->
             let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
             generalEquation advanceDate advanceDate advances payments
-            |> fun apr -> Decimal.Round(apr, precision)
+            |> fun apr -> Decimal.Round(apr, precision) |> Percent.fromDecimal
         | UnitedStatesRule ->
             failwith "Not yet implemented"

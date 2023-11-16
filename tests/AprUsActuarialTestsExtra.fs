@@ -11,7 +11,7 @@ module AprActuarialTestsExtra =
 
     open Apr
 
-    type AprUsActuarialTestItem = {
+    type AprUsActuarialTestItemDto = {
         StartDate: DateTime
         Principal: decimal
         PaymentAmount: decimal
@@ -20,13 +20,31 @@ module AprActuarialTestsExtra =
         ActualApr: decimal
     }
 
+    type AprUsActuarialTestItem = {
+        StartDate: DateTime
+        Principal: int<Cent>
+        PaymentAmount: int<Cent>
+        PaymentDates: DateTime array
+        ExpectedApr: decimal<Percent>
+        ActualApr: decimal<Percent>
+    }
+
     let aprUsActuarialTestData =
         IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/AprUsActuarialTestData.json"
-        |> JsonSerializer.Deserialize<AprUsActuarialTestItem array>
+        |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
         |> Array.map(fun ssi ->
-            let payments = ssi.PaymentDates |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = ssi.PaymentAmount })
-            let actualApr = Apr.calculate UsActuarial 8 ssi.Principal ssi.StartDate payments |> fun m -> Decimal.Round(m * 100m, 4)
-            { ssi with ActualApr = actualApr }
+            let principal = Cent.fromDecimal ssi.Principal
+            let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
+            let payments = ssi.PaymentDates |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = paymentAmount })
+            let actualApr = Apr.calculate UsActuarial 8 principal ssi.StartDate payments |> Percent.round 4
+            {
+                StartDate = ssi.StartDate
+                Principal = principal
+                PaymentAmount = paymentAmount
+                PaymentDates = ssi.PaymentDates
+                ExpectedApr = Percent.fromDecimal ssi.ExpectedApr
+                ActualApr = actualApr
+            }
         )
         |> toMemberData
 
