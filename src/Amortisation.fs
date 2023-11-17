@@ -74,15 +74,35 @@ module Amortisation =
         | Percentage of Percentage:decimal<Percent> * Cap:int<Cent> voption
         | Simple of Simple:int<Cent>
 
+    /// options on how often interest is capitalised
+    [<Struct>]
+    type InterestCapitalisation =
+        /// interest is capitalised at the beginning of the term
+        | AtTermStart
+        /// interest is capitalised at every payment date
+        | OnPaymentDates
+        /// interest is capitalised daily
+        | EveryDay
+
+    /// options on how often interest is capitalised
+    [<Struct>]
+    type Output =
+        /// produce full daily itemised amortisation schedule
+        | Full
+        /// produce amortisation schedule summarised at each unit-period
+        | Summary
+
     /// parameters for calculating an amortisation schedule
     [<Struct>]
     type Parameters = {
         Principal: int<Cent>
         ProductFees: ProductFees
         AnnualInterestRate: decimal<Percent>
+        InterestCapitalisation: InterestCapitalisation
         StartDate: DateTime
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
+        Output: Output
     }
 
     /// extra information on parameters
@@ -314,18 +334,8 @@ module Amortisation =
             }
         ) advance
 
-    /// options on how often interest is capitalised
-    [<Struct>]
-    type Output =
-        /// interest is capitalised only every unit-period
-        | UnitPeriodsOnly
-        /// interest is capitalised daily but summed every unit-period
-        | UnitPeriodsWithDailyInterest
-        /// interest is capitalised daily
-        | IntersperseDays
-
     /// generates an amortisation schedule based on the output options and parameters
-    let createRegularScheduleInfo output p =
+    let createRegularScheduleInfo p =
         let pi = parametersInfo p
         let paymentDates = Schedule.generate p.PaymentCount Schedule.Forward p.UnitPeriodConfig
         let termLength = ((paymentDates |> Array.last).Date - p.StartDate.Date).TotalDays
@@ -345,10 +355,10 @@ module Amortisation =
         let zeroPayment i = { Index = i; Date = p.StartDate.AddDays(float i); Day = i * 1<Day>; Amount = 0m; Interval = 1<Duration>; PenaltyCharges = ValueNone }
         let maxPaymentDay = roughPayments |> Array.maxBy _.Day |> _.Day
         let roughPayments' =
-            match output with
-            | UnitPeriodsOnly -> roughPayments
-            | UnitPeriodsWithDailyInterest
-            | IntersperseDays ->
+            match p.InterestCapitalisation with
+            | AtTermStart
+            | OnPaymentDates -> roughPayments
+            | EveryDay ->
                 [| 1 .. int maxPaymentDay |]
                 |> Array.map(fun i -> 
                     roughPayments
@@ -370,16 +380,16 @@ module Amortisation =
             roughPayments'
             |> Array.mapi(fun i p -> { p with Amount = if finalPaymentIndex = i then decimal iri.FinalPayment elif p.Amount > 0m then decimal iri.LevelPayment else 0m })
 
-        let filterOutput =
-            match output with
-            | UnitPeriodsWithDailyInterest ->
+        let outputFun =
+            match p.Output with
+            | Full -> id
+            | Summary ->
                 Array.filter(fun si -> si.Advance > 0<Cent> || si.Payments |> Array.isEmpty |> not)
                 >> Array.map(fun si -> { si with NewInterest = si.InterestPortion })
-            | _ -> id
 
         {
             Parameters = p
             IntermediateResult = intermediateResult
-            Items = calculateSchedule p intermediateResult payments (ValueSome p.StartDate) |> filterOutput
+            Items = calculateSchedule p intermediateResult payments (ValueSome p.StartDate) |> outputFun
         }
         |> scheduleInfo

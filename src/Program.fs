@@ -11,8 +11,17 @@ let amortisationScheduleInfo =
     let unitPeriodConfig = UnitPeriod.Weekly(2, DateTime.Today.AddDays(15.))
     let maxLoanLength = 180<Duration>
     let paymentCount = UnitPeriod.maxPaymentCount maxLoanLength startDate unitPeriodConfig
-    { Principal = principal; ProductFees = productFees; AnnualInterestRate = annualInterestRate; StartDate = startDate; UnitPeriodConfig = unitPeriodConfig; PaymentCount = paymentCount }
-    |> createRegularScheduleInfo UnitPeriodsOnly
+    {
+        Principal = principal
+        ProductFees = productFees
+        AnnualInterestRate = annualInterestRate
+        InterestCapitalisation = OnPaymentDates
+        StartDate = startDate
+        UnitPeriodConfig = unitPeriodConfig
+        PaymentCount = paymentCount
+        Output = Full
+    }
+    |> createRegularScheduleInfo
 
 amortisationScheduleInfo.Schedule.Items
 |> Formatting.outputListToHtml "Output.md" (ValueSome 180)

@@ -10,7 +10,7 @@ module AmortisationTests =
 
     open Amortisation
 
-    let parameters1 =
+    let parametersWith interestCapitalisation output =
         let principal = Cent.fromDecimal 1200m
         let productFees = Percentage (189.47m<Percent>, ValueNone)
         let annualInterestRate = 9.95m<Percent>
@@ -18,12 +18,22 @@ module AmortisationTests =
         let unitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
         let maxLoanLength = 180<Duration>
         let paymentCount = UnitPeriod.maxPaymentCount maxLoanLength startDate unitPeriodConfig
-        { Principal = principal; ProductFees = productFees; AnnualInterestRate = annualInterestRate; StartDate = startDate; UnitPeriodConfig = unitPeriodConfig; PaymentCount = paymentCount }
+        {
+            Principal = principal
+            ProductFees = productFees
+            AnnualInterestRate = annualInterestRate
+            InterestCapitalisation = interestCapitalisation
+            StartDate = startDate
+            UnitPeriodConfig = unitPeriodConfig
+            PaymentCount = paymentCount
+            Output = output
+        }
 
     [<Fact>]
     let ``Biweekly schedule with long first period (unit-periods only)`` () =
-        let actual = createRegularScheduleInfo UnitPeriodsOnly parameters1
-        let schedule = { Parameters = parameters1; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
+        let p = parametersWith OnPaymentDates Full
+        let actual = createRegularScheduleInfo p
+        let schedule = { Parameters = p; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
         let expected = {
             Schedule = schedule
             AdvancesTotal = Cent.fromDecimal 1200m
@@ -43,8 +53,9 @@ module AmortisationTests =
 
     [<Fact>]
     let ``Biweekly schedule with long first period (unit-periods with daily interest)`` () =
-        let actual = createRegularScheduleInfo UnitPeriodsWithDailyInterest parameters1
-        let schedule = { Parameters = parameters1; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
+        let p = parametersWith EveryDay Summary
+        let actual = createRegularScheduleInfo p
+        let schedule = { Parameters = p; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
         let expected = {
             Schedule = schedule
             AdvancesTotal = Cent.fromDecimal 1200m
@@ -64,8 +75,9 @@ module AmortisationTests =
 
     [<Fact>]
     let ``Biweekly schedule with long first period (interspersed days)`` () =
-        let actual = createRegularScheduleInfo IntersperseDays parameters1
-        let schedule = { Parameters = parameters1; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
+        let p = parametersWith EveryDay Full
+        let actual = createRegularScheduleInfo p
+        let schedule = { Parameters = p; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
         let expected = {
             Schedule = schedule
             AdvancesTotal = Cent.fromDecimal 1200m
