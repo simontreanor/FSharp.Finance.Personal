@@ -29,7 +29,7 @@ module UnitPeriod =
     /// coerce a length to the nearest unit-period
     let normalise length =
         all
-        |> Array.minBy(fun (days, _) -> Int32.Abs(days - length))
+        |> Array.minBy(fun (days, _) -> abs (days - length))
 
     /// lengths that occur more than once
     let commonLengths (lengths: int array) =
@@ -40,7 +40,7 @@ module UnitPeriod =
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
         if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) = 1 then
-            Int32.Min(term.TotalDays, 365)
+            min term.TotalDays 365
             |> NoInterval
         else
             let periodLengths =
@@ -113,7 +113,7 @@ module UnitPeriod =
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxLoanLength: int<Duration>) (startDate: DateTime) (config: Config) =
-        let offset y m td = (DateTime(y, m, Int32.Min(DateTime.DaysInMonth(y, m), td)) - startDate).TotalDays |> fun f -> int f * 1<Duration>
+        let offset y m td = (DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td) - startDate).TotalDays |> fun f -> int f * 1<Duration>
         match config with
         | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day

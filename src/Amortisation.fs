@@ -214,7 +214,7 @@ module Amortisation =
         let rec calculate (p: Parameters) (roughPayments: Payment array) (day: int<Day>) (principalBalance: decimal) (interestBalance: decimal) (accumulatedInterest: decimal) =
             let pi = parametersInfo p
             if day > maxPaymentDay then
-                if Decimal.Abs principalBalance < 0.001m then
+                if abs principalBalance < 0.001m then
                     accumulatedInterest |> Cent.round
                 else
                     let roughPayments' = roughPayments |> Array.mapi(fun i r ->
@@ -226,7 +226,7 @@ module Amortisation =
                 let principalRepayment, interestRepayment =
                     roughPayments
                     |> Array.tryPick(fun payment -> if payment.Day = day then Some payment.Amount else None)
-                    |> Option.map(fun paymentAmount -> (interestBalance + interest) |> fun interestToPay -> Decimal.Max(0m, decimal paymentAmount - interestToPay), interestToPay)
+                    |> Option.map(fun paymentAmount -> (interestBalance + interest) |> fun interestToPay -> max 0m (decimal paymentAmount - interestToPay), interestToPay)
                     |> Option.defaultValue (0m, 0m)
                 calculate p roughPayments (day + 1<Day>) (principalBalance - principalRepayment) (interestBalance + interest - interestRepayment) (accumulatedInterest + interest)
         calculate p roughPayments 1<Day> (p.Principal + (parametersInfo p).ProductFeesTotal |> decimal) 0m 0m

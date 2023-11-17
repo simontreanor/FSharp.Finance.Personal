@@ -1,24 +1,53 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <OutputType>exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <Compile Include="Formatting.fs" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Util.fs" />
-    <Compile Include="Formatting.fs" />
     <Compile Include="General.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Schedule.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="Amortisation.fs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <Compile Include="Program.fs" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <PackageReference Include="Microsoft.DotNet.Interactive.Formatting" Version="1.0.0-beta.23562.1" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>FSharp.Finance</PackageId>
+    <Version>0.1.1</Version>
+    <Authors>Simon Treanor</Authors>
+    <PackageDescription>F# Finance Library</PackageDescription>
+    <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance</RepositoryUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadMeFile>README.md</PackageReadMeFile>
+    <IncludeContentInPack>true</IncludeContentInPack>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <None Include="../LICENSE">
+      <Pack>true</Pack>
+      <PackagePath></PackagePath>
+      <Visible>True</Visible>
+    </None>
+    <None Include="../README.md">
+      <Pack>true</Pack>
+      <PackagePath></PackagePath>
+      <Visible>True</Visible>
+    </None>
   </ItemGroup>
 </Project>

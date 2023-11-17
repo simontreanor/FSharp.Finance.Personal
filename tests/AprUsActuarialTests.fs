@@ -16,12 +16,6 @@ module AprUsActuarialTests =
     open Apr
     open UnitPeriod
 
-    let roundTo (dp: int) m =
-        let x = 10m ** decimal dp
-        divRem (m * x) 1m
-        |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1m
-        |> fun m -> m / x
-
     /// (c)(1) Single advance transaction, with or without an odd first period, and otherwise regular
     let calculate1 advanceAmount payment paymentCount intervalSchedule advanceDate =
         let consummationDate = advanceDate

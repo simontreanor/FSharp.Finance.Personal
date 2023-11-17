@@ -32,7 +32,7 @@ module Apr =
     /// (b)(5)(i) The number of days between 2 dates shall be the number of 24-hour intervals between any point in time on the first 
     /// date to the same point in time on the second date.
     let daysBetween (date1: DateTime) (date2: DateTime) =
-        (date2.Date - date1.Date).TotalDays |> decimal
+        (date2.Date - date1.Date).TotalDays |> int
 
     /// (b)(5)(iv) If the unit-period is a day, [...] the number of full unit-periods and the remaining fractions of a unit-period 
     /// shall be determined by dividing the number of days between the 2 given dates by the number of days per unit-period. If the 
@@ -41,7 +41,7 @@ module Apr =
         let transferDates = transfers |> Array.map _.Date
         let offset = daysBetween termStart (transferDates |> Array.head)
         transfers
-        |> Array.mapi(fun i t -> t, { Quotient = decimal i + offset; Remainder = 0m })
+        |> Array.mapi(fun i t -> t, { Quotient = i + offset; Remainder = 0m })
 
     /// (b)(5)(ii) If the unit-period is a month, the number of full unit-periods between 2 dates shall be the number of months 
     /// measured back from the later date. The remaining fraction of a unit-period shall be the number of days measured forward from 
@@ -71,7 +71,7 @@ module Apr =
         let offset = (scheduleCount - 1) - ((transferCount - 1) * multiple) |> fun i -> Decimal.Floor(decimal i / decimal multiple) |> int
         [| 0 .. (transferCount - 1) |]
         |> Array.map(fun i ->
-            let wholeUnitPeriods = decimal (i + offset)
+            let wholeUnitPeriods = i + offset
             let remainingMonthDays = decimal (lastWholeUnitPeriodBackIndex - lastWholeMonthBackIndex) * 30m
             let remainingDays = decimal (schedule[lastWholeMonthBackIndex] - termStart).TotalDays
             let remainder =
@@ -98,7 +98,7 @@ module Apr =
         [| 0 .. (transferCount - 1) |]
         |> Array.map(fun i ->
             let lastWholeMonthBackIndex = (i + offset) % 2
-            let wholeUnitPeriods = decimal (i + offset - lastWholeMonthBackIndex)
+            let wholeUnitPeriods = i + offset - lastWholeMonthBackIndex
             let fractional = decimal (schedule[lastWholeMonthBackIndex] - termStart).TotalDays / 15m |> fun d -> divRem d 1m
             transfers[i], { Quotient = wholeUnitPeriods + fractional.Quotient; Remainder = fractional.Remainder }
         )
@@ -110,10 +110,10 @@ module Apr =
     /// 52 divided by the number of weeks per unit-period.
     let weeklyUnitPeriods (multiple: int) termStart transfers =
         let transferDates = transfers |> Array.map _.Date
-        let dr  = (daysBetween termStart (transferDates |> Array.head)) / (7m * decimal multiple) |> fun d -> divRem d 1m
+        let dr  = decimal (daysBetween termStart (transferDates |> Array.head)) / (7m * decimal multiple) |> fun d -> divRem d 1m
         transfers
         |> Array.mapi(fun i t ->
-            t, { Quotient = dr.Quotient + decimal i; Remainder = dr.Remainder }
+            t, { Quotient = dr.Quotient + i; Remainder = dr.Remainder }
         )
 
     /// (b)(5)(vi) In a single advance, single payment transaction in which the term is less than a year and is equal 
@@ -126,7 +126,7 @@ module Apr =
     /// unit-periods per year shall be 365 divided by the number of days in the term.
     let singleUnitPeriod _ transfers =
         let transfer = transfers |> Array.exactlyOne
-        [| transfer, { Quotient = 1m; Remainder = 0m } |]
+        [| transfer, { Quotient = 1; Remainder = 0m } |]
 
     /// map an array of transfers to an array of whole and fractional unit periods
     let mapUnitPeriods unitPeriod =
@@ -136,9 +136,6 @@ module Apr =
         | (UnitPeriod.Week multiple) -> weeklyUnitPeriods multiple
         | UnitPeriod.SemiMonth -> semiMonthlyUnitPeriods
         | (UnitPeriod.Month multiple) -> monthlyUnitPeriods multiple
-
-    /// overrides existing power function to take and return decimals
-    let inline ( ** ) (var1: decimal) (var2: decimal) = decimal (Math.Pow(double var1, double var2))
 
     /// (b)(8) General equation.
     let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
@@ -153,7 +150,7 @@ module Apr =
             let paymentCount = payments |> Array.length |> decimal
             ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
         let unitPeriodRate =
-            let eq = [| advances[0].Amount, 0m, 0m |]
+            let eq = [| advances[0].Amount, 0m, 0 |]
                 // mapUnitPeriods unitPeriod term.Start advances
                 // |> Array.map(fun (tr, dr) ->
                 //     let e = dr.Remainder //The fraction of a unit-period in the time interval from the beginning of the term of the transaction to the kth advance.
@@ -173,7 +170,7 @@ module Apr =
                 if Decimal.Round(pp - aa, 10) = 0m then
                     None
                 else
-                    Some (i, i * ((pp / aa) ** 2m))
+                    Some (i, i * ((pp / aa) ** 2))
             ) roughUnitPeriodRate
             |> Array.last
         annualPercentageRate unitPeriodRate unitPeriodsPerYear
