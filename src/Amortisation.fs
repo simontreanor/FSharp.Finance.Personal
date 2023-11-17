@@ -230,6 +230,9 @@ module Amortisation =
     /// calculate total interest due on a regular schedule
     [<TailCall>]
     let calculateInterestTotal (p: Parameters) maxPaymentDay (roughPayments: Payment array) =
+        match p.InterestCapitalisation with
+        | AtTermStart -> failwith "Not implemented yet"
+        | _ ->
         // note that inside this function, "principal" refers to (principal + product fees) together
         let rec calculate (p: Parameters) (roughPayments: Payment array) (day: int<Day>) (principalBalance: decimal) (interestBalance: decimal) (accumulatedInterest: decimal) =
             let pi = parametersInfo p
