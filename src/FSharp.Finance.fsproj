@@ -20,6 +20,7 @@
     <Compile Include="Schedule.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="Amortisation.fs" />
+    <Compile Include="Amortisation2.fs" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <Compile Include="Program.fs" />

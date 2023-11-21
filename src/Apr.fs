@@ -164,14 +164,15 @@ module Apr =
                     let t = dr.Quotient //The number of full unit-periods from the beginning of the term of the transaction to the jth payment.
                     tr.Amount, f, t
                 )
-            Array.unfold(fun i -> //The percentage rate of finance charge per unit-period, expressed as a decimal equivalent.
+            roughUnitPeriodRate
+            |> Array.unfold(fun i -> //The percentage rate of finance charge per unit-period, expressed as a decimal equivalent.
                 let aa = eq |> Array.sumBy(fun (a, e, q) -> Cent.toDecimal a / ((1m + (e * i)) * ((1m + i) ** q)))
                 let pp = ft |> Array.sumBy(fun (p, f, t) -> Cent.toDecimal p / ((1m + (f * i)) * ((1m + i) ** t)))
                 if Decimal.Round(pp - aa, 10) = 0m then
                     None
                 else
                     Some (i, i * ((pp / aa) ** 2))
-            ) roughUnitPeriodRate
+            )
             |> Array.last
         annualPercentageRate unitPeriodRate unitPeriodsPerYear
 

@@ -13,6 +13,7 @@
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
     <Compile Include="AmortisationTests.fs" />
+    <Compile Include="Amortisation2Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
