@@ -30,11 +30,11 @@
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>FSharp.Finance</PackageId>
-    <Version>0.1.1</Version>
+    <PackageId>FSharp.Finance.Personal</PackageId>
+    <Version>0.2.0</Version>
     <Authors>Simon Treanor</Authors>
-    <PackageDescription>F# Finance Library</PackageDescription>
-    <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance</RepositoryUrl>
+    <PackageDescription>F# Personal Finance Library</PackageDescription>
+    <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadMeFile>README.md</PackageReadMeFile>
     <IncludeContentInPack>true</IncludeContentInPack>

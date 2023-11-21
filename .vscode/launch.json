@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build: solution",
-            "program": "${workspaceFolder}/src/bin/Debug/net8.0/FSharp.Finance.dll",
+            "program": "${workspaceFolder}/src/bin/Debug/net8.0/FSharp.Finance.Personal.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

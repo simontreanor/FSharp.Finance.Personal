@@ -6,7 +6,7 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\FSharp.Finance.fsproj" />
+    <ProjectReference Include="..\src\FSharp.Finance.Personal.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Util.fs" />

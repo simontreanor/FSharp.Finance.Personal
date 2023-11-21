@@ -1,10 +1,10 @@
-namespace FSharp.Finance.Tests
+namespace FSharp.Finance.Personal.Tests
 
 open System
 open Xunit
 open FsUnit.Xunit
 
-open FSharp.Finance
+open FSharp.Finance.Personal
 
 module Amortisation2Tests =
 
@@ -34,7 +34,7 @@ module Amortisation2Tests =
             PrincipalTotal = 347364<Cent>
             InterestTotal = 7426<Cent>
             Apr = 717.439942m<Percent>
-            CostToBorrowingRatio = 2.137815m<Percent>
+            CostToBorrowingRatio = 67.591921m<Percent>
         }
         actual |> should equal expected
 
@@ -50,7 +50,7 @@ module Amortisation2Tests =
             PrincipalTotal = 347364<Cent>
             InterestTotal = 8004<Cent>
             Apr = 637.180799m<Percent>
-            CostToBorrowingRatio = 2.304211m<Percent>
+            CostToBorrowingRatio = 67.758317m<Percent>
         }
         actual |> should equal expected
 
@@ -66,6 +66,6 @@ module Amortisation2Tests =
             PrincipalTotal = 347364<Cent>
             InterestTotal = 8101<Cent>
             Apr = 623.706600m<Percent>
-            CostToBorrowingRatio = 2.332136m<Percent>
+            CostToBorrowingRatio = 67.786242m<Percent>
         }
         actual |> should equal expected

@@ -1,4 +1,4 @@
-namespace FSharp.Finance.Tests
+namespace FSharp.Finance.Personal.Tests
 
 open System
 

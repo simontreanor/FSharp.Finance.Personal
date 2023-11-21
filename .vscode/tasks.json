@@ -8,7 +8,7 @@
 			],
 			"group": "build",
 			"label": "Build: solution",
-			"detail": "Build the FSharp.Finance.sln solution using dotnet build"
+			"detail": "Build the FSharp.Finance.Personal.sln solution using dotnet build"
 		}
 	]
 }

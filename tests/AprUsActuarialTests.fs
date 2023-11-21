@@ -1,10 +1,10 @@
-namespace FSharp.Finance.Tests
+namespace FSharp.Finance.Personal.Tests
 
 open System
 open Xunit
 open FsUnit.Xunit
 
-open FSharp.Finance
+open FSharp.Finance.Personal
 
 /// https://www.consumerfinance.gov/rules-policy/regulations/1026/j/
 /// 

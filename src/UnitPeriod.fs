@@ -1,4 +1,4 @@
-﻿namespace FSharp.Finance
+﻿namespace FSharp.Finance.Personal
 
 open System
 

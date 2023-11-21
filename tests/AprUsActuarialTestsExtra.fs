@@ -1,11 +1,11 @@
-namespace FSharp.Finance.Tests
+namespace FSharp.Finance.Personal.Tests
 
 open System
 open Xunit
 open FsUnit.Xunit
 open System.Text.Json
 
-open FSharp.Finance
+open FSharp.Finance.Personal
 
 module AprActuarialTestsExtra =
 

@@ -1,5 +1,5 @@
 open System
-open FSharp.Finance
+open FSharp.Finance.Personal
 
 open Amortisation
 
