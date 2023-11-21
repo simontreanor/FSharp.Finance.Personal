@@ -1,6 +1,9 @@
-# FSharp.Finance
-Financial functions written in F#
+# FSharp.Finance.Personal
 
-Note: this is a work in progress until version 1 is released
+Personal-finance functions written in F#
+
+Starting with APR calculations and loan amortisation
+
+Note: this is a work in progress so breaking changes can happen at any time while in version 0
 
 https://www.nuget.org/packages/FSharp.Finance/
