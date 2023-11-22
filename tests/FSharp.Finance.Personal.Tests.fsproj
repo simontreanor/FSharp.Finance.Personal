@@ -12,8 +12,8 @@
     <Compile Include="Util.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
-    <Compile Include="AmortisationTests.fs" />
-    <Compile Include="Amortisation2Tests.fs" />
+    <Compile Include="IrregularPaymentTests.fs" />
+    <Compile Include="RegularPaymentTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

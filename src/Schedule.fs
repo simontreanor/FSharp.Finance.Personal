@@ -13,9 +13,9 @@ module Schedule =
 
     /// generate a schedule based on a unit-period schedule
     let generate count direction unitPeriodSchedule =
-        let adjustMonthEnd monthEndTrackingDay (dt: DateTime) =
-            if dt.Day > 15 && monthEndTrackingDay > 28 then
-                DateTime(dt.Year, dt.Month, min monthEndTrackingDay (DateTime.DaysInMonth(dt.Year, dt.Month)))
+        let adjustMonthEnd (monthEndTrackingDay: int<TrackingDay>) (dt: DateTime) =
+            if dt.Day > 15 && monthEndTrackingDay > 28<TrackingDay> then
+                DateTime(dt.Year, dt.Month, min (int monthEndTrackingDay) (DateTime.DaysInMonth(dt.Year, dt.Month)))
             else dt
         let generate =
             match unitPeriodSchedule |> constrain with
@@ -25,17 +25,17 @@ module Schedule =
                 Array.map (fun c -> startDate.AddDays (float c))
             | Weekly (multiple, startDate) ->
                 Array.map (fun c -> startDate.AddDays (float(c * 7 * multiple)))
-            | SemiMonthly (SemiMonthlyConfig (year, month, TrackingDay day1, TrackingDay day2)) ->
-                let startDate = DateTime(year, month, min day1 (DateTime.DaysInMonth(year, month)))
-                let offset, monthEndTrackingDay = (if day1 > day2 then 1, day1 else 0, day2) |> fun (o, metd) -> (match direction with Forward -> o, metd | Reverse -> o - 1, metd)
+            | SemiMonthly (SemiMonthlyConfig (year, month, td1, td2)) ->
+                let startDate = DateTime(year, month, min (int td1) (DateTime.DaysInMonth(year, month)))
+                let offset, monthEndTrackingDay = (if td1 > td2 then 1, td1 else 0, td2) |> fun (o, metd) -> (match direction with Forward -> o, metd | Reverse -> o - 1, metd)
                 Array.collect(fun c -> [|
                     startDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
-                    startDate.AddMonths (c + offset) |> fun dt -> DateTime(dt.Year, dt.Month, min day2 (DateTime.DaysInMonth(dt.Year, dt.Month))) |> adjustMonthEnd monthEndTrackingDay
+                    startDate.AddMonths (c + offset) |> fun dt -> DateTime(dt.Year, dt.Month, min (int td2) (DateTime.DaysInMonth(dt.Year, dt.Month))) |> adjustMonthEnd monthEndTrackingDay
                 |])
                 >> Array.take count
-            | Monthly (multiple, (MonthlyConfig (year, month, TrackingDay day))) ->
-                let startDate = DateTime(year, month, min day (DateTime.DaysInMonth(year, month)))
-                Array.map (fun c -> startDate.AddMonths (c * multiple) |> adjustMonthEnd day)
+            | Monthly (multiple, (MonthlyConfig (year, month, td))) ->
+                let startDate = DateTime(year, month, min (int td) (DateTime.DaysInMonth(year, month)))
+                Array.map (fun c -> startDate.AddMonths (c * multiple) |> adjustMonthEnd td)
         match direction with
         | Forward -> [| 0 .. (count - 1) |] |> generate
         | Reverse -> [| 0 .. -1 .. -(count - 1) |] |> generate |> Array.sort
@@ -54,11 +54,11 @@ module Schedule =
             |> Array.chunkBySize 2
             |> Array.transpose
             |> Array.map (Array.maxBy _.Day >> _.Day)
-            |> fun days -> SemiMonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay days[0], TrackingDay days[1])
+            |> fun days -> SemiMonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay.fromInt days[0], TrackingDay.fromInt days[1])
             |> SemiMonthly
         | Month multiple ->
             transferDates
             |> Array.maxBy _.Day
             |> _.Day
-            |> fun day -> multiple, MonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay day)
+            |> fun day -> multiple, MonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay.fromInt day)
             |> Monthly

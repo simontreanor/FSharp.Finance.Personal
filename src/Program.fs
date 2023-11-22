@@ -1,29 +1,43 @@
 open System
 open FSharp.Finance.Personal
 
-open Amortisation
+open RegularPayment
 
-let amortisationScheduleInfo =
-    let principal = 1200 * 100<Cent>
-    let productFees = Percentage (189.47m<Percent>, ValueNone)
-    let annualInterestRate = 9.95m<Percent>
-    let startDate = DateTime.Today
-    let unitPeriodConfig = UnitPeriod.Weekly(2, DateTime.Today.AddDays(15.))
-    let maxLoanLength = 180<Duration>
-    let paymentCount = UnitPeriod.maxPaymentCount maxLoanLength startDate unitPeriodConfig
+let scheduleParameters =
     {
-        Principal = principal
-        ProductFees = productFees
-        AnnualInterestRate = annualInterestRate
-        InterestCapitalisation = OnPaymentDates
-        StartDate = startDate
-        UnitPeriodConfig = unitPeriodConfig
-        PaymentCount = paymentCount
-        Output = Full
+        StartDate = DateTime.Today
+        Principal = 1200 * 100<Cent>
+        ProductFees = Percentage (189.47m<Percent>, ValueNone)
+        InterestRate = AnnualInterestRate 9.95m<Percent>
+        UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime.Today.AddDays(15.))
+        PaymentCount = 11
+        FinalPaymentTolerance = ValueNone
     }
-    |> createRegularScheduleInfo
 
-amortisationScheduleInfo.Schedule.Items
-|> Formatting.outputListToHtml "Output.md" (ValueSome 180)
+let regularSchedule =
+    scheduleParameters
+    |> calculateSchedule
+
+regularSchedule.Items
+|> Formatting.outputListToHtml "RegularPayment.md" (ValueSome 180)
+
+open IrregularPayment
+
+let actualPayments = [|
+    { Day = 18<Day>; Amounts = [| 10000<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+|]
+
+let scheduledPayments =
+    regularSchedule.Items
+    |> Array.map(fun si ->
+        { Day = si.Day; Amounts = [| si.Payment |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+    )
+
+let mergedPayments =
+    mergePayments 50<Day> 1000<Cent> scheduledPayments actualPayments
+
+mergedPayments
+|> calculateSchedule scheduleParameters
+|> Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 180)
 
 exit 0

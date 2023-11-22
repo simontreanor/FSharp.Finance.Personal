@@ -6,9 +6,9 @@ open FsUnit.Xunit
 
 open FSharp.Finance.Personal
 
-module Amortisation2Tests =
+module RegularPaymentTests =
 
-    open Amortisation2
+    open RegularPayment
 
     let biweeklyParameters principal offset =
         let startDate = DateTime(2023, 11, 15)
@@ -24,7 +24,7 @@ module Amortisation2Tests =
 
     [<Fact>]
     let ``Biweekly schedule $1200 with short first period`` () =
-        let actual = biweeklyParameters 120000<Cent> 8<Duration> |> calculateRegularPaymentSchedule
+        let actual = biweeklyParameters 120000<Cent> 8<Duration> |> calculateSchedule
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 148<Day>
@@ -40,7 +40,7 @@ module Amortisation2Tests =
 
     [<Fact>]
     let ``Biweekly schedule $1200 with first period equal to unit-period length`` () =
-        let actual = biweeklyParameters 120000<Cent> 14<Duration> |> calculateRegularPaymentSchedule
+        let actual = biweeklyParameters 120000<Cent> 14<Duration> |> calculateSchedule
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 154<Day>
@@ -56,7 +56,7 @@ module Amortisation2Tests =
 
     [<Fact>]
     let ``Biweekly schedule $1200 with long first period`` () =
-        let actual = biweeklyParameters 120000<Cent> 15<Duration> |> calculateRegularPaymentSchedule
+        let actual = biweeklyParameters 120000<Cent> 15<Duration> |> calculateSchedule
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 155<Day>

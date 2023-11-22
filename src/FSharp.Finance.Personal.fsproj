@@ -19,8 +19,8 @@
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Schedule.fs" />
     <Compile Include="Apr.fs" />
-    <Compile Include="Amortisation.fs" />
-    <Compile Include="Amortisation2.fs" />
+    <Compile Include="RegularPayment.fs" />
+    <Compile Include="IrregularPayment.fs" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <Compile Include="Program.fs" />
@@ -42,12 +42,14 @@
   <ItemGroup Condition="'$(Configuration)'=='Release'">
     <None Include="../LICENSE">
       <Pack>true</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>
+      </PackagePath>
       <Visible>True</Visible>
     </None>
     <None Include="../README.md">
       <Pack>true</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>
+      </PackagePath>
       <Visible>True</Visible>
     </None>
   </ItemGroup>

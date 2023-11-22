@@ -5,16 +5,37 @@ open System
 [<AutoOpen>]
 module General =
     
-    /// a transaction term is the length of a transaction, from the start date to the final payment
+    /// the interest rate expressed as either an annual or a daily rate
     [<Struct>]
-    type TransactionTerm = {
-        Start: DateTime
-        End: DateTime
-        TotalDays: int
-    }
+    type InterestRate =
+        | AnnualInterestRate of AnnualInterestRate:decimal<Percent>
+        | DailyInterestRate of DailyInterestRate:decimal<Percent>
 
-    /// calculate the transaction term based on specific events
-    let transactionTerm (consummationDate: DateTime) firstFinanceChargeEarnedDate (lastPaymentDueDate: DateTime) lastAdvanceScheduledDate =
-        let beginDateTime = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
-        let endDateTime = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
-        { Start = beginDateTime; End = endDateTime; TotalDays = (endDateTime.Date - beginDateTime.Date).TotalDays |> int }
+    let dailyInterestRate = function
+        | AnnualInterestRate ir -> ir / 365m
+        | DailyInterestRate ir -> ir
+
+    /// the type and amount of any product fees, taking into account any constraints
+    [<Struct>]
+    type ProductFees =
+        | Percentage of Percentage:decimal<Percent> * Cap:int<Cent> voption
+        | Simple of Simple:int<Cent>
+
+    let productFeesTotal (principal: int<Cent>) productFees =
+        match productFees with
+        | Percentage (percentage, ValueSome cap) ->
+            Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
+            |> fun cents -> Cent.min cents cap
+        | Percentage (percentage, ValueNone) ->
+            Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
+        | Simple simple -> simple
+
+    /// the type and amount of penalty charge
+    [<Struct>]
+    type PenaltyCharge =
+        | LatePayment of LatePayment:int<Cent>
+        | InsufficientFunds of InsufficientFunds:int<Cent>
+
+    let penaltyChargesTotal penaltyCharges =
+        penaltyCharges
+        |> Array.sumBy(function LatePayment m | InsufficientFunds m -> m)

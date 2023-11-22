@@ -4,10 +4,24 @@ open System
 
 module UnitPeriod =
 
+    /// a transaction term is the length of a transaction, from the start date to the final payment
+    [<Struct>]
+    type TransactionTerm = {
+        Start: DateTime
+        End: DateTime
+        TotalDays: int<Duration>
+    }
+
+    /// calculate the transaction term based on specific events
+    let transactionTerm (consummationDate: DateTime) firstFinanceChargeEarnedDate (lastPaymentDueDate: DateTime) lastAdvanceScheduledDate =
+        let beginDateTime = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
+        let endDateTime = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
+        { Start = beginDateTime; End = endDateTime; TotalDays = int (endDateTime.Date - beginDateTime.Date).TotalDays * 1<Duration> }
+
     /// interval between payments
     [<Struct>]
     type UnitPeriod =
-        | NoInterval of UnitPeriodDays:int // cf. (b)(5)(vii)
+        | NoInterval of UnitPeriodDays:int<Duration> // cf. (b)(5)(vii)
         | Day
         | Week of WeekMultiple:int
         | SemiMonth
@@ -40,7 +54,7 @@ module UnitPeriod =
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
         if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) = 1 then
-            min term.TotalDays 365
+            min term.TotalDays 365<Duration>
             |> NoInterval
         else
             let periodLengths =
@@ -73,19 +87,13 @@ module UnitPeriod =
         | SemiMonth -> 24m
         | (Month multiple) -> 12m / decimal multiple
 
-    /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
-    /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
-    /// possible to start with e.g. (2024, 02, 31) and this will yield 2024-02-29 29 2024-03-31 2024-04-30 etc.
-    [<Struct>]
-    type TrackingDay = TrackingDay of int
-
     /// settings for a semi-monthly payment config, where day 1 is in the first half of the month (1st to 15th) and day 2 in the second half (16th to 31st)
     [<Struct>]
-    type SemiMonthlyConfig = SemiMonthlyConfig of Year:int * Month:int * Day1:TrackingDay * Day2:TrackingDay
+    type SemiMonthlyConfig = SemiMonthlyConfig of Year:int * Month:int * Day1:int<TrackingDay> * Day2:int<TrackingDay>
 
     /// settings for a monthly payment config, where day is the day of the month to track
     [<Struct>]
-    type MonthlyConfig = MonthlyConfig of Year:int * Month:int * Day:TrackingDay
+    type MonthlyConfig = MonthlyConfig of Year:int * Month:int * Day:int<TrackingDay>
 
     /// unit period combined with a
     [<Struct>]
@@ -104,11 +112,13 @@ module UnitPeriod =
     /// constrains the freqencies to valid values
     let constrain = function
         | Single _ | Daily _ | Weekly _ as f -> f
-        | SemiMonthly (SemiMonthlyConfig (_, _, TrackingDay day1, TrackingDay day2)) as f
-            when day1 >= 1 && day1 <= 15 && day2 >= 16 && day2 <= 31 && ((day2 < 31 && day2 - day1 = 15) || (day2 = 31 && day1 = 15)) -> f
-        | SemiMonthly (SemiMonthlyConfig (_, _, TrackingDay day1, TrackingDay day2)) as f
-            when day2 >= 1 && day2 <= 15 && day1 >= 16 && day1 <= 31 && ((day1 < 31 && day1 - day2 = 15) || (day1 = 31 && day2 = 15)) -> f
-        | Monthly (_, MonthlyConfig (_, _, TrackingDay day)) as f when day >= 1 && day <= 31 -> f
+        | SemiMonthly (SemiMonthlyConfig (_, _, day1, day2)) as f
+            when day1 >= 1<TrackingDay> && day1 <= 15<TrackingDay> && day2 >= 16<TrackingDay> && day2 <= 31<TrackingDay> &&
+                ((day2 < 31<TrackingDay> && day2 - day1 = 15<TrackingDay>) || (day2 = 31<TrackingDay> && day1 = 15<TrackingDay>)) -> f
+        | SemiMonthly (SemiMonthlyConfig (_, _, day1, day2)) as f
+            when day2 >= 1<TrackingDay> && day2 <= 15<TrackingDay> && day1 >= 16<TrackingDay> && day1 <= 31<TrackingDay> &&
+                ((day1 < 31<TrackingDay> && day1 - day2 = 15<TrackingDay>) || (day1 = 31<TrackingDay> && day2 = 15<TrackingDay>)) -> f
+        | Monthly (_, MonthlyConfig (_, _, day)) as f when day >= 1<TrackingDay> && day <= 31<TrackingDay> -> f
         | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
@@ -118,6 +128,6 @@ module UnitPeriod =
         | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | (Weekly (multiple, dt)) -> (maxLoanLength - offset dt.Year dt.Month dt.Day) / (multiple * 7)
-        | SemiMonthly (SemiMonthlyConfig (y, m, TrackingDay d1, _)) -> (maxLoanLength - offset y m d1) / 15
-        | (Monthly (multiple, MonthlyConfig (y, m, TrackingDay d))) -> (maxLoanLength - offset y m d) / (multiple * 30)
+        | SemiMonthly (SemiMonthlyConfig (y, m, d1, _)) -> (maxLoanLength - offset y m (int d1)) / 15
+        | (Monthly (multiple, MonthlyConfig (y, m, d))) -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
         |> int
