@@ -39,3 +39,13 @@ module General =
     let penaltyChargesTotal penaltyCharges =
         penaltyCharges
         |> Array.sumBy(function LatePayment m | InsufficientFunds m -> m)
+
+    [<Struct>]
+    type InterestCap =
+        | PercentageOfPrincipal of PercentageOfPrincipal:decimal<Percent>
+        | Fixed of int<Cent>
+
+    let calculateInterestCap (principal: int<Cent>) interestCap =
+        match interestCap with
+        | PercentageOfPrincipal percentage -> decimal principal * Percent.toDecimal percentage |> Cent.round
+        | Fixed i -> i

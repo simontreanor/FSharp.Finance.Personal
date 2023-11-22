@@ -8,89 +8,62 @@ open FSharp.Finance.Personal
 
 module IrregularPaymentTests =
 
+    open RegularPayment
     open IrregularPayment
 
-    // let parametersWith interestCapitalisation output =
-    //     let principal = Cent.fromDecimal 1200m
-    //     let productFees = Percentage (189.47m<Percent>, ValueNone)
-    //     let annualInterestRate = 9.95m<Percent>
-    //     let startDate = DateTime(2023, 11, 15)
-    //     let unitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-    //     let maxLoanLength = 180<Duration>
-    //     let paymentCount = UnitPeriod.maxPaymentCount maxLoanLength startDate unitPeriodConfig
-    //     {
-    //         Principal = principal
-    //         ProductFees = productFees
-    //         AnnualInterestRate = annualInterestRate
-    //         InterestCapitalisation = interestCapitalisation
-    //         StartDate = startDate
-    //         UnitPeriodConfig = unitPeriodConfig
-    //         PaymentCount = paymentCount
-    //         Output = output
-    //     }
+    [<Fact>]
+    let ``Non-payer who commits to a long-term payment plan and completes it`` () =
+        let startDate = DateTime.Today.AddDays(-421.)
+        let rpsp =
+            {
+                StartDate = startDate
+                Principal = 1200 * 100<Cent>
+                ProductFees = Percentage (189.47m<Percent>, ValueNone)
+                InterestRate = AnnualInterestRate 9.95m<Percent>
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+                PaymentCount = 11
+                FinalPaymentTolerance = ValueNone
+            }
+        let regularSchedule = rpsp |> RegularPayment.calculateSchedule
+        let actualPayments =
+            [| 180 .. 7 .. 2098 |]
+            |> Array.map(fun i -> { Day = i * 1<Day>; Adjustments = [| ActualPayment 2500<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+        let scheduledPayments =
+            regularSchedule.Items
+            |> Array.map(fun si -> { Day = si.Day; Adjustments = (match si.Payment with ValueSome p -> [| ScheduledPayment p |] | _ -> [||]); PaymentStatus = ValueNone; PenaltyCharges = [||] })
+        let mergedPayments =
+            let today = int (DateTime.Today - startDate).TotalDays * 1<Day>
+            mergePayments today 1000<Cent> scheduledPayments actualPayments
+        let irregularSchedule =
+            {
+                RegularPaymentScheduleParameters = rpsp
+                RegularPaymentSchedule = regularSchedule
+                Payments = mergedPayments
+                InterestCap = PercentageOfPrincipal 100m<Percent>
+            }
+            |> calculateSchedule
 
-    // [<Fact>]
-    // let ``Biweekly schedule with long first period (unit-periods only)`` () =
-    //     let p = parametersWith OnPaymentDates Full
-    //     let actual = createRegularScheduleInfo p
-    //     let schedule = { Parameters = p; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
-    //     let expected = {
-    //         Schedule = schedule
-    //         AdvancesTotal = Cent.fromDecimal 1200m
-    //         PaymentsTotal = Cent.fromDecimal 3554.65m
-    //         PrincipalTotal = Cent.fromDecimal 1200m
-    //         ProductFeesTotal = Cent.fromDecimal 2273.64m
-    //         InterestTotal = Cent.fromDecimal 81.01m
-    //         PenaltyChargesTotal = Cent.fromDecimal 0m   
-    //         ProductFeesRefund = Cent.fromDecimal 0m   
-    //         FinalPaymentDate = DateTime(2024, 04, 18)
-    //         FinalPaymentDateCount = 11
-    //         Apr = 623.706600m<Percent>
-    //         EffectiveAnnualInterestRate = 5.491804m<Percent>
-    //         EffectiveDailyInterestRate = 0.015046m<Percent>
-    //     }
-    //     actual |> should equal expected
+        let actual = irregularSchedule |> Array.last
 
-    // [<Fact>]
-    // let ``Biweekly schedule with long first period (unit-periods with daily interest)`` () =
-    //     let p = parametersWith EveryDay Summary
-    //     let actual = createRegularScheduleInfo p
-    //     let schedule = { Parameters = p; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
-    //     let expected = {
-    //         Schedule = schedule
-    //         AdvancesTotal = Cent.fromDecimal 1200m
-    //         PaymentsTotal = Cent.fromDecimal 3554.81m
-    //         PrincipalTotal = Cent.fromDecimal 1200m
-    //         ProductFeesTotal = Cent.fromDecimal 2273.64m
-    //         InterestTotal = Cent.fromDecimal 81.17m
-    //         PenaltyChargesTotal = Cent.fromDecimal 0m   
-    //         ProductFeesRefund = Cent.fromDecimal 0m   
-    //         FinalPaymentDate = DateTime(2024, 04, 18)
-    //         FinalPaymentDateCount = 11
-    //         Apr = 623.645811m<Percent>
-    //         EffectiveAnnualInterestRate = 5.502650m<Percent>
-    //         EffectiveDailyInterestRate = 0.015076m<Percent>
-    //     }
-    //     actual |> should equal expected
+        let expected = {
+            Date = DateTime(2026, 8, 9)
+            TermDay = 1412<Day>
+            Advance = 0<Cent>
+            Adjustments = [| ActualPayment 2500<Cent> |] // to-do: limit this to the final payment amount
+            Payments = [| 1264<Cent> |]
+            PaymentStatus = ValueSome PaidInFull
+            CumulativeInterest = 82900<Cent>
+            NewInterest = 2<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 439<Cent>
+            ProductFeesPortion = 823<Cent>
+            InterestPortion = 2<Cent>
+            PenaltyChargesPortion = 0<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
 
-    // [<Fact>]
-    // let ``Biweekly schedule with long first period (interspersed days)`` () =
-    //     let p = parametersWith EveryDay Full
-    //     let actual = createRegularScheduleInfo p
-    //     let schedule = { Parameters = p; IntermediateResult = actual.Schedule.IntermediateResult; Items = actual.Schedule.Items }
-    //     let expected = {
-    //         Schedule = schedule
-    //         AdvancesTotal = Cent.fromDecimal 1200m
-    //         PaymentsTotal = Cent.fromDecimal 3554.81m
-    //         PrincipalTotal = Cent.fromDecimal 1200m
-    //         ProductFeesTotal = Cent.fromDecimal 2273.64m
-    //         InterestTotal = Cent.fromDecimal 81.17m
-    //         PenaltyChargesTotal = Cent.fromDecimal 0m   
-    //         ProductFeesRefund = Cent.fromDecimal 0m   
-    //         FinalPaymentDate = DateTime(2024, 04, 18)
-    //         FinalPaymentDateCount = 11
-    //         Apr = 623.645811m<Percent>
-    //         EffectiveAnnualInterestRate = 5.502650m<Percent>
-    //         EffectiveDailyInterestRate = 0.015076m<Percent>
-    //     }
-    //     actual |> should equal expected
+        actual |> should equal expected

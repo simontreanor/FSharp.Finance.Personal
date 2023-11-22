@@ -9,8 +9,8 @@ module RegularPayment =
     [<Struct>]
     type ScheduleItem = {
         Day: int<Day>
-        Advance: int<Cent>
-        Payment: int<Cent>
+        Advance: int<Cent> voption
+        Payment: int<Cent> voption
         Interest: int<Cent>
         Principal: int<Cent>
         PrincipalBalance: int<Cent>
@@ -46,7 +46,7 @@ module RegularPayment =
         let paymentCount = paymentDates |> Array.length
         let productFees = productFeesTotal sp.Principal sp.ProductFees
         let roughPayment = decimal sp.Principal / decimal paymentCount
-        let advance = { Day = 0<Day>; Advance = sp.Principal + productFees; Payment = 0<Cent>; Interest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
+        let advance = { Day = 0<Day>; Advance = ValueSome (sp.Principal + productFees); Payment = ValueNone; Interest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
         let finalPaymentTolerance = sp.FinalPaymentTolerance |> ValueOption.defaultValue 100<Cent>
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let items =
@@ -63,8 +63,8 @@ module RegularPayment =
                         let finalPaymentCorrection = if principalBalance > -finalPaymentTolerance && principalBalance < 0<Cent> then principalBalance else 0<Cent>
                         {
                             Day = d
-                            Advance = 0<Cent>
-                            Payment = payment + finalPaymentCorrection
+                            Advance = ValueNone
+                            Payment = ValueSome (payment + finalPaymentCorrection)
                             Interest = interest
                             Principal = principalPortion + finalPaymentCorrection
                             PrincipalBalance = if finalPaymentCorrection < 0<Cent> then 0<Cent> else principalBalance
@@ -83,15 +83,15 @@ module RegularPayment =
         {
             Items = items
             FinalPaymentDay = finalPaymentDay
-            LevelPayment = items |> Array.countBy _.Payment |> Array.maxBy snd |> fst
-            FinalPayment = items |> Array.last |> _.Payment
-            PaymentTotal = items |> Array.sumBy _.Payment
+            LevelPayment = items |> Array.countBy (_.Payment >> ValueOption.defaultValue 0<Cent>) |> Array.maxBy snd |> fst
+            FinalPayment = items |> Array.last |> _.Payment |> ValueOption.defaultValue 0<Cent>
+            PaymentTotal = items |> Array.sumBy (_.Payment >> ValueOption.defaultValue 0<Cent>)
             PrincipalTotal = principalTotal
             InterestTotal = interestTotal
             Apr =
                 items
-                |> Array.filter(fun si -> si.Payment > 0<Cent>)
-                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
+                |> Array.filter(fun si -> si.Payment.IsSome)
+                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment.Value })
                 |> Apr.calculate Apr.UsActuarial 8 sp.Principal sp.StartDate
             CostToBorrowingRatio = decimal (productFees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 6
         }
