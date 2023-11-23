@@ -43,12 +43,14 @@ module RegularPayment =
     let calculateSchedule sp =
         let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
         let finalPaymentDate = paymentDates |> Array.max
+        let finalPaymentDay = int (finalPaymentDate.Date - sp.StartDate.Date).TotalDays
         let paymentCount = paymentDates |> Array.length
         let productFees = productFeesTotal sp.Principal sp.ProductFees
-        let roughPayment = decimal sp.Principal / decimal paymentCount
-        let advance = { Day = 0<Day>; Advance = ValueSome (sp.Principal + productFees); Payment = ValueNone; Interest = 0<Cent>; CumulativeInterest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
+        //let roughPayment = (decimal sp.Principal * Percent.toDecimal dailyInterestRate * decimal finalPaymentDay) / decimal paymentCount
+        let roughPayment = (decimal sp.Principal * (((1m + ((Percent.toDecimal dailyInterestRate * decimal finalPaymentDay) / decimal paymentCount)) ** 5) - 1m)) / decimal paymentCount
+        let advance = { Day = 0<Day>; Advance = ValueSome (sp.Principal + productFees); Payment = ValueNone; Interest = 0<Cent>; CumulativeInterest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
         let items =
             roughPayment
             |> Array.unfold(fun roughPayment' ->
