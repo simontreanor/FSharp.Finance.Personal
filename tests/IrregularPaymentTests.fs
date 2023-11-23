@@ -11,7 +11,7 @@ module IrregularPaymentTests =
     open IrregularPayment
 
     [<Fact>]
-    let ``1. Standard schedule with month-end payments from 4 days and paid off on time`` () =
+    let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
         let (sp: RegularPayment.ScheduleParameters) =
             {
                 StartDate = DateTime(2022, 11, 26)
@@ -59,7 +59,7 @@ module IrregularPaymentTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2. Standard schedule with month-end payments from 32 days and paid off on time`` () =
+    let ``2) Standard schedule with month-end payments from 32 days and paid off on time`` () =
         let (sp: RegularPayment.ScheduleParameters) =
             {
                 StartDate = DateTime(2022, 10, 29)
@@ -107,7 +107,55 @@ module IrregularPaymentTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``99. Non-payer who commits to a long-term payment plan and completes it`` () =
+    let ``3) Standard schedule with mid-monthly payments from 14 days and paid off on time`` () =
+        let (sp: RegularPayment.ScheduleParameters) =
+            {
+                StartDate = DateTime(2022, 11, 1)
+                Principal = 1500 * 100<Cent>
+                ProductFees = ValueNone
+                InterestRate = DailyInterestRate 0.8m<Percent>
+                InterestCap = ValueSome <| PercentageOfPrincipal 100m<Percent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
+                PaymentCount = 5
+            }
+        let (actualPayments: Payment array) = [|
+            { Day =  14<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day =  44<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day =  75<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 106<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 134<Day>; Adjustments = [| ActualPayment 49148<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        |]
+        let irregularSchedule =
+            actualPayments
+            |> applyPayments sp
+
+        irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300)
+
+        let actual = irregularSchedule |> Array.last
+        let expected = {
+            Date = DateTime(2023, 3, 31)
+            TermDay = 135<Day>
+            Advance = 0<Cent>
+            Adjustments = [| ScheduledPayment 49226<Cent>; ActualPayment 49226<Cent> |]
+            Payments = [| 49148<Cent> |]
+            PaymentStatus = ValueSome PaidInFull
+            CumulativeInterest = 95764<Cent>
+            NewInterest = 8994<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 40154<Cent>
+            ProductFeesPortion = 0<Cent>
+            InterestPortion = 8994<Cent>
+            PenaltyChargesPortion = 0<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``99) Non-payer who commits to a long-term payment plan and completes it`` () =
         let startDate = DateTime(2022, 9, 27)
         let (sp: RegularPayment.ScheduleParameters) = {
             StartDate = startDate
