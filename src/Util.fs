@@ -63,6 +63,12 @@ module Util =
     /// an offset from the start date
     [<Measure>] type Day
 
+    /// utility functions for days
+    [<RequireQualifiedAccess>]
+    module Day =
+        let todayAsOffset (startDate: DateTime) =
+            int (DateTime.Today - startDate).TotalDays * 1<Day>
+
     /// a number of days
     [<Measure>] type Duration
 

@@ -15,11 +15,11 @@ module RegularPaymentTests =
         {
             StartDate = startDate
             Principal = decimal principal |> Cent.round
-            ProductFees = Percentage (189.47m<Percent>, ValueNone)
+            ProductFees = ValueSome <| Percentage (189.47m<Percent>, ValueNone)
             InterestRate = AnnualInterestRate 9.95m<Percent>
+            InterestCap = ValueNone
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
             PaymentCount = 11
-            FinalPaymentTolerance = ValueNone
         }
 
     [<Fact>]

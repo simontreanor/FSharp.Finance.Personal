@@ -5,22 +5,18 @@ open RegularPayment
 
 let startDate = DateTime.Today.AddDays(-421.)
 
-let rpsp =
-    {
-        StartDate = startDate
-        Principal = 1200 * 100<Cent>
-        ProductFees = Percentage (189.47m<Percent>, ValueNone)
-        InterestRate = AnnualInterestRate 9.95m<Percent>
-        UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-        PaymentCount = 11
-        FinalPaymentTolerance = ValueNone
-    }
+let sp = {
+    StartDate = startDate
+    Principal = 1200 * 100<Cent>
+    ProductFees = ValueSome <| Percentage (189.47m<Percent>, ValueNone)
+    InterestRate = AnnualInterestRate 9.95m<Percent>
+    InterestCap = ValueNone
+    UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+    PaymentCount = 11
+}
 
-let regularSchedule =
-    rpsp
-    |> calculateSchedule
-
-regularSchedule.Items
+calculateSchedule sp
+|> _.Items
 |> Formatting.outputListToHtml "RegularPayment.md" (ValueSome 180)
 
 open IrregularPayment
@@ -44,25 +40,8 @@ let actualPayments =
 //     { Day = 191<Day>; Adjustments = [| ActualPayment 300<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
 // |]
 
-let scheduledPayments =
-    regularSchedule.Items
-    |> Array.map(fun si ->
-        { Day = si.Day; Adjustments = (match si.Payment with ValueSome p -> [| ScheduledPayment p |] | _ -> [||]); PaymentStatus = ValueNone; PenaltyCharges = [||] }
-    )
-
-let mergedPayments =
-    let today = int (DateTime.Today - rpsp.StartDate).TotalDays * 1<Day>
-    mergePayments today 1000<Cent> scheduledPayments actualPayments
-
-let sp = {
-    RegularPaymentScheduleParameters = rpsp
-    RegularPaymentSchedule = regularSchedule
-    Payments = mergedPayments
-    InterestCap = PercentageOfPrincipal 100m<Percent>
-}
-
-sp
-|> calculateSchedule
+actualPayments
+|> applyPayments sp
 |> Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 300)
 
 exit 0

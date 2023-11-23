@@ -23,12 +23,13 @@ module General =
 
     let productFeesTotal (principal: int<Cent>) productFees =
         match productFees with
-        | Percentage (percentage, ValueSome cap) ->
+        | ValueSome (Percentage (percentage, ValueSome cap)) ->
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
             |> fun cents -> Cent.min cents cap
-        | Percentage (percentage, ValueNone) ->
+        | ValueSome (Percentage (percentage, ValueNone)) ->
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
-        | Simple simple -> simple
+        | ValueSome (Simple simple) -> simple
+        | ValueNone -> 0<Cent>
 
     /// the type and amount of penalty charge
     [<Struct>]
@@ -47,5 +48,6 @@ module General =
 
     let calculateInterestCap (principal: int<Cent>) interestCap =
         match interestCap with
-        | PercentageOfPrincipal percentage -> decimal principal * Percent.toDecimal percentage |> Cent.round
-        | Fixed i -> i
+        | ValueSome(PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.round
+        | ValueSome(Fixed i) -> i
+        | ValueNone -> Int32.MaxValue * 1<Cent> // if anyone is charging more than $42,949,672.96 interest, they need "regulating" // note: famous last words // flag: potential year 2100 bug

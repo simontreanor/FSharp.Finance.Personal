@@ -19,7 +19,7 @@ module IrregularPayment =
     [<Struct>]
     type Adjustment =
         | ScheduledPayment of ScheduledPayment:int<Cent>
-        | ActualPayment of ManualPayment:int<Cent>
+        | ActualPayment of ActualPayment:int<Cent>
 
     /// a real payment
     [<Struct>]
@@ -59,23 +59,15 @@ module IrregularPayment =
         FinalApr: decimal<Percent>
     }
 
-    [<Struct>]
-    type ScheduleParameters = {
-        RegularPaymentScheduleParameters: RegularPayment.ScheduleParameters
-        RegularPaymentSchedule: RegularPayment.Schedule
-        Payments: Payment array
-        InterestCap: InterestCap
-    }
-
-    let scheduled = Array.choose(function ScheduledPayment a -> Some a | _ -> None)
-
     /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
-    let mergePayments asOfDay latePaymentPenaltyCharge scheduledPayments actualPayments =
+    let mergePayments asOfDay latePaymentPenaltyCharge actualPayments (scheduledPayments: RegularPayment.ScheduleItem array) =
+        let finalActualPaymentDay = actualPayments |> Array.maxBy _.Day |> _.Day
+        let finalScheduledPaymentDay = scheduledPayments |> Array.maxBy _.Day |> _.Day
+        let scheduled = Array.choose(function ScheduledPayment a -> Some a | _ -> None)
         let toMap = Array.map(fun p -> (p.Day, p)) >> Map.ofArray
-        let finalDayOf = Array.maxBy _.Day >> _.Day
-        let actual = Array.choose(function ActualPayment a -> Some a | _ -> None)
         let netEffectOf = Array.sumBy(function ScheduledPayment a -> -a | ActualPayment a -> a)
         scheduledPayments
+        |> Array.map(fun si -> { Day = si.Day; Adjustments = (match si.Payment with ValueSome p -> [| ScheduledPayment p |] | _ -> [||]); PaymentStatus = ValueNone; PenaltyCharges = [||] })
         |> toMap
         |> Map.fold(fun s (d: int<Day>) scheduledPayment ->
             match s |> Map.tryFind d with
@@ -87,9 +79,9 @@ module IrregularPayment =
                 match payment with
                 | _ when d = 0<Day> ->
                     ValueNone, [||]
-                | _ when d >= asOfDay && d <= finalDayOf scheduledPayments ->
+                | _ when d >= asOfDay && d <= finalScheduledPaymentDay ->
                     ValueSome NotYetDue, [||]
-                | _ when d > finalDayOf scheduledPayments && d = finalDayOf actualPayments ->
+                | _ when d > finalScheduledPaymentDay && d = finalActualPaymentDay ->
                     ValueSome OpenBalance, [||]
                 | p when netEffectOf p.Adjustments > 0<Cent> ->
                     ValueSome Overpayment, [||]
@@ -106,20 +98,18 @@ module IrregularPayment =
         |> Array.map snd
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
-    let calculateSchedule (irsp: ScheduleParameters) =
-        let rpsp = irsp.RegularPaymentScheduleParameters
-        let dailyInterestRate = rpsp.InterestRate |> dailyInterestRate
-        let interestCap = irsp.InterestCap |> calculateInterestCap rpsp.Principal
-        let productFeesTotal = productFeesTotal rpsp.Principal rpsp.ProductFees
-        let productFeesPercentage = decimal productFeesTotal / decimal rpsp.Principal |> Percent.fromDecimal
-        let payments = irsp.Payments
-        let maxScheduledPaymentDay = payments |> Array.choose(fun p -> p.Adjustments |> Array.tryPick(function ScheduledPayment _ -> Some p.Day | _ -> None)) |> Array.max
-        let maxActualPaymentDay = payments |> Array.choose(fun p -> p.Adjustments |> Array.tryPick(function ActualPayment _ -> Some p.Day | _ -> None)) |> Array.max
-        let dayZeroPayment = payments |> Array.head
+    let calculateSchedule (sp: RegularPayment.ScheduleParameters) (mergedPayments: Payment array) =
+        let dailyInterestRate = sp.InterestRate |> dailyInterestRate
+        let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
+        let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
+        let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
+        let maxScheduledPaymentDay = mergedPayments |> Array.choose(fun p -> p.Adjustments |> Array.tryPick(function ScheduledPayment _ -> Some p.Day | _ -> None)) |> Array.max
+        let maxActualPaymentDay = mergedPayments |> Array.choose(fun p -> p.Adjustments |> Array.tryPick(function ActualPayment _ -> Some p.Day | _ -> None)) |> Array.max
+        let dayZeroPayment = mergedPayments |> Array.head
         let advance = {
-            Date = rpsp.StartDate
+            Date = sp.StartDate
             TermDay = 0<Day>
-            Advance = rpsp.Principal
+            Advance = sp.Principal
             Adjustments = dayZeroPayment.Adjustments 
             Payments = dayZeroPayment.Adjustments |> Array.choose(function ActualPayment a -> Some a | _ -> None)
             PaymentStatus = dayZeroPayment.PaymentStatus
@@ -131,7 +121,7 @@ module IrregularPayment =
             InterestPortion = 0<Cent>
             PenaltyChargesPortion = 0<Cent>
             ProductFeesRefund = 0<Cent>
-            PrincipalBalance = rpsp.Principal
+            PrincipalBalance = sp.Principal
             ProductFeesBalance = productFeesTotal
             InterestBalance = 0<Cent>
             PenaltyChargesBalance = 0<Cent>
@@ -139,7 +129,7 @@ module IrregularPayment =
 
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0<Cent> then 0<Cent> else amount
 
-        payments
+        mergedPayments
         |> Array.tail
         |> Array.scan(fun a p ->
             let paymentTotal = p.Adjustments |> Array.choose(function ActualPayment a -> Some a | ScheduledPayment a when p.PaymentStatus = ValueSome NotYetDue -> Some a | _ -> None) |> Array.sum
@@ -200,7 +190,7 @@ module IrregularPayment =
                     p.PaymentStatus
 
             {
-                Date = rpsp.StartDate.AddDays(float p.Day)
+                Date = sp.StartDate.AddDays(float p.Day)
                 TermDay = p.Day
                 Advance = 0<Cent>
                 Adjustments = p.Adjustments
@@ -221,3 +211,9 @@ module IrregularPayment =
             }
         ) advance
         |> Array.takeWhile(fun a -> a.PaymentStatus <> ValueSome Superfluous)
+
+    let applyPayments (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
+        RegularPayment.calculateSchedule sp
+        |> _.Items
+        |> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
+        |> calculateSchedule sp
