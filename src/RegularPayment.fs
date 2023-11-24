@@ -9,8 +9,8 @@ module RegularPayment =
     [<Struct>]
     type ScheduleItem = {
         Day: int<Day>
-        Advance: int<Cent> voption
-        Payment: int<Cent> voption
+        Advance: int<Cent>
+        Payment: int<Cent>
         Interest: int<Cent>
         CumulativeInterest: int<Cent>
         Principal: int<Cent>
@@ -48,66 +48,57 @@ module RegularPayment =
         let productFees = productFeesTotal sp.Principal sp.ProductFees
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
-        //let roughPayment = (decimal sp.Principal * Percent.toDecimal dailyInterestRate * decimal finalPaymentDay) / decimal paymentCount
-        let roughPayment = (decimal sp.Principal * (((1m + ((Percent.toDecimal dailyInterestRate * decimal finalPaymentDay) / decimal paymentCount)) ** 5) - 1m)) / decimal paymentCount
-        let advance = { Day = 0<Day>; Advance = ValueSome (sp.Principal + productFees); Payment = ValueNone; Interest = 0<Cent>; CumulativeInterest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
+        let roughPayment = (decimal sp.Principal + (decimal sp.Principal * Percent.toDecimal dailyInterestRate * decimal finalPaymentDay)) / decimal paymentCount
+        let advance = { Day = 0<Day>; Advance = sp.Principal + productFees; Payment = 0<Cent>; Interest = 0<Cent>; CumulativeInterest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
+        let tolerance = paymentCount * 1<Cent> // tolerance is the payment count expressed as a number of cents // to-do: check if this is too tolerant with large payment counts
         let items =
             roughPayment
             |> Array.unfold(fun roughPayment' ->
                 if roughPayment' = 0m then None else
                 let schedule =
-                    paymentDates |> Array.map(fun dt -> dt, int (dt.Date - sp.StartDate.Date).TotalDays * 1<Day>)
-                    |> Array.scan(fun si (dt, d) ->
+                    paymentDates |> Array.map(fun dt -> int (dt.Date - sp.StartDate.Date).TotalDays * 1<Day>)
+                    |> Array.scan(fun si d ->
                         let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal (d - si.Day) |> Cent.round
                         let interest' = si.CumulativeInterest + interest |> fun i -> if i >= interestCap then interestCap - si.CumulativeInterest else interest
                         let payment = Cent.round roughPayment'
                         let principalPortion = payment - interest
-                        let principalBalance = si.PrincipalBalance - principalPortion
                         {
                             Day = d
-                            Advance = ValueNone
-                            Payment = ValueSome payment
+                            Advance = 0<Cent>
+                            Payment = payment
                             Interest = interest'
                             CumulativeInterest = si.CumulativeInterest + interest'
                             Principal = principalPortion
-                            PrincipalBalance = principalBalance
+                            PrincipalBalance = si.PrincipalBalance - principalPortion
                         }
                     ) advance
                 let principalBalance = schedule |> Array.last |> fun psi -> psi.PrincipalBalance
-                let adjustFinalPayment principalBalance schedule = // note: principal balance is negative
-                    schedule
-                    |> Array.splitAt ((schedule |> Array.length) - 1)
-                    |> fun (rest, last) ->
-                        let last' = last |> Array.exactlyOne
-                        let last'' =
-                            { last' with
-                                Payment = last'.Payment |> ValueOption.map(fun p -> p + principalBalance)
-                                Principal = last'.Principal + principalBalance
-                                PrincipalBalance = 0<Cent>
-                            }
-                        [| rest; [| last'' |] |]
-                    |> Array.concat
-                if principalBalance > -paymentCount * 1<Cent> && principalBalance <= 0<Cent> then // tolerance is the payment count expressed as a number of cents // to-do: check if this is too tolerant with large payment counts
-                    Some (adjustFinalPayment principalBalance schedule, 0m)
+                if principalBalance > -tolerance && principalBalance <= 0<Cent> then
+                    Some (schedule, 0m)
                 else
                     Some (schedule, roughPayment' + (decimal principalBalance / decimal paymentCount))
             )
             |> Array.last
-        let principalTotal = items |> Array.sumBy _.Principal
-        let interestTotal = items |> Array.sumBy _.Interest
         let finalPaymentDay = int (finalPaymentDate.Date - sp.StartDate.Date).TotalDays * 1<Day>
+        let items' =
+            items |> Array.map(fun si ->
+                if si.Day = finalPaymentDay then { si with Payment = si.Payment + si.PrincipalBalance; Principal = si.Principal + si.PrincipalBalance; PrincipalBalance = si.PrincipalBalance - si.PrincipalBalance }
+                else si
+            )
+        let principalTotal = items' |> Array.sumBy _.Principal
+        let interestTotal = items' |> Array.sumBy _.Interest
         {
-            Items = items
+            Items = items'
             FinalPaymentDay = finalPaymentDay
-            LevelPayment = items |> Array.countBy (_.Payment >> ValueOption.defaultValue 0<Cent>) |> Array.maxBy snd |> fst
-            FinalPayment = items |> Array.last |> _.Payment |> ValueOption.defaultValue 0<Cent>
-            PaymentTotal = items |> Array.sumBy (_.Payment >> ValueOption.defaultValue 0<Cent>)
+            LevelPayment = items' |> Array.countBy _.Payment |> Array.maxBy snd |> fst
+            FinalPayment = items' |> Array.last |> _.Payment
+            PaymentTotal = items' |> Array.sumBy _.Payment
             PrincipalTotal = principalTotal
             InterestTotal = interestTotal
             Apr =
-                items
-                |> Array.filter(fun si -> si.Payment.IsSome)
-                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment.Value })
+                items'
+                |> Array.filter(fun si -> si.Payment > 0<Cent>)
+                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
                 |> Apr.calculate Apr.UsActuarial 8 sp.Principal sp.StartDate
             CostToBorrowingRatio = decimal (productFees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 6
         }

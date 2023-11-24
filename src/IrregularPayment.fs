@@ -7,38 +7,52 @@ module IrregularPayment =
 
     [<Struct>]
     type PaymentStatus =
-        | Overpayment
         | PaymentMade
-        | RefundMade
+        | MissedPayment
         | Underpayment
+        | Overpayment
+        | ExtraPayment
+        | Refunded
         | NotYetDue
-        | PaidInFull
-        | OpenBalance
-        | Superfluous
 
     [<Struct>]
-    type Adjustment =
-        | ScheduledPayment of ScheduledPayment:int<Cent>
-        | ActualPayment of ActualPayment:int<Cent>
+    type BalanceStatus =
+        | PaidInFull
+        | OpenBalance
 
     /// a real payment
     [<Struct>]
     type Payment = {
         Day: int<Day>
-        Adjustments: Adjustment array
+        ScheduledPayment: int<Cent>
+        ActualPayments: int<Cent> array
+        NetEffect: int<Cent>
         PaymentStatus: PaymentStatus voption
         PenaltyCharges: PenaltyCharge array
     }
  
+    let quickActualPayments days levelPayment finalPayment =
+        days
+        |> Array.rev
+        |> Array.splitAt 1
+        |> fun (last, rest) -> [|
+            last |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| finalPayment |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+            rest |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| levelPayment |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+        |]
+        |> Array.concat
+        |> Array.rev
+
     /// detail of a payment with apportionment to principal, product fees, interest and penalty charges
     [<Struct>]
     type Apportionment = {
         Date: DateTime
         TermDay: int<Day>
         Advance: int<Cent>
-        Adjustments: Adjustment array
-        Payments: int<Cent> array
+        ScheduledPayment: int<Cent>
+        ActualPayments: int<Cent> array
+        NetEffect: int<Cent>
         PaymentStatus: PaymentStatus voption
+        BalanceStatus: BalanceStatus
         CumulativeInterest: int<Cent>
         NewInterest: int<Cent>
         NewPenaltyCharges: int<Cent>
@@ -61,41 +75,32 @@ module IrregularPayment =
 
     /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
     let mergePayments asOfDay latePaymentPenaltyCharge actualPayments (scheduledPayments: RegularPayment.ScheduleItem array) =
-        let finalActualPaymentDay = actualPayments |> Array.maxBy _.Day |> _.Day
         let finalScheduledPaymentDay = scheduledPayments |> Array.maxBy _.Day |> _.Day
-        let scheduled = Array.choose(function ScheduledPayment a -> Some a | _ -> None)
-        let toMap = Array.map(fun p -> (p.Day, p)) >> Map.ofArray
-        let netEffectOf = Array.sumBy(function ScheduledPayment a -> -a | ActualPayment a -> a)
         scheduledPayments
-        |> Array.map(fun si -> { Day = si.Day; Adjustments = (match si.Payment with ValueSome p -> [| ScheduledPayment p |] | _ -> [||]); PaymentStatus = ValueNone; PenaltyCharges = [||] })
-        |> toMap
-        |> Map.fold(fun s (d: int<Day>) scheduledPayment ->
-            match s |> Map.tryFind d with
-            | Some actualPayment -> s |> Map.add d { scheduledPayment with Adjustments = [| scheduledPayment.Adjustments; actualPayment.Adjustments |] |> Array.concat }
-            | None -> s |> Map.add d { scheduledPayment with Adjustments = scheduledPayment.Adjustments }
-        ) (actualPayments |> toMap)
-        |> Map.map(fun d payment ->
-            let paymentStatus, newPenaltyCharges =
-                match payment with
-                | _ when d = 0<Day> ->
-                    ValueNone, [||]
-                | _ when d >= asOfDay && d <= finalScheduledPaymentDay ->
-                    ValueSome NotYetDue, [||]
-                | _ when d > finalScheduledPaymentDay && d = finalActualPaymentDay ->
-                    ValueSome OpenBalance, [||]
-                | p when netEffectOf p.Adjustments > 0<Cent> ->
-                    ValueSome Overpayment, [||]
-                | p when netEffectOf p.Adjustments = 0<Cent> ->
-                    ValueSome PaymentMade, [||]
-                | p when scheduled p.Adjustments |> Array.isEmpty ->
-                    ValueSome RefundMade, [||]
-                | _ ->
-                    ValueSome Underpayment, [| LatePayment latePaymentPenaltyCharge |]
-            let penaltyCharges = ([| payment.PenaltyCharges; newPenaltyCharges |] |> Array.concat)
-            { Day = d; Adjustments = payment.Adjustments; PaymentStatus = paymentStatus; PenaltyCharges = penaltyCharges }
+        |> Array.map(fun si -> { Day = si.Day; ScheduledPayment = si.Payment; ActualPayments = [||]; NetEffect=0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+        |> fun sp -> Array.concat [| actualPayments; sp |]
+        |> Array.groupBy _.Day
+        |> Array.map(fun (d, pp) ->
+            let scheduledPayment = pp |> Array.sumBy _.ScheduledPayment
+            let actualPayments = pp |> Array.collect _.ActualPayments
+            let netEffect, paymentStatus =
+                match scheduledPayment, Array.sum actualPayments with
+                | 0<Cent>, 0<Cent> -> 0<Cent>, ValueNone
+                | 0<Cent>, ap when ap < 0<Cent> -> ap, ValueSome Refunded
+                | 0<Cent>, ap -> ap, ValueSome ExtraPayment
+                | sp, _ when d >= asOfDay && d <= finalScheduledPaymentDay -> sp, ValueSome NotYetDue
+                | _, 0<Cent> -> 0<Cent>, ValueSome MissedPayment
+                | sp, ap when ap < sp -> ap, ValueSome Underpayment
+                | sp, ap when ap > sp -> ap, ValueSome Overpayment
+                | sp, ap when sp = ap -> sp, ValueSome PaymentMade
+                | sp, ap -> failwith $"Unexpected permutation of scheduled ({sp}) vs actual payments ({ap})"
+            let penaltyCharges =
+                pp
+                |> Array.collect _.PenaltyCharges
+                |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| LatePayment latePaymentPenaltyCharge |] | _ -> [||])
+            { Day = d; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; NetEffect = netEffect; PaymentStatus = paymentStatus; PenaltyCharges = penaltyCharges }
         )
-        |> Map.toArray
-        |> Array.map snd
+        |> Array.sortBy _.Day
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
     let calculateSchedule (sp: RegularPayment.ScheduleParameters) (mergedPayments: Payment array) =
@@ -103,49 +108,50 @@ module IrregularPayment =
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
         let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
-        let maxScheduledPaymentDay = mergedPayments |> Array.choose(fun p -> p.Adjustments |> Array.tryPick(function ScheduledPayment _ -> Some p.Day | _ -> None)) |> Array.max
-        let maxActualPaymentDay = mergedPayments |> Array.choose(fun p -> p.Adjustments |> Array.tryPick(function ActualPayment _ -> Some p.Day | _ -> None)) |> Array.max
+        let maxScheduledPaymentDay = mergedPayments |> Array.filter(fun p -> p.ScheduledPayment > 0<Cent>) |> Array.maxBy _.Day |> _.Day
+        let maxActualPaymentDay = mergedPayments |> Array.filter(fun p -> p.ActualPayments |> Array.isEmpty |> not) |> Array.maxBy _.Day |> _.Day
         let dayZeroPayment = mergedPayments |> Array.head
+        let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0<Cent> then 0<Cent> else amount
+        let principalBalance = sp.Principal + dayZeroPayment.NetEffect
+        let principalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal productFeesPercentage) |> Cent.round
+        let productFeesPortion = dayZeroPayment.NetEffect - principalPortion
         let advance = {
             Date = sp.StartDate
             TermDay = 0<Day>
             Advance = sp.Principal
-            Adjustments = dayZeroPayment.Adjustments 
-            Payments = dayZeroPayment.Adjustments |> Array.choose(function ActualPayment a -> Some a | _ -> None)
+            ScheduledPayment = dayZeroPayment.ScheduledPayment
+            ActualPayments = dayZeroPayment.ActualPayments
+            NetEffect = dayZeroPayment.NetEffect
             PaymentStatus = dayZeroPayment.PaymentStatus
+            BalanceStatus = if principalBalance = 0<Cent> then PaidInFull else OpenBalance
             CumulativeInterest = 0<Cent>
             NewInterest = 0<Cent>
             NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 0<Cent>
-            ProductFeesPortion = 0<Cent>
+            PrincipalPortion = principalPortion
+            ProductFeesPortion = productFeesPortion
             InterestPortion = 0<Cent>
             PenaltyChargesPortion = 0<Cent>
             ProductFeesRefund = 0<Cent>
-            PrincipalBalance = sp.Principal
+            PrincipalBalance = principalBalance
             ProductFeesBalance = productFeesTotal
             InterestBalance = 0<Cent>
             PenaltyChargesBalance = 0<Cent>
         }
-
-        let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0<Cent> then 0<Cent> else amount
-
         mergedPayments
         |> Array.tail
         |> Array.scan(fun a p ->
-            let paymentTotal = p.Adjustments |> Array.choose(function ActualPayment a -> Some a | ScheduledPayment a when p.PaymentStatus = ValueSome NotYetDue -> Some a | _ -> None) |> Array.sum
-
             let newPenaltyCharges = penaltyChargesTotal p.PenaltyCharges
-            let penaltyChargesPortion = newPenaltyCharges + a.PenaltyChargesBalance |> ``don't apportion for a refund`` paymentTotal
+            let penaltyChargesPortion = newPenaltyCharges + a.PenaltyChargesBalance |> ``don't apportion for a refund`` p.NetEffect
 
             let newInterest = decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal (p.Day - a.TermDay) |> Cent.round
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
-            let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` paymentTotal
+            let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` p.NetEffect
             
             let productFeesDue = Cent.min productFeesTotal (decimal productFeesTotal * decimal p.Day / decimal maxScheduledPaymentDay |> Cent.round)
             let productFeesRemaining = productFeesTotal - productFeesDue
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
-            let isSettlement = paymentTotal >= settlementFigure //&& p.Day < maxScheduledPaymentDay) || p.Day = maxScheduledPaymentDay && p.Day >= maxActualPaymentDay
+            let isSettlement = p.NetEffect >= settlementFigure //&& p.Day < maxScheduledPaymentDay) || p.Day = maxScheduledPaymentDay && p.Day >= maxActualPaymentDay
 
             let productFeesRefund = if isSettlement then productFeesRemaining else 0<Cent>
 
@@ -155,7 +161,7 @@ module IrregularPayment =
                 elif isSettlement then
                     settlementFigure, id
                 else
-                    abs paymentTotal, if paymentTotal < 0<Cent> then (( * ) -1) else id
+                    abs p.NetEffect, if p.NetEffect < 0<Cent> then (( * ) -1) else id
 
             let principalPortion, cabFeePortion =
                 if (penaltyChargesPortion > actualPayment) || (penaltyChargesPortion + interestPortion > actualPayment) then
@@ -179,23 +185,15 @@ module IrregularPayment =
                 else
                     0<Cent>, 0<Cent>
 
-            let paymentStatus =
-                if a.PaymentStatus = ValueSome PaidInFull then 
-                    ValueSome Superfluous
-                elif isSettlement then // to-do: figure out how to prevent this status when not yet due
-                    ValueSome PaidInFull
-                elif p.Day = maxActualPaymentDay && a.PrincipalBalance > 0<Cent> then
-                    ValueSome OpenBalance
-                else
-                    p.PaymentStatus
-
             {
                 Date = sp.StartDate.AddDays(float p.Day)
                 TermDay = p.Day
                 Advance = 0<Cent>
-                Adjustments = p.Adjustments
-                Payments = if actualPayment <> 0<Cent> then [| actualPayment |] else [||]
-                PaymentStatus = paymentStatus
+                ScheduledPayment = p.ScheduledPayment
+                ActualPayments = p.ActualPayments
+                NetEffect = p.NetEffect
+                PaymentStatus = p.PaymentStatus
+                BalanceStatus = if a.PrincipalBalance - sign principalPortion = 0<Cent> then PaidInFull else OpenBalance
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
                 NewPenaltyCharges = newPenaltyCharges
@@ -210,7 +208,7 @@ module IrregularPayment =
                 PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges
             }
         ) advance
-        |> Array.takeWhile(fun a -> a.PaymentStatus <> ValueSome Superfluous)
+        |> Array.takeWhile(fun a -> a.TermDay = 0<Day> || (a.TermDay > 0<Day> && a.PaymentStatus.IsSome))
 
     let applyPayments (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
         RegularPayment.calculateSchedule sp

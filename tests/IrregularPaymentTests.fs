@@ -22,13 +22,8 @@ module IrregularPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
             }
-        let (actualPayments: Payment array) = [|
-            { Day =   4<Day>; Adjustments = [| ActualPayment 45688<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  35<Day>; Adjustments = [| ActualPayment 45688<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  66<Day>; Adjustments = [| ActualPayment 45688<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  94<Day>; Adjustments = [| ActualPayment 45688<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 125<Day>; Adjustments = [| ActualPayment 45688<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-        |]
+        let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 45688<Cent> 45688<Cent>
+
         let irregularSchedule =
             actualPayments
             |> applyPayments sp
@@ -40,9 +35,11 @@ module IrregularPaymentTests =
             Date = DateTime(2023, 3, 31)
             TermDay = 125<Day>
             Advance = 0<Cent>
-            Adjustments = [| ScheduledPayment 45688<Cent>; ActualPayment 45688<Cent> |]
-            Payments = [| 45688<Cent> |]
-            PaymentStatus = ValueSome PaidInFull
+            ScheduledPayment = 45688<Cent>
+            ActualPayments = [| 45688<Cent> |]
+            NetEffect = 45688<Cent>
+            PaymentStatus = ValueSome PaymentMade
+            BalanceStatus = PaidInFull
             CumulativeInterest = 78440<Cent>
             NewInterest = 9079<Cent>
             NewPenaltyCharges = 0<Cent>
@@ -70,13 +67,8 @@ module IrregularPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
             }
-        let (actualPayments: Payment array) = [|
-            { Day =  32<Day>; Adjustments = [| ActualPayment 55605<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  63<Day>; Adjustments = [| ActualPayment 55605<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  94<Day>; Adjustments = [| ActualPayment 55605<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 122<Day>; Adjustments = [| ActualPayment 55605<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 153<Day>; Adjustments = [| ActualPayment 55603<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-        |]
+        let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 55605<Cent> 55603<Cent>
+
         let irregularSchedule =
             actualPayments
             |> applyPayments sp
@@ -88,9 +80,11 @@ module IrregularPaymentTests =
             Date = DateTime(2023, 3, 31)
             TermDay = 153<Day>
             Advance = 0<Cent>
-            Adjustments = [| ScheduledPayment 55603<Cent>; ActualPayment 55603<Cent> |]
-            Payments = [| 55603<Cent> |]
-            PaymentStatus = ValueSome PaidInFull
+            ScheduledPayment = 55603<Cent>
+            ActualPayments = [| 55603<Cent> |]
+            NetEffect = 55603<Cent>
+            PaymentStatus = ValueSome PaymentMade
+            BalanceStatus = PaidInFull
             CumulativeInterest = 128023<Cent>
             NewInterest = 11049<Cent>
             NewPenaltyCharges = 0<Cent>
@@ -118,13 +112,8 @@ module IrregularPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
-        let (actualPayments: Payment array) = [|
-            { Day =  14<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  44<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =  75<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 106<Day>; Adjustments = [| ActualPayment 49154<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 134<Day>; Adjustments = [| ActualPayment 49148<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-        |]
+        let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49154<Cent> 49148<Cent>
+
         let irregularSchedule =
             actualPayments
             |> applyPayments sp
@@ -136,9 +125,11 @@ module IrregularPaymentTests =
             Date = DateTime(2023, 3, 31)
             TermDay = 135<Day>
             Advance = 0<Cent>
-            Adjustments = [| ScheduledPayment 49226<Cent>; ActualPayment 49226<Cent> |]
-            Payments = [| 49148<Cent> |]
-            PaymentStatus = ValueSome PaidInFull
+            ScheduledPayment = 49148<Cent>
+            ActualPayments = [| 49148<Cent> |]
+            NetEffect = 49148<Cent>
+            PaymentStatus = ValueSome PaymentMade
+            BalanceStatus = PaidInFull
             CumulativeInterest = 95764<Cent>
             NewInterest = 8994<Cent>
             NewPenaltyCharges = 0<Cent>
@@ -168,7 +159,7 @@ module IrregularPaymentTests =
         }
         let actualPayments =
             [| 180 .. 7 .. 2098 |]
-            |> Array.map(fun i -> { Day = i * 1<Day>; Adjustments = [| ActualPayment 2500<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+            |> Array.map(fun i -> { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
         let irregularSchedule =
             actualPayments
             |> applyPayments sp
@@ -180,9 +171,11 @@ module IrregularPaymentTests =
             Date = DateTime(2026, 8, 9)
             TermDay = 1412<Day>
             Advance = 0<Cent>
-            Adjustments = [| ActualPayment 2500<Cent> |] // to-do: limit this to the final payment amount
-            Payments = [| 1264<Cent> |]
-            PaymentStatus = ValueSome PaidInFull
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| 1264<Cent> |]
+            NetEffect = 1264<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = PaidInFull
             CumulativeInterest = 82900<Cent>
             NewInterest = 2<Cent>
             NewPenaltyCharges = 0<Cent>

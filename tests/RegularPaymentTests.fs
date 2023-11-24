@@ -23,8 +23,9 @@ module RegularPaymentTests =
         }
 
     [<Fact>]
-    let ``Biweekly schedule $1200 with short first period`` () =
+    let ``1) Biweekly schedule $1200 with short first period`` () =
         let actual = biweeklyParameters 120000<Cent> 8<Duration> |> calculateSchedule
+        actual.Items |> Formatting.outputListToHtml "RegularPaymentTest001.md" (ValueSome 300)
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 148<Day>
@@ -39,8 +40,9 @@ module RegularPaymentTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``Biweekly schedule $1200 with first period equal to unit-period length`` () =
+    let ``2) Biweekly schedule $1200 with first period equal to unit-period length`` () =
         let actual = biweeklyParameters 120000<Cent> 14<Duration> |> calculateSchedule
+        actual.Items |> Formatting.outputListToHtml "RegularPaymentTest002.md" (ValueSome 300)
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 154<Day>
@@ -55,8 +57,9 @@ module RegularPaymentTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``Biweekly schedule $1200 with long first period`` () =
+    let ``3) Biweekly schedule $1200 with long first period`` () =
         let actual = biweeklyParameters 120000<Cent> 15<Duration> |> calculateSchedule
+        actual.Items |> Formatting.outputListToHtml "RegularPaymentTest003.md" (ValueSome 300)
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 155<Day>

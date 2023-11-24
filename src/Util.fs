@@ -36,6 +36,8 @@ module Util =
         /// round a decimal value to whole cents
         let round (m: decimal) = int (round m) * 1<Cent>
         /// lower to the base currency unit
+        let ceil (m: decimal) = int (ceil m) * 1<Cent>
+        /// lower to the base currency unit
         let fromDecimal (m: decimal) = round (m * 100m)
         /// raise to the standard currency unit
         let toDecimal (c: int<Cent>) = decimal c / 100m

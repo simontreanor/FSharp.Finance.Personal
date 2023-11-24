@@ -24,7 +24,7 @@ open IrregularPayment
 let actualPayments =
     [| 180 .. 7 .. 2098 |]
     |> Array.map(fun i ->
-        { Day = i * 1<Day>; Adjustments = [| ActualPayment 2500<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
     )
 
 // let actualPayments = [|
