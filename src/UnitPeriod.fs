@@ -9,14 +9,14 @@ module UnitPeriod =
     type TransactionTerm = {
         Start: DateTime
         End: DateTime
-        TotalDays: int<Duration>
+        Duration: int<Duration>
     }
 
     /// calculate the transaction term based on specific events
     let transactionTerm (consummationDate: DateTime) firstFinanceChargeEarnedDate (lastPaymentDueDate: DateTime) lastAdvanceScheduledDate =
         let beginDateTime = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
         let endDateTime = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
-        { Start = beginDateTime; End = endDateTime; TotalDays = int (endDateTime.Date - beginDateTime.Date).TotalDays * 1<Duration> }
+        { Start = beginDateTime; End = endDateTime; Duration = (endDateTime.Date - beginDateTime.Date).Days * 1<Duration> }
 
     /// interval between payments
     [<Struct>]
@@ -54,7 +54,7 @@ module UnitPeriod =
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
         if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) = 1 then
-            min term.TotalDays 365<Duration>
+            min term.Duration 365<Duration>
             |> NoInterval
         else
             let periodLengths =
@@ -62,7 +62,7 @@ module UnitPeriod =
                 |> Array.sort
                 |> Array.distinct
                 |> Array.windowed 2
-                |> Array.map ((fun a -> (a[1].Date - a[0].Date).TotalDays) >> int >> normalise >> fst)
+                |> Array.map ((fun a -> (a[1].Date - a[0].Date).Days) >> normalise >> fst)
             let commonPeriodLengths = periodLengths |> commonLengths
             if commonPeriodLengths |> Array.isEmpty then
                 periodLengths
@@ -123,7 +123,7 @@ module UnitPeriod =
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxLoanLength: int<Duration>) (startDate: DateTime) (config: Config) =
-        let offset y m td = (DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td) - startDate).TotalDays |> fun f -> int f * 1<Duration>
+        let offset y m td = (DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td) - startDate).Days |> fun f -> int f * 1<Duration>
         match config with
         | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day

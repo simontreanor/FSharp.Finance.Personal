@@ -29,13 +29,13 @@ module RegularPaymentTests =
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 148<Day>
-            LevelPayment = 32254<Cent>
-            FinalPayment = 32250<Cent>
-            PaymentTotal = 354790<Cent>
+            LevelPayment = 32253<Cent>
+            FinalPayment = 32253<Cent>
+            PaymentTotal = 354783<Cent>
             PrincipalTotal = 347364<Cent>
-            InterestTotal = 7426<Cent>
-            Apr = 717.439942m<Percent>
-            CostToBorrowingRatio = 67.591921m<Percent>
+            InterestTotal = 7419<Cent>
+            Apr = 717.412507m<Percent>
+            CostToBorrowingRatio = 67.589906m<Percent>
         }
         actual |> should equal expected
 
@@ -46,13 +46,13 @@ module RegularPaymentTests =
         let expected = {
             Items = actual.Items
             FinalPaymentDay = 154<Day>
-            LevelPayment = 32307<Cent>
-            FinalPayment = 32298<Cent>
-            PaymentTotal = 355368<Cent>
+            LevelPayment = 32306<Cent>
+            FinalPayment = 32303<Cent>
+            PaymentTotal = 355363<Cent>
             PrincipalTotal = 347364<Cent>
-            InterestTotal = 8004<Cent>
-            Apr = 637.180799m<Percent>
-            CostToBorrowingRatio = 67.758317m<Percent>
+            InterestTotal = 7999<Cent>
+            Apr = 637.159359m<Percent>
+            CostToBorrowingRatio = 67.756878m<Percent>
         }
         actual |> should equal expected
 
@@ -64,11 +64,11 @@ module RegularPaymentTests =
             Items = actual.Items
             FinalPaymentDay = 155<Day>
             LevelPayment = 32315<Cent>
-            FinalPayment = 32315<Cent>
-            PaymentTotal = 355465<Cent>
+            FinalPayment = 32310<Cent>
+            PaymentTotal = 355460<Cent>
             PrincipalTotal = 347364<Cent>
-            InterestTotal = 8101<Cent>
-            Apr = 623.706600m<Percent>
-            CostToBorrowingRatio = 67.786242m<Percent>
+            InterestTotal = 8096<Cent>
+            Apr = 623.703586m<Percent>
+            CostToBorrowingRatio = 67.784802m<Percent>
         }
         actual |> should equal expected

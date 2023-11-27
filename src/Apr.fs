@@ -32,7 +32,7 @@ module Apr =
     /// (b)(5)(i) The number of days between 2 dates shall be the number of 24-hour intervals between any point in time on the first 
     /// date to the same point in time on the second date.
     let daysBetween (date1: DateTime) (date2: DateTime) =
-        (date2.Date - date1.Date).TotalDays |> int
+        (date2.Date - date1.Date).Days
 
     /// (b)(5)(iv) If the unit-period is a day, [...] the number of full unit-periods and the remaining fractions of a unit-period 
     /// shall be determined by dividing the number of days between the 2 given dates by the number of days per unit-period. If the 
@@ -73,14 +73,14 @@ module Apr =
         |> Array.map(fun i ->
             let wholeUnitPeriods = i + offset
             let remainingMonthDays = decimal (lastWholeUnitPeriodBackIndex - lastWholeMonthBackIndex) * 30m
-            let remainingDays = decimal (schedule[lastWholeMonthBackIndex] - termStart).TotalDays
+            let remainingDays = decimal (schedule[lastWholeMonthBackIndex] - termStart).Days
             let remainder =
                 if multiple < 12 then
                     (remainingMonthDays + remainingDays) / (30m * decimal multiple)
                 elif remainingDays = 0m then
                     decimal (lastWholeUnitPeriodBackIndex - lastWholeMonthBackIndex) / 12m
                 else
-                    decimal (schedule[lastWholeUnitPeriodBackIndex] - termStart).TotalDays / 365m
+                    decimal (schedule[lastWholeUnitPeriodBackIndex] - termStart).Days / 365m
             transfers[i], { Quotient = wholeUnitPeriods; Remainder = remainder }
         )
 
@@ -99,7 +99,7 @@ module Apr =
         |> Array.map(fun i ->
             let lastWholeMonthBackIndex = (i + offset) % 2
             let wholeUnitPeriods = i + offset - lastWholeMonthBackIndex
-            let fractional = decimal (schedule[lastWholeMonthBackIndex] - termStart).TotalDays / 15m |> fun d -> divRem d 1m
+            let fractional = decimal (schedule[lastWholeMonthBackIndex] - termStart).Days / 15m |> fun d -> divRem d 1m
             transfers[i], { Quotient = wholeUnitPeriods + fractional.Quotient; Remainder = fractional.Remainder }
         )
         |> Array.map id

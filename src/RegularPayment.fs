@@ -43,7 +43,7 @@ module RegularPayment =
     let calculateSchedule sp =
         let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
         let finalPaymentDate = paymentDates |> Array.max
-        let finalPaymentDay = int (finalPaymentDate.Date - sp.StartDate.Date).TotalDays
+        let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days
         let paymentCount = paymentDates |> Array.length
         let productFees = productFeesTotal sp.Principal sp.ProductFees
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
@@ -56,9 +56,9 @@ module RegularPayment =
             |> Array.unfold(fun roughPayment' ->
                 if roughPayment' = 0m then None else
                 let schedule =
-                    paymentDates |> Array.map(fun dt -> int (dt.Date - sp.StartDate.Date).TotalDays * 1<Day>)
+                    paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<Day>)
                     |> Array.scan(fun si d ->
-                        let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal (d - si.Day) |> Cent.round
+                        let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal (d - si.Day) |> Cent.floor
                         let interest' = si.CumulativeInterest + interest |> fun i -> if i >= interestCap then interestCap - si.CumulativeInterest else interest
                         let payment = Cent.round roughPayment'
                         let principalPortion = payment - interest
@@ -79,7 +79,7 @@ module RegularPayment =
                     Some (schedule, roughPayment' + (decimal principalBalance / decimal paymentCount))
             )
             |> Array.last
-        let finalPaymentDay = int (finalPaymentDate.Date - sp.StartDate.Date).TotalDays * 1<Day>
+        let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<Day>
         let items' =
             items |> Array.map(fun si ->
                 if si.Day = finalPaymentDay then { si with Payment = si.Payment + si.PrincipalBalance; Principal = si.Principal + si.PrincipalBalance; PrincipalBalance = si.PrincipalBalance - si.PrincipalBalance }

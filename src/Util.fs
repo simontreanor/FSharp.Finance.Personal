@@ -36,7 +36,7 @@ module Util =
         /// round a decimal value to whole cents
         let round (m: decimal) = int (round m) * 1<Cent>
         /// lower to the base currency unit
-        let ceil (m: decimal) = int (ceil m) * 1<Cent>
+        let floor (m: decimal) = int (floor m) * 1<Cent>
         /// lower to the base currency unit
         let fromDecimal (m: decimal) = round (m * 100m)
         /// raise to the standard currency unit
@@ -69,7 +69,7 @@ module Util =
     [<RequireQualifiedAccess>]
     module Day =
         let todayAsOffset (startDate: DateTime) =
-            int (DateTime.Today - startDate).TotalDays * 1<Day>
+            (DateTime.Today - startDate).Days * 1<Day>
 
     /// a number of days
     [<Measure>] type Duration
