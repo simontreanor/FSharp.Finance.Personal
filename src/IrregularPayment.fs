@@ -203,7 +203,7 @@ module IrregularPayment =
 
     let applyPayments (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
         RegularPayment.calculateSchedule sp
-        |> Option.map(
+        |> ValueOption.map(
             _.Items
             >> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
             >> calculateSchedule sp

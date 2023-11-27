@@ -172,11 +172,11 @@ module Apr =
                 let aa = eq |> Array.sumBy(fun (a, e, q) -> Cent.toDecimal a / ((1m + (e * i)) * ((1m + i) ** q)))
                 let pp = ft |> Array.sumBy(fun (p, f, t) -> Cent.toDecimal p / ((1m + (f * i)) * ((1m + i) ** t)))
                 if Decimal.Round(pp - aa, 10) = 0m then
-                    None
+                    ValueNone
                 else
-                    Some (i, i * ((pp / aa) ** 2))
-            )
-            |> Option.defaultValue 0m
+                    ValueSome (i, i * ((pp / aa) ** 2))
+            ) 100
+            |> ValueOption.defaultValue 0m
         annualPercentageRate unitPeriodRate unitPeriodsPerYear
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and

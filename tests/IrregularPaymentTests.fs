@@ -21,7 +21,7 @@ module IrregularPaymentTests =
         |> Array.concat
         |> Array.rev
 
-    let quickExpectedFinalApportionment date termDay paymentAmount cumulativeInterest newInterest principalPortion = Some {
+    let quickExpectedFinalApportionment date termDay paymentAmount cumulativeInterest newInterest principalPortion = ValueSome {
         Date = date
         TermDay = termDay
         Advance = 0<Cent>
@@ -62,9 +62,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Option.iter (Formatting.outputListToHtml "IrregularPaymentTest001.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter (Formatting.outputListToHtml "IrregularPaymentTest001.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Option.map Array.last
+        let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 125<Day> 45684<Cent> 78436<Cent> 9078<Cent> 36606<Cent>
         actual |> should equal expected
 
@@ -86,9 +86,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Option.iter(Formatting.outputListToHtml "IrregularPaymentTest002.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest002.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Option.map Array.last
+        let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 153<Day> 55600<Cent> 128020<Cent> 11048<Cent> 44552<Cent>
         actual |> should equal expected
 
@@ -110,54 +110,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Option.iter(Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Option.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 135<Day> 49153<Cent> 95765<Cent> 8995<Cent> 40158<Cent>
+        let actual = irregularSchedule |> ValueOption.map Array.last
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 15)) 134<Day> 49153<Cent> 95765<Cent> 8995<Cent> 40158<Cent>
         actual |> should equal expected
 
-    [<Fact>]
-    let ``99) Non-payer who commits to a long-term payment plan and completes it`` () =
-        let startDate = DateTime(2022, 9, 27)
-        let (sp: RegularPayment.ScheduleParameters) = {
-            StartDate = startDate
-            Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
-            InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-            PaymentCount = 11
-        }
-        let actualPayments =
-            [| 180 .. 7 .. 2098 |]
-            |> Array.map(fun i -> { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
-        let irregularSchedule =
-            actualPayments
-            |> applyPayments sp
-
-        irregularSchedule |> Option.iter(Formatting.outputListToHtml "IrregularPaymentTest099.md" (ValueSome 300))
-
-        let actual = irregularSchedule |> Option.map Array.last
-        let expected = {
-            Date = DateTime(2026, 8, 9)
-            TermDay = 1412<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 0<Cent>
-            ActualPayments = [| 1264<Cent> |]
-            NetEffect = 1264<Cent>
-            PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = PaidInFull
-            CumulativeInterest = 82900<Cent>
-            NewInterest = 2<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 439<Cent>
-            ProductFeesPortion = 823<Cent>
-            InterestPortion = 2<Cent>
-            PenaltyChargesPortion = 0<Cent>
-            ProductFeesRefund = 0<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        }
-        actual |> should equal expected

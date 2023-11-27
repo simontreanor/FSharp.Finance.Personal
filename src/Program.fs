@@ -16,7 +16,7 @@ let sp = {
 }
 
 calculateSchedule sp
-|> Option.iter(
+|> ValueOption.iter(
     _.Items
     >> Formatting.outputListToHtml "RegularPayment.md" (ValueSome 180)
 )
@@ -44,7 +44,7 @@ let actualPayments =
 
 actualPayments
 |> applyPayments sp
-|> Option.iter(
+|> ValueOption.iter(
     Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 300)
 )
 

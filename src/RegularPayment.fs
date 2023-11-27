@@ -41,7 +41,7 @@ module RegularPayment =
     }
 
     let calculateSchedule sp =
-        if sp.PaymentCount = 0 then None else
+        if sp.PaymentCount = 0 then ValueNone else
         let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
         let finalPaymentDate = paymentDates |> Array.max
         let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days
@@ -55,7 +55,7 @@ module RegularPayment =
         let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<Day>)
         roughPayment
         |> Array.solve(fun roughPayment' ->
-            if roughPayment' = 0m then None else
+            if roughPayment' = 0m then ValueNone else
             let schedule =
                 paymentDays
                 |> Array.scan(fun si d ->
@@ -74,12 +74,12 @@ module RegularPayment =
                     }
                 ) advance
             let principalBalance = schedule |> Array.last |> fun psi -> psi.PrincipalBalance
-            if principalBalance > -tolerance && principalBalance <= 0<Cent> then
-                Some (schedule, 0m)
+            if principalBalance >= -tolerance && principalBalance <= 0<Cent> then
+                ValueSome (schedule, 0m)
             else
-                Some (schedule, roughPayment' + (decimal principalBalance / decimal paymentCount))
-        )
-        |> Option.map(fun sii ->
+                ValueSome (schedule, roughPayment' + (decimal principalBalance / decimal paymentCount))
+        ) 100
+        |> ValueOption.map(fun sii ->
             let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<Day>
             let items =
                 sii |> Array.map(fun si ->
