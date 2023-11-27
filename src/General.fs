@@ -48,6 +48,6 @@ module General =
 
     let calculateInterestCap (principal: int<Cent>) interestCap =
         match interestCap with
-        | ValueSome(PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.round
+        | ValueSome(PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.floor
         | ValueSome(Fixed i) -> i
         | ValueNone -> Int32.MaxValue * 1<Cent> // if anyone is charging more than $42,949,672.96 interest, they need "regulating" // note: famous last words // flag: potential year 2100 bug

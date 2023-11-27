@@ -21,7 +21,7 @@ module IrregularPaymentTests =
         |> Array.concat
         |> Array.rev
 
-    let quickExpectedFinalApportionment date termDay paymentAmount cumulativeInterest newInterest principalPortion = {
+    let quickExpectedFinalApportionment date termDay paymentAmount cumulativeInterest newInterest principalPortion = Some {
         Date = date
         TermDay = termDay
         Advance = 0<Cent>

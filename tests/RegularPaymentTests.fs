@@ -14,7 +14,7 @@ module RegularPaymentTests =
         let startDate = DateTime(2023, 11, 15)
         {
             StartDate = startDate
-            Principal = decimal principal |> Cent.round
+            Principal = decimal principal |> Cent.floor
             ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -26,7 +26,7 @@ module RegularPaymentTests =
     let ``1) Biweekly schedule $1200 with short first period`` () =
         let actual = biweeklyParameters 120000<Cent> 8<Duration> |> calculateSchedule
         actual |> Option.iter(_.Items >> Formatting.outputListToHtml "RegularPaymentTest001.md" (ValueSome 300))
-        let expected = {
+        let expected = Some {
             Items = actual |> Option.map _.Items |> Option.defaultValue [||]
             FinalPaymentDay = 148<Day>
             LevelPayment = 32253<Cent>
@@ -43,7 +43,7 @@ module RegularPaymentTests =
     let ``2) Biweekly schedule $1200 with first period equal to unit-period length`` () =
         let actual = biweeklyParameters 120000<Cent> 14<Duration> |> calculateSchedule
         actual |> Option.iter (_.Items >> Formatting.outputListToHtml "RegularPaymentTest002.md" (ValueSome 300))
-        let expected = {
+        let expected = Some {
             Items = actual |> Option.map _.Items |> Option.defaultValue [||]
             FinalPaymentDay = 154<Day>
             LevelPayment = 32306<Cent>
@@ -60,7 +60,7 @@ module RegularPaymentTests =
     let ``3) Biweekly schedule $1200 with long first period`` () =
         let actual = biweeklyParameters 120000<Cent> 15<Duration> |> calculateSchedule
         actual |> Option.iter (_.Items >> Formatting.outputListToHtml "RegularPaymentTest003.md" (ValueSome 300))
-        let expected = {
+        let expected = Some {
             Items = actual |> Option.map _.Items |> Option.defaultValue [||]
             FinalPaymentDay = 155<Day>
             LevelPayment = 32315<Cent>

@@ -93,3 +93,15 @@ module Util =
         let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
         /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
         let maxByOrDefault maxByProp getProp defaultValue a = if Array.isEmpty a then defaultValue else a |> Array.maxBy maxByProp |> getProp
+        /// equivalent of Array.unfold but only holding the previous and current state and returning the final state rather than maintaining a full state history
+        let solve<'T, 'State> (generator: 'State -> ('T * 'State) option) (state: 'State) =
+            let mutable res = (None, None)
+            let rec loop state =
+                match generator state with
+                | None -> ()
+                | Some(x, s') ->
+                    res <- (snd res, Some x)
+                    loop s'
+
+            loop state
+            snd res

@@ -54,14 +54,14 @@ module RegularPayment =
         let tolerance = paymentCount * 1<Cent> // tolerance is the payment count expressed as a number of cents // to-do: check if this is too tolerant with large payment counts
         let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<Day>)
         roughPayment
-        |> Array.unfold(fun roughPayment' ->
+        |> Array.solve(fun roughPayment' ->
             if roughPayment' = 0m then None else
             let schedule =
                 paymentDays
                 |> Array.scan(fun si d ->
                     let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal (d - si.Day) |> Cent.floor
                     let interest' = si.CumulativeInterest + interest |> fun i -> if i >= interestCap then interestCap - si.CumulativeInterest else interest
-                    let payment = Cent.round roughPayment'
+                    let payment = Cent.floor roughPayment'
                     let principalPortion = payment - interest
                     {
                         Day = d
@@ -79,7 +79,6 @@ module RegularPayment =
             else
                 Some (schedule, roughPayment' + (decimal principalBalance / decimal paymentCount))
         )
-        |> Array.tryLast
         |> Option.map(fun sii ->
             let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<Day>
             let items =
