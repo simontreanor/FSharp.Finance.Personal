@@ -95,13 +95,13 @@ module Util =
         let maxByOrDefault maxByProp getProp defaultValue a = if Array.isEmpty a then defaultValue else a |> Array.maxBy maxByProp |> getProp
         /// equivalent of Array.unfold but only holding the previous and current state and returning the final state rather than maintaining a full state history
         let solve<'T, 'State> (generator: 'State -> ('T * 'State) voption) iterationLimit (state: 'State) =
-            let mutable res = (ValueNone, ValueNone)
-            let rec loop i state =
+            let rec loop i res state =
                 match i, generator state with
-                | i, _ when i > iterationLimit -> ()
-                | _, ValueNone -> ()
+                | i, _ when i > iterationLimit ->
+                    res
+                | _, ValueNone ->
+                    res
                 | _, ValueSome(x, s') ->
-                    res <- (snd res, ValueSome x)
-                    loop (i + 1) s'
-            loop 0 state
-            snd res
+                    loop (i + 1) (snd res, ValueSome x) s'
+            loop 0 (ValueNone, ValueNone) state
+            |> snd
