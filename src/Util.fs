@@ -43,8 +43,7 @@ module Util =
         let toDecimal (c: int<Cent>) = decimal c / 100m
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
-    [<Measure>]
-    type Percent
+    type Percent = Percent of decimal
 
     /// overrides existing power function to take and return decimals
     let inline ( ** ) (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
@@ -55,12 +54,15 @@ module Util =
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
     module Percent =
+
         /// create a percent value from a decimal
-        let fromDecimal (m: decimal) = m * 100m<Percent>
+        let fromDecimal (m: decimal) = m * 100m |> Percent
         /// round a percent value to two decimal places
-        let round (places: int) (p: decimal<Percent>) = roundTo places (decimal p) * 1m<Percent>
+        let round (places: int) (Percent p) = roundTo places p |> Percent
         /// convert a percent value to a decimal
-        let toDecimal (p: decimal<Percent>) = p / 100m<Percent>
+        let toDecimal (Percent p) = p / 100m
+        // multiply two percentages together
+        let multiply (Percent p1) (Percent p2) = p1 * p2 |> fromDecimal
 
     /// an offset from the start date
     [<Measure>] type Day

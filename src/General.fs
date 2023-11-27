@@ -8,25 +8,25 @@ module General =
     /// the interest rate expressed as either an annual or a daily rate
     [<Struct>]
     type InterestRate =
-        | AnnualInterestRate of AnnualInterestRate:decimal<Percent>
-        | DailyInterestRate of DailyInterestRate:decimal<Percent>
+        | AnnualInterestRate of AnnualInterestRate:Percent
+        | DailyInterestRate of DailyInterestRate:Percent
 
     let dailyInterestRate = function
-        | AnnualInterestRate ir -> ir / 365m
-        | DailyInterestRate ir -> ir
+        | AnnualInterestRate (Percent ir) -> ir / 365m |> Percent
+        | DailyInterestRate (Percent ir) -> ir |> Percent
 
     /// the type and amount of any product fees, taking into account any constraints
     [<Struct>]
     type ProductFees =
-        | Percentage of Percentage:decimal<Percent> * Cap:int<Cent> voption
+        | Percentage of Percentage:Percent * Cap:int<Cent> voption
         | Simple of Simple:int<Cent>
 
     let productFeesTotal (principal: int<Cent>) productFees =
         match productFees with
-        | ValueSome (Percentage (percentage, ValueSome cap)) ->
+        | ValueSome (Percentage (Percent percentage, ValueSome cap)) ->
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
             |> fun cents -> Cent.min cents cap
-        | ValueSome (Percentage (percentage, ValueNone)) ->
+        | ValueSome (Percentage (Percent percentage, ValueNone)) ->
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
         | ValueSome (Simple simple) -> simple
         | ValueNone -> 0<Cent>
@@ -43,7 +43,7 @@ module General =
 
     [<Struct>]
     type InterestCap =
-        | PercentageOfPrincipal of PercentageOfPrincipal:decimal<Percent>
+        | PercentageOfPrincipal of PercentageOfPrincipal:Percent
         | Fixed of int<Cent>
 
     let calculateInterestCap (principal: int<Cent>) interestCap =

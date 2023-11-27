@@ -25,8 +25,8 @@ module RegularPayment =
         PaymentTotal: int<Cent>
         PrincipalTotal: int<Cent>
         InterestTotal: int<Cent>
-        Apr: decimal<Percent>
-        CostToBorrowingRatio: decimal<Percent>
+        Apr: Percent
+        CostToBorrowingRatio: Percent
     }
 
     [<Struct>]

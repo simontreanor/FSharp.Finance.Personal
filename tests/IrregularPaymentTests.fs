@@ -10,6 +10,40 @@ module IrregularPaymentTests =
 
     open IrregularPayment
 
+    let quickActualPayments days levelPayment finalPayment =
+        days
+        |> Array.rev
+        |> Array.splitAt 1
+        |> fun (last, rest) -> [|
+            last |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| finalPayment |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+            rest |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| levelPayment |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+        |]
+        |> Array.concat
+        |> Array.rev
+
+    let quickExpectedFinalApportionment date termDay paymentAmount cumulativeInterest newInterest principalPortion = {
+        Date = date
+        TermDay = termDay
+        Advance = 0<Cent>
+        ScheduledPayment = paymentAmount
+        ActualPayments = [| paymentAmount |]
+        NetEffect = paymentAmount
+        PaymentStatus = ValueSome PaymentMade
+        BalanceStatus = PaidInFull
+        CumulativeInterest = cumulativeInterest
+        NewInterest = newInterest
+        NewPenaltyCharges = 0<Cent>
+        PrincipalPortion = principalPortion
+        ProductFeesPortion = 0<Cent>
+        InterestPortion = newInterest
+        PenaltyChargesPortion = 0<Cent>
+        ProductFeesRefund = 0<Cent>
+        PrincipalBalance = 0<Cent>
+        ProductFeesBalance = 0<Cent>
+        InterestBalance = 0<Cent>
+        PenaltyChargesBalance = 0<Cent>
+    }
+
     [<Fact>]
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
         let (sp: RegularPayment.ScheduleParameters) =
@@ -17,12 +51,12 @@ module IrregularPaymentTests =
                 StartDate = DateTime(2022, 11, 26)
                 Principal = 1500 * 100<Cent>
                 ProductFees = ValueNone
-                InterestRate = DailyInterestRate 0.8m<Percent>
-                InterestCap = ValueSome <| PercentageOfPrincipal 100m<Percent>
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
             }
-        let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 45688<Cent> 45688<Cent>
+        let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 45688<Cent> 45684<Cent>
 
         let irregularSchedule =
             actualPayments
@@ -31,28 +65,7 @@ module IrregularPaymentTests =
         irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest001.md" (ValueSome 300)
 
         let actual = irregularSchedule |> Array.last
-        let expected = {
-            Date = DateTime(2023, 3, 31)
-            TermDay = 125<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 45688<Cent>
-            ActualPayments = [| 45688<Cent> |]
-            NetEffect = 45688<Cent>
-            PaymentStatus = ValueSome PaymentMade
-            BalanceStatus = PaidInFull
-            CumulativeInterest = 78440<Cent>
-            NewInterest = 9079<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 36609<Cent>
-            ProductFeesPortion = 0<Cent>
-            InterestPortion = 9079<Cent>
-            PenaltyChargesPortion = 0<Cent>
-            ProductFeesRefund = 0<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        }
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 125<Day> 45684<Cent> 78436<Cent> 9078<Cent> 36606<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -62,12 +75,12 @@ module IrregularPaymentTests =
                 StartDate = DateTime(2022, 10, 29)
                 Principal = 1500 * 100<Cent>
                 ProductFees = ValueNone
-                InterestRate = DailyInterestRate 0.8m<Percent>
-                InterestCap = ValueSome <| PercentageOfPrincipal 100m<Percent>
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
             }
-        let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 55605<Cent> 55603<Cent>
+        let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 55605<Cent> 55600<Cent>
 
         let irregularSchedule =
             actualPayments
@@ -76,28 +89,7 @@ module IrregularPaymentTests =
         irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest002.md" (ValueSome 300)
 
         let actual = irregularSchedule |> Array.last
-        let expected = {
-            Date = DateTime(2023, 3, 31)
-            TermDay = 153<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 55603<Cent>
-            ActualPayments = [| 55603<Cent> |]
-            NetEffect = 55603<Cent>
-            PaymentStatus = ValueSome PaymentMade
-            BalanceStatus = PaidInFull
-            CumulativeInterest = 128023<Cent>
-            NewInterest = 11049<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 44554<Cent>
-            ProductFeesPortion = 0<Cent>
-            InterestPortion = 11049<Cent>
-            PenaltyChargesPortion = 0<Cent>
-            ProductFeesRefund = 0<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        }
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 153<Day> 55600<Cent> 128020<Cent> 11048<Cent> 44552<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -107,12 +99,12 @@ module IrregularPaymentTests =
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 1500 * 100<Cent>
                 ProductFees = ValueNone
-                InterestRate = DailyInterestRate 0.8m<Percent>
-                InterestCap = ValueSome <| PercentageOfPrincipal 100m<Percent>
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
-        let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49154<Cent> 49148<Cent>
+        let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49153<Cent> 49153<Cent>
 
         let irregularSchedule =
             actualPayments
@@ -121,28 +113,7 @@ module IrregularPaymentTests =
         irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300)
 
         let actual = irregularSchedule |> Array.last
-        let expected = {
-            Date = DateTime(2023, 3, 31)
-            TermDay = 135<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 49148<Cent>
-            ActualPayments = [| 49148<Cent> |]
-            NetEffect = 49148<Cent>
-            PaymentStatus = ValueSome PaymentMade
-            BalanceStatus = PaidInFull
-            CumulativeInterest = 95764<Cent>
-            NewInterest = 8994<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 40154<Cent>
-            ProductFeesPortion = 0<Cent>
-            InterestPortion = 8994<Cent>
-            PenaltyChargesPortion = 0<Cent>
-            ProductFeesRefund = 0<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        }
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 135<Day> 49153<Cent> 95765<Cent> 8995<Cent> 40158<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -151,8 +122,8 @@ module IrregularPaymentTests =
         let (sp: RegularPayment.ScheduleParameters) = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (189.47m<Percent>, ValueNone)
-            InterestRate = AnnualInterestRate 9.95m<Percent>
+            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11

@@ -25,8 +25,8 @@ module AprActuarialTestsExtra =
         Principal: int<Cent>
         PaymentAmount: int<Cent>
         PaymentDates: DateTime array
-        ExpectedApr: decimal<Percent>
-        ActualApr: decimal<Percent>
+        ExpectedApr: Percent
+        ActualApr: Percent
     }
 
     let aprUsActuarialTestData =
@@ -42,7 +42,7 @@ module AprActuarialTestsExtra =
                 Principal = principal
                 PaymentAmount = paymentAmount
                 PaymentDates = ssi.PaymentDates
-                ExpectedApr = ssi.ExpectedApr * 1m<Percent>
+                ExpectedApr = Percent ssi.ExpectedApr
                 ActualApr = actualApr
             }
         )

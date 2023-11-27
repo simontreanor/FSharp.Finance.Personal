@@ -15,8 +15,8 @@ module RegularPaymentTests =
         {
             StartDate = startDate
             Principal = decimal principal |> Cent.round
-            ProductFees = ValueSome <| Percentage (189.47m<Percent>, ValueNone)
-            InterestRate = AnnualInterestRate 9.95m<Percent>
+            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
             PaymentCount = 11
@@ -34,8 +34,8 @@ module RegularPaymentTests =
             PaymentTotal = 354783<Cent>
             PrincipalTotal = 347364<Cent>
             InterestTotal = 7419<Cent>
-            Apr = 717.412507m<Percent>
-            CostToBorrowingRatio = 67.589906m<Percent>
+            Apr = Percent 717.412507m
+            CostToBorrowingRatio = Percent 67.589906m
         }
         actual |> should equal expected
 
@@ -51,8 +51,8 @@ module RegularPaymentTests =
             PaymentTotal = 355363<Cent>
             PrincipalTotal = 347364<Cent>
             InterestTotal = 7999<Cent>
-            Apr = 637.159359m<Percent>
-            CostToBorrowingRatio = 67.756878m<Percent>
+            Apr = Percent 637.159359m
+            CostToBorrowingRatio = Percent 67.756878m
         }
         actual |> should equal expected
 
@@ -68,7 +68,7 @@ module RegularPaymentTests =
             PaymentTotal = 355460<Cent>
             PrincipalTotal = 347364<Cent>
             InterestTotal = 8096<Cent>
-            Apr = 623.703586m<Percent>
-            CostToBorrowingRatio = 67.784802m<Percent>
+            Apr = Percent 623.703586m
+            CostToBorrowingRatio = Percent 67.784802m
         }
         actual |> should equal expected

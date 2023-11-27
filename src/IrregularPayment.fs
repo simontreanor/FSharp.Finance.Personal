@@ -31,17 +31,6 @@ module IrregularPayment =
         PenaltyCharges: PenaltyCharge array
     }
  
-    let quickActualPayments days levelPayment finalPayment =
-        days
-        |> Array.rev
-        |> Array.splitAt 1
-        |> fun (last, rest) -> [|
-            last |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| finalPayment |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
-            rest |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| levelPayment |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
-        |]
-        |> Array.concat
-        |> Array.rev
-
     /// detail of a payment with apportionment to principal, product fees, interest and penalty charges
     [<Struct>]
     type Apportionment = {
@@ -70,7 +59,7 @@ module IrregularPayment =
     type AmortisationSchedule = {
         Items: Apportionment array
         FinalPaymentCount: int
-        FinalApr: decimal<Percent>
+        FinalApr: Percent
     }
 
     /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
