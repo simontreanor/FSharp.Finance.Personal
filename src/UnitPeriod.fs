@@ -94,6 +94,8 @@ module UnitPeriod =
     /// settings for a monthly payment config, where day is the day of the month to track
     [<Struct>]
     type MonthlyConfig = MonthlyConfig of Year:int * Month:int * Day:int<TrackingDay>
+        with
+            static member fromDt(dt:DateTime) = MonthlyConfig (Year = dt.Year, Month = dt.Month, Day = dt.Day*1<TrackingDay>)
 
     /// unit period combined with a
     [<Struct>]
