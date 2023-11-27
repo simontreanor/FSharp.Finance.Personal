@@ -64,6 +64,7 @@ module IrregularPayment =
 
     /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
     let mergePayments asOfDay latePaymentPenaltyCharge actualPayments (scheduledPayments: RegularPayment.ScheduleItem array) =
+        if Array.isEmpty scheduledPayments then [||] else
         let finalScheduledPaymentDay = scheduledPayments |> Array.maxBy _.Day |> _.Day
         scheduledPayments
         |> Array.map(fun si -> { Day = si.Day; ScheduledPayment = si.Payment; ActualPayments = [||]; NetEffect=0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
@@ -93,6 +94,7 @@ module IrregularPayment =
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
     let calculateSchedule (sp: RegularPayment.ScheduleParameters) (mergedPayments: Payment array) =
+        if Array.isEmpty mergedPayments then [||] else
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
@@ -201,6 +203,8 @@ module IrregularPayment =
 
     let applyPayments (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
         RegularPayment.calculateSchedule sp
-        |> _.Items
-        |> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
-        |> calculateSchedule sp
+        |> Option.map(
+            _.Items
+            >> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
+            >> calculateSchedule sp
+        )

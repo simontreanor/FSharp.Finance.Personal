@@ -46,10 +46,10 @@ module Util =
     type Percent = Percent of decimal
 
     /// overrides existing power function to take and return decimals
-    let inline ( ** ) (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
+    let inline internal ( ** ) (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
 
     /// round a percent value to two decimal places
-    let roundTo (places: int) (m: decimal) = (10m ** places) |> fun p -> round (m * p) / p
+    let roundTo (places: int) (m: decimal) = Math.Round(m, places)
 
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
@@ -86,3 +86,10 @@ module Util =
     module TrackingDay =
         /// create a tracking day from an int
         let fromInt (i: int) = i * 1<TrackingDay>
+
+    /// utility functions for arrays
+    module Array =
+        /// equivalent of Array.last but yields a default value instead of an error if the array is empty
+        let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
+        /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
+        let maxByOrDefault maxByProp getProp defaultValue a = if Array.isEmpty a then defaultValue else a |> Array.maxBy maxByProp |> getProp

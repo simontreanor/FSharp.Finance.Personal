@@ -102,7 +102,6 @@ module Apr =
             let fractional = decimal (schedule[lastWholeMonthBackIndex] - termStart).Days / 15m |> fun d -> divRem d 1m
             transfers[i], { Quotient = wholeUnitPeriods + fractional.Quotient; Remainder = fractional.Remainder }
         )
-        |> Array.map id
 
     /// (b)(5)(iv) If the unit-period is [...] a week, or a multiple of a week, the number of full unit-periods and the remaining 
     /// fractions of a unit-period shall be determined by dividing the number of days between the 2 given dates by the number of days 
@@ -139,6 +138,7 @@ module Apr =
 
     /// (b)(8) General equation.
     let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
+        if Array.isEmpty advances || Array.isEmpty payments then 0m else
         let advanceDates = advances |> Array.map _.Date
         let paymentDates = payments |> Array.map _.Date
         let term = UnitPeriod.transactionTerm consummationDate firstFinanceChargeEarnedDate (paymentDates |> Array.last) (advanceDates |> Array.last)
@@ -148,7 +148,10 @@ module Apr =
             let paymentAverage = payments |> Array.averageBy (_.Amount >> Cent.toDecimal)
             let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
             let paymentCount = payments |> Array.length |> decimal
-            ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
+            if advanceTotal = 0m || unitPeriodsPerYear = 0m then
+                0m
+            else
+                ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
         let unitPeriodRate =
             let eq = [| advances[0].Amount, 0m, 0 |]
                 // mapUnitPeriods unitPeriod term.Start advances
@@ -173,7 +176,7 @@ module Apr =
                 else
                     Some (i, i * ((pp / aa) ** 2))
             )
-            |> Array.last
+            |> Array.lastOrDefault 0m
         annualPercentageRate unitPeriodRate unitPeriodsPerYear
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and
@@ -182,7 +185,9 @@ module Apr =
         match method with
         | UsActuarial ->
             let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
-            generalEquation advanceDate advanceDate advances payments
+            if Array.isEmpty payments then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0<Cent> } |]
+            else payments
+            |> generalEquation advanceDate advanceDate advances
             |> fun apr -> Decimal.Round(apr, precision) |> Percent.fromDecimal
         | UnitedStatesRule ->
             failwith "Not yet implemented"

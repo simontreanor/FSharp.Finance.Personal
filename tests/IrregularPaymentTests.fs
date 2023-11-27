@@ -62,9 +62,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest001.md" (ValueSome 300)
+        irregularSchedule |> Option.iter (Formatting.outputListToHtml "IrregularPaymentTest001.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Array.last
+        let actual = irregularSchedule |> Option.map Array.last
         let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 125<Day> 45684<Cent> 78436<Cent> 9078<Cent> 36606<Cent>
         actual |> should equal expected
 
@@ -86,9 +86,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest002.md" (ValueSome 300)
+        irregularSchedule |> Option.iter(Formatting.outputListToHtml "IrregularPaymentTest002.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Array.last
+        let actual = irregularSchedule |> Option.map Array.last
         let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 153<Day> 55600<Cent> 128020<Cent> 11048<Cent> 44552<Cent>
         actual |> should equal expected
 
@@ -110,9 +110,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300)
+        irregularSchedule |> Option.iter(Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Array.last
+        let actual = irregularSchedule |> Option.map Array.last
         let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 135<Day> 49153<Cent> 95765<Cent> 8995<Cent> 40158<Cent>
         actual |> should equal expected
 
@@ -135,9 +135,9 @@ module IrregularPaymentTests =
             actualPayments
             |> applyPayments sp
 
-        irregularSchedule |> Formatting.outputListToHtml "IrregularPaymentTest099.md" (ValueSome 300)
+        irregularSchedule |> Option.iter(Formatting.outputListToHtml "IrregularPaymentTest099.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> Array.last
+        let actual = irregularSchedule |> Option.map Array.last
         let expected = {
             Date = DateTime(2026, 8, 9)
             TermDay = 1412<Day>

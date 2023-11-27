@@ -53,7 +53,7 @@ module UnitPeriod =
 
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
-        if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) = 1 then
+        if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) < 2 then
             min term.Duration 365<Duration>
             |> NoInterval
         else

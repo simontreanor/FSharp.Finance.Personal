@@ -25,9 +25,9 @@ module RegularPaymentTests =
     [<Fact>]
     let ``1) Biweekly schedule $1200 with short first period`` () =
         let actual = biweeklyParameters 120000<Cent> 8<Duration> |> calculateSchedule
-        actual.Items |> Formatting.outputListToHtml "RegularPaymentTest001.md" (ValueSome 300)
+        actual |> Option.iter(_.Items >> Formatting.outputListToHtml "RegularPaymentTest001.md" (ValueSome 300))
         let expected = {
-            Items = actual.Items
+            Items = actual |> Option.map _.Items |> Option.defaultValue [||]
             FinalPaymentDay = 148<Day>
             LevelPayment = 32253<Cent>
             FinalPayment = 32253<Cent>
@@ -42,9 +42,9 @@ module RegularPaymentTests =
     [<Fact>]
     let ``2) Biweekly schedule $1200 with first period equal to unit-period length`` () =
         let actual = biweeklyParameters 120000<Cent> 14<Duration> |> calculateSchedule
-        actual.Items |> Formatting.outputListToHtml "RegularPaymentTest002.md" (ValueSome 300)
+        actual |> Option.iter (_.Items >> Formatting.outputListToHtml "RegularPaymentTest002.md" (ValueSome 300))
         let expected = {
-            Items = actual.Items
+            Items = actual |> Option.map _.Items |> Option.defaultValue [||]
             FinalPaymentDay = 154<Day>
             LevelPayment = 32306<Cent>
             FinalPayment = 32303<Cent>
@@ -59,9 +59,9 @@ module RegularPaymentTests =
     [<Fact>]
     let ``3) Biweekly schedule $1200 with long first period`` () =
         let actual = biweeklyParameters 120000<Cent> 15<Duration> |> calculateSchedule
-        actual.Items |> Formatting.outputListToHtml "RegularPaymentTest003.md" (ValueSome 300)
+        actual |> Option.iter (_.Items >> Formatting.outputListToHtml "RegularPaymentTest003.md" (ValueSome 300))
         let expected = {
-            Items = actual.Items
+            Items = actual |> Option.map _.Items |> Option.defaultValue [||]
             FinalPaymentDay = 155<Day>
             LevelPayment = 32315<Cent>
             FinalPayment = 32310<Cent>

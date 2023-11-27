@@ -22,7 +22,7 @@ module Schedule =
             | Single startDate ->
                 Array.map (fun _ -> startDate)
             | Daily startDate ->
-                Array.map (fun c -> startDate.AddDays (float c))
+                Array.map (float >> startDate.AddDays)
             | Weekly (multiple, startDate) ->
                 Array.map (fun c -> startDate.AddDays (float(c * 7 * multiple)))
             | SemiMonthly (SemiMonthlyConfig (year, month, td1, td2)) ->
@@ -42,6 +42,7 @@ module Schedule =
 
     /// for a given interval and array of dates, devise the unit-period schedule
     let detect direction interval (transferDates: DateTime array) =
+        if Array.isEmpty transferDates then Single (DateTime.Today.AddYears 1) else
         let transform = match direction with Forward -> id | Reverse -> Array.rev
         let transferDates = transform transferDates
         let firstTransferDate = transferDates |> Array.head
