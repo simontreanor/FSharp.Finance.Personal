@@ -47,10 +47,10 @@ module Util =
     type Percent
 
     /// overrides existing power function to take and return decimals
-    let inline ( ** ) (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
+    let inline internal ( ** ) (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
 
     /// round a percent value to two decimal places
-    let roundTo (places: int) (m: decimal) = (10m ** places) |> fun p -> round (m * p) / p
+    let roundTo (places: int) (m: decimal) = Math.Round(m, places)
 
     /// utility functions for percent values
     [<RequireQualifiedAccess>]

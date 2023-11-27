@@ -75,7 +75,9 @@ module IrregularPayment =
 
     /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
     let mergePayments asOfDay latePaymentPenaltyCharge actualPayments (scheduledPayments: RegularPayment.ScheduleItem array) =
-        let finalScheduledPaymentDay = scheduledPayments |> Array.maxBy _.Day |> _.Day
+        let finalScheduledPaymentDay = 
+            if Array.isEmpty scheduledPayments then asOfDay else
+            scheduledPayments |> Array.maxBy _.Day |> _.Day
         scheduledPayments
         |> Array.map(fun si -> { Day = si.Day; ScheduledPayment = si.Payment; ActualPayments = [||]; NetEffect=0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
         |> fun sp -> Array.concat [| actualPayments; sp |]
@@ -107,8 +109,10 @@ module IrregularPayment =
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
-        let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
-        let maxScheduledPaymentDay = mergedPayments |> Array.filter(fun p -> p.ScheduledPayment > 0<Cent>) |> Array.maxBy _.Day |> _.Day
+        let productFeesPercentage = if sp.Principal = 0<Cent> then 0m<Percent> else decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
+        let maxScheduledPaymentDay = 
+                let schedule = mergedPayments |> Array.filter(fun p -> p.ScheduledPayment > 0<Cent>)
+                if Array.isEmpty schedule then 365<Day> else schedule |> Array.maxBy _.Day |> _.Day
         let maxActualPaymentDay = mergedPayments |> Array.filter(fun p -> p.ActualPayments |> Array.isEmpty |> not) |> Array.maxBy _.Day |> _.Day
         let dayZeroPayment = mergedPayments |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0<Cent> then 0<Cent> else amount

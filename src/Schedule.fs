@@ -22,7 +22,7 @@ module Schedule =
             | Single startDate ->
                 Array.map (fun _ -> startDate)
             | Daily startDate ->
-                Array.map (fun c -> startDate.AddDays (float c))
+                Array.map (float >> startDate.AddDays)
             | Weekly (multiple, startDate) ->
                 Array.map (fun c -> startDate.AddDays (float(c * 7 * multiple)))
             | SemiMonthly (SemiMonthlyConfig (year, month, td1, td2)) ->
