@@ -14,11 +14,13 @@ module IrregularPayment =
         | ExtraPayment
         | Refunded
         | NotYetDue
+        | Overpaid
 
     [<Struct>]
     type BalanceStatus =
-        | PaidInFull
+        | Settled
         | OpenBalance
+        | RefundDue
 
     /// a real payment
     [<Struct>]
@@ -100,7 +102,6 @@ module IrregularPayment =
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
         let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
         let maxScheduledPaymentDay = mergedPayments |> Array.filter(fun p -> p.ScheduledPayment > 0<Cent>) |> Array.maxBy _.Day |> _.Day
-        let maxActualPaymentDay = mergedPayments |> Array.filter(fun p -> p.ActualPayments |> Array.isEmpty |> not) |> Array.maxBy _.Day |> _.Day
         let dayZeroPayment = mergedPayments |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0<Cent> then 0<Cent> else amount
         let dayZeroPrincipalBalance = sp.Principal + dayZeroPayment.NetEffect
@@ -114,7 +115,7 @@ module IrregularPayment =
             ActualPayments = dayZeroPayment.ActualPayments
             NetEffect = dayZeroPayment.NetEffect
             PaymentStatus = dayZeroPayment.PaymentStatus
-            BalanceStatus = if dayZeroPrincipalBalance = 0<Cent> then PaidInFull else OpenBalance
+            BalanceStatus = if dayZeroPrincipalBalance = 0<Cent> then Settled else OpenBalance
             CumulativeInterest = 0<Cent>
             NewInterest = 0<Cent>
             NewPenaltyCharges = 0<Cent>
@@ -134,7 +135,7 @@ module IrregularPayment =
             let newPenaltyCharges = penaltyChargesTotal p.PenaltyCharges
             let penaltyChargesPortion = newPenaltyCharges + a.PenaltyChargesBalance |> ``don't apportion for a refund`` p.NetEffect
 
-            let newInterest = decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal (p.Day - a.TermDay) |> Cent.floor
+            let newInterest = if a.PrincipalBalance <= 0<Cent> then 0<Cent> else decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal (p.Day - a.TermDay) |> Cent.floor
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` p.NetEffect
             
@@ -142,31 +143,27 @@ module IrregularPayment =
             let productFeesRemaining = productFeesTotal - productFeesDue
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
-            let isSettlement = p.NetEffect >= settlementFigure //&& p.Day < maxScheduledPaymentDay) || p.Day = maxScheduledPaymentDay && p.Day >= maxActualPaymentDay
+            let isSettlement, isOverpayment = p.NetEffect = settlementFigure, p.NetEffect > settlementFigure
 
             let productFeesRefund = if isSettlement then productFeesRemaining else 0<Cent>
 
-            let actualPayment, (sign: int<Cent> -> int<Cent>) =
-                if a.PrincipalBalance = 0<Cent> then
-                    0<Cent>, id
-                elif isSettlement then
-                    settlementFigure, id
-                else
-                    abs p.NetEffect, if p.NetEffect < 0<Cent> then (( * ) -1) else id
+            let actualPayment, (sign: int<Cent> -> int<Cent>) = abs p.NetEffect, if p.NetEffect < 0<Cent> then (( * ) -1) else id
 
-            let principalPortion, cabFeePortion =
+            let principalPortion, productFeesPortion =
                 if (penaltyChargesPortion > actualPayment) || (penaltyChargesPortion + interestPortion > actualPayment) then
                     0<Cent>, 0<Cent>
                 else
-                    if isSettlement then
-                        let cabFeePayment = a.ProductFeesBalance - productFeesRemaining
-                        actualPayment - penaltyChargesPortion - interestPortion - cabFeePayment, cabFeePayment
+                    if isOverpayment || isSettlement then
+                        let productFeesPayment = a.ProductFeesBalance - productFeesRemaining
+                        actualPayment - penaltyChargesPortion - interestPortion - productFeesPayment, productFeesPayment
                     else
                         let principalPayment = decimal (actualPayment - penaltyChargesPortion - interestPortion) / (1m + Percent.toDecimal productFeesPercentage) |> Cent.floor
                         principalPayment, actualPayment - penaltyChargesPortion - interestPortion - principalPayment
-                        
-            let principalPortion = Cent.min a.PrincipalBalance principalPortion
-            let productFeesPortion = Cent.min a.ProductFeesBalance cabFeePortion
+
+            // let principalPortion = Cent.min a.PrincipalBalance principalPortion
+            // let productFeesPortion = Cent.min a.ProductFeesBalance productFeesPortion
+
+            let principalBalance = a.PrincipalBalance - sign principalPortion
 
             let carriedPenaltyCharges, carriedInterest =
                 if penaltyChargesPortion > actualPayment then
@@ -183,8 +180,8 @@ module IrregularPayment =
                 ScheduledPayment = p.ScheduledPayment
                 ActualPayments = p.ActualPayments
                 NetEffect = p.NetEffect
-                PaymentStatus = p.PaymentStatus
-                BalanceStatus = if a.PrincipalBalance - sign principalPortion = 0<Cent> then PaidInFull else OpenBalance
+                PaymentStatus = if isOverpayment then ValueSome Overpayment else p.PaymentStatus
+                BalanceStatus = if principalBalance = 0<Cent> then Settled elif principalBalance < 0<Cent> then RefundDue else OpenBalance
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
                 NewPenaltyCharges = newPenaltyCharges
@@ -193,7 +190,7 @@ module IrregularPayment =
                 InterestPortion = interestPortion - carriedInterest
                 PenaltyChargesPortion = penaltyChargesPortion - carriedPenaltyCharges
                 ProductFeesRefund = productFeesRefund
-                PrincipalBalance = a.PrincipalBalance - sign principalPortion
+                PrincipalBalance = principalBalance
                 ProductFeesBalance = a.ProductFeesBalance - sign productFeesPortion - productFeesRefund
                 InterestBalance = a.InterestBalance + newInterest' - interestPortion + carriedInterest
                 PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges

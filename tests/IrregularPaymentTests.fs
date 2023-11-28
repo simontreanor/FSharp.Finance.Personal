@@ -29,7 +29,7 @@ module IrregularPaymentTests =
         ActualPayments = [| paymentAmount |]
         NetEffect = paymentAmount
         PaymentStatus = ValueSome PaymentMade
-        BalanceStatus = PaidInFull
+        BalanceStatus = Settled
         CumulativeInterest = cumulativeInterest
         NewInterest = newInterest
         NewPenaltyCharges = 0<Cent>
@@ -116,3 +116,142 @@ module IrregularPaymentTests =
         let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 15)) 134<Day> 49153<Cent> 95765<Cent> 8995<Cent> 40158<Cent>
         actual |> should equal expected
 
+    [<Fact>]
+    let ``4) Made 2 payments on early repayment, then one single payment after the full balance is overdue`` () =
+        let (sp: RegularPayment.ScheduleParameters) =
+            {
+                StartDate = DateTime(2022, 11, 1)
+                Principal = 1500 * 100<Cent>
+                ProductFees = ValueNone
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
+                PaymentCount = 5
+            }
+        let actualPayments = quickActualPayments [| 2; 4; 140 |] 49153<Cent> 121391<Cent>
+
+        let irregularSchedule =
+            actualPayments
+            |> applyPayments sp
+
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest004.md" (ValueSome 300))
+
+        let actual = irregularSchedule |> ValueOption.map Array.last
+        let expected = ValueSome {
+            Date = DateTime(2023, 3, 21)
+            TermDay = 140<Day>
+            Advance = 0<Cent>
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| 121391<Cent> |]
+            NetEffect = 121391<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = Settled
+            CumulativeInterest = 64697<Cent>
+            NewInterest = 2675<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 55745<Cent>
+            ProductFeesPortion = 0<Cent>
+            InterestPortion = 60646<Cent>
+            PenaltyChargesPortion = 5000<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``5) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue`` () =
+        let (sp: RegularPayment.ScheduleParameters) =
+            {
+                StartDate = DateTime(2022, 11, 1)
+                Principal = 1500 * 100<Cent>
+                ProductFees = ValueNone
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
+                PaymentCount = 5
+            }
+        let actualPayments = quickActualPayments [| 2; 4; 140 |] 49153<Cent> (49153<Cent> * 3)
+
+        let irregularSchedule =
+            actualPayments
+            |> applyPayments sp
+
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest005.md" (ValueSome 300))
+
+        let actual = irregularSchedule |> ValueOption.map Array.last
+        let expected = ValueSome {
+            Date = DateTime(2023, 3, 21)
+            TermDay = 140<Day>
+            Advance = 0<Cent>
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| 147459<Cent> |]
+            NetEffect = 147459<Cent>
+            PaymentStatus = ValueSome Overpayment
+            BalanceStatus = RefundDue
+            CumulativeInterest = 64697<Cent>
+            NewInterest = 2675<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 81813<Cent>
+            ProductFeesPortion = 0<Cent>
+            InterestPortion = 60646<Cent>
+            PenaltyChargesPortion = 5000<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = -26068<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``6) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded`` () =
+        let (sp: RegularPayment.ScheduleParameters) =
+            {
+                StartDate = DateTime(2022, 11, 1)
+                Principal = 1500 * 100<Cent>
+                ProductFees = ValueNone
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
+                PaymentCount = 5
+            }
+        let actualPayments = [|
+            { Day =   2<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [|  49153<Cent>     |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day =   4<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [|  49153<Cent>     |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 140<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [|  49153<Cent> * 3 |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 143<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| -26068<Cent>     |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> applyPayments sp
+
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest006.md" (ValueSome 300))
+
+        let actual = irregularSchedule |> ValueOption.map Array.last
+        let expected = ValueSome {
+            Date = DateTime(2023, 3, 24)
+            TermDay = 143<Day>
+            Advance = 0<Cent>
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| -26068<Cent> |]
+            NetEffect = -26068<Cent>
+            PaymentStatus = ValueSome Refunded
+            BalanceStatus = Settled
+            CumulativeInterest = 64697<Cent>
+            NewInterest = 0<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = -26068<Cent>
+            ProductFeesPortion = 0<Cent>
+            InterestPortion = 0<Cent>
+            PenaltyChargesPortion = 0<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
+        actual |> should equal expected
