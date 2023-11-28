@@ -104,9 +104,10 @@ module IrregularPayment =
         let maxScheduledPaymentDay = mergedPayments |> Array.filter(fun p -> p.ScheduledPayment > 0<Cent>) |> Array.maxBy _.Day |> _.Day
         let dayZeroPayment = mergedPayments |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0<Cent> then 0<Cent> else amount
-        let dayZeroPrincipalBalance = sp.Principal + dayZeroPayment.NetEffect
+        let dayZeroPrincipalBalance = sp.Principal - dayZeroPayment.NetEffect
         let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal productFeesPercentage) |> Cent.floor
         let dayZeroProductFeesPortion = dayZeroPayment.NetEffect - dayZeroPrincipalPortion
+        let getBalanceStatus principalBalance = if principalBalance = 0<Cent> then Settled elif principalBalance < 0<Cent> then RefundDue else OpenBalance
         let advance = {
             Date = sp.StartDate
             TermDay = 0<Day>
@@ -115,7 +116,7 @@ module IrregularPayment =
             ActualPayments = dayZeroPayment.ActualPayments
             NetEffect = dayZeroPayment.NetEffect
             PaymentStatus = dayZeroPayment.PaymentStatus
-            BalanceStatus = if dayZeroPrincipalBalance = 0<Cent> then Settled else OpenBalance
+            BalanceStatus = getBalanceStatus dayZeroPrincipalBalance
             CumulativeInterest = 0<Cent>
             NewInterest = 0<Cent>
             NewPenaltyCharges = 0<Cent>
@@ -180,8 +181,8 @@ module IrregularPayment =
                 ScheduledPayment = p.ScheduledPayment
                 ActualPayments = p.ActualPayments
                 NetEffect = p.NetEffect
-                PaymentStatus = if isOverpayment then ValueSome Overpayment else p.PaymentStatus
-                BalanceStatus = if principalBalance = 0<Cent> then Settled elif principalBalance < 0<Cent> then RefundDue else OpenBalance
+                PaymentStatus = if a.BalanceStatus = Settled then ValueNone elif isOverpayment then ValueSome Overpayment else p.PaymentStatus
+                BalanceStatus = getBalanceStatus principalBalance
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
                 NewPenaltyCharges = newPenaltyCharges

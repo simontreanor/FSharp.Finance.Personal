@@ -255,3 +255,50 @@ module IrregularPaymentTests =
             PenaltyChargesBalance = 0<Cent>
         }
         actual |> should equal expected
+
+    [<Fact>]
+    let ``7) Zero-day loan`` () =
+        let (sp: RegularPayment.ScheduleParameters) =
+            {
+                StartDate = DateTime(2022, 11, 1)
+                Principal = 1500 * 100<Cent>
+                ProductFees = ValueNone
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
+                PaymentCount = 5
+            }
+        let actualPayments = [|
+            { Day = 0<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 150000<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> applyPayments sp
+
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest007.md" (ValueSome 300))
+
+        let actual = irregularSchedule |> ValueOption.map Array.last
+        let expected = ValueSome {
+            Date = DateTime(2022, 11, 1)
+            TermDay = 0<Day>
+            Advance = 150000<Cent>
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| 150000<Cent> |]
+            NetEffect = 150000<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = Settled
+            CumulativeInterest = 0<Cent>
+            NewInterest = 0<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 150000<Cent>
+            ProductFeesPortion = 0<Cent>
+            InterestPortion = 0<Cent>
+            PenaltyChargesPortion = 0<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
+        actual |> should equal expected
