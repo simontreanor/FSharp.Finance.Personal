@@ -45,8 +45,11 @@ module Util =
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
     type Percent = Percent of decimal
 
-    /// overrides existing power function to take and return decimals
-    let inline internal ( ** ) (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
+    /// raises a decimal to an int power
+    let powi (base': decimal) (power: int) = decimal (Math.Pow(double base', double power))
+
+    /// raises a decimal to a decimal power
+    let powm (base': decimal) (power: decimal) = decimal (Math.Pow(double base', double power))
 
     /// round a percent value to two decimal places
     let roundTo (places: int) (m: decimal) = Math.Round(m, places)

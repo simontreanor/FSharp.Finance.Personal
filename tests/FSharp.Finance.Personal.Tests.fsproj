@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Util.fs" />
+    <Compile Include="AprUnitedKingdomTests.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
     <Compile Include="IrregularPaymentTests.fs" />
