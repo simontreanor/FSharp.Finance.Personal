@@ -97,7 +97,7 @@ module Util =
         let solve<'T, 'State> (generator: 'State -> ('T * 'State) voption) iterationLimit (state: 'State) =
             let rec loop i res state =
                 match i, generator state with
-                | i, _ when i > iterationLimit ->
+                | i, _ when i = iterationLimit ->
                     res
                 | _, ValueNone ->
                     res
