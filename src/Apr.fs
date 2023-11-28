@@ -93,12 +93,12 @@ module Apr =
             4.2m
             |> Array.solve(fun i ->
                 if i < 0m then ValueNone else
-                let aa = ak |> Array.sumBy(fun (a, t) -> Cent.toDecimal a / (powm (1m + i) t))
-                let pp = a'k' |> Array.sumBy(fun (a', t') -> Cent.toDecimal a' / (powm (1m + i) t'))
+                let aa = ak |> Array.sumBy(fun (a, t) -> Cent.toDecimal a / ((1m + i) |> powm t))
+                let pp = a'k' |> Array.sumBy(fun (a', t') -> Cent.toDecimal a' / ((1m + i) |> powm t'))
                 if Decimal.Round(pp - aa, 6) = 0m then
                     ValueNone
                 else
-                    ValueSome (i, i * (powi (pp / aa) 2))
+                    ValueSome (i, i * ((pp / aa) |> powi 2))
             ) 1000
             |> ValueOption.map Percent.fromDecimal
 
@@ -245,12 +245,12 @@ module Apr =
                     )
                 roughUnitPeriodRate
                 |> Array.solve(fun i -> //The percentage rate of finance charge per unit-period, expressed as a decimal equivalent.
-                    let aa = eq |> Array.sumBy(fun (a, e, q) -> Cent.toDecimal a / ((1m + (e * i)) * (powi (1m + i) q)))
-                    let pp = ft |> Array.sumBy(fun (p, f, t) -> Cent.toDecimal p / ((1m + (f * i)) * (powi (1m + i) t)))
+                    let aa = eq |> Array.sumBy(fun (a, e, q) -> Cent.toDecimal a / ((1m + (e * i)) * ((1m + i) |> powi q)))
+                    let pp = ft |> Array.sumBy(fun (p, f, t) -> Cent.toDecimal p / ((1m + (f * i)) * ((1m + i) |> powi t)))
                     if aa = 0m || Decimal.Round(pp - aa, 10) = 0m then
                         ValueNone
                     else
-                        ValueSome (i, i * (powi (pp / aa) 2))
+                        ValueSome (i, i * ((pp / aa) |> powi 2))
                 ) 100
                 |> ValueOption.defaultValue 0m
             annualPercentageRate unitPeriodRate unitPeriodsPerYear
