@@ -206,3 +206,45 @@ module IrregularPayment =
             >> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
             >> calculateSchedule sp
         )
+
+    let getSettlementQuote (settlementDate: DateTime) (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
+        let extraPaymentAmount = sp.Principal * 10
+        let extraPayment = {
+            Day = int (settlementDate.Date - sp.StartDate.Date).Days * 1<Day>
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| extraPaymentAmount |]
+            NetEffect = 0<Cent>
+            PaymentStatus = ValueNone
+            PenaltyCharges = [| |]
+        }
+        let apportionments =
+            applyPayments sp (Array.concat [| actualPayments; [| extraPayment |] |])
+            |> ValueOption.map (Array.filter(fun a -> a.Date <= settlementDate))
+        // apportionments |> ValueOption.iter (Formatting.outputListToHtml "SettlementQuoteIntermediate.md" (ValueSome 300))
+        apportionments
+        |> ValueOption.map Array.last
+        |> ValueOption.bind(fun a ->
+            let actualPayments = a.ActualPayments |> Array.filter(fun p -> p <> extraPaymentAmount)
+            let actualPaymentsTotal = actualPayments |> Array.sum
+            let settlementAmount, productFeesRefund = a.NetEffect + a.PrincipalBalance - actualPaymentsTotal, a.ProductFeesBalance
+            let settlementApportionment =
+                { a with 
+                    ActualPayments = Array.concat [| actualPayments; [| settlementAmount |] |] // note: the settlement amount is the last of the actual payments
+                    NetEffect = settlementAmount + actualPaymentsTotal
+                    BalanceStatus = Settled
+                    PrincipalPortion = a.NetEffect + a.PrincipalBalance - a.ProductFeesPortion - a.InterestPortion - a.PenaltyChargesPortion
+                    ProductFeesRefund = productFeesRefund
+                    PrincipalBalance = 0<Cent>
+                    ProductFeesBalance = 0<Cent>
+                }
+            let finalApportionments =
+                apportionments
+                |> ValueOption.map(
+                    Array.rev
+                    >> Array.tail
+                    >> Array.rev
+                    >> fun a -> Array.concat [| a; [| settlementApportionment |] |]
+                )
+            // finalApportionments |> ValueOption.iter (Formatting.outputListToHtml "SettlementQuote.md" (ValueSome 300))
+            finalApportionments
+        )

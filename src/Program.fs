@@ -3,7 +3,7 @@ open FSharp.Finance.Personal
 
 open RegularPayment
 
-let startDate = DateTime.Today.AddDays(-421.)
+let startDate = DateTime.Today.AddDays(-60.)
 
 let sp = {
     StartDate = startDate
@@ -15,16 +15,22 @@ let sp = {
     PaymentCount = 11
 }
 
-calculateSchedule sp
-|> ValueOption.iter(
-    _.Items
-    >> Formatting.outputListToHtml "RegularPayment.md" (ValueSome 180)
-)
+// calculateSchedule sp
+// |> ValueOption.iter(
+//     _.Items
+//     >> Formatting.outputListToHtml "RegularPayment.md" (ValueSome 180)
+// )
 
 open IrregularPayment
 
+// let actualPayments =
+//     [| 7 .. 7 .. 14 |]
+//     |> Array.map(fun i ->
+//         { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     )
+
 let actualPayments =
-    [| 180 .. 7 .. 2098 |]
+    [| 18 .. 7 .. 60 |]
     |> Array.map(fun i ->
         { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
     )
@@ -42,10 +48,13 @@ let actualPayments =
 //     { Day = 191<Day>; Adjustments = [| ActualPayment 300<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
 // |]
 
-actualPayments
-|> applyPayments sp
-|> ValueOption.iter(
-    Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 300)
-)
+// actualPayments
+// |> applyPayments sp
+// |> ValueOption.iter(
+//     Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 300)
+// )
+
+getSettlementQuote (DateTime.Today) sp actualPayments
+|> fun s -> Console.WriteLine $"{s}"
 
 exit 0
