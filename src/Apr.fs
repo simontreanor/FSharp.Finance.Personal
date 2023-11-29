@@ -98,8 +98,8 @@ module Apr =
                 if Decimal.Round(pp - aa, 6) = 0m then
                     ValueNone
                 else
-                    ValueSome (i, i * ((pp / aa) |> powi 2))
-            ) 1000
+                    ValueSome (i, i * ((pp / aa) |> powi 4))
+            ) (if Array.length transfers < 4 then 1000 else 100)
             |> ValueOption.map Percent.fromDecimal
 
     /// APR as in https://www.consumerfinance.gov/rules-policy/regulations/1026/j/
