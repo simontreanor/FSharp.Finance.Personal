@@ -91,33 +91,3 @@ module AprUnitedKingdomTests =
         let actual = calculateUkOld 50000<Cent> 1760<Cent> 30 (Weekly (1, DateTime(1978, 4, 21))) (DateTime(1978, 3, 20))
         let expected = calculateUk 50000<Cent> 1760<Cent> 30 (Weekly (1, DateTime(1978, 4, 21))) (DateTime(1978, 3, 20)) |> ValueOption.defaultValue (Percent 0m) |> fun (Percent c) -> c
         actual |> should (equalWithin 0.0001) expected
-
-    // [<Fact>]
-    // let ``UK vs US. Example (c)(1)(i): Monthly payments (regular first period)`` () =
-    //     let actual = calculateUk 500000<Cent> 23000<Cent> 24 (Monthly (1, MonthlyConfig (1978, 2, 10<TrackingDay>))) (DateTime(1978, 1, 10)) |> ValueOption.defaultValue (Percent 0m)
-    //     let expected = calculateUs 500000<Cent> 23000<Cent> 24 (Monthly (1, MonthlyConfig (1978, 2, 10<TrackingDay>))) (DateTime(1978, 1, 10))
-    //     actual |> should equal expected
-
-    // [<Fact>]
-    // let ``UK vs US. Example (c)(1)(ii): Monthly payments (long first period)`` () =
-    //     let actual = calculateUk 600000<Cent> 20000<Cent> 36 (Monthly (1, MonthlyConfig (1978, 4, 1<TrackingDay>))) (DateTime(1978, 2, 10)) |> ValueOption.defaultValue (Percent 0m)
-    //     let expected = calculateUs 600000<Cent> 20000<Cent> 36 (Monthly (1, MonthlyConfig (1978, 4, 1<TrackingDay>))) (DateTime(1978, 2, 10))
-    //     actual |> should equal expected
-
-    // [<Fact>]
-    // let ``UK vs US. Example (c)(1)(iii): Semimonthly payments (short first period)`` () =
-    //     let actual = calculateUk 500000<Cent> 21917<Cent> 24 (SemiMonthly (SemiMonthlyConfig (1978, 3, 1<TrackingDay>, 16<TrackingDay>))) (DateTime(1978, 2, 23)) |> ValueOption.defaultValue (Percent 0m)
-    //     let expected = calculateUs 500000<Cent> 21917<Cent> 24 (SemiMonthly (SemiMonthlyConfig (1978, 3, 1<TrackingDay>, 16<TrackingDay>))) (DateTime(1978, 2, 23))
-    //     actual |> should equal expected
-
-    // [<Fact>]
-    // let ``UK vs US. Example (c)(1)(iv): Quarterly payments (long first period)`` () =
-    //     let actual = calculateUk 1000000<Cent> 38500<Cent> 40 (Monthly (3, MonthlyConfig (1978, 10, 1<TrackingDay>))) (DateTime(1978, 5, 23)) |> ValueOption.defaultValue (Percent 0m)
-    //     let expected = calculateUs 1000000<Cent> 38500<Cent> 40 (Monthly (3, MonthlyConfig (1978, 10, 1<TrackingDay>))) (DateTime(1978, 5, 23))
-    //     actual |> should equal expected
-
-    // [<Fact>]
-    // let ``UK vs US. Example (c)(1)(v): Weekly payments (long first period)`` () =
-    //     let actual = calculateUk 50000<Cent> 1760<Cent> 30 (Weekly (1, DateTime(1978, 4, 21))) (DateTime(1978, 3, 20)) |> ValueOption.defaultValue (Percent 0m)
-    //     let expected = calculateUs 50000<Cent> 1760<Cent> 30 (Weekly (1, DateTime(1978, 4, 21))) (DateTime(1978, 3, 20))
-    //     actual |> should equal expected
