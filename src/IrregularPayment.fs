@@ -144,11 +144,13 @@ module IrregularPayment =
             let productFeesRemaining = productFeesTotal - productFeesDue
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
-            let isSettlement, isOverpayment = p.NetEffect = settlementFigure, p.NetEffect > settlementFigure
+            let isSettlement = p.NetEffect = settlementFigure
+            let isOverpayment = p.NetEffect > settlementFigure
 
             let productFeesRefund = if isSettlement then productFeesRemaining else 0<Cent>
 
-            let actualPayment, (sign: int<Cent> -> int<Cent>) = abs p.NetEffect, if p.NetEffect < 0<Cent> then (( * ) -1) else id
+            let actualPayment = abs p.NetEffect
+            let sign: int<Cent> -> int<Cent> = if p.NetEffect < 0<Cent> then (( * ) -1) else id
 
             let principalPortion, productFeesPortion =
                 if (penaltyChargesPortion > actualPayment) || (penaltyChargesPortion + interestPortion > actualPayment) then
@@ -200,12 +202,19 @@ module IrregularPayment =
         |> Array.takeWhile(fun a -> a.TermDay = 0<Day> || (a.TermDay > 0<Day> && a.PaymentStatus.IsSome))
 
     let applyPayments (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
-        RegularPayment.calculateSchedule sp
-        |> ValueOption.map(
-            _.Items
-            >> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
-            >> calculateSchedule sp
-        )
+        voption {
+            let! schedule = RegularPayment.calculateSchedule sp
+            return
+                schedule
+                |> _.Items
+                |> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
+                |> calculateSchedule sp
+        }
+
+    type SettlementQuote = {
+        SettlementFigure: int<Cent>
+        SettlementStatement: Apportionment array
+    }
 
     let getSettlementQuote (settlementDate: DateTime) (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
         let extraPaymentAmount = sp.Principal * 10
@@ -217,34 +226,13 @@ module IrregularPayment =
             PaymentStatus = ValueNone
             PenaltyCharges = [| |]
         }
-        let apportionments =
-            applyPayments sp (Array.concat [| actualPayments; [| extraPayment |] |])
-            |> ValueOption.map (Array.filter(fun a -> a.Date <= settlementDate))
-        // apportionments |> ValueOption.iter (Formatting.outputListToHtml "SettlementQuoteIntermediate.md" (ValueSome 300))
-        apportionments
-        |> ValueOption.map Array.last
-        |> ValueOption.bind(fun a ->
-            let actualPayments = a.ActualPayments |> Array.filter(fun p -> p <> extraPaymentAmount)
-            let actualPaymentsTotal = actualPayments |> Array.sum
-            let settlementAmount, productFeesRefund = a.NetEffect + a.PrincipalBalance - actualPaymentsTotal, a.ProductFeesBalance
-            let settlementApportionment =
-                { a with 
-                    ActualPayments = Array.concat [| actualPayments; [| settlementAmount |] |] // note: the settlement amount is the last of the actual payments
-                    NetEffect = settlementAmount + actualPaymentsTotal
-                    BalanceStatus = Settled
-                    PrincipalPortion = a.NetEffect + a.PrincipalBalance - a.ProductFeesPortion - a.InterestPortion - a.PenaltyChargesPortion
-                    ProductFeesRefund = productFeesRefund
-                    PrincipalBalance = 0<Cent>
-                    ProductFeesBalance = 0<Cent>
-                }
-            let finalApportionments =
-                apportionments
-                |> ValueOption.map(
-                    Array.rev
-                    >> Array.tail
-                    >> Array.rev
-                    >> fun a -> Array.concat [| a; [| settlementApportionment |] |]
-                )
-            // finalApportionments |> ValueOption.iter (Formatting.outputListToHtml "SettlementQuote.md" (ValueSome 300))
-            finalApportionments
-        )
+        voption {
+            let! appliedPayments = applyPayments sp (Array.concat [| actualPayments; [| extraPayment |] |])
+            let finalApportionment = appliedPayments |> Array.filter(fun a -> a.Date <= settlementDate) |> Array.last
+            let actualPaymentAmounts = finalApportionment.ActualPayments |> Array.filter(fun p -> p <> extraPaymentAmount)
+            let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
+            let settlementFigure = finalApportionment.NetEffect + finalApportionment.PrincipalBalance - actualPaymentsTotal
+            let settlementPayment = { extraPayment with ActualPayments = [| settlementFigure |] }
+            let! settlementStatement = applyPayments sp (Array.concat [| actualPayments; [| settlementPayment |] |])
+            return { SettlementFigure = settlementFigure; SettlementStatement = settlementStatement }
+        }

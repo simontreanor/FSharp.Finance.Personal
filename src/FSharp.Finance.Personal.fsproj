@@ -11,6 +11,7 @@
     <OutputType>exe</OutputType>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <Compile Include="ValueOption.fs" />
     <Compile Include="Formatting.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +54,7 @@
       <Visible>True</Visible>
     </None>
   </ItemGroup>
-  <ItemGroup>  
-     <PackageReference Update="FSharp.Core" Version="8.0.100" />
-  </ItemGroup>    
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.100" />
+  </ItemGroup>
 </Project>

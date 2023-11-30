@@ -304,7 +304,7 @@ module IrregularPaymentTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``Settlement quote. Settlement falling on a scheduled payment date`` () =
+    let ``Settlement quote. 1) Settlement falling on a scheduled payment date`` () =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : RegularPayment.ScheduleParameters = {
@@ -323,9 +323,14 @@ module IrregularPaymentTests =
                 { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
-        let actual = getSettlementQuote (DateTime.Today.AddDays -3.) sp actualPayments |> ValueOption.map Array.last
+        let actual =
+            voption{
+                let! settlementQuote = getSettlementQuote (DateTime.Today.AddDays -3.) sp actualPayments
+                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote001.md" (ValueSome 300)
+                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
+            }
 
-        let expected = ValueSome {
+        let expected = ValueSome (196970<Cent>, {
             Date = (DateTime.Today.AddDays -3.)
             TermDay = 57<Day>
             Advance = 0<Cent>
@@ -346,12 +351,12 @@ module IrregularPaymentTests =
             ProductFeesBalance = 0<Cent>
             InterestBalance = 0<Cent>
             PenaltyChargesBalance = 0<Cent>
-        }
+        })
 
         actual |> should equal expected
 
     [<Fact>]
-    let ``Settlement quote. Settlement not falling on a scheduled payment date`` () =
+    let ``Settlement quote. 2) Settlement not falling on a scheduled payment date`` () =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : RegularPayment.ScheduleParameters = {
@@ -370,16 +375,21 @@ module IrregularPaymentTests =
                 { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
-        let actual = getSettlementQuote DateTime.Today sp actualPayments |> ValueOption.map Array.last
+        let actual =
+            voption {
+                let! settlementQuote = getSettlementQuote DateTime.Today sp actualPayments
+                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote002.md" (ValueSome 300)
+                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
+            }
 
-        let expected = ValueSome {
+        let expected = ValueSome (202648<Cent>, {
             Date = DateTime.Today
             TermDay = 60<Day>
             Advance = 0<Cent>
             ScheduledPayment = 0<Cent>
             ActualPayments = [| 202648<Cent> |]
             NetEffect = 202648<Cent>
-            PaymentStatus = ValueSome Overpayment
+            PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settled
             CumulativeInterest = 5637<Cent>
             NewInterest = 278<Cent>
@@ -393,12 +403,12 @@ module IrregularPaymentTests =
             ProductFeesBalance = 0<Cent>
             InterestBalance = 0<Cent>
             PenaltyChargesBalance = 0<Cent>
-        }
+        })
 
         actual |> should equal expected
 
     [<Fact>]
-    let ``Settlement quote. Settlement not falling on a scheduled payment date but having an actual payment already made on the same day`` () =
+    let ``Settlement quote. 3) Settlement not falling on a scheduled payment date but having an actual payment already made on the same day`` () =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : RegularPayment.ScheduleParameters = {
@@ -417,16 +427,21 @@ module IrregularPaymentTests =
                 { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
-        let actual = getSettlementQuote DateTime.Today sp actualPayments |> ValueOption.map Array.last
+        let actual =
+            voption {
+                let! settlementQuote = getSettlementQuote DateTime.Today sp actualPayments
+                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote003.md" (ValueSome 300)
+                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
+            }
 
-        let expected = ValueSome {
+        let expected = ValueSome (200148<Cent>, {
             Date = DateTime.Today
             TermDay = 60<Day>
             Advance = 0<Cent>
             ScheduledPayment = 0<Cent>
             ActualPayments = [| 2500<Cent>; 200148<Cent> |]
             NetEffect = 202648<Cent>
-            PaymentStatus = ValueSome Overpayment
+            PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settled
             CumulativeInterest = 5637<Cent>
             NewInterest = 278<Cent>
@@ -440,6 +455,6 @@ module IrregularPaymentTests =
             ProductFeesBalance = 0<Cent>
             InterestBalance = 0<Cent>
             PenaltyChargesBalance = 0<Cent>
-        }
+        })
 
         actual |> should equal expected
