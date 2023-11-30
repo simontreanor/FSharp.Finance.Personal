@@ -11,6 +11,10 @@ module General =
         | AnnualInterestRate of AnnualInterestRate:Percent
         | DailyInterestRate of DailyInterestRate:Percent
 
+    let annualInterestRate = function
+        | AnnualInterestRate (Percent ir) -> ir |> Percent
+        | DailyInterestRate (Percent ir) -> ir * 365m |> Percent
+
     let dailyInterestRate = function
         | AnnualInterestRate (Percent ir) -> ir / 365m |> Percent
         | DailyInterestRate (Percent ir) -> ir |> Percent
@@ -30,6 +34,11 @@ module General =
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
         | ValueSome (Simple simple) -> simple
         | ValueNone -> 0<Cent>
+
+    [<Struct>]
+    type ProductFeesSettlement =
+        | DueInFull
+        | ProRataRefund
 
     /// the type and amount of penalty charge
     [<Struct>]
@@ -51,3 +60,9 @@ module General =
         | ValueSome(PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.floor
         | ValueSome(Fixed i) -> i
         | ValueNone -> Int32.MaxValue * 1<Cent> // if anyone is charging more than $42,949,672.96 interest, they need "regulating" // note: famous last words // flag: potential year 2100 bug
+
+    [<Struct>]
+    type InterestHoliday = {
+        InterestHolidayStart: DateTime
+        InterestHolidayEnd: DateTime
+    }

@@ -18,6 +18,7 @@ module SettlementQuoteTests =
             StartDate = startDate
             Principal = 1200 * 100<Cent>
             ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
             InterestGracePeriod = 3<Duration>
@@ -72,6 +73,7 @@ module SettlementQuoteTests =
             StartDate = startDate
             Principal = 1200 * 100<Cent>
             ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
             InterestGracePeriod = 3<Duration>
@@ -126,6 +128,7 @@ module SettlementQuoteTests =
             StartDate = startDate
             Principal = 1200 * 100<Cent>
             ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
             InterestGracePeriod = 3<Duration>
@@ -180,6 +183,7 @@ module SettlementQuoteTests =
             StartDate = startDate
             Principal = 1200 * 100<Cent>
             ProductFees = ValueNone
+            ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
             InterestCap = ValueSome (PercentageOfPrincipal (Percent 100m))
             InterestGracePeriod = 3<Duration>
@@ -230,6 +234,7 @@ module SettlementQuoteTests =
             StartDate = startDate
             Principal = 1200 * 100<Cent>
             ProductFees = ValueNone
+            ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
             InterestCap = ValueSome (PercentageOfPrincipal (Percent 100m))
             InterestGracePeriod = 3<Duration>
@@ -263,6 +268,61 @@ module SettlementQuoteTests =
             ProductFeesPortion = 0<Cent>
             InterestPortion = 3840<Cent>
             PenaltyChargesPortion = 0<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        })
+
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``6) Settlement when product fee is due in full`` () =
+        let startDate = DateTime.Today.AddDays(-60.)
+
+        let sp : RegularPayment.ScheduleParameters = {
+            StartDate = startDate
+            Principal = 1200 * 100<Cent>
+            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFeesSettlement = DueInFull
+            InterestRate = AnnualInterestRate (Percent 9.95m)
+            InterestCap = ValueNone
+            InterestGracePeriod = 3<Duration>
+            InterestHolidays = [||]
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            PaymentCount = 11
+        }
+
+        let actualPayments =
+            [| 18 .. 7 .. 53 |]
+            |> Array.map(fun i ->
+                { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            )
+
+        let actual =
+            voption {
+                let! settlementQuote = Settlement.getQuote DateTime.Today sp actualPayments
+                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote006.md" (ValueSome 300)
+                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
+            }
+
+        let expected = ValueSome (342001<Cent>, {
+            Date = DateTime.Today
+            TermDay = 60<Day>
+            Advance = 0<Cent>
+            ScheduledPayment = 0<Cent>
+            ActualPayments = [| 342001<Cent> |]
+            NetEffect = 342001<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = Settled
+            CumulativeInterest = 5637<Cent>
+            NewInterest = 278<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 117580<Cent>
+            ProductFeesPortion = 222772<Cent>
+            InterestPortion = 649<Cent>
+            PenaltyChargesPortion = 1000<Cent>
             ProductFeesRefund = 0<Cent>
             PrincipalBalance = 0<Cent>
             ProductFeesBalance = 0<Cent>

@@ -9,6 +9,7 @@ let sp = {
     StartDate = startDate
     Principal = 1200 * 100<Cent>
     ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+    ProductFeesSettlement = ProRataRefund
     InterestRate = AnnualInterestRate (Percent 9.95m)
     InterestCap = ValueNone
     InterestGracePeriod = 3<Duration>

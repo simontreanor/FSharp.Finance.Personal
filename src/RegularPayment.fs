@@ -30,16 +30,11 @@ module RegularPayment =
     }
 
     [<Struct>]
-    type InterestHoliday = {
-        InterestHolidayStart: DateTime
-        InterestHolidayEnd: DateTime
-    }
-
-    [<Struct>]
     type ScheduleParameters = {
         StartDate: DateTime
         Principal: int<Cent>
         ProductFees: ProductFees voption
+        ProductFeesSettlement: ProductFeesSettlement
         InterestRate: InterestRate
         InterestCap: InterestCap voption
         InterestGracePeriod: int<Duration>

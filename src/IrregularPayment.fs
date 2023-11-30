@@ -142,14 +142,20 @@ module IrregularPayment =
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` p.NetEffect
             
-            let productFeesDue = Cent.min productFeesTotal (decimal productFeesTotal * decimal p.Day / decimal maxScheduledPaymentDay |> Cent.floor)
+            let productFeesDue =
+                match sp.ProductFeesSettlement with
+                | DueInFull -> productFeesTotal
+                | ProRataRefund -> Cent.min productFeesTotal (decimal productFeesTotal * decimal p.Day / decimal maxScheduledPaymentDay |> Cent.floor)
             let productFeesRemaining = productFeesTotal - productFeesDue
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
             let isSettlement = p.NetEffect = settlementFigure
             let isOverpayment = p.NetEffect > settlementFigure
 
-            let productFeesRefund = if isSettlement then productFeesRemaining else 0<Cent>
+            let productFeesRefund =
+                match sp.ProductFeesSettlement with
+                | DueInFull -> 0<Cent>
+                | ProRataRefund -> if isOverpayment || isSettlement then productFeesRemaining else 0<Cent>
 
             let actualPayment = abs p.NetEffect
             let sign: int<Cent> -> int<Cent> = if p.NetEffect < 0<Cent> then (( * ) -1) else id
@@ -164,9 +170,6 @@ module IrregularPayment =
                     else
                         let principalPayment = decimal (actualPayment - penaltyChargesPortion - interestPortion) / (1m + Percent.toDecimal productFeesPercentage) |> Cent.floor
                         principalPayment, actualPayment - penaltyChargesPortion - interestPortion - principalPayment
-
-            // let principalPortion = Cent.min a.PrincipalBalance principalPortion
-            // let productFeesPortion = Cent.min a.ProductFeesBalance productFeesPortion
 
             let principalBalance = a.PrincipalBalance - sign principalPortion
 
