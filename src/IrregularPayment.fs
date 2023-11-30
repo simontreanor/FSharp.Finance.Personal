@@ -181,24 +181,26 @@ module IrregularPayment =
                 else
                     0<Cent>, 0<Cent>
 
+            let finalPaymentAdjustment = if isOverpayment && (p.ScheduledPayment > abs principalBalance) then principalBalance else 0<Cent>
+
             {
                 Date = sp.StartDate.AddDays(float p.Day)
                 TermDay = p.Day
                 Advance = 0<Cent>
-                ScheduledPayment = p.ScheduledPayment
+                ScheduledPayment = p.ScheduledPayment + finalPaymentAdjustment
                 ActualPayments = p.ActualPayments
-                NetEffect = p.NetEffect
-                PaymentStatus = if a.BalanceStatus = Settled then ValueNone elif isOverpayment then ValueSome Overpayment else p.PaymentStatus
-                BalanceStatus = getBalanceStatus principalBalance
+                NetEffect = p.NetEffect + finalPaymentAdjustment
+                PaymentStatus = if a.BalanceStatus = Settled then ValueNone elif isOverpayment && finalPaymentAdjustment = 0<Cent> then ValueSome Overpayment else p.PaymentStatus
+                BalanceStatus = getBalanceStatus (principalBalance - finalPaymentAdjustment)
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
                 NewPenaltyCharges = newPenaltyCharges
-                PrincipalPortion = sign principalPortion
+                PrincipalPortion = sign (principalPortion + finalPaymentAdjustment)
                 ProductFeesPortion = sign productFeesPortion
                 InterestPortion = interestPortion - carriedInterest
                 PenaltyChargesPortion = penaltyChargesPortion - carriedPenaltyCharges
                 ProductFeesRefund = productFeesRefund
-                PrincipalBalance = principalBalance
+                PrincipalBalance = principalBalance - finalPaymentAdjustment
                 ProductFeesBalance = a.ProductFeesBalance - sign productFeesPortion - productFeesRefund
                 InterestBalance = a.InterestBalance + newInterest' - interestPortion + carriedInterest
                 PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges
