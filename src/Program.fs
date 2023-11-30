@@ -57,7 +57,7 @@ let actualPayments =
 //     Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 300)
 // )
 
-Settlement.getQuote (DateTime.Today) sp actualPayments
+Settlement.getSettlement (DateTime.Today) sp actualPayments
 |> fun s -> Console.WriteLine $"{s}"
 
 exit 0

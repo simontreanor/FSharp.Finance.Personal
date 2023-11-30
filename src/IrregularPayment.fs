@@ -150,7 +150,7 @@ module IrregularPayment =
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
             let isSettlement = p.NetEffect = settlementFigure
-            let isOverpayment = p.NetEffect > settlementFigure
+            let isOverpayment = p.NetEffect > settlementFigure // to-do: only if the overpayment comes from a manual, not a scheduled payment that is not yet due
 
             let productFeesRefund =
                 match sp.ProductFeesSettlement with

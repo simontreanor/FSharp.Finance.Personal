@@ -15,7 +15,7 @@
     <Compile Include="AprUsActuarialTestsExtra.fs" />
     <Compile Include="RegularPaymentTests.fs" />
     <Compile Include="IrregularPaymentTests.fs" />
-    <Compile Include="SettlementQuoteTests.fs" />
+    <Compile Include="SettlementTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
