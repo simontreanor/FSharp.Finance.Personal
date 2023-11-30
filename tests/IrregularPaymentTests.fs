@@ -53,6 +53,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
             }
@@ -60,7 +62,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp ValueNone
 
         irregularSchedule |> ValueOption.iter (Formatting.outputListToHtml "IrregularPaymentTest001.md" (ValueSome 300))
 
@@ -77,6 +79,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
             }
@@ -84,7 +88,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest002.md" (ValueSome 300))
 
@@ -101,6 +105,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
@@ -108,7 +114,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest003.md" (ValueSome 300))
 
@@ -125,6 +131,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
@@ -132,7 +140,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest004.md" (ValueSome 300))
 
@@ -170,6 +178,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
@@ -177,7 +187,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest005.md" (ValueSome 300))
 
@@ -215,6 +225,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
@@ -227,7 +239,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest006.md" (ValueSome 300))
 
@@ -265,6 +277,8 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
@@ -274,7 +288,7 @@ module IrregularPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp
+            |> applyPayments sp (ValueSome (DateTime(2022, 11, 1)))
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest007.md" (ValueSome 300))
 
@@ -301,160 +315,4 @@ module IrregularPaymentTests =
             InterestBalance = 0<Cent>
             PenaltyChargesBalance = 0<Cent>
         }
-        actual |> should equal expected
-
-    [<Fact>]
-    let ``Settlement quote. 1) Settlement falling on a scheduled payment date`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
-
-        let sp : RegularPayment.ScheduleParameters = {
-            StartDate = startDate
-            Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
-            InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-            PaymentCount = 11
-        }
-
-        let actualPayments =
-            [| 18 .. 7 .. 53 |]
-            |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            )
-
-        let actual =
-            voption{
-                let! settlementQuote = getSettlementQuote (DateTime.Today.AddDays -3.) sp actualPayments
-                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote001.md" (ValueSome 300)
-                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
-            }
-
-        let expected = ValueSome (196970<Cent>, {
-            Date = (DateTime.Today.AddDays -3.)
-            TermDay = 57<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 32315<Cent>
-            ActualPayments = [| 196970<Cent> |]
-            NetEffect = 196970<Cent>
-            PaymentStatus = ValueSome Overpayment
-            BalanceStatus = Settled
-            CumulativeInterest = 5359<Cent>
-            NewInterest = 371<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 117580<Cent>
-            ProductFeesPortion = 79019<Cent>
-            InterestPortion = 371<Cent>
-            PenaltyChargesPortion = 0<Cent>
-            ProductFeesRefund = 143753<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        })
-
-        actual |> should equal expected
-
-    [<Fact>]
-    let ``Settlement quote. 2) Settlement not falling on a scheduled payment date`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
-
-        let sp : RegularPayment.ScheduleParameters = {
-            StartDate = startDate
-            Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
-            InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-            PaymentCount = 11
-        }
-
-        let actualPayments =
-            [| 18 .. 7 .. 53 |]
-            |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            )
-
-        let actual =
-            voption {
-                let! settlementQuote = getSettlementQuote DateTime.Today sp actualPayments
-                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote002.md" (ValueSome 300)
-                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
-            }
-
-        let expected = ValueSome (202648<Cent>, {
-            Date = DateTime.Today
-            TermDay = 60<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 0<Cent>
-            ActualPayments = [| 202648<Cent> |]
-            NetEffect = 202648<Cent>
-            PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
-            CumulativeInterest = 5637<Cent>
-            NewInterest = 278<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 117580<Cent>
-            ProductFeesPortion = 83419<Cent>
-            InterestPortion = 649<Cent>
-            PenaltyChargesPortion = 1000<Cent>
-            ProductFeesRefund = 139353<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        })
-
-        actual |> should equal expected
-
-    [<Fact>]
-    let ``Settlement quote. 3) Settlement not falling on a scheduled payment date but having an actual payment already made on the same day`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
-
-        let sp : RegularPayment.ScheduleParameters = {
-            StartDate = startDate
-            Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
-            InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
-            PaymentCount = 11
-        }
-
-        let actualPayments =
-            [| 18 .. 7 .. 60 |]
-            |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            )
-
-        let actual =
-            voption {
-                let! settlementQuote = getSettlementQuote DateTime.Today sp actualPayments
-                settlementQuote.SettlementStatement |> Formatting.outputListToHtml "SettlementQuote003.md" (ValueSome 300)
-                return settlementQuote.SettlementFigure, Array.last settlementQuote.SettlementStatement
-            }
-
-        let expected = ValueSome (200148<Cent>, {
-            Date = DateTime.Today
-            TermDay = 60<Day>
-            Advance = 0<Cent>
-            ScheduledPayment = 0<Cent>
-            ActualPayments = [| 2500<Cent>; 200148<Cent> |]
-            NetEffect = 202648<Cent>
-            PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
-            CumulativeInterest = 5637<Cent>
-            NewInterest = 278<Cent>
-            NewPenaltyCharges = 0<Cent>
-            PrincipalPortion = 117580<Cent>
-            ProductFeesPortion = 83419<Cent>
-            InterestPortion = 649<Cent>
-            PenaltyChargesPortion = 1000<Cent>
-            ProductFeesRefund = 139353<Cent>
-            PrincipalBalance = 0<Cent>
-            ProductFeesBalance = 0<Cent>
-            InterestBalance = 0<Cent>
-            PenaltyChargesBalance = 0<Cent>
-        })
-
         actual |> should equal expected

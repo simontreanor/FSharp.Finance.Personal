@@ -95,7 +95,7 @@ module IrregularPayment =
         |> Array.sortBy _.Day
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
-    let calculateSchedule (sp: RegularPayment.ScheduleParameters) (mergedPayments: Payment array) =
+    let calculateSchedule (sp: RegularPayment.ScheduleParameters) isEarlySettlement (mergedPayments: Payment array) =
         if Array.isEmpty mergedPayments then [||] else
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
@@ -136,7 +136,9 @@ module IrregularPayment =
             let newPenaltyCharges = penaltyChargesTotal p.PenaltyCharges
             let penaltyChargesPortion = newPenaltyCharges + a.PenaltyChargesBalance |> ``don't apportion for a refund`` p.NetEffect
 
-            let newInterest = if a.PrincipalBalance <= 0<Cent> then 0<Cent> else decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal (p.Day - a.TermDay) |> Cent.floor
+            let interestChargeableDays = RegularPayment.interestChargeableDays sp.StartDate isEarlySettlement sp.InterestGracePeriod sp.InterestHolidays a.TermDay p.Day
+
+            let newInterest = if a.PrincipalBalance <= 0<Cent> then 0<Cent> else decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays |> Cent.floor
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` p.NetEffect
             
@@ -201,38 +203,12 @@ module IrregularPayment =
         ) advance
         |> Array.takeWhile(fun a -> a.TermDay = 0<Day> || (a.TermDay > 0<Day> && a.PaymentStatus.IsSome))
 
-    let applyPayments (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
+    let applyPayments (sp: RegularPayment.ScheduleParameters) isEarlySettlement (actualPayments: Payment array) =
         voption {
             let! schedule = RegularPayment.calculateSchedule sp
             return
                 schedule
                 |> _.Items
                 |> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
-                |> calculateSchedule sp
-        }
-
-    type SettlementQuote = {
-        SettlementFigure: int<Cent>
-        SettlementStatement: Apportionment array
-    }
-
-    let getSettlementQuote (settlementDate: DateTime) (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
-        let extraPaymentAmount = sp.Principal * 10
-        let extraPayment = {
-            Day = int (settlementDate.Date - sp.StartDate.Date).Days * 1<Day>
-            ScheduledPayment = 0<Cent>
-            ActualPayments = [| extraPaymentAmount |]
-            NetEffect = 0<Cent>
-            PaymentStatus = ValueNone
-            PenaltyCharges = [| |]
-        }
-        voption {
-            let! appliedPayments = applyPayments sp (Array.concat [| actualPayments; [| extraPayment |] |])
-            let finalApportionment = appliedPayments |> Array.filter(fun a -> a.Date <= settlementDate) |> Array.last
-            let actualPaymentAmounts = finalApportionment.ActualPayments |> Array.filter(fun p -> p <> extraPaymentAmount)
-            let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
-            let settlementFigure = finalApportionment.NetEffect + finalApportionment.PrincipalBalance - actualPaymentsTotal
-            let settlementPayment = { extraPayment with ActualPayments = [| settlementFigure |] }
-            let! settlementStatement = applyPayments sp (Array.concat [| actualPayments; [| settlementPayment |] |])
-            return { SettlementFigure = settlementFigure; SettlementStatement = settlementStatement }
+                |> calculateSchedule sp isEarlySettlement
         }

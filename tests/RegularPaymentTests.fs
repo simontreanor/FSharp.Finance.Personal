@@ -18,6 +18,8 @@ module RegularPaymentTests =
             ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
+            InterestGracePeriod = 3<Duration>
+            InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
             PaymentCount = 11
         }

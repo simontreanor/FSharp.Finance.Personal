@@ -22,6 +22,7 @@
     <Compile Include="Apr.fs" />
     <Compile Include="RegularPayment.fs" />
     <Compile Include="IrregularPayment.fs" />
+    <Compile Include="SettlementQuote.fs" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <Compile Include="Program.fs" />

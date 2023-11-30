@@ -30,15 +30,38 @@ module RegularPayment =
     }
 
     [<Struct>]
+    type InterestHoliday = {
+        InterestHolidayStart: DateTime
+        InterestHolidayEnd: DateTime
+    }
+
+    [<Struct>]
     type ScheduleParameters = {
         StartDate: DateTime
         Principal: int<Cent>
         ProductFees: ProductFees voption
         InterestRate: InterestRate
         InterestCap: InterestCap voption
+        InterestGracePeriod: int<Duration>
+        InterestHolidays: InterestHoliday array
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
     }
+
+    let interestChargeableDays (startDate: DateTime) (settlementDate: DateTime voption) (interestGracePeriod: int<Duration>) interestHolidays (fromDay: int<Day>) (toDay: int<Day>) =
+        let interestFreeDays =
+            interestHolidays
+            |> Array.collect(fun ih ->
+                [| (ih.InterestHolidayStart.Date - startDate.Date).Days .. (ih.InterestHolidayEnd.Date - startDate.Date).Days |]
+            )
+            |> Array.filter(fun d -> d >= int fromDay && d <= int toDay)
+        let isWithinGracePeriod d = d <= int interestGracePeriod
+        let isSettledWithinGracePeriod = settlementDate |> ValueOption.map(fun sd -> isWithinGracePeriod (sd.Date - startDate.Date).Days) |> ValueOption.defaultValue false
+        [| int fromDay .. int toDay |]
+        |> Array.filter(fun d -> not (isSettledWithinGracePeriod && isWithinGracePeriod d))
+        |> Array.filter(fun d -> interestFreeDays |> Array.exists ((=) d) |> not)
+        |> Array.length
+        |> fun l -> max 0 (l - 1)
 
     let calculateSchedule sp =
         voption {
@@ -52,7 +75,7 @@ module RegularPayment =
             let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
             let roughPayment = (decimal sp.Principal + (decimal sp.Principal * Percent.toDecimal dailyInterestRate * decimal finalPaymentDay)) / decimal paymentCount
             let advance = { Day = 0<Day>; Advance = sp.Principal + productFees; Payment = 0<Cent>; Interest = 0<Cent>; CumulativeInterest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
-            let tolerance = paymentCount * 1<Cent> // tolerance is the payment count expressed as a number of cents // to-do: check if this is too tolerant with large payment counts
+            let tolerance = paymentCount * 1<Cent>
             let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<Day>)
             let! schedule =
                 roughPayment
@@ -61,7 +84,8 @@ module RegularPayment =
                     let schedule =
                         paymentDays
                         |> Array.scan(fun si d ->
-                            let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal (d - si.Day) |> Cent.floor
+                            let interestChargeableDays = interestChargeableDays sp.StartDate ValueNone sp.InterestGracePeriod sp.InterestHolidays si.Day d
+                            let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays |> Cent.floor
                             let interest' = si.CumulativeInterest + interest |> fun i -> if i >= interestCap then interestCap - si.CumulativeInterest else interest
                             let payment = Cent.floor roughPayment'
                             let principalPortion = payment - interest
