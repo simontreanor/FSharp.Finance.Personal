@@ -43,7 +43,7 @@ module RegularPayment =
         PaymentCount: int
     }
 
-    let interestChargeableDays (startDate: DateTime) (settlementDate: DateTime voption) (interestGracePeriod: int<Duration>) interestHolidays (fromDay: int<Day>) (toDay: int<Day>) =
+    let interestChargeableDays (startDate: DateTime) (earlySettlementDate: DateTime voption) (interestGracePeriod: int<Duration>) interestHolidays (fromDay: int<Day>) (toDay: int<Day>) =
         let interestFreeDays =
             interestHolidays
             |> Array.collect(fun ih ->
@@ -51,7 +51,7 @@ module RegularPayment =
             )
             |> Array.filter(fun d -> d >= int fromDay && d <= int toDay)
         let isWithinGracePeriod d = d <= int interestGracePeriod
-        let isSettledWithinGracePeriod = settlementDate |> ValueOption.map(fun sd -> isWithinGracePeriod (sd.Date - startDate.Date).Days) |> ValueOption.defaultValue false
+        let isSettledWithinGracePeriod = earlySettlementDate |> ValueOption.map(fun sd -> isWithinGracePeriod (sd.Date - startDate.Date).Days) |> ValueOption.defaultValue false
         [| int fromDay .. int toDay |]
         |> Array.filter(fun d -> not (isSettledWithinGracePeriod && isWithinGracePeriod d))
         |> Array.filter(fun d -> interestFreeDays |> Array.exists ((=) d) |> not)
@@ -61,6 +61,7 @@ module RegularPayment =
     let calculateSchedule sp =
         voption {
             if sp.PaymentCount = 0 then return! ValueNone else
+            if sp.StartDate > UnitPeriod.configStartDate sp.UnitPeriodConfig then return! ValueNone else
             let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
             let finalPaymentDate = paymentDates |> Array.max
             let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days
@@ -70,7 +71,7 @@ module RegularPayment =
             let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
             let roughPayment = (decimal sp.Principal + (decimal sp.Principal * Percent.toDecimal dailyInterestRate * decimal finalPaymentDay)) / decimal paymentCount
             let advance = { Day = 0<Day>; Advance = sp.Principal + productFees; Payment = 0<Cent>; Interest = 0<Cent>; CumulativeInterest = 0<Cent>; Principal = 0<Cent>; PrincipalBalance = sp.Principal + productFees }
-            let tolerance = paymentCount * 1<Cent>
+            let tolerance = paymentCount * 2<Cent>
             let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<Day>)
             let! schedule =
                 roughPayment

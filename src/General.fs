@@ -11,6 +11,12 @@ module General =
         | AnnualInterestRate of AnnualInterestRate:Percent
         | DailyInterestRate of DailyInterestRate:Percent
 
+    module InterestRate =
+
+        let serialise = function
+        | AnnualInterestRate (Percent air) -> $"AnnualInterestRate{air}%%"
+        | DailyInterestRate (Percent dir) -> $"DailyInterestRate{dir}%%"
+
     let annualInterestRate = function
         | AnnualInterestRate (Percent ir) -> ir |> Percent
         | DailyInterestRate (Percent ir) -> ir * 365m |> Percent
@@ -20,6 +26,7 @@ module General =
         | DailyInterestRate (Percent ir) -> ir |> Percent
 
     /// the type and amount of any product fees, taking into account any constraints
+    [<RequireQualifiedAccess>]
     [<Struct>]
     type ProductFees =
         | Percentage of Percentage:Percent * Cap:int<Cent> voption
@@ -27,12 +34,12 @@ module General =
 
     let productFeesTotal (principal: int<Cent>) productFees =
         match productFees with
-        | ValueSome (Percentage (Percent percentage, ValueSome cap)) ->
+        | ValueSome (ProductFees.Percentage (Percent percentage, ValueSome cap)) ->
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
             |> fun cents -> Cent.min cents cap
-        | ValueSome (Percentage (Percent percentage, ValueNone)) ->
+        | ValueSome (ProductFees.Percentage (Percent percentage, ValueNone)) ->
             Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
-        | ValueSome (Simple simple) -> simple
+        | ValueSome (ProductFees.Simple simple) -> simple
         | ValueNone -> 0<Cent>
 
     [<Struct>]
@@ -50,6 +57,7 @@ module General =
         penaltyCharges
         |> Array.sumBy(function LatePayment m | InsufficientFunds m -> m)
 
+    [<RequireQualifiedAccess>]
     [<Struct>]
     type InterestCap =
         | PercentageOfPrincipal of PercentageOfPrincipal:Percent
@@ -57,8 +65,8 @@ module General =
 
     let calculateInterestCap (principal: int<Cent>) interestCap =
         match interestCap with
-        | ValueSome(PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.floor
-        | ValueSome(Fixed i) -> i
+        | ValueSome(InterestCap.PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.floor
+        | ValueSome(InterestCap.Fixed i) -> i
         | ValueNone -> Int32.MaxValue * 1<Cent> // if anyone is charging more than $42,949,672.96 interest, they need "regulating" // note: famous last words // flag: potential year 2100 bug
 
     [<Struct>]

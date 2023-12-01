@@ -21,6 +21,7 @@ module IrregularPayment =
         | Settled
         | OpenBalance
         | RefundDue
+        static member FromString = function "Settled" -> Settled | "RefundDue" -> RefundDue | _ -> OpenBalance
 
     /// a real payment
     [<Struct>]
@@ -95,7 +96,7 @@ module IrregularPayment =
         |> Array.sortBy _.Day
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
-    let calculateSchedule (sp: RegularPayment.ScheduleParameters) isEarlySettlement (mergedPayments: Payment array) =
+    let calculateSchedule (sp: RegularPayment.ScheduleParameters) earlySettlementDate (mergedPayments: Payment array) =
         if Array.isEmpty mergedPayments then [||] else
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
@@ -136,7 +137,7 @@ module IrregularPayment =
             let newPenaltyCharges = penaltyChargesTotal p.PenaltyCharges
             let penaltyChargesPortion = newPenaltyCharges + a.PenaltyChargesBalance |> ``don't apportion for a refund`` p.NetEffect
 
-            let interestChargeableDays = RegularPayment.interestChargeableDays sp.StartDate isEarlySettlement sp.InterestGracePeriod sp.InterestHolidays a.TermDay p.Day
+            let interestChargeableDays = RegularPayment.interestChargeableDays sp.StartDate earlySettlementDate sp.InterestGracePeriod sp.InterestHolidays a.TermDay p.Day
 
             let newInterest = if a.PrincipalBalance <= 0<Cent> then 0<Cent> else decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays |> Cent.floor
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
@@ -208,12 +209,12 @@ module IrregularPayment =
         ) advance
         |> Array.takeWhile(fun a -> a.TermDay = 0<Day> || (a.TermDay > 0<Day> && a.PaymentStatus.IsSome))
 
-    let applyPayments (sp: RegularPayment.ScheduleParameters) isEarlySettlement (actualPayments: Payment array) =
+    let applyPayments (sp: RegularPayment.ScheduleParameters) earlySettlementDate (actualPayments: Payment array) =
         voption {
             let! schedule = RegularPayment.calculateSchedule sp
             return
                 schedule
                 |> _.Items
                 |> mergePayments (Day.todayAsOffset sp.StartDate) 1000<Cent> actualPayments
-                |> calculateSchedule sp isEarlySettlement
+                |> calculateSchedule sp earlySettlementDate
         }

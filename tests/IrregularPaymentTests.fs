@@ -53,7 +53,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
@@ -80,7 +80,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
@@ -107,7 +107,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -134,7 +134,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -182,7 +182,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -230,7 +230,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -283,7 +283,7 @@ module IrregularPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| PercentageOfPrincipal (Percent 100m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
                 InterestGracePeriod = 3<Duration>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -315,6 +315,59 @@ module IrregularPaymentTests =
             PrincipalPortion = 150000<Cent>
             ProductFeesPortion = 0<Cent>
             InterestPortion = 0<Cent>
+            PenaltyChargesPortion = 0<Cent>
+            ProductFeesRefund = 0<Cent>
+            PrincipalBalance = 0<Cent>
+            ProductFeesBalance = 0<Cent>
+            InterestBalance = 0<Cent>
+            PenaltyChargesBalance = 0<Cent>
+        }
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``8) Check that penalty charge for late payment is not applied on scheduled payment date when payment has not yet been made`` () =
+        let startDate = DateTime.Today.AddDays -56.
+        let (sp: RegularPayment.ScheduleParameters) =
+            {
+                StartDate = startDate
+                Principal = 1500 * 100<Cent>
+                ProductFees = ValueNone
+                ProductFeesSettlement = ProRataRefund
+                InterestRate = DailyInterestRate (Percent 0.8m)
+                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestGracePeriod = 3<Duration>
+                InterestHolidays = [||]
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14.)
+                PaymentCount = 11
+            }
+        let actualPayments = [|
+            { Day = 14<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 24386<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 28<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 24386<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 42<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 24386<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> applyPayments sp ValueNone
+
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "IrregularPaymentTest008.md" (ValueSome 300))
+
+        let actual = irregularSchedule |> ValueOption.map Array.last
+        let expected = ValueSome {
+            Date = startDate.AddDays 154.
+            TermDay = 154<Day>
+            Advance = 0<Cent>
+            ScheduledPayment = 24366<Cent> // to-do: this should be less than the level payment
+            ActualPayments = [| |]
+            NetEffect = 24366<Cent>
+            PaymentStatus = ValueSome NotYetDue
+            BalanceStatus = Settled
+            CumulativeInterest = 118226<Cent>
+            NewInterest = 2454<Cent>
+            NewPenaltyCharges = 0<Cent>
+            PrincipalPortion = 21912<Cent>
+            ProductFeesPortion = 0<Cent>
+            InterestPortion = 2454<Cent>
             PenaltyChargesPortion = 0<Cent>
             ProductFeesRefund = 0<Cent>
             PrincipalBalance = 0<Cent>

@@ -17,7 +17,7 @@ module SettlementTests =
         let sp : RegularPayment.ScheduleParameters = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -35,9 +35,9 @@ module SettlementTests =
 
         let actual =
             voption{
-                let! settlementQuote = Settlement.getSettlement (DateTime.Today.AddDays -3.) sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote001.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getSettlement (DateTime.Today.AddDays -3.) sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement001.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (196970<Cent>, {
@@ -72,7 +72,7 @@ module SettlementTests =
         let sp : RegularPayment.ScheduleParameters = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -90,9 +90,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote002.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement002.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (202648<Cent>, {
@@ -127,7 +127,7 @@ module SettlementTests =
         let sp : RegularPayment.ScheduleParameters = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -145,9 +145,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote003.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement003.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (200148<Cent>, {
@@ -185,7 +185,7 @@ module SettlementTests =
             ProductFees = ValueNone
             ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
-            InterestCap = ValueSome (PercentageOfPrincipal (Percent 100m))
+            InterestCap = ValueSome (InterestCap.PercentageOfPrincipal (Percent 100m))
             InterestGracePeriod = 3<Duration>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
@@ -196,9 +196,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote004.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement004.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (120000<Cent>, {
@@ -236,7 +236,7 @@ module SettlementTests =
             ProductFees = ValueNone
             ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
-            InterestCap = ValueSome (PercentageOfPrincipal (Percent 100m))
+            InterestCap = ValueSome (InterestCap.PercentageOfPrincipal (Percent 100m))
             InterestGracePeriod = 3<Duration>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
@@ -247,9 +247,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote005.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement005.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (123840<Cent>, {
@@ -284,7 +284,7 @@ module SettlementTests =
         let sp : RegularPayment.ScheduleParameters = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -302,9 +302,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote006.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement006.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (342001<Cent>, {
@@ -339,7 +339,7 @@ module SettlementTests =
         let sp : RegularPayment.ScheduleParameters = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -357,9 +357,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getNextScheduled DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote007.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getNextScheduled DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement007.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (32315<Cent>, {
@@ -394,7 +394,7 @@ module SettlementTests =
         let sp : RegularPayment.ScheduleParameters = {
             StartDate = startDate
             Principal = 1200 * 100<Cent>
-            ProductFees = ValueSome <| Percentage (Percent 189.47m, ValueNone)
+            ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
@@ -412,9 +412,9 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlementQuote = Settlement.getAllOverdue DateTime.Today sp actualPayments
-                settlementQuote.WhatIfStatement |> Formatting.outputListToHtml "SettlementQuote008.md" (ValueSome 300)
-                return settlementQuote.PaymentAmount, Array.last settlementQuote.WhatIfStatement
+                let! settlement = Settlement.getAllOverdue DateTime.Today sp actualPayments
+                settlement.WhatIfStatement |> Formatting.outputListToHtml "Settlement008.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
             }
 
         let expected = ValueSome (68808<Cent>, {

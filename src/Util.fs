@@ -89,6 +89,8 @@ module Util =
     module TrackingDay =
         /// create a tracking day from an int
         let fromInt (i: int) = i * 1<TrackingDay>
+        /// create a date from a year, month, and tracking day
+        let toDate y m td = DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td)
 
     /// utility functions for arrays
     module Array =

@@ -15,7 +15,7 @@ module Schedule =
     let generate count direction unitPeriodSchedule =
         let adjustMonthEnd (monthEndTrackingDay: int<TrackingDay>) (dt: DateTime) =
             if dt.Day > 15 && monthEndTrackingDay > 28<TrackingDay> then
-                DateTime(dt.Year, dt.Month, min (int monthEndTrackingDay) (DateTime.DaysInMonth(dt.Year, dt.Month)))
+                TrackingDay.toDate dt.Year dt.Month (int monthEndTrackingDay)
             else dt
         let generate =
             match unitPeriodSchedule |> constrain with
@@ -26,15 +26,15 @@ module Schedule =
             | Weekly (multiple, startDate) ->
                 Array.map (fun c -> startDate.AddDays (float(c * 7 * multiple)))
             | SemiMonthly (SemiMonthlyConfig (year, month, td1, td2)) ->
-                let startDate = DateTime(year, month, min (int td1) (DateTime.DaysInMonth(year, month)))
+                let startDate = TrackingDay.toDate year month (int td1)
                 let offset, monthEndTrackingDay = (if td1 > td2 then 1, td1 else 0, td2) |> fun (o, metd) -> (match direction with Forward -> o, metd | Reverse -> o - 1, metd)
                 Array.collect(fun c -> [|
                     startDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
-                    startDate.AddMonths (c + offset) |> fun dt -> DateTime(dt.Year, dt.Month, min (int td2) (DateTime.DaysInMonth(dt.Year, dt.Month))) |> adjustMonthEnd monthEndTrackingDay
+                    startDate.AddMonths (c + offset) |> fun dt -> TrackingDay.toDate dt.Year dt.Month (int td2) |> adjustMonthEnd monthEndTrackingDay
                 |])
                 >> Array.take count
             | Monthly (multiple, (MonthlyConfig (year, month, td))) ->
-                let startDate = DateTime(year, month, min (int td) (DateTime.DaysInMonth(year, month)))
+                let startDate = TrackingDay.toDate year month (int td)
                 Array.map (fun c -> startDate.AddMonths (c * multiple) |> adjustMonthEnd td)
         match direction with
         | Forward -> [| 0 .. (count - 1) |] |> generate

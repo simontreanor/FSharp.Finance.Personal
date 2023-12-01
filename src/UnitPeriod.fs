@@ -109,6 +109,22 @@ module UnitPeriod =
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
         | Monthly of MonthMultiple:int * MonthlyConfig
 
+    module Config =
+
+        let serialise = function
+        | Single dt -> $"""Single+{dt.ToString "yyyy-MM-dd"}"""
+        | Daily sd -> $"""Daily+{sd.ToString "yyyy-MM-dd"}"""
+        | Weekly (wm, wsd) -> $"""{wm.ToString "00"}-Weekly+{wsd.ToString "yyyy-MM-dd"}"""
+        | SemiMonthly (SemiMonthlyConfig (y, m, td1, td2)) -> $"""SemiMonthly+{y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}+{(int td2).ToString "00"})"""
+        | Monthly (mm, MonthlyConfig(y, m, d)) -> $"""{mm.ToString "00"}-Monthly+{y.ToString "0000"}+{m.ToString "00"}+{(int d).ToString "00"}"""
+
+    let configStartDate = function
+        | Single dt -> dt
+        | Daily sd -> sd
+        | Weekly (_, wsd) -> wsd
+        | SemiMonthly (SemiMonthlyConfig(y, m, d1, _)) -> TrackingDay.toDate y m (int d1)
+        | Monthly (_, MonthlyConfig(y, m, d)) -> TrackingDay.toDate y m (int d)
+
     /// constrains the freqencies to valid values
     let constrain = function
         | Single _ | Daily _ | Weekly _ as f -> f
@@ -123,7 +139,7 @@ module UnitPeriod =
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxLoanLength: int<Duration>) (startDate: DateTime) (config: Config) =
-        let offset y m td = (DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td) - startDate).Days |> fun f -> int f * 1<Duration>
+        let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<Duration>
         match config with
         | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
