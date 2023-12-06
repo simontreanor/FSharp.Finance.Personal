@@ -31,6 +31,8 @@ module Formatting =
                         |> String.concat "; "
                         |> fun s -> $"<td>{s}</td>"
                 )
+        let fi = FileInfo $"{__SOURCE_DIRECTORY__}/../io/{fileName}"
+        if not <| fi.Directory.Exists then fi.Directory.Create() else ()
         writer.ToString()
         |> clean
         |> fun s -> File.WriteAllText($"{__SOURCE_DIRECTORY__}/../io/{fileName}", s)

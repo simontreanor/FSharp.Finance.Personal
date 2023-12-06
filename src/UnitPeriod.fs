@@ -14,9 +14,9 @@ module UnitPeriod =
 
     /// calculate the transaction term based on specific events
     let transactionTerm (consummationDate: DateTime) firstFinanceChargeEarnedDate (lastPaymentDueDate: DateTime) lastAdvanceScheduledDate =
-        let beginDateTime = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
-        let endDateTime = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
-        { Start = beginDateTime; End = endDateTime; Duration = (endDateTime.Date - beginDateTime.Date).Days * 1<Duration> }
+        let beginDate = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
+        let endDate = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
+        { Start = beginDate; End = endDate; Duration = (endDate.Date - beginDate.Date).Days * 1<Duration> }
 
     /// interval between payments
     [<Struct>]

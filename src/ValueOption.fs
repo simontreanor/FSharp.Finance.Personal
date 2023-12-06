@@ -5,7 +5,7 @@ module ValueOptionCE =
 
     type ValueOptionBuilder() = 
 
-        member inline _.Bind(value: 'a voption, [<InlineIfLambda>]binder: 'a -> 'b voption) : 'b voption = ValueOption.bind binder value
+        member inline _.Bind(value: 'a voption, [<InlineIfLambda>] f: 'a -> 'b voption) : 'b voption = ValueOption.bind f value
         
         member inline _.Return(value: 'a) : 'a voption = ValueSome value
 
