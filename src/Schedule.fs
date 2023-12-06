@@ -51,7 +51,9 @@ module Schedule =
         | Day -> Daily firstTransferDate
         | Week multiple -> Weekly (multiple, firstTransferDate)
         | SemiMonth ->
-            transferDates
+            if Array.length transferDates % 2 = 1 then // deals with odd numbers of transfer dates
+                transferDates |> Array.lastButOne |> fun a -> [| transferDates; [| a |] |] |> Array.concat
+            else transferDates
             |> Array.chunkBySize 2
             |> Array.transpose
             |> Array.map (Array.maxBy _.Day >> _.Day)

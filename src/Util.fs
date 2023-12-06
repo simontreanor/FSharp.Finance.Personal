@@ -94,6 +94,8 @@ module Util =
 
     /// utility functions for arrays
     module Array =
+        /// gets the last but one member of an array
+        let lastButOne a = a |> Array.rev |> Array.tail |> Array.head
         /// equivalent of Array.last but yields a default value instead of an error if the array is empty
         let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
         /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
