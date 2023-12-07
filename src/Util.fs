@@ -30,17 +30,17 @@ module Util =
     [<RequireQualifiedAccess>]
     module Cent =
         /// max of two cent values
-        let max (c1: int<Cent>) (c2: int<Cent>) = min (int c1) (int c2) * 1<Cent>
+        let max (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
         /// min of two cent values
-        let min (c1: int<Cent>) (c2: int<Cent>) = min (int c1) (int c2) * 1<Cent>
+        let min (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
         /// round a decimal value to whole cents
-        let round (m: decimal) = int (round m) * 1<Cent>
-        let ceil (m: decimal) = int (ceil m) * 1<Cent>
-        let floor (m: decimal) = int (floor m) * 1<Cent>
+        let round (m: decimal) = int64 (round m) * 1L<Cent>
+        let ceil (m: decimal) = int64 (ceil m) * 1L<Cent>
+        let floor (m: decimal) = int64 (floor m) * 1L<Cent>
         /// lower to the base currency unit
         let fromDecimal (m: decimal) = round (m * 100m)
         /// raise to the standard currency unit
-        let toDecimal (c: int<Cent>) = decimal c / 100m
+        let toDecimal (c: int64<Cent>) = decimal c / 100m
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
     type Percent = Percent of decimal

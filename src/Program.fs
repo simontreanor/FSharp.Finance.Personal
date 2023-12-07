@@ -1,13 +1,13 @@
 open System
 open FSharp.Finance.Personal
 
-open RegularPayment
+open ScheduledPayment
 
 let startDate = DateTime.Today.AddDays(-60.)
 
 let sp = {
     StartDate = startDate
-    Principal = 1200 * 100<Cent>
+    Principal = 120000L<Cent>
     ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
     ProductFeesSettlement = ProRataRefund
     InterestRate = AnnualInterestRate (Percent 9.95m)
@@ -21,40 +21,40 @@ let sp = {
 // calculateSchedule sp
 // |> ValueOption.iter(
 //     _.Items
-//     >> Formatting.outputListToHtml "RegularPayment.md" (ValueSome 180)
+//     >> Formatting.outputListToHtml "output/ScheduledPayment.md" (ValueSome 180)
 // )
 
-open IrregularPayment
+open ActualPayment
 
 // let actualPayments =
 //     [| 7 .. 7 .. 14 |]
 //     |> Array.map(fun i ->
-//         { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//         { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
 //     )
 
 let actualPayments =
     [| 18 .. 7 .. 60 |]
     |> Array.map(fun i ->
-        { Day = i * 1<Day>; ScheduledPayment = 0<Cent>; ActualPayments = [| 2500<Cent> |]; NetEffect = 0<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
     )
 
 // let actualPayments = [|
-//     { Day = 15<Day>; Adjustments = [| ActualPayment 32315<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-//     { Day = 18<Day>; Adjustments = [| ActualPayment 10000<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-//     { Day = 19<Day>; Adjustments = [| ActualPayment -10000<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 15<Day>; Adjustments = [| ActualPayment 32315L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 18<Day>; Adjustments = [| ActualPayment 10000L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 19<Day>; Adjustments = [| ActualPayment -10000L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
 // |]
 
 // let actualPayments = [|
-//     { Day = 170<Day>; Adjustments = [| ActualPayment 300<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-//     { Day = 177<Day>; Adjustments = [| ActualPayment 300<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-//     { Day = 184<Day>; Adjustments = [| ActualPayment 300<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-//     { Day = 191<Day>; Adjustments = [| ActualPayment 300<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 170<Day>; Adjustments = [| ActualPayment 300L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 177<Day>; Adjustments = [| ActualPayment 300L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 184<Day>; Adjustments = [| ActualPayment 300L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+//     { Day = 191<Day>; Adjustments = [| ActualPayment 300L<Cent> |]; PaymentStatus = ValueNone; PenaltyCharges = [||] }
 // |]
 
 // actualPayments
 // |> applyPayments sp
 // |> ValueOption.iter(
-//     Formatting.outputListToHtml "IrregularPayment.md" (ValueSome 300)
+//     Formatting.outputListToHtml "ActualPayment.md" (ValueSome 300)
 // )
 
 Settlement.getSettlement (DateTime.Today) sp actualPayments

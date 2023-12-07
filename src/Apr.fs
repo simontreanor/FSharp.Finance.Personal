@@ -27,7 +27,7 @@ module Apr =
     type Transfer = {
         TransferType: TransferType
         Date: DateTime
-        Amount: int<Cent>
+        Amount: int64<Cent>
     }
 
     /// APR as in https://www.handbook.fca.org.uk/handbook/MCOB/10/?view=chapter
@@ -81,8 +81,8 @@ module Apr =
                     | Accurate -> 100.*(min+middle)
                 decimal(``fit APR`` 0. 10000. 0)
 
-        let calculateApr (startDate: DateTime) (principal: int<Cent>) (transfers: Transfer array) =
-            if principal = 0<Cent> || Array.isEmpty transfers then ValueNone else
+        let calculateApr (startDate: DateTime) (principal: int64<Cent>) (transfers: Transfer array) =
+            if principal = 0L<Cent> || Array.isEmpty transfers then ValueNone else
             let ak = [| principal, 0m |]
             let a'k' =
                 transfers
@@ -263,7 +263,7 @@ module Apr =
             Percent 0m
         | UsActuarial ->
             let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
-            if Array.isEmpty payments then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0<Cent> } |]
+            if Array.isEmpty payments then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
             else payments
             |> UsActuarial.generalEquation advanceDate advanceDate advances
             |> fun apr -> Decimal.Round(apr, precision) |> Percent.fromDecimal

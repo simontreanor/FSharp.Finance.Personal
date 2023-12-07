@@ -5,7 +5,7 @@ open System
 /// functions for settling outstanding payments
 module Settlement =
 
-    open IrregularPayment
+    open ActualPayment
 
     [<Struct>]
     type QuoteType =
@@ -16,20 +16,20 @@ module Settlement =
     [<Struct>]
     type Quote = {
         QuoteType: QuoteType
-        PaymentAmount: int<Cent>
+        PaymentAmount: int64<Cent>
         CurrentStatement: Apportionment array
         WhatIfStatement: Apportionment array
     }
 
-    let getSettlement (settlementDate: DateTime) (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
+    let getSettlement (settlementDate: DateTime) (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
         voption {
             let! currentStatement = applyPayments sp ValueNone actualPayments
-            let newPaymentAmount = sp.Principal * 10
+            let newPaymentAmount = sp.Principal * 10L
             let newPayment = {
                 Day = int (settlementDate.Date - sp.StartDate.Date).Days * 1<Day>
-                ScheduledPayment = 0<Cent>
+                ScheduledPayment = 0L<Cent>
                 ActualPayments = [| newPaymentAmount |]
-                NetEffect = 0<Cent>
+                NetEffect = 0L<Cent>
                 PaymentStatus = ValueNone
                 PenaltyCharges = [| |]
             }
@@ -43,19 +43,19 @@ module Settlement =
             return { QuoteType = Settlement; PaymentAmount = settlementPaymentAmount; CurrentStatement = currentStatement; WhatIfStatement = statement }
         }
 
-    let getNextScheduled asOfDate (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
+    let getNextScheduled asOfDate (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
         voption {
             let! currentStatement = applyPayments sp ValueNone actualPayments
             let! apportionment =
                 currentStatement
                 |> Array.filter(fun a -> a.Date >= asOfDate)
-                |> Array.tryFind(fun a -> a.ScheduledPayment > 0<Cent>)
+                |> Array.tryFind(fun a -> a.ScheduledPayment > 0L<Cent>)
                 |> function Some a -> ValueSome a | _ -> ValueNone
             let newPayment = {
                 Day = apportionment.TermDay
-                ScheduledPayment = 0<Cent>
+                ScheduledPayment = 0L<Cent>
                 ActualPayments = [| apportionment.ScheduledPayment |]
-                NetEffect = 0<Cent>
+                NetEffect = 0L<Cent>
                 PaymentStatus = ValueNone
                 PenaltyCharges = [| |]
             }
@@ -63,7 +63,7 @@ module Settlement =
             return { QuoteType = NextScheduled; PaymentAmount = apportionment.ScheduledPayment; CurrentStatement = currentStatement; WhatIfStatement = statement }
         }
 
-    let getAllOverdue asOfDate (sp: RegularPayment.ScheduleParameters) (actualPayments: Payment array) =
+    let getAllOverdue asOfDate (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
         voption {
             let! currentStatement = applyPayments sp ValueNone actualPayments
             let missedPayments =
@@ -78,9 +78,9 @@ module Settlement =
             let newPaymentAmount = missedPayments + interestAndPenaltyCharges
             let newPayment = {
                 Day = int (asOfDate.Date - sp.StartDate.Date).Days * 1<Day>
-                ScheduledPayment = 0<Cent>
+                ScheduledPayment = 0L<Cent>
                 ActualPayments = [| newPaymentAmount |]
-                NetEffect = 0<Cent>
+                NetEffect = 0L<Cent>
                 PaymentStatus = ValueNone
                 PenaltyCharges = [| |]
             }

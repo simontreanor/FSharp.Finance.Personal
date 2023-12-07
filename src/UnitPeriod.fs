@@ -112,11 +112,11 @@ module UnitPeriod =
     module Config =
 
         let serialise = function
-        | Single dt -> $"""Single+{dt.ToString "yyyy-MM-dd"}"""
-        | Daily sd -> $"""Daily+{sd.ToString "yyyy-MM-dd"}"""
-        | Weekly (wm, wsd) -> $"""{wm.ToString "00"}-Weekly+{wsd.ToString "yyyy-MM-dd"}"""
-        | SemiMonthly (SemiMonthlyConfig (y, m, td1, td2)) -> $"""SemiMonthly+{y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}+{(int td2).ToString "00"})"""
-        | Monthly (mm, MonthlyConfig(y, m, d)) -> $"""{mm.ToString "00"}-Monthly+{y.ToString "0000"}+{m.ToString "00"}+{(int d).ToString "00"}"""
+        | Single dt -> $"""(Single {dt.ToString "yyyy-MM-dd"})"""
+        | Daily sd -> $"""(Daily {sd.ToString "yyyy-MM-dd"})"""
+        | Weekly (wm, wsd) -> $"""({wm.ToString "00"}-Weekly ({wsd.ToString "yyyy-MM-dd"}))"""
+        | SemiMonthly (SemiMonthlyConfig (y, m, td1, td2)) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
+        | Monthly (mm, MonthlyConfig(y, m, d)) -> $"""({mm.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
 
     let configStartDate = function
         | Single dt -> dt

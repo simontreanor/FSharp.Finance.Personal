@@ -22,8 +22,8 @@ module AprActuarialTestsExtra =
 
     type AprUsActuarialTestItem = {
         StartDate: DateTime
-        Principal: int<Cent>
-        PaymentAmount: int<Cent>
+        Principal: int64<Cent>
+        PaymentAmount: int64<Cent>
         PaymentDates: DateTime array
         ExpectedApr: Percent
         ActualApr: Percent

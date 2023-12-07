@@ -13,9 +13,9 @@
     <Compile Include="AprUnitedKingdomTests.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
-    <Compile Include="RegularPaymentTests.fs" />
-    <Compile Include="RegularPaymentTestsExtra.fs" />
-    <Compile Include="IrregularPaymentTests.fs" />
+    <Compile Include="ScheduledPaymentTests.fs" />
+    <Compile Include="ActualPaymentTestsExtra.fs" />
+    <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="SettlementTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

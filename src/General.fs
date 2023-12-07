@@ -14,8 +14,8 @@ module General =
     module InterestRate =
 
         let serialise = function
-        | AnnualInterestRate (Percent air) -> $"AnnualInterestRate{air}%%"
-        | DailyInterestRate (Percent dir) -> $"DailyInterestRate{dir}%%"
+        | AnnualInterestRate (Percent air) -> $"AnnualInterestRate{air}pc"
+        | DailyInterestRate (Percent dir) -> $"DailyInterestRate{dir}pc"
 
     let annualInterestRate = function
         | AnnualInterestRate (Percent ir) -> ir |> Percent
@@ -29,18 +29,18 @@ module General =
     [<RequireQualifiedAccess>]
     [<Struct>]
     type ProductFees =
-        | Percentage of Percentage:Percent * Cap:int<Cent> voption
-        | Simple of Simple:int<Cent>
+        | Percentage of Percentage:Percent * Cap:int64<Cent> voption
+        | Simple of Simple:int64<Cent>
 
-    let productFeesTotal (principal: int<Cent>) productFees =
+    let productFeesTotal (principal: int64<Cent>) productFees =
         match productFees with
         | ValueSome (ProductFees.Percentage (Percent percentage, ValueSome cap)) ->
-            Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
+            Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int64 m * 1L<Cent>)
             |> fun cents -> Cent.min cents cap
         | ValueSome (ProductFees.Percentage (Percent percentage, ValueNone)) ->
-            Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int m * 1<Cent>)
+            Decimal.Floor(decimal principal * decimal percentage) / 100m |> fun m -> (int64 m * 1L<Cent>)
         | ValueSome (ProductFees.Simple simple) -> simple
-        | ValueNone -> 0<Cent>
+        | ValueNone -> 0L<Cent>
 
     [<Struct>]
     type ProductFeesSettlement =
@@ -50,8 +50,8 @@ module General =
     /// the type and amount of penalty charge
     [<Struct>]
     type PenaltyCharge =
-        | LatePayment of LatePayment:int<Cent>
-        | InsufficientFunds of InsufficientFunds:int<Cent>
+        | LatePayment of LatePayment:int64<Cent>
+        | InsufficientFunds of InsufficientFunds:int64<Cent>
 
     let penaltyChargesTotal penaltyCharges =
         penaltyCharges
@@ -61,13 +61,13 @@ module General =
     [<Struct>]
     type InterestCap =
         | PercentageOfPrincipal of PercentageOfPrincipal:Percent
-        | Fixed of int<Cent>
+        | Fixed of int64<Cent>
 
-    let calculateInterestCap (principal: int<Cent>) interestCap =
+    let calculateInterestCap (principal: int64<Cent>) interestCap =
         match interestCap with
         | ValueSome(InterestCap.PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.floor
         | ValueSome(InterestCap.Fixed i) -> i
-        | ValueNone -> Int32.MaxValue * 1<Cent> // if anyone is charging more than $42,949,672.96 interest, they need "regulating" // note: famous last words // flag: potential year 2100 bug
+        | ValueNone -> Int64.MaxValue * 1L<Cent>
 
     [<Struct>]
     type InterestHoliday = {
