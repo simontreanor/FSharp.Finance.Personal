@@ -30,7 +30,7 @@ module Util =
     [<RequireQualifiedAccess>]
     module Cent =
         /// max of two cent values
-        let max (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
+        let max (c1: int64<Cent>) (c2: int64<Cent>) = max (int64 c1) (int64 c2) * 1L<Cent>
         /// min of two cent values
         let min (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
         /// round a decimal value to whole cents
@@ -46,7 +46,7 @@ module Util =
     type Percent = Percent of decimal
 
     /// raises a decimal to an int power
-    let powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))
+    let powi (power: int64) (base': decimal) = decimal (Math.Pow(double base', double power))
 
     /// raises a decimal to a decimal power
     let powm (power: decimal) (base': decimal) = decimal (Math.Pow(double base', double power))

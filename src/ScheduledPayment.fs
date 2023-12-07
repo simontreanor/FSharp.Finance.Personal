@@ -78,7 +78,11 @@ module ScheduledPayment =
             let! schedule =
                 roughPayment
                 |> Array.solve(fun roughPayment' ->
-                    if roughPayment' = 0m then ValueNone else
+                    if roughPayment' = 0m then
+                        ValueNone
+                    elif roughPayment' < decimal sp.Principal * -10m || roughPayment' > decimal sp.Principal * 10m then
+                        ValueNone
+                    else
                     let schedule =
                         paymentDays
                         |> Array.scan(fun si d ->

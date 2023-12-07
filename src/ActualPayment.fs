@@ -95,14 +95,13 @@ module ActualPayment =
         |> Array.sortBy _.Day
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
-    let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate (mergedPayments: Payment array) =
+    let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (mergedPayments: Payment array) =
         if Array.isEmpty mergedPayments then [||] else
         let asOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
         let dailyInterestRate = sp.InterestRate |> dailyInterestRate
         let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
         let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
-        let maxScheduledPaymentDay = mergedPayments |> Array.filter(fun p -> p.ScheduledPayment > 0L<Cent>) |> Array.maxBy _.Day |> _.Day
         let dayZeroPayment = mergedPayments |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0L<Cent> then 0L<Cent> else amount
         let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal productFeesPercentage) |> Cent.floor
@@ -147,8 +146,8 @@ module ActualPayment =
             let productFeesDue =
                 match sp.ProductFeesSettlement with
                 | DueInFull -> productFeesTotal
-                | ProRataRefund -> decimal productFeesTotal * decimal p.Day / decimal maxScheduledPaymentDay |> Cent.floor
-            let productFeesRemaining = Cent.max 0L<Cent> (productFeesTotal - productFeesDue)
+                | ProRataRefund -> decimal productFeesTotal * decimal p.Day / decimal originalFinalPaymentDay |> Cent.floor
+            let productFeesRemaining = if p.Day > originalFinalPaymentDay then 0L<Cent> else Cent.max 0L<Cent> (productFeesTotal - productFeesDue)
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
             let isSettlement = p.NetEffect = settlementFigure
@@ -158,7 +157,7 @@ module ActualPayment =
             let productFeesRefund =
                 match sp.ProductFeesSettlement with
                 | DueInFull -> 0L<Cent>
-                | ProRataRefund -> if isOverpayment || isSettlement then productFeesRemaining else 0L<Cent>
+                | ProRataRefund -> if isProjection || isOverpayment || isSettlement then productFeesRemaining else 0L<Cent>
 
             let actualPayment = abs p.NetEffect
             let sign: int64<Cent> -> int64<Cent> = if p.NetEffect < 0L<Cent> then (( * ) -1L) else id
@@ -218,7 +217,7 @@ module ActualPayment =
                 schedule
                 |> _.Items
                 |> mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
-                |> calculateSchedule sp earlySettlementDate
+                |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
         }
 
     let allPaidOnTime (scheduleItems: ScheduledPayment.ScheduleItem array) =

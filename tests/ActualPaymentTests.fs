@@ -48,7 +48,7 @@ module ActualPaymentTests =
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 26)
+                AsOfDate = DateTime(2023, 4, 1)
                 StartDate = DateTime(2022, 11, 26)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
@@ -76,7 +76,7 @@ module ActualPaymentTests =
     let ``2) Standard schedule with month-end payments from 32 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 10, 29)
+                AsOfDate = DateTime(2023, 4, 1)
                 StartDate = DateTime(2022, 10, 29)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
@@ -104,7 +104,7 @@ module ActualPaymentTests =
     let ``3) Standard schedule with mid-monthly payments from 14 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 1)
+                AsOfDate = DateTime(2023, 3, 16)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
@@ -132,7 +132,7 @@ module ActualPaymentTests =
     let ``4) Made 2 payments on early repayment, then one single payment after the full balance is overdue`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 1)
+                AsOfDate = DateTime(2023, 3, 22)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
@@ -181,7 +181,7 @@ module ActualPaymentTests =
     let ``5) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 1)
+                AsOfDate = DateTime(2023, 3, 22)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
@@ -230,7 +230,7 @@ module ActualPaymentTests =
     let ``6) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 1)
+                AsOfDate = DateTime(2023, 3, 25)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
@@ -284,7 +284,7 @@ module ActualPaymentTests =
     let ``7) Zero-day loan`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 1)
+                AsOfDate = DateTime(2022, 11, 2)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
