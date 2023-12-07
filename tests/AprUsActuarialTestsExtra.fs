@@ -30,7 +30,7 @@ module AprActuarialTestsExtra =
     }
 
     let aprUsActuarialTestData =
-        IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/AprUsActuarialTestData.json"
+        IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/in/AprUsActuarialTestData.json"
         |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
         |> Array.map(fun ssi ->
             let principal = Cent.fromDecimal ssi.Principal

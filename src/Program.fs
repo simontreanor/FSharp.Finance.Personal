@@ -21,7 +21,7 @@ let sp = {
 // calculateSchedule sp
 // |> ValueOption.iter(
 //     _.Items
-//     >> Formatting.outputListToHtml "output/ScheduledPayment.md" (ValueSome 180)
+//     >> Formatting.outputListToHtml "out/ScheduledPayment.md" (ValueSome 180)
 // )
 
 open ActualPayment
@@ -54,7 +54,7 @@ let actualPayments =
 // actualPayments
 // |> applyPayments sp
 // |> ValueOption.iter(
-//     Formatting.outputListToHtml "ActualPayment.md" (ValueSome 300)
+//     Formatting.outputListToHtml "out/ActualPayment.md" (ValueSome 300)
 // )
 
 Settlement.getSettlement (DateTime.Today) sp actualPayments

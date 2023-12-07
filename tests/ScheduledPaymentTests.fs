@@ -28,7 +28,7 @@ module ScheduledPaymentTests =
     [<Fact>]
     let ``1) Biweekly schedule $1200 with short first period`` () =
         let actual = biweeklyParameters 120000L<Cent> 8<Duration> |> calculateSchedule
-        actual |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "ScheduledPaymentTest001.md" (ValueSome 300))
+        actual |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest001.md" (ValueSome 300))
         let expected = ValueSome {
             Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
             FinalPaymentDay = 148<Day>
@@ -45,7 +45,7 @@ module ScheduledPaymentTests =
     [<Fact>]
     let ``2) Biweekly schedule $1200 with first period equal to unit-period length`` () =
         let actual = biweeklyParameters 120000L<Cent> 14<Duration> |> calculateSchedule
-        actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "ScheduledPaymentTest002.md" (ValueSome 300))
+        actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest002.md" (ValueSome 300))
         let expected = ValueSome {
             Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
             FinalPaymentDay = 154<Day>
@@ -62,7 +62,7 @@ module ScheduledPaymentTests =
     [<Fact>]
     let ``3) Biweekly schedule $1200 with long first period`` () =
         let actual = biweeklyParameters 120000L<Cent> 15<Duration> |> calculateSchedule
-        actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "ScheduledPaymentTest003.md" (ValueSome 300))
+        actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest003.md" (ValueSome 300))
         let expected = ValueSome {
             Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
             FinalPaymentDay = 155<Day>

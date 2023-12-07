@@ -112,7 +112,7 @@ module ScheduledPayment =
                     items |> Array.sumBy _.Principal
                 with
                     | ex ->
-                        items |> Formatting.outputListToHtml "error/SchedulePayment.calculateSchedule.principalTotalError.md" (ValueSome 300)
+                        items |> Formatting.outputListToHtml $"out/SchedulePayment.calculateSchedule.principalTotalError.{DateTime.Now.Ticks}.md" (ValueSome 300)
                         failwith $"Principal total calculation error: {ex.Message}"
             let interestTotal = items |> Array.sumBy _.Interest
             return! ValueSome {
