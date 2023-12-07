@@ -8,3 +8,5 @@ bin/
 obj/
 
 .vs/*
+
+io/out/*
