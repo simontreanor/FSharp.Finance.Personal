@@ -13,13 +13,14 @@ module ScheduledPaymentTests =
     let biweeklyParameters principal offset =
         let startDate = DateTime(2023, 11, 15)
         {
+            AsOfDate = startDate
             StartDate = startDate
             Principal = decimal principal |> Cent.floor
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
             PaymentCount = 11
@@ -27,11 +28,12 @@ module ScheduledPaymentTests =
 
     [<Fact>]
     let ``1) Biweekly schedule $1200 with short first period`` () =
-        let actual = biweeklyParameters 120000L<Cent> 8<Duration> |> calculateSchedule
+        let actual = biweeklyParameters 120000L<Cent> 8<Days> |> calculateSchedule
         actual |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest001.md" (ValueSome 300))
         let expected = ValueSome {
+            AsOfDay = 0<OffsetDay>
             Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
-            FinalPaymentDay = 148<Day>
+            FinalPaymentDay = 148<OffsetDay>
             LevelPayment = 32253L<Cent>
             FinalPayment = 32253L<Cent>
             PaymentTotal = 354783L<Cent>
@@ -44,11 +46,12 @@ module ScheduledPaymentTests =
 
     [<Fact>]
     let ``2) Biweekly schedule $1200 with first period equal to unit-period length`` () =
-        let actual = biweeklyParameters 120000L<Cent> 14<Duration> |> calculateSchedule
+        let actual = biweeklyParameters 120000L<Cent> 14<Days> |> calculateSchedule
         actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest002.md" (ValueSome 300))
         let expected = ValueSome {
+            AsOfDay = 0<OffsetDay>
             Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
-            FinalPaymentDay = 154<Day>
+            FinalPaymentDay = 154<OffsetDay>
             LevelPayment = 32306L<Cent>
             FinalPayment = 32303L<Cent>
             PaymentTotal = 355363L<Cent>
@@ -61,11 +64,12 @@ module ScheduledPaymentTests =
 
     [<Fact>]
     let ``3) Biweekly schedule $1200 with long first period`` () =
-        let actual = biweeklyParameters 120000L<Cent> 15<Duration> |> calculateSchedule
+        let actual = biweeklyParameters 120000L<Cent> 15<Days> |> calculateSchedule
         actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest003.md" (ValueSome 300))
         let expected = ValueSome {
+            AsOfDay = 0<OffsetDay>
             Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
-            FinalPaymentDay = 155<Day>
+            FinalPaymentDay = 155<OffsetDay>
             LevelPayment = 32315L<Cent>
             FinalPayment = 32310L<Cent>
             PaymentTotal = 355460L<Cent>

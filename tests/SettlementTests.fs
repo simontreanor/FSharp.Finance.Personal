@@ -15,13 +15,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
@@ -30,7 +31,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+                { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
         let actual =
@@ -41,8 +42,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (196970L<Cent>, {
-            Date = (DateTime.Today.AddDays -3.)
-            TermDay = 57<Day>
+            OffsetDate = (DateTime.Today.AddDays -3.)
+            OffsetDay = 57<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 32315L<Cent>
             ActualPayments = [| 196970L<Cent> |]
@@ -70,13 +71,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
@@ -85,7 +87,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+                { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
         let actual =
@@ -96,8 +98,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (202648L<Cent>, {
-            Date = DateTime.Today
-            TermDay = 60<Day>
+            OffsetDate = DateTime.Today
+            OffsetDay = 60<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 202648L<Cent> |]
@@ -125,13 +127,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
@@ -140,7 +143,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+                { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
         let actual =
@@ -151,8 +154,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (200148L<Cent>, {
-            Date = DateTime.Today
-            TermDay = 60<Day>
+            OffsetDate = DateTime.Today
+            OffsetDay = 60<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 2500L<Cent>; 200148L<Cent> |]
@@ -180,13 +183,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays -3.
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueNone
             ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
             InterestCap = ValueSome (InterestCap.PercentageOfPrincipal (Percent 100m))
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
             PaymentCount = 5
@@ -202,8 +206,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (120000L<Cent>, {
-            Date = DateTime.Today
-            TermDay = 3<Day>
+            OffsetDate = DateTime.Today
+            OffsetDay = 3<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 120000L<Cent> |]
@@ -231,13 +235,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays -4.
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueNone
             ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
             InterestCap = ValueSome (InterestCap.PercentageOfPrincipal (Percent 100m))
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
             PaymentCount = 5
@@ -253,8 +258,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (123840L<Cent>, {
-            Date = DateTime.Today
-            TermDay = 4<Day>
+            OffsetDate = DateTime.Today
+            OffsetDay = 4<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 123840L<Cent> |]
@@ -282,13 +287,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
@@ -297,7 +303,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+                { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
         let actual =
@@ -308,8 +314,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (342001L<Cent>, {
-            Date = DateTime.Today
-            TermDay = 60<Day>
+            OffsetDate = DateTime.Today
+            OffsetDay = 60<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 342001L<Cent> |]
@@ -338,12 +344,13 @@ module SettlementTests =
 
         let sp : ScheduledPayment.ScheduleParameters = {
             StartDate = startDate
+            AsOfDate = DateTime.Today
             Principal = 120000L<Cent>
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
@@ -352,7 +359,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 32315L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+                { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 32315L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
         let actual =
@@ -363,8 +370,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (32315L<Cent>, {
-            Date = startDate.AddDays(155.)
-            TermDay = 155<Day>
+            OffsetDate = startDate.AddDays(155.)
+            OffsetDay = 155<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 32310L<Cent>
             ActualPayments = [| |]
@@ -392,13 +399,14 @@ module SettlementTests =
         let startDate = DateTime.Today.AddDays(-60.)
 
         let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime.Today
             StartDate = startDate
             Principal = 120000L<Cent>
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
             InterestCap = ValueNone
-            InterestGracePeriod = 3<Duration>
+            InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
@@ -407,7 +415,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 32315L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+                { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 32315L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
             )
 
         let actual =
@@ -418,8 +426,8 @@ module SettlementTests =
             }
 
         let expected = ValueSome (68808L<Cent>, {
-            Date = startDate.AddDays(155.)
-            TermDay = 155<Day>
+            OffsetDate = startDate.AddDays(155.)
+            OffsetDay = 155<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 30250L<Cent>
             ActualPayments = [| |]

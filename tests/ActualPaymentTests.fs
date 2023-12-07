@@ -15,15 +15,15 @@ module ActualPaymentTests =
         |> Array.rev
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
-            last |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| finalPayment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
-            rest |> Array.map(fun d -> { Day =   d * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| levelPayment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+            last |> Array.map(fun d -> { Day =   d * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| finalPayment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+            rest |> Array.map(fun d -> { Day =   d * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| levelPayment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
         |]
         |> Array.concat
         |> Array.rev
 
-    let quickExpectedFinalApportionment date termDay paymentAmount cumulativeInterest newInterest principalPortion = ValueSome {
-        Date = date
-        TermDay = termDay
+    let quickExpectedFinalApportionment date offsetDay paymentAmount cumulativeInterest newInterest principalPortion = ValueSome {
+        OffsetDate = date
+        OffsetDay = offsetDay
         Advance = 0L<Cent>
         ScheduledPayment = paymentAmount
         ActualPayments = [| paymentAmount |]
@@ -48,13 +48,14 @@ module ActualPaymentTests =
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 11, 26)
                 StartDate = DateTime(2022, 11, 26)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
@@ -65,23 +66,24 @@ module ActualPaymentTests =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter (Formatting.outputListToHtml "ActualPaymentTest001.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter (Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 125<Day> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 125<OffsetDay> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
         actual |> should equal expected
 
     [<Fact>]
     let ``2) Standard schedule with month-end payments from 32 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 10, 29)
                 StartDate = DateTime(2022, 10, 29)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
@@ -92,23 +94,24 @@ module ActualPaymentTests =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest002.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 153<Day> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 153<OffsetDay> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
         actual |> should equal expected
 
     [<Fact>]
     let ``3) Standard schedule with mid-monthly payments from 14 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 11, 1)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
@@ -119,23 +122,24 @@ module ActualPaymentTests =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest003.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 15)) 134<Day> 49148L<Cent> 95764L<Cent> 8994L<Cent> 40154L<Cent>
+        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 15)) 134<OffsetDay> 49148L<Cent> 95764L<Cent> 8994L<Cent> 40154L<Cent>
         actual |> should equal expected
 
     [<Fact>]
     let ``4) Made 2 payments on early repayment, then one single payment after the full balance is overdue`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 11, 1)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
@@ -146,12 +150,12 @@ module ActualPaymentTests =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest004.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = ValueSome {
-            Date = DateTime(2023, 3, 21)
-            TermDay = 140<Day>
+            OffsetDate = DateTime(2023, 3, 21)
+            OffsetDay = 140<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 121391L<Cent> |]
@@ -177,13 +181,14 @@ module ActualPaymentTests =
     let ``5) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 11, 1)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
@@ -194,12 +199,12 @@ module ActualPaymentTests =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest005.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = ValueSome {
-            Date = DateTime(2023, 3, 21)
-            TermDay = 140<Day>
+            OffsetDate = DateTime(2023, 3, 21)
+            OffsetDay = 140<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 147459L<Cent> |]
@@ -225,34 +230,35 @@ module ActualPaymentTests =
     let ``6) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 11, 1)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
         let actualPayments = [|
-            { Day =   2<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =   4<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 140<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent> * 3L |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 143<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| -26068L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day =   2<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day =   4<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 140<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent> * 3L |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 143<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| -26068L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
         |]
 
         let irregularSchedule =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest006.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = ValueSome {
-            Date = DateTime(2023, 3, 24)
-            TermDay = 143<Day>
+            OffsetDate = DateTime(2023, 3, 24)
+            OffsetDay = 143<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| -26068L<Cent> |]
@@ -278,31 +284,32 @@ module ActualPaymentTests =
     let ``7) Zero-day loan`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime(2022, 11, 1)
                 StartDate = DateTime(2022, 11, 1)
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
             }
         let actualPayments = [|
-            { Day = 0<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 150000L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 150000L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
         |]
 
         let irregularSchedule =
             actualPayments
             |> applyPayments sp (ValueSome (DateTime(2022, 11, 1)))
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest007.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = ValueSome {
-            Date = DateTime(2022, 11, 1)
-            TermDay = 0<Day>
+            OffsetDate = DateTime(2022, 11, 1)
+            OffsetDay = 0<OffsetDay>
             Advance = 150000L<Cent>
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 150000L<Cent> |]
@@ -329,33 +336,34 @@ module ActualPaymentTests =
         let startDate = DateTime.Today.AddDays -56.
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
+                AsOfDate = DateTime.Today
                 StartDate = startDate
                 Principal = 150000L<Cent>
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
                 InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
-                InterestGracePeriod = 3<Duration>
+                InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14.)
                 PaymentCount = 11
             }
         let actualPayments = [|
-            { Day = 14<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 28<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 42<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 14<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 28<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { Day = 42<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
         |]
 
         let irregularSchedule =
             actualPayments
             |> applyPayments sp ValueNone
 
-        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "ActualPaymentTest008.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
         let expected = ValueSome {
-            Date = startDate.AddDays 154.
-            TermDay = 154<Day>
+            OffsetDate = startDate.AddDays 154.
+            OffsetDay = 154<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 24366L<Cent> // to-do: this should be less than the level payment
             ActualPayments = [| |]

@@ -26,7 +26,7 @@ module Settlement =
             let! currentStatement = applyPayments sp ValueNone actualPayments
             let newPaymentAmount = sp.Principal * 10L
             let newPayment = {
-                Day = int (settlementDate.Date - sp.StartDate.Date).Days * 1<Day>
+                Day = int (settlementDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
                 ScheduledPayment = 0L<Cent>
                 ActualPayments = [| newPaymentAmount |]
                 NetEffect = 0L<Cent>
@@ -34,7 +34,7 @@ module Settlement =
                 PenaltyCharges = [| |]
             }
             let! appliedPayments = applyPayments sp (ValueSome settlementDate) (Array.concat [| actualPayments; [| newPayment |] |])
-            let finalApportionment = appliedPayments |> Array.filter(fun a -> a.Date <= settlementDate) |> Array.last
+            let finalApportionment = appliedPayments |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
             let actualPaymentAmounts = finalApportionment.ActualPayments |> Array.filter(fun p -> p <> newPaymentAmount)
             let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
             let settlementPaymentAmount = finalApportionment.NetEffect + finalApportionment.PrincipalBalance - actualPaymentsTotal
@@ -48,11 +48,11 @@ module Settlement =
             let! currentStatement = applyPayments sp ValueNone actualPayments
             let! apportionment =
                 currentStatement
-                |> Array.filter(fun a -> a.Date >= asOfDate)
+                |> Array.filter(fun a -> a.OffsetDate >= asOfDate)
                 |> Array.tryFind(fun a -> a.ScheduledPayment > 0L<Cent>)
                 |> function Some a -> ValueSome a | _ -> ValueNone
             let newPayment = {
-                Day = apportionment.TermDay
+                Day = apportionment.OffsetDay
                 ScheduledPayment = 0L<Cent>
                 ActualPayments = [| apportionment.ScheduledPayment |]
                 NetEffect = 0L<Cent>
@@ -72,12 +72,12 @@ module Settlement =
                 |> Array.sumBy _.ScheduledPayment
             let interestAndPenaltyCharges =
                 currentStatement
-                |> Array.filter(fun a -> a.Date <= asOfDate)
+                |> Array.filter(fun a -> a.OffsetDate <= asOfDate)
                 |> Array.last
                 |> fun a -> a.InterestBalance + a.PenaltyChargesBalance
             let newPaymentAmount = missedPayments + interestAndPenaltyCharges
             let newPayment = {
-                Day = int (asOfDate.Date - sp.StartDate.Date).Days * 1<Day>
+                Day = int (asOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
                 ScheduledPayment = 0L<Cent>
                 ActualPayments = [| newPaymentAmount |]
                 NetEffect = 0L<Cent>

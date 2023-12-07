@@ -6,13 +6,14 @@ open ScheduledPayment
 let startDate = DateTime.Today.AddDays(-60.)
 
 let sp = {
+    AsOfDate = startDate
     StartDate = startDate
     Principal = 120000L<Cent>
     ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
     ProductFeesSettlement = ProRataRefund
     InterestRate = AnnualInterestRate (Percent 9.95m)
     InterestCap = ValueNone
-    InterestGracePeriod = 3<Duration>
+    InterestGracePeriod = 3<Days>
     InterestHolidays = [||]
     UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
     PaymentCount = 11
@@ -35,7 +36,7 @@ open ActualPayment
 let actualPayments =
     [| 18 .. 7 .. 60 |]
     |> Array.map(fun i ->
-        { Day = i * 1<Day>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
     )
 
 // let actualPayments = [|

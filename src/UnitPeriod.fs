@@ -9,19 +9,19 @@ module UnitPeriod =
     type TransactionTerm = {
         Start: DateTime
         End: DateTime
-        Duration: int<Duration>
+        Duration: int<Days>
     }
 
     /// calculate the transaction term based on specific events
     let transactionTerm (consummationDate: DateTime) firstFinanceChargeEarnedDate (lastPaymentDueDate: DateTime) lastAdvanceScheduledDate =
         let beginDate = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
         let endDate = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
-        { Start = beginDate; End = endDate; Duration = (endDate.Date - beginDate.Date).Days * 1<Duration> }
+        { Start = beginDate; End = endDate; Duration = (endDate.Date - beginDate.Date).Days * 1<Days> }
 
     /// interval between payments
     [<Struct>]
     type UnitPeriod =
-        | NoInterval of UnitPeriodDays:int<Duration> // cf. (b)(5)(vii)
+        | NoInterval of UnitPeriodDays:int<Days> // cf. (b)(5)(vii)
         | Day
         | Week of WeekMultiple:int
         | SemiMonth
@@ -54,7 +54,7 @@ module UnitPeriod =
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
         if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) < 2 then
-            min term.Duration 365<Duration>
+            min term.Duration 365<Days>
             |> NoInterval
         else
             let periodLengths =
@@ -138,8 +138,8 @@ module UnitPeriod =
         | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
-    let maxPaymentCount (maxLoanLength: int<Duration>) (startDate: DateTime) (config: Config) =
-        let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<Duration>
+    let maxPaymentCount (maxLoanLength: int<Days>) (startDate: DateTime) (config: Config) =
+        let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<Days>
         match config with
         | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day

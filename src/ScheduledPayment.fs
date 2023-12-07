@@ -8,7 +8,7 @@ module ScheduledPayment =
     /// 
     [<Struct>]
     type ScheduleItem = {
-        Day: int<Day>
+        Day: int<OffsetDay>
         Advance: int64<Cent>
         Payment: int64<Cent>
         Interest: int64<Cent>
@@ -18,8 +18,9 @@ module ScheduledPayment =
     }
 
     type Schedule = {
+        AsOfDay: int<OffsetDay>
         Items: ScheduleItem array
-        FinalPaymentDay: int<Day>
+        FinalPaymentDay: int<OffsetDay>
         LevelPayment: int64<Cent>
         FinalPayment: int64<Cent>
         PaymentTotal: int64<Cent>
@@ -31,19 +32,20 @@ module ScheduledPayment =
 
     [<Struct>]
     type ScheduleParameters = {
+        AsOfDate: DateTime
         StartDate: DateTime
         Principal: int64<Cent>
         ProductFees: ProductFees voption
         ProductFeesSettlement: ProductFeesSettlement
         InterestRate: InterestRate
         InterestCap: InterestCap voption
-        InterestGracePeriod: int<Duration>
+        InterestGracePeriod: int<Days>
         InterestHolidays: InterestHoliday array
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
     }
 
-    let interestChargeableDays (startDate: DateTime) (earlySettlementDate: DateTime voption) (interestGracePeriod: int<Duration>) interestHolidays (fromDay: int<Day>) (toDay: int<Day>) =
+    let interestChargeableDays (startDate: DateTime) (earlySettlementDate: DateTime voption) (interestGracePeriod: int<Days>) interestHolidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
         let interestFreeDays =
             interestHolidays
             |> Array.collect(fun ih ->
@@ -64,15 +66,15 @@ module ScheduledPayment =
             if sp.StartDate > UnitPeriod.configStartDate sp.UnitPeriodConfig then return! ValueNone else
             let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
             let finalPaymentDate = paymentDates |> Array.max
-            let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<Day>
+            let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
             let paymentCount = paymentDates |> Array.length
             let productFees = productFeesTotal sp.Principal sp.ProductFees
             let dailyInterestRate = sp.InterestRate |> dailyInterestRate
             let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
             let roughPayment = decimal sp.Principal / decimal paymentCount
-            let advance = { Day = 0<Day>; Advance = sp.Principal + productFees; Payment = 0L<Cent>; Interest = 0L<Cent>; CumulativeInterest = 0L<Cent>; Principal = 0L<Cent>; PrincipalBalance = sp.Principal + productFees }
+            let advance = { Day = 0<OffsetDay>; Advance = sp.Principal + productFees; Payment = 0L<Cent>; Interest = 0L<Cent>; CumulativeInterest = 0L<Cent>; Principal = 0L<Cent>; PrincipalBalance = sp.Principal + productFees }
             let tolerance = int64 paymentCount * 2L<Cent>
-            let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<Day>)
+            let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<OffsetDay>)
             let! schedule =
                 roughPayment
                 |> Array.solve(fun roughPayment' ->
@@ -116,6 +118,7 @@ module ScheduledPayment =
                         failwith $"Principal total calculation error: {ex.Message}"
             let interestTotal = items |> Array.sumBy _.Interest
             return! ValueSome {
+                AsOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
                 Items = items
                 FinalPaymentDay = finalPaymentDay
                 LevelPayment = items |> Array.countBy _.Payment |> Array.maxByOrDefault snd fst 0L<Cent>

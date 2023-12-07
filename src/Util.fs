@@ -67,17 +67,11 @@ module Util =
         // multiply two percentages together
         let multiply (Percent p1) (Percent p2) = p1 * p2 |> fromDecimal
 
-    /// an offset from the start date
-    [<Measure>] type Day
+    /// the offset of a date from the start date, in days
+    [<Measure>] type OffsetDay
 
-    /// utility functions for days
-    [<RequireQualifiedAccess>]
-    module Day =
-        let todayAsOffset (startDate: DateTime) =
-            (DateTime.Today - startDate).Days * 1<Day>
-
-    /// a number of days
-    [<Measure>] type Duration
+    /// a duration of a number of days
+    [<Measure>] type Days
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is

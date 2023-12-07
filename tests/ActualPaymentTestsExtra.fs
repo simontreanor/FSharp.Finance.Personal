@@ -9,7 +9,8 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTestsExtra =
 
-    let startDates = [| -90. .. 5. .. 90. |] |> Array.map (DateTime(2023, 12, 1).AddDays)
+    let asOfDate = DateTime(2023, 12, 1)
+    let startDates = [| -90. .. 5. .. 90. |] |> Array.map (asOfDate.AddDays)
     let advanceAmounts = [| 10000L<Cent> .. 5000L<Cent> .. 250000L<Cent> |]
     let productFees =
         let none = [| ValueNone |]
@@ -27,7 +28,7 @@ module ActualPaymentTestsExtra =
         let fixed' = [| 10000L<Cent> .. 10000L<Cent> .. 50000L<Cent> |] |> Array.map (InterestCap.Fixed >> ValueSome)
         let percentageOfPrincipal = [| 50m .. 50m .. 200m |] |> Array.map (Percent >> InterestCap.PercentageOfPrincipal >> ValueSome)
         [| none; fixed'; percentageOfPrincipal |] |> Array.concat
-    let interestGracePeriods = [| 0<Duration> .. 1<Duration> .. 7<Duration> |]
+    let interestGracePeriods = [| 0<Days> .. 1<Days> .. 7<Days> |]
     let interestHolidays =
         let none = [||]
         let some = [| { InterestHolidayStart = DateTime(2024, 3, 1); InterestHolidayEnd = DateTime(2024, 12, 31)} |]
@@ -73,6 +74,7 @@ module ActualPaymentTestsExtra =
     }
 
     let applyPayments (sp: ScheduledPayment.ScheduleParameters) =
+        let aod = sp.AsOfDate.ToString "yyyy-MM-dd"
         let sd = sp.StartDate.ToString "yyyy-MM-dd"
         let p = sp.Principal
         let pf = sp.ProductFees
@@ -83,7 +85,7 @@ module ActualPaymentTestsExtra =
         let ih = match sp.InterestHolidays with [||] -> "()" | ihh -> ihh |> Array.map(fun ih -> $"""({ih.InterestHolidayStart.ToString "yyyy-MM-dd"}-{ih.InterestHolidayEnd.ToString "yyyy-MM-dd"})""") |> String.concat ";" |> fun s -> $"({s})"
         let upc = UnitPeriod.Config.serialise sp.UnitPeriodConfig
         let pc = sp.PaymentCount
-        let testId = $"sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}"
+        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}"""
         let appliedPayments = 
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule sp
@@ -91,7 +93,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> Array.map(fun si -> { Day = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
                 return
                     scheduleItems
-                    |> ActualPayment.mergePayments (Day.todayAsOffset sp.StartDate) 1000L<Cent> actualPayments
+                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone
             }
         appliedPayments |> ValueOption.iter(fun aa -> 
@@ -113,13 +115,13 @@ module ActualPaymentTestsExtra =
                 || cumulativeInterest <> interestPortionTotal
                 || principalPortionTotal <> advanceTotal
                 then
-                    aa |> Formatting.outputListToHtml $"aptx/ActualPaymentTestsExtra_{testId}.md" (ValueSome 300)
+                    aa |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md" (ValueSome 300)
             else
                 ()
         )
         testId, appliedPayments
 
-    let generateRandomAppliedPayments size =
+    let generateRandomAppliedPayments asOfDate size =
         let rnd = Random()
         seq { 1 .. size }
         |> Seq.map(fun _ ->
@@ -134,11 +136,11 @@ module ActualPaymentTestsExtra =
             let ih  = takeRandomFrom interestHolidays
             let upc = takeRandomFrom <| unitPeriodConfigs sd
             let pc  = takeRandomFrom paymentCounts
-            { StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = ic; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc } : ScheduledPayment.ScheduleParameters
+            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = ic; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc } : ScheduledPayment.ScheduleParameters
             |> applyPayments
         )
 
-    let generateAllAppliedPayments () = // warning: very large seq (~168 trillion items)
+    let generateAllAppliedPayments asOfDate = // warning: very large seq (~168 trillion items)
         startDates |> Seq.collect(fun sd ->
         advanceAmounts |> Seq.collect(fun aa ->
         productFees |> Seq.collect(fun pf ->
@@ -150,7 +152,7 @@ module ActualPaymentTestsExtra =
         unitPeriodConfigs sd |> Seq.collect(fun upc ->
         paymentCounts
         |> Seq.map(fun pc ->
-            { StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = ic; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc } : ScheduledPayment.ScheduleParameters
+            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = ic; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc } : ScheduledPayment.ScheduleParameters
         ))))))))))
         |> Seq.map applyPayments
 
@@ -179,7 +181,7 @@ module ActualPaymentTestsExtra =
         |> Seq.toArray
         |> toMemberData
 
-    let randomAppliedPayments = generateRandomAppliedPayments 1000
+    let randomAppliedPayments = generateRandomAppliedPayments asOfDate 1000
 
     let regularPaymentTestData =
         generateRegularPaymentTestData randomAppliedPayments 
@@ -209,27 +211,164 @@ module ActualPaymentTestsExtra =
     let ``The sum of principal portions should equal the sum of advances`` (testItem: ScheduledPaymentTestItem) =
         testItem.PrincipalPortionTotal |> should equal testItem.AdvanceTotal
 
-    // [<Fact>]
-    // let ``Error #001`` () =
-    //     let sp = ({
-    //         StartDate = DateTime(2023, 9, 2)
-    //         Principal = 10000L<Cent>
-    //         ProductFees = ValueNone
-    //         ProductFeesSettlement = DueInFull
-    //         InterestRate = DailyInterestRate (Percent 0.02m)
-    //         InterestCap = ValueNone
-    //         InterestGracePeriod = 0<Duration>
-    //         InterestHolidays = [||]
-    //         UnitPeriodConfig = UnitPeriod.Daily(DateTime(2023, 9, 6))
-    //         PaymentCount = 2
-    //     } : ScheduledPayment.ScheduleParameters)
-    //     voption {
-    //         let! schedule = ScheduledPayment.calculateSchedule sp
-    //         let scheduleItems = schedule.Items
-    //         let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
-    //         let appliedPayments =
-    //             scheduleItems
-    //             |> ActualPayment.mergePayments (Day.todayAsOffset sp.StartDate) 1000L<Cent> actualPayments
-    //             |> ActualPayment.calculateSchedule sp ValueNone
-    //         appliedPayments |> Formatting.outputListToHtml $"aptx/ActualPaymentTestsExtraError001.md" (ValueSome 300)
-    //     }
+    [<Fact>]
+    let ``1) Simple schedule looked at from a date in the past showing projected to be fully settled on time`` () =
+        let sp = ({
+            AsOfDate = DateTime(2023, 7, 23)
+            StartDate = DateTime(2023, 7, 23)
+            Principal = 80000L<Cent>
+            ProductFees = ValueSome(ProductFees.Percentage (Percent 150m, ValueNone))
+            ProductFeesSettlement = ProRataRefund
+            InterestRate = AnnualInterestRate (Percent 9.95m)
+            InterestCap = ValueNone
+            InterestGracePeriod = 3<Days>
+            InterestHolidays = [||]
+            UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2023, 8, 1<TrackingDay>))
+            PaymentCount = 5
+        } : ScheduledPayment.ScheduleParameters)
+        let actual =
+            voption {
+                let! schedule = ScheduledPayment.calculateSchedule sp
+                let scheduleItems = schedule.Items
+                let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
+                let appliedPayments =
+                    scheduleItems
+                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone
+                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
+                return appliedPayments
+            }
+            |> ValueOption.map Array.last
+        let expected = ValueSome ({
+            OffsetDate = DateTime(2023, 12, 1)
+            OffsetDay = 131<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 40764L<Cent>
+            ActualPayments = [| 40764L<Cent> |]
+            NetEffect = 40764L<Cent>
+            PaymentStatus = ValueSome ActualPayment.NotYetDue
+            BalanceStatus = ActualPayment.Settled
+            CumulativeInterest = 3832L<Cent>
+            NewInterest = 330L<Cent>
+            NewPenaltyCharges = 0L<Cent>
+            PrincipalPortion = 16176L<Cent>
+            ProductFeesPortion = 24258L<Cent>
+            InterestPortion = 330L<Cent>
+            PenaltyChargesPortion = 0L<Cent>
+            ProductFeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            ProductFeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            PenaltyChargesBalance = 0L<Cent>
+        } : ActualPayment.Apportionment)
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``2) Schedule with a payment on day zero, seen from a date before scheduled payments are due to start`` () =
+        let sp = ({
+            AsOfDate = DateTime(2022, 3, 25)
+            StartDate = DateTime(2022, 3, 8)
+            Principal = 80000L<Cent>
+            ProductFees = ValueSome(ProductFees.Percentage (Percent 150m, ValueNone))
+            ProductFeesSettlement = ProRataRefund
+            InterestRate = AnnualInterestRate (Percent 9.95m)
+            InterestCap = ValueNone
+            InterestGracePeriod = 3<Days>
+            InterestHolidays = [||]
+            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
+            PaymentCount = 12
+        } : ScheduledPayment.ScheduleParameters)
+        let actual =
+            voption {
+                let! schedule = ScheduledPayment.calculateSchedule sp
+                let scheduleItems = schedule.Items
+                let actualPayments = [|
+                    ({ Day = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                |]
+                let appliedPayments =
+                    scheduleItems
+                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone
+                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
+                return appliedPayments
+            }
+            |> ValueOption.map Array.last
+        let expected = ValueSome ({
+            OffsetDate = DateTime(2022, 8, 13)
+            OffsetDay = 158<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 16736L<Cent>
+            ActualPayments = [| |]
+            NetEffect = 16736L<Cent>
+            PaymentStatus = ValueSome ActualPayment.NotYetDue
+            BalanceStatus = ActualPayment.Settled
+            CumulativeInterest = 4416L<Cent>
+            NewInterest = 63L<Cent>
+            NewPenaltyCharges = 0L<Cent>
+            PrincipalPortion = 6673L<Cent>
+            ProductFeesPortion = 10000L<Cent>
+            InterestPortion = 63L<Cent>
+            PenaltyChargesPortion = 0L<Cent>
+            ProductFeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            ProductFeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            PenaltyChargesBalance = 0L<Cent>
+        } : ActualPayment.Apportionment)
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``3) Schedule with a payment on day zero, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
+        let sp = ({
+            AsOfDate = DateTime(2022, 8, 31)
+            StartDate = DateTime(2022, 3, 8)
+            Principal = 80000L<Cent>
+            ProductFees = ValueSome(ProductFees.Percentage (Percent 150m, ValueNone))
+            ProductFeesSettlement = ProRataRefund
+            InterestRate = AnnualInterestRate (Percent 9.95m)
+            InterestCap = ValueNone
+            InterestGracePeriod = 3<Days>
+            InterestHolidays = [||]
+            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
+            PaymentCount = 12
+        } : ScheduledPayment.ScheduleParameters)
+        let actual =
+            voption {
+                let! schedule = ScheduledPayment.calculateSchedule sp
+                let scheduleItems = schedule.Items
+                let actualPayments = [|
+                    ({ Day = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                    for d in [| 177 .. 14 .. 2000 |] do
+                        ({ Day = d * 1<OffsetDay>; ScheduledPayment = 2000L<Cent>; ActualPayments = [||]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                |]
+                let appliedPayments =
+                    scheduleItems
+                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone
+                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
+                return appliedPayments
+            }
+            |> ValueOption.map Array.last
+        let expected = ValueSome ({
+            OffsetDate = DateTime(2027, 7, 29)
+            OffsetDay = 1969<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 949L<Cent>
+            ActualPayments = [| |]
+            NetEffect = 949L<Cent>
+            PaymentStatus = ValueSome ActualPayment.NotYetDue
+            BalanceStatus = ActualPayment.Settled
+            CumulativeInterest = 61609L<Cent>
+            NewInterest = 3L<Cent>
+            NewPenaltyCharges = 0L<Cent>
+            PrincipalPortion = 425L<Cent>
+            ProductFeesPortion = 521L<Cent>
+            InterestPortion = 3L<Cent>
+            PenaltyChargesPortion = 0L<Cent>
+            ProductFeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            ProductFeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            PenaltyChargesBalance = 0L<Cent>
+        } : ActualPayment.Apportionment)
+        actual |> should equal expected
