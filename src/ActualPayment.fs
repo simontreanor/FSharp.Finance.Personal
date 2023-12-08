@@ -168,7 +168,7 @@ module ActualPayment =
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
             let isSettlement = ap.NetEffect = settlementFigure
-            let isOverpayment = ap.NetEffect > settlementFigure && ap.AppliedPaymentDay <= asOfDay // to-do: only if the overpayment comes from a manual, not a scheduled payment that is not yet due
+            let isOverpayment = ap.NetEffect > settlementFigure && ap.AppliedPaymentDay <= asOfDay
             let isProjection = ap.NetEffect > settlementFigure && ap.AppliedPaymentDay > asOfDay
 
             let productFeesRefund =
