@@ -21,7 +21,7 @@ module SettlementTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
@@ -77,7 +77,7 @@ module SettlementTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
@@ -133,7 +133,7 @@ module SettlementTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
@@ -189,7 +189,7 @@ module SettlementTests =
             ProductFees = ValueNone
             ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
-            InterestCap = ValueSome (InterestCap.PercentageOfPrincipal (Percent 100m))
+            InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
@@ -241,7 +241,7 @@ module SettlementTests =
             ProductFees = ValueNone
             ProductFeesSettlement = ProRataRefund
             InterestRate = DailyInterestRate (Percent 0.8m)
-            InterestCap = ValueSome (InterestCap.PercentageOfPrincipal (Percent 100m))
+            InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
@@ -293,7 +293,7 @@ module SettlementTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
@@ -349,7 +349,7 @@ module SettlementTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
@@ -405,7 +405,7 @@ module SettlementTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = DueInFull
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))

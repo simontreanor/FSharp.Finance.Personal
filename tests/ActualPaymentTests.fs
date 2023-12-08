@@ -54,7 +54,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
@@ -82,7 +82,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
@@ -110,7 +110,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -138,7 +138,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -187,7 +187,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -236,7 +236,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -290,7 +290,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
@@ -342,7 +342,7 @@ module ActualPaymentTests =
                 ProductFees = ValueNone
                 ProductFeesSettlement = ProRataRefund
                 InterestRate = DailyInterestRate (Percent 0.8m)
-                InterestCap = ValueSome <| InterestCap.PercentageOfPrincipal (Percent 100m)
+                InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueNone }
                 InterestGracePeriod = 3<Days>
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14.)

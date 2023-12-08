@@ -220,7 +220,7 @@ module ActualPaymentTestsExtra =
             ProductFees = ValueSome(ProductFees.Percentage (Percent 150m, ValueNone))
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2023, 8, 1<TrackingDay>))
@@ -272,7 +272,7 @@ module ActualPaymentTestsExtra =
             ProductFees = ValueSome(ProductFees.Percentage (Percent 150m, ValueNone))
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
@@ -326,7 +326,7 @@ module ActualPaymentTestsExtra =
             ProductFees = ValueSome(ProductFees.Percentage (Percent 150m, ValueNone))
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
@@ -382,7 +382,7 @@ module ActualPaymentTestsExtra =
             ProductFees = ValueSome (ProductFees.Percentage (Percent 164m, ValueNone))
             ProductFeesSettlement = DueInFull
             InterestRate = DailyInterestRate (Percent 0.12m)
-            InterestCap = ValueSome (InterestCap.Fixed 50000L<Cent>)
+            InterestCap = { TotalCap = ValueSome <| TotalFixedCap 50000L<Cent>; DailyCap = ValueNone }
             InterestGracePeriod = 7<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly (8, DateTime(2023, 11, 23))

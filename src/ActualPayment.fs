@@ -99,7 +99,7 @@ module ActualPayment =
         if Array.isEmpty mergedPayments then [||] else
         let asOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
         let dailyInterestRate = sp.InterestRate |> InterestRate.daily
-        let interestCap, dailyInterestCap = sp.InterestCap |> calculateInterestCaps sp.Principal
+        let totalInterestCap = sp.InterestCap.TotalCap |> InterestCap.totalCap sp.Principal
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
         let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
         let dayZeroPayment = mergedPayments |> Array.head
@@ -143,8 +143,9 @@ module ActualPayment =
                 if a.PrincipalBalance <= 0L<Cent> then
                     0L<Cent>
                 else
+                    let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap (a.PrincipalBalance + a.ProductFeesBalance)
                     calculateInterest dailyInterestCap (a.PrincipalBalance + a.ProductFeesBalance) dailyInterestRate interestChargeableDays
-            let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
+            let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` p.NetEffect
             
             let productFeesDue =

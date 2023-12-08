@@ -19,7 +19,7 @@ module ScheduledPaymentTests =
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
-            InterestCap = ValueNone
+            InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
             InterestGracePeriod = 3<Days>
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))

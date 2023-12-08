@@ -31,20 +31,36 @@ module Interest =
             | AnnualInterestRate (Percent air) -> air / 365m |> Percent
             | DailyInterestRate (Percent dir) -> dir |> Percent
 
-    [<RequireQualifiedAccess>]
     [<Struct>]
-    type InterestCap =
-        | PercentageOfPrincipal of PercentageOfPrincipal:Percent
-        | Daily of Daily:int64<Cent>
-        | Fixed of Fixed:int64<Cent>
+    type TotalInterestCap =
+        | TotalPercentageCap of TotalPercentageCap:Percent
+        | TotalFixedCap of TotalFixedCap:int64<Cent>
 
-    /// calculates the overall and daily interest cap
-    let calculateInterestCaps (principal: int64<Cent>) interestCap =
-        match interestCap with
-        | ValueSome(InterestCap.PercentageOfPrincipal percentage) -> decimal principal * Percent.toDecimal percentage |> Cent.floor, Int64.MaxValue * 1L<Cent>
-        | ValueSome(InterestCap.Daily i) -> Int64.MaxValue * 1L<Cent>, i
-        | ValueSome(InterestCap.Fixed i) -> i, Int64.MaxValue * 1L<Cent>
-        | ValueNone -> Int64.MaxValue * 1L<Cent>, Int64.MaxValue * 1L<Cent>
+    [<Struct>]
+    type DailyInterestCap =
+        | DailyPercentageCap of DailyPercentageCap:Percent
+        | DailyFixedCap of DailyFixedCap:int64<Cent>
+
+    [<Struct>]
+    type InterestCap = {
+        TotalCap: TotalInterestCap voption
+        DailyCap: DailyInterestCap voption
+    }
+
+    [<RequireQualifiedAccess>]
+    module InterestCap =
+
+        /// calculates the total interest cap
+        let totalCap (initialPrincipal: int64<Cent>) = function
+            | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage |> Cent.floor
+            | ValueSome (TotalFixedCap i) -> i
+            | ValueNone -> Int64.MaxValue * 1L<Cent>
+
+        /// calculates the daily interest cap
+        let dailyCap (balance: int64<Cent>) = function
+            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage |> Cent.floor
+            | ValueSome (DailyFixedCap i) -> i
+            | ValueNone -> Int64.MaxValue * 1L<Cent>
 
     [<Struct>]
     type InterestHoliday = {
