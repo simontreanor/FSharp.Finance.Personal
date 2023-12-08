@@ -15,8 +15,8 @@ module ActualPaymentTests =
         |> Array.rev
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
-            last |> Array.map(fun d -> { Day =   d * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| finalPayment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
-            rest |> Array.map(fun d -> { Day =   d * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| levelPayment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] })
+            last |> Array.map(fun d -> { PaymentDay =   d * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| finalPayment |]; PenaltyCharges = [||] })
+            rest |> Array.map(fun d -> { PaymentDay =   d * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| levelPayment |]; PenaltyCharges = [||] })
         |]
         |> Array.concat
         |> Array.rev
@@ -65,7 +65,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter (Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
@@ -93,7 +93,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
@@ -121,7 +121,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
@@ -149,7 +149,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
 
@@ -199,7 +199,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
 
@@ -246,15 +246,15 @@ module ActualPaymentTests =
                 PaymentCount = 5
             }
         let actualPayments = [|
-            { Day =   2<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day =   4<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 140<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent> * 3L |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 143<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| -26068L<Cent>      |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { PaymentDay =   2<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; PenaltyCharges = [||] }
+            { PaymentDay =   4<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; PenaltyCharges = [||] }
+            { PaymentDay = 140<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent> * 3L |]; PenaltyCharges = [||] }
+            { PaymentDay = 143<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| -26068L<Cent>      |]; PenaltyCharges = [||] }
         |]
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
 
@@ -301,12 +301,12 @@ module ActualPaymentTests =
                 PaymentCount = 5
             }
         let actualPayments = [|
-            { Day = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 150000L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 150000L<Cent> |]; PenaltyCharges = [||] }
         |]
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp (ValueSome (DateTime(2022, 11, 1)))
+            |> generateStatement sp (ValueSome (DateTime(2022, 11, 1)))
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
@@ -354,14 +354,14 @@ module ActualPaymentTests =
                 PaymentCount = 11
             }
         let actualPayments = [|
-            { Day = 14<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 28<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
-            { Day = 42<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+            { PaymentDay = 14<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; PenaltyCharges = [||] }
+            { PaymentDay = 28<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; PenaltyCharges = [||] }
+            { PaymentDay = 42<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; PenaltyCharges = [||] }
         |]
 
         let irregularSchedule =
             actualPayments
-            |> applyPayments sp ValueNone
+            |> generateStatement sp ValueNone
 
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
 

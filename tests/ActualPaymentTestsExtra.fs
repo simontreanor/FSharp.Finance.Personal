@@ -95,10 +95,10 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.map(fun si -> { Day = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; PenaltyCharges = [||] } : ActualPayment.Payment)
                 return
                     scheduleItems
-                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
             }
         appliedPayments |> ValueOption.iter(fun aa -> 
@@ -240,7 +240,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =
                     scheduleItems
-                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
                 return appliedPayments
@@ -291,11 +291,11 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ Day = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; PenaltyCharges = [||] } : ActualPayment.Payment)
                 |]
                 let appliedPayments =
                     scheduleItems
-                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
                 return appliedPayments
@@ -346,13 +346,13 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ Day = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; PenaltyCharges = [||] } : ActualPayment.Payment)
                     for d in [| 177 .. 14 .. 2000 |] do
-                        ({ Day = d * 1<OffsetDay>; ScheduledPayment = 2000L<Cent>; ActualPayments = [||]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] } : ActualPayment.Payment)
+                        ({ PaymentDay = d * 1<OffsetDay>; ScheduledPayment = 2000L<Cent>; ActualPayments = [||]; PenaltyCharges = [||] } : ActualPayment.Payment)
                 |]
                 let appliedPayments =
                     scheduleItems
-                    |> ActualPayment.mergePayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
                 return appliedPayments

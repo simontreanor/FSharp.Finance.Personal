@@ -10,7 +10,7 @@ NEW FEATURES / TO DO:
 - return version of software used to generate figures
 - move types / DUs to appropriate modules
 - add [<RQA>] attribute
-- payment needs a stub type when e.g. net-effect should not be set by the caller
+- payment needs a stub type when e.g. net-effect should not be set by the caller ✔️ done
 - wrap applied payments in a type so we can bundle e.g. final APR
 - check number of required decimal places in iterations for UK APR
 - show iteration stage results for comparison
@@ -58,7 +58,7 @@ open ActualPayment
 let actualPayments =
     [| 18 .. 7 .. 60 |]
     |> Array.map(fun i ->
-        { Day = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone; PenaltyCharges = [||] }
+        { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; PenaltyCharges = [||] }
     )
 
 // let actualPayments = [|
