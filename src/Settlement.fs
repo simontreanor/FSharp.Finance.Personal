@@ -17,8 +17,8 @@ module Settlement =
     type Quote = {
         QuoteType: QuoteType
         PaymentAmount: int64<Cent>
-        CurrentStatement: Apportionment array
-        WhatIfStatement: Apportionment array
+        CurrentStatement: AmortisationScheduleItem array
+        WhatIfStatement: AmortisationScheduleItem array
     }
 
     let getSettlement (settlementDate: DateTime) (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
@@ -34,10 +34,10 @@ module Settlement =
                 PenaltyCharges = [| |]
             }
             let! appliedPayments = applyPayments sp (ValueSome settlementDate) (Array.concat [| actualPayments; [| newPayment |] |])
-            let finalApportionment = appliedPayments |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
-            let actualPaymentAmounts = finalApportionment.ActualPayments |> Array.filter(fun p -> p <> newPaymentAmount)
+            let finalItem = appliedPayments |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
+            let actualPaymentAmounts = finalItem.ActualPayments |> Array.filter(fun p -> p <> newPaymentAmount)
             let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
-            let settlementPaymentAmount = finalApportionment.NetEffect + finalApportionment.PrincipalBalance - actualPaymentsTotal
+            let settlementPaymentAmount = finalItem.NetEffect + finalItem.PrincipalBalance - actualPaymentsTotal
             let settlementPayment = { newPayment with ActualPayments = [| settlementPaymentAmount |] }
             let! statement = applyPayments sp (ValueSome settlementDate) (Array.concat [| actualPayments; [| settlementPayment |] |])
             return { QuoteType = Settlement; PaymentAmount = settlementPaymentAmount; CurrentStatement = currentStatement; WhatIfStatement = statement }
@@ -46,21 +46,21 @@ module Settlement =
     let getNextScheduled asOfDate (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
         voption {
             let! currentStatement = applyPayments sp ValueNone actualPayments
-            let! apportionment =
+            let! item =
                 currentStatement
                 |> Array.filter(fun a -> a.OffsetDate >= asOfDate)
                 |> Array.tryFind(fun a -> a.ScheduledPayment > 0L<Cent>)
                 |> function Some a -> ValueSome a | _ -> ValueNone
             let newPayment = {
-                Day = apportionment.OffsetDay
+                Day = item.OffsetDay
                 ScheduledPayment = 0L<Cent>
-                ActualPayments = [| apportionment.ScheduledPayment |]
+                ActualPayments = [| item.ScheduledPayment |]
                 NetEffect = 0L<Cent>
                 PaymentStatus = ValueNone
                 PenaltyCharges = [| |]
             }
             let! statement = applyPayments sp ValueNone (Array.concat [| actualPayments; [| newPayment |] |])
-            return { QuoteType = NextScheduled; PaymentAmount = apportionment.ScheduledPayment; CurrentStatement = currentStatement; WhatIfStatement = statement }
+            return { QuoteType = NextScheduled; PaymentAmount = item.ScheduledPayment; CurrentStatement = currentStatement; WhatIfStatement = statement }
         }
 
     let getAllOverdue asOfDate (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =

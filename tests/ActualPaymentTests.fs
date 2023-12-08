@@ -21,7 +21,7 @@ module ActualPaymentTests =
         |> Array.concat
         |> Array.rev
 
-    let quickExpectedFinalApportionment date offsetDay paymentAmount cumulativeInterest newInterest principalPortion = ValueSome {
+    let quickExpectedFinalItem date offsetDay paymentAmount cumulativeInterest newInterest principalPortion = ValueSome {
         OffsetDate = date
         OffsetDay = offsetDay
         Advance = 0L<Cent>
@@ -42,6 +42,7 @@ module ActualPaymentTests =
         ProductFeesBalance = 0L<Cent>
         InterestBalance = 0L<Cent>
         PenaltyChargesBalance = 0L<Cent>
+        PenaltyCharges = [||]
     }
 
     [<Fact>]
@@ -69,7 +70,7 @@ module ActualPaymentTests =
         irregularSchedule |> ValueOption.iter (Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 125<OffsetDay> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
+        let expected = quickExpectedFinalItem (DateTime(2023, 3, 31)) 125<OffsetDay> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -97,7 +98,7 @@ module ActualPaymentTests =
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 31)) 153<OffsetDay> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
+        let expected = quickExpectedFinalItem (DateTime(2023, 3, 31)) 153<OffsetDay> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -125,7 +126,7 @@ module ActualPaymentTests =
         irregularSchedule |> ValueOption.iter(Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map Array.last
-        let expected = quickExpectedFinalApportionment (DateTime(2023, 3, 15)) 134<OffsetDay> 49148L<Cent> 95764L<Cent> 8994L<Cent> 40154L<Cent>
+        let expected = quickExpectedFinalItem (DateTime(2023, 3, 15)) 134<OffsetDay> 49148L<Cent> 95764L<Cent> 8994L<Cent> 40154L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -174,6 +175,7 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -223,6 +225,7 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -277,6 +280,7 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -328,6 +332,7 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -382,5 +387,6 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         }
         actual |> should equal expected

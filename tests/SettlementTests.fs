@@ -62,6 +62,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -118,6 +119,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -174,6 +176,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -226,6 +229,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -278,6 +282,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -334,6 +339,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -390,6 +396,7 @@ module SettlementTests =
             ProductFeesBalance = 44855L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected
@@ -446,6 +453,7 @@ module SettlementTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         })
 
         actual |> should equal expected

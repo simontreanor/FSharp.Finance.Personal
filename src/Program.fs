@@ -6,7 +6,7 @@ open FSharp.Finance.Personal
 NEW FEATURES / TO DO:
 ---------------------
 
-- add penalty charge types to statement
+- add penalty charge types to statement ✔️ done
 - return version of software used to generate figures
 - move types / DUs to appropriate modules
 - add [<RQA>] attribute
@@ -18,6 +18,7 @@ NEW FEATURES / TO DO:
 - add function: if I pay $20 installments, how many payments / how long until settlement?
 - add minimum payment option to prevent banking errors / unfavourable minimim transaction charges
 - DU for manual intervention e.g. penalty charge refunds? (might be better just using zero fees and recalculating to avoid the effect of slower principal amortisation)
+- add Excel calculation sheets?
 - documentation
 
 *)

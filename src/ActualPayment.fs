@@ -34,9 +34,9 @@ module ActualPayment =
         PenaltyCharges: PenaltyCharge array
     }
  
-    /// detail of a payment with apportionment to principal, product fees, interest and penalty charges
+    /// amortisation schedule item showing apportionment of payments to principal, product fees, interest and penalty charges
     [<Struct>]
-    type Apportionment = {
+    type AmortisationScheduleItem = {
         OffsetDate: DateTime
         OffsetDay: int<OffsetDay>
         Advance: int64<Cent>
@@ -57,10 +57,11 @@ module ActualPayment =
         ProductFeesBalance: int64<Cent>
         InterestBalance: int64<Cent>
         PenaltyChargesBalance: int64<Cent>
+        PenaltyCharges: PenaltyCharge array
     }
 
     type AmortisationSchedule = {
-        Items: Apportionment array
+        Items: AmortisationScheduleItem array
         FinalPaymentCount: int
         FinalApr: Percent
     }
@@ -130,6 +131,7 @@ module ActualPayment =
             ProductFeesBalance = dayZeroProductFeesBalance
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
         }
         mergedPayments
         |> Array.tail
@@ -211,6 +213,7 @@ module ActualPayment =
                 ProductFeesBalance = a.ProductFeesBalance - sign productFeesPortion - productFeesRefund
                 InterestBalance = a.InterestBalance + newInterest' - interestPortion + carriedInterest
                 PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges
+                PenaltyCharges = a.PenaltyCharges
             }
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
