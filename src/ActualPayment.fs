@@ -71,7 +71,8 @@ module ActualPayment =
 
     type AmortisationSchedule = {
         Items: AmortisationScheduleItem array
-        FinalPaymentCount: int
+        FinalScheduledPaymentCount: int
+        FinalActualPaymentCount: int
         FinalApr: Percent
     }
 
@@ -154,7 +155,7 @@ module ActualPayment =
                 if a.PrincipalBalance <= 0L<Cent> then
                     0L<Cent>
                 else
-                    let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap (a.PrincipalBalance + a.ProductFeesBalance)
+                    let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap (a.PrincipalBalance + a.ProductFeesBalance) interestChargeableDays
                     calculateInterest dailyInterestCap (a.PrincipalBalance + a.ProductFeesBalance) dailyInterestRate interestChargeableDays
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` ap.NetEffect
@@ -227,14 +228,25 @@ module ActualPayment =
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
 
-    let generateStatement (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate (actualPayments: Payment array) =
+    let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate (actualPayments: Payment array) =
         voption {
             let! schedule = ScheduledPayment.calculateSchedule sp
-            return
+            let items =
                 schedule
                 |> _.Items
                 |> applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                 |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
+            return {
+                Items = items
+                FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
+                FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
+                FinalApr =
+                    items
+                    |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
+                    |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
+                    |> Apr.calculate sp.AprCalculationMethod 8 sp.Principal sp.StartDate
+
+            }
         }
 
     let allPaidOnTime (scheduleItems: ScheduledPayment.ScheduleItem array) =

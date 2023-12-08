@@ -26,6 +26,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments =
@@ -37,8 +38,8 @@ module SettlementTests =
         let actual =
             voption{
                 let! settlement = Settlement.getSettlement (DateTime.Today.AddDays -3.) sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (196970L<Cent>, {
@@ -83,6 +84,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments =
@@ -94,8 +96,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (202648L<Cent>, {
@@ -140,6 +142,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments =
@@ -151,8 +154,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (200148L<Cent>, {
@@ -197,6 +200,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
             PaymentCount = 5
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments = [||]
@@ -204,8 +208,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (120000L<Cent>, {
@@ -250,6 +254,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
             PaymentCount = 5
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments = [||]
@@ -257,8 +262,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (123840L<Cent>, {
@@ -303,6 +308,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments =
@@ -314,8 +320,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (342001L<Cent>, {
@@ -360,6 +366,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments =
@@ -371,8 +378,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getNextScheduled DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (32315L<Cent>, {
@@ -417,6 +424,7 @@ module SettlementTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
         let actualPayments =
@@ -428,8 +436,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getAllOverdue DateTime.Today sp actualPayments
-                settlement.WhatIfStatement |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfStatement
+                settlement.WhatIfAmortisationSchedule.Items |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfAmortisationSchedule.Items
             }
 
         let expected = ValueSome (68808L<Cent>, {

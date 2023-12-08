@@ -43,6 +43,7 @@ module ScheduledPayment =
         InterestHolidays: InterestHoliday array
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
+        AprCalculationMethod: Apr.CalculationMethod
     }
 
     let interestChargeableDays (startDate: DateTime) (earlySettlementDate: DateTime voption) (interestGracePeriod: int<Days>) interestHolidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
@@ -87,7 +88,7 @@ module ScheduledPayment =
                         paymentDays
                         |> Array.scan(fun si d ->
                             let interestChargeableDays = interestChargeableDays sp.StartDate ValueNone sp.InterestGracePeriod sp.InterestHolidays si.Day d
-                            let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap si.PrincipalBalance
+                            let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap si.PrincipalBalance interestChargeableDays
                             let interest = calculateInterest dailyInterestCap si.PrincipalBalance dailyInterestRate interestChargeableDays
                             let interest' = si.CumulativeInterest + interest |> fun i -> if i >= totalInterestCap then totalInterestCap - si.CumulativeInterest else interest
                             let payment = Cent.ceil roughPayment'
@@ -135,7 +136,7 @@ module ScheduledPayment =
                     items
                     |> Array.filter(fun si -> si.Payment > 0L<Cent>)
                     |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
-                    |> Apr.calculate Apr.UsActuarial 8 sp.Principal sp.StartDate
+                    |> Apr.calculate sp.AprCalculationMethod 8 sp.Principal sp.StartDate
                 CostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m else
                     decimal (productFees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 6

@@ -11,7 +11,7 @@ NEW FEATURES / TO DO:
 - move types / DUs to appropriate modules
 - add [<RQA>] attribute
 - payment needs a stub type when e.g. net-effect should not be set by the caller ✔️ done
-- wrap applied payments in a type so we can bundle e.g. final APR
+- wrap applied payments in a type so we can bundle e.g. final APR ✔️ done
 - check number of required decimal places in iterations for UK APR
 - show iteration stage results for comparison
 - add interest up-front option (for comparison)
@@ -39,6 +39,7 @@ let sp = {
     InterestHolidays = [||]
     UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
     PaymentCount = 11
+    AprCalculationMethod = Apr.CalculationMethod.UsActuarial
 }
 
 // calculateSchedule sp

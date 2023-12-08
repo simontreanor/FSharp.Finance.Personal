@@ -57,8 +57,8 @@ module Interest =
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
         /// calculates the daily interest cap
-        let dailyCap (balance: int64<Cent>) = function
-            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage |> Cent.floor
+        let dailyCap (balance: int64<Cent>) (interestChargeableDays: int<Days>) = function
+            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays |> Cent.floor
             | ValueSome (DailyFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 

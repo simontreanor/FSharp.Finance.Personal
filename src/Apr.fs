@@ -6,8 +6,9 @@ open Util
 module Apr =
 
     /// the calculation method used to determine the APR
+    [<RequireQualifiedAccess>]
     [<Struct>]
-    type AprCalculationMethod =
+    type CalculationMethod =
         | UnitedKingdom
         | UsActuarial
         | UnitedStatesRule
@@ -259,13 +260,13 @@ module Apr =
     /// advance date are all the same
     let calculate method (precision: int) advanceAmount advanceDate payments =
         match method with
-        | UnitedKingdom ->
+        | CalculationMethod.UnitedKingdom ->
             Percent 0m
-        | UsActuarial ->
+        | CalculationMethod.UsActuarial ->
             let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
             if Array.isEmpty payments then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
             else payments
             |> UsActuarial.generalEquation advanceDate advanceDate advances
             |> fun apr -> Decimal.Round(apr, precision) |> Percent.fromDecimal
-        | UnitedStatesRule ->
+        | CalculationMethod.UnitedStatesRule ->
             failwith "Not yet implemented"

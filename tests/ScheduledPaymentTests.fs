@@ -24,6 +24,7 @@ module ScheduledPaymentTests =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
             PaymentCount = 11
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         }
 
     [<Fact>]

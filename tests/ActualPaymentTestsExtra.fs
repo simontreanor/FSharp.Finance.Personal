@@ -62,6 +62,7 @@ module ActualPaymentTestsExtra =
             )
         [| daily; weekly; semiMonthly; monthly |] |> Array.concat
     let paymentCounts = [| 1 .. 26 |]
+    let aprCalculationMethods = [| Apr.CalculationMethod.UnitedKingdom; Apr.CalculationMethod.UnitedStatesRule |]
 
     type ScheduledPaymentTestItem = {
         TestId: string
@@ -90,7 +91,8 @@ module ActualPaymentTestsExtra =
         let ih = match sp.InterestHolidays with [||] -> "()" | ihh -> ihh |> Array.map(fun ih -> $"""({ih.InterestHolidayStart.ToString "yyyy-MM-dd"}-{ih.InterestHolidayEnd.ToString "yyyy-MM-dd"})""") |> String.concat ";" |> fun s -> $"({s})"
         let upc = UnitPeriod.Config.serialise sp.UnitPeriodConfig
         let pc = sp.PaymentCount
-        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}"""
+        let acm = sp.AprCalculationMethod
+        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}"""
         let appliedPayments = 
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule sp
@@ -142,7 +144,8 @@ module ActualPaymentTestsExtra =
             let ih  = takeRandomFrom interestHolidays
             let upc = takeRandomFrom <| unitPeriodConfigs sd
             let pc  = takeRandomFrom paymentCounts
-            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc } : ScheduledPayment.ScheduleParameters
+            let acm = takeRandomFrom aprCalculationMethods
+            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc; AprCalculationMethod = acm } : ScheduledPayment.ScheduleParameters
             |> applyPayments
         )
 
@@ -157,10 +160,11 @@ module ActualPaymentTestsExtra =
         interestGracePeriods |> Seq.collect(fun igp ->
         interestHolidays |> Seq.collect(fun ih ->
         unitPeriodConfigs sd |> Seq.collect(fun upc ->
-        paymentCounts
-        |> Seq.map(fun pc ->
-            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc } : ScheduledPayment.ScheduleParameters
-        )))))))))))
+        paymentCounts |> Seq.collect(fun pc ->
+        aprCalculationMethods
+        |> Seq.map(fun acm ->
+            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc; AprCalculationMethod = acm } : ScheduledPayment.ScheduleParameters
+        ))))))))))))
         |> Seq.map applyPayments
 
     let generateRegularPaymentTestData (appliedPayments: (string * ActualPayment.AmortisationScheduleItem array voption) seq) =
@@ -232,6 +236,7 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2023, 8, 1<TrackingDay>))
             PaymentCount = 5
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -285,6 +290,7 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
             PaymentCount = 12
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -340,6 +346,7 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
             PaymentCount = 12
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -397,5 +404,6 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly (8, DateTime(2023, 11, 23))
             PaymentCount = 19
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         } : ScheduledPayment.ScheduleParameters)
         sp

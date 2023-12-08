@@ -6,6 +6,7 @@ module Program = let [<EntryPoint>] main _ = 0
 MORE UNIT TESTS REQUIRED:
 -------------------------
 
+- investigate `never settles down` test
 - tests for other unit-periods
 - pay lates
 - pay next
