@@ -98,8 +98,8 @@ module ActualPayment =
     let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (mergedPayments: Payment array) =
         if Array.isEmpty mergedPayments then [||] else
         let asOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
-        let dailyInterestRate = sp.InterestRate |> dailyInterestRate
-        let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
+        let dailyInterestRate = sp.InterestRate |> InterestRate.daily
+        let interestCap, dailyInterestCap = sp.InterestCap |> calculateInterestCaps sp.Principal
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
         let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
         let dayZeroPayment = mergedPayments |> Array.head
@@ -139,7 +139,11 @@ module ActualPayment =
 
             let interestChargeableDays = ScheduledPayment.interestChargeableDays sp.StartDate earlySettlementDate sp.InterestGracePeriod sp.InterestHolidays a.OffsetDay p.Day
 
-            let newInterest = if a.PrincipalBalance <= 0L<Cent> then 0L<Cent> else decimal (a.PrincipalBalance + a.ProductFeesBalance) * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays |> Cent.floor
+            let newInterest =
+                if a.PrincipalBalance <= 0L<Cent> then
+                    0L<Cent>
+                else
+                    calculateInterest dailyInterestCap (a.PrincipalBalance + a.ProductFeesBalance) dailyInterestRate interestChargeableDays
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= interestCap then interestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` p.NetEffect
             

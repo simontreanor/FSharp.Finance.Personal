@@ -58,7 +58,7 @@ module ScheduledPayment =
         |> Array.filter(fun d -> not (isSettledWithinGracePeriod && isWithinGracePeriod d))
         |> Array.filter(fun d -> interestFreeDays |> Array.exists ((=) d) |> not)
         |> Array.length
-        |> fun l -> max 0 (l - 1)
+        |> fun l -> (max 0 (l - 1)) * 1<Days>
 
     let calculateSchedule sp =
         voption {
@@ -69,8 +69,8 @@ module ScheduledPayment =
             let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
             let paymentCount = paymentDates |> Array.length
             let productFees = productFeesTotal sp.Principal sp.ProductFees
-            let dailyInterestRate = sp.InterestRate |> dailyInterestRate
-            let interestCap = sp.InterestCap |> calculateInterestCap sp.Principal
+            let dailyInterestRate = sp.InterestRate |> InterestRate.daily
+            let interestCap, dailyInterestCap = sp.InterestCap |> calculateInterestCaps sp.Principal
             let roughPayment = decimal sp.Principal / decimal paymentCount
             let advance = { Day = 0<OffsetDay>; Advance = sp.Principal + productFees; Payment = 0L<Cent>; Interest = 0L<Cent>; CumulativeInterest = 0L<Cent>; Principal = 0L<Cent>; PrincipalBalance = sp.Principal + productFees }
             let tolerance = int64 paymentCount * 2L<Cent>
@@ -87,7 +87,7 @@ module ScheduledPayment =
                         paymentDays
                         |> Array.scan(fun si d ->
                             let interestChargeableDays = interestChargeableDays sp.StartDate ValueNone sp.InterestGracePeriod sp.InterestHolidays si.Day d
-                            let interest = decimal si.PrincipalBalance * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays |> Cent.floor
+                            let interest = calculateInterest dailyInterestCap si.PrincipalBalance dailyInterestRate interestChargeableDays
                             let interest' = si.CumulativeInterest + interest |> fun i -> if i >= interestCap then interestCap - si.CumulativeInterest else interest
                             let payment = Cent.ceil roughPayment'
                             let principalPortion = payment - interest

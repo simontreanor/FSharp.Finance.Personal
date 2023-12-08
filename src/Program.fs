@@ -1,6 +1,27 @@
 open System
 open FSharp.Finance.Personal
 
+(*
+
+NEW FEATURES / TO DO:
+---------------------
+
+- add penalty charge types to statement
+- return version of software used to generate figures
+- move types / DUs to appropriate modules
+- add [<RQA>] attribute
+- payment needs a stub type when e.g. net-effect should not be set by the caller
+- wrap applied payments in a type so we can bundle e.g. final APR
+- check number of required decimal places in iterations for UK APR
+- show iteration stage results for comparison
+- add interest up-front option (for comparison)
+- add function: if I pay $20 installments, how many payments / how long until settlement?
+- add minimum payment option to prevent banking errors / unfavourable minimim transaction charges
+- DU for manual intervention e.g. penalty charge refunds? (might be better just using zero fees and recalculating to avoid the effect of slower principal amortisation)
+- documentation
+
+*)
+
 open ScheduledPayment
 
 let startDate = DateTime.Today.AddDays(-60.)

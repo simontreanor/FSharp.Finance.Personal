@@ -17,6 +17,7 @@
   <ItemGroup>
     <Compile Include="Util.fs" />
     <Compile Include="General.fs" />
+    <Compile Include="Interest.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Schedule.fs" />
     <Compile Include="Apr.fs" />
