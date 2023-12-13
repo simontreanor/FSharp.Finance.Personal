@@ -46,7 +46,7 @@ module Util =
     type Percent = Percent of decimal
 
     /// raises a decimal to an int power
-    let powi (power: int64) (base': decimal) = decimal (Math.Pow(double base', double power))
+    let powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))
 
     /// raises a decimal to a decimal power
     let powm (power: decimal) (base': decimal) = decimal (Math.Pow(double base', double power))
@@ -86,6 +86,21 @@ module Util =
         /// create a date from a year, month, and tracking day
         let toDate y m td = DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td)
 
+    [<RequireQualifiedAccess>]
+    [<Struct>]
+    type Solution =
+        | Impossible
+        | IterationLimitReached of PartialSolution:decimal * IterationLimit:int * MaxTolerance:int64<Cent>
+        | Found of Found:decimal * Iteration:int * Tolerance:int64<Cent>
+
+    [<RequireQualifiedAccess>]
+    [<Struct>]
+    type ToleranceSteps = {
+        Min: int64<Cent>
+        Step: int64<Cent>
+        Max: int64<Cent>
+    }
+
     /// utility functions for arrays
     module Array =
         /// gets the last but one member of an array
@@ -94,15 +109,29 @@ module Util =
         let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
         /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
         let maxByOrDefault maxByProp getProp defaultValue a = if Array.isEmpty a then defaultValue else a |> Array.maxBy maxByProp |> getProp
-        /// equivalent of Array.unfold but only holding the previous and current state and returning the final state rather than maintaining a full state history
-        let solve<'T, 'State> (generator: 'State -> ('T * 'State) voption) iterationLimit (state: 'State) =
-            let rec loop i res state =
-                match i, generator state with
-                | i, _ when i = iterationLimit ->
-                    res
-                | _, ValueNone ->
-                    res
-                | _, ValueSome(x, s') ->
-                    loop (i + 1) (snd res, ValueSome x) s'
-            loop 0 (ValueNone, ValueNone) state
-            |> snd
+
+        [<TailCall>]
+        let solve (generator: decimal -> decimal) iterationLimit approximation (toleranceSteps: ToleranceSteps voption) =
+            let toleranceSteps' = toleranceSteps |> ValueOption.defaultValue { Min = 0L<Cent>; Step = 0L<Cent>; Max = 0L<Cent> }
+            let rec loop i lowerBound upperBound (tolerance: int64<Cent>) =
+                let midRange =
+                    let x = (upperBound - lowerBound) / 2m
+                    if x = upperBound then upperBound * 2m
+                    elif x = lowerBound then lowerBound / 2m
+                    else x
+                let newBound = lowerBound + midRange
+                if i = iterationLimit then
+                    if tolerance = toleranceSteps'.Max then
+                        Solution.IterationLimitReached (newBound, i, tolerance)
+                    else
+                        let newTolerance = min toleranceSteps'.Max (tolerance + toleranceSteps'.Step)
+                        loop 0 0m (approximation * 100m) newTolerance
+                else
+                    let difference = generator newBound
+                    if difference >= decimal -tolerance && difference <= 0m then
+                        Solution.Found(newBound, i, tolerance)
+                    elif difference > 0m then
+                        loop (i + 1) newBound upperBound tolerance
+                    else
+                        loop (i + 1) lowerBound newBound tolerance
+            loop 0 0m (approximation * 100m) toleranceSteps'.Min // to-do: improve approximation

@@ -73,7 +73,7 @@ module ActualPayment =
         Items: AmortisationScheduleItem array
         FinalScheduledPaymentCount: int
         FinalActualPaymentCount: int
-        FinalApr: Percent
+        FinalApr: Percent voption
     }
 
     /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
@@ -228,7 +228,7 @@ module ActualPayment =
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
 
-    let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate (actualPayments: Payment array) =
+    let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr (actualPayments: Payment array) =
         voption {
             let! schedule = ScheduledPayment.calculateSchedule sp
             let items =
@@ -241,10 +241,13 @@ module ActualPayment =
                 FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
                 FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
                 FinalApr =
-                    items
-                    |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                    |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
-                    |> Apr.calculate sp.AprCalculationMethod 8 sp.Principal sp.StartDate
+                    if calculateFinalApr then
+                        items
+                        |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
+                        |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
+                        |> Apr.calculate sp.AprCalculationMethod 8 sp.Principal sp.StartDate
+                        |> ValueSome
+                    else ValueNone
 
             }
         }

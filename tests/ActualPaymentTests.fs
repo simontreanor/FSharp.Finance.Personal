@@ -66,7 +66,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
@@ -95,7 +95,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
@@ -120,16 +120,16 @@ module ActualPaymentTests =
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
             }
-        let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49154L<Cent> 49148L<Cent>
+        let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49153L<Cent> 49153L<Cent>
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
-        let expected = quickExpectedFinalItem (DateTime(2023, 3, 15)) 134<OffsetDay> 49148L<Cent> 95764L<Cent> 8994L<Cent> 40154L<Cent>
+        let expected = quickExpectedFinalItem (DateTime(2023, 3, 15)) 134<OffsetDay> 49153L<Cent> 95765L<Cent> 8995L<Cent> 40158L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -153,7 +153,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
 
@@ -204,7 +204,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
 
@@ -260,7 +260,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
 
@@ -313,7 +313,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp (ValueSome (DateTime(2022, 11, 1)))
+            |> generateAmortisationSchedule sp (ValueSome (DateTime(2022, 11, 1))) false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
@@ -369,7 +369,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone
+            |> generateAmortisationSchedule sp ValueNone false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
 

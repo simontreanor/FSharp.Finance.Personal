@@ -2,6 +2,8 @@ namespace FSharp.Finance.Personal.Tests
 
 open System
 
+open FSharp.Finance.Personal
+
 [<AutoOpen>]
 module Util =
 
@@ -38,3 +40,5 @@ module Util =
     let toMemberData (a: _ array) =
         Array.toList a
         |> List.map(fun ssi -> [| box ssi |])
+
+    let getAprOr defaultValue = function Solution.Found(apr, _, _) -> apr | _ -> defaultValue

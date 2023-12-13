@@ -391,7 +391,7 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``never settles down`` () =
+    let ``4) never settles down`` () =
         let sp = ({
             AsOfDate = DateTime(2023, 12, 1)
             StartDate = DateTime(2023, 11, 6)
@@ -406,4 +406,94 @@ module ActualPaymentTestsExtra =
             PaymentCount = 19
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
         } : ScheduledPayment.ScheduleParameters)
-        sp
+        let actual =
+            voption {
+                let! schedule = ScheduledPayment.calculateSchedule sp
+                let scheduleItems = schedule.Items
+                let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
+                let appliedPayments =
+                    scheduleItems
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
+                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
+                return appliedPayments
+            }
+            |> ValueOption.map Array.last
+        let expected = ValueSome ({
+            OffsetDate = DateTime(2026, 8, 27)
+            OffsetDay = 1025<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 13736L<Cent>
+            ActualPayments = [| 13736L<Cent> |]
+            NetEffect = 13736L<Cent>
+            PaymentStatus = ValueSome ActualPayment.NotYetDue
+            BalanceStatus = ActualPayment.Settled
+            CumulativeInterest = 50000L<Cent>
+            NewInterest = 0L<Cent>
+            NewPenaltyCharges = 0L<Cent>
+            PrincipalPortion = 5214L<Cent>
+            ProductFeesPortion = 8522L<Cent>
+            InterestPortion = 0L<Cent>
+            PenaltyChargesPortion = 0L<Cent>
+            ProductFeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            ProductFeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
+        } : ActualPayment.AmortisationScheduleItem)
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``5) large negative payment`` () =
+        let sp = ({
+            AsOfDate = DateTime(2023, 12, 11)
+            StartDate = DateTime(2022, 9, 11)
+            Principal = 20000L<Cent>
+            ProductFees = ValueNone
+            ProductFeesSettlement = ProRataRefund
+            InterestRate = DailyInterestRate (Percent 0.8m)
+            InterestCap = { TotalCap = ValueSome <| TotalPercentageCap (Percent 100m); DailyCap = ValueSome <| DailyPercentageCap (Percent 0.8m) }
+            InterestGracePeriod = 3<Days>
+            InterestHolidays = [||]
+            UnitPeriodConfig = UnitPeriod.Monthly (1, UnitPeriod.MonthlyConfig(2022, 9, 15<TrackingDay>))
+            PaymentCount = 7
+            AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+        } : ScheduledPayment.ScheduleParameters)
+        let actual =
+            voption {
+                let! schedule = ScheduledPayment.calculateSchedule sp
+                let scheduleItems = schedule.Items
+                let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
+                let appliedPayments =
+                    scheduleItems
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
+                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
+                return appliedPayments
+            }
+            |> ValueOption.map Array.last
+        let expected = ValueSome ({
+            OffsetDate = DateTime(2023, 3, 15)
+            OffsetDay = 185<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 5153L<Cent>
+            ActualPayments = [| 5153L<Cent> |]
+            NetEffect = 5153L<Cent>
+            PaymentStatus = ValueSome ActualPayment.PaymentMade
+            BalanceStatus = ActualPayment.Settled
+            CumulativeInterest = 16119L<Cent>
+            NewInterest = 943L<Cent>
+            NewPenaltyCharges = 0L<Cent>
+            PrincipalPortion = 4210L<Cent>
+            ProductFeesPortion = 0L<Cent>
+            InterestPortion = 943L<Cent>
+            PenaltyChargesPortion = 0L<Cent>
+            ProductFeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            ProductFeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            PenaltyChargesBalance = 0L<Cent>
+            PenaltyCharges = [||]
+        } : ActualPayment.AmortisationScheduleItem)
+        actual |> should equal expected

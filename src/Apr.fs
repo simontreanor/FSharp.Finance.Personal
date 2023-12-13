@@ -83,25 +83,28 @@ module Apr =
                 decimal(``fit APR`` 0. 10000. 0)
 
         let calculateApr (startDate: DateTime) (principal: int64<Cent>) (transfers: Transfer array) =
-            if principal = 0L<Cent> || Array.isEmpty transfers then ValueNone else
+            if principal = 0L<Cent> || Array.isEmpty transfers then Solution.Impossible else
+            let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)
+            let paymentTotal = payments |> Array.sumBy _.Amount
+            if principal = paymentTotal then Solution.Found(0m, 0, 0L<Cent>) else
+            let roughApr = 4.2m
             let ak = [| principal, 0m |]
             let a'k' =
-                transfers
-                |> Array.filter(fun t -> t.TransferType = Payment)
+                payments
                 |> Array.map(fun t ->
                     t.Amount, decimal (t.Date.Date - startDate.Date).Days / 365m
                 )
-            4.2m
-            |> Array.solve(fun i ->
-                if i < 0m then ValueNone else
-                let aa = ak |> Array.sumBy(fun (a, t) -> Cent.toDecimal a / ((1m + i) |> powm t))
-                let pp = a'k' |> Array.sumBy(fun (a', t') -> Cent.toDecimal a' / ((1m + i) |> powm t'))
-                if Decimal.Round(pp - aa, 6) = 0m then
-                    ValueNone
-                else
-                    ValueSome (i, i * ((pp / aa) |> powi 4))
-            ) (if Array.length transfers < 4 then 1000 else 100)
-            |> ValueOption.map Percent.fromDecimal
+            let calc transfers unitPeriodRate =
+                transfers
+                |> Array.sumBy(fun (amount, years) ->
+                    Cent.toDecimal amount / ((1m + unitPeriodRate) |> powm years)
+                )
+            let generator unitPeriodRate =
+                let aa = calc ak unitPeriodRate
+                let pp = calc a'k' unitPeriodRate
+                let difference = Decimal.Round(pp - aa, 10)
+                difference
+            Array.solve generator 100 roughApr ValueNone
 
     /// APR as in https://www.consumerfinance.gov/rules-policy/regulations/1026/j/
     module UsActuarial =
@@ -215,7 +218,10 @@ module Apr =
 
         /// (b)(8) General equation.
         let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
-            if Array.isEmpty advances || Array.isEmpty payments then 0m else
+            if Array.isEmpty advances || Array.isEmpty payments then Solution.Impossible else
+            let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
+            let paymentTotal = payments |> Array.sumBy (_.Amount >> Cent.toDecimal)
+            if advanceTotal = paymentTotal then Solution.Found(0m, 0, 0L<Cent>) else
             let advanceDates = advances |> Array.map _.Date
             let paymentDates = payments |> Array.map _.Date
             let term = UnitPeriod.transactionTerm consummationDate firstFinanceChargeEarnedDate (paymentDates |> Array.last) (advanceDates |> Array.last)
@@ -223,7 +229,6 @@ module Apr =
             let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
             let roughUnitPeriodRate =
                 let paymentAverage = payments |> Array.averageBy (_.Amount >> Cent.toDecimal)
-                let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
                 let paymentCount = payments |> Array.length |> decimal
                 if advanceTotal = 0m || unitPeriodsPerYear = 0m then
                     0m
@@ -231,12 +236,6 @@ module Apr =
                     ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
             let unitPeriodRate =
                 let eq = [| advances[0].Amount, 0m, 0 |]
-                    // mapUnitPeriods unitPeriod term.Start advances
-                    // |> Array.map(fun (tr, dr) ->
-                    //     let e = dr.Remainder //The fraction of a unit-period in the time interval from the beginning of the term of the transaction to the kth advance.
-                    //     let q = dr.Quotient //The number of full unit-periods from the beginning of the term of the transaction to the kth advance.
-                    //     tr.Amount, e, q
-                    // )
                 let ft =
                     mapUnitPeriods unitPeriod term.Start payments
                     |> Array.map(fun (tr, dr) ->
@@ -244,17 +243,22 @@ module Apr =
                         let t = dr.Quotient //The number of full unit-periods from the beginning of the term of the transaction to the jth payment.
                         tr.Amount, f, t
                     )
-                roughUnitPeriodRate
-                |> Array.solve(fun i -> //The percentage rate of finance charge per unit-period, expressed as a decimal equivalent.
-                    let aa = eq |> Array.sumBy(fun (a, e, q) -> Cent.toDecimal a / ((1m + (e * i)) * ((1m + i) |> powi q)))
-                    let pp = ft |> Array.sumBy(fun (p, f, t) -> Cent.toDecimal p / ((1m + (f * i)) * ((1m + i) |> powi t)))
-                    if aa = 0m || Decimal.Round(pp - aa, 10) = 0m then
-                        ValueNone
-                    else
-                        ValueSome (i, i * ((pp / aa) |> powi 2))
-                ) 100
-                |> ValueOption.defaultValue 0m
-            annualPercentageRate unitPeriodRate unitPeriodsPerYear
+                let calc transfers unitPeriodRate =
+                    transfers
+                    |> Array.sumBy(fun (amount, remainder, quotient) ->
+                        let divisor = (1m + (remainder * unitPeriodRate)) * ((1m + unitPeriodRate) |> powi quotient)
+                        if divisor = 0m then 0m else Cent.toDecimal amount / divisor
+                    )
+                let generator unitPeriodRate =
+                    let aa = calc eq unitPeriodRate
+                    let pp = calc ft unitPeriodRate
+                    let difference = Decimal.Round(pp - aa, 10)
+                    difference
+                Array.solve generator 100 roughUnitPeriodRate ValueNone
+            match unitPeriodRate with
+            | Solution.Found(upr, iteration, tolerance) ->
+                Solution.Found (annualPercentageRate upr unitPeriodsPerYear, iteration, tolerance)
+            | s -> s
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and
     /// advance date are all the same
@@ -267,6 +271,10 @@ module Apr =
             if Array.isEmpty payments then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
             else payments
             |> UsActuarial.generalEquation advanceDate advanceDate advances
-            |> fun apr -> Decimal.Round(apr, precision) |> Percent.fromDecimal
+            |> fun solution ->
+                match solution with
+                | Solution.Found(apr, iteration, tolerance) ->
+                    Decimal.Round(apr, precision) |> Percent.fromDecimal
+                | s -> failwith $"Solution: {s}"
         | CalculationMethod.UnitedStatesRule ->
             failwith "Not yet implemented"

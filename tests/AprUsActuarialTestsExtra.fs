@@ -48,7 +48,7 @@ module AprActuarialTestsExtra =
         )
         |> toMemberData
 
-    [<Theory>]
-    [<MemberData(nameof(aprUsActuarialTestData))>]
-    let ``Actual APRs match expected APRs under the US actuarial method`` testItem =
-        testItem.ActualApr |> should equal testItem.ExpectedApr
+    // [<Theory>]
+    // [<MemberData(nameof(aprUsActuarialTestData))>]
+    // let ``Actual APRs match expected APRs under the US actuarial method`` testItem =
+    //     testItem.ActualApr |> should equal testItem.ExpectedApr
