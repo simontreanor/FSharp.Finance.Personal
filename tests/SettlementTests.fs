@@ -27,6 +27,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments =
@@ -85,6 +86,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments =
@@ -143,6 +145,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments =
@@ -201,6 +204,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
             PaymentCount = 5
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments = [||]
@@ -255,6 +259,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays 15. |> fun sd -> UnitPeriod.MonthlyConfig(sd.Year, sd.Month, sd.Day * 1<TrackingDay>))
             PaymentCount = 5
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments = [||]
@@ -309,6 +314,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments =
@@ -367,6 +373,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments =
@@ -425,6 +432,7 @@ module SettlementTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
         let actualPayments =

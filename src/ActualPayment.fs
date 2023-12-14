@@ -100,7 +100,10 @@ module ActualPayment =
             let penaltyCharges =
                 payments
                 |> Array.collect _.PenaltyCharges
-                |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| LatePayment latePaymentPenaltyCharge |] | _ -> [||])
+                |> fun pcc ->
+                    if latePaymentPenaltyCharge > 0L<Cent> then
+                        pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| PenaltyCharge.LatePayment latePaymentPenaltyCharge |] | _ -> [||])
+                    else pcc
             { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; NetEffect = netEffect; PaymentStatus = paymentStatus; PenaltyCharges = penaltyCharges }
         )
         |> Array.sortBy _.AppliedPaymentDay
@@ -231,10 +234,11 @@ module ActualPayment =
     let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr (actualPayments: Payment array) =
         voption {
             let! schedule = ScheduledPayment.calculateSchedule sp
+            let latePaymentPenaltyCharge = sp.PenaltyCharges |> Array.tryPick(function PenaltyCharge.LatePayment pc -> Some pc | _ -> None) |> Option.defaultValue 0L<Cent>
             let items =
                 schedule
                 |> _.Items
-                |> applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
+                |> applyPayments schedule.AsOfDay latePaymentPenaltyCharge actualPayments
                 |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
             return {
                 Items = items

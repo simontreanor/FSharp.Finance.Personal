@@ -25,6 +25,7 @@ module ScheduledPaymentTests =
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         }
 
     [<Fact>]

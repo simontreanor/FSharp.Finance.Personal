@@ -61,6 +61,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 45688L<Cent> 45684L<Cent>
 
@@ -90,6 +91,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 55605L<Cent> 55600L<Cent>
 
@@ -119,6 +121,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49153L<Cent> 49153L<Cent>
 
@@ -148,6 +151,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 49153L<Cent> 121391L<Cent>
 
@@ -199,6 +203,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 49153L<Cent> (49153L<Cent> * 3L)
 
@@ -250,6 +255,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = [|
             { PaymentDay =   2<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [|  49153L<Cent>      |]; PenaltyCharges = [||] }
@@ -306,6 +312,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = [|
             { PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 150000L<Cent> |]; PenaltyCharges = [||] }
@@ -360,6 +367,7 @@ module ActualPaymentTests =
                 UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14.)
                 PaymentCount = 11
                 AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             }
         let actualPayments = [|
             { PaymentDay = 14<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 24386L<Cent> |]; PenaltyCharges = [||] }

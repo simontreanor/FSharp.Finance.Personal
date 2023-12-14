@@ -28,6 +28,7 @@ module General =
         | ProRataRefund
 
     /// the type and amount of penalty charge
+    [<RequireQualifiedAccess>]
     [<Struct>]
     type PenaltyCharge =
         | LatePayment of LatePayment:int64<Cent>
@@ -35,4 +36,4 @@ module General =
 
     let penaltyChargesTotal penaltyCharges =
         penaltyCharges
-        |> Array.sumBy(function LatePayment m | InsufficientFunds m -> m)
+        |> Array.sumBy(function PenaltyCharge.LatePayment m | PenaltyCharge.InsufficientFunds m -> m)

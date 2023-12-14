@@ -66,6 +66,7 @@ module ScheduledPayment =
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
         AprCalculationMethod: Apr.CalculationMethod
+        PenaltyCharges: PenaltyCharge array
         // PaymentRounding: PaymentRounding
         // InterestRounding: InterestRounding
         // SolverTolerance: SolverTolerance

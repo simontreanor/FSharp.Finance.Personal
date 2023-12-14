@@ -63,6 +63,10 @@ module ActualPaymentTestsExtra =
         [| daily; weekly; semiMonthly; monthly |] |> Array.concat
     let paymentCounts = [| 1 .. 26 |]
     let aprCalculationMethods = [| Apr.CalculationMethod.UnitedKingdom; Apr.CalculationMethod.UnitedStatesRule |]
+    let penaltyCharges =
+        let insufficientFunds = [| 0L<Cent>; 750L<Cent> |] |> Array.map PenaltyCharge.InsufficientFunds
+        let latePayment = [| 0L<Cent>; 1000L<Cent> |] |> Array.map PenaltyCharge.LatePayment
+        [| insufficientFunds; latePayment |]
 
     type ScheduledPaymentTestItem = {
         TestId: string
@@ -145,7 +149,8 @@ module ActualPaymentTestsExtra =
             let upc = takeRandomFrom <| unitPeriodConfigs sd
             let pc  = takeRandomFrom paymentCounts
             let acm = takeRandomFrom aprCalculationMethods
-            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc; AprCalculationMethod = acm } : ScheduledPayment.ScheduleParameters
+            let pcc = takeRandomFrom penaltyCharges
+            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc; AprCalculationMethod = acm; PenaltyCharges = pcc } : ScheduledPayment.ScheduleParameters
             |> applyPayments
         )
 
@@ -161,10 +166,11 @@ module ActualPaymentTestsExtra =
         interestHolidays |> Seq.collect(fun ih ->
         unitPeriodConfigs sd |> Seq.collect(fun upc ->
         paymentCounts |> Seq.collect(fun pc ->
-        aprCalculationMethods
-        |> Seq.map(fun acm ->
-            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc; AprCalculationMethod = acm } : ScheduledPayment.ScheduleParameters
-        ))))))))))))
+        aprCalculationMethods |> Seq.collect(fun acm ->
+        penaltyCharges
+        |> Seq.map(fun pcc ->
+            { AsOfDate = asOfDate; StartDate = sd; Principal = aa; ProductFees = pf; ProductFeesSettlement = pfs; InterestRate = ir; InterestCap = { TotalCap = tic; DailyCap = dic }; InterestGracePeriod = igp; InterestHolidays = ih; UnitPeriodConfig = upc; PaymentCount = pc; AprCalculationMethod = acm; PenaltyCharges = pcc } : ScheduledPayment.ScheduleParameters
+        )))))))))))))
         |> Seq.map applyPayments
 
     let generateRegularPaymentTestData (appliedPayments: (string * ActualPayment.AmortisationScheduleItem array voption) seq) =
@@ -237,6 +243,7 @@ module ActualPaymentTestsExtra =
             UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2023, 8, 1<TrackingDay>))
             PaymentCount = 5
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -291,6 +298,7 @@ module ActualPaymentTestsExtra =
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
             PaymentCount = 12
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -347,6 +355,7 @@ module ActualPaymentTestsExtra =
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
             PaymentCount = 12
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -405,6 +414,7 @@ module ActualPaymentTestsExtra =
             UnitPeriodConfig = UnitPeriod.Weekly (8, DateTime(2023, 11, 23))
             PaymentCount = 19
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
@@ -459,6 +469,7 @@ module ActualPaymentTestsExtra =
             UnitPeriodConfig = UnitPeriod.Monthly (1, UnitPeriod.MonthlyConfig(2022, 9, 15<TrackingDay>))
             PaymentCount = 7
             AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+            PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
