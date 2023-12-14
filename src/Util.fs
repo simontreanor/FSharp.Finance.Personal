@@ -101,6 +101,12 @@ module Util =
         Max: int64<Cent>
     }
 
+    [<Struct>]
+    type ToleranceOption =
+        | BelowZero
+        | AroundZero
+        | AboveZero
+
     /// utility functions for arrays
     module Array =
         /// gets the last but one member of an array
@@ -109,9 +115,10 @@ module Util =
         let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
         /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
         let maxByOrDefault maxByProp getProp defaultValue a = if Array.isEmpty a then defaultValue else a |> Array.maxBy maxByProp |> getProp
-
+        /// iteratively solves for a given input using a generator function until the output is zero or within a set tolerance,
+        /// optionally relaxing the tolerance until a solution is found
         [<TailCall>]
-        let solve (generator: decimal -> decimal) iterationLimit approximation (toleranceSteps: ToleranceSteps voption) =
+        let solve (generator: decimal -> decimal) iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps voption) =
             let toleranceSteps' = toleranceSteps |> ValueOption.defaultValue { Min = 0L<Cent>; Step = 0L<Cent>; Max = 0L<Cent> }
             let rec loop i lowerBound upperBound (tolerance: int64<Cent>) =
                 let midRange =
@@ -128,10 +135,15 @@ module Util =
                         loop 0 0m (approximation * 100m) newTolerance
                 else
                     let difference = generator newBound
-                    if difference >= decimal -tolerance && difference <= 0m then
+                    let lowerTolerance, upperTolerance =
+                        match toleranceOption with
+                        | BelowZero -> decimal -tolerance, 0m
+                        | AroundZero -> decimal -tolerance, decimal tolerance
+                        | AboveZero -> 0m, decimal tolerance
+                    if difference >= lowerTolerance && difference <= upperTolerance then
                         Solution.Found(newBound, i, tolerance)
-                    elif difference > 0m then
+                    elif difference > upperTolerance then
                         loop (i + 1) newBound upperBound tolerance
-                    else
+                    else //difference < lowerTolerance
                         loop (i + 1) lowerBound newBound tolerance
             loop 0 0m (approximation * 100m) toleranceSteps'.Min // to-do: improve approximation

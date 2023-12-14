@@ -104,7 +104,7 @@ module Apr =
                 let pp = calc a'k' unitPeriodRate
                 let difference = Decimal.Round(pp - aa, 10)
                 difference
-            Array.solve generator 100 roughApr ValueNone
+            Array.solve generator 100 roughApr AroundZero ValueNone
 
     /// APR as in https://www.consumerfinance.gov/rules-policy/regulations/1026/j/
     module UsActuarial =
@@ -254,7 +254,7 @@ module Apr =
                     let pp = calc ft unitPeriodRate
                     let difference = Decimal.Round(pp - aa, 10)
                     difference
-                Array.solve generator 100 roughUnitPeriodRate ValueNone
+                Array.solve generator 100 roughUnitPeriodRate AroundZero ValueNone
             match unitPeriodRate with
             | Solution.Found(upr, iteration, tolerance) ->
                 Solution.Found (annualPercentageRate upr unitPeriodsPerYear, iteration, tolerance)

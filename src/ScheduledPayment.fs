@@ -123,7 +123,7 @@ module ScheduledPayment =
                 ) advance
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
-        Array.solve generator 100 roughPayment toleranceSteps
+        Array.solve generator 100 roughPayment BelowZero toleranceSteps
         |> function
             | Solution.Found _ -> // note: payment is discarded because it is in the schedule
                 let items =
