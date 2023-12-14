@@ -59,7 +59,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -91,7 +91,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 31<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -123,7 +123,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -155,7 +155,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -208,7 +208,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -261,7 +261,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -319,7 +319,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2022, 11, 15<TrackingDay>))
                 PaymentCount = 5
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -375,7 +375,7 @@ module ActualPaymentTests =
                 InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14.)
                 PaymentCount = 11
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
                 PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
@@ -398,7 +398,7 @@ module ActualPaymentTests =
             OffsetDay = 154<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 24366L<Cent> // to-do: this should be less than the level payment
-            ActualPayments = [| |]
+            ActualPayments = [||]
             NetEffect = 24366L<Cent>
             PaymentStatus = ValueSome NotYetDue
             BalanceStatus = Settled

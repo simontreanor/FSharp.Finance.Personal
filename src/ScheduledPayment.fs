@@ -64,7 +64,7 @@ module ScheduledPayment =
         |> Array.length
         |> fun l -> (max 0 (l - 1)) * 1<Days>
 
-    let calculateSchedule sp =
+    let calculateSchedule toleranceOption sp =
         if sp.PaymentCount = 0 then ValueNone else
         if sp.StartDate > UnitPeriod.configStartDate sp.UnitPeriodConfig then ValueNone else
         let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
@@ -101,7 +101,7 @@ module ScheduledPayment =
                 ) advance
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
-        Array.solve generator 100 roughPayment BelowZero toleranceSteps
+        Array.solve generator 100 roughPayment toleranceOption toleranceSteps
         |> function
             | Solution.Found _ -> // note: payment is discarded because it is in the schedule
                 let items =
@@ -130,10 +130,10 @@ module ScheduledPayment =
                         items
                         |> Array.filter(fun si -> si.Payment > 0L<Cent>)
                         |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
-                        |> Apr.calculate sp.AprCalculationMethod 8 sp.Principal sp.StartDate
+                        |> Apr.calculate sp.AprCalculationMethod sp.Principal sp.StartDate
                     CostToBorrowingRatio =
                         if principalTotal = 0L<Cent> then Percent 0m else
-                        decimal (productFees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 6
+                        decimal (productFees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
                 }
             | _ ->
                 ValueNone

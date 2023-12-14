@@ -36,7 +36,7 @@ module AprActuarialTestsExtra =
             let principal = Cent.fromDecimal ssi.Principal
             let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
             let payments = ssi.PaymentDates |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = paymentAmount })
-            let actualApr = Apr.calculate Apr.CalculationMethod.UsActuarial 8 principal ssi.StartDate payments |> Percent.round 4
+            let actualApr = Apr.calculate (Apr.CalculationMethod.UsActuarial 8) principal ssi.StartDate payments |> Percent.round 4
             {
                 StartDate = ssi.StartDate
                 Principal = principal

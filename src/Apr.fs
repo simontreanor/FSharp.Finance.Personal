@@ -9,8 +9,10 @@ module Apr =
     [<RequireQualifiedAccess>]
     [<Struct>]
     type CalculationMethod =
-        | UnitedKingdom
-        | UsActuarial
+        /// calculates the APR according to UK FAC rules to the stated decimal precision (note that this is two places more than the percent precision)
+        | UnitedKingdom of UkPrecision:int
+        /// calculates the APR according to the US CFPB actuarial method to the stated decimal precision (note that this is two places more than the percent precision)
+        | UsActuarial of UsPrecision:int
         | UnitedStatesRule
 
     /// basic calculation to determine the APR
@@ -54,7 +56,7 @@ module Apr =
             let generator unitPeriodRate =
                 let aa = calc ak unitPeriodRate
                 let pp = calc a'k' unitPeriodRate
-                let difference = Decimal.Round(pp - aa, 10)
+                let difference = Decimal.Round(pp - aa, 8)
                 difference
             Array.solve generator 100 roughApr AroundZero ValueNone
 
@@ -214,14 +216,19 @@ module Apr =
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and
     /// advance date are all the same
-    let calculate method (precision: int) advanceAmount advanceDate payments =
+    let calculate method advanceAmount advanceDate transfers =
         match method with
-        | CalculationMethod.UnitedKingdom ->
-            Percent 0m
-        | CalculationMethod.UsActuarial ->
+        | CalculationMethod.UnitedKingdom precision ->
+            UnitedKingdom.calculateApr advanceDate advanceAmount transfers
+            |> fun solution ->
+                match solution with
+                | Solution.Found(apr, iteration, tolerance) ->
+                    Decimal.Round(apr, precision) |> Percent.fromDecimal
+                | s -> failwith $"Solution: {s}"
+        | CalculationMethod.UsActuarial precision ->
             let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
-            if Array.isEmpty payments then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
-            else payments
+            if Array.isEmpty transfers then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
+            else transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
             |> fun solution ->
                 match solution with

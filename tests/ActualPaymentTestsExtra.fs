@@ -62,7 +62,7 @@ module ActualPaymentTestsExtra =
             )
         [| daily; weekly; semiMonthly; monthly |] |> Array.concat
     let paymentCounts = [| 1 .. 26 |]
-    let aprCalculationMethods = [| Apr.CalculationMethod.UnitedKingdom; Apr.CalculationMethod.UnitedStatesRule |]
+    let aprCalculationMethods = [| Apr.CalculationMethod.UnitedKingdom 3; Apr.CalculationMethod.UsActuarial 8 |]
     let penaltyCharges =
         let insufficientFundses = [| 0L<Cent>; 750L<Cent> |] |> Array.map PenaltyCharge.InsufficientFunds
         let latePayments = [| 0L<Cent>; 1000L<Cent> |] |> Array.map PenaltyCharge.LatePayment
@@ -108,7 +108,7 @@ module ActualPaymentTestsExtra =
         let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}_fpa{fpa}"""
         let appliedPayments = 
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule sp
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; PenaltyCharges = [||] } : ActualPayment.Payment)
                 return
@@ -255,14 +255,14 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly(1, UnitPeriod.MonthlyConfig(2023, 8, 1<TrackingDay>))
             PaymentCount = 5
-            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial 8
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule sp
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =
@@ -311,14 +311,14 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
             PaymentCount = 12
-            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial 8
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule sp
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; PenaltyCharges = [||] } : ActualPayment.Payment)
@@ -336,7 +336,7 @@ module ActualPaymentTestsExtra =
             OffsetDay = 144<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 14240L<Cent>
-            ActualPayments = [| |]
+            ActualPayments = [||]
             NetEffect = 14240L<Cent>
             PaymentStatus = ValueSome ActualPayment.NotYetDue
             BalanceStatus = ActualPayment.Settled
@@ -369,14 +369,14 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
             PaymentCount = 12
-            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial 8
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule sp
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; PenaltyCharges = [||] } : ActualPayment.Payment)
@@ -396,7 +396,7 @@ module ActualPaymentTestsExtra =
             OffsetDay = 1969<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 949L<Cent>
-            ActualPayments = [| |]
+            ActualPayments = [||]
             NetEffect = 949L<Cent>
             PaymentStatus = ValueSome ActualPayment.NotYetDue
             BalanceStatus = ActualPayment.Settled
@@ -429,14 +429,14 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Weekly (8, DateTime(2023, 11, 23))
             PaymentCount = 19
-            AprCalculationMethod = Apr.CalculationMethod.UsActuarial
+            AprCalculationMethod = Apr.CalculationMethod.UsActuarial 8
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule sp
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =
@@ -485,14 +485,14 @@ module ActualPaymentTestsExtra =
             InterestHolidays = [||]
             UnitPeriodConfig = UnitPeriod.Monthly (1, UnitPeriod.MonthlyConfig(2022, 9, 15<TrackingDay>))
             PaymentCount = 7
-            AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom
+            AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
             PenaltyCharges = [| PenaltyCharge.LatePayment 1000L<Cent> |]
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule sp
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =

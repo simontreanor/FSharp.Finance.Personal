@@ -230,7 +230,7 @@ module ActualPayment =
 
     let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr (actualPayments: Payment array) =
         voption {
-            let! schedule = ScheduledPayment.calculateSchedule sp
+            let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
             let latePaymentPenaltyCharge = sp.PenaltyCharges |> Array.tryPick(function PenaltyCharge.LatePayment pc -> Some pc | _ -> None) |> Option.defaultValue 0L<Cent>
             let items =
                 schedule
@@ -246,7 +246,7 @@ module ActualPayment =
                         items
                         |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
                         |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
-                        |> Apr.calculate sp.AprCalculationMethod 8 sp.Principal sp.StartDate
+                        |> Apr.calculate sp.AprCalculationMethod sp.Principal sp.StartDate
                         |> ValueSome
                     else ValueNone
 

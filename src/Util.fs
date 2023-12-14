@@ -49,7 +49,7 @@ module Util =
             |> (( * ) 1L<Cent>)
 
         /// lower to the base currency unit
-        let fromDecimal (m: decimal) = round (Round MidpointRounding.ToEven) (m * 100m)
+        let fromDecimal (m: decimal) = round (Round MidpointRounding.AwayFromZero) (m * 100m)
         /// raise to the standard currency unit
         let toDecimal (c: int64<Cent>) = decimal c / 100m
 
