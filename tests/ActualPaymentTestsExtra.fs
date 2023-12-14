@@ -284,7 +284,7 @@ module ActualPaymentTestsExtra =
             BalanceStatus = ActualPayment.Settled
             CumulativeInterest = 3832L<Cent>
             NewInterest = 330L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 16176L<Cent>
             ProductFeesPortion = 24258L<Cent>
             InterestPortion = 330L<Cent>
@@ -294,7 +294,6 @@ module ActualPaymentTestsExtra =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         } : ActualPayment.AmortisationScheduleItem)
         actual |> should equal expected
 
@@ -343,7 +342,7 @@ module ActualPaymentTestsExtra =
             BalanceStatus = ActualPayment.Settled
             CumulativeInterest = 4353L<Cent>
             NewInterest = 128L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 13462L<Cent>
             ProductFeesPortion = 650L<Cent>
             InterestPortion = 128L<Cent>
@@ -353,7 +352,6 @@ module ActualPaymentTestsExtra =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         } : ActualPayment.AmortisationScheduleItem)
         actual |> should equal expected
 
@@ -404,7 +402,7 @@ module ActualPaymentTestsExtra =
             BalanceStatus = ActualPayment.Settled
             CumulativeInterest = 61609L<Cent>
             NewInterest = 3L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 425L<Cent>
             ProductFeesPortion = 521L<Cent>
             InterestPortion = 3L<Cent>
@@ -414,7 +412,6 @@ module ActualPaymentTestsExtra =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         } : ActualPayment.AmortisationScheduleItem)
         actual |> should equal expected
 
@@ -461,7 +458,7 @@ module ActualPaymentTestsExtra =
             BalanceStatus = ActualPayment.Settled
             CumulativeInterest = 50000L<Cent>
             NewInterest = 0L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 5214L<Cent>
             ProductFeesPortion = 8522L<Cent>
             InterestPortion = 0L<Cent>
@@ -471,7 +468,6 @@ module ActualPaymentTestsExtra =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         } : ActualPayment.AmortisationScheduleItem)
         actual |> should equal expected
 
@@ -518,7 +514,7 @@ module ActualPaymentTestsExtra =
             BalanceStatus = ActualPayment.Settled
             CumulativeInterest = 16119L<Cent>
             NewInterest = 943L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 4210L<Cent>
             ProductFeesPortion = 0L<Cent>
             InterestPortion = 943L<Cent>
@@ -528,6 +524,5 @@ module ActualPaymentTestsExtra =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         } : ActualPayment.AmortisationScheduleItem)
         actual |> should equal expected

@@ -32,7 +32,7 @@ module ActualPaymentTests =
         BalanceStatus = Settled
         CumulativeInterest = cumulativeInterest
         NewInterest = newInterest
-        NewPenaltyCharges = 0L<Cent>
+        NewPenaltyCharges = [||]
         PrincipalPortion = principalPortion
         ProductFeesPortion = 0L<Cent>
         InterestPortion = newInterest
@@ -42,7 +42,6 @@ module ActualPaymentTests =
         ProductFeesBalance = 0L<Cent>
         InterestBalance = 0L<Cent>
         PenaltyChargesBalance = 0L<Cent>
-        PenaltyCharges = [||]
     }
 
     [<Fact>]
@@ -181,7 +180,7 @@ module ActualPaymentTests =
             BalanceStatus = Settled
             CumulativeInterest = 64697L<Cent>
             NewInterest = 2675L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 55745L<Cent>
             ProductFeesPortion = 0L<Cent>
             InterestPortion = 60646L<Cent>
@@ -191,7 +190,6 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -235,7 +233,7 @@ module ActualPaymentTests =
             BalanceStatus = RefundDue
             CumulativeInterest = 64697L<Cent>
             NewInterest = 2675L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 81813L<Cent>
             ProductFeesPortion = 0L<Cent>
             InterestPortion = 60646L<Cent>
@@ -245,7 +243,6 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -294,7 +291,7 @@ module ActualPaymentTests =
             BalanceStatus = Settled
             CumulativeInterest = 64697L<Cent>
             NewInterest = 0L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = -26068L<Cent>
             ProductFeesPortion = 0L<Cent>
             InterestPortion = 0L<Cent>
@@ -304,7 +301,6 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -350,7 +346,7 @@ module ActualPaymentTests =
             BalanceStatus = Settled
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 150000L<Cent>
             ProductFeesPortion = 0L<Cent>
             InterestPortion = 0L<Cent>
@@ -360,7 +356,6 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         }
         actual |> should equal expected
 
@@ -409,7 +404,7 @@ module ActualPaymentTests =
             BalanceStatus = Settled
             CumulativeInterest = 118226L<Cent>
             NewInterest = 2454L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = 21912L<Cent>
             ProductFeesPortion = 0L<Cent>
             InterestPortion = 2454L<Cent>
@@ -419,6 +414,5 @@ module ActualPaymentTests =
             ProductFeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         }
         actual |> should equal expected

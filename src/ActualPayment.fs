@@ -56,7 +56,7 @@ module ActualPayment =
         BalanceStatus: BalanceStatus
         CumulativeInterest: int64<Cent>
         NewInterest: int64<Cent>
-        NewPenaltyCharges: int64<Cent>
+        NewPenaltyCharges: PenaltyCharge array
         PrincipalPortion: int64<Cent>
         ProductFeesPortion: int64<Cent>
         InterestPortion: int64<Cent>
@@ -66,7 +66,6 @@ module ActualPayment =
         ProductFeesBalance: int64<Cent>
         InterestBalance: int64<Cent>
         PenaltyChargesBalance: int64<Cent>
-        PenaltyCharges: PenaltyCharge array
     }
 
     type AmortisationSchedule = {
@@ -134,7 +133,7 @@ module ActualPayment =
             BalanceStatus = getBalanceStatus dayZeroPrincipalBalance
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
-            NewPenaltyCharges = 0L<Cent>
+            NewPenaltyCharges = [||]
             PrincipalPortion = dayZeroPrincipalPortion
             ProductFeesPortion = dayZeroProductFeesPortion
             InterestPortion = 0L<Cent>
@@ -144,13 +143,12 @@ module ActualPayment =
             ProductFeesBalance = dayZeroProductFeesBalance
             InterestBalance = 0L<Cent>
             PenaltyChargesBalance = 0L<Cent>
-            PenaltyCharges = [||]
         }
         appliedPayments
         |> Array.tail
         |> Array.scan(fun a ap ->
-            let newPenaltyCharges = penaltyChargesTotal ap.PenaltyCharges
-            let penaltyChargesPortion = newPenaltyCharges + a.PenaltyChargesBalance |> ``don't apportion for a refund`` ap.NetEffect
+            let newPenaltyChargesTotal = penaltyChargesTotal ap.PenaltyCharges
+            let penaltyChargesPortion = newPenaltyChargesTotal + a.PenaltyChargesBalance |> ``don't apportion for a refund`` ap.NetEffect
 
             let interestChargeableDays = ScheduledPayment.interestChargeableDays sp.StartDate earlySettlementDate sp.InterestGracePeriod sp.InterestHolidays a.OffsetDay ap.AppliedPaymentDay
 
@@ -216,7 +214,7 @@ module ActualPayment =
                 BalanceStatus = getBalanceStatus (principalBalance - finalPaymentAdjustment)
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
-                NewPenaltyCharges = newPenaltyCharges
+                NewPenaltyCharges = ap.PenaltyCharges
                 PrincipalPortion = sign (principalPortion + finalPaymentAdjustment)
                 ProductFeesPortion = sign productFeesPortion
                 InterestPortion = interestPortion - carriedInterest
@@ -225,8 +223,7 @@ module ActualPayment =
                 PrincipalBalance = principalBalance - finalPaymentAdjustment
                 ProductFeesBalance = a.ProductFeesBalance - sign productFeesPortion - productFeesRefund
                 InterestBalance = a.InterestBalance + newInterest' - interestPortion + carriedInterest
-                PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyCharges - penaltyChargesPortion + carriedPenaltyCharges
-                PenaltyCharges = a.PenaltyCharges
+                PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyChargesTotal - penaltyChargesPortion + carriedPenaltyCharges
             }
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
