@@ -33,54 +33,6 @@ module Apr =
 
     /// APR as in https://www.handbook.fca.org.uk/handbook/MCOB/10/?view=chapter
     module UnitedKingdom =
-        [<Struct>]
-        type AprResult =
-        | More
-        | Less
-        | Accurate
-
-
-        /// Payments: duedate * repayment sum
-        let ``APR Calculation`` (startDay:DateTime) (principalValue) (payments:(DateTime*decimal)[]) =
-
-            let S = principalValue
-
-            let paymentsMap =
-                payments |> Array.map( fun(day, singlePayment) ->
-                    let tK = (decimal (day.Date-startDay.Date).Days)/365m
-                    let Ak = singlePayment
-                    tK, Ak)
-
-            let ``APR formula`` i =
-                let res =
-                    let max = float Decimal.MaxValue
-                    paymentsMap |> Array.sumBy( fun(tK, Ak) ->
-                        let d = Math.Pow((1. + i), (float tK))
-                        if d <= max then Ak/(decimal d)
-                        else 0m
-                    )
-                let tolerance = 0.00001m
-                if res < S - tolerance then AprResult.Less
-                elif res > S + tolerance then AprResult.More
-                else AprResult.Accurate
-
-            match ``APR formula`` 0. with
-            | AprResult.Accurate -> 0m
-            | _ ->
-                let rec ``fit APR`` min max iter =
-                    let middle =
-                        let x = (max-min) / 2.
-                        if x = max then max * 2.
-                        elif x = min then
-                            if min = 0. then -1000. else min / 2.
-                        else x
-                    if iter> 1000 then 100.*(min+middle)
-                    else
-                    match ``APR formula`` (min+middle) with
-                    | More -> ``fit APR`` (min+middle) max (iter+1)
-                    | Less -> ``fit APR`` min (max-middle) (iter+1)
-                    | Accurate -> 100.*(min+middle)
-                decimal(``fit APR`` 0. 10000. 0)
 
         let calculateApr (startDate: DateTime) (principal: int64<Cent>) (transfers: Transfer array) =
             if principal = 0L<Cent> || Array.isEmpty transfers then Solution.Impossible else
