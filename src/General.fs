@@ -37,3 +37,14 @@ module General =
     let penaltyChargesTotal penaltyCharges =
         penaltyCharges
         |> Array.sumBy(function PenaltyCharge.LatePayment m | PenaltyCharge.InsufficientFunds m -> m)
+
+    [<Struct>]
+    type RoundingOptions = {
+        InterestRounding: Rounding
+        PaymentRounding: Rounding
+    }
+
+    [<Struct>]
+    type FinalPaymentAdjustment =
+        | AdjustFinalPayment
+        | SpreadOverLevelPayments

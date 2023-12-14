@@ -5,10 +5,10 @@ open System
 [<AutoOpen>]
 module Interest =
 
-    let calculateInterest (dailyInterestCap: int64<Cent>) (balance: int64<Cent>) (dailyInterestRate: Percent) (interestChargeableDays: int<Days>) =
+    let calculateInterest (dailyInterestCap: int64<Cent>) (balance: int64<Cent>) (dailyInterestRate: Percent) (interestChargeableDays: int<Days>) rounding =
         decimal balance * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays
         |> min (decimal dailyInterestCap) 
-        |> Cent.floor
+        |> Cent.round rounding
 
     /// the interest rate expressed as either an annual or a daily rate
     [<Struct>]
@@ -51,14 +51,14 @@ module Interest =
     module InterestCap =
 
         /// calculates the total interest cap
-        let totalCap (initialPrincipal: int64<Cent>) = function
-            | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage |> Cent.floor
+        let totalCap (initialPrincipal: int64<Cent>) rounding = function
+            | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage |> Cent.round rounding
             | ValueSome (TotalFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
         /// calculates the daily interest cap
-        let dailyCap (balance: int64<Cent>) (interestChargeableDays: int<Days>) = function
-            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays |> Cent.floor
+        let dailyCap (balance: int64<Cent>) (interestChargeableDays: int<Days>) rounding = function
+            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays |> Cent.round rounding
             | ValueSome (DailyFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 

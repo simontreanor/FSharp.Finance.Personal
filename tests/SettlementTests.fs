@@ -28,6 +28,8 @@ module SettlementTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments =
@@ -87,6 +89,8 @@ module SettlementTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments =
@@ -146,6 +150,8 @@ module SettlementTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments =
@@ -205,6 +211,8 @@ module SettlementTests =
             PaymentCount = 5
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments = [||]
@@ -260,6 +268,8 @@ module SettlementTests =
             PaymentCount = 5
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments = [||]
@@ -315,6 +325,8 @@ module SettlementTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments =
@@ -374,6 +386,8 @@ module SettlementTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments =
@@ -433,6 +447,8 @@ module SettlementTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
         let actualPayments =

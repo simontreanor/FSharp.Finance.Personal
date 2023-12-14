@@ -15,7 +15,7 @@ module ScheduledPaymentTests =
         {
             AsOfDate = startDate
             StartDate = startDate
-            Principal = decimal principal |> Cent.floor
+            Principal = principal
             ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
             ProductFeesSettlement = ProRataRefund
             InterestRate = AnnualInterestRate (Percent 9.95m)
@@ -26,6 +26,8 @@ module ScheduledPaymentTests =
             PaymentCount = 11
             AprCalculationMethod = Apr.CalculationMethod.UsActuarial
             PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
+            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            FinalPaymentAdjustment = AdjustFinalPayment
         }
 
     [<Fact>]

@@ -109,16 +109,16 @@ module ActualPayment =
         |> Array.sortBy _.AppliedPaymentDay
         
     /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
-    let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (mergedPayments: AppliedPayment array) =
-        if Array.isEmpty mergedPayments then [||] else
+    let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (appliedPayments: AppliedPayment array) =
+        if Array.isEmpty appliedPayments then [||] else
         let asOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
         let dailyInterestRate = sp.InterestRate |> InterestRate.daily
-        let totalInterestCap = sp.InterestCap.TotalCap |> InterestCap.totalCap sp.Principal
+        let totalInterestCap = sp.InterestCap.TotalCap |> InterestCap.totalCap sp.Principal sp.RoundingOptions.InterestRounding
         let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
         let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
-        let dayZeroPayment = mergedPayments |> Array.head
+        let dayZeroPayment = appliedPayments |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0L<Cent> then 0L<Cent> else amount
-        let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal productFeesPercentage) |> Cent.floor
+        let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal productFeesPercentage) |> Cent.round RoundDown
         let dayZeroPrincipalBalance = sp.Principal - dayZeroPrincipalPortion
         let dayZeroProductFeesPortion = dayZeroPayment.NetEffect - dayZeroPrincipalPortion
         let dayZeroProductFeesBalance = productFeesTotal - dayZeroProductFeesPortion
@@ -146,7 +146,7 @@ module ActualPayment =
             PenaltyChargesBalance = 0L<Cent>
             PenaltyCharges = [||]
         }
-        mergedPayments
+        appliedPayments
         |> Array.tail
         |> Array.scan(fun a ap ->
             let newPenaltyCharges = penaltyChargesTotal ap.PenaltyCharges
@@ -158,15 +158,15 @@ module ActualPayment =
                 if a.PrincipalBalance <= 0L<Cent> then
                     0L<Cent>
                 else
-                    let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap (a.PrincipalBalance + a.ProductFeesBalance) interestChargeableDays
-                    calculateInterest dailyInterestCap (a.PrincipalBalance + a.ProductFeesBalance) dailyInterestRate interestChargeableDays
+                    let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap (a.PrincipalBalance + a.ProductFeesBalance) interestChargeableDays sp.RoundingOptions.InterestRounding
+                    calculateInterest dailyInterestCap (a.PrincipalBalance + a.ProductFeesBalance) dailyInterestRate interestChargeableDays sp.RoundingOptions.InterestRounding
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` ap.NetEffect
             
             let productFeesDue =
                 match sp.ProductFeesSettlement with
                 | DueInFull -> productFeesTotal
-                | ProRataRefund -> decimal productFeesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.floor
+                | ProRataRefund -> decimal productFeesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
             let productFeesRemaining = if ap.AppliedPaymentDay > originalFinalPaymentDay then 0L<Cent> else Cent.max 0L<Cent> (productFeesTotal - productFeesDue)
 
             let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
@@ -190,7 +190,7 @@ module ActualPayment =
                         let productFeesPayment = a.ProductFeesBalance - productFeesRemaining
                         actualPayment - penaltyChargesPortion - interestPortion - productFeesPayment, productFeesPayment
                     else
-                        let principalPayment = decimal (actualPayment - penaltyChargesPortion - interestPortion) / (1m + Percent.toDecimal productFeesPercentage) |> Cent.floor
+                        let principalPayment = decimal (actualPayment - penaltyChargesPortion - interestPortion) / (1m + Percent.toDecimal productFeesPercentage) |> Cent.round RoundDown
                         principalPayment, actualPayment - penaltyChargesPortion - interestPortion - principalPayment
 
             let principalBalance = a.PrincipalBalance - sign principalPortion

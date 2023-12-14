@@ -22,6 +22,12 @@ module Util =
         divRem m 1m
         |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1
 
+    [<Struct>]
+    type Rounding =
+        | RoundUp
+        | RoundDown
+        | Round of MidpointRounding
+
     /// the base unit of a currency
     [<Measure>]
     type Cent
@@ -33,12 +39,17 @@ module Util =
         let max (c1: int64<Cent>) (c2: int64<Cent>) = max (int64 c1) (int64 c2) * 1L<Cent>
         /// min of two cent values
         let min (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
-        /// round a decimal value to whole cents
-        let round (m: decimal) = int64 (round m) * 1L<Cent>
-        let ceil (m: decimal) = int64 (ceil m) * 1L<Cent>
-        let floor (m: decimal) = int64 (floor m) * 1L<Cent>
+
+        let round rounding (m: decimal) =
+            match rounding with
+            | RoundDown -> floor m
+            | RoundUp -> ceil m
+            | Round mpr -> Math.Round(m, 0, mpr)
+            |> int64
+            |> (( * ) 1L<Cent>)
+
         /// lower to the base currency unit
-        let fromDecimal (m: decimal) = round (m * 100m)
+        let fromDecimal (m: decimal) = round (Round MidpointRounding.ToEven) (m * 100m)
         /// raise to the standard currency unit
         let toDecimal (c: int64<Cent>) = decimal c / 100m
 
@@ -51,7 +62,7 @@ module Util =
     /// raises a decimal to a decimal power
     let powm (power: decimal) (base': decimal) = decimal (Math.Pow(double base', double power))
 
-    /// round a percent value to two decimal places
+    /// round a percent value to n decimal places
     let roundTo (places: int) (m: decimal) = Math.Round(m, places)
 
     /// utility functions for percent values
