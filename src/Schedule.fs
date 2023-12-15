@@ -12,13 +12,13 @@ module Schedule =
         | Reverse
 
     /// generate a schedule based on a unit-period schedule
-    let generate count direction unitPeriodSchedule =
+    let generate count direction unitPeriodConfig =
         let adjustMonthEnd (monthEndTrackingDay: int<TrackingDay>) (dt: DateTime) =
             if dt.Day > 15 && monthEndTrackingDay > 28<TrackingDay> then
                 TrackingDay.toDate dt.Year dt.Month (int monthEndTrackingDay)
             else dt
         let generate =
-            match unitPeriodSchedule |> constrain with
+            match unitPeriodConfig |> Config.constrain with
             | Single startDate ->
                 Array.map (fun _ -> startDate)
             | Daily startDate ->

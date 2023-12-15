@@ -89,7 +89,7 @@ module ScheduledPayment =
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculateSchedule toleranceOption sp =
         if sp.PaymentCount = 0 then ValueNone else
-        if sp.StartDate > UnitPeriod.configStartDate sp.UnitPeriodConfig then ValueNone else
+        if sp.StartDate > UnitPeriod.Config.startDate sp.UnitPeriodConfig then ValueNone else
         let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
         let finalPaymentDate = paymentDates |> Array.max
         let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>

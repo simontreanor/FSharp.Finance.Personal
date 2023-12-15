@@ -2,6 +2,7 @@
 
 open System
 
+// note: unit-period definitions are based on US federal legislation but the definitions are universally applicable
 module UnitPeriod =
 
     /// a transaction term is the length of a transaction, from the start date to the final payment
@@ -110,25 +111,25 @@ module UnitPeriod =
         | SemiMonthly (y, m, td1, td2) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
         | Monthly (multiple, y, m, d) -> $"""({multiple.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
 
-    /// gets the start date based on a unit-period config
-    let configStartDate = function
-        | Single dt -> dt
-        | Daily sd -> sd
-        | Weekly (_, wsd) -> wsd
-        | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m (int d1)
-        | Monthly (_, y, m, d) -> TrackingDay.toDate y m (int d)
+        /// gets the start date based on a unit-period config
+        let startDate = function
+            | Single dt -> dt
+            | Daily sd -> sd
+            | Weekly (_, wsd) -> wsd
+            | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m (int d1)
+            | Monthly (_, y, m, d) -> TrackingDay.toDate y m (int d)
 
-    /// constrains the freqencies to valid values
-    let constrain = function
-        | Single _ | Daily _ | Weekly _ as f -> f
-        | SemiMonthly (_, _, day1, day2) as f
-            when day1 >= 1<TrackingDay> && day1 <= 15<TrackingDay> && day2 >= 16<TrackingDay> && day2 <= 31<TrackingDay> &&
-                ((day2 < 31<TrackingDay> && day2 - day1 = 15<TrackingDay>) || (day2 = 31<TrackingDay> && day1 = 15<TrackingDay>)) -> f
-        | SemiMonthly (_, _, day1, day2) as f
-            when day2 >= 1<TrackingDay> && day2 <= 15<TrackingDay> && day1 >= 16<TrackingDay> && day1 <= 31<TrackingDay> &&
-                ((day1 < 31<TrackingDay> && day1 - day2 = 15<TrackingDay>) || (day1 = 31<TrackingDay> && day2 = 15<TrackingDay>)) -> f
-        | Monthly (_, _, _, day) as f when day >= 1<TrackingDay> && day <= 31<TrackingDay> -> f
-        | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
+        /// constrains the freqencies to valid values
+        let constrain = function
+            | Single _ | Daily _ | Weekly _ as f -> f
+            | SemiMonthly (_, _, day1, day2) as f
+                when day1 >= 1<TrackingDay> && day1 <= 15<TrackingDay> && day2 >= 16<TrackingDay> && day2 <= 31<TrackingDay> &&
+                    ((day2 < 31<TrackingDay> && day2 - day1 = 15<TrackingDay>) || (day2 = 31<TrackingDay> && day1 = 15<TrackingDay>)) -> f
+            | SemiMonthly (_, _, day1, day2) as f
+                when day2 >= 1<TrackingDay> && day2 <= 15<TrackingDay> && day1 >= 16<TrackingDay> && day1 <= 31<TrackingDay> &&
+                    ((day1 < 31<TrackingDay> && day1 - day2 = 15<TrackingDay>) || (day1 = 31<TrackingDay> && day2 = 15<TrackingDay>)) -> f
+            | Monthly (_, _, _, day) as f when day >= 1<TrackingDay> && day <= 31<TrackingDay> -> f
+            | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxLoanLength: int<Days>) (startDate: DateTime) (config: Config) =
