@@ -2,68 +2,113 @@ namespace FSharp.Finance.Personal
 
 open System
 
-[<AutoOpen>]
 module Interest =
 
-    let calculateInterest (dailyInterestCap: int64<Cent>) (balance: int64<Cent>) (dailyInterestRate: Percent) (interestChargeableDays: int<Days>) rounding =
-        decimal balance * Percent.toDecimal dailyInterestRate * decimal interestChargeableDays
-        |> min (decimal dailyInterestCap) 
+    /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped bya daily amount
+    let calculate (dailyCap: int64<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<Days>) rounding =
+        decimal balance * Percent.toDecimal dailyRate * decimal chargeableDays
+        |> min (decimal dailyCap) 
         |> Cent.round rounding
 
     /// the interest rate expressed as either an annual or a daily rate
     [<Struct>]
-    type InterestRate =
-        | AnnualInterestRate of AnnualInterestRate:Percent
-        | DailyInterestRate of DailyInterestRate:Percent
+    type Rate =
+        /// the annual interest rate, or the daily interest rate multiplied by 365
+        | Annual of Annual:Percent
+        /// the daily interest rate, or the annual interest rate divided by 365
+        | Daily of Daily:Percent
 
     [<RequireQualifiedAccess>]
-    module InterestRate =
-
+    module Rate =
+        /// used to pretty-print the interest rate for debugging
         let serialise = function
-        | AnnualInterestRate (Percent air) -> $"AnnualInterestRate{air}pc"
-        | DailyInterestRate (Percent dir) -> $"DailyInterestRate{dir}pc"
-
+        | Annual (Percent air) -> $"AnnualInterestRate{air}pc"
+        | Daily (Percent dir) -> $"DailyInterestRate{dir}pc"
+        /// calculates the annual interest rate from the daily one
         let annual = function
-            | AnnualInterestRate (Percent air) -> air |> Percent
-            | DailyInterestRate (Percent dir) -> dir * 365m |> Percent
-
+            | Annual (Percent air) -> air |> Percent
+            | Daily (Percent dir) -> dir * 365m |> Percent
+        /// calculates the daily interest rate from the annual one
         let daily = function
-            | AnnualInterestRate (Percent air) -> air / 365m |> Percent
-            | DailyInterestRate (Percent dir) -> dir |> Percent
+            | Annual (Percent air) -> air / 365m |> Percent
+            | Daily (Percent dir) -> dir |> Percent
 
+    /// the maximum interest that can accrue over the full schedule
     [<Struct>]
-    type TotalInterestCap =
+    type TotalCap =
+        /// total interest is capped at a percentage of the initial principal
         | TotalPercentageCap of TotalPercentageCap:Percent
+        /// total interest is capped at a fixed amount
         | TotalFixedCap of TotalFixedCap:int64<Cent>
 
+    /// the maximum interest that can accrue over a single day
     [<Struct>]
-    type DailyInterestCap =
+    type DailyCap =
+        /// daily interest is capped at a percentage of the principal balance
         | DailyPercentageCap of DailyPercentageCap:Percent
+        /// daily interest is capped at a fixed amount
         | DailyFixedCap of DailyFixedCap:int64<Cent>
 
+    /// the interest cap options
+    [<RequireQualifiedAccess>]
     [<Struct>]
-    type InterestCap = {
-        TotalCap: TotalInterestCap voption
-        DailyCap: DailyInterestCap voption
+    type Cap = {
+        Total: TotalCap voption
+        Daily: DailyCap voption
     }
 
     [<RequireQualifiedAccess>]
-    module InterestCap =
+    module Cap =
 
         /// calculates the total interest cap
-        let totalCap (initialPrincipal: int64<Cent>) rounding = function
+        let total (initialPrincipal: int64<Cent>) rounding = function
             | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage |> Cent.round rounding
             | ValueSome (TotalFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
         /// calculates the daily interest cap
-        let dailyCap (balance: int64<Cent>) (interestChargeableDays: int<Days>) rounding = function
+        let daily (balance: int64<Cent>) (interestChargeableDays: int<Days>) rounding = function
             | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays |> Cent.round rounding
             | ValueSome (DailyFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
+    /// an interest holiday, i.e. a period when no interest is accrued
+    [<RequireQualifiedAccess>]
     [<Struct>]
-    type InterestHoliday = {
-        InterestHolidayStart: DateTime
-        InterestHolidayEnd: DateTime
+    type Holiday = {
+        Start: DateTime
+        End: DateTime
     }
+
+    [<Struct>]
+    type Options = {
+        Rate: Rate
+        Cap: Cap
+        GracePeriod: int<Days>
+        Holidays: Holiday array
+    }
+
+    module Options =
+        /// recommended interest options
+        let recommended = {
+            Rate = Daily (Percent 0.8m)
+            Cap = { Total = ValueSome (TotalPercentageCap (Percent 100m)); Daily = ValueSome (DailyPercentageCap (Percent 0.8m)) }
+            GracePeriod = 3<Days>
+            Holidays = [||]
+        }
+
+    let chargeableDays (startDate: DateTime) (earlySettlementDate: DateTime voption) (gracePeriod: int<Days>) holidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
+        let interestFreeDays =
+            holidays
+            |> Array.collect(fun (ih: Holiday) ->
+                [| (ih.Start.Date - startDate.Date).Days .. (ih.End.Date - startDate.Date).Days |]
+            )
+            |> Array.filter(fun d -> d >= int fromDay && d <= int toDay)
+        let isWithinGracePeriod d = d <= int gracePeriod
+        let isSettledWithinGracePeriod = earlySettlementDate |> ValueOption.map(fun sd -> isWithinGracePeriod (sd.Date - startDate.Date).Days) |> ValueOption.defaultValue false
+        [| int fromDay .. int toDay |]
+        |> Array.filter(fun d -> not (isSettledWithinGracePeriod && isWithinGracePeriod d))
+        |> Array.filter(fun d -> interestFreeDays |> Array.exists ((=) d) |> not)
+        |> Array.length
+        |> fun l -> (max 0 (l - 1)) * 1<Days>
+

@@ -110,7 +110,7 @@ module UnitPeriod =
         | Monthly of MonthMultiple:int * MonthlyConfig
 
     module Config =
-
+        /// pretty-print the unit-period config, useful for debugging 
         let serialise = function
         | Single dt -> $"""(Single {dt.ToString "yyyy-MM-dd"})"""
         | Daily sd -> $"""(Daily {sd.ToString "yyyy-MM-dd"})"""
@@ -118,6 +118,7 @@ module UnitPeriod =
         | SemiMonthly (SemiMonthlyConfig (y, m, td1, td2)) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
         | Monthly (mm, MonthlyConfig(y, m, d)) -> $"""({mm.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
 
+    /// gets the start date based on a unit-period config
     let configStartDate = function
         | Single dt -> dt
         | Daily sd -> sd

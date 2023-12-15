@@ -22,6 +22,7 @@ module Util =
         divRem m 1m
         |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1
 
+    /// the type of rounding, specifying midpoint-rounding where necessary
     [<Struct>]
     type Rounding =
         | RoundUp
@@ -39,7 +40,7 @@ module Util =
         let max (c1: int64<Cent>) (c2: int64<Cent>) = max (int64 c1) (int64 c2) * 1L<Cent>
         /// min of two cent values
         let min (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
-
+        /// derive a rounded cent value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
             match rounding with
             | RoundDown -> floor m
@@ -47,7 +48,6 @@ module Util =
             | Round mpr -> Math.Round(m, 0, mpr)
             |> int64
             |> (( * ) 1L<Cent>)
-
         /// lower to the base currency unit
         let fromDecimal (m: decimal) = round (Round MidpointRounding.AwayFromZero) (m * 100m)
         /// raise to the standard currency unit
@@ -68,7 +68,6 @@ module Util =
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
     module Percent =
-
         /// create a percent value from a decimal
         let fromDecimal (m: decimal) = m * 100m |> Percent
         /// round a percent value to two decimal places
@@ -97,25 +96,34 @@ module Util =
         /// create a date from a year, month, and tracking day
         let toDate y m td = DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td)
 
+    /// the result obtained from the array solver
     [<RequireQualifiedAccess>]
     [<Struct>]
     type Solution =
+        /// a solution could not be found due to an issue with the initial parameters
         | Impossible
-        | IterationLimitReached of PartialSolution:decimal * IterationLimit:int * MaxTolerance:int64<Cent>
-        | Found of Found:decimal * Iteration:int * Tolerance:int64<Cent>
+        /// a solution could not be found within the iteration limit, but it returns the result of the last iteration and stats on how it was reached
+        | IterationLimitReached of PartialSolution:decimal * IterationLimit:int * MaxTolerance:int
+        /// a solution was found, returning the solution, the number of iterations required and the final tolerance used
+        | Found of Found:decimal * Iteration:int * Tolerance:int
 
+    /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     [<RequireQualifiedAccess>]
     [<Struct>]
     type ToleranceSteps = {
-        Min: int64<Cent>
-        Step: int64<Cent>
-        Max: int64<Cent>
+        Min: int
+        Step: int
+        Max: int
     }
 
+    /// what range of values the solver should aim for
     [<Struct>]
     type ToleranceOption =
+        /// find a solution less than or equal to zero
         | BelowZero
+        /// find a solution either side of zero
         | AroundZero
+        /// find a solution greater than or equal to zero
         | AboveZero
 
     /// utility functions for arrays
@@ -130,8 +138,8 @@ module Util =
         /// optionally relaxing the tolerance until a solution is found
         [<TailCall>]
         let solve (generator: decimal -> decimal) iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps voption) =
-            let toleranceSteps' = toleranceSteps |> ValueOption.defaultValue { Min = 0L<Cent>; Step = 0L<Cent>; Max = 0L<Cent> }
-            let rec loop i lowerBound upperBound (tolerance: int64<Cent>) =
+            let toleranceSteps' = toleranceSteps |> ValueOption.defaultValue { Min = 0; Step = 0; Max = 0 }
+            let rec loop i lowerBound upperBound tolerance =
                 let midRange =
                     let x = (upperBound - lowerBound) / 2m
                     if x = upperBound then upperBound * 2m
@@ -158,3 +166,17 @@ module Util =
                     else //difference < lowerTolerance
                         loop (i + 1) lowerBound newBound tolerance
             loop 0 0m (approximation * 100m) toleranceSteps'.Min // to-do: improve approximation
+
+    /// how to round calculated interest and payments
+    [<Struct>]
+    type RoundingOptions = {
+        InterestRounding: Rounding
+        PaymentRounding: Rounding
+    }
+
+    /// how to handle the principal balance overpayment (due to rounding) on the final payment of a schedule
+    [<Struct>]
+    type FinalPaymentAdjustment =
+        | AdjustFinalPayment
+        | SpreadOverLevelPayments
+

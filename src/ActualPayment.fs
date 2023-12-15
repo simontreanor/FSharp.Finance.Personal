@@ -2,84 +2,131 @@ namespace FSharp.Finance.Personal
 
 open System
 
-/// functions for handling received payments and calculating interest and/or penalty charges where necessary
+/// functions for handling received payments and calculating interest and/or charges where necessary
 module ActualPayment =
 
     [<Struct>]
     type PaymentStatus =
+        /// a scheduled payment was made in full and on time
         | PaymentMade
+        /// a scheduled payment was missed completely
         | MissedPayment
+        /// a scheduled payment was made on time but not in the full amount
         | Underpayment
+        /// a scheduled payment was made on time but exceeded the full amount
         | Overpayment
+        /// a payment was made on a day when no payments were scheduled
         | ExtraPayment
+        /// a refund was processed
         | Refunded
+        /// a scheduled payment is in the future (seen from the as-of date)
         | NotYetDue
-        | Overpaid
 
     [<Struct>]
     type BalanceStatus =
+        /// the balance has been settled in full
         | Settled
+        /// the balance is open, meaning further payments will be required to settle it
         | OpenBalance
+        /// due to an overpayment or a refund of charges, a refund is due
         | RefundDue
-        static member deserialise = function "Settled" -> Settled | "RefundDue" -> RefundDue | _ -> OpenBalance
 
-    /// a real payment
+    /// an actual payment made on a particular day, optionally with charges applied
     [<Struct>]
     type Payment = {
+        /// the day the payment is made, as an offset of days from the start date
         PaymentDay: int<OffsetDay>
+        /// the amount of any scheduled payment due on the current day
         ScheduledPayment: int64<Cent>
+        /// the amounts of any actual payments made on the current day
         ActualPayments: int64<Cent> array
-        PenaltyCharges: PenaltyCharge array
+        /// details of any charges incurred on the current day
+        Charges: Charge array
     }
  
-    /// a real payment
+    /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     [<Struct>]
     type AppliedPayment = {
+        /// the day the payment is made, as an offset of days from the start date
         AppliedPaymentDay: int<OffsetDay>
+        /// the amount of any scheduled payment due on the current day
         ScheduledPayment: int64<Cent>
+        /// the amounts of any actual payments made on the current day
         ActualPayments: int64<Cent> array
+        /// details of any charges incurred on the current day
+        Charges: Charge array
+        /// the net effect of any payments made on the current day
         NetEffect: int64<Cent>
+        /// the payment status based on the payments made on the current day
         PaymentStatus: PaymentStatus voption
-        PenaltyCharges: PenaltyCharge array
     }
 
-    /// amortisation schedule item showing apportionment of payments to principal, product fees, interest and penalty charges
+    /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
     [<Struct>]
     type AmortisationScheduleItem = {
+        /// the date of amortisation
         OffsetDate: DateTime
+        /// the offset expressed as the number of days from the start date
         OffsetDay: int<OffsetDay>
+        /// the principal
         Advance: int64<Cent>
+        /// any payment scheduled on the current day
         ScheduledPayment: int64<Cent>
+        /// any payments actually made on the current day
         ActualPayments: int64<Cent> array
+        /// the net effect of the scheduled and actual payments, or, for future days, what the net effect would be if the scheduled payment was actually made
         NetEffect: int64<Cent>
+        /// the status based on the payments and net effect
         PaymentStatus: PaymentStatus voption
+        /// the overall balance status
         BalanceStatus: BalanceStatus
+        /// the total of interest accrued up to and including the current day
         CumulativeInterest: int64<Cent>
+        /// the new interest charged between the previous amortisation day and the current day
         NewInterest: int64<Cent>
-        NewPenaltyCharges: PenaltyCharge array
+        /// any new charges incurred between the previous amortisation day and the current day
+        NewCharges: Charge array
+        /// the portion of the net effect assigned to the principal
         PrincipalPortion: int64<Cent>
-        ProductFeesPortion: int64<Cent>
+        /// the portion of the net effect assigned to the fees
+        FeesPortion: int64<Cent>
+        /// the portion of the net effect assigned to the interest
         InterestPortion: int64<Cent>
-        PenaltyChargesPortion: int64<Cent>
-        ProductFeesRefund: int64<Cent>
+        /// the portion of the net effect assigned to the charges
+        ChargesPortion: int64<Cent>
+        /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
+        FeesRefund: int64<Cent>
+        /// the principal balance to be carried forward
         PrincipalBalance: int64<Cent>
-        ProductFeesBalance: int64<Cent>
+        /// the fees balance to be carried forward
+        FeesBalance: int64<Cent>
+        /// the interest balance to be carried forward
         InterestBalance: int64<Cent>
-        PenaltyChargesBalance: int64<Cent>
+        /// the charges balance to be carried forward
+        ChargesBalance: int64<Cent>
     }
 
+    /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
     type AmortisationSchedule = {
+        /// a list of amortisation items, showing the events and calculations for a particular offset day
         Items: AmortisationScheduleItem array
+        /// the final number of scheduled payments in the schedule
         FinalScheduledPaymentCount: int
+        /// the final number of actual payments in the schedule (multiple payments made on the same day are counted separately)
         FinalActualPaymentCount: int
+        /// the APR based on the actual payments made and their timings
         FinalApr: Percent voption
+        /// the final ratio of (fees + interest + charges) to principal
+        FinalCostToBorrowingRatio: Percent
+        /// the daily interest rate derived from interest over (principal + fees), ignoring charges 
+        EffectiveInterestRate: Interest.Rate
     }
 
-    /// merges scheduled and actual payments by date, adds a payment status and a late payment penalty charge if underpaid
-    let applyPayments asOfDay latePaymentPenaltyCharge actualPayments (scheduledPayments: ScheduledPayment.ScheduleItem array) =
+    /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid
+    let applyPayments asOfDay latePaymentCharge actualPayments (scheduledPayments: ScheduledPayment.ScheduleItem array) =
         if Array.isEmpty scheduledPayments then [||] else
         scheduledPayments
-        |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = si.Payment; ActualPayments = [||]; PenaltyCharges = [||] })
+        |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = si.Payment; ActualPayments = [||]; Charges = [||] })
         |> fun payments -> Array.concat [| actualPayments; payments |]
         |> Array.groupBy _.PaymentDay
         |> Array.map(fun (offsetDay, payments) ->
@@ -96,31 +143,31 @@ module ActualPayment =
                 | sp, ap when ap > sp -> ap, ValueSome Overpayment
                 | sp, ap when sp = ap -> sp, ValueSome PaymentMade
                 | sp, ap -> failwith $"Unexpected permutation of scheduled ({sp}) vs actual payments ({ap})"
-            let penaltyCharges =
+            let charges =
                 payments
-                |> Array.collect _.PenaltyCharges
+                |> Array.collect _.Charges
                 |> fun pcc ->
-                    if latePaymentPenaltyCharge > 0L<Cent> then
-                        pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| PenaltyCharge.LatePayment latePaymentPenaltyCharge |] | _ -> [||])
+                    if latePaymentCharge > 0L<Cent> then
+                        pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge |] | _ -> [||])
                     else pcc
-            { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; NetEffect = netEffect; PaymentStatus = paymentStatus; PenaltyCharges = penaltyCharges }
+            { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; NetEffect = netEffect; PaymentStatus = paymentStatus; Charges = charges }
         )
         |> Array.sortBy _.AppliedPaymentDay
         
-    /// calculate amortisation schedule detailing how elements (principal, product fees, interest and penalty charges) are paid off over time
+    /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (appliedPayments: AppliedPayment array) =
         if Array.isEmpty appliedPayments then [||] else
         let asOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
-        let dailyInterestRate = sp.InterestRate |> InterestRate.daily
-        let totalInterestCap = sp.InterestCap.TotalCap |> InterestCap.totalCap sp.Principal sp.RoundingOptions.InterestRounding
-        let productFeesTotal = productFeesTotal sp.Principal sp.ProductFees
-        let productFeesPercentage = decimal productFeesTotal / decimal sp.Principal |> Percent.fromDecimal
+        let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
+        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
+        let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees
+        let feesPercentage = decimal feesTotal / decimal sp.Principal |> Percent.fromDecimal
         let dayZeroPayment = appliedPayments |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0L<Cent> then 0L<Cent> else amount
-        let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal productFeesPercentage) |> Cent.round RoundDown
+        let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal feesPercentage) |> Cent.round RoundDown
         let dayZeroPrincipalBalance = sp.Principal - dayZeroPrincipalPortion
-        let dayZeroProductFeesPortion = dayZeroPayment.NetEffect - dayZeroPrincipalPortion
-        let dayZeroProductFeesBalance = productFeesTotal - dayZeroProductFeesPortion
+        let dayZeroFeesPortion = dayZeroPayment.NetEffect - dayZeroPrincipalPortion
+        let dayZeroFeesBalance = feesTotal - dayZeroFeesPortion
         let getBalanceStatus principalBalance = if principalBalance = 0L<Cent> then Settled elif principalBalance < 0L<Cent> then RefundDue else OpenBalance
         let advance = {
             OffsetDate = sp.StartDate
@@ -133,71 +180,71 @@ module ActualPayment =
             BalanceStatus = getBalanceStatus dayZeroPrincipalBalance
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
-            NewPenaltyCharges = [||]
+            NewCharges = [||]
             PrincipalPortion = dayZeroPrincipalPortion
-            ProductFeesPortion = dayZeroProductFeesPortion
+            FeesPortion = dayZeroFeesPortion
             InterestPortion = 0L<Cent>
-            PenaltyChargesPortion = 0L<Cent>
-            ProductFeesRefund = 0L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
             PrincipalBalance = dayZeroPrincipalBalance
-            ProductFeesBalance = dayZeroProductFeesBalance
+            FeesBalance = dayZeroFeesBalance
             InterestBalance = 0L<Cent>
-            PenaltyChargesBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
         }
         appliedPayments
         |> Array.tail
         |> Array.scan(fun a ap ->
-            let newPenaltyChargesTotal = penaltyChargesTotal ap.PenaltyCharges
-            let penaltyChargesPortion = newPenaltyChargesTotal + a.PenaltyChargesBalance |> ``don't apportion for a refund`` ap.NetEffect
+            let newChargesTotal = Charges.total ap.Charges
+            let chargesPortion = newChargesTotal + a.ChargesBalance |> ``don't apportion for a refund`` ap.NetEffect
 
-            let interestChargeableDays = ScheduledPayment.interestChargeableDays sp.StartDate earlySettlementDate sp.InterestGracePeriod sp.InterestHolidays a.OffsetDay ap.AppliedPaymentDay
+            let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.GracePeriod sp.Interest.Holidays a.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
                 if a.PrincipalBalance <= 0L<Cent> then
                     0L<Cent>
                 else
-                    let dailyInterestCap = sp.InterestCap.DailyCap |> InterestCap.dailyCap (a.PrincipalBalance + a.ProductFeesBalance) interestChargeableDays sp.RoundingOptions.InterestRounding
-                    calculateInterest dailyInterestCap (a.PrincipalBalance + a.ProductFeesBalance) dailyInterestRate interestChargeableDays sp.RoundingOptions.InterestRounding
+                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (a.PrincipalBalance + a.FeesBalance) interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
+                    Interest.calculate dailyInterestCap (a.PrincipalBalance + a.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` ap.NetEffect
             
-            let productFeesDue =
-                match sp.ProductFeesSettlement with
-                | DueInFull -> productFeesTotal
-                | ProRataRefund -> decimal productFeesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
-            let productFeesRemaining = if ap.AppliedPaymentDay > originalFinalPaymentDay then 0L<Cent> else Cent.max 0L<Cent> (productFeesTotal - productFeesDue)
+            let feesDue =
+                match sp.FeesAndCharges.FeesSettlement with
+                | Fees.Settlement.DueInFull -> feesTotal
+                | Fees.Settlement.ProRataRefund -> decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
+            let feesRemaining = if ap.AppliedPaymentDay > originalFinalPaymentDay then 0L<Cent> else Cent.max 0L<Cent> (feesTotal - feesDue)
 
-            let settlementFigure = a.PrincipalBalance + a.ProductFeesBalance - productFeesRemaining + interestPortion + penaltyChargesPortion
+            let settlementFigure = a.PrincipalBalance + a.FeesBalance - feesRemaining + interestPortion + chargesPortion
             let isSettlement = ap.NetEffect = settlementFigure
             let isOverpayment = ap.NetEffect > settlementFigure && ap.AppliedPaymentDay <= asOfDay
             let isProjection = ap.NetEffect > settlementFigure && ap.AppliedPaymentDay > asOfDay
 
-            let productFeesRefund =
-                match sp.ProductFeesSettlement with
-                | DueInFull -> 0L<Cent>
-                | ProRataRefund -> if isProjection || isOverpayment || isSettlement then productFeesRemaining else 0L<Cent>
+            let feesRefund =
+                match sp.FeesAndCharges.FeesSettlement with
+                | Fees.Settlement.DueInFull -> 0L<Cent>
+                | Fees.Settlement.ProRataRefund -> if isProjection || isOverpayment || isSettlement then feesRemaining else 0L<Cent>
 
             let actualPayment = abs ap.NetEffect
             let sign: int64<Cent> -> int64<Cent> = if ap.NetEffect < 0L<Cent> then (( * ) -1L) else id
 
-            let principalPortion, productFeesPortion =
-                if (penaltyChargesPortion > actualPayment) || (penaltyChargesPortion + interestPortion > actualPayment) then
+            let principalPortion, feesPortion =
+                if (chargesPortion > actualPayment) || (chargesPortion + interestPortion > actualPayment) then
                     0L<Cent>, 0L<Cent>
                 else
                     if isProjection || isOverpayment || isSettlement then
-                        let productFeesPayment = a.ProductFeesBalance - productFeesRemaining
-                        actualPayment - penaltyChargesPortion - interestPortion - productFeesPayment, productFeesPayment
+                        let feesPayment = a.FeesBalance - feesRemaining
+                        actualPayment - chargesPortion - interestPortion - feesPayment, feesPayment
                     else
-                        let principalPayment = decimal (actualPayment - penaltyChargesPortion - interestPortion) / (1m + Percent.toDecimal productFeesPercentage) |> Cent.round RoundDown
-                        principalPayment, actualPayment - penaltyChargesPortion - interestPortion - principalPayment
+                        let principalPayment = decimal (actualPayment - chargesPortion - interestPortion) / (1m + Percent.toDecimal feesPercentage) |> Cent.round RoundDown
+                        principalPayment, actualPayment - chargesPortion - interestPortion - principalPayment
 
             let principalBalance = a.PrincipalBalance - sign principalPortion
 
-            let carriedPenaltyCharges, carriedInterest =
-                if penaltyChargesPortion > actualPayment then
-                    penaltyChargesPortion - actualPayment, interestPortion
-                elif penaltyChargesPortion + interestPortion > actualPayment then
-                    0L<Cent>, interestPortion - (actualPayment - penaltyChargesPortion)
+            let carriedCharges, carriedInterest =
+                if chargesPortion > actualPayment then
+                    chargesPortion - actualPayment, interestPortion
+                elif chargesPortion + interestPortion > actualPayment then
+                    0L<Cent>, interestPortion - (actualPayment - chargesPortion)
                 else
                     0L<Cent>, 0L<Cent>
 
@@ -214,29 +261,36 @@ module ActualPayment =
                 BalanceStatus = getBalanceStatus (principalBalance - finalPaymentAdjustment)
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
-                NewPenaltyCharges = ap.PenaltyCharges
+                NewCharges = ap.Charges
                 PrincipalPortion = sign (principalPortion + finalPaymentAdjustment)
-                ProductFeesPortion = sign productFeesPortion
+                FeesPortion = sign feesPortion
                 InterestPortion = interestPortion - carriedInterest
-                PenaltyChargesPortion = penaltyChargesPortion - carriedPenaltyCharges
-                ProductFeesRefund = productFeesRefund
+                ChargesPortion = chargesPortion - carriedCharges
+                FeesRefund = feesRefund
                 PrincipalBalance = principalBalance - finalPaymentAdjustment
-                ProductFeesBalance = a.ProductFeesBalance - sign productFeesPortion - productFeesRefund
+                FeesBalance = a.FeesBalance - sign feesPortion - feesRefund
                 InterestBalance = a.InterestBalance + newInterest' - interestPortion + carriedInterest
-                PenaltyChargesBalance = a.PenaltyChargesBalance + newPenaltyChargesTotal - penaltyChargesPortion + carriedPenaltyCharges
+                ChargesBalance = a.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
             }
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
 
+    /// generates an amortisation schedule and final statistics
     let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr (actualPayments: Payment array) =
         voption {
             let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
-            let latePaymentPenaltyCharge = sp.PenaltyCharges |> Array.tryPick(function PenaltyCharge.LatePayment pc -> Some pc | _ -> None) |> Option.defaultValue 0L<Cent>
+            let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment pc -> Some pc | _ -> None) |> Option.defaultValue 0L<Cent>
             let items =
                 schedule
                 |> _.Items
-                |> applyPayments schedule.AsOfDay latePaymentPenaltyCharge actualPayments
+                |> applyPayments schedule.AsOfDay latePaymentCharge actualPayments
                 |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
+            let principalTotal = items |> Array.sumBy _.PrincipalPortion
+            let feesTotal = items |> Array.sumBy _.FeesPortion
+            let interestTotal = items |> Array.last |> _.CumulativeInterest
+            let chargesTotal = items |> Array.sumBy _.ChargesPortion
+            let feesRefund = items |> Array.last |> _.FeesRefund
+            let finalPaymentDay = items |> Array.last |> _.OffsetDay
             return {
                 Items = items
                 FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
@@ -246,13 +300,20 @@ module ActualPayment =
                         items
                         |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
                         |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
-                        |> Apr.calculate sp.AprCalculationMethod sp.Principal sp.StartDate
+                        |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                         |> ValueSome
                     else ValueNone
-
+                FinalCostToBorrowingRatio =
+                    if principalTotal = 0L<Cent> then Percent 0m
+                    else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+                EffectiveInterestRate =
+                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
+                    else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
+                    |> Percent |> Interest.Daily
             }
         }
 
+    /// creates an array of actual payments made on time and in full according to an array of scheduled payments
     let allPaidOnTime (scheduleItems: ScheduledPayment.ScheduleItem array) =
         scheduleItems
-        |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; PenaltyCharges = [||] })
+        |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; Charges = [||] })

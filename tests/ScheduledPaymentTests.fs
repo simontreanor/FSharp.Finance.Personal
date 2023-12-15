@@ -17,18 +17,24 @@ module ScheduledPaymentTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = principal
-                ProductFees = ValueSome <| ProductFees.Percentage (Percent 189.47m, ValueNone)
-                ProductFeesSettlement = ProRataRefund
-                InterestRate = AnnualInterestRate (Percent 9.95m)
-                InterestCap = { TotalCap = ValueNone; DailyCap = ValueNone }
-                InterestGracePeriod = 3<Days>
-                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(float offset))
                 PaymentCount = 11
-                AprCalculationMethod = Apr.CalculationMethod.UsActuarial 8
-                PenaltyCharges = [| PenaltyCharge.InsufficientFunds 750L<Cent>; PenaltyCharge.LatePayment 1000L<Cent> |]
-                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FeesAndCharges = {
+                    Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.InsufficientFunds 750L<Cent>; Charge.LatePayment 1000L<Cent> |]
+                }
+                Interest = {
+                    Rate = Interest.Rate.Annual (Percent 9.95m)
+                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    GracePeriod = 3<Days>
+                    Holidays = [||]
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UsActuarial 8
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
             }
 
         [<Fact>]
@@ -93,18 +99,24 @@ module ScheduledPaymentTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = principal
-                ProductFees = ValueNone
-                ProductFeesSettlement = ProRataRefund
-                InterestRate = DailyInterestRate (Percent 0.798m)
-                InterestCap = { TotalCap = ValueSome (TotalPercentageCap (Percent 100m)); DailyCap = ValueSome (DailyPercentageCap (Percent 0.8m)) }
-                InterestGracePeriod = 3<Days>
-                InterestHolidays = [||]
                 UnitPeriodConfig = UnitPeriod.Monthly(1, startDate.AddDays(float offset) |> fun dt -> UnitPeriod.MonthlyConfig(dt.Year, dt.Month, dt.Day * 1<TrackingDay>))
                 PaymentCount = paymentCount
-                AprCalculationMethod = Apr.CalculationMethod.UnitedKingdom 3
-                PenaltyCharges = [||]
-                RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FeesAndCharges = {
+                    Fees = ValueNone
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.798m)
+                    Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)); Daily = ValueSome (Interest.DailyPercentageCap (Percent 0.8m)) }
+                    GracePeriod = 3<Days>
+                    Holidays = [||]
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
             }
 
         [<Fact>]

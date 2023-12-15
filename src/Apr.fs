@@ -40,7 +40,7 @@ module Apr =
             if principal = 0L<Cent> || Array.isEmpty transfers then Solution.Impossible else
             let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)
             let paymentTotal = payments |> Array.sumBy _.Amount
-            if principal = paymentTotal then Solution.Found(0m, 0, 0L<Cent>) else
+            if principal = paymentTotal then Solution.Found(0m, 0, 0) else
             let roughApr = 4.2m
             let ak = [| principal, 0m |]
             let a'k' =
@@ -175,7 +175,7 @@ module Apr =
             if Array.isEmpty advances || Array.isEmpty payments then Solution.Impossible else
             let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
             let paymentTotal = payments |> Array.sumBy (_.Amount >> Cent.toDecimal)
-            if advanceTotal = paymentTotal then Solution.Found(0m, 0, 0L<Cent>) else
+            if advanceTotal = paymentTotal then Solution.Found(0m, 0, 0) else
             let advanceDates = advances |> Array.map _.Date
             let paymentDates = payments |> Array.map _.Date
             let term = UnitPeriod.transactionTerm consummationDate firstFinanceChargeEarnedDate (paymentDates |> Array.last) (advanceDates |> Array.last)

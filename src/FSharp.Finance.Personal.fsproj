@@ -13,7 +13,7 @@
   <ItemGroup>
     <Compile Include="ValueOption.fs" />
     <Compile Include="Util.fs" />
-    <Compile Include="General.fs" />
+    <Compile Include="FeesAndCharges.fs" />
     <Compile Include="Interest.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Schedule.fs" />

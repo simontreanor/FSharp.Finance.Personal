@@ -8,6 +8,10 @@ module Formatting =
     open System.Linq
 
     /// creates a formatted HTML table from an IEnumerable
+    /// 
+    /// the resulting .md file can be opened in VS Code and Ctrl + Shift + v pressed to preview the table
+    /// 
+    /// (this is just a convenience feature, useful for visualising e.g. amortisation schedules output from unit tests - do not contact me about using regex for HTML!)
     let outputListToHtml fileName limit list =
         Formatter.ListExpansionLimit <- limit |> ValueOption.defaultValue 200
         Formatter.RecursionLimit <- 1
