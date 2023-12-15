@@ -25,7 +25,7 @@ module Schedule =
                 Array.map (float >> startDate.AddDays)
             | Weekly (multiple, startDate) ->
                 Array.map (fun c -> startDate.AddDays (float(c * 7 * multiple)))
-            | SemiMonthly (SemiMonthlyConfig (year, month, td1, td2)) ->
+            | SemiMonthly (year, month, td1, td2) ->
                 let startDate = TrackingDay.toDate year month (int td1)
                 let offset, monthEndTrackingDay = (if td1 > td2 then 1, td1 else 0, td2) |> fun (o, metd) -> (match direction with Forward -> o, metd | Reverse -> o - 1, metd)
                 Array.collect(fun c -> [|
@@ -33,7 +33,7 @@ module Schedule =
                     startDate.AddMonths (c + offset) |> fun dt -> TrackingDay.toDate dt.Year dt.Month (int td2) |> adjustMonthEnd monthEndTrackingDay
                 |])
                 >> Array.take count
-            | Monthly (multiple, (MonthlyConfig (year, month, td))) ->
+            | Monthly (multiple, year, month, td) ->
                 let startDate = TrackingDay.toDate year month (int td)
                 Array.map (fun c -> startDate.AddMonths (c * multiple) |> adjustMonthEnd td)
         match direction with
@@ -57,11 +57,9 @@ module Schedule =
             |> Array.chunkBySize 2
             |> Array.transpose
             |> Array.map (Array.maxBy _.Day >> _.Day)
-            |> fun days -> SemiMonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay.fromInt days[0], TrackingDay.fromInt days[1])
-            |> SemiMonthly
+            |> fun days -> SemiMonthly(firstTransferDate.Year, firstTransferDate.Month, TrackingDay.fromInt days[0], TrackingDay.fromInt days[1])
         | Month multiple ->
             transferDates
             |> Array.maxBy _.Day
             |> _.Day
-            |> fun day -> multiple, MonthlyConfig(firstTransferDate.Year, firstTransferDate.Month, TrackingDay.fromInt day)
-            |> Monthly
+            |> fun day -> Monthly(multiple, firstTransferDate.Year, firstTransferDate.Month, TrackingDay.fromInt day)

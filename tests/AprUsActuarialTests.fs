@@ -27,25 +27,25 @@ module AprUsActuarialTests =
 
     [<Fact>]
     let ``Example (c)(1)(i): Monthly payments (regular first period)`` () =
-        let actual = calculate1 500000L<Cent> 23000L<Cent> 24 (Monthly (1, MonthlyConfig (1978, 2, 10<TrackingDay>))) (DateTime(1978, 1, 10))
+        let actual = calculate1 500000L<Cent> 23000L<Cent> 24 (Monthly (1, 1978, 2, 10<TrackingDay>)) (DateTime(1978, 1, 10))
         let expected = Percent 9.69m
         actual |> should equal expected
 
     [<Fact>]
     let ``Example (c)(1)(ii): Monthly payments (long first period)`` () =
-        let actual = calculate1 600000L<Cent> 20000L<Cent> 36 (Monthly (1, MonthlyConfig (1978, 4, 1<TrackingDay>))) (DateTime(1978, 2, 10))
+        let actual = calculate1 600000L<Cent> 20000L<Cent> 36 (Monthly (1, 1978, 4, 1<TrackingDay>)) (DateTime(1978, 2, 10))
         let expected = Percent 11.82m
         actual |> should equal expected
 
     [<Fact>]
     let ``Example (c)(1)(iii): Semimonthly payments (short first period)`` () =
-        let actual = calculate1 500000L<Cent> 21917L<Cent> 24 (SemiMonthly (SemiMonthlyConfig (1978, 3, 1<TrackingDay>, 16<TrackingDay>))) (DateTime(1978, 2, 23))
+        let actual = calculate1 500000L<Cent> 21917L<Cent> 24 (SemiMonthly (1978, 3, 1<TrackingDay>, 16<TrackingDay>)) (DateTime(1978, 2, 23))
         let expected = Percent 10.34m
         actual |> should equal expected
 
     [<Fact>]
     let ``Example (c)(1)(iv): Quarterly payments (long first period)`` () =
-        let actual = calculate1 1000000L<Cent> 38500L<Cent> 40 (Monthly (3, MonthlyConfig (1978, 10, 1<TrackingDay>))) (DateTime(1978, 5, 23))
+        let actual = calculate1 1000000L<Cent> 38500L<Cent> 40 (Monthly (3, 1978, 10, 1<TrackingDay>)) (DateTime(1978, 5, 23))
         let expected = Percent 8.97m
         actual |> should equal expected
 
@@ -68,7 +68,7 @@ module AprUsActuarialTests =
     [<Fact>]
     let ``Example (c)(2)(i): Monthly payments (regular first period and irregular first payment)`` () =
         let firstPayment = { TransferType = Advance; Amount = 25000L<Cent>; Date = DateTime(1978, 2, 10) } 
-        let actual = calculate2 500000L<Cent> firstPayment 23000L<Cent> 23 (Monthly (1, MonthlyConfig (1978, 3, 10<TrackingDay>))) (DateTime(1978, 1, 10))
+        let actual = calculate2 500000L<Cent> firstPayment 23000L<Cent> 23 (Monthly (1, 1978, 3, 10<TrackingDay>)) (DateTime(1978, 1, 10))
         let expected = Percent 10.08m
         actual |> should equal expected
 
@@ -92,7 +92,7 @@ module AprUsActuarialTests =
     [<Fact>]
     let ``Example (c)(3)(i): Monthly payments (regular first period and irregular final payment)`` () =
         let lastPayment = { TransferType = Advance; Amount = 28000L<Cent>; Date = DateTime(1978, 2, 10).AddMonths(23) }
-        let actual = calculate3 500000L<Cent> lastPayment 23000L<Cent> 23 (Monthly (1, MonthlyConfig(1978, 2, 10<TrackingDay>))) (DateTime(1978, 1, 10))
+        let actual = calculate3 500000L<Cent> lastPayment 23000L<Cent> 23 (Monthly (1, 1978, 2, 10<TrackingDay>)) (DateTime(1978, 1, 10))
         let expected = Percent 10.50m
         actual |> should equal expected
 
@@ -117,7 +117,7 @@ module AprUsActuarialTests =
     let ``Example (c)(4)(i): Monthly payments (regular first period, irregular first payment, and irregular final payment)`` () =
         let firstPayment = { TransferType = Payment; Amount = 25000L<Cent>; Date = DateTime(1978, 2, 10) }
         let lastPayment = { TransferType = Payment; Amount = 28000L<Cent>; Date = DateTime(1978, 3, 10).AddMonths(22) }
-        let actual = calculate4 500000L<Cent> firstPayment lastPayment 23000L<Cent> 22 (Monthly (1, MonthlyConfig(1978, 3, 10<TrackingDay>))) (DateTime(1978, 1, 10))
+        let actual = calculate4 500000L<Cent> firstPayment lastPayment 23000L<Cent> 22 (Monthly (1, 1978, 3, 10<TrackingDay>)) (DateTime(1978, 1, 10))
         let expected = Percent 10.90m
         actual |> should equal expected
 
@@ -125,7 +125,7 @@ module AprUsActuarialTests =
     let ``Example (c)(4)(ii): Payments every two months (short first period, irregular first payment, and irregular final payment)`` () =
         let firstPayment = { TransferType = Payment; Amount = 44936L<Cent>; Date = DateTime(1978, 3, 1) }
         let lastPayment = { TransferType = Payment; Amount = 20000L<Cent>; Date = DateTime(1978, 5, 1).AddMonths(36) }
-        let actual = calculate4 800000L<Cent> firstPayment lastPayment 46500L<Cent> 18 (Monthly (2, MonthlyConfig(1978, 5, 1<TrackingDay>))) (DateTime(1978, 1, 10))
+        let actual = calculate4 800000L<Cent> firstPayment lastPayment 46500L<Cent> 18 (Monthly (2, 1978, 5, 1<TrackingDay>)) (DateTime(1978, 1, 10))
         let expected = Percent 7.30m
         actual |> should equal expected
 
@@ -151,13 +151,13 @@ module AprUsActuarialTests =
 
         [<Fact>]
         let ``Example (c)(1)(iv) [modified]: Quarterly payments (shorter first period)`` () =
-            let actual = calculate1 1000000L<Cent> 38500L<Cent> 40 (Monthly (3, MonthlyConfig (1978, 10, 1<TrackingDay>))) (DateTime(1978, 6, 23))
+            let actual = calculate1 1000000L<Cent> 38500L<Cent> 40 (Monthly (3, 1978, 10, 1<TrackingDay>)) (DateTime(1978, 6, 23))
             let expected = Percent 9.15m
             actual |> should equal expected
 
         [<Fact>]
         let ``Example (c)(1)(iv) [modified]: Quarterly payments (shorter first period: less than unit-period)`` () =
-            let actual = calculate1 1000000L<Cent> 38500L<Cent> 40 (Monthly (3, MonthlyConfig (1978, 10, 1<TrackingDay>))) (DateTime(1978, 7, 23))
+            let actual = calculate1 1000000L<Cent> 38500L<Cent> 40 (Monthly (3, 1978, 10, 1<TrackingDay>)) (DateTime(1978, 7, 23))
             let expected = Percent 9.32m
             actual |> should equal expected
 
@@ -187,6 +187,6 @@ module AprUsActuarialTests =
 
         [<Fact>]
         let ``Yearly payments`` () =
-            let actual = calculate1 100000L<Cent> 50000L<Cent> 5 (Monthly (12, MonthlyConfig (2023, 11, 30<TrackingDay>))) (DateTime(2023, 10, 26))
+            let actual = calculate1 100000L<Cent> 50000L<Cent> 5 (Monthly (12, 2023, 11, 30<TrackingDay>)) (DateTime(2023, 10, 26))
             let expected = Percent 78.34m
             actual |> should equal expected

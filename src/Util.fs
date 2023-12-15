@@ -29,7 +29,7 @@ module Util =
         | RoundDown
         | Round of MidpointRounding
 
-    /// the base unit of a currency
+    /// the base unit of a currency (cent, penny, øre etc.)
     [<Measure>]
     type Cent
 

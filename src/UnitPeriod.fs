@@ -87,14 +87,6 @@ module UnitPeriod =
         | SemiMonth -> 24m
         | (Month multiple) -> 12m / decimal multiple
 
-    /// settings for a semi-monthly payment config, where day 1 is in the first half of the month (1st to 15th) and day 2 in the second half (16th to 31st)
-    [<Struct>]
-    type SemiMonthlyConfig = SemiMonthlyConfig of Year:int * Month:int * Day1:int<TrackingDay> * Day2:int<TrackingDay>
-
-    /// settings for a monthly payment config, where day is the day of the month to track
-    [<Struct>]
-    type MonthlyConfig = MonthlyConfig of Year:int * Month:int * Day:int<TrackingDay>
-
     /// unit period combined with a
     [<Struct>]
     type Config =
@@ -105,37 +97,37 @@ module UnitPeriod =
         /// (multi-)weekly: every n weeks starting on the given date
         | Weekly of WeekMultiple:int * WeekStartDate:DateTime
         /// semi-monthly: twice a month starting on the date given by year, month and day 1, with the other day given by day 2
-        | SemiMonthly of SemiMonthlyConfig
+        | SemiMonthly of smYear:int * smMonth:int * Day1:int<TrackingDay> * Day2:int<TrackingDay>
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
-        | Monthly of MonthMultiple:int * MonthlyConfig
+        | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int<TrackingDay>
 
     module Config =
         /// pretty-print the unit-period config, useful for debugging 
         let serialise = function
         | Single dt -> $"""(Single {dt.ToString "yyyy-MM-dd"})"""
         | Daily sd -> $"""(Daily {sd.ToString "yyyy-MM-dd"})"""
-        | Weekly (wm, wsd) -> $"""({wm.ToString "00"}-Weekly ({wsd.ToString "yyyy-MM-dd"}))"""
-        | SemiMonthly (SemiMonthlyConfig (y, m, td1, td2)) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
-        | Monthly (mm, MonthlyConfig(y, m, d)) -> $"""({mm.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
+        | Weekly (multiple, wsd) -> $"""({multiple.ToString "00"}-Weekly ({wsd.ToString "yyyy-MM-dd"}))"""
+        | SemiMonthly (y, m, td1, td2) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
+        | Monthly (multiple, y, m, d) -> $"""({multiple.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
 
     /// gets the start date based on a unit-period config
     let configStartDate = function
         | Single dt -> dt
         | Daily sd -> sd
         | Weekly (_, wsd) -> wsd
-        | SemiMonthly (SemiMonthlyConfig(y, m, d1, _)) -> TrackingDay.toDate y m (int d1)
-        | Monthly (_, MonthlyConfig(y, m, d)) -> TrackingDay.toDate y m (int d)
+        | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m (int d1)
+        | Monthly (_, y, m, d) -> TrackingDay.toDate y m (int d)
 
     /// constrains the freqencies to valid values
     let constrain = function
         | Single _ | Daily _ | Weekly _ as f -> f
-        | SemiMonthly (SemiMonthlyConfig (_, _, day1, day2)) as f
+        | SemiMonthly (_, _, day1, day2) as f
             when day1 >= 1<TrackingDay> && day1 <= 15<TrackingDay> && day2 >= 16<TrackingDay> && day2 <= 31<TrackingDay> &&
                 ((day2 < 31<TrackingDay> && day2 - day1 = 15<TrackingDay>) || (day2 = 31<TrackingDay> && day1 = 15<TrackingDay>)) -> f
-        | SemiMonthly (SemiMonthlyConfig (_, _, day1, day2)) as f
+        | SemiMonthly (_, _, day1, day2) as f
             when day2 >= 1<TrackingDay> && day2 <= 15<TrackingDay> && day1 >= 16<TrackingDay> && day1 <= 31<TrackingDay> &&
                 ((day1 < 31<TrackingDay> && day1 - day2 = 15<TrackingDay>) || (day1 = 31<TrackingDay> && day2 = 15<TrackingDay>)) -> f
-        | Monthly (_, MonthlyConfig (_, _, day)) as f when day >= 1<TrackingDay> && day <= 31<TrackingDay> -> f
+        | Monthly (_, _, _, day) as f when day >= 1<TrackingDay> && day <= 31<TrackingDay> -> f
         | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
@@ -144,7 +136,7 @@ module UnitPeriod =
         match config with
         | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
         | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
-        | (Weekly (multiple, dt)) -> (maxLoanLength - offset dt.Year dt.Month dt.Day) / (multiple * 7)
-        | SemiMonthly (SemiMonthlyConfig (y, m, d1, _)) -> (maxLoanLength - offset y m (int d1)) / 15
-        | (Monthly (multiple, MonthlyConfig (y, m, d))) -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
+        | Weekly (multiple, dt) -> (maxLoanLength - offset dt.Year dt.Month dt.Day) / (multiple * 7)
+        | SemiMonthly (y, m, d1, _) -> (maxLoanLength - offset y m (int d1)) / 15
+        | Monthly (multiple, y, m, d) -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
         |> int
