@@ -28,7 +28,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -94,7 +94,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -160,7 +160,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -226,7 +226,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -288,7 +288,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -350,7 +350,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -416,7 +416,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -482,7 +482,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {

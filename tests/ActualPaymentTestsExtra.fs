@@ -33,7 +33,7 @@ module ActualPaymentTestsExtra =
         let dailyFixed = [| 100L<Cent> .. 100L<Cent> .. 1000L<Cent> |] |> Array.map (Interest.DailyFixedCap >> ValueSome)
         let dailyPercentageCap = [| 0.02m .. 0.02m .. 0.2m |] |> Array.map (Percent >> Interest.DailyPercentageCap >> ValueSome)
         [| none; dailyFixed; dailyPercentageCap |] |> Array.concat
-    let interestGracePeriods = [| 0<Days> .. 1<Days> .. 7<Days> |]
+    let interestGracePeriods = [| 0<DurationDays> .. 1<DurationDays> .. 7<DurationDays> |]
     let interestHolidays =
         let none = [||]
         let some = [| { Interest.Holiday.Start = DateTime(2024, 3, 1); Interest.Holiday.End = DateTime(2024, 12, 31)} |]
@@ -301,7 +301,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -363,7 +363,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -427,7 +427,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -493,7 +493,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.12m)
                 Cap = { Total = ValueSome <| Interest.TotalFixedCap 50000L<Cent>; Daily = ValueNone }
-                GracePeriod = 7<Days>
+                GracePeriod = 7<DurationDays>
                 Holidays = [||]
             }
             Calculation = {
@@ -555,7 +555,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                GracePeriod = 3<Days>
+                GracePeriod = 3<DurationDays>
                 Holidays = [||]
             }
             Calculation = {

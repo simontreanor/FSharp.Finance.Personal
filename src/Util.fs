@@ -81,7 +81,7 @@ module Util =
     [<Measure>] type OffsetDay
 
     /// a duration of a number of days
-    [<Measure>] type Days
+    [<Measure>] type DurationDays
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
