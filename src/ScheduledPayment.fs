@@ -157,7 +157,7 @@ module ScheduledPayment =
                 Apr =
                     items
                     |> Array.filter(fun si -> si.Payment > 0L<Cent>)
-                    |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
+                    |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
                     |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                 CostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m else

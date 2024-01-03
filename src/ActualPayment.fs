@@ -302,7 +302,7 @@ module ActualPayment =
                     if calculateFinalApr then
                         items
                         |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                        |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.Date = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
+                        |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
                         |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                         |> ValueSome
                     else ValueNone

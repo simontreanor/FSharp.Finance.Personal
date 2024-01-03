@@ -28,7 +28,7 @@ module Apr =
     [<Struct>]
     type Transfer = {
         TransferType: TransferType
-        Date: DateTime
+        TransferDate: DateTime
         Amount: int64<Cent>
     }
 
@@ -45,7 +45,7 @@ module Apr =
             let a'k' =
                 payments
                 |> Array.map(fun t ->
-                    t.Amount, decimal (t.Date.Date - startDate.Date).Days / 365m
+                    t.Amount, decimal (t.TransferDate.Date - startDate.Date).Days / 365m
                 )
             let calc transfers unitPeriodRate =
                 transfers
@@ -71,7 +71,7 @@ module Apr =
         /// shall be determined by dividing the number of days between the 2 given dates by the number of days per unit-period. If the 
         /// unit-period is a day, the number of unit-periods per year shall be 365. [...]
         let dailyUnitPeriods termStart transfers =
-            let transferDates = transfers |> Array.map _.Date
+            let transferDates = transfers |> Array.map _.TransferDate
             let offset = daysBetween termStart (transferDates |> Array.head)
             transfers
             |> Array.mapi(fun i t -> t, { Quotient = i + offset; Remainder = 0m })
@@ -94,7 +94,7 @@ module Apr =
         ///
         /// > (B) The remaining number of days divided by 365 if the remaining interval is not equal to a whole number of months.
         let monthlyUnitPeriods (multiple: int) termStart transfers =
-            let transferDates = transfers |> Array.map _.Date
+            let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
             let frequency = transferDates |> Schedule.detect Schedule.Reverse (UnitPeriod.Month 1)
             let schedule = Schedule.generate ((transferCount + 1) * multiple) Schedule.Reverse frequency |> Array.filter(fun dt -> dt >= termStart)
@@ -122,7 +122,7 @@ module Apr =
         /// fraction of a unit-period shall be determined by dividing such number of days by 15 in the case of a semimonthly unit-period 
         /// [...]. If the unit-period is a semimonth, the number of unit-periods per year shall be 24. [...]
         let semiMonthlyUnitPeriods termStart transfers =
-            let transferDates = transfers |> Array.map _.Date
+            let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
             let frequency = transferDates |> Schedule.detect Schedule.Reverse UnitPeriod.SemiMonth
             let schedule = Schedule.generate (transferCount + 2) Schedule.Reverse frequency |> Array.filter(fun dt -> dt >= termStart)
@@ -141,7 +141,7 @@ module Apr =
         /// per unit-period. [...] If the unit-period is a week or a multiple of a week, the number of unit-periods per year shall be 
         /// 52 divided by the number of weeks per unit-period.
         let weeklyUnitPeriods (multiple: int) termStart transfers =
-            let transferDates = transfers |> Array.map _.Date
+            let transferDates = transfers |> Array.map _.TransferDate
             let dr  = decimal (daysBetween termStart (transferDates |> Array.head)) / (7m * decimal multiple) |> fun d -> divRem d 1m
             transfers
             |> Array.mapi(fun i t ->
@@ -175,8 +175,8 @@ module Apr =
             let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
             let paymentTotal = payments |> Array.sumBy (_.Amount >> Cent.toDecimal)
             if advanceTotal = paymentTotal then Solution.Found(0m, 0, 0) else
-            let advanceDates = advances |> Array.map _.Date
-            let paymentDates = payments |> Array.map _.Date
+            let advanceDates = advances |> Array.map _.TransferDate
+            let paymentDates = payments |> Array.map _.TransferDate
             let term = UnitPeriod.transactionTerm consummationDate firstFinanceChargeEarnedDate (paymentDates |> Array.last) (advanceDates |> Array.last)
             let unitPeriod = UnitPeriod.nearest term advanceDates paymentDates
             let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
@@ -225,8 +225,8 @@ module Apr =
                     Decimal.Round(apr, precision) |> Percent.fromDecimal
                 | s -> failwith $"Solution: {s}"
         | CalculationMethod.UsActuarial precision ->
-            let advances = [| { TransferType = Advance; Date = advanceDate; Amount = advanceAmount } |]
-            if Array.isEmpty transfers then [| { TransferType = Payment; Date = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
+            let advances = [| { TransferType = Advance; TransferDate = advanceDate; Amount = advanceAmount } |]
+            if Array.isEmpty transfers then [| { TransferType = Payment; TransferDate = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
             else transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
             |> fun solution ->

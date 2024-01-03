@@ -20,8 +20,8 @@ module AprUsActuarialTests =
     let calculate1 advanceAmount payment paymentCount intervalSchedule advanceDate =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
-        let advances = [| { TransferType = Advance; Date = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> Schedule.generate paymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = payment })
+        let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
+        let payments = intervalSchedule |> Schedule.generate paymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; TransferDate = dt; Amount = payment })
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
@@ -59,22 +59,22 @@ module AprUsActuarialTests =
     let calculate2 advanceAmount firstPayment regularPaymentAmount regularPaymentCount intervalSchedule advanceDate =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
-        let advances = [| { TransferType = Advance; Date = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = regularPaymentAmount })
+        let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
+        let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; TransferDate = dt; Amount = regularPaymentAmount })
         let payments' = Array.concat [| [| firstPayment |]; payments |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(2)(i): Monthly payments (regular first period and irregular first payment)`` () =
-        let firstPayment = { TransferType = Advance; Amount = 25000L<Cent>; Date = DateTime(1978, 2, 10) } 
+        let firstPayment = { TransferType = Advance; Amount = 25000L<Cent>; TransferDate = DateTime(1978, 2, 10) } 
         let actual = calculate2 500000L<Cent> firstPayment 23000L<Cent> 23 (Monthly (1, 1978, 3, 10)) (DateTime(1978, 1, 10))
         let expected = Percent 10.08m
         actual |> should equal expected
 
     [<Fact>]
     let ``Example (c)(2)(ii): Payments every 4 weeks (long first period and irregular first payment)`` () =
-        let firstPayment = { TransferType = Advance; Amount = 3950L<Cent>; Date = DateTime(1978, 4, 20) }
+        let firstPayment = { TransferType = Advance; Amount = 3950L<Cent>; TransferDate = DateTime(1978, 4, 20) }
         let actual = calculate2 40000L<Cent> firstPayment 3831L<Cent> 11 (Weekly (4, DateTime(1978, 5, 18))) (DateTime(1978, 3, 18))
         let expected = Percent 28.50m
         actual |> should equal expected
@@ -83,22 +83,22 @@ module AprUsActuarialTests =
     let calculate3 advanceAmount lastPayment regularPaymentAmount regularPaymentCount intervalSchedule advanceDate =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
-        let advances = [| { TransferType = Advance; Date = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = regularPaymentAmount })
+        let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
+        let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; TransferDate = dt; Amount = regularPaymentAmount })
         let payments' = Array.concat [| payments; [| lastPayment |] |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(3)(i): Monthly payments (regular first period and irregular final payment)`` () =
-        let lastPayment = { TransferType = Advance; Amount = 28000L<Cent>; Date = DateTime(1978, 2, 10).AddMonths(23) }
+        let lastPayment = { TransferType = Advance; Amount = 28000L<Cent>; TransferDate = DateTime(1978, 2, 10).AddMonths(23) }
         let actual = calculate3 500000L<Cent> lastPayment 23000L<Cent> 23 (Monthly (1, 1978, 2, 10)) (DateTime(1978, 1, 10))
         let expected = Percent 10.50m
         actual |> should equal expected
 
     [<Fact>]
     let ``Example (c)(3)(ii): Payments every 2 weeks (short first period and irregular final payment)`` () =
-        let lastPayment = { TransferType = Advance; Amount = 3000L<Cent>; Date = DateTime(1978, 4, 11).AddDays(14.*19.) }
+        let lastPayment = { TransferType = Advance; Amount = 3000L<Cent>; TransferDate = DateTime(1978, 4, 11).AddDays(14.*19.) }
         let actual = calculate3 20000L<Cent> lastPayment 950L<Cent> 19 (Weekly (2, DateTime(1978, 4, 11))) (DateTime(1978, 4, 3))
         let expected = Percent 12.22m
         actual |> should equal expected
@@ -107,31 +107,31 @@ module AprUsActuarialTests =
     let calculate4 advanceAmount firstPayment lastPayment regularPaymentAmount regularPaymentCount intervalSchedule advanceDate =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
-        let advances = [| { TransferType = Advance; Date = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; Date = dt; Amount = regularPaymentAmount })
+        let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
+        let payments = intervalSchedule |> Schedule.generate regularPaymentCount Schedule.Forward |> Array.map(fun dt -> { TransferType = Payment; TransferDate = dt; Amount = regularPaymentAmount })
         let payments' = Array.concat [| [| firstPayment |]; payments; [| lastPayment |] |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(4)(i): Monthly payments (regular first period, irregular first payment, and irregular final payment)`` () =
-        let firstPayment = { TransferType = Payment; Amount = 25000L<Cent>; Date = DateTime(1978, 2, 10) }
-        let lastPayment = { TransferType = Payment; Amount = 28000L<Cent>; Date = DateTime(1978, 3, 10).AddMonths(22) }
+        let firstPayment = { TransferType = Payment; Amount = 25000L<Cent>; TransferDate = DateTime(1978, 2, 10) }
+        let lastPayment = { TransferType = Payment; Amount = 28000L<Cent>; TransferDate = DateTime(1978, 3, 10).AddMonths(22) }
         let actual = calculate4 500000L<Cent> firstPayment lastPayment 23000L<Cent> 22 (Monthly (1, 1978, 3, 10)) (DateTime(1978, 1, 10))
         let expected = Percent 10.90m
         actual |> should equal expected
 
     [<Fact>]
     let ``Example (c)(4)(ii): Payments every two months (short first period, irregular first payment, and irregular final payment)`` () =
-        let firstPayment = { TransferType = Payment; Amount = 44936L<Cent>; Date = DateTime(1978, 3, 1) }
-        let lastPayment = { TransferType = Payment; Amount = 20000L<Cent>; Date = DateTime(1978, 5, 1).AddMonths(36) }
+        let firstPayment = { TransferType = Payment; Amount = 44936L<Cent>; TransferDate = DateTime(1978, 3, 1) }
+        let lastPayment = { TransferType = Payment; Amount = 20000L<Cent>; TransferDate = DateTime(1978, 5, 1).AddMonths(36) }
         let actual = calculate4 800000L<Cent> firstPayment lastPayment 46500L<Cent> 18 (Monthly (2, 1978, 5, 1)) (DateTime(1978, 1, 10))
         let expected = Percent 7.30m
         actual |> should equal expected
 
     /// (c)(5) Single advance, single payment transaction
     let calculate5 advance payment =
-        let consummationDate = advance.Date
+        let consummationDate = advance.TransferDate
         let firstFinanceChargeEarnedDate = consummationDate
         let advances = [| advance |]
         let payments = [| payment |]
@@ -140,8 +140,8 @@ module AprUsActuarialTests =
 
     [<Fact>]
     let ``Example (c)(5)(i): Single advance, single payment (term of less than 1 year, measured in days)`` () =
-        let advance = { TransferType = Payment; Date = DateTime(1978, 1, 3); Amount = 100000L<Cent> }
-        let payment = { TransferType = Payment; Date = DateTime(1978, 9, 15); Amount = 108000L<Cent> }
+        let advance = { TransferType = Payment; TransferDate = DateTime(1978, 1, 3); Amount = 100000L<Cent> }
+        let payment = { TransferType = Payment; TransferDate = DateTime(1978, 9, 15); Amount = 108000L<Cent> }
         let actual = calculate5 advance payment
         let expected = Percent 11.45m
         actual |> should equal expected
