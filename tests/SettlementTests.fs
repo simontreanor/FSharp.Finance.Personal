@@ -488,7 +488,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -520,6 +520,138 @@ module SettlementTests =
             PrincipalPortion = 10416L<Cent>
             FeesPortion = 19719L<Cent>
             InterestPortion = 115L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``9) Verified example`` () =
+        let startDate = DateTime(2023, 6, 23)
+
+        let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime(2023, 12, 21)
+            StartDate = startDate
+            Principal = 500_00L<Cent>
+            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2023, 6, 30))
+            PaymentCount = 10
+            FeesAndCharges = {
+                Fees = ValueSome <| Fees.Percentage (Percent 150m, ValueNone)
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+            }
+            Interest = {
+                Rate = Interest.Rate.Annual (Percent 9.95m)
+                Cap = { Total = ValueNone; Daily = ValueNone }
+                GracePeriod = 3<DurationDays>
+                Holidays = [||]
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UsActuarial 5
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+            }
+        }
+
+        let actualPayments = [||]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement (DateTime(2023, 12, 21)) sp actualPayments
+                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+            }
+
+        let expected = ValueSome (1311_66L<Cent>, {
+            OffsetDate = startDate.AddDays(181.)
+            OffsetDay = 181<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [| 1311_66L<Cent>|]
+            NetEffect = 1311_66L<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = Settled
+            CumulativeInterest = 61_66L<Cent>
+            NewInterest = 16_35L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 500_00L<Cent>
+            FeesPortion = 750_00L<Cent>
+            InterestPortion = 61_66L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``10) Verified example`` () =
+        let startDate = DateTime(2022, 11, 28)
+
+        let sp : ScheduledPayment.ScheduleParameters = {
+            AsOfDate = DateTime(2023, 12, 21)
+            StartDate = startDate
+            Principal = 1200_00L<Cent>
+            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 12, 12))
+            PaymentCount = 11
+            FeesAndCharges = {
+                Fees = ValueSome <| Fees.Percentage (Percent 150m, ValueNone)
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+            }
+            Interest = {
+                Rate = Interest.Rate.Annual (Percent 9.95m)
+                Cap = { Total = ValueNone; Daily = ValueNone }
+                GracePeriod = 3<DurationDays>
+                Holidays = [||]
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UsActuarial 5
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+            }
+        }
+
+        let actualPayments = [|
+            { PaymentDay = 70<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 84<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 84<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 85<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 98<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 112<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 126<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement (DateTime(2023, 12, 21)) sp actualPayments
+                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+            }
+
+        let expected = ValueSome (1261_68L<Cent>, {
+            OffsetDate = startDate.AddDays(388.)
+            OffsetDay = 388<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [| 1261_68L<Cent>|]
+            NetEffect = 1261_68L<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = Settled
+            CumulativeInterest = 171_56L<Cent>
+            NewInterest = 75_11L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 471_06L<Cent>
+            FeesPortion = 706_53L<Cent>
+            InterestPortion = 84_09L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
