@@ -48,7 +48,7 @@ module ActualPaymentTestsExtra =
                 |> fun sd ->
                     if sd.Day < 15 then [| sd.Day + 15 |] elif sd.Day = 15 then [| 30; 31 |] elif sd.Day < 31 then [| sd.Day - 15 |] else [| 15 |]
                     |> Array.map(fun td2 -> 
-                        UnitPeriod.Config.SemiMonthly(sd.Year, sd.Month, sd.Day * 1<TrackingDay>, td2 * 1<TrackingDay>)
+                        UnitPeriod.Config.SemiMonthly(sd.Year, sd.Month, sd.Day * 1, td2 * 1)
                     )
             )
         let monthly =
@@ -57,7 +57,7 @@ module ActualPaymentTestsExtra =
                 [| 4. .. 32. |]
                 |> Array.map(fun d ->
                     startDate.AddDays d
-                    |> fun sd -> UnitPeriod.Config.Monthly(multiple, sd.Year, sd.Month, sd.Day * 1<TrackingDay>)
+                    |> fun sd -> UnitPeriod.Config.Monthly(multiple, sd.Year, sd.Month, sd.Day * 1)
                 )
             )
         [| daily; weekly; semiMonthly; monthly |] |> Array.concat
@@ -291,7 +291,7 @@ module ActualPaymentTestsExtra =
             AsOfDate = DateTime(2023, 7, 23)
             StartDate = DateTime(2023, 7, 23)
             Principal = 80000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1<TrackingDay>)
+            UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1)
             PaymentCount = 5
             FeesAndCharges = {
                 Fees = ValueSome(Fees.Percentage (Percent 150m, ValueNone))
@@ -545,7 +545,7 @@ module ActualPaymentTestsExtra =
             AsOfDate = DateTime(2023, 12, 11)
             StartDate = DateTime(2022, 9, 11)
             Principal = 20000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15<TrackingDay>)
+            UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15)
             PaymentCount = 7
             FeesAndCharges = {
                 Fees = ValueNone

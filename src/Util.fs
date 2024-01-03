@@ -53,25 +53,6 @@ module Util =
         // multiply two percentages together
         let multiply (Percent p1) (Percent p2) = p1 * p2 |> fromDecimal
 
-    /// the offset of a date from the start date, in days
-    [<Measure>] type OffsetDay
-
-    /// a duration of a number of days
-    [<Measure>] type DurationDays
-
-    /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
-    /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
-    /// possible to start with e.g. (2024, 02, 31) and this will yield 2024-02-29 29 2024-03-31 2024-04-30 etc.
-    [<Measure>]
-    type TrackingDay
-
-    [<RequireQualifiedAccess>]
-    module TrackingDay =
-        /// create a tracking day from an int
-        let fromInt (i: int) = i * 1<TrackingDay>
-        /// create a date from a year, month, and tracking day
-        let toDate y m td = DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td)
-
     /// how to round calculated interest and payments
     [<Struct>]
     type RoundingOptions = {

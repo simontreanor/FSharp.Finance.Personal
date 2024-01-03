@@ -14,6 +14,7 @@
     <Compile Include="ValueOption.fs" />
     <Compile Include="Util.fs" />
     <Compile Include="Array.fs" />
+    <Compile Include="Date.fs" />
     <Compile Include="Currency.fs" />
     <Compile Include="FeesAndCharges.fs" />
     <Compile Include="Interest.fs" />

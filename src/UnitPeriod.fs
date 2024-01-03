@@ -98,9 +98,9 @@ module UnitPeriod =
         /// (multi-)weekly: every n weeks starting on the given date
         | Weekly of WeekMultiple:int * WeekStartDate:DateTime
         /// semi-monthly: twice a month starting on the date given by year, month and day 1, with the other day given by day 2
-        | SemiMonthly of smYear:int * smMonth:int * Day1:int<TrackingDay> * Day2:int<TrackingDay>
+        | SemiMonthly of smYear:int * smMonth:int * Day1:int * Day2:int
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
-        | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int<TrackingDay>
+        | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int
 
     module Config =
         /// pretty-print the unit-period config, useful for debugging 
@@ -116,19 +116,19 @@ module UnitPeriod =
             | Single dt -> dt
             | Daily sd -> sd
             | Weekly (_, wsd) -> wsd
-            | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m (int d1)
-            | Monthly (_, y, m, d) -> TrackingDay.toDate y m (int d)
+            | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m d1
+            | Monthly (_, y, m, d) -> TrackingDay.toDate y m d
 
         /// constrains the freqencies to valid values
         let constrain = function
             | Single _ | Daily _ | Weekly _ as f -> f
             | SemiMonthly (_, _, day1, day2) as f
-                when day1 >= 1<TrackingDay> && day1 <= 15<TrackingDay> && day2 >= 16<TrackingDay> && day2 <= 31<TrackingDay> &&
-                    ((day2 < 31<TrackingDay> && day2 - day1 = 15<TrackingDay>) || (day2 = 31<TrackingDay> && day1 = 15<TrackingDay>)) -> f
+                when day1 >= 1 && day1 <= 15 && day2 >= 16 && day2 <= 31 &&
+                    ((day2 < 31 && day2 - day1 = 15) || (day2 = 31 && day1 = 15)) -> f
             | SemiMonthly (_, _, day1, day2) as f
-                when day2 >= 1<TrackingDay> && day2 <= 15<TrackingDay> && day1 >= 16<TrackingDay> && day1 <= 31<TrackingDay> &&
-                    ((day1 < 31<TrackingDay> && day1 - day2 = 15<TrackingDay>) || (day1 = 31<TrackingDay> && day2 = 15<TrackingDay>)) -> f
-            | Monthly (_, _, _, day) as f when day >= 1<TrackingDay> && day <= 31<TrackingDay> -> f
+                when day2 >= 1 && day2 <= 15 && day1 >= 16 && day1 <= 31 &&
+                    ((day1 < 31 && day1 - day2 = 15) || (day1 = 31 && day2 = 15)) -> f
+            | Monthly (_, _, _, day) as f when day >= 1 && day <= 31 -> f
             | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
