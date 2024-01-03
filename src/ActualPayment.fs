@@ -71,7 +71,7 @@ module ActualPayment =
         OffsetDate: DateTime
         /// the offset expressed as the number of days from the start date
         OffsetDay: int<OffsetDay>
-        /// the principal
+        /// any advance made on the current day, typically the principal on day 0 for a single-advance transaction
         Advance: int64<Cent>
         /// any payment scheduled on the current day
         ScheduledPayment: int64<Cent>

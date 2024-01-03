@@ -47,8 +47,8 @@ module SettlementTests =
         let actual =
             voption{
                 let! settlement = Settlement.getSettlement (DateTime.Today.AddDays -3.) sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (196970L<Cent>, {
@@ -113,8 +113,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (202648L<Cent>, {
@@ -179,8 +179,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (200148L<Cent>, {
@@ -241,8 +241,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (120000L<Cent>, {
@@ -303,8 +303,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (123840L<Cent>, {
@@ -369,8 +369,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (342001L<Cent>, {
@@ -435,8 +435,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getNextScheduled DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (32315L<Cent>, {
@@ -501,8 +501,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getAllOverdue DateTime.Today sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (68808L<Cent>, {
@@ -563,8 +563,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (DateTime(2023, 12, 21)) sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (1311_66L<Cent>, {
@@ -633,8 +633,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (DateTime(2023, 12, 21)) sp actualPayments
-                settlement.WhatIfSchedule.Items |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.WhatIfSchedule.Items
+                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (1261_68L<Cent>, {
