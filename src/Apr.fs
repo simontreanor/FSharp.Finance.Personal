@@ -8,7 +8,7 @@ module Apr =
     [<RequireQualifiedAccess>]
     [<Struct>]
     type CalculationMethod =
-        /// calculates the APR according to UK FAC rules to the stated decimal precision (note that this is two places more than the percent precision)
+        /// calculates the APR according to UK FCA rules to the stated decimal precision (note that this is two places more than the percent precision)
         | UnitedKingdom of UkPrecision:int
         /// calculates the APR according to the US CFPB actuarial method to the stated decimal precision (note that this is two places more than the percent precision)
         | UsActuarial of UsPrecision:int
