@@ -1,7 +1,6 @@
 namespace FSharp.Finance.Personal
 
 open System
-open Util
 
 module Apr =
 
