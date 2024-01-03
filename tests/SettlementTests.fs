@@ -34,7 +34,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -100,7 +100,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -166,7 +166,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -232,7 +232,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -294,7 +294,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -356,7 +356,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 
@@ -422,7 +422,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         }
 

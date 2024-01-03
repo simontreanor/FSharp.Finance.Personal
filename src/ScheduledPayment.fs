@@ -48,6 +48,12 @@ module ScheduledPayment =
         CostToBorrowingRatio: Percent
     }
 
+    /// how to handle the principal balance overpayment (due to rounding) on the final payment of a schedule
+    [<Struct>]
+    type FinalPaymentAdjustment =
+        | AdjustFinalPayment
+        | SpreadOverLevelPayments
+
     /// technical calculation options
     [<Struct>]
     type Calculation = {

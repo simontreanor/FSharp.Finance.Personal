@@ -44,10 +44,3 @@ module Calculation =
         InterestRounding: Rounding
         PaymentRounding: Rounding
     }
-
-    /// how to handle the principal balance overpayment (due to rounding) on the final payment of a schedule
-    [<Struct>]
-    type FinalPaymentAdjustment =
-        | AdjustFinalPayment
-        | SpreadOverLevelPayments
-

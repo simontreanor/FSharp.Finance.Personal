@@ -72,7 +72,7 @@ module ActualPaymentTestsExtra =
         let paymentRoundings = [| RoundDown; RoundUp; Round MidpointRounding.ToEven; Round MidpointRounding.AwayFromZero; |]
         interestRoundings
         |> Array.collect(fun ir -> paymentRoundings |> Array.map(fun pr -> { InterestRounding = ir; PaymentRounding = pr }))
-    let finalPaymentAdjustments = [| AdjustFinalPayment; SpreadOverLevelPayments |]
+    let finalPaymentAdjustments = [| ScheduledPayment.AdjustFinalPayment; ScheduledPayment.SpreadOverLevelPayments |]
 
     type ScheduledPaymentTestItem = {
         TestId: string
@@ -307,7 +307,7 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         } : ScheduledPayment.ScheduleParameters)
         let actual =
@@ -369,7 +369,7 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         } : ScheduledPayment.ScheduleParameters)
         let actual =
@@ -433,7 +433,7 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         } : ScheduledPayment.ScheduleParameters)
         let actual =
@@ -499,7 +499,7 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         } : ScheduledPayment.ScheduleParameters)
         let actual =
@@ -561,7 +561,7 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
+                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
         } : ScheduledPayment.ScheduleParameters)
         let actual =
