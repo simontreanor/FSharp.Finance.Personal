@@ -27,16 +27,14 @@ module Settlement =
             let newPaymentAmount = sp.Principal * 10L
             let newPayment = {
                 PaymentDay = int (settlementDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
-                ScheduledPayment = 0L<Cent>
-                ActualPayments = [| newPaymentAmount |]
-                Charges = [||]
+                PaymentDetails = ActualPayments ([| newPaymentAmount |], [||])
             }
             let! amortisationSchedule = generateAmortisationSchedule sp (ValueSome settlementDate) false (Array.concat [| actualPayments; [| newPayment |] |])
             let finalItem = amortisationSchedule.Items |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
             let actualPaymentAmounts = finalItem.ActualPayments |> Array.filter(fun p -> p <> newPaymentAmount)
             let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
             let settlementPaymentAmount = finalItem.NetEffect + finalItem.PrincipalBalance - actualPaymentsTotal
-            let settlementPayment = { newPayment with ActualPayments = [| settlementPaymentAmount |] }
+            let settlementPayment = { newPayment with PaymentDetails = ActualPayments ([| settlementPaymentAmount |], [||]) }
             let! whatIfAmortisationSchedule = generateAmortisationSchedule sp (ValueSome settlementDate) false (Array.concat [| actualPayments; [| settlementPayment |] |])
             return { QuoteType = Settlement; PaymentAmount = settlementPaymentAmount; CurrentSchedule = currentAmortisationSchedule; WhatIfSchedule = whatIfAmortisationSchedule }
         }
@@ -51,9 +49,7 @@ module Settlement =
                 |> function Some a -> ValueSome a | _ -> ValueNone
             let newPayment = {
                 PaymentDay = item.OffsetDay
-                ScheduledPayment = 0L<Cent>
-                ActualPayments = [| item.ScheduledPayment |]
-                Charges = [||]
+                PaymentDetails = ActualPayments ([| item.ScheduledPayment |], [||])
             }
             let! whatIfAmortisationSchedule = generateAmortisationSchedule sp ValueNone false (Array.concat [| actualPayments; [| newPayment |] |])
             return { QuoteType = NextScheduled; PaymentAmount = item.ScheduledPayment; CurrentSchedule = currentAmortisationSchedule; WhatIfSchedule = whatIfAmortisationSchedule }
@@ -74,9 +70,7 @@ module Settlement =
             let newPaymentAmount = missedPayments + interestAndCharges
             let newPayment = {
                 PaymentDay = int (asOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
-                ScheduledPayment = 0L<Cent>
-                ActualPayments = [| newPaymentAmount |]
-                Charges = [||]
+                PaymentDetails = ActualPayments ([| newPaymentAmount |], [||])
             }
             let! whatIfAmortisationSchedule = generateAmortisationSchedule sp ValueNone false (Array.concat [| actualPayments; [| newPayment |] |])
             return { QuoteType = AllOverdue; PaymentAmount = newPaymentAmount; CurrentSchedule = currentAmortisationSchedule; WhatIfSchedule = whatIfAmortisationSchedule }

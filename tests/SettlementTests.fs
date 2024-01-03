@@ -41,7 +41,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; Charges = [||] }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayments ([| 2500L<Cent> |], [||]) }
             )
 
         let actual =
@@ -107,7 +107,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; Charges = [||] }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayments ([| 2500L<Cent> |], [||]) }
             )
 
         let actual =
@@ -173,7 +173,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; Charges = [||] }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayments ([| 2500L<Cent> |], [||]) }
             )
 
         let actual =
@@ -363,7 +363,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 2500L<Cent> |]; Charges = [||] }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayments ([| 2500L<Cent> |], [||]) }
             )
 
         let actual =
@@ -429,7 +429,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 32315L<Cent> |]; Charges = [||] }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayments ([| 32315L<Cent> |], [||]) }
             )
 
         let actual =
@@ -495,7 +495,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 32315L<Cent> |]; Charges = [||] }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayments ([| 32315L<Cent> |], [||]) }
             )
 
         let actual =
@@ -621,13 +621,13 @@ module SettlementTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 70<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
-            { PaymentDay = 84<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
-            { PaymentDay = 84<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
-            { PaymentDay = 85<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
-            { PaymentDay = 98<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
-            { PaymentDay = 112<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
-            { PaymentDay = 126<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 272_84L<Cent> |]; Charges = [||] }
+            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
+            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
+            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
+            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayments ([| 272_84L<Cent> |], [||]) }
         |]
 
         let actual =

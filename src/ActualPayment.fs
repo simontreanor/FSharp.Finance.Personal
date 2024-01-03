@@ -31,17 +31,20 @@ module ActualPayment =
         /// due to an overpayment or a refund of charges, a refund is due
         | RefundDue
 
-    /// an actual payment made on a particular day, optionally with charges applied
+    /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
+    type PaymentDetails =
+        /// the amount of any extra scheduled payment due on the current day
+        | ExtraScheduledPayment of ExtraScheduledPayment: int64<Cent>
+        /// the amounts of any actual payments made on the current day, with any charges incurred
+        | ActualPayments of ActualPayments: int64<Cent> array * Charges: Charge array
+
+    /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     [<Struct>]
     type Payment = {
         /// the day the payment is made, as an offset of days from the start date
         PaymentDay: int<OffsetDay>
-        /// the amount of any scheduled payment due on the current day
-        ScheduledPayment: int64<Cent>
-        /// the amounts of any actual payments made on the current day
-        ActualPayments: int64<Cent> array
-        /// details of any charges incurred on the current day
-        Charges: Charge array
+        /// the details of the payment
+        PaymentDetails: PaymentDetails
     }
  
     /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
@@ -126,12 +129,12 @@ module ActualPayment =
     let applyPayments asOfDay latePaymentCharge actualPayments (scheduledPayments: ScheduledPayment.ScheduleItem array) =
         if Array.isEmpty scheduledPayments then [||] else
         scheduledPayments
-        |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = si.Payment; ActualPayments = [||]; Charges = [||] })
+        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ExtraScheduledPayment si.Payment })
         |> fun payments -> Array.concat [| actualPayments; payments |]
         |> Array.groupBy _.PaymentDay
         |> Array.map(fun (offsetDay, payments) ->
-            let scheduledPayment = payments |> Array.sumBy _.ScheduledPayment
-            let actualPayments = payments |> Array.collect _.ActualPayments
+            let scheduledPayment = payments |> Array.map(fun p -> p.PaymentDetails |> function ExtraScheduledPayment p -> p | _ -> 0L<Cent>) |> Array.sum
+            let actualPayments = payments |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (ap, _) -> ap | _ -> [||])
             let netEffect, paymentStatus =
                 match scheduledPayment, Array.sum actualPayments with
                 | 0L<Cent>, 0L<Cent> -> 0L<Cent>, ValueNone
@@ -145,7 +148,7 @@ module ActualPayment =
                 | sp, ap -> failwith $"Unexpected permutation of scheduled ({sp}) vs actual payments ({ap})"
             let charges =
                 payments
-                |> Array.collect _.Charges
+                |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (_, c) -> c | _ -> [||])
                 |> fun pcc ->
                     if latePaymentCharge > 0L<Cent> then
                         pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge |] | _ -> [||])
@@ -316,4 +319,4 @@ module ActualPayment =
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
     let allPaidOnTime (scheduleItems: ScheduledPayment.ScheduleItem array) =
         scheduleItems
-        |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; Charges = [||] })
+        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) })

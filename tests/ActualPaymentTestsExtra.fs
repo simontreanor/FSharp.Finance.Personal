@@ -3,9 +3,9 @@ namespace FSharp.Finance.Personal.Tests
 open System
 open Xunit
 open FsUnit.Xunit
-open System.Text.Json
 
 open FSharp.Finance.Personal
+open FSharp.Finance.Personal.ActualPayment
 
 module ActualPaymentTestsExtra =
 
@@ -110,7 +110,7 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; ScheduledPayment = 0L<Cent>; ActualPayments = [| si.Payment |]; Charges = [||] } : ActualPayment.Payment)
+                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) } : ActualPayment.Payment)
                 return
                     scheduleItems
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
@@ -377,7 +377,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; Charges = [||] } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
                 |]
                 let appliedPayments =
                     scheduleItems
@@ -441,9 +441,9 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [| 16660L<Cent> |]; Charges = [||] } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
                     for d in [| 177 .. 14 .. 2000 |] do
-                        ({ PaymentDay = d * 1<OffsetDay>; ScheduledPayment = 2000L<Cent>; ActualPayments = [||]; Charges = [||] } : ActualPayment.Payment)
+                        ({ PaymentDay = d * 1<OffsetDay>; PaymentDetails = ExtraScheduledPayment 2000L<Cent> } : ActualPayment.Payment)
                 |]
                 let appliedPayments =
                     scheduleItems
