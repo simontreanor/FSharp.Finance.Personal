@@ -6,7 +6,13 @@ open System
 module Date =
 
     /// the offset of a date from the start date, in days
-    [<Measure>] type OffsetDay
+    [<Measure>]
+    type OffsetDay
+
+    [<RequireQualifiedAccess>]
+    module OffsetDay =
+        let toDate (startDate: DateTime) (offsetDay: int<OffsetDay>) = startDate.AddDays(float offsetDay)
+
 
     /// a duration of a number of days
     [<Measure>] type DurationDays
