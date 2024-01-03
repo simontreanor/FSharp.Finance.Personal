@@ -106,7 +106,11 @@ module UnitPeriod =
 
         /// creates a semi monthly config specifying the first day only, using month-end tracking where appropriate
         let defaultSemiMonthly year month day1 =
-            let day2 = if day1 <= 15 then day1 + 15 |> fun d2 -> (if d2 = DateTime.DaysInMonth(year, month) then 31 else d2) else day1 - 15
+            let day2 =
+                if day1 < 15 then day1 + 15
+                elif day1 = 15 then 31
+                elif day1 = 31 then 15
+                else day1 - 15
             SemiMonthly (year, month, day1, day2)
 
         /// pretty-print the unit-period config, useful for debugging 
