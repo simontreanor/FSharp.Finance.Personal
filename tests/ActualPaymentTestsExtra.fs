@@ -106,7 +106,7 @@ module ActualPaymentTestsExtra =
         let ro = sp.Calculation.RoundingOptions
         let fpa = sp.Calculation.FinalPaymentAdjustment
         let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}_fpa{fpa}"""
-        let appliedPayments = 
+        let amortisationSchedule = 
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
@@ -117,7 +117,7 @@ module ActualPaymentTestsExtra =
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
             }
-        appliedPayments |> ValueOption.iter(fun aa -> 
+        amortisationSchedule |> ValueOption.iter(fun aa -> 
             let a = Array.last aa
             let finalPayment = a.NetEffect
             let levelPayment = aa |> Array.filter(fun a -> a.NetEffect > 0L<Cent>) |> Array.countBy _.NetEffect |> Array.maxByOrDefault snd fst 0L<Cent>
@@ -140,7 +140,7 @@ module ActualPaymentTestsExtra =
             else
                 ()
         )
-        testId, appliedPayments
+        testId, amortisationSchedule
 
     let generateRandomAppliedPayments asOfDate size =
         let rnd = Random()
@@ -231,8 +231,8 @@ module ActualPaymentTestsExtra =
         )))))))))))))))
         |> Seq.map applyPayments
 
-    let generateRegularPaymentTestData (appliedPayments: (string * ActualPayment.AmortisationScheduleItem array voption) seq) =
-        appliedPayments
+    let generateRegularPaymentTestData (amortisationSchedule: (string * ActualPayment.AmortisationScheduleItem array voption) seq) =
+        amortisationSchedule
         |> Seq.map(fun (testId, items) ->
             match items with
             | ValueSome aa ->
@@ -316,13 +316,13 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
-                let appliedPayments =
+                let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
-                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
-                return appliedPayments
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
+                return amortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -381,13 +381,13 @@ module ActualPaymentTestsExtra =
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
                 |]
-                let appliedPayments =
+                let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
-                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
-                return appliedPayments
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
+                return amortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -413,6 +413,27 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
         } : ActualPayment.AmortisationScheduleItem)
         actual |> should equal expected
+
+    let reschedule asOfDay (sp: ScheduledPayment.ScheduleParameters) oldFinalPaymentDay oldScheduledPayments actualPayments (oldAmortisationSchedule: AmortisationScheduleItem array) =
+        let finalAppliedPayment = oldAmortisationSchedule |> Array.last
+        let outstandingBalance = finalAppliedPayment |> fun p -> p.PrincipalBalance + p.FeesBalance + p.InterestBalance + p.ChargesBalance
+        let newPaymentAmount = 20_00L<Cent>
+        let iterationsToPayOffExistingBalance = decimal outstandingBalance / decimal newPaymentAmount |> Math.Ceiling
+        let unitPeriodLenth = 14m
+        let estimatedYears = unitPeriodLenth * iterationsToPayOffExistingBalance / 365m
+        let annualInterestRate = sp.Interest.Rate |> Interest.Rate.annual |> Percent.toDecimal
+        let totalIterations = (1m + (annualInterestRate * estimatedYears)) * iterationsToPayOffExistingBalance |> Math.Ceiling
+        let limit = int finalAppliedPayment.OffsetDay + int (totalIterations * unitPeriodLenth)
+        let rescheduledPaymentStartDay = 177<OffsetDay>
+        let extraScheduledPayments =
+            [| int rescheduledPaymentStartDay .. int unitPeriodLenth .. limit |]
+            |> Array.map(fun d ->
+                ({ PaymentDay = d * 1<OffsetDay>; PaymentDetails = ScheduledPayment 2000L<Cent> } : ActualPayment.Payment)
+            )
+        let actualPayments' = Array.concat [| actualPayments; extraScheduledPayments |]
+        oldScheduledPayments
+        |> ActualPayment.applyPayments asOfDay 1000L<Cent> actualPayments'
+        |> ActualPayment.calculateSchedule sp ValueNone oldFinalPaymentDay
 
     [<Fact>]
     let ``3) Schedule with a payment on day zero, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
@@ -441,20 +462,22 @@ module ActualPaymentTestsExtra =
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
-                let scheduleItems = schedule.Items
+                let! oldSchedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let oldScheduledPayments =
+                    oldSchedule.Items
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
-                    for d in [| 177 .. 14 .. 2000 |] do
-                        ({ PaymentDay = d * 1<OffsetDay>; PaymentDetails = ScheduledPayment 2000L<Cent> } : ActualPayment.Payment)
                 |]
-                let appliedPayments =
-                    scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
-                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
-                return appliedPayments
+                let oldAmortisationSchedule =
+                    oldScheduledPayments
+                    |> ActualPayment.applyPayments oldSchedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone oldSchedule.FinalPaymentDay
+                oldAmortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003intermediate.md" (ValueSome 300)
+                let newAmortisationSchedule = reschedule oldSchedule.AsOfDay sp oldSchedule.FinalPaymentDay oldScheduledPayments actualPayments oldAmortisationSchedule
+                newAmortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
+
+                return newAmortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -511,13 +534,13 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
-                let appliedPayments =
+                let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
-                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
-                return appliedPayments
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
+                return amortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -574,13 +597,13 @@ module ActualPaymentTestsExtra =
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
-                let appliedPayments =
+                let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
-                appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
-                return appliedPayments
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
+                return amortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
