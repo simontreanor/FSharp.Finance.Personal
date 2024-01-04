@@ -441,22 +441,20 @@ module ActualPaymentTestsExtra =
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
-                let! oldSchedule = ScheduledPayment.calculateSchedule BelowZero sp
-                let oldScheduledPayments =
-                    oldSchedule.Items
+                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let scheduledPayments =
+                    schedule.Items
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
                 |]
-                let oldAmortisationSchedule =
-                    oldScheduledPayments
-                    |> ActualPayment.applyPayments oldSchedule.AsOfDay 1000L<Cent> actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone oldSchedule.FinalPaymentDay
-                oldAmortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003intermediate.md" (ValueSome 300)
-                let newAmortisationSchedule = Rescheduling.reschedule oldSchedule.AsOfDay sp oldSchedule.FinalPaymentDay oldScheduledPayments actualPayments oldAmortisationSchedule
-                newAmortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
-
-                return newAmortisationSchedule
+                let amortisationSchedule = 
+                    scheduledPayments
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
+                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
+                    |> Rescheduling.reschedule 20_00L<Cent> sp scheduledPayments actualPayments 
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
+                return amortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({

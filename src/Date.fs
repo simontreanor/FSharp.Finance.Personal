@@ -11,6 +11,9 @@ module Date =
 
     [<RequireQualifiedAccess>]
     module OffsetDay =
+        /// convert an offset date to an offset day based on a given start date
+        let fromDate (startDate: DateTime) (offsetDate: DateTime) = (offsetDate - startDate).Days * 1<OffsetDay>
+        /// convert an offset day to an offset date based on a given start date
         let toDate (startDate: DateTime) (offsetDay: int<OffsetDay>) = startDate.AddDays(float offsetDay)
 
 

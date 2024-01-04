@@ -6,10 +6,12 @@ open ActualPayment
 /// functions for rescheduling payments after an original schedule failed to amortise
 module Rescheduling =
 
-    let reschedule asOfDay (sp: ScheduledPayment.ScheduleParameters) oldFinalPaymentDay oldScheduledPayments actualPayments (oldAmortisationSchedule: AmortisationScheduleItem array) =
-        let finalAppliedPayment = oldAmortisationSchedule |> Array.last
+    /// reschedule 
+    let reschedule (newPaymentAmount: int64<Cent>) (sp: ScheduledPayment.ScheduleParameters) scheduledPayments actualPayments (amortisationSchedule: AmortisationScheduleItem array) =
+        let asOfDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+        let finalAppliedPayment = amortisationSchedule |> Array.last
+        let oldFinalPaymentDay = finalAppliedPayment.OffsetDay
         let outstandingBalance = finalAppliedPayment |> fun p -> p.PrincipalBalance + p.FeesBalance + p.InterestBalance + p.ChargesBalance
-        let newPaymentAmount = 20_00L<Cent>
         let iterationsToPayOffExistingBalance = decimal outstandingBalance / decimal newPaymentAmount |> Math.Ceiling
         let unitPeriodLenth = 14m
         let estimatedYears = unitPeriodLenth * iterationsToPayOffExistingBalance / 365m
@@ -23,6 +25,6 @@ module Rescheduling =
                 ({ PaymentDay = d * 1<OffsetDay>; PaymentDetails = ScheduledPayment 2000L<Cent> } : ActualPayment.Payment)
             )
         let actualPayments' = Array.concat [| actualPayments; extraScheduledPayments |]
-        oldScheduledPayments
+        scheduledPayments
         |> ActualPayment.applyPayments asOfDay 1000L<Cent> actualPayments'
         |> ActualPayment.calculateSchedule sp ValueNone oldFinalPaymentDay
