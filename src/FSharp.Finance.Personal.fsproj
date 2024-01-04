@@ -20,7 +20,6 @@
     <Compile Include="FeesAndCharges.fs" />
     <Compile Include="Interest.fs" />
     <Compile Include="UnitPeriod.fs" />
-    <Compile Include="Schedule.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="ScheduledPayment.fs" />
     <Compile Include="ActualPayment.fs" />

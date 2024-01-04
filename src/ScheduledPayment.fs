@@ -96,7 +96,7 @@ module ScheduledPayment =
     let calculateSchedule toleranceOption sp =
         if sp.PaymentCount = 0 then ValueNone else
         if sp.StartDate > UnitPeriod.Config.startDate sp.UnitPeriodConfig then ValueNone else
-        let paymentDates = Schedule.generate sp.PaymentCount Schedule.Forward sp.UnitPeriodConfig
+        let paymentDates = UnitPeriod.generatePaymentSchedule sp.PaymentCount UnitPeriod.Direction.Forward sp.UnitPeriodConfig
         let finalPaymentDate = paymentDates |> Array.max
         let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
         let paymentCount = paymentDates |> Array.length

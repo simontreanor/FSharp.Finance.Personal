@@ -32,9 +32,10 @@ module ActualPayment =
         | RefundDue
 
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
+    [<Struct>]
     type PaymentDetails =
         /// the amount of any extra scheduled payment due on the current day
-        | ExtraScheduledPayment of ExtraScheduledPayment: int64<Cent>
+        | ScheduledPayment of ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day, with any charges incurred
         | ActualPayments of ActualPayments: int64<Cent> array * Charges: Charge array
 
@@ -126,14 +127,13 @@ module ActualPayment =
     }
 
     /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay latePaymentCharge actualPayments (scheduledPayments: ScheduledPayment.ScheduleItem array) =
+    let applyPayments asOfDay latePaymentCharge actualPayments (scheduledPayments: Payment array) =
         if Array.isEmpty scheduledPayments then [||] else
-        scheduledPayments
-        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ExtraScheduledPayment si.Payment })
-        |> fun payments -> Array.concat [| actualPayments; payments |]
+        [| scheduledPayments; actualPayments |]
+        |> Array.concat
         |> Array.groupBy _.PaymentDay
         |> Array.map(fun (offsetDay, payments) ->
-            let scheduledPayment = payments |> Array.map(fun p -> p.PaymentDetails |> function ExtraScheduledPayment p -> p | _ -> 0L<Cent>) |> Array.sum
+            let scheduledPayment = payments |> Array.map(fun p -> p.PaymentDetails |> function ScheduledPayment p -> p | _ -> 0L<Cent>) |> Array.sum
             let actualPayments = payments |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (ap, _) -> ap | _ -> [||])
             let netEffect, paymentStatus =
                 match scheduledPayment, Array.sum actualPayments with
@@ -286,6 +286,7 @@ module ActualPayment =
             let items =
                 schedule
                 |> _.Items
+                |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 |> applyPayments schedule.AsOfDay latePaymentCharge actualPayments
                 |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
             let principalTotal = items |> Array.sumBy _.PrincipalPortion

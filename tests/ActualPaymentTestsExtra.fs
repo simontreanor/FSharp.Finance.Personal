@@ -113,6 +113,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) } : ActualPayment.Payment)
                 return
                     scheduleItems
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
             }
@@ -317,6 +318,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =
                     scheduleItems
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
@@ -381,6 +383,7 @@ module ActualPaymentTestsExtra =
                 |]
                 let appliedPayments =
                     scheduleItems
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
@@ -443,10 +446,11 @@ module ActualPaymentTestsExtra =
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
                     for d in [| 177 .. 14 .. 2000 |] do
-                        ({ PaymentDay = d * 1<OffsetDay>; PaymentDetails = ExtraScheduledPayment 2000L<Cent> } : ActualPayment.Payment)
+                        ({ PaymentDay = d * 1<OffsetDay>; PaymentDetails = ScheduledPayment 2000L<Cent> } : ActualPayment.Payment)
                 |]
                 let appliedPayments =
                     scheduleItems
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
@@ -509,6 +513,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =
                     scheduleItems
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
@@ -571,6 +576,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
                 let appliedPayments =
                     scheduleItems
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 appliedPayments |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
