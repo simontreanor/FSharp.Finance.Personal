@@ -113,6 +113,14 @@ module UnitPeriod =
                 else day1 - 15
             SemiMonthly (year, month, day1, day2)
 
+        /// approximate length of unit period in days, used e.g. for generating rescheduling iterations
+        let roughLength = function
+        | Single _ -> 365m
+        | Daily _ -> 1m
+        | Weekly (multiple, _) -> 7m * decimal multiple
+        | SemiMonthly _ -> 15m
+        | Monthly (multiple, _, _, _) -> 30m * decimal multiple
+
         /// pretty-print the unit-period config, useful for debugging 
         let serialise = function
         | Single dt -> $"""(Single {dt.ToString "yyyy-MM-dd"})"""
