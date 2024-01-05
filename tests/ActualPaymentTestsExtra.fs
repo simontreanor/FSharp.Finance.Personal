@@ -441,6 +441,7 @@ module ActualPaymentTestsExtra =
         } : ScheduledPayment.ScheduleParameters)
         let actual =
             voption {
+                // calculate schedule based on existing payments
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduledPayments =
                     schedule.Items
@@ -448,13 +449,23 @@ module ActualPaymentTestsExtra =
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
                 |]
-                let amortisationSchedule = 
+                let amortisationSchedule =
                     scheduledPayments
                     |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> actualPayments
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
-                    |> Rescheduling.reschedule 20_00L<Cent> sp scheduledPayments actualPayments 
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
-                return amortisationSchedule
+                // calculate revised schedule including new payment plan
+                let amount = 20_00L<Cent>
+                let paymentPlanStartDate = DateTime(2022, 9, 1)
+                let unitPeriodConfig = UnitPeriod.Config.Weekly(2, paymentPlanStartDate)
+                let outstandingBalance = amortisationSchedule |> Array.last |> fun asi -> asi.PrincipalBalance + asi.FeesBalance + asi.InterestBalance + asi.ChargesBalance
+                let extraScheduledPayments = Rescheduling.createPaymentPlan amount unitPeriodConfig sp.Interest.Rate outstandingBalance sp.StartDate
+                let payments = Array.concat [| actualPayments; extraScheduledPayments |]
+                let amortisationSchedule' =
+                    scheduledPayments
+                    |> ActualPayment.applyPayments schedule.AsOfDay 1000L<Cent> payments
+                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
+                amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
+                return amortisationSchedule'
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
