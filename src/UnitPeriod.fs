@@ -104,14 +104,32 @@ module UnitPeriod =
 
     module Config =
 
-        /// creates a semi monthly config specifying the first day only, using month-end tracking where appropriate
-        let defaultSemiMonthly year month day1 =
-            let day2 =
-                if day1 < 15 then day1 + 15
-                elif day1 = 15 then 31
-                elif day1 = 31 then 15
-                else day1 - 15
-            SemiMonthly (year, month, day1, day2)
+        /// creates a semi-monthly config specifying the first day only, using month-end tracking where appropriate
+        let defaultSemiMonthly (startDate: DateTime) =
+            let day1 = startDate.Day
+            let monthEndDay1 = DateTime.DaysInMonth(startDate.Year, startDate.Month)
+            let trackingDay1 = if day1 = monthEndDay1 then 31 else day1
+            let day2, monthOffset =
+                if trackingDay1 < 15 then trackingDay1 + 15, 0
+                elif trackingDay1 = 15 then 31, 0
+                elif trackingDay1 = 31 then 15, 1
+                else trackingDay1 - 15, 1
+            let monthEndDay2 = startDate.AddMonths monthOffset |> fun dt -> DateTime.DaysInMonth(dt.Year, dt.Month)
+            let trackingDay2 = if day2 = monthEndDay2 then 31 else day2
+            SemiMonthly (startDate.Year, startDate.Month, trackingDay1, trackingDay2)
+
+        let defaultMonthly multiple (startDate: DateTime) =
+            let monthEndDay = DateTime.DaysInMonth(startDate.Year, startDate.Month)
+            let trackingDay = if startDate.Day = monthEndDay then 31 else startDate.Day
+            Monthly (multiple, startDate.Year, startDate.Month, trackingDay)
+
+        /// create a unit-period config from a unit period (using month-end tracking for semi-monthly and monthly unit periods)
+        let from startDate = function
+        | NoInterval unitPeriodDays -> Single startDate
+        | Day -> Daily startDate
+        | Week weekMultiple -> Weekly (weekMultiple, startDate)
+        | SemiMonth -> defaultSemiMonthly startDate
+        | Month monthMultiple -> defaultMonthly monthMultiple startDate
 
         /// approximate length of unit period in days, used e.g. for generating rescheduling iterations
         let roughLength = function
