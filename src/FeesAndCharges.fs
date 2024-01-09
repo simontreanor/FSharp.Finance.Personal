@@ -6,6 +6,10 @@ open System
 module FeesAndCharges =
     
     /// the type and amount of any fees, such as facilitation fees or CSO/CAB fees, taking into account any constraints
+    /// 
+    /// NOTE: differences between fees and charges:
+    /// - fees are up-front amounts paid under agreed terms for receiving an advance
+    /// - fees are added to the principal balance and therefore accrue interest
     [<RequireQualifiedAccess>]
     [<Struct>]
     type Fees =
@@ -35,6 +39,10 @@ module FeesAndCharges =
             | ProRataRefund
 
     /// the type and amount of charge
+    /// 
+    /// NOTE: differences between charges and fees:
+    /// - charges are not up-front amounts, they are incurred as a result of a breach of agreed terms
+    /// - charges are not added to the principal balance and do not therefore accrue interest
     [<RequireQualifiedAccess>]
     [<Struct>]
     type Charge =
