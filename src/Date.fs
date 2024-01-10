@@ -15,7 +15,7 @@ module DateDay =
             member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> fun d -> Date(d.Year, d.Month, d.Day)
             member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> fun d -> Date(d.Year, d.Month, d.Day)
             member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> fun d -> Date(d.Year, d.Month, d.Day)
-            member d.ToString (format: string) = DateTime(d.Year, d.Month, d.Day).ToString format
+            override d.ToString() = DateTime(d.Year, d.Month, d.Day).ToString "yyyy-MM-dd"
             static member (-) (d1: Date, d2: Date) =  DateTime(d1.Year, d1.Month, d1.Day) - DateTime(d2.Year, d2.Month, d2.Day)
             static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
 

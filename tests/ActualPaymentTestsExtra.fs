@@ -90,15 +90,15 @@ module ActualPaymentTestsExtra =
     }
 
     let applyPayments (sp: ScheduledPayment.ScheduleParameters) =
-        let aod = sp.AsOfDate.ToString "yyyy-MM-dd"
-        let sd = sp.StartDate.ToString "yyyy-MM-dd"
+        let aod = sp.AsOfDate.ToString()
+        let sd = sp.StartDate.ToString()
         let p = sp.Principal
         let pf = sp.FeesAndCharges.Fees
         let pfs = sp.FeesAndCharges.FeesSettlement
         let ir = Interest.Rate.serialise sp.Interest.Rate
         let ic = sp.Interest.Cap
         let igp = sp.Interest.GracePeriod
-        let ih = match sp.Interest.Holidays with [||] -> "()" | ihh -> ihh |> Array.map(fun ih -> $"""({ih.Start.ToString "yyyy-MM-dd"}-{ih.End.ToString "yyyy-MM-dd"})""") |> String.concat ";" |> fun s -> $"({s})"
+        let ih = match sp.Interest.Holidays with [||] -> "()" | ihh -> ihh |> Array.map(fun ih -> $"""({ih.Start.ToString()}-{ih.End.ToString()})""") |> String.concat ";" |> fun s -> $"({s})"
         let upc = UnitPeriod.Config.serialise sp.UnitPeriodConfig
         let pc = sp.PaymentCount
         let acm = sp.Calculation.AprMethod

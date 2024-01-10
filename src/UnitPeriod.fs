@@ -141,9 +141,9 @@ module UnitPeriod =
 
         /// pretty-print the unit-period config, useful for debugging 
         let serialise = function
-        | Single d -> $"""(Single {d.ToString "yyyy-MM-dd"})"""
-        | Daily sd -> $"""(Daily {sd.ToString "yyyy-MM-dd"})"""
-        | Weekly (multiple, wsd) -> $"""({multiple.ToString "00"}-Weekly ({wsd.ToString "yyyy-MM-dd"}))"""
+        | Single d -> $"""(Single {d.ToString()})"""
+        | Daily sd -> $"""(Daily {sd.ToString()})"""
+        | Weekly (multiple, wsd) -> $"""({multiple.ToString "00"}-Weekly ({wsd.ToString()}))"""
         | SemiMonthly (y, m, td1, td2) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
         | Monthly (multiple, y, m, d) -> $"""({multiple.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
 
