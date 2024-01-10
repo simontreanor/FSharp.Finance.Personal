@@ -23,6 +23,7 @@ module ScheduledPaymentTests =
                     Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.InsufficientFunds 750L<Cent>; Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
@@ -105,6 +106,7 @@ module ScheduledPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.798m)

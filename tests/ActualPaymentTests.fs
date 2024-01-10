@@ -57,6 +57,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -95,6 +96,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -133,6 +135,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -171,6 +174,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -230,6 +234,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -289,6 +294,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -353,6 +359,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
@@ -415,6 +422,7 @@ module ActualPaymentTests =
                     Fees = ValueNone
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)

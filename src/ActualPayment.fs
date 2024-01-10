@@ -21,6 +21,8 @@ module ActualPayment =
         | Refunded
         /// a scheduled payment is in the future (seen from the as-of date)
         | NotYetDue
+        /// a scheduled payment has not been made on time but is within the late-charge grace period
+        | WithinGracePeriod
 
     [<Struct>]
     type BalanceStatus =
@@ -127,7 +129,7 @@ module ActualPayment =
     }
 
     /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay latePaymentCharge actualPayments (scheduledPayments: Payment array) =
+    let applyPayments asOfDay latePaymentGracePeriod latePaymentCharge actualPayments (scheduledPayments: Payment array) =
         if Array.isEmpty scheduledPayments then [||] else
         [| scheduledPayments; actualPayments |]
         |> Array.concat
@@ -140,6 +142,7 @@ module ActualPayment =
                 | 0L<Cent>, 0L<Cent> -> 0L<Cent>, ValueNone
                 | 0L<Cent>, ap when ap < 0L<Cent> -> ap, ValueSome Refunded
                 | 0L<Cent>, ap -> ap, ValueSome ExtraPayment
+                | sp, _ when (offsetDay < asOfDay) && (int offsetDay + int latePaymentGracePeriod >= int asOfDay) -> sp, ValueSome WithinGracePeriod
                 | sp, _ when offsetDay >= asOfDay -> sp, ValueSome NotYetDue
                 | _, 0L<Cent> -> 0L<Cent>, ValueSome MissedPayment
                 | sp, ap when ap < sp -> ap, ValueSome Underpayment
@@ -287,7 +290,7 @@ module ActualPayment =
                 schedule
                 |> _.Items
                 |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                |> applyPayments schedule.AsOfDay latePaymentCharge actualPayments
+                |> applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge actualPayments
                 |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
             let principalTotal = items |> Array.sumBy _.PrincipalPortion
             let feesTotal = items |> Array.sumBy _.FeesPortion

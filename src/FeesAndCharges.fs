@@ -62,6 +62,7 @@ module FeesAndCharges =
         Fees: Fees voption
         FeesSettlement: Fees.Settlement
         Charges: Charge array
+        LatePaymentGracePeriod: int<DurationDay>
     }
 
     module FeesAndCharges =
@@ -70,4 +71,5 @@ module FeesAndCharges =
             Fees = ValueNone
             FeesSettlement = Fees.Settlement.ProRataRefund
             Charges = [||]
+            LatePaymentGracePeriod = 3<DurationDay>
         }
