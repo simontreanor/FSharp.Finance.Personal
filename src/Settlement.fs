@@ -21,12 +21,12 @@ module Settlement =
         RevisedSchedule: AmortisationSchedule
     }
 
-    let getSettlement (settlementDate: DateTime) (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
+    let getSettlement (settlementDate: Date) (sp: ScheduledPayment.ScheduleParameters) (actualPayments: Payment array) =
         voption {
             let! currentAmortisationSchedule = generateAmortisationSchedule sp ValueNone false actualPayments
             let newPaymentAmount = sp.Principal * 10L
             let newPayment = {
-                PaymentDay = int (settlementDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
+                PaymentDay = int (settlementDate - sp.StartDate).Days * 1<OffsetDay>
                 PaymentDetails = ActualPayments ([| newPaymentAmount |], [||])
             }
             let! amortisationSchedule = generateAmortisationSchedule sp (ValueSome settlementDate) false (Array.concat [| actualPayments; [| newPayment |] |])
@@ -69,7 +69,7 @@ module Settlement =
                 |> fun a -> a.InterestBalance + a.ChargesBalance
             let newPaymentAmount = missedPayments + interestAndCharges
             let newPayment = {
-                PaymentDay = int (asOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
+                PaymentDay = int (asOfDate - sp.StartDate).Days * 1<OffsetDay>
                 PaymentDetails = ActualPayments ([| newPaymentAmount |], [||])
             }
             let! revisedAmortisationSchedule = generateAmortisationSchedule sp ValueNone false (Array.concat [| actualPayments; [| newPayment |] |])

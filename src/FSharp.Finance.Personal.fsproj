@@ -39,6 +39,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadMeFile>README.md</PackageReadMeFile>
     <IncludeContentInPack>true</IncludeContentInPack>
+  	<DefineConstants Condition="'$(TargetFramework)' != 'netstandard2.0' And '$(TargetFramework)' != 'net8.0'">NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
     <None Include="../LICENSE">

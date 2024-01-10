@@ -28,14 +28,14 @@ module Apr =
     [<Struct>]
     type Transfer = {
         TransferType: TransferType
-        TransferDate: DateTime
+        TransferDate: Date
         Amount: int64<Cent>
     }
 
     /// APR as in https://www.handbook.fca.org.uk/handbook/MCOB/10/?view=chapter
     module UnitedKingdom =
 
-        let calculateApr (startDate: DateTime) (principal: int64<Cent>) (transfers: Transfer array) =
+        let calculateApr (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
             if principal = 0L<Cent> || Array.isEmpty transfers then Solution.Impossible else
             let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)
             let paymentTotal = payments |> Array.sumBy _.Amount
@@ -45,7 +45,7 @@ module Apr =
             let a'k' =
                 payments
                 |> Array.map(fun t ->
-                    t.Amount, decimal (t.TransferDate.Date - startDate.Date).Days / 365m
+                    t.Amount, decimal (t.TransferDate - startDate).Days / 365m
                 )
             let calc transfers unitPeriodRate =
                 transfers
@@ -64,8 +64,8 @@ module Apr =
 
         /// (b)(5)(i) The number of days between 2 dates shall be the number of 24-hour intervals between any point in time on the first 
         /// date to the same point in time on the second date.
-        let daysBetween (date1: DateTime) (date2: DateTime) =
-            (date2.Date - date1.Date).Days
+        let daysBetween (date1: Date) (date2: Date) =
+            (date2 - date1).Days
 
         /// (b)(5)(iv) If the unit-period is a day, [...] the number of full unit-periods and the remaining fractions of a unit-period 
         /// shall be determined by dividing the number of days between the 2 given dates by the number of days per unit-period. If the 
@@ -97,7 +97,7 @@ module Apr =
             let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
             let unitPeriod = transferDates |> UnitPeriod.detect UnitPeriod.Direction.Reverse (UnitPeriod.Month 1)
-            let schedule = UnitPeriod.generatePaymentSchedule ((transferCount + 1) * multiple) UnitPeriod.Direction.Reverse unitPeriod |> Array.filter(fun dt -> dt >= termStart)
+            let schedule = UnitPeriod.generatePaymentSchedule ((transferCount + 1) * multiple) UnitPeriod.Direction.Reverse unitPeriod |> Array.filter(fun d -> d >= termStart)
             let scheduleCount = schedule |> Array.length
             let lastWholeMonthBackIndex = 0
             let lastWholeUnitPeriodBackIndex = (scheduleCount - 1) % multiple
@@ -125,7 +125,7 @@ module Apr =
             let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
             let frequency = transferDates |> UnitPeriod.detect UnitPeriod.Direction.Reverse UnitPeriod.SemiMonth
-            let schedule = UnitPeriod.generatePaymentSchedule (transferCount + 2) UnitPeriod.Direction.Reverse frequency |> Array.filter(fun dt -> dt >= termStart)
+            let schedule = UnitPeriod.generatePaymentSchedule (transferCount + 2) UnitPeriod.Direction.Reverse frequency |> Array.filter(fun d -> d >= termStart)
             let scheduleCount = schedule |> Array.length
             let offset = scheduleCount - transferCount
             [| 0 .. (transferCount - 1) |]

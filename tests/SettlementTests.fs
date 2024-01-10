@@ -12,13 +12,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``1) Settlement falling on a scheduled payment date`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
+        let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
@@ -28,7 +28,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -46,13 +46,13 @@ module SettlementTests =
 
         let actual =
             voption{
-                let! settlement = Settlement.getSettlement (DateTime.Today.AddDays -3.) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1).AddDays -3) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (196970L<Cent>, {
-            OffsetDate = (DateTime.Today.AddDays -3.)
+            OffsetDate = (Date(2024, 10, 1).AddDays -3)
             OffsetDay = 57<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 32315L<Cent>
@@ -78,13 +78,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``2) Settlement not falling on a scheduled payment date`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
+        let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
@@ -94,7 +94,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -112,13 +112,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (202648L<Cent>, {
-            OffsetDate = DateTime.Today
+            OffsetDate = Date(2024, 10, 1)
             OffsetDay = 60<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -144,13 +144,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``3) Settlement not falling on a scheduled payment date but having an actual payment already made on the same day`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
+        let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
@@ -160,7 +160,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -178,13 +178,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (200148L<Cent>, {
-            OffsetDate = DateTime.Today
+            OffsetDate = Date(2024, 10, 1)
             OffsetDay = 60<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -210,13 +210,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``4) Settlement within interest grace period should not accrue interest`` () =
-        let startDate = DateTime.Today.AddDays -3.
+        let startDate = Date(2024, 10, 1).AddDays -3
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = startDate.AddDays 15. |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
+            UnitPeriodConfig = startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
             PaymentCount = 5
             FeesAndCharges = {
                 Fees = ValueNone
@@ -226,7 +226,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -240,13 +240,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (120000L<Cent>, {
-            OffsetDate = DateTime.Today
+            OffsetDate = Date(2024, 10, 1)
             OffsetDay = 3<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -272,13 +272,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``5) Settlement just outside interest grace period should accrue interest`` () =
-        let startDate = DateTime.Today.AddDays -4.
+        let startDate = Date(2024, 10, 1).AddDays -4
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = startDate.AddDays 15. |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
+            UnitPeriodConfig = startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
             PaymentCount = 5
             FeesAndCharges = {
                 Fees = ValueNone
@@ -288,7 +288,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -302,13 +302,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (123840L<Cent>, {
-            OffsetDate = DateTime.Today
+            OffsetDate = Date(2024, 10, 1)
             OffsetDay = 4<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -334,13 +334,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``6) Settlement when fee is due in full`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
+        let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
@@ -350,7 +350,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -368,13 +368,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement DateTime.Today sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (342001L<Cent>, {
-            OffsetDate = DateTime.Today
+            OffsetDate = Date(2024, 10, 1)
             OffsetDay = 60<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -400,13 +400,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``7) Get next scheduled payment`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
+        let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp : ScheduledPayment.ScheduleParameters = {
             StartDate = startDate
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             Principal = 120000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
@@ -416,7 +416,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -434,13 +434,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getNextScheduled DateTime.Today sp actualPayments
+                let! settlement = Settlement.getNextScheduled (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (32315L<Cent>, {
-            OffsetDate = startDate.AddDays(155.)
+            OffsetDate = startDate.AddDays 155
             OffsetDay = 155<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 32310L<Cent>
@@ -466,13 +466,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``8) Get payment to cover all overdue amounts`` () =
-        let startDate = DateTime.Today.AddDays(-60.)
+        let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime.Today
+            AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(15.))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 189.47m, ValueNone)
@@ -482,7 +482,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -500,13 +500,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getAllOverdue DateTime.Today sp actualPayments
+                let! settlement = Settlement.getAllOverdue (Date(2024, 10, 1)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (68808L<Cent>, {
-            OffsetDate = startDate.AddDays(155.)
+            OffsetDate = startDate.AddDays 155
             OffsetDay = 155<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 30250L<Cent>
@@ -532,13 +532,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``9) Verified example`` () =
-        let startDate = DateTime(2023, 6, 23)
+        let startDate = Date(2023, 6, 23)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime(2023, 12, 21)
+            AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 500_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2023, 6, 30))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2023, 6, 30))
             PaymentCount = 10
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 150m, ValueNone)
@@ -548,7 +548,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -562,13 +562,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (DateTime(2023, 12, 21)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (1311_66L<Cent>, {
-            OffsetDate = startDate.AddDays(181.)
+            OffsetDate = startDate.AddDays 181
             OffsetDay = 181<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -594,13 +594,13 @@ module SettlementTests =
 
     [<Fact>]
     let ``10) Verified example`` () =
-        let startDate = DateTime(2022, 11, 28)
+        let startDate = Date(2022, 11, 28)
 
         let sp : ScheduledPayment.ScheduleParameters = {
-            AsOfDate = DateTime(2023, 12, 21)
+            AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 12, 12))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = ValueSome <| Fees.Percentage (Percent 150m, ValueNone)
@@ -610,7 +610,7 @@ module SettlementTests =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -632,13 +632,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (DateTime(2023, 12, 21)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
 
         let expected = ValueSome (1261_68L<Cent>, {
-            OffsetDate = startDate.AddDays(388.)
+            OffsetDate = startDate.AddDays 388
             OffsetDay = 388<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>

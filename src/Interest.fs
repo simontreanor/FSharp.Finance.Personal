@@ -5,7 +5,7 @@ open System
 module Interest =
 
     /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped bya daily amount
-    let calculate (dailyCap: int64<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<DurationDays>) rounding =
+    let calculate (dailyCap: int64<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<DurationDay>) rounding =
         decimal balance * Percent.toDecimal dailyRate * decimal chargeableDays
         |> min (decimal dailyCap) 
         |> Cent.round rounding
@@ -67,7 +67,7 @@ module Interest =
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
         /// calculates the daily interest cap
-        let daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDays>) rounding = function
+        let daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDay>) rounding = function
             | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays |> Cent.round rounding
             | ValueSome (DailyFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
@@ -76,15 +76,15 @@ module Interest =
     [<RequireQualifiedAccess>]
     [<Struct>]
     type Holiday = {
-        Start: DateTime
-        End: DateTime
+        Start: Date
+        End: Date
     }
 
     [<Struct>]
     type Options = {
         Rate: Rate
         Cap: Cap
-        GracePeriod: int<DurationDays>
+        GracePeriod: int<DurationDay>
         Holidays: Holiday array
     }
 
@@ -93,22 +93,22 @@ module Interest =
         let recommended = {
             Rate = Daily (Percent 0.8m)
             Cap = { Total = ValueSome (TotalPercentageCap (Percent 100m)); Daily = ValueSome (DailyPercentageCap (Percent 0.8m)) }
-            GracePeriod = 3<DurationDays>
+            GracePeriod = 3<DurationDay>
             Holidays = [||]
         }
 
-    let chargeableDays (startDate: DateTime) (earlySettlementDate: DateTime voption) (gracePeriod: int<DurationDays>) holidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
+    let chargeableDays (startDate: Date) (earlySettlementDate: Date voption) (gracePeriod: int<DurationDay>) holidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
         let interestFreeDays =
             holidays
             |> Array.collect(fun (ih: Holiday) ->
-                [| (ih.Start.Date - startDate.Date).Days .. (ih.End.Date - startDate.Date).Days |]
+                [| (ih.Start - startDate).Days .. (ih.End - startDate).Days |]
             )
             |> Array.filter(fun d -> d >= int fromDay && d <= int toDay)
         let isWithinGracePeriod d = d <= int gracePeriod
-        let isSettledWithinGracePeriod = earlySettlementDate |> ValueOption.map(fun sd -> isWithinGracePeriod (sd.Date - startDate.Date).Days) |> ValueOption.defaultValue false
+        let isSettledWithinGracePeriod = earlySettlementDate |> ValueOption.map(fun sd -> isWithinGracePeriod (sd - startDate).Days) |> ValueOption.defaultValue false
         [| int fromDay .. int toDay |]
         |> Array.filter(fun d -> not (isSettledWithinGracePeriod && isWithinGracePeriod d))
         |> Array.filter(fun d -> interestFreeDays |> Array.exists ((=) d) |> not)
         |> Array.length
-        |> fun l -> (max 0 (l - 1)) * 1<DurationDays>
+        |> fun l -> (max 0 (l - 1)) * 1<DurationDay>
 

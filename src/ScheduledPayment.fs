@@ -75,9 +75,9 @@ module ScheduledPayment =
     [<Struct>]
     type ScheduleParameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
-        AsOfDate: DateTime
+        AsOfDate: Date
         /// the start date of the schedule, typically the day on which the principal is advanced
-        StartDate: DateTime
+        StartDate: Date
         /// the principal
         Principal: int64<Cent>
         /// the unit-period config, specifying the payment frequency, first payment date and optionally whether the payments track a particular day of the month
@@ -98,7 +98,7 @@ module ScheduledPayment =
         if sp.StartDate > UnitPeriod.Config.startDate sp.UnitPeriodConfig then ValueNone else
         let paymentDates = UnitPeriod.generatePaymentSchedule sp.PaymentCount UnitPeriod.Direction.Forward sp.UnitPeriodConfig
         let finalPaymentDate = paymentDates |> Array.max
-        let finalPaymentDay = (finalPaymentDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
+        let finalPaymentDay = (finalPaymentDate - sp.StartDate).Days * 1<OffsetDay>
         let paymentCount = paymentDates |> Array.length
         let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
@@ -106,7 +106,7 @@ module ScheduledPayment =
         let roughPayment = decimal sp.Principal / decimal paymentCount
         let advance = { Day = 0<OffsetDay>; Advance = sp.Principal + fees; Payment = 0L<Cent>; Interest = 0L<Cent>; CumulativeInterest = 0L<Cent>; Principal = 0L<Cent>; PrincipalBalance = sp.Principal + fees }
         let toleranceSteps = ValueSome { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 2 }
-        let paymentDays = paymentDates |> Array.map(fun dt -> (dt.Date - sp.StartDate.Date).Days * 1<OffsetDay>)
+        let paymentDays = paymentDates |> Array.map(fun d -> (d - sp.StartDate).Days * 1<OffsetDay>)
         let mutable schedule = [||]
         let generator payment =
             schedule <-
@@ -146,7 +146,7 @@ module ScheduledPayment =
             let principalTotal = items |> Array.sumBy _.Principal
             let interestTotal = items |> Array.sumBy _.Interest
             ValueSome {
-                AsOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
+                AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
                 FinalPaymentDay = finalPaymentDay
                 LevelPayment = items |> Array.countBy _.Payment |> Array.maxByOrDefault snd fst 0L<Cent>
@@ -157,7 +157,7 @@ module ScheduledPayment =
                 Apr =
                     items
                     |> Array.filter(fun si -> si.Payment > 0L<Cent>)
-                    |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(float si.Day); Apr.Amount = si.Payment })
+                    |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment })
                     |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                 CostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m else

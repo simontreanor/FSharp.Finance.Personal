@@ -8,21 +8,21 @@ module UnitPeriod =
     /// a transaction term is the length of a transaction, from the start date to the final payment
     [<Struct>]
     type TransactionTerm = {
-        Start: DateTime
-        End: DateTime
-        Duration: int<DurationDays>
+        Start: Date
+        End: Date
+        Duration: int<DurationDay>
     }
 
     /// calculate the transaction term based on specific events
-    let transactionTerm (consummationDate: DateTime) firstFinanceChargeEarnedDate (lastPaymentDueDate: DateTime) lastAdvanceScheduledDate =
+    let transactionTerm (consummationDate: Date) firstFinanceChargeEarnedDate (lastPaymentDueDate: Date) lastAdvanceScheduledDate =
         let beginDate = if firstFinanceChargeEarnedDate > consummationDate then firstFinanceChargeEarnedDate else consummationDate
         let endDate = if lastAdvanceScheduledDate > lastPaymentDueDate then lastAdvanceScheduledDate else lastPaymentDueDate
-        { Start = beginDate; End = endDate; Duration = (endDate.Date - beginDate.Date).Days * 1<DurationDays> }
+        { Start = beginDate; End = endDate; Duration = (endDate - beginDate).Days * 1<DurationDay> }
 
     /// interval between payments
     [<Struct>]
     type UnitPeriod =
-        | NoInterval of UnitPeriodDays:int<DurationDays> // cf. (b)(5)(vii)
+        | NoInterval of UnitPeriodDays:int<DurationDay> // cf. (b)(5)(vii)
         | Day
         | Week of WeekMultiple:int
         | SemiMonth
@@ -55,7 +55,7 @@ module UnitPeriod =
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
         if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) < 2 then
-            min term.Duration 365<DurationDays>
+            min term.Duration 365<DurationDay>
             |> NoInterval
         else
             let periodLengths =
@@ -63,7 +63,7 @@ module UnitPeriod =
                 |> Array.sort
                 |> Array.distinct
                 |> Array.windowed 2
-                |> Array.map ((fun a -> (a[1].Date - a[0].Date).Days) >> normalise >> fst)
+                |> Array.map ((fun a -> (a[1] - a[0]).Days) >> normalise >> fst)
             let commonPeriodLengths = periodLengths |> commonLengths
             if commonPeriodLengths |> Array.isEmpty then
                 periodLengths
@@ -92,11 +92,11 @@ module UnitPeriod =
     [<Struct>]
     type Config =
         /// single on the given date
-        | Single of DateTime:DateTime
+        | Single of Date:Date
         /// daily starting on the given date
-        | Daily of StartDate:DateTime
+        | Daily of StartDate:Date
         /// (multi-)weekly: every n weeks starting on the given date
-        | Weekly of WeekMultiple:int * WeekStartDate:DateTime
+        | Weekly of WeekMultiple:int * WeekStartDate:Date
         /// semi-monthly: twice a month starting on the date given by year, month and day 1, with the other day given by day 2
         | SemiMonthly of smYear:int * smMonth:int * Day1:int * Day2:int
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
@@ -105,21 +105,21 @@ module UnitPeriod =
     module Config =
 
         /// creates a semi-monthly config specifying the first day only, using month-end tracking where appropriate
-        let defaultSemiMonthly (startDate: DateTime) =
+        let defaultSemiMonthly (startDate: Date) =
             let day1 = startDate.Day
-            let monthEndDay1 = DateTime.DaysInMonth(startDate.Year, startDate.Month)
+            let monthEndDay1 = Date.DaysInMonth(startDate.Year, startDate.Month)
             let trackingDay1 = if day1 = monthEndDay1 then 31 else day1
             let day2, monthOffset =
                 if trackingDay1 < 15 then trackingDay1 + 15, 0
                 elif trackingDay1 = 15 then 31, 0
                 elif trackingDay1 = 31 then 15, 1
                 else trackingDay1 - 15, 1
-            let monthEndDay2 = startDate.AddMonths monthOffset |> fun dt -> DateTime.DaysInMonth(dt.Year, dt.Month)
+            let monthEndDay2 = startDate.AddMonths monthOffset |> fun d -> Date.DaysInMonth(d.Year, d.Month)
             let trackingDay2 = if day2 = monthEndDay2 then 31 else day2
             SemiMonthly (startDate.Year, startDate.Month, trackingDay1, trackingDay2)
 
-        let defaultMonthly multiple (startDate: DateTime) =
-            let monthEndDay = DateTime.DaysInMonth(startDate.Year, startDate.Month)
+        let defaultMonthly multiple (startDate: Date) =
+            let monthEndDay = Date.DaysInMonth(startDate.Year, startDate.Month)
             let trackingDay = if startDate.Day = monthEndDay then 31 else startDate.Day
             Monthly (multiple, startDate.Year, startDate.Month, trackingDay)
 
@@ -141,7 +141,7 @@ module UnitPeriod =
 
         /// pretty-print the unit-period config, useful for debugging 
         let serialise = function
-        | Single dt -> $"""(Single {dt.ToString "yyyy-MM-dd"})"""
+        | Single d -> $"""(Single {d.ToString "yyyy-MM-dd"})"""
         | Daily sd -> $"""(Daily {sd.ToString "yyyy-MM-dd"})"""
         | Weekly (multiple, wsd) -> $"""({multiple.ToString "00"}-Weekly ({wsd.ToString "yyyy-MM-dd"}))"""
         | SemiMonthly (y, m, td1, td2) -> $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
@@ -149,7 +149,7 @@ module UnitPeriod =
 
         /// gets the start date based on a unit-period config
         let startDate = function
-            | Single dt -> dt
+            | Single d -> d
             | Daily sd -> sd
             | Weekly (_, wsd) -> wsd
             | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m d1
@@ -168,12 +168,12 @@ module UnitPeriod =
             | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
-    let maxPaymentCount (maxLoanLength: int<DurationDays>) (startDate: DateTime) (config: Config) =
-        let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<DurationDays>
+    let maxPaymentCount (maxLoanLength: int<DurationDay>) (startDate: Date) (config: Config) =
+        let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<DurationDay>
         match config with
-        | Single dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
-        | Daily dt -> maxLoanLength - offset dt.Year dt.Month dt.Day
-        | Weekly (multiple, dt) -> (maxLoanLength - offset dt.Year dt.Month dt.Day) / (multiple * 7)
+        | Single d -> maxLoanLength - offset d.Year d.Month d.Day
+        | Daily d -> maxLoanLength - offset d.Year d.Month d.Day
+        | Weekly (multiple, d) -> (maxLoanLength - offset d.Year d.Month d.Day) / (multiple * 7)
         | SemiMonthly (y, m, d1, _) -> (maxLoanLength - offset y m (int d1)) / 15
         | Monthly (multiple, y, m, d) -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
         |> int
@@ -186,24 +186,24 @@ module UnitPeriod =
 
     /// generate a payment schedule based on a unit-period config
     let generatePaymentSchedule count direction unitPeriodConfig =
-        let adjustMonthEnd (monthEndTrackingDay: int) (dt: DateTime) =
-            if dt.Day > 15 && monthEndTrackingDay > 28 then
-                TrackingDay.toDate dt.Year dt.Month monthEndTrackingDay
-            else dt
+        let adjustMonthEnd (monthEndTrackingDay: int) (d: Date) =
+            if d.Day > 15 && monthEndTrackingDay > 28 then
+                TrackingDay.toDate d.Year d.Month monthEndTrackingDay
+            else d
         let generate =
             match unitPeriodConfig |> Config.constrain with
             | Single startDate ->
                 Array.map (fun _ -> startDate)
             | Daily startDate ->
-                Array.map (float >> startDate.AddDays)
+                Array.map startDate.AddDays
             | Weekly (multiple, startDate) ->
-                Array.map (fun c -> startDate.AddDays (float(c * 7 * multiple)))
+                Array.map (fun c -> startDate.AddDays (c * 7 * multiple))
             | SemiMonthly (year, month, td1, td2) ->
                 let startDate = TrackingDay.toDate year month td1
                 let offset, monthEndTrackingDay = (if td1 > td2 then 1, td1 else 0, td2) |> fun (o, metd) -> (match direction with Direction.Forward -> o, metd | Direction.Reverse -> o - 1, metd)
                 Array.collect(fun c -> [|
                     startDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
-                    startDate.AddMonths (c + offset) |> fun dt -> TrackingDay.toDate dt.Year dt.Month td2 |> adjustMonthEnd monthEndTrackingDay
+                    startDate.AddMonths (c + offset) |> fun d -> TrackingDay.toDate d.Year d.Month td2 |> adjustMonthEnd monthEndTrackingDay
                 |])
                 >> Array.take count
             | Monthly (multiple, year, month, td) ->
@@ -214,8 +214,8 @@ module UnitPeriod =
         | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |] |> generate |> Array.sort
 
     /// for a given interval and array of dates, devise the unit-period config
-    let detect direction interval (transferDates: DateTime array) =
-        if Array.isEmpty transferDates then Single (DateTime.Today.AddYears 1) else
+    let detect direction interval (transferDates: Date array) =
+        if Array.isEmpty transferDates then failwith "No transfer dates given" else
         let transform = match direction with Direction.Forward -> id | Direction.Reverse -> Array.rev
         let transferDates = transform transferDates
         let firstTransferDate = transferDates |> Array.head

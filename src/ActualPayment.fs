@@ -69,7 +69,7 @@ module ActualPayment =
     [<Struct>]
     type AmortisationScheduleItem = {
         /// the date of amortisation
-        OffsetDate: DateTime
+        OffsetDate: Date
         /// the offset expressed as the number of days from the start date
         OffsetDay: int<OffsetDay>
         /// any advance made on the current day, typically the principal on day 0 for a single-advance transaction
@@ -160,7 +160,7 @@ module ActualPayment =
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (appliedPayments: AppliedPayment array) =
         if Array.isEmpty appliedPayments then [||] else
-        let asOfDay = (sp.AsOfDate.Date - sp.StartDate.Date).Days * 1<OffsetDay>
+        let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
         let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees
@@ -254,7 +254,7 @@ module ActualPayment =
             let finalPaymentAdjustment = if isProjection || isOverpayment && (ap.ScheduledPayment > abs principalBalance) then principalBalance else 0L<Cent>
 
             {
-                OffsetDate = sp.StartDate.AddDays(float ap.AppliedPaymentDay)
+                OffsetDate = sp.StartDate.AddDays(int ap.AppliedPaymentDay)
                 OffsetDay = ap.AppliedPaymentDay
                 Advance = 0L<Cent>
                 ScheduledPayment = ap.ScheduledPayment + finalPaymentAdjustment
@@ -303,7 +303,7 @@ module ActualPayment =
                     if calculateFinalApr then
                         items
                         |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                        |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(float asi.OffsetDay); Apr.Amount = asi.NetEffect })
+                        |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
                         |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                         |> ValueSome
                     else ValueNone

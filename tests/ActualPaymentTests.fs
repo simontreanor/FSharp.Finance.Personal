@@ -48,8 +48,8 @@ module ActualPaymentTests =
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2023, 4, 1)
-                StartDate = DateTime(2022, 11, 26)
+                AsOfDate = Date(2023, 4, 1)
+                StartDate = Date(2022, 11, 26)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
                 PaymentCount = 5
@@ -61,7 +61,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -79,15 +79,15 @@ module ActualPaymentTests =
         irregularSchedule |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
-        let expected = quickExpectedFinalItem (DateTime(2023, 3, 31)) 125<OffsetDay> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
         actual |> should equal expected
 
     [<Fact>]
     let ``2) Standard schedule with month-end payments from 32 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2023, 4, 1)
-                StartDate = DateTime(2022, 10, 29)
+                AsOfDate = Date(2023, 4, 1)
+                StartDate = Date(2022, 10, 29)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
                 PaymentCount = 5
@@ -99,7 +99,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -117,15 +117,15 @@ module ActualPaymentTests =
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
-        let expected = quickExpectedFinalItem (DateTime(2023, 3, 31)) 153<OffsetDay> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
         actual |> should equal expected
 
     [<Fact>]
     let ``3) Standard schedule with mid-monthly payments from 14 days and paid off on time`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2023, 3, 16)
-                StartDate = DateTime(2022, 11, 1)
+                AsOfDate = Date(2023, 3, 16)
+                StartDate = Date(2022, 11, 1)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
                 PaymentCount = 5
@@ -137,7 +137,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -155,15 +155,15 @@ module ActualPaymentTests =
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
-        let expected = quickExpectedFinalItem (DateTime(2023, 3, 15)) 134<OffsetDay> 49153L<Cent> 95765L<Cent> 8995L<Cent> 40158L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 49153L<Cent> 95765L<Cent> 8995L<Cent> 40158L<Cent>
         actual |> should equal expected
 
     [<Fact>]
     let ``4) Made 2 payments on early repayment, then one single payment after the full balance is overdue`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2023, 3, 22)
-                StartDate = DateTime(2022, 11, 1)
+                AsOfDate = Date(2023, 3, 22)
+                StartDate = Date(2022, 11, 1)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
                 PaymentCount = 5
@@ -175,7 +175,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -194,7 +194,7 @@ module ActualPaymentTests =
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
         let expected = ValueSome {
-            OffsetDate = DateTime(2023, 3, 21)
+            OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -221,8 +221,8 @@ module ActualPaymentTests =
     let ``5) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2023, 3, 22)
-                StartDate = DateTime(2022, 11, 1)
+                AsOfDate = Date(2023, 3, 22)
+                StartDate = Date(2022, 11, 1)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
                 PaymentCount = 5
@@ -234,7 +234,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -253,7 +253,7 @@ module ActualPaymentTests =
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
         let expected = ValueSome {
-            OffsetDate = DateTime(2023, 3, 21)
+            OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -280,8 +280,8 @@ module ActualPaymentTests =
     let ``6) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2023, 3, 25)
-                StartDate = DateTime(2022, 11, 1)
+                AsOfDate = Date(2023, 3, 25)
+                StartDate = Date(2022, 11, 1)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
                 PaymentCount = 5
@@ -293,7 +293,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -317,7 +317,7 @@ module ActualPaymentTests =
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
         let expected = ValueSome {
-            OffsetDate = DateTime(2023, 3, 24)
+            OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -344,8 +344,8 @@ module ActualPaymentTests =
     let ``7) Zero-day loan`` () =
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime(2022, 11, 2)
-                StartDate = DateTime(2022, 11, 1)
+                AsOfDate = Date(2022, 11, 2)
+                StartDate = Date(2022, 11, 1)
                 Principal = 150000L<Cent>
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
                 PaymentCount = 5
@@ -357,7 +357,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -372,13 +372,13 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp (ValueSome (DateTime(2022, 11, 1))) false
+            |> generateAmortisationSchedule sp (ValueSome (Date(2022, 11, 1))) false
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
         let expected = ValueSome {
-            OffsetDate = DateTime(2022, 11, 1)
+            OffsetDate = Date(2022, 11, 1)
             OffsetDay = 0<OffsetDay>
             Advance = 150000L<Cent>
             ScheduledPayment = 0L<Cent>
@@ -403,13 +403,13 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``8) Check that charge for late payment is not applied on scheduled payment date when payment has not yet been made`` () =
-        let startDate = DateTime.Today.AddDays -56.
+        let startDate = Date(2024, 10, 1).AddDays -56
         let (sp: ScheduledPayment.ScheduleParameters) =
             {
-                AsOfDate = DateTime.Today
+                AsOfDate = Date(2024, 10, 1)
                 StartDate = startDate
                 Principal = 150000L<Cent>
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14.)
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14)
                 PaymentCount = 11
                 FeesAndCharges = {
                     Fees = ValueNone
@@ -419,7 +419,7 @@ module ActualPaymentTests =
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDays>
+                    GracePeriod = 3<DurationDay>
                     Holidays = [||]
                 }
                 Calculation = {
@@ -442,7 +442,7 @@ module ActualPaymentTests =
 
         let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
         let expected = ValueSome {
-            OffsetDate = startDate.AddDays 154.
+            OffsetDate = startDate.AddDays 154
             OffsetDay = 154<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 24366L<Cent> // to-do: this should be less than the level payment

@@ -9,8 +9,8 @@ open FSharp.Finance.Personal.ActualPayment
 
 module ActualPaymentTestsExtra =
 
-    let asOfDate = DateTime(2023, 12, 1)
-    let startDates = [| -90. .. 5. .. 90. |] |> Array.map (asOfDate.AddDays)
+    let asOfDate = Date(2023, 12, 1)
+    let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
     let advanceAmounts = [| 10000L<Cent> .. 5000L<Cent> .. 250000L<Cent> |]
     let fees =
         let none = [| ValueNone |]
@@ -33,16 +33,16 @@ module ActualPaymentTestsExtra =
         let dailyFixed = [| 100L<Cent> .. 100L<Cent> .. 1000L<Cent> |] |> Array.map (Interest.DailyFixedCap >> ValueSome)
         let dailyPercentageCap = [| 0.02m .. 0.02m .. 0.2m |] |> Array.map (Percent >> Interest.DailyPercentageCap >> ValueSome)
         [| none; dailyFixed; dailyPercentageCap |] |> Array.concat
-    let interestGracePeriods = [| 0<DurationDays> .. 1<DurationDays> .. 7<DurationDays> |]
+    let interestGracePeriods = [| 0<DurationDay> .. 1<DurationDay> .. 7<DurationDay> |]
     let interestHolidays =
         let none = [||]
-        let some = [| { Interest.Holiday.Start = DateTime(2024, 3, 1); Interest.Holiday.End = DateTime(2024, 12, 31)} |]
+        let some = [| { Interest.Holiday.Start = Date(2024, 3, 1); Interest.Holiday.End = Date(2024, 12, 31)} |]
         [| none; some |]
-    let unitPeriodConfigs (startDate: DateTime) =
-        let daily = [| 4. .. 32. |] |> Array.map (startDate.AddDays >> UnitPeriod.Config.Daily)
-        let weekly = [| 1; 2; 4; 8 |] |> Array.collect(fun multiple -> [| 4. .. 32. |] |> Array.map(fun d -> UnitPeriod.Config.Weekly(multiple, (startDate.AddDays d))))
+    let unitPeriodConfigs (startDate: Date) =
+        let daily = [| 4 .. 32 |] |> Array.map (startDate.AddDays >> UnitPeriod.Config.Daily)
+        let weekly = [| 1; 2; 4; 8 |] |> Array.collect(fun multiple -> [| 4 .. 32 |] |> Array.map(fun d -> UnitPeriod.Config.Weekly(multiple, (startDate.AddDays d))))
         let semiMonthly =
-            [| 4. .. 32. |]
+            [| 4 .. 32 |]
             |> Array.collect(fun d -> 
                 startDate.AddDays d
                 |> fun sd ->
@@ -54,7 +54,7 @@ module ActualPaymentTestsExtra =
         let monthly =
             [| 1; 2; 3; 6 |]
             |> Array.collect(fun multiple ->
-                [| 4. .. 32. |]
+                [| 4 .. 32 |]
                 |> Array.map(fun d ->
                     startDate.AddDays d
                     |> fun sd -> UnitPeriod.Config.Monthly(multiple, sd.Year, sd.Month, sd.Day * 1)
@@ -289,8 +289,8 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ``1) Simple schedule looked at from a date in the past showing projected to be fully settled on time`` () =
         let sp = ({
-            AsOfDate = DateTime(2023, 7, 23)
-            StartDate = DateTime(2023, 7, 23)
+            AsOfDate = Date(2023, 7, 23)
+            StartDate = Date(2023, 7, 23)
             Principal = 80000L<Cent>
             UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1)
             PaymentCount = 5
@@ -302,7 +302,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -326,7 +326,7 @@ module ActualPaymentTestsExtra =
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
-            OffsetDate = DateTime(2023, 12, 1)
+            OffsetDate = Date(2023, 12, 1)
             OffsetDay = 131<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 40764L<Cent>
@@ -352,10 +352,10 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ``2) Schedule with a payment on day zero, seen from a date before scheduled payments are due to start`` () =
         let sp = ({
-            AsOfDate = DateTime(2022, 3, 25)
-            StartDate = DateTime(2022, 3, 8)
+            AsOfDate = Date(2022, 3, 25)
+            StartDate = Date(2022, 3, 8)
             Principal = 80000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
             PaymentCount = 12
             FeesAndCharges = {
                 Fees = ValueSome(Fees.Percentage (Percent 150m, ValueNone))
@@ -365,7 +365,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -391,7 +391,7 @@ module ActualPaymentTestsExtra =
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
-            OffsetDate = DateTime(2022, 7, 30)
+            OffsetDate = Date(2022, 7, 30)
             OffsetDay = 144<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 14240L<Cent>
@@ -417,10 +417,10 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ``3) Schedule with a payment on day zero, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
         let sp = ({
-            AsOfDate = DateTime(2022, 8, 31)
-            StartDate = DateTime(2022, 3, 8)
+            AsOfDate = Date(2022, 8, 31)
+            StartDate = Date(2022, 3, 8)
             Principal = 80000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, DateTime(2022, 3, 26))
+            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
             PaymentCount = 12
             FeesAndCharges = {
                 Fees = ValueSome(Fees.Percentage (Percent 150m, ValueNone))
@@ -430,7 +430,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -455,7 +455,7 @@ module ActualPaymentTestsExtra =
                     |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay
                 // calculate revised schedule including new payment plan
                 let amount = 20_00L<Cent>
-                let paymentPlanStartDate = DateTime(2022, 9, 1)
+                let paymentPlanStartDate = Date(2022, 9, 1)
                 let unitPeriodConfig = UnitPeriod.Config.Weekly(2, paymentPlanStartDate)
                 let outstandingBalance = amortisationSchedule |> Array.last |> fun asi -> asi.PrincipalBalance + asi.FeesBalance + asi.InterestBalance + asi.ChargesBalance
                 let extraScheduledPayments = Rescheduling.createPaymentPlan amount unitPeriodConfig sp.Interest.Rate outstandingBalance sp.StartDate
@@ -469,7 +469,7 @@ module ActualPaymentTestsExtra =
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
-            OffsetDate = DateTime(2027, 7, 29)
+            OffsetDate = Date(2027, 7, 29)
             OffsetDay = 1969<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 949L<Cent>
@@ -495,10 +495,10 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ``4) never settles down`` () =
         let sp = ({
-            AsOfDate = DateTime(2023, 12, 1)
-            StartDate = DateTime(2023, 11, 6)
+            AsOfDate = Date(2023, 12, 1)
+            StartDate = Date(2023, 11, 6)
             Principal = 80000L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly (8, DateTime(2023, 11, 23))
+            UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23))
             PaymentCount = 19
             FeesAndCharges = {
                 Fees = ValueSome (Fees.Percentage (Percent 164m, ValueNone))
@@ -508,7 +508,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.12m)
                 Cap = { Total = ValueSome <| Interest.TotalFixedCap 50000L<Cent>; Daily = ValueNone }
-                GracePeriod = 7<DurationDays>
+                GracePeriod = 7<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -532,7 +532,7 @@ module ActualPaymentTestsExtra =
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
-            OffsetDate = DateTime(2026, 8, 27)
+            OffsetDate = Date(2026, 8, 27)
             OffsetDay = 1025<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 13736L<Cent>
@@ -558,8 +558,8 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ``5) large negative payment`` () =
         let sp = ({
-            AsOfDate = DateTime(2023, 12, 11)
-            StartDate = DateTime(2022, 9, 11)
+            AsOfDate = Date(2023, 12, 11)
+            StartDate = Date(2022, 9, 11)
             Principal = 20000L<Cent>
             UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15)
             PaymentCount = 7
@@ -571,7 +571,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                GracePeriod = 3<DurationDays>
+                GracePeriod = 3<DurationDay>
                 Holidays = [||]
             }
             Calculation = {
@@ -595,7 +595,7 @@ module ActualPaymentTestsExtra =
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
-            OffsetDate = DateTime(2023, 3, 15)
+            OffsetDate = Date(2023, 3, 15)
             OffsetDay = 185<OffsetDay>
             Advance = 0L<Cent>
             ScheduledPayment = 5153L<Cent>

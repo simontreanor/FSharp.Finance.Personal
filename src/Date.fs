@@ -3,7 +3,21 @@ namespace FSharp.Finance.Personal
 open System
 
 [<AutoOpen>]
-module Date =
+module DateDay =
+
+    [<Struct>]
+    type Date =
+        val Year: int
+        val Month: int
+        val Day: int
+        new (year: int, month: int, day: int) = { Year = year; Month = month; Day = day }
+        with
+            member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> fun d -> Date(d.Year, d.Month, d.Day)
+            member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> fun d -> Date(d.Year, d.Month, d.Day)
+            member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> fun d -> Date(d.Year, d.Month, d.Day)
+            member d.ToString (format: string) = DateTime(d.Year, d.Month, d.Day).ToString format
+            static member (-) (d1: Date, d2: Date) =  DateTime(d1.Year, d1.Month, d1.Day) - DateTime(d2.Year, d2.Month, d2.Day)
+            static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
 
     /// the offset of a date from the start date, in days
     [<Measure>]
@@ -12,13 +26,13 @@ module Date =
     [<RequireQualifiedAccess>]
     module OffsetDay =
         /// convert an offset date to an offset day based on a given start date
-        let fromDate (startDate: DateTime) (offsetDate: DateTime) = (offsetDate - startDate).Days * 1<OffsetDay>
+        let fromDate (startDate: Date) (offsetDate: Date) = (offsetDate - startDate).Days * 1<OffsetDay>
         /// convert an offset day to an offset date based on a given start date
-        let toDate (startDate: DateTime) (offsetDay: int<OffsetDay>) = startDate.AddDays(float offsetDay)
+        let toDate (startDate: Date) (offsetDay: int<OffsetDay>) = startDate.AddDays(int offsetDay)
 
 
     /// a duration of a number of days
-    [<Measure>] type DurationDays
+    [<Measure>] type DurationDay
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
@@ -26,4 +40,4 @@ module Date =
     [<RequireQualifiedAccess>]
     module TrackingDay =
         /// create a date from a year, month, and tracking day
-        let toDate y m td = DateTime(y, m, min (DateTime.DaysInMonth(y, m)) td)
+        let toDate y m td = Date(y, m, min (Date.DaysInMonth(y, m)) td)
