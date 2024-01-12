@@ -5,6 +5,7 @@ open System
 [<AutoOpen>]
 module DateDay =
 
+    /// the date at the customer's location - ensure any time-zone conversion is performed before using this - as all calculations are date-only with no time component, summer time or other such time artefacts
     [<Struct>]
     type Date =
         val Year: int
@@ -12,11 +13,13 @@ module DateDay =
         val Day: int
         new (year: int, month: int, day: int) = { Year = year; Month = month; Day = day }
         with
-            member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> fun d -> Date(d.Year, d.Month, d.Day)
-            member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> fun d -> Date(d.Year, d.Month, d.Day)
-            member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> fun d -> Date(d.Year, d.Month, d.Day)
-            override d.ToString() = DateTime(d.Year, d.Month, d.Day).ToString "yyyy-MM-dd"
-            static member (-) (d1: Date, d2: Date) =  DateTime(d1.Year, d1.Month, d1.Day) - DateTime(d2.Year, d2.Month, d2.Day)
+            static member FromDateTime (dt: DateTime) = Date(dt.Year, dt.Month, dt.Day)
+            member d.ToDateTime() = DateTime(d.Year, d.Month, d.Day)
+            member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> Date.FromDateTime
+            member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> Date.FromDateTime
+            member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> Date.FromDateTime
+            override d.ToString() = d.ToDateTime().ToString "yyyy-MM-dd"
+            static member (-) (d1: Date, d2: Date) =  d1.ToDateTime() - d2.ToDateTime()
             static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
 
     /// the offset of a date from the start date, in days
