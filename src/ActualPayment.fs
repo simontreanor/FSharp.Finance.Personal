@@ -281,6 +281,35 @@ module ActualPayment =
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
 
+    let calculateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) calculateFinalApr items =
+        let principalTotal = items |> Array.sumBy _.PrincipalPortion
+        let feesTotal = items |> Array.sumBy _.FeesPortion
+        let interestTotal = items |> Array.last |> _.CumulativeInterest
+        let chargesTotal = items |> Array.sumBy _.ChargesPortion
+        let feesRefund = items |> Array.last |> _.FeesRefund
+        let finalPaymentDay = items |> Array.last |> _.OffsetDay
+        {
+            Items = items
+            FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
+            FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
+            FinalApr =
+                if calculateFinalApr then
+                    items
+                    |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
+                    |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
+                    |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
+                    |> ValueSome
+                else ValueNone
+            FinalCostToBorrowingRatio =
+                if principalTotal = 0L<Cent> then Percent 0m
+                else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+            EffectiveInterestRate =
+                if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
+                else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
+                |> Percent |> Interest.Daily
+        }
+
+
     /// generates an amortisation schedule and final statistics
     let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr (actualPayments: Payment array) =
         voption {
@@ -292,32 +321,7 @@ module ActualPayment =
                 |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 |> applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge actualPayments
                 |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
-            let principalTotal = items |> Array.sumBy _.PrincipalPortion
-            let feesTotal = items |> Array.sumBy _.FeesPortion
-            let interestTotal = items |> Array.last |> _.CumulativeInterest
-            let chargesTotal = items |> Array.sumBy _.ChargesPortion
-            let feesRefund = items |> Array.last |> _.FeesRefund
-            let finalPaymentDay = items |> Array.last |> _.OffsetDay
-            return {
-                Items = items
-                FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
-                FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
-                FinalApr =
-                    if calculateFinalApr then
-                        items
-                        |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                        |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
-                        |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
-                        |> ValueSome
-                    else ValueNone
-                FinalCostToBorrowingRatio =
-                    if principalTotal = 0L<Cent> then Percent 0m
-                    else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
-                EffectiveInterestRate =
-                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
-                    else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
-                    |> Percent |> Interest.Daily
-            }
+            return items |> calculateAmortisationSchedule sp calculateFinalApr
         }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
