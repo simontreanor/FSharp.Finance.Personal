@@ -31,6 +31,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -47,7 +48,7 @@ module SettlementTests =
 
         let actual =
             voption{
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1).AddDays -3) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1).AddDays -3) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -98,6 +99,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -114,7 +116,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -165,6 +167,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -181,7 +184,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -232,6 +235,7 @@ module SettlementTests =
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -244,7 +248,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -295,6 +299,7 @@ module SettlementTests =
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -307,7 +312,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -358,6 +363,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -374,7 +380,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -425,6 +431,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -492,6 +499,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -559,6 +567,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
@@ -571,7 +580,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }
@@ -622,6 +631,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
@@ -642,7 +652,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp actualPayments
+                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
                 settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
             }

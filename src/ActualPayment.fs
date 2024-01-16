@@ -161,7 +161,7 @@ module ActualPayment =
         |> Array.sortBy _.AppliedPaymentDay
         
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
-    let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay (appliedPayments: AppliedPayment array) =
+    let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay applyNegativeInterest (appliedPayments: AppliedPayment array) =
         if Array.isEmpty appliedPayments then [||] else
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
@@ -206,13 +206,16 @@ module ActualPayment =
             let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.GracePeriod sp.Interest.Holidays a.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
-                if a.PrincipalBalance <= 0L<Cent> then
-                    0L<Cent>
+                if a.PrincipalBalance <= 0L<Cent> then // to-do: should this also inspect fees balance?
+                    if applyNegativeInterest then
+                        let dailyInterestRate = sp.Interest.RateOnNegativeBalance |> Interest.Rate.daily
+                        Interest.calculate 0L<Cent> (a.PrincipalBalance + a.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
+                    else 0L<Cent>
                 else
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (a.PrincipalBalance + a.FeesBalance) interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     Interest.calculate dailyInterestCap (a.PrincipalBalance + a.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
-            let interestPortion = newInterest' + a.InterestBalance |> ``don't apportion for a refund`` ap.NetEffect
+            let interestPortion = newInterest' + a.InterestBalance //|> ``don't apportion for a refund`` ap.NetEffect
             
             let feesDue =
                 match sp.FeesAndCharges.FeesSettlement with
@@ -239,10 +242,10 @@ module ActualPayment =
                 else
                     if isProjection || isOverpayment || isSettlement then
                         let feesPayment = a.FeesBalance - feesRemaining
-                        actualPayment - chargesPortion - interestPortion - feesPayment, feesPayment
+                        actualPayment - chargesPortion - sign interestPortion - feesPayment, feesPayment
                     else
-                        let principalPayment = decimal (actualPayment - chargesPortion - interestPortion) / (1m + Percent.toDecimal feesPercentage) |> Cent.round RoundDown
-                        principalPayment, actualPayment - chargesPortion - interestPortion - principalPayment
+                        let principalPayment = decimal (actualPayment - chargesPortion - sign interestPortion) / (1m + Percent.toDecimal feesPercentage) |> Cent.round RoundDown
+                        principalPayment, actualPayment - chargesPortion - sign interestPortion - principalPayment
 
             let principalBalance = a.PrincipalBalance - sign principalPortion
 
@@ -311,7 +314,7 @@ module ActualPayment =
 
 
     /// generates an amortisation schedule and final statistics
-    let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr (actualPayments: Payment array) =
+    let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr applyNegativeInterest (actualPayments: Payment array) =
         voption {
             let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
             let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment pc -> Some pc | _ -> None) |> Option.defaultValue 0L<Cent>
@@ -320,7 +323,7 @@ module ActualPayment =
                 |> _.Items
                 |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 |> applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge actualPayments
-                |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay
+                |> calculateSchedule sp earlySettlementDate schedule.FinalPaymentDay applyNegativeInterest
             return items |> calculateAmortisationSchedule sp calculateFinalApr
         }
 

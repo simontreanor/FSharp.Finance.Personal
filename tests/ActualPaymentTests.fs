@@ -64,6 +64,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -75,7 +76,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
@@ -103,6 +104,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -114,7 +116,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
@@ -142,6 +144,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -153,7 +156,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
@@ -181,6 +184,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -192,7 +196,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
 
@@ -241,6 +245,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -252,7 +257,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
 
@@ -301,6 +306,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -317,7 +323,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
 
@@ -366,6 +372,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -379,7 +386,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp (ValueSome (Date(2022, 11, 1))) false
+            |> generateAmortisationSchedule sp (ValueSome (Date(2022, 11, 1))) false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
@@ -429,6 +436,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -444,7 +452,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> generateAmortisationSchedule sp ValueNone false
+            |> generateAmortisationSchedule sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
 

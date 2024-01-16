@@ -86,6 +86,7 @@ module Interest =
         Cap: Cap
         GracePeriod: int<DurationDay>
         Holidays: Holiday array
+        RateOnNegativeBalance: Rate
     }
 
     module Options =
@@ -95,6 +96,7 @@ module Interest =
             Cap = { Total = ValueSome (TotalPercentageCap (Percent 100m)); Daily = ValueSome (DailyPercentageCap (Percent 0.8m)) }
             GracePeriod = 3<DurationDay>
             Holidays = [||]
+            RateOnNegativeBalance = Annual (Percent 8m)
         }
 
     let chargeableDays (startDate: Date) (earlySettlementDate: Date voption) (gracePeriod: int<DurationDay>) holidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
