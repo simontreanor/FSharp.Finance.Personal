@@ -206,9 +206,9 @@ module ActualPayment =
             let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.GracePeriod sp.Interest.Holidays a.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
-                if a.PrincipalBalance <= 0L<Cent> then // to-do: should this also inspect fees balance?
+                if a.PrincipalBalance <= 0L<Cent> then // note: should this also inspect fees balance: problably not, as fees can be zero and also principal balance is always settled last
                     if applyNegativeInterest then
-                        let dailyInterestRate = sp.Interest.RateOnNegativeBalance |> Interest.Rate.daily
+                        let dailyInterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.map Interest.Rate.daily |> ValueOption.defaultValue (Percent 0m)
                         Interest.calculate 0L<Cent> (a.PrincipalBalance + a.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     else 0L<Cent>
                 else

@@ -30,7 +30,7 @@ module ScheduledPaymentTests =
                     Cap = { Total = ValueNone; Daily = ValueNone }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -114,7 +114,7 @@ module ScheduledPaymentTests =
                     Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)); Daily = ValueSome (Interest.DailyPercentageCap (Percent 0.8m)) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3

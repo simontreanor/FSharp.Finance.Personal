@@ -31,7 +31,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -99,7 +99,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -167,7 +167,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -235,7 +235,7 @@ module SettlementTests =
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -299,7 +299,7 @@ module SettlementTests =
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -363,7 +363,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -431,7 +431,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -499,7 +499,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
@@ -567,7 +567,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
@@ -631,7 +631,7 @@ module SettlementTests =
                 Cap = { Total = ValueNone; Daily = ValueNone }
                 GracePeriod = 3<DurationDay>
                 Holidays = [||]
-                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = ValueNone
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 5

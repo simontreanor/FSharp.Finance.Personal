@@ -64,7 +64,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -104,7 +104,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -144,7 +144,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -184,7 +184,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -245,7 +245,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -306,7 +306,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -372,7 +372,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -436,7 +436,7 @@ module ActualPaymentTests =
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
                     GracePeriod = 3<DurationDay>
                     Holidays = [||]
-                    RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -480,3 +480,70 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
         }
         actual |> should equal expected
+
+    [<Fact>]
+    let ``9) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)`` () =
+        let (sp: ScheduledPayment.ScheduleParameters) =
+            {
+                AsOfDate = Date(2023, 3, 25)
+                StartDate = Date(2022, 11, 1)
+                Principal = 150000L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
+                FeesAndCharges = {
+                    Fees = ValueNone
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment 1000L<Cent> |]
+                    LatePaymentGracePeriod = 0<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =   2<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent>      |], [||]) }
+            { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent>      |], [||]) }
+            { PaymentDay = 140<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent> * 3L |], [||]) }
+            { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayments ([| -26086L<Cent>      |], [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> generateAmortisationSchedule sp ValueNone false true
+
+        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest009.md" (ValueSome 300))
+
+        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let expected = ValueSome {
+            OffsetDate = Date(2023, 3, 24)
+            OffsetDay = 143<OffsetDay>
+            Advance = 0L<Cent>
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [| -26086L<Cent> |]
+            NetEffect = -26086L<Cent>
+            PaymentStatus = ValueSome Refunded
+            BalanceStatus = Settled
+            CumulativeInterest = 64679L<Cent>
+            NewInterest = -18L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = -26068L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = -18L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        }
+        actual |> should equal expected
+
