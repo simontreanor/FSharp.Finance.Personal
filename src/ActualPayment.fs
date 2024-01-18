@@ -127,7 +127,7 @@ module ActualPayment =
     }
 
     /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay latePaymentGracePeriod latePaymentCharge actualPayments (scheduledPayments: Payment array) =
+    let applyPayments asOfDay latePaymentGracePeriod (latePaymentCharge: Amount voption) actualPayments (scheduledPayments: Payment array) =
         if Array.isEmpty scheduledPayments then [||] else
         [| scheduledPayments; actualPayments |]
         |> Array.concat
@@ -151,8 +151,8 @@ module ActualPayment =
                 payments
                 |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (_, c) -> c | _ -> [||])
                 |> fun pcc ->
-                    if latePaymentCharge > 0L<Cent> then
-                        pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge |] | _ -> [||])
+                    if latePaymentCharge.IsSome then
+                        pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge.Value |] | _ -> [||])
                     else pcc
             { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; NetEffect = netEffect; PaymentStatus = paymentStatus; Charges = charges }
         )
@@ -198,7 +198,13 @@ module ActualPayment =
         appliedPayments
         |> Array.tail
         |> Array.scan(fun a ap ->
-            let newChargesTotal = Charges.total ap.Charges
+            let underpayment =
+                match ap.PaymentStatus with
+                | ValueSome MissedPayment -> ap.ScheduledPayment
+                | ValueSome Underpayment -> ap.ScheduledPayment - ap.NetEffect
+                | _ -> 0L<Cent>
+
+            let newChargesTotal = Charges.total underpayment ap.Charges
             let chargesPortion = newChargesTotal + a.ChargesBalance |> ``don't apportion for a refund`` ap.NetEffect
 
             let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.GracePeriod sp.Interest.Holidays a.OffsetDay ap.AppliedPaymentDay
@@ -315,7 +321,7 @@ module ActualPayment =
     let generateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate calculateFinalApr applyNegativeInterest (actualPayments: Payment array) =
         voption {
             let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
-            let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment pc -> Some pc | _ -> None) |> Option.defaultValue 0L<Cent>
+            let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment amount -> Some amount | _ -> None) |> Option.map ValueSome |> Option.defaultValue ValueNone
             let items =
                 schedule
                 |> _.Items

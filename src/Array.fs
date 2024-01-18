@@ -6,8 +6,7 @@ open System
 module Array =
 
     /// the result obtained from the array solver
-    [<RequireQualifiedAccess>]
-    [<Struct>]
+    [<RequireQualifiedAccess; Struct>]
     type Solution =
         /// a solution could not be found due to an issue with the initial parameters
         | Impossible
@@ -17,8 +16,7 @@ module Array =
         | Found of Found:decimal * Iteration:int * Tolerance:int
 
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
-    [<RequireQualifiedAccess>]
-    [<Struct>]
+    [<RequireQualifiedAccess; Struct>]
     type ToleranceSteps = {
         Min: int
         Step: int

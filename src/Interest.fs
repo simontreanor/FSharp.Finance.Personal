@@ -50,8 +50,7 @@ module Interest =
         | DailyFixedCap of DailyFixedCap:int64<Cent>
 
     /// the interest cap options
-    [<RequireQualifiedAccess>]
-    [<Struct>]
+    [<RequireQualifiedAccess; Struct>]
     type Cap = {
         Total: TotalCap voption
         Daily: DailyCap voption
@@ -73,8 +72,7 @@ module Interest =
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
     /// an interest holiday, i.e. a period when no interest is accrued
-    [<RequireQualifiedAccess>]
-    [<Struct>]
+    [<RequireQualifiedAccess; Struct>]
     type Holiday = {
         Start: Date
         End: Date

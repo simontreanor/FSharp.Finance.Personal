@@ -5,8 +5,7 @@ open System
 module Apr =
 
     /// the calculation method used to determine the APR
-    [<RequireQualifiedAccess>]
-    [<Struct>]
+    [<RequireQualifiedAccess; Struct>]
     type CalculationMethod =
         /// calculates the APR according to UK FCA rules to the stated decimal precision (note that this is two places more than the percent precision)
         | UnitedKingdom of UkPrecision:int
