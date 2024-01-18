@@ -1,7 +1,5 @@
 namespace FSharp.Finance.Personal
 
-open System
-
 /// functions for handling received payments and calculating interest and/or charges where necessary
 module ActualPayment =
 
@@ -75,7 +73,7 @@ module ActualPayment =
         /// the offset expressed as the number of days from the start date
         OffsetDay: int<OffsetDay>
         /// any advance made on the current day, typically the principal on day 0 for a single-advance transaction
-        Advance: int64<Cent>
+        Advances: int64<Cent> array
         /// any payment scheduled on the current day
         ScheduledPayment: int64<Cent>
         /// any payments actually made on the current day
@@ -178,7 +176,7 @@ module ActualPayment =
         let advance = {
             OffsetDate = sp.StartDate
             OffsetDay = 0<OffsetDay>
-            Advance = sp.Principal
+            Advances = [| sp.Principal |]
             ScheduledPayment = dayZeroPayment.ScheduledPayment
             ActualPayments = dayZeroPayment.ActualPayments
             NetEffect = dayZeroPayment.NetEffect
@@ -262,7 +260,7 @@ module ActualPayment =
             {
                 OffsetDate = sp.StartDate.AddDays(int ap.AppliedPaymentDay)
                 OffsetDay = ap.AppliedPaymentDay
-                Advance = 0L<Cent>
+                Advances = [| 0L<Cent> |]
                 ScheduledPayment = ap.ScheduledPayment + finalPaymentAdjustment
                 ActualPayments = ap.ActualPayments
                 NetEffect = ap.NetEffect + finalPaymentAdjustment
