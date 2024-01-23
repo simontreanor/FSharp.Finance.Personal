@@ -12,7 +12,7 @@ module Formatting =
     /// the resulting .md file can be opened in VS Code and Ctrl + Shift + v pressed to preview the table
     /// 
     /// (this is just a convenience feature, useful for visualising e.g. amortisation schedules output from unit tests - do not contact me about using regex for HTML!)
-    let outputListToHtml fileName limit list =
+    let outputListToHtml' filePath limit list =
         Formatter.ListExpansionLimit <- limit |> ValueOption.defaultValue 200
         Formatter.RecursionLimit <- 1
         let formatter = Formatter.GetPreferredFormatterFor(typeof<TabularData.TabularDataResource>, Formatter.DefaultMimeType)
@@ -35,8 +35,11 @@ module Formatting =
                         |> String.concat "; "
                         |> fun s -> $"<td>{s}</td>"
                 )
-        let fi = FileInfo $"{__SOURCE_DIRECTORY__}/../io/{fileName}"
+        let fi = FileInfo filePath
         if not fi.Directory.Exists then fi.Directory.Create() else ()
         writer.ToString()
         |> clean
-        |> fun s -> File.WriteAllText($"{__SOURCE_DIRECTORY__}/../io/{fileName}", s)
+        |> fun s -> File.WriteAllText(filePath, s)
+
+    let outputListToHtml fileName limit list =
+        outputListToHtml' $"{__SOURCE_DIRECTORY__}/../io/{fileName}" limit list
