@@ -7,8 +7,10 @@
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <Compile Include="Formatting.fs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="ValueOption.fs" />
     <Compile Include="Calculation.fs" />
     <Compile Include="Percentages.fs" />
@@ -24,13 +26,13 @@
     <Compile Include="Settlement.fs" />
     <Compile Include="Rescheduling.fs" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <PackageReference Include="Microsoft.DotNet.Interactive.Formatting" Version="1.0.0-beta.23562.1" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>FSharp.Finance.Personal</PackageId>
-    <Version>0.6.2</Version>
+    <Version>0.6.3</Version>
     <Authors>Simon Treanor</Authors>
     <PackageDescription>F# Personal Finance Library</PackageDescription>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>

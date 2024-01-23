@@ -160,13 +160,18 @@ module ActualPayment =
         
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let calculateSchedule (sp: ScheduledPayment.ScheduleParameters) earlySettlementDate originalFinalPaymentDay applyNegativeInterest (appliedPayments: AppliedPayment array) =
-        if Array.isEmpty appliedPayments then [||] else
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
         let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees
         let feesPercentage = decimal feesTotal / decimal sp.Principal |> Percent.fromDecimal
-        let dayZeroPayment = appliedPayments |> Array.head
+        let appliedPayments' =
+            if Array.isEmpty appliedPayments || (Array.head appliedPayments |> fun ap -> ap.AppliedPaymentDay <> 0<OffsetDay>) then // deals both with no payments and manual payment schedules
+                let advance = { AppliedPaymentDay = 0<OffsetDay>; ScheduledPayment = 0L<Cent>; ActualPayments = [||]; Charges = [||]; NetEffect = 0L<Cent>; PaymentStatus = ValueNone }
+                Array.concat [| [| advance |]; appliedPayments |]
+            else
+                appliedPayments
+        let dayZeroPayment = appliedPayments' |> Array.head
         let ``don't apportion for a refund`` paymentTotal amount = if paymentTotal < 0L<Cent> then 0L<Cent> else amount
         let dayZeroPrincipalPortion = decimal dayZeroPayment.NetEffect / (1m + Percent.toDecimal feesPercentage) |> Cent.round RoundDown
         let dayZeroPrincipalBalance = sp.Principal - dayZeroPrincipalPortion
@@ -195,7 +200,7 @@ module ActualPayment =
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
         }
-        appliedPayments
+        appliedPayments'
         |> Array.tail
         |> Array.scan(fun a ap ->
             let underpayment =

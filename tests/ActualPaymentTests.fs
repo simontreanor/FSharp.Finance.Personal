@@ -546,4 +546,3 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
         }
         actual |> should equal expected
-
