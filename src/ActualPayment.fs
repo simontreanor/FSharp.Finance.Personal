@@ -294,18 +294,20 @@ module ActualPayment =
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
 
     let calculateAmortisationSchedule (sp: ScheduledPayment.ScheduleParameters) calculateFinalApr items =
+        let finalItem = Array.last items
         let principalTotal = items |> Array.sumBy _.PrincipalPortion
         let feesTotal = items |> Array.sumBy _.FeesPortion
-        let interestTotal = items |> Array.last |> _.CumulativeInterest
+        let interestTotal = finalItem.CumulativeInterest
         let chargesTotal = items |> Array.sumBy _.ChargesPortion
-        let feesRefund = items |> Array.last |> _.FeesRefund
-        let finalPaymentDay = items |> Array.last |> _.OffsetDay
+        let feesRefund = finalItem.FeesRefund
+        let finalPaymentDay = finalItem.OffsetDay
+        let finalBalanceStatus = finalItem.BalanceStatus
         {
             Items = items
             FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
             FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
             FinalApr =
-                if calculateFinalApr then
+                if calculateFinalApr && finalBalanceStatus = Settled then
                     items
                     |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
                     |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
