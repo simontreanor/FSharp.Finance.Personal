@@ -9,8 +9,8 @@ open FSharp.Finance.Personal
 module ActualPaymentTestsExtra =
 
     open Payments
-    open ScheduledPayment
-    open AmortisationSchedule
+    open PaymentSchedule
+    open Amortisation
 
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
@@ -75,7 +75,7 @@ module ActualPaymentTestsExtra =
         let paymentRoundings = [| RoundDown; RoundUp; Round MidpointRounding.ToEven; Round MidpointRounding.AwayFromZero; |]
         interestRoundings
         |> Array.collect(fun ir -> paymentRoundings |> Array.map(fun pr -> { InterestRounding = ir; PaymentRounding = pr }))
-    let finalPaymentAdjustments = [| ScheduledPayment.AdjustFinalPayment; ScheduledPayment.SpreadOverLevelPayments |]
+    let finalPaymentAdjustments = [| AdjustFinalPayment; SpreadOverLevelPayments |]
 
     type ScheduledPaymentTestItem = {
         TestId: string
@@ -92,7 +92,7 @@ module ActualPaymentTestsExtra =
         PrincipalPortionTotal: int64<Cent>
     }
 
-    let applyPayments (sp: ScheduledPayment.ScheduleParameters) =
+    let applyPayments sp =
         let aod = sp.AsOfDate.ToString()
         let sd = sp.StartDate.ToString()
         let p = sp.Principal
@@ -111,14 +111,14 @@ module ActualPaymentTestsExtra =
         let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}_fpa{fpa}"""
         let amortisationSchedule = 
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) })
                 return
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
             let a = Array.last aa
@@ -238,7 +238,7 @@ module ActualPaymentTestsExtra =
         )))))))))))))))
         |> Seq.map applyPayments
 
-    let generateRegularPaymentTestData (amortisationSchedule: (string * AmortisationSchedule.Item array voption) seq) =
+    let generateRegularPaymentTestData (amortisationSchedule: (string * Amortisation.Item array voption) seq) =
         amortisationSchedule
         |> Seq.map(fun (testId, items) ->
             match items with
@@ -317,19 +317,19 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         })
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> ScheduledPayment.allPaidOnTime
+                let actualPayments = scheduleItems |> allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -382,12 +382,12 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         })
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
@@ -395,8 +395,8 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -449,13 +449,13 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         })
         let actual =
             voption {
                 // calculate schedule based on existing payments
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduledPayments =
                     schedule.Items
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
@@ -464,8 +464,8 @@ module ActualPaymentTestsExtra =
                 |]
                 let amortisationSchedule =
                     scheduledPayments
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 // calculate revised schedule including new payment plan
                 let amount = 20_00L<Cent>
                 let paymentPlanStartDate = Date(2022, 9, 1)
@@ -475,8 +475,8 @@ module ActualPaymentTestsExtra =
                 let payments = Array.concat [| actualPayments; extraScheduledPayments |]
                 let amortisationSchedule' =
                     scheduledPayments
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) payments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) payments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
                 return amortisationSchedule'
             }
@@ -529,19 +529,19 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         })
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> ScheduledPayment.allPaidOnTime
+                let actualPayments = scheduleItems |> allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -594,19 +594,19 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         })
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> ScheduledPayment.allPaidOnTime
+                let actualPayments = scheduleItems |> allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -659,12 +659,12 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         })
         let actual =
             voption {
-                let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
+                let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
@@ -672,8 +672,8 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md" (ValueSome 300)
                 return amortisationSchedule
             }

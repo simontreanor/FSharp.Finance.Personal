@@ -8,8 +8,8 @@ open FSharp.Finance.Personal
 module SettlementTests =
 
     open Payments
-    open ScheduledPayment
-    open AmortisationSchedule
+    open PaymentSchedule
+    open Amortisation
 
     [<Fact>]
     let ``1) Settlement falling on a scheduled payment date`` () =

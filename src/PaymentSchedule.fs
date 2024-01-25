@@ -3,11 +3,11 @@ namespace FSharp.Finance.Personal
 open Payments
 
 /// functions for generating a regular payment schedule, with payment amounts, interest and APR
-module ScheduledPayment =
+module PaymentSchedule =
 
     /// a scheduled payment item, with running calculations of interest and principal balance
     [<Struct>]
-    type ScheduleItem = {
+    type Item = {
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
         /// the principal
@@ -25,11 +25,12 @@ module ScheduledPayment =
     }
 
     ///  a schedule of payments, with final statistics based on the payments being made on time and in full
+    [<Struct>]
     type Schedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is inspected
         AsOfDay: int<OffsetDay>
         /// the items of the schedule
-        Items: ScheduleItem array
+        Items: Item array
         /// the final day of the schedule, expressed as an offset from the start date
         FinalPaymentDay: int<OffsetDay>
         /// the amount of all the payments except the final one
@@ -73,7 +74,7 @@ module ScheduledPayment =
 
     /// parameters for creating a payment schedule
     [<Struct>]
-    type ScheduleParameters = {
+    type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
         AsOfDate: Date
         /// the start date of the schedule, typically the day on which the principal is advanced
@@ -93,7 +94,7 @@ module ScheduledPayment =
     }
 
     /// calculates the number of days between two offset days on which interest is chargeable
-    let calculateSchedule toleranceOption sp =
+    let calculate toleranceOption sp =
         if sp.PaymentCount = 0 then ValueNone else
         if sp.StartDate > UnitPeriod.Config.startDate sp.UnitPeriodConfig then ValueNone else
         let paymentDates = UnitPeriod.generatePaymentSchedule sp.PaymentCount UnitPeriod.Direction.Forward sp.UnitPeriodConfig
@@ -167,6 +168,6 @@ module ScheduledPayment =
             ValueNone
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
-    let allPaidOnTime (scheduleItems: ScheduleItem array) =
+    let allPaidOnTime (scheduleItems: Item array) =
         scheduleItems
         |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) })

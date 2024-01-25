@@ -3,19 +3,19 @@ namespace FSharp.Finance.Personal
 open Payments
 
 /// functions for handling received payments and calculating interest and/or charges where necessary
-module AppliedPayments =
+module AppliedPayment =
 
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
-    [<RequireQualifiedAccess; Struct>]
+    [<Struct>]
     type AppliedPayment = {
         /// the day the payment is made, as an offset of days from the start date
-        PaymentDay: int<OffsetDay>
+        AppliedPaymentDay: int<OffsetDay>
         /// the amount of any scheduled payment due on the current day
         ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day
         ActualPayments: int64<Cent> array
         /// details of any charges incurred on the current day
-        Charges: Charge array
+        IncurredCharges: Charge array
         /// the net effect of any payments made on the current day
         NetEffect: int64<Cent>
         /// the payment status based on the payments made on the current day
@@ -41,8 +41,7 @@ module AppliedPayments =
                 | _, 0L<Cent> -> 0L<Cent>, ValueSome MissedPayment
                 | sp, ap when ap < sp -> ap, ValueSome Underpayment
                 | sp, ap when ap > sp -> ap, ValueSome Overpayment
-                | sp, ap when sp = ap -> sp, ValueSome PaymentMade
-                | sp, ap -> failwith $"Unexpected permutation of scheduled ({sp}) vs actual payments ({ap})"
+                | _, ap -> ap, ValueSome PaymentMade
             let charges =
                 payments
                 |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (_, c) -> c | _ -> [||])
@@ -50,6 +49,6 @@ module AppliedPayments =
                     if latePaymentCharge.IsSome then
                         pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge.Value |] | _ -> [||])
                     else pcc
-            { PaymentDay = offsetDay; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; Charges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus } : AppliedPayment
+            { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment; ActualPayments = actualPayments; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus }
         )
-        |> Array.sortBy _.PaymentDay
+        |> Array.sortBy _.AppliedPaymentDay

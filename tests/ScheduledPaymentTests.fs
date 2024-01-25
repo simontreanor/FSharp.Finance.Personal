@@ -8,7 +8,7 @@ open FSharp.Finance.Personal
 
 module ScheduledPaymentTests =
 
-    open ScheduledPayment
+    open PaymentSchedule
 
     module Biweekly =
         let biweeklyParameters principal offset =
@@ -41,7 +41,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``$1200 with short first period`` () =
-            let actual = biweeklyParameters 120000L<Cent> 8<DurationDay> |> calculateSchedule BelowZero
+            let actual = biweeklyParameters 120000L<Cent> 8<DurationDay> |> calculate BelowZero
             actual |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Biweekly001.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -59,7 +59,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``2) $1200 with first period equal to unit-period length`` () =
-            let actual = biweeklyParameters 120000L<Cent> 14<DurationDay> |> calculateSchedule BelowZero
+            let actual = biweeklyParameters 120000L<Cent> 14<DurationDay> |> calculate BelowZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Biweekly002.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -77,7 +77,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``3) $1200 with long first period`` () =
-            let actual = biweeklyParameters 120000L<Cent> 15<DurationDay> |> calculateSchedule BelowZero
+            let actual = biweeklyParameters 120000L<Cent> 15<DurationDay> |> calculate BelowZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Biweekly003.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -125,7 +125,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 4<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 10000L<Cent> 4<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly001.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -144,7 +144,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 8<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 10000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly009.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -163,7 +163,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 12<DurationDay> 4 |> calculateSchedule AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 10000L<Cent> 12<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly017.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -182,7 +182,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 16<DurationDay> 4 |> calculateSchedule BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 10000L<Cent> 16<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly025.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -201,7 +201,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 20<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 10000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly033.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -220,7 +220,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 24<DurationDay> 4 |> calculateSchedule BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 10000L<Cent> 24<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly041.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -239,7 +239,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 28<DurationDay> 4 |> calculateSchedule BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 10000L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly049.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -258,7 +258,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 32<DurationDay> 4 |> calculateSchedule AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 10000L<Cent> 32<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly057.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -277,7 +277,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 4<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 4<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly002.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -296,7 +296,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 8<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly010.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -315,7 +315,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 12<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 12<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly018.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -334,7 +334,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 16<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 16<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly026.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -353,7 +353,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 20<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly034.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -372,7 +372,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 24<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 24<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly042.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -391,7 +391,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 28<DurationDay> 4 |> calculateSchedule BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 30000L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly050.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -410,7 +410,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 32<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 30000L<Cent> 32<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly058.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -429,7 +429,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 4<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 50000L<Cent> 4<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly003.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -448,7 +448,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 8<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 50000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly011.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -467,7 +467,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 12<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 50000L<Cent> 12<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly019.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -486,7 +486,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 16<DurationDay> 4 |> calculateSchedule AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 50000L<Cent> 16<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly027.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -505,7 +505,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 20<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 50000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly035.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -524,7 +524,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 24<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 50000L<Cent> 24<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly043.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -543,7 +543,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 28<DurationDay> 4 |> calculateSchedule BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 50000L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly051.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -562,7 +562,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 32<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 50000L<Cent> 32<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly059.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -581,7 +581,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 4<DurationDay> 5 |> calculateSchedule BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 70000L<Cent> 4<DurationDay> 5 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly004.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -600,7 +600,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 8<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly012.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -619,7 +619,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 12<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 12<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly020.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -638,7 +638,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 16<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 16<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly028.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -657,7 +657,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 20<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly036.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -676,7 +676,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 24<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 24<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly044.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -695,7 +695,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 28<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 28<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly052.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -714,7 +714,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 32<DurationDay> 4 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 70000L<Cent> 32<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly060.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -733,7 +733,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 4<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly005.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -752,7 +752,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 8<DurationDay> 6 |> calculateSchedule AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 90000L<Cent> 8<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly013.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -771,7 +771,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 12<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly021.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -790,7 +790,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 16<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly029.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -809,7 +809,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 20 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 20<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 20<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly037.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -828,7 +828,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 24 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 24<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 24<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly045.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -847,7 +847,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 28 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 28<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 28<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly053.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -866,7 +866,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 32<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 90000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly061.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -885,7 +885,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 4<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly006.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -904,7 +904,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 8<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 8<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly014.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -923,7 +923,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 12<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly022.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -942,7 +942,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 16<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly030.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -961,7 +961,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 20 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 20<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 20<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly038.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -980,7 +980,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 24 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 24<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 24<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly046.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -999,7 +999,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 28 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 28<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 28<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly054.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1018,7 +1018,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 32<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 110000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly062.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1037,7 +1037,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 4<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly007.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1056,7 +1056,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 8<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 8<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly015.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1075,7 +1075,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 12<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly023.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1094,7 +1094,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 16<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly031.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1113,7 +1113,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 20 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 20<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 20<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly039.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1132,7 +1132,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 24 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 24<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 24<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly047.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1151,7 +1151,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 28 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 28<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 28<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly055.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1170,7 +1170,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 32<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 130000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly063.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1189,7 +1189,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 4<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly008.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1208,7 +1208,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 8<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 8<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly016.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1227,7 +1227,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 12<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly024.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1246,7 +1246,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 16<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly032.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1265,7 +1265,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 20 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 20<DurationDay> 6 |> calculateSchedule AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 150000L<Cent> 20<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly040.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1284,7 +1284,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 24 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 24<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 24<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly048.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1303,7 +1303,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 28 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 28<DurationDay> 6 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 28<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly056.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
@@ -1322,7 +1322,7 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 32<DurationDay> 5 |> calculateSchedule AroundZero
+            let actual = monthlyParameters 150000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly064.md" (ValueSome 300))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>

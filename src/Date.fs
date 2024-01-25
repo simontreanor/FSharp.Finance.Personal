@@ -13,12 +13,13 @@ module DateDay =
         val Day: int
         new (year: int, month: int, day: int) = { Year = year; Month = month; Day = day }
         with
-            static member FromDateTime (dt: DateTime) = Date(dt.Year, dt.Month, dt.Day)
+            static member internal FromDateTime (dt: DateTime) = Date(dt.Year, dt.Month, dt.Day)
             member d.ToDateTime() = DateTime(d.Year, d.Month, d.Day)
             member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> Date.FromDateTime
             member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> Date.FromDateTime
             member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> Date.FromDateTime
             override d.ToString() = d.ToDateTime().ToString "yyyy-MM-dd"
+            static member FromIsoString (ds: string) = Date(ds[0..3] |> Convert.ToInt32, ds[5..6] |> Convert.ToInt32, ds[8..9] |> Convert.ToInt32)
             static member (-) (d1: Date, d2: Date) =  d1.ToDateTime() - d2.ToDateTime()
             static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
 

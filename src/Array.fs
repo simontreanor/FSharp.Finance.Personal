@@ -1,7 +1,5 @@
 namespace FSharp.Finance.Personal
 
-open System
-
 [<AutoOpen>]
 module Array =
 

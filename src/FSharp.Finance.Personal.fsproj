@@ -22,8 +22,8 @@
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="Payments.fs" />
-    <Compile Include="ScheduledPayment.fs" />
-    <Compile Include="AppliedPayments.fs" />
+    <Compile Include="PaymentSchedule.fs" />
+    <Compile Include="AppliedPayment.fs" />
     <Compile Include="AmortisationSchedule.fs" />
     <Compile Include="Settlement.fs" />
     <Compile Include="Rescheduling.fs" />

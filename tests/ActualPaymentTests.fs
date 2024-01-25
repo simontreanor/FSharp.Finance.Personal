@@ -8,7 +8,8 @@ open FSharp.Finance.Personal
 module ActualPaymentTests =
 
     open Payments
-    open AmortisationSchedule
+    open PaymentSchedule
+    open Amortisation
 
     let quickActualPayments days levelPayment finalPayment =
         days
@@ -29,7 +30,7 @@ module ActualPaymentTests =
         ActualPayments = [| paymentAmount |]
         NetEffect = paymentAmount
         PaymentStatus = ValueSome PaymentMade
-        BalanceStatus = AmortisationSchedule.BalanceStatus.Settled
+        BalanceStatus = Amortisation.BalanceStatus.Settled
         CumulativeInterest = cumulativeInterest
         NewInterest = newInterest
         NewCharges = [||]
@@ -46,7 +47,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
@@ -69,14 +70,14 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 45688L<Cent> 45684L<Cent>
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
@@ -86,7 +87,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``2) Standard schedule with month-end payments from 32 days and paid off on time`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 10, 29)
@@ -109,14 +110,14 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 55605L<Cent> 55600L<Cent>
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
@@ -126,7 +127,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``3) Standard schedule with mid-monthly payments from 14 days and paid off on time`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 3, 16)
                 StartDate = Date(2022, 11, 1)
@@ -149,14 +150,14 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 49153L<Cent> 49153L<Cent>
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
@@ -166,7 +167,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``4) Made 2 payments on early repayment, then one single payment after the full balance is overdue`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 3, 22)
                 StartDate = Date(2022, 11, 1)
@@ -189,14 +190,14 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 49153L<Cent> 121391L<Cent>
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
 
@@ -209,7 +210,7 @@ module ActualPaymentTests =
             ActualPayments = [| 121391L<Cent> |]
             NetEffect = 121391L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = AmortisationSchedule.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settled
             CumulativeInterest = 64697L<Cent>
             NewInterest = 2675L<Cent>
             NewCharges = [||]
@@ -227,7 +228,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``5) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 3, 22)
                 StartDate = Date(2022, 11, 1)
@@ -250,14 +251,14 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 49153L<Cent> (49153L<Cent> * 3L)
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
 
@@ -270,7 +271,7 @@ module ActualPaymentTests =
             ActualPayments = [| 147459L<Cent> |]
             NetEffect = 147459L<Cent>
             PaymentStatus = ValueSome Overpayment
-            BalanceStatus = AmortisationSchedule.BalanceStatus.RefundDue
+            BalanceStatus = Amortisation.BalanceStatus.RefundDue
             CumulativeInterest = 64697L<Cent>
             NewInterest = 2675L<Cent>
             NewCharges = [||]
@@ -288,7 +289,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``6) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 3, 25)
                 StartDate = Date(2022, 11, 1)
@@ -311,7 +312,7 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = [|
@@ -323,7 +324,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
 
@@ -336,7 +337,7 @@ module ActualPaymentTests =
             ActualPayments = [| -26068L<Cent> |]
             NetEffect = -26068L<Cent>
             PaymentStatus = ValueSome Refunded
-            BalanceStatus = AmortisationSchedule.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settled
             CumulativeInterest = 64697L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -354,7 +355,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``7) Zero-day loan`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2022, 11, 2)
                 StartDate = Date(2022, 11, 1)
@@ -377,7 +378,7 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = [|
@@ -386,7 +387,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp (ValueSome (Date(2022, 11, 1))) false true
+            |> Amortisation.generate sp (ValueSome (Date(2022, 11, 1))) false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
@@ -399,7 +400,7 @@ module ActualPaymentTests =
             ActualPayments = [| 150000L<Cent> |]
             NetEffect = 150000L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = AmortisationSchedule.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settled
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -418,7 +419,7 @@ module ActualPaymentTests =
     [<Fact>]
     let ``8) Check that charge for late payment is not applied on scheduled payment date when payment has not yet been made`` () =
         let startDate = Date(2024, 10, 1).AddDays -56
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2024, 10, 1)
                 StartDate = startDate
@@ -441,7 +442,7 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = [|
@@ -452,7 +453,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
 
@@ -465,7 +466,7 @@ module ActualPaymentTests =
             ActualPayments = [||]
             NetEffect = 24366L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = AmortisationSchedule.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settled
             CumulativeInterest = 118226L<Cent>
             NewInterest = 2454L<Cent>
             NewCharges = [||]
@@ -483,7 +484,7 @@ module ActualPaymentTests =
 
     [<Fact>]
     let ``9) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)`` () =
-        let (sp: ScheduledPayment.ScheduleParameters) =
+        let sp =
             {
                 AsOfDate = Date(2023, 3, 25)
                 StartDate = Date(2022, 11, 1)
@@ -506,7 +507,7 @@ module ActualPaymentTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                    FinalPaymentAdjustment = AdjustFinalPayment
                 }
             }
         let actualPayments = [|
@@ -518,7 +519,7 @@ module ActualPaymentTests =
 
         let irregularSchedule =
             actualPayments
-            |> AmortisationSchedule.generate sp ValueNone false true
+            |> Amortisation.generate sp ValueNone false true
 
         irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest009.md" (ValueSome 300))
 
@@ -531,7 +532,7 @@ module ActualPaymentTests =
             ActualPayments = [| -26086L<Cent> |]
             NetEffect = -26086L<Cent>
             PaymentStatus = ValueSome Refunded
-            BalanceStatus = AmortisationSchedule.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settled
             CumulativeInterest = 64679L<Cent>
             NewInterest = -18L<Cent>
             NewCharges = [||]
