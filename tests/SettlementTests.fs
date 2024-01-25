@@ -1,6 +1,5 @@
 namespace FSharp.Finance.Personal.Tests
 
-open System
 open Xunit
 open FsUnit.Xunit
 
@@ -8,13 +7,15 @@ open FSharp.Finance.Personal
 
 module SettlementTests =
 
-    open ActualPayment
+    open Payments
+    open ScheduledPayment
+    open AmortisationSchedule
 
     [<Fact>]
     let ``1) Settlement falling on a scheduled payment date`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -36,7 +37,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -82,7 +83,7 @@ module SettlementTests =
     let ``2) Settlement not falling on a scheduled payment date`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -104,7 +105,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -150,7 +151,7 @@ module SettlementTests =
     let ``3) Settlement not falling on a scheduled payment date but having an actual payment already made on the same day`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -172,7 +173,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -218,7 +219,7 @@ module SettlementTests =
     let ``4) Settlement within interest grace period should not accrue interest`` () =
         let startDate = Date(2024, 10, 1).AddDays -3
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -240,7 +241,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -282,7 +283,7 @@ module SettlementTests =
     let ``5) Settlement just outside interest grace period should accrue interest`` () =
         let startDate = Date(2024, 10, 1).AddDays -4
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -304,7 +305,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -346,7 +347,7 @@ module SettlementTests =
     let ``6) Settlement when fee is due in full`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -368,7 +369,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -414,7 +415,7 @@ module SettlementTests =
     let ``7) Get next scheduled payment`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             StartDate = startDate
             AsOfDate = Date(2024, 10, 1)
             Principal = 120000L<Cent>
@@ -436,7 +437,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -482,7 +483,7 @@ module SettlementTests =
     let ``8) Get payment to cover all overdue amounts`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 120000L<Cent>
@@ -504,7 +505,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -550,7 +551,7 @@ module SettlementTests =
     let ``9) Verified example`` () =
         let startDate = Date(2023, 6, 23)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 500_00L<Cent>
@@ -572,7 +573,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 
@@ -614,7 +615,7 @@ module SettlementTests =
     let ``10) Verified example`` () =
         let startDate = Date(2022, 11, 28)
 
-        let sp : ScheduledPayment.ScheduleParameters = {
+        let sp = {
             AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 1200_00L<Cent>
@@ -636,7 +637,7 @@ module SettlementTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
+                FinalPaymentAdjustment = AdjustFinalPayment
             }
         }
 

@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open System
+open Payments
 
 /// functions for generating a regular payment schedule, with payment amounts, interest and APR
 module ScheduledPayment =
@@ -17,11 +17,11 @@ module ScheduledPayment =
         /// the interest accrued since the previous payment
         Interest: int64<Cent>
         /// the total interest accrued from the start date to the current date
-        CumulativeInterest: int64<Cent>
+        AggregateInterest: int64<Cent>
         /// the principal portion paid off by the payment
         Principal: int64<Cent>
         /// the principal balance carried forward
-        PrincipalBalance: int64<Cent>
+        Balance: int64<Cent>
     }
 
     ///  a schedule of payments, with final statistics based on the payments being made on time and in full
@@ -104,7 +104,7 @@ module ScheduledPayment =
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
         let roughPayment = decimal sp.Principal / decimal paymentCount
-        let advance = { Day = 0<OffsetDay>; Advance = sp.Principal + fees; Payment = 0L<Cent>; Interest = 0L<Cent>; CumulativeInterest = 0L<Cent>; Principal = 0L<Cent>; PrincipalBalance = sp.Principal + fees }
+        let advance = { Day = 0<OffsetDay>; Advance = sp.Principal + fees; Payment = 0L<Cent>; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; Balance = sp.Principal + fees }
         let toleranceSteps = ValueSome { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 2 }
         let paymentDays = paymentDates |> Array.map(fun d -> (d - sp.StartDate).Days * 1<OffsetDay>)
         let mutable schedule = [||]
@@ -113,9 +113,9 @@ module ScheduledPayment =
                 paymentDays
                 |> Array.scan(fun si d ->
                     let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.GracePeriod sp.Interest.Holidays si.Day d
-                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.PrincipalBalance interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
-                    let interest = Interest.calculate dailyInterestCap si.PrincipalBalance dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
-                    let interest' = si.CumulativeInterest + interest |> fun i -> if i >= totalInterestCap then totalInterestCap - si.CumulativeInterest else interest
+                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.Balance interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
+                    let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
+                    let interest' = si.AggregateInterest + interest |> fun i -> if i >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
                     let payment' = Cent.round sp.Calculation.RoundingOptions.PaymentRounding payment
                     let principalPortion = payment' - interest'
                     {
@@ -123,12 +123,12 @@ module ScheduledPayment =
                         Advance = 0L<Cent>
                         Payment = payment'
                         Interest = interest'
-                        CumulativeInterest = si.CumulativeInterest + interest'
+                        AggregateInterest = si.AggregateInterest + interest'
                         Principal = principalPortion
-                        PrincipalBalance = si.PrincipalBalance - principalPortion
+                        Balance = si.Balance - principalPortion
                     }
                 ) advance
-            let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
+            let principalBalance = schedule |> Array.last |> _.Balance |> decimal
             principalBalance
         match Array.solve generator 100 roughPayment toleranceOption toleranceSteps with
         | Solution.Found _ -> // note: payment is discarded because it is in the schedule
@@ -138,7 +138,7 @@ module ScheduledPayment =
                     schedule
                     |> Array.map(fun si ->
                         if si.Day = finalPaymentDay then
-                            { si with Payment = si.Payment + si.PrincipalBalance; Principal = si.Principal + si.PrincipalBalance; PrincipalBalance = si.PrincipalBalance - si.PrincipalBalance }
+                            { si with Payment = si.Payment + si.Balance; Principal = si.Principal + si.Balance; Balance = 0L<Cent> }
                         else si
                     )
                 | SpreadOverLevelPayments ->
@@ -165,3 +165,8 @@ module ScheduledPayment =
             }
         | _ ->
             ValueNone
+
+    /// creates an array of actual payments made on time and in full according to an array of scheduled payments
+    let allPaidOnTime (scheduleItems: ScheduleItem array) =
+        scheduleItems
+        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) })

@@ -5,9 +5,12 @@ open Xunit
 open FsUnit.Xunit
 
 open FSharp.Finance.Personal
-open FSharp.Finance.Personal.ActualPayment
 
 module ActualPaymentTestsExtra =
+
+    open Payments
+    open ScheduledPayment
+    open AmortisationSchedule
 
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
@@ -82,7 +85,7 @@ module ActualPaymentTestsExtra =
         FeesBalance: int64<Cent>
         InterestBalance: int64<Cent>
         ChargesBalance: int64<Cent>
-        BalanceStatus: ActualPayment.BalanceStatus
+        BalanceStatus: BalanceStatus
         CumulativeInterest: int64<Cent>
         InterestPortionTotal: int64<Cent>
         AdvanceTotal: int64<Cent>
@@ -110,12 +113,12 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) } : ActualPayment.Payment)
+                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) })
                 return
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
             let a = Array.last aa
@@ -132,7 +135,7 @@ module ActualPaymentTestsExtra =
             let principalPortionTotal = aa |> Array.sumBy _.PrincipalPortion
             if finalPayment > levelPayment
                 || (principalBalance, feesBalance, interestBalance, chargesBalance) <> (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>)
-                || balanceStatus <> ActualPayment.BalanceStatus.Settled
+                || balanceStatus <> BalanceStatus.Settled
                 || cumulativeInterest <> interestPortionTotal
                 || principalPortionTotal <> advanceTotal
                 then
@@ -186,7 +189,7 @@ module ActualPaymentTestsExtra =
                     RoundingOptions = ro
                     FinalPaymentAdjustment = fpa
                 }
-            } : ScheduledPayment.ScheduleParameters
+            }
             |> applyPayments
         )
 
@@ -231,11 +234,11 @@ module ActualPaymentTestsExtra =
                     RoundingOptions = ro
                     FinalPaymentAdjustment = fpa
                 }
-            } : ScheduledPayment.ScheduleParameters
+            }
         )))))))))))))))
         |> Seq.map applyPayments
 
-    let generateRegularPaymentTestData (amortisationSchedule: (string * ActualPayment.AmortisationScheduleItem array voption) seq) =
+    let generateRegularPaymentTestData (amortisationSchedule: (string * AmortisationSchedule.Item array voption) seq) =
         amortisationSchedule
         |> Seq.map(fun (testId, items) ->
             match items with
@@ -316,17 +319,17 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
-        } : ScheduledPayment.ScheduleParameters)
+        })
         let actual =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
+                let actualPayments = scheduleItems |> ScheduledPayment.allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -338,8 +341,8 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = 40764L<Cent>
             ActualPayments = [| 40764L<Cent> |]
             NetEffect = 40764L<Cent>
-            PaymentStatus = ValueSome ActualPayment.NotYetDue
-            BalanceStatus = ActualPayment.Settled
+            PaymentStatus = ValueSome NotYetDue
+            BalanceStatus = BalanceStatus.Settled
             CumulativeInterest = 3832L<Cent>
             NewInterest = 330L<Cent>
             NewCharges = [||]
@@ -352,7 +355,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-        } : ActualPayment.AmortisationScheduleItem)
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -381,19 +384,19 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
-        } : ScheduledPayment.ScheduleParameters)
+        })
         let actual =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
                 |]
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -405,8 +408,8 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = 14240L<Cent>
             ActualPayments = [||]
             NetEffect = 14240L<Cent>
-            PaymentStatus = ValueSome ActualPayment.NotYetDue
-            BalanceStatus = ActualPayment.Settled
+            PaymentStatus = ValueSome NotYetDue
+            BalanceStatus = BalanceStatus.Settled
             CumulativeInterest = 4353L<Cent>
             NewInterest = 128L<Cent>
             NewCharges = [||]
@@ -419,7 +422,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-        } : ActualPayment.AmortisationScheduleItem)
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -448,7 +451,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
-        } : ScheduledPayment.ScheduleParameters)
+        })
         let actual =
             voption {
                 // calculate schedule based on existing payments
@@ -457,12 +460,12 @@ module ActualPaymentTestsExtra =
                     schedule.Items
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
                 |]
                 let amortisationSchedule =
                     scheduledPayments
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 // calculate revised schedule including new payment plan
                 let amount = 20_00L<Cent>
                 let paymentPlanStartDate = Date(2022, 9, 1)
@@ -472,8 +475,8 @@ module ActualPaymentTestsExtra =
                 let payments = Array.concat [| actualPayments; extraScheduledPayments |]
                 let amortisationSchedule' =
                     scheduledPayments
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) payments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) payments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
                 return amortisationSchedule'
             }
@@ -485,8 +488,8 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = 949L<Cent>
             ActualPayments = [||]
             NetEffect = 949L<Cent>
-            PaymentStatus = ValueSome ActualPayment.NotYetDue
-            BalanceStatus = ActualPayment.Settled
+            PaymentStatus = ValueSome NotYetDue
+            BalanceStatus = BalanceStatus.Settled
             CumulativeInterest = 61609L<Cent>
             NewInterest = 3L<Cent>
             NewCharges = [||]
@@ -499,7 +502,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-        } : ActualPayment.AmortisationScheduleItem)
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -528,17 +531,17 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
-        } : ScheduledPayment.ScheduleParameters)
+        })
         let actual =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
+                let actualPayments = scheduleItems |> ScheduledPayment.allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -550,8 +553,8 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = 13736L<Cent>
             ActualPayments = [| 13736L<Cent> |]
             NetEffect = 13736L<Cent>
-            PaymentStatus = ValueSome ActualPayment.NotYetDue
-            BalanceStatus = ActualPayment.Settled
+            PaymentStatus = ValueSome NotYetDue
+            BalanceStatus = BalanceStatus.Settled
             CumulativeInterest = 50000L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -564,7 +567,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-        } : ActualPayment.AmortisationScheduleItem)
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -593,17 +596,17 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
-        } : ScheduledPayment.ScheduleParameters)
+        })
         let actual =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> ActualPayment.allPaidOnTime
+                let actualPayments = scheduleItems |> ScheduledPayment.allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -615,8 +618,8 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = 5153L<Cent>
             ActualPayments = [| 5153L<Cent> |]
             NetEffect = 5153L<Cent>
-            PaymentStatus = ValueSome ActualPayment.PaymentMade
-            BalanceStatus = ActualPayment.Settled
+            PaymentStatus = ValueSome PaymentMade
+            BalanceStatus = BalanceStatus.Settled
             CumulativeInterest = 16119L<Cent>
             NewInterest = 943L<Cent>
             NewCharges = [||]
@@ -629,7 +632,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-        } : ActualPayment.AmortisationScheduleItem)
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -658,19 +661,19 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = ScheduledPayment.AdjustFinalPayment
             }
-        } : ScheduledPayment.ScheduleParameters)
+        })
         let actual =
             voption {
                 let! schedule = ScheduledPayment.calculateSchedule BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) } : ActualPayment.Payment)
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
                 |]
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> ActualPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
-                    |> ActualPayment.calculateSchedule sp ValueNone schedule.FinalPaymentDay true
+                    |> AppliedPayments.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
+                    |> AmortisationSchedule.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md" (ValueSome 300)
                 return amortisationSchedule
             }
@@ -682,8 +685,8 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = 14240L<Cent>
             ActualPayments = [||]
             NetEffect = 14240L<Cent>
-            PaymentStatus = ValueSome ActualPayment.NotYetDue
-            BalanceStatus = ActualPayment.Settled
+            PaymentStatus = ValueSome NotYetDue
+            BalanceStatus = BalanceStatus.Settled
             CumulativeInterest = 4353L<Cent>
             NewInterest = 128L<Cent>
             NewCharges = [||]
@@ -696,6 +699,6 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-        } : ActualPayment.AmortisationScheduleItem)
+        })
         actual |> should equal expected
 
