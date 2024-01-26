@@ -113,7 +113,7 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayments ([| si.Payment |], [||]) })
+                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment, [||]) })
                 return
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
@@ -390,7 +390,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (16660L<Cent>, [||]) })
                 |]
                 let amortisationSchedule =
                     scheduleItems
@@ -460,7 +460,7 @@ module ActualPaymentTestsExtra =
                     schedule.Items
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (16660L<Cent>, [||]) })
                 |]
                 let amortisationSchedule =
                     scheduledPayments
@@ -667,7 +667,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 16660L<Cent> |], [||]) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (16660L<Cent>, [||]) })
                 |]
                 let amortisationSchedule =
                     scheduleItems

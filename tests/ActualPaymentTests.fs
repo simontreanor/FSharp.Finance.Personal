@@ -16,8 +16,8 @@ module ActualPaymentTests =
         |> Array.rev
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
-            last |> Array.map(fun d -> { PaymentDay =   d * 1<OffsetDay>; PaymentDetails = ActualPayments ([| finalPayment |], [||]) })
-            rest |> Array.map(fun d -> { PaymentDay =   d * 1<OffsetDay>; PaymentDetails = ActualPayments ([| levelPayment |], [||]) })
+            last |> Array.map(fun d -> { PaymentDay =   d * 1<OffsetDay>; PaymentDetails = ActualPayment (finalPayment, [||]) })
+            rest |> Array.map(fun d -> { PaymentDay =   d * 1<OffsetDay>; PaymentDetails = ActualPayment (levelPayment, [||]) })
         |]
         |> Array.concat
         |> Array.rev
@@ -316,10 +316,10 @@ module ActualPaymentTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =   2<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent>      |], [||]) }
-            { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent>      |], [||]) }
-            { PaymentDay = 140<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent> * 3L |], [||]) }
-            { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayments ([| -26068L<Cent>      |], [||]) }
+            { PaymentDay =   2<OffsetDay>; PaymentDetails = ActualPayment ( 49153L<Cent>     , [||]) }
+            { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment ( 49153L<Cent>     , [||]) }
+            { PaymentDay = 140<OffsetDay>; PaymentDetails = ActualPayment ( 49153L<Cent> * 3L, [||]) }
+            { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayment (-26068L<Cent>     , [||]) }
         |]
 
         let irregularSchedule =
@@ -382,7 +382,7 @@ module ActualPaymentTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayments ([| 150000L<Cent> |], [||]) }
+            { PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (150000L<Cent>, [||]) }
         |]
 
         let irregularSchedule =
@@ -446,9 +446,9 @@ module ActualPaymentTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayments ([| 24386L<Cent> |], [||]) }
-            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayments ([| 24386L<Cent> |], [||]) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayments ([| 24386L<Cent> |], [||]) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (24386L<Cent>, [||]) }
+            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (24386L<Cent>, [||]) }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (24386L<Cent>, [||]) }
         |]
 
         let irregularSchedule =
@@ -511,10 +511,10 @@ module ActualPaymentTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =   2<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent>      |], [||]) }
-            { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent>      |], [||]) }
-            { PaymentDay = 140<OffsetDay>; PaymentDetails = ActualPayments ([|  49153L<Cent> * 3L |], [||]) }
-            { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayments ([| -26086L<Cent>      |], [||]) }
+            { PaymentDay =   2<OffsetDay>; PaymentDetails = ActualPayment ( 49153L<Cent>     , [||]) }
+            { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment ( 49153L<Cent>     , [||]) }
+            { PaymentDay = 140<OffsetDay>; PaymentDetails = ActualPayment ( 49153L<Cent> * 3L, [||]) }
+            { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayment (-26086L<Cent>     , [||]) }
         |]
 
         let irregularSchedule =

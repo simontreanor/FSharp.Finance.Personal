@@ -8,7 +8,7 @@ module Payments =
         /// the amount of any extra scheduled payment due on the current day
         | ScheduledPayment of ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day, with any charges incurred
-        | ActualPayments of ActualPayments: int64<Cent> array * Charges: Charge array
+        | ActualPayment of ActualPayment: int64<Cent> * Charges: Charge array
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     [<Struct>]

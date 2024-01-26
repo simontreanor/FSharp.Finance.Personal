@@ -25,12 +25,18 @@ module AppliedPayment =
     /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid
     let applyPayments asOfDay (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else
-        [| scheduledPayments; actualPayments |]
-        |> Array.concat
+        let nonZero =
+            Array.filter(fun p ->
+                match p.PaymentDetails with
+                | ScheduledPayment sp when p.PaymentDay > 0<OffsetDay> && sp = 0L<Cent> -> false
+                | ActualPayment (ap, _) when ap = 0L<Cent> -> false
+                | _ -> true
+            )
+        [| nonZero scheduledPayments; nonZero actualPayments |]        |> Array.concat
         |> Array.groupBy _.PaymentDay
         |> Array.map(fun (offsetDay, payments) ->
             let scheduledPayment = payments |> Array.map(fun p -> p.PaymentDetails |> function ScheduledPayment p -> p | _ -> 0L<Cent>) |> Array.sum
-            let actualPayments = payments |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (ap, _) -> ap | _ -> [||])
+            let actualPayments = payments |> Array.choose(fun p -> p.PaymentDetails |> function ActualPayment (ap, _) -> Some ap | _ -> None)
             let netEffect, paymentStatus =
                 match scheduledPayment, Array.sum actualPayments with
                 | 0L<Cent>, 0L<Cent> -> 0L<Cent>, ValueNone
@@ -44,7 +50,7 @@ module AppliedPayment =
                 | _, ap -> ap, ValueSome PaymentMade
             let charges =
                 payments
-                |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayments (_, c) -> c | _ -> [||])
+                |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayment (_, c) -> c | _ -> [||])
                 |> fun pcc ->
                     if latePaymentCharge.IsSome then
                         pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge.Value |] | _ -> [||])
