@@ -7,7 +7,7 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTests =
 
-    open Payments
+    open CustomerPayments
     open PaymentSchedule
     open Amortisation
 
@@ -30,7 +30,7 @@ module ActualPaymentTests =
         ActualPayments = [| paymentAmount |]
         NetEffect = paymentAmount
         PaymentStatus = ValueSome PaymentMade
-        BalanceStatus = Amortisation.BalanceStatus.Settled
+        BalanceStatus = Amortisation.BalanceStatus.Settlement
         CumulativeInterest = cumulativeInterest
         NewInterest = newInterest
         NewCharges = [||]
@@ -79,9 +79,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest001.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 45684L<Cent> 78436L<Cent> 9078L<Cent> 36606L<Cent>
         actual |> should equal expected
 
@@ -119,9 +119,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest002.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 55600L<Cent> 128020L<Cent> 11048L<Cent> 44552L<Cent>
         actual |> should equal expected
 
@@ -159,9 +159,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest003.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 49153L<Cent> 95765L<Cent> 8995L<Cent> 40158L<Cent>
         actual |> should equal expected
 
@@ -199,9 +199,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest004.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
@@ -210,7 +210,7 @@ module ActualPaymentTests =
             ActualPayments = [| 121391L<Cent> |]
             NetEffect = 121391L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Amortisation.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settlement
             CumulativeInterest = 64697L<Cent>
             NewInterest = 2675L<Cent>
             NewCharges = [||]
@@ -260,9 +260,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest005.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
@@ -326,9 +326,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest006.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
@@ -337,7 +337,7 @@ module ActualPaymentTests =
             ActualPayments = [| -26068L<Cent> |]
             NetEffect = -26068L<Cent>
             PaymentStatus = ValueSome Refunded
-            BalanceStatus = Amortisation.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settlement
             CumulativeInterest = 64697L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -389,9 +389,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome (Date(2022, 11, 1))) false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2022, 11, 1)
             OffsetDay = 0<OffsetDay>
@@ -400,7 +400,7 @@ module ActualPaymentTests =
             ActualPayments = [| 150000L<Cent> |]
             NetEffect = 150000L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Amortisation.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settlement
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -455,9 +455,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest008.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = startDate.AddDays 154
             OffsetDay = 154<OffsetDay>
@@ -466,7 +466,7 @@ module ActualPaymentTests =
             ActualPayments = [||]
             NetEffect = 24366L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = Amortisation.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settlement
             CumulativeInterest = 118226L<Cent>
             NewInterest = 2454L<Cent>
             NewCharges = [||]
@@ -521,9 +521,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false true
 
-        irregularSchedule |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ActualPaymentTest009.md" (ValueSome 300))
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest009.md" (ValueSome 300))
 
-        let actual = irregularSchedule |> ValueOption.map (_.Items >> Array.last)
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
@@ -532,7 +532,7 @@ module ActualPaymentTests =
             ActualPayments = [| -26086L<Cent> |]
             NetEffect = -26086L<Cent>
             PaymentStatus = ValueSome Refunded
-            BalanceStatus = Amortisation.BalanceStatus.Settled
+            BalanceStatus = Amortisation.BalanceStatus.Settlement
             CumulativeInterest = 64679L<Cent>
             NewInterest = -18L<Cent>
             NewCharges = [||]

@@ -7,7 +7,7 @@ open FSharp.Finance.Personal
 
 module SettlementTests =
 
-    open Payments
+    open CustomerPayments
     open PaymentSchedule
     open Amortisation
 
@@ -50,8 +50,8 @@ module SettlementTests =
         let actual =
             voption{
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1).AddDays -3) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (196970L<Cent>, {
@@ -62,7 +62,7 @@ module SettlementTests =
             ActualPayments = [| 196970L<Cent> |]
             NetEffect = 196970L<Cent>
             PaymentStatus = ValueSome Overpayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 5359L<Cent>
             NewInterest = 371L<Cent>
             NewCharges = [||]
@@ -118,8 +118,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (202648L<Cent>, {
@@ -130,7 +130,7 @@ module SettlementTests =
             ActualPayments = [| 202648L<Cent> |]
             NetEffect = 202648L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 5637L<Cent>
             NewInterest = 278L<Cent>
             NewCharges = [||]
@@ -186,8 +186,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (200148L<Cent>, {
@@ -198,7 +198,7 @@ module SettlementTests =
             ActualPayments = [| 2500L<Cent>; 200148L<Cent> |]
             NetEffect = 202648L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 5637L<Cent>
             NewInterest = 278L<Cent>
             NewCharges = [||]
@@ -250,8 +250,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (120000L<Cent>, {
@@ -262,7 +262,7 @@ module SettlementTests =
             ActualPayments = [| 120000L<Cent> |]
             NetEffect = 120000L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -314,8 +314,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (123840L<Cent>, {
@@ -326,7 +326,7 @@ module SettlementTests =
             ActualPayments = [| 123840L<Cent> |]
             NetEffect = 123840L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 3840L<Cent>
             NewInterest = 3840L<Cent>
             NewCharges = [||]
@@ -382,8 +382,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (342001L<Cent>, {
@@ -394,7 +394,7 @@ module SettlementTests =
             ActualPayments = [| 342001L<Cent> |]
             NetEffect = 342001L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 5637L<Cent>
             NewInterest = 278L<Cent>
             NewCharges = [||]
@@ -450,8 +450,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getNextScheduled (Date(2024, 10, 1)) sp actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (32315L<Cent>, {
@@ -518,8 +518,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getAllOverdue (Date(2024, 10, 1)) sp actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (68808L<Cent>, {
@@ -530,7 +530,7 @@ module SettlementTests =
             ActualPayments = [||]
             NetEffect = 30250L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 8214L<Cent>
             NewInterest = 115L<Cent>
             NewCharges = [||]
@@ -582,8 +582,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (1311_66L<Cent>, {
@@ -594,7 +594,7 @@ module SettlementTests =
             ActualPayments = [| 1311_66L<Cent>|]
             NetEffect = 1311_66L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 61_66L<Cent>
             NewInterest = 16_35L<Cent>
             NewCharges = [||]
@@ -654,8 +654,8 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
-                settlement.RevisedSchedule.Items |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.Items
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (1261_68L<Cent>, {
@@ -666,7 +666,7 @@ module SettlementTests =
             ActualPayments = [| 1261_68L<Cent>|]
             NetEffect = 1261_68L<Cent>
             PaymentStatus = ValueSome ExtraPayment
-            BalanceStatus = Settled
+            BalanceStatus = Settlement
             CumulativeInterest = 171_56L<Cent>
             NewInterest = 75_11L<Cent>
             NewCharges = [||]

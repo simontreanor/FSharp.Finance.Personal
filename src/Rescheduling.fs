@@ -1,7 +1,7 @@
 namespace FSharp.Finance.Personal
 
 open System
-open Payments
+open CustomerPayments
 
 /// functions for rescheduling payments after an original schedule failed to amortise
 module Rescheduling =
@@ -9,7 +9,7 @@ module Rescheduling =
     [<Struct>]
     type PaymentPlanSchedule =
         | RegularPlan of PaymentPlanStart: DateTime * UnitPeriod: UnitPeriod.UnitPeriod * Amount: int64<Cent>
-        | IrregularPlan of Payment array
+        | IrregularPlan of CustomerPayment array
 
     [<Struct>]
     type PaymentPlanParameters = {

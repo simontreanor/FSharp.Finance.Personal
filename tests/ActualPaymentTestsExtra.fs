@@ -8,7 +8,7 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTestsExtra =
 
-    open Payments
+    open CustomerPayments
     open PaymentSchedule
     open Amortisation
 
@@ -135,7 +135,7 @@ module ActualPaymentTestsExtra =
             let principalPortionTotal = aa |> Array.sumBy _.PrincipalPortion
             if finalPayment > levelPayment
                 || (principalBalance, feesBalance, interestBalance, chargesBalance) <> (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>)
-                || balanceStatus <> BalanceStatus.Settled
+                || balanceStatus <> BalanceStatus.Settlement
                 || cumulativeInterest <> interestPortionTotal
                 || principalPortionTotal <> advanceTotal
                 then
@@ -238,7 +238,7 @@ module ActualPaymentTestsExtra =
         )))))))))))))))
         |> Seq.map applyPayments
 
-    let generateRegularPaymentTestData (amortisationSchedule: (string * Amortisation.Item array voption) seq) =
+    let generateRegularPaymentTestData (amortisationSchedule: (string * Amortisation.ScheduleItem array voption) seq) =
         amortisationSchedule
         |> Seq.map(fun (testId, items) ->
             match items with
@@ -342,7 +342,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [| 40764L<Cent> |]
             NetEffect = 40764L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settled
+            BalanceStatus = BalanceStatus.Settlement
             CumulativeInterest = 3832L<Cent>
             NewInterest = 330L<Cent>
             NewCharges = [||]
@@ -409,7 +409,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [||]
             NetEffect = 14240L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settled
+            BalanceStatus = BalanceStatus.Settlement
             CumulativeInterest = 4353L<Cent>
             NewInterest = 128L<Cent>
             NewCharges = [||]
@@ -489,7 +489,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [||]
             NetEffect = 949L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settled
+            BalanceStatus = BalanceStatus.Settlement
             CumulativeInterest = 61609L<Cent>
             NewInterest = 3L<Cent>
             NewCharges = [||]
@@ -554,7 +554,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [| 13736L<Cent> |]
             NetEffect = 13736L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settled
+            BalanceStatus = BalanceStatus.Settlement
             CumulativeInterest = 50000L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -619,7 +619,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [| 5153L<Cent> |]
             NetEffect = 5153L<Cent>
             PaymentStatus = ValueSome PaymentMade
-            BalanceStatus = BalanceStatus.Settled
+            BalanceStatus = BalanceStatus.Settlement
             CumulativeInterest = 16119L<Cent>
             NewInterest = 943L<Cent>
             NewCharges = [||]
@@ -686,7 +686,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [||]
             NetEffect = 14240L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settled
+            BalanceStatus = BalanceStatus.Settlement
             CumulativeInterest = 4353L<Cent>
             NewInterest = 128L<Cent>
             NewCharges = [||]

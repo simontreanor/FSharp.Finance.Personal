@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open Payments
+open CustomerPayments
 
 /// functions for handling received payments and calculating interest and/or charges where necessary
 module AppliedPayment =
@@ -19,7 +19,7 @@ module AppliedPayment =
         /// the net effect of any payments made on the current day
         NetEffect: int64<Cent>
         /// the payment status based on the payments made on the current day
-        PaymentStatus: PaymentStatus voption
+        PaymentStatus: CustomerPaymentStatus voption
     }
 
     /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid

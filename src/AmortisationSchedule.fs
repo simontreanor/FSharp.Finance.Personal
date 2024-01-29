@@ -2,14 +2,14 @@ namespace FSharp.Finance.Personal
 
 module Amortisation =
 
-    open Payments
+    open CustomerPayments
     open PaymentSchedule
     open AppliedPayment
 
     [<Struct>]
     type BalanceStatus =
         /// the balance has been settled in full
-        | Settled
+        | Settlement
         /// the balance is open, meaning further payments will be required to settle it
         | OpenBalance
         /// due to an overpayment or a refund of charges, a refund is due
@@ -17,7 +17,7 @@ module Amortisation =
 
     /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
     [<Struct>]
-    type Item = {
+    type ScheduleItem = {
         /// the date of amortisation
         OffsetDate: Date
         /// the offset expressed as the number of days from the start date
@@ -31,7 +31,7 @@ module Amortisation =
         /// the net effect of the scheduled and actual payments, or, for future days, what the net effect would be if the scheduled payment was actually made
         NetEffect: int64<Cent>
         /// the status based on the payments and net effect
-        PaymentStatus: PaymentStatus voption
+        PaymentStatus: CustomerPaymentStatus voption
         /// the overall balance status
         BalanceStatus: BalanceStatus
         /// the total of interest accrued up to and including the current day
@@ -64,7 +64,7 @@ module Amortisation =
     [<Struct>]
     type Schedule = {
         /// a list of amortisation items, showing the events and calculations for a particular offset day
-        Items: Item array
+        ScheduleItems: ScheduleItem array
         /// the final number of scheduled payments in the schedule
         FinalScheduledPaymentCount: int
         /// the final number of actual payments in the schedule (multiple payments made on the same day are counted separately)
@@ -96,7 +96,7 @@ module Amortisation =
         let dayZeroPrincipalBalance = sp.Principal - dayZeroPrincipalPortion
         let dayZeroFeesPortion = dayZeroPayment.NetEffect - dayZeroPrincipalPortion
         let dayZeroFeesBalance = feesTotal - dayZeroFeesPortion
-        let getBalanceStatus principalBalance = if principalBalance = 0L<Cent> then Settled elif principalBalance < 0L<Cent> then RefundDue else OpenBalance
+        let getBalanceStatus principalBalance = if principalBalance = 0L<Cent> then Settlement elif principalBalance < 0L<Cent> then RefundDue else OpenBalance
         let advance = {
             OffsetDate = sp.StartDate
             OffsetDay = 0<OffsetDay>
@@ -121,7 +121,7 @@ module Amortisation =
         }
         appliedPayments'
         |> Array.tail
-        |> Array.scan(fun (a: Item) ap ->
+        |> Array.scan(fun (a: ScheduleItem) ap ->
             let underpayment =
                 match ap.PaymentStatus with
                 | ValueSome MissedPayment -> ap.ScheduledPayment
@@ -194,7 +194,7 @@ module Amortisation =
                 ScheduledPayment = ap.ScheduledPayment + finalPaymentAdjustment
                 ActualPayments = ap.ActualPayments
                 NetEffect = ap.NetEffect + finalPaymentAdjustment
-                PaymentStatus = if a.BalanceStatus = Settled then ValueNone elif isOverpayment && finalPaymentAdjustment = 0L<Cent> then ValueSome Overpayment else ap.PaymentStatus
+                PaymentStatus = if a.BalanceStatus = Settlement then ValueNone elif isOverpayment && finalPaymentAdjustment = 0L<Cent> then ValueSome Overpayment else ap.PaymentStatus
                 BalanceStatus = getBalanceStatus (principalBalance - finalPaymentAdjustment)
                 CumulativeInterest = a.CumulativeInterest + newInterest'
                 NewInterest = newInterest'
@@ -222,11 +222,11 @@ module Amortisation =
         let finalPaymentDay = finalItem.OffsetDay
         let finalBalanceStatus = finalItem.BalanceStatus
         {
-            Items = items
+            ScheduleItems = items
             FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
             FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
             FinalApr =
-                if calculateFinalApr && finalBalanceStatus = Settled then
+                if calculateFinalApr && finalBalanceStatus = Settlement then
                     items
                     |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
                     |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })

@@ -3,7 +3,7 @@ namespace FSharp.Finance.Personal
 /// functions for settling outstanding payments
 module Settlement =
 
-    open Payments
+    open CustomerPayments
     open PaymentSchedule
     open AppliedPayment
 
@@ -21,7 +21,7 @@ module Settlement =
         RevisedSchedule: Amortisation.Schedule
     }
 
-    let getSettlement (settlementDate: Date) sp applyNegativeInterest (actualPayments: Payment array) =
+    let getSettlement (settlementDate: Date) sp applyNegativeInterest (actualPayments: CustomerPayment array) =
         voption {
             let! currentAmortisationSchedule = Amortisation.generate sp ValueNone false applyNegativeInterest actualPayments
             let newPaymentAmount = sp.Principal * 10L
@@ -30,7 +30,7 @@ module Settlement =
                 PaymentDetails = ActualPayment (newPaymentAmount, [||])
             }
             let! amortisationSchedule = Amortisation.generate sp (ValueSome settlementDate) false applyNegativeInterest (Array.concat [| actualPayments; [| newPayment |] |])
-            let finalItem = amortisationSchedule.Items |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
+            let finalItem = amortisationSchedule.ScheduleItems |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
             let actualPaymentAmounts = finalItem.ActualPayments |> Array.filter(fun p -> p <> newPaymentAmount)
             let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
             let settlementPaymentAmount = finalItem.NetEffect + finalItem.PrincipalBalance - actualPaymentsTotal
@@ -39,11 +39,11 @@ module Settlement =
             return { QuoteType = Settlement; PaymentAmount = settlementPaymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
         }
 
-    let getNextScheduled asOfDate (sp: PaymentSchedule.Parameters) (actualPayments: Payment array) =
+    let getNextScheduled asOfDate (sp: PaymentSchedule.Parameters) (actualPayments: CustomerPayment array) =
         voption {
             let! currentAmortisationSchedule = Amortisation.generate sp ValueNone false false actualPayments
             let! item =
-                currentAmortisationSchedule.Items
+                currentAmortisationSchedule.ScheduleItems
                 |> Array.filter(fun a -> a.OffsetDate >= asOfDate)
                 |> Array.tryFind(fun a -> a.ScheduledPayment > 0L<Cent>)
                 |> function Some a -> ValueSome a | _ -> ValueNone
@@ -59,11 +59,11 @@ module Settlement =
         voption {
             let! currentAmortisationSchedule = Amortisation.generate sp ValueNone false false actualPayments
             let missedPayments =
-                currentAmortisationSchedule.Items
+                currentAmortisationSchedule.ScheduleItems
                 |> Array.filter(fun a -> a.PaymentStatus = ValueSome MissedPayment)
                 |> Array.sumBy _.ScheduledPayment
             let interestAndCharges =
-                currentAmortisationSchedule.Items
+                currentAmortisationSchedule.ScheduleItems
                 |> Array.filter(fun a -> a.OffsetDate <= asOfDate)
                 |> Array.last
                 |> fun a -> a.InterestBalance + a.ChargesBalance

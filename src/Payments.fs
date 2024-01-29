@@ -1,10 +1,10 @@
 namespace FSharp.Finance.Personal
 
-module Payments =
+module CustomerPayments =
 
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
     [<Struct>]
-    type PaymentDetails =
+    type CustomerPaymentDetails =
         /// the amount of any extra scheduled payment due on the current day
         | ScheduledPayment of ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day, with any charges incurred
@@ -12,15 +12,15 @@ module Payments =
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     [<Struct>]
-    type Payment = {
+    type CustomerPayment = {
         /// the day the payment is made, as an offset of days from the start date
         PaymentDay: int<OffsetDay>
         /// the details of the payment
-        PaymentDetails: PaymentDetails
+        PaymentDetails: CustomerPaymentDetails
     }
  
     [<Struct>]
-    type PaymentStatus =
+    type CustomerPaymentStatus =
         /// a scheduled payment was made in full and on time
         | PaymentMade
         /// a scheduled payment was missed completely
