@@ -153,15 +153,6 @@ module PaymentSchedule =
                 |> Array.filter(fun si -> si.Payment > 0L<Cent>)
                 |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
-            let precision = sp.Calculation.AprMethod |> function Apr.CalculationMethod.UnitedKingdom precision | Apr.CalculationMethod.UsActuarial precision -> precision | _ -> 0
-            let apr =
-                match aprSolution with
-                | Solution.Found(apr, _, _)
-                | Solution.IterationLimitReached(apr, _, _) ->
-                    Decimal.Round(apr, precision)
-                    |> Percent.fromDecimal
-                    |> ValueSome
-                | Solution.Impossible -> ValueNone
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
@@ -171,7 +162,7 @@ module PaymentSchedule =
                 PaymentTotal = items |> Array.sumBy _.Payment
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
-                Apr = aprSolution, apr
+                Apr = aprSolution, Apr.toPercent sp.Calculation.AprMethod aprSolution
                 CostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m else
                     decimal (fees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
