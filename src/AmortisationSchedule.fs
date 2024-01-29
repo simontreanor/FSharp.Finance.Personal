@@ -70,7 +70,7 @@ module Amortisation =
         /// the final number of actual payments in the schedule (multiple payments made on the same day are counted separately)
         FinalActualPaymentCount: int
         /// the APR based on the actual payments made and their timings
-        FinalApr: Percent voption
+        FinalApr: (Solution * Percent voption) voption
         /// the final ratio of (fees + interest + charges) to principal
         FinalCostToBorrowingRatio: Percent
         /// the daily interest rate derived from interest over (principal + fees), ignoring charges 
@@ -221,18 +221,19 @@ module Amortisation =
         let feesRefund = finalItem.FeesRefund
         let finalPaymentDay = finalItem.OffsetDay
         let finalBalanceStatus = finalItem.BalanceStatus
+        let finalAprSolution =
+            if calculateFinalApr && finalBalanceStatus = Settlement then
+                items
+                |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
+                |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
+                |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
+                |> ValueSome
+            else ValueNone
         {
             ScheduleItems = items
             FinalScheduledPaymentCount = items |> Array.filter(fun asi -> asi.ScheduledPayment > 0L<Cent>) |> Array.length
             FinalActualPaymentCount = items |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
-            FinalApr =
-                if calculateFinalApr && finalBalanceStatus = Settlement then
-                    items
-                    |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                    |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
-                    |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
-                    |> ValueSome
-                else ValueNone
+            FinalApr = finalAprSolution |> ValueOption.map(fun s -> s, Apr.toPercent sp.Calculation.AprMethod s)
             FinalCostToBorrowingRatio =
                 if principalTotal = 0L<Cent> then Percent 0m
                 else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2

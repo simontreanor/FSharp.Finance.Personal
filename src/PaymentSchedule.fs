@@ -1,9 +1,11 @@
 namespace FSharp.Finance.Personal
 
-open CustomerPayments
+open System
 
 /// functions for generating a regular payment schedule, with payment amounts, interest and APR
 module PaymentSchedule =
+
+    open CustomerPayments
 
     /// a scheduled payment item, with running calculations of interest and principal balance
     [<Struct>]
@@ -44,7 +46,7 @@ module PaymentSchedule =
         /// the total interest accrued
         InterestTotal: int64<Cent>
         /// the APR according to the calculation method specified in the schedule parameters and based on the schedule being settled as agreed
-        Apr: Percent
+        Apr: Solution * Percent voption
         /// the cost of borrowing, expressed as a ratio of interest to principal
         CostToBorrowingRatio: Percent
     }
@@ -146,6 +148,20 @@ module PaymentSchedule =
                     failwith "Not yet implemented" // to-do: this is tricky because adjusting payments pays off principal and affects interest calculations during the loan
             let principalTotal = items |> Array.sumBy _.Principal
             let interestTotal = items |> Array.sumBy _.Interest
+            let aprSolution =
+                items
+                |> Array.filter(fun si -> si.Payment > 0L<Cent>)
+                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment })
+                |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
+            let precision = sp.Calculation.AprMethod |> function Apr.CalculationMethod.UnitedKingdom precision | Apr.CalculationMethod.UsActuarial precision -> precision | _ -> 0
+            let apr =
+                match aprSolution with
+                | Solution.Found(apr, _, _)
+                | Solution.IterationLimitReached(apr, _, _) ->
+                    Decimal.Round(apr, precision)
+                    |> Percent.fromDecimal
+                    |> ValueSome
+                | Solution.Impossible -> ValueNone
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
@@ -155,11 +171,7 @@ module PaymentSchedule =
                 PaymentTotal = items |> Array.sumBy _.Payment
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
-                Apr =
-                    items
-                    |> Array.filter(fun si -> si.Payment > 0L<Cent>)
-                    |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment })
-                    |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
+                Apr = aprSolution, apr
                 CostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m else
                     decimal (fees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2

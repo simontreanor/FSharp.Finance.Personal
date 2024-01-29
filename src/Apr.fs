@@ -216,34 +216,22 @@ module Apr =
     /// advance date are all the same
     let calculate method advanceAmount advanceDate transfers =
         match method with
-        | CalculationMethod.UnitedKingdom precision ->
+        | CalculationMethod.UnitedKingdom _ ->
             UnitedKingdom.calculateApr advanceDate advanceAmount transfers
-            |> fun solution ->
-                match solution with
-                | Solution.Found(apr, iteration, tolerance) ->
-                    Decimal.Round(apr, precision) |> Percent.fromDecimal
-                | Solution.IterationLimitReached(partialSolution, iterationLimit, maxTolerance) ->
-                    let ex = ArithmeticException("Iteration limit reached")
-                    ex.Data.Add("PartialSolution", partialSolution)
-                    ex.Data.Add("IterationLimit", iterationLimit)
-                    ex.Data.Add("MaxTolerance", maxTolerance)
-                    raise ex
-                | s -> failwith $"Solution: {s}"
-        | CalculationMethod.UsActuarial precision ->
+        | CalculationMethod.UsActuarial _ ->
             let advances = [| { TransferType = Advance; TransferDate = advanceDate; Amount = advanceAmount } |]
             if Array.isEmpty transfers then [| { TransferType = Payment; TransferDate = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
             else transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
-            |> fun solution ->
-                match solution with
-                | Solution.Found(apr, iteration, tolerance) ->
-                    Decimal.Round(apr, precision) |> Percent.fromDecimal
-                | Solution.IterationLimitReached(partialSolution, iterationLimit, maxTolerance) ->
-                    let ex = ArithmeticException("Iteration limit reached")
-                    ex.Data.Add("PartialSolution", partialSolution)
-                    ex.Data.Add("IterationLimit", iterationLimit)
-                    ex.Data.Add("MaxTolerance", maxTolerance)
-                    raise ex
-                | s -> failwith $"Solution: {s}"
         | CalculationMethod.UnitedStatesRule ->
             failwith "Not yet implemented"
+
+    let toPercent aprMethod aprSolution =
+        let precision = aprMethod |> function CalculationMethod.UnitedKingdom precision | CalculationMethod.UsActuarial precision -> precision | _ -> 0
+        match aprSolution with
+        | Solution.Found(apr, _, _)
+        | Solution.IterationLimitReached(apr, _, _) ->
+            Decimal.Round(apr, precision)
+            |> Percent.fromDecimal
+            |> ValueSome
+        | Solution.Impossible -> ValueNone
