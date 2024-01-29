@@ -222,6 +222,12 @@ module Apr =
                 match solution with
                 | Solution.Found(apr, iteration, tolerance) ->
                     Decimal.Round(apr, precision) |> Percent.fromDecimal
+                | Solution.IterationLimitReached(partialSolution, iterationLimit, maxTolerance) ->
+                    let ex = ArithmeticException("Iteration limit reached")
+                    ex.Data.Add("PartialSolution", partialSolution)
+                    ex.Data.Add("IterationLimit", iterationLimit)
+                    ex.Data.Add("MaxTolerance", maxTolerance)
+                    raise ex
                 | s -> failwith $"Solution: {s}"
         | CalculationMethod.UsActuarial precision ->
             let advances = [| { TransferType = Advance; TransferDate = advanceDate; Amount = advanceAmount } |]
@@ -232,6 +238,12 @@ module Apr =
                 match solution with
                 | Solution.Found(apr, iteration, tolerance) ->
                     Decimal.Round(apr, precision) |> Percent.fromDecimal
+                | Solution.IterationLimitReached(partialSolution, iterationLimit, maxTolerance) ->
+                    let ex = ArithmeticException("Iteration limit reached")
+                    ex.Data.Add("PartialSolution", partialSolution)
+                    ex.Data.Add("IterationLimit", iterationLimit)
+                    ex.Data.Add("MaxTolerance", maxTolerance)
+                    raise ex
                 | s -> failwith $"Solution: {s}"
         | CalculationMethod.UnitedStatesRule ->
             failwith "Not yet implemented"
