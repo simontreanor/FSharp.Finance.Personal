@@ -29,24 +29,24 @@ module AprActuarialTestsExtra =
         ActualApr: Percent
     }
 
-    let aprUsActuarialTestData =
-        IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/in/AprUsActuarialTestData.json"
-        |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
-        |> Array.map(fun ssi ->
-            let principal = Cent.fromDecimal ssi.Principal
-            let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
-            let payments = ssi.PaymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = paymentAmount })
-            let actualApr = calculate (CalculationMethod.UsActuarial 8) principal ssi.StartDate payments |> Percent.round 4
-            {
-                StartDate = ssi.StartDate
-                Principal = principal
-                PaymentAmount = paymentAmount
-                PaymentDates = ssi.PaymentDates
-                ExpectedApr = Percent ssi.ExpectedApr
-                ActualApr = actualApr
-            }
-        )
-        |> toMemberData
+    // let aprUsActuarialTestData =
+    //     IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/in/AprUsActuarialTestData.json"
+    //     |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
+    //     |> Array.map(fun ssi ->
+    //         let principal = Cent.fromDecimal ssi.Principal
+    //         let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
+    //         let payments = ssi.PaymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = paymentAmount })
+    //         let actualApr = calculate (CalculationMethod.UsActuarial 8) principal ssi.StartDate payments |> Percent.round 4
+    //         {
+    //             StartDate = ssi.StartDate
+    //             Principal = principal
+    //             PaymentAmount = paymentAmount
+    //             PaymentDates = ssi.PaymentDates
+    //             ExpectedApr = Percent ssi.ExpectedApr
+    //             ActualApr = actualApr
+    //         }
+    //     )
+    //     |> toMemberData
 
     // [<Theory>]
     // [<MemberData(nameof(aprUsActuarialTestData))>]

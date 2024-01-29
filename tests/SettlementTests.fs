@@ -50,7 +50,7 @@ module SettlementTests =
         let actual =
             voption{
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1).AddDays -3) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -118,7 +118,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -186,7 +186,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -250,7 +250,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -314,7 +314,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -382,7 +382,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -450,7 +450,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getNextScheduled (Date(2024, 10, 1)) sp actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement007.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement007.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -518,7 +518,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getAllOverdue (Date(2024, 10, 1)) sp actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement008.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement008.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -582,7 +582,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
@@ -654,7 +654,7 @@ module SettlementTests =
         let actual =
             voption {
                 let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md" (ValueSome 300)
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 

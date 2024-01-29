@@ -139,7 +139,7 @@ module ActualPaymentTestsExtra =
                 || cumulativeInterest <> interestPortionTotal
                 || principalPortionTotal <> advanceTotal
                 then
-                    aa |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md" (ValueSome 300)
+                    aa |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md"
             else
                 ()
         )
@@ -330,7 +330,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md" (ValueSome 300)
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -397,7 +397,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md" (ValueSome 300)
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -477,7 +477,7 @@ module ActualPaymentTestsExtra =
                     scheduledPayments
                     |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) payments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
-                amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md" (ValueSome 300)
+                amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
                 return amortisationSchedule'
             }
             |> ValueOption.map Array.last
@@ -542,7 +542,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md" (ValueSome 300)
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -607,7 +607,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md" (ValueSome 300)
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -674,7 +674,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 1000L<Cent>)) actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md" (ValueSome 300)
+                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
