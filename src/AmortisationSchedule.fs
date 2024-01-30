@@ -147,8 +147,10 @@ module Amortisation =
             
             let feesDue =
                 match sp.FeesAndCharges.FeesSettlement with
-                | Fees.Settlement.DueInFull -> feesTotal
-                | Fees.Settlement.ProRataRefund -> decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
+                | Fees.Settlement.ProRataRefund when originalFinalPaymentDay > 0<OffsetDay> -> 
+                    decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
+                | Fees.Settlement.DueInFull 
+                | _ -> feesTotal
             let feesRemaining = if ap.AppliedPaymentDay > originalFinalPaymentDay then 0L<Cent> else Cent.max 0L<Cent> (feesTotal - feesDue)
 
             let settlementFigure = a.PrincipalBalance + a.FeesBalance - feesRemaining + interestPortion + chargesPortion
