@@ -21,7 +21,7 @@ module Settlement =
         RevisedSchedule: Amortisation.Schedule
     }
 
-    let getSettlement (settlementDate: Date) (sp: Parameters) applyNegativeInterest (actualPayments: CustomerPayment array) =
+    let getSettlement (settlementDate: Date) sp applyNegativeInterest (actualPayments: CustomerPayment array) =
         voption {
             let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
             let! currentAmortisationSchedule = Amortisation.generate sp' ValueNone false applyNegativeInterest actualPayments
