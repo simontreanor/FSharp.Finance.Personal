@@ -226,6 +226,7 @@ module Apr =
         | CalculationMethod.UnitedStatesRule ->
             failwith "Not yet implemented"
 
+    /// converts an APR solution to a percentage, if possible
     let toPercent aprMethod aprSolution =
         let precision = aprMethod |> function CalculationMethod.UnitedKingdom precision | CalculationMethod.UsActuarial precision -> precision | _ -> 0
         match aprSolution with

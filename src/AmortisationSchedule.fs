@@ -6,6 +6,7 @@ module Amortisation =
     open PaymentSchedule
     open AppliedPayment
 
+    /// the status of the balance on a given offset day
     [<Struct>]
     type BalanceStatus =
         /// the balance has been settled in full
@@ -192,7 +193,7 @@ module Amortisation =
             {
                 OffsetDate = sp.StartDate.AddDays(int ap.AppliedPaymentDay)
                 OffsetDay = ap.AppliedPaymentDay
-                Advances = [| 0L<Cent> |]
+                Advances = [||]
                 ScheduledPayment = ap.ScheduledPayment + finalPaymentAdjustment
                 ActualPayments = ap.ActualPayments
                 NetEffect = ap.NetEffect + finalPaymentAdjustment
@@ -214,6 +215,7 @@ module Amortisation =
         ) advance
         |> Array.takeWhile(fun a -> a.OffsetDay = 0<OffsetDay> || (a.OffsetDay > 0<OffsetDay> && a.PaymentStatus.IsSome))
 
+    /// wraps the amortisation schedule in some statistics, and optionally calculate the final APR (optional because it can be processor-intensive)
     let calculateStats sp calculateFinalApr items =
         let finalItem = Array.last items
         let principalTotal = items |> Array.sumBy _.PrincipalPortion

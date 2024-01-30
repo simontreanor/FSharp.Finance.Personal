@@ -78,6 +78,7 @@ module Interest =
         End: Date
     }
 
+    /// interest options
     [<Struct>]
     type Options = {
         Rate: Rate
@@ -97,6 +98,7 @@ module Interest =
             RateOnNegativeBalance = ValueSome (Annual (Percent 8m))
         }
 
+    /// calculates the number of interest-chargeable days between two dates
     let chargeableDays (startDate: Date) (earlySettlementDate: Date voption) (gracePeriod: int<DurationDay>) holidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
         let interestFreeDays =
             holidays

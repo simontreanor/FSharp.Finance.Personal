@@ -5,6 +5,7 @@ open System
 [<AutoOpen>]
 module FeesAndCharges =
 
+    /// the type of restriction placed on a possible value
     [<Struct>]
     type Restriction =
         | LowerLimit of LowerLimit:int64<Cent>
@@ -13,6 +14,7 @@ module FeesAndCharges =
 
     [<RequireQualifiedAccess>]
     module Restriction =
+        /// calculate a permitted value based on a restriction
         let calculate restriction amount =
             match restriction with
             | ValueSome (LowerLimit a) -> amount |> Cent.max a

@@ -6,11 +6,13 @@ open CustomerPayments
 /// functions for rescheduling payments after an original schedule failed to amortise
 module Rescheduling =
 
+    /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     [<Struct>]
     type PaymentPlanSchedule =
         | RegularPlan of PaymentPlanStart: DateTime * UnitPeriod: UnitPeriod.UnitPeriod * Amount: int64<Cent>
         | IrregularPlan of CustomerPayment array
 
+    /// the parameters used for setting up a payment plan
     [<Struct>]
     type PaymentPlanParameters = {
         Schedule: PaymentPlanSchedule
@@ -31,6 +33,6 @@ module Rescheduling =
         |> UnitPeriod.generatePaymentSchedule count UnitPeriod.Direction.Forward
         |> Array.map(fun d -> { PaymentDay = d |> OffsetDay.fromDate originalStartDate ; PaymentDetails = ScheduledPayment amount })
 
-    /// 
+    /// to-do: create a function to disapply all interest paid so far
     let disapplyInterest =
         ()

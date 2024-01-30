@@ -19,6 +19,7 @@ module CustomerPayments =
         PaymentDetails: CustomerPaymentDetails
     }
  
+    /// the status of a payment made by the customer
     [<Struct>]
     type CustomerPaymentStatus =
         /// a scheduled payment was made in full and on time

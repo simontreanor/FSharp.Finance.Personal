@@ -5,14 +5,18 @@ module Settlement =
 
     open CustomerPayments
     open PaymentSchedule
-    open AppliedPayment
 
+    /// the type of settlement quote requested
     [<Struct>]
     type QuoteType =
+        /// calculate the single final payment required to settle in full
         | Settlement
+        /// calculate the next scheduled payment
         | NextScheduled
+        /// calculate the total of all overdue payments
         | AllOverdue
 
+    /// a settlement quote
     [<Struct>]
     type Quote = {
         QuoteType: QuoteType
@@ -21,6 +25,7 @@ module Settlement =
         RevisedSchedule: Amortisation.Schedule
     }
 
+    /// calculates the single final payment required to settle in full
     let getSettlement (settlementDate: Date) sp applyNegativeInterest (actualPayments: CustomerPayment array) =
         voption {
             let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
@@ -40,6 +45,7 @@ module Settlement =
             return { QuoteType = Settlement; PaymentAmount = settlementPaymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
         }
 
+    /// calculates the next scheduled payment
     let getNextScheduled asOfDate (sp: PaymentSchedule.Parameters) (actualPayments: CustomerPayment array) =
         voption {
             let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
@@ -57,6 +63,7 @@ module Settlement =
             return { QuoteType = NextScheduled; PaymentAmount = item.ScheduledPayment; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
         }
 
+    /// calculates the total of all overdue payments
     let getAllOverdue asOfDate sp actualPayments =
         voption {
             let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
