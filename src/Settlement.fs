@@ -21,27 +21,29 @@ module Settlement =
         RevisedSchedule: Amortisation.Schedule
     }
 
-    let getSettlement (settlementDate: Date) sp applyNegativeInterest (actualPayments: CustomerPayment array) =
+    let getSettlement (settlementDate: Date) (sp: Parameters) applyNegativeInterest (actualPayments: CustomerPayment array) =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp ValueNone false applyNegativeInterest actualPayments
-            let newPaymentAmount = sp.Principal * 10L
+            let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
+            let! currentAmortisationSchedule = Amortisation.generate sp' ValueNone false applyNegativeInterest actualPayments
+            let newPaymentAmount = sp'.Principal * 10L
             let newPayment = {
-                PaymentDay = int (settlementDate - sp.StartDate).Days * 1<OffsetDay>
+                PaymentDay = int (settlementDate - sp'.StartDate).Days * 1<OffsetDay>
                 PaymentDetails = ActualPayment (newPaymentAmount, [||])
             }
-            let! amortisationSchedule = Amortisation.generate sp (ValueSome settlementDate) false applyNegativeInterest (Array.concat [| actualPayments; [| newPayment |] |])
+            let! amortisationSchedule = Amortisation.generate sp' (ValueSome settlementDate) false applyNegativeInterest (Array.concat [| actualPayments; [| newPayment |] |])
             let finalItem = amortisationSchedule.ScheduleItems |> Array.filter(fun a -> a.OffsetDate <= settlementDate) |> Array.last
             let actualPaymentAmounts = finalItem.ActualPayments |> Array.filter(fun p -> p <> newPaymentAmount)
             let actualPaymentsTotal = actualPaymentAmounts |> Array.sum
             let settlementPaymentAmount = finalItem.NetEffect + finalItem.PrincipalBalance - actualPaymentsTotal
             let settlementPayment = { newPayment with PaymentDetails = ActualPayment (settlementPaymentAmount, [||]) }
-            let! revisedAmortisationSchedule = Amortisation.generate sp (ValueSome settlementDate) false applyNegativeInterest (Array.concat [| actualPayments; [| settlementPayment |] |])
+            let! revisedAmortisationSchedule = Amortisation.generate sp' (ValueSome settlementDate) false applyNegativeInterest (Array.concat [| actualPayments; [| settlementPayment |] |])
             return { QuoteType = Settlement; PaymentAmount = settlementPaymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
         }
 
     let getNextScheduled asOfDate (sp: PaymentSchedule.Parameters) (actualPayments: CustomerPayment array) =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp ValueNone false false actualPayments
+            let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
+            let! currentAmortisationSchedule = Amortisation.generate sp' ValueNone false false actualPayments
             let! item =
                 currentAmortisationSchedule.ScheduleItems
                 |> Array.filter(fun a -> a.OffsetDate >= asOfDate)
@@ -51,13 +53,14 @@ module Settlement =
                 PaymentDay = item.OffsetDay
                 PaymentDetails = ActualPayment (item.ScheduledPayment, [||])
             }
-            let! revisedAmortisationSchedule = Amortisation.generate sp ValueNone false false (Array.concat [| actualPayments; [| newPayment |] |])
+            let! revisedAmortisationSchedule = Amortisation.generate sp' ValueNone false false (Array.concat [| actualPayments; [| newPayment |] |])
             return { QuoteType = NextScheduled; PaymentAmount = item.ScheduledPayment; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
         }
 
     let getAllOverdue asOfDate sp actualPayments =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp ValueNone false false actualPayments
+            let sp' = { sp with Parameters.FeesAndCharges.LatePaymentGracePeriod = 0<DurationDay> }
+            let! currentAmortisationSchedule = Amortisation.generate sp' ValueNone false false actualPayments
             let missedPayments =
                 currentAmortisationSchedule.ScheduleItems
                 |> Array.filter(fun a -> a.PaymentStatus = ValueSome MissedPayment)
@@ -69,9 +72,9 @@ module Settlement =
                 |> fun a -> a.InterestBalance + a.ChargesBalance
             let newPaymentAmount = missedPayments + interestAndCharges
             let newPayment = {
-                PaymentDay = int (asOfDate - sp.StartDate).Days * 1<OffsetDay>
+                PaymentDay = int (asOfDate - sp'.StartDate).Days * 1<OffsetDay>
                 PaymentDetails = ActualPayment (newPaymentAmount, [||])
             }
-            let! revisedAmortisationSchedule = Amortisation.generate sp ValueNone false false (Array.concat [| actualPayments; [| newPayment |] |])
+            let! revisedAmortisationSchedule = Amortisation.generate sp' ValueNone false false (Array.concat [| actualPayments; [| newPayment |] |])
             return { QuoteType = AllOverdue; PaymentAmount = newPaymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
         }
