@@ -682,3 +682,72 @@ module SettlementTests =
         })
 
         actual |> should equal expected
+
+    [<Fact>]
+    let ``11) When settling a loan with 3-day late-payment grace period, scheduled payments within the grace period should be treated as missed payments, otherwise the settlement balance is too low`` () =
+        let startDate = Date(2022, 11, 28)
+
+        let sp = {
+            AsOfDate = Date(2023, 12, 21)
+            StartDate = startDate
+            Principal = 1200_00L<Cent>
+            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
+            PaymentCount = 11
+            FeesAndCharges = {
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Rate.Annual (Percent 9.95m)
+                Cap = { Total = ValueNone; Daily = ValueNone }
+                GracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UsActuarial 5
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+            }
+        }
+
+        let actualPayments = [|
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
+            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
+            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement (Date(2023, 2, 8)) sp true actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+            }
+
+        let expected = ValueSome (973_52L<Cent>, {
+            OffsetDate = startDate.AddDays 72
+            OffsetDay = 72<OffsetDay>
+            Advances = [| 0L<Cent> |]
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [| 973_52L<Cent>|]
+            NetEffect = 973_52L<Cent>
+            PaymentStatus = ValueSome ExtraPayment
+            BalanceStatus = Settlement
+            CumulativeInterest = 48_01L<Cent>
+            NewInterest = 1_04L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 769_46L<Cent>
+            FeesPortion = 195_68L<Cent>
+            InterestPortion = 8_38L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 958_45L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+
+        actual |> should equal expected
