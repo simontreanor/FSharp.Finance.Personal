@@ -169,6 +169,6 @@ module PaymentSchedule =
             ValueNone
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
-    let allPaidOnTime (scheduleItems: Item array) =
+    let internal allPaidOnTime (scheduleItems: Item array) =
         scheduleItems
         |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment, [||]) })

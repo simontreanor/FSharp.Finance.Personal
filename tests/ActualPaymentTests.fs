@@ -270,7 +270,7 @@ module ActualPaymentTests =
             ScheduledPayment = 0L<Cent>
             ActualPayments = [| 1474_59L<Cent> |]
             NetEffect = 1474_59L<Cent>
-            PaymentStatus = ValueSome Overpayment
+            PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = RefundDue
             CumulativeInterest = 646_97L<Cent>
             NewInterest = 26_75L<Cent>
@@ -672,6 +672,73 @@ module ActualPaymentTests =
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 155_09L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        }
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``12) Settled loan`` () =
+        let sp =
+            {
+                AsOfDate = Date(2034, 1, 31)
+                StartDate = Date(2022, 11, 1)
+                Principal = 1500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> Amortisation.generate sp ValueNone false true
+
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest012.md")
+
+        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let expected = ValueSome {
+            OffsetDate = Date(2023, 3, 15)
+            OffsetDay = 134<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = 491_53L<Cent>
+            ActualPayments = [| 500_00L<Cent> |]
+            NetEffect = 500_00L<Cent>
+            PaymentStatus = ValueSome Overpayment
+            BalanceStatus = RefundDue
+            CumulativeInterest = 932_07L<Cent>
+            NewInterest = 79_07L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 420_93L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 79_07L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = -67_93L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
