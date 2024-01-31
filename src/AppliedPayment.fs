@@ -32,7 +32,8 @@ module AppliedPayment =
                 | ActualPayment (ap, _) when ap = 0L<Cent> -> false
                 | _ -> true
             )
-        [| nonZero scheduledPayments; nonZero actualPayments |]        |> Array.concat
+        [| nonZero scheduledPayments; nonZero actualPayments |]
+        |> Array.concat
         |> Array.groupBy _.PaymentDay
         |> Array.map(fun (offsetDay, payments) ->
             let scheduledPayment = payments |> Array.map(fun p -> p.PaymentDetails |> function ScheduledPayment p -> p | _ -> 0L<Cent>) |> Array.sum
@@ -42,8 +43,8 @@ module AppliedPayment =
                 | 0L<Cent>, 0L<Cent> -> 0L<Cent>, ValueNone
                 | 0L<Cent>, ap when ap < 0L<Cent> -> ap, ValueSome Refunded
                 | 0L<Cent>, ap -> ap, ValueSome ExtraPayment
-                | sp, _ when (offsetDay < asOfDay) && (int offsetDay + int latePaymentGracePeriod >= int asOfDay) -> sp, ValueSome WithinGracePeriod
-                | sp, _ when offsetDay >= asOfDay -> sp, ValueSome NotYetDue
+                | sp, ap when ap < sp && (offsetDay <= asOfDay) && (int offsetDay + int latePaymentGracePeriod >= int asOfDay) -> sp, ValueSome WithinGracePeriod
+                | sp, _ when offsetDay > asOfDay -> sp, ValueSome NotYetDue
                 | _, 0L<Cent> -> 0L<Cent>, ValueSome MissedPayment
                 | sp, ap when ap < sp -> ap, ValueSome Underpayment
                 | sp, ap when ap > sp -> ap, ValueSome Overpayment

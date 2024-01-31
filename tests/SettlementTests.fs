@@ -16,7 +16,7 @@ module SettlementTests =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
-            AsOfDate = Date(2024, 10, 1)
+            AsOfDate = Date(2024, 9, 28)
             StartDate = startDate
             Principal = 120000L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
@@ -49,7 +49,7 @@ module SettlementTests =
 
         let actual =
             voption{
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1).AddDays -3) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -117,7 +117,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -185,7 +185,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -249,7 +249,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -313,7 +313,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -381,7 +381,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2024, 10, 1)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -449,7 +449,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getNextScheduled (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getNextScheduled sp actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement007.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -517,7 +517,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getAllOverdue (Date(2024, 10, 1)) sp actualPayments
+                let! settlement = Settlement.getAllOverdue sp actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement008.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -581,7 +581,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -653,7 +653,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2023, 12, 21)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -688,7 +688,7 @@ module SettlementTests =
         let startDate = Date(2022, 11, 28)
 
         let sp = {
-            AsOfDate = Date(2023, 12, 21)
+            AsOfDate = Date(2023, 2, 8)
             StartDate = startDate
             Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
@@ -722,7 +722,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement (Date(2023, 2, 8)) sp true actualPayments
+                let! settlement = Settlement.getSettlement sp true actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -744,6 +744,70 @@ module SettlementTests =
             InterestPortion = 8_38L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 958_45L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``12) Settlement figure should not be lower than principal`` () =
+        let startDate = Date(2024, 1, 29)
+
+        let sp = {
+            AsOfDate = Date(2024, 2, 28)
+            StartDate = startDate
+            Principal = 400_00L<Cent>
+            UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 28)
+            PaymentCount = 4
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.798m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                GracePeriod = 1<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+            }
+        }
+
+        let actualPayments = [||]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement sp true actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement012.md"
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+            }
+
+        let expected = ValueSome (495_76L<Cent>, {
+            OffsetDate = startDate.AddDays 30
+            OffsetDay = 30<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = 165_90L<Cent>
+            ActualPayments = [| 495_76L<Cent>|]
+            NetEffect = 495_76L<Cent>
+            PaymentStatus = ValueSome Overpayment
+            BalanceStatus = Settlement
+            CumulativeInterest = 95_76L<Cent>
+            NewInterest = 95_76L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 400_00L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 95_76L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
