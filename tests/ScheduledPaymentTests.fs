@@ -22,7 +22,7 @@ module ScheduledPaymentTests =
                 FeesAndCharges = {
                     Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                    Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
@@ -41,17 +41,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``$1200 with short first period`` () =
-            let actual = biweeklyParameters 120000L<Cent> 8<DurationDay> |> calculate BelowZero
+            let actual = biweeklyParameters 1200_00L<Cent> 8<DurationDay> |> calculate BelowZero
             actual |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Biweekly001.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 148<OffsetDay>
-                LevelPayment = 32253L<Cent>
-                FinalPayment = 32253L<Cent>
-                PaymentTotal = 354783L<Cent>
-                PrincipalTotal = 347364L<Cent>
-                InterestTotal = 7419L<Cent>
+                LevelPayment = 322_53L<Cent>
+                FinalPayment = 322_53L<Cent>
+                PaymentTotal = 3547_83L<Cent>
+                PrincipalTotal = 3473_64L<Cent>
+                InterestTotal = 74_19L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 717.412507m)
                 CostToBorrowingRatio = Percent 67.59m
             }
@@ -59,17 +59,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``2) $1200 with first period equal to unit-period length`` () =
-            let actual = biweeklyParameters 120000L<Cent> 14<DurationDay> |> calculate BelowZero
+            let actual = biweeklyParameters 1200_00L<Cent> 14<DurationDay> |> calculate BelowZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Biweekly002.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 154<OffsetDay>
-                LevelPayment = 32306L<Cent>
-                FinalPayment = 32303L<Cent>
-                PaymentTotal = 355363L<Cent>
-                PrincipalTotal = 347364L<Cent>
-                InterestTotal = 7999L<Cent>
+                LevelPayment = 323_06L<Cent>
+                FinalPayment = 323_03L<Cent>
+                PaymentTotal = 3553_63L<Cent>
+                PrincipalTotal = 3473_64L<Cent>
+                InterestTotal = 79_99L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 637.159359m)
                 CostToBorrowingRatio = Percent 67.76m
             }
@@ -77,17 +77,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``3) $1200 with long first period`` () =
-            let actual = biweeklyParameters 120000L<Cent> 15<DurationDay> |> calculate BelowZero
+            let actual = biweeklyParameters 1200_00L<Cent> 15<DurationDay> |> calculate BelowZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Biweekly003.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 155<OffsetDay>
-                LevelPayment = 32315L<Cent>
-                FinalPayment = 32310L<Cent>
-                PaymentTotal = 355460L<Cent>
-                PrincipalTotal = 347364L<Cent>
-                InterestTotal = 8096L<Cent>
+                LevelPayment = 323_15L<Cent>
+                FinalPayment = 323_10L<Cent>
+                PaymentTotal = 3554_60L<Cent>
+                PrincipalTotal = 3473_64L<Cent>
+                InterestTotal = 80_96L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 623.703586m)
                 CostToBorrowingRatio = Percent 67.78m
             }
@@ -125,17 +125,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 4<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 100_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly001.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 126<OffsetDay>
-                LevelPayment = 3049L<Cent>
-                FinalPayment = 3046L<Cent>
-                PaymentTotal = 15242L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 5242L<Cent>
+                LevelPayment = 30_49L<Cent>
+                FinalPayment = 30_46L<Cent>
+                PaymentTotal = 152_42L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 52_42L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1280.8m)
                 CostToBorrowingRatio = Percent 52.42m
             }
@@ -144,17 +144,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 100_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly009.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 130<OffsetDay>
-                LevelPayment = 3143L<Cent>
-                FinalPayment = 3142L<Cent>
-                PaymentTotal = 15714L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 5714L<Cent>
+                LevelPayment = 31_43L<Cent>
+                FinalPayment = 31_42L<Cent>
+                PaymentTotal = 157_14L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 57_14L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1295.9m)
                 CostToBorrowingRatio = Percent 57.14m
             }
@@ -163,17 +163,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 12<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 12<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly017.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 103<OffsetDay>
-                LevelPayment = 3694L<Cent>
-                FinalPayment = 3695L<Cent>
-                PaymentTotal = 14777L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 4777L<Cent>
+                LevelPayment = 36_94L<Cent>
+                FinalPayment = 36_95L<Cent>
+                PaymentTotal = 147_77L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 47_77L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1312.3m)
                 CostToBorrowingRatio = Percent 47.77m
             }
@@ -182,17 +182,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 16<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 16<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly025.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 107<OffsetDay>
-                LevelPayment = 3802L<Cent>
-                FinalPayment = 3800L<Cent>
-                PaymentTotal = 15206L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 5206L<Cent>
+                LevelPayment = 38_02L<Cent>
+                FinalPayment = 38_00L<Cent>
+                PaymentTotal = 152_06L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 52_06L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1309m)
                 CostToBorrowingRatio = Percent 52.06m
             }
@@ -201,17 +201,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 100_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly033.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 111<OffsetDay>
-                LevelPayment = 3909L<Cent>
-                FinalPayment = 3911L<Cent>
-                PaymentTotal = 15638L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 5638L<Cent>
+                LevelPayment = 39_09L<Cent>
+                FinalPayment = 39_11L<Cent>
+                PaymentTotal = 156_38L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 56_38L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1299.7m)
                 CostToBorrowingRatio = Percent 56.38m
             }
@@ -220,17 +220,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 24<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 24<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly041.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 115<OffsetDay>
-                LevelPayment = 4006L<Cent>
-                FinalPayment = 4004L<Cent>
-                PaymentTotal = 16022L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 6022L<Cent>
+                LevelPayment = 40_06L<Cent>
+                FinalPayment = 40_04L<Cent>
+                PaymentTotal = 160_22L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 60_22L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1287.7m)
                 CostToBorrowingRatio = Percent 60.22m
             }
@@ -239,17 +239,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly049.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 119<OffsetDay>
-                LevelPayment = 4113L<Cent>
-                FinalPayment = 4111L<Cent>
-                PaymentTotal = 16450L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 6450L<Cent>
+                LevelPayment = 41_13L<Cent>
+                FinalPayment = 41_11L<Cent>
+                PaymentTotal = 164_50L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 64_50L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1268.8m)
                 CostToBorrowingRatio = Percent 64.5m
             }
@@ -258,17 +258,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0100 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 10000L<Cent> 32<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 32<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly057.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 123<OffsetDay>
-                LevelPayment = 4220L<Cent>
-                FinalPayment = 4222L<Cent>
-                PaymentTotal = 16882L<Cent>
-                PrincipalTotal = 10000L<Cent>
-                InterestTotal = 6882L<Cent>
+                LevelPayment = 42_20L<Cent>
+                FinalPayment = 42_22L<Cent>
+                PaymentTotal = 168_82L<Cent>
+                PrincipalTotal = 100_00L<Cent>
+                InterestTotal = 68_82L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1248.6m)
                 CostToBorrowingRatio = Percent 68.82m
             }
@@ -277,17 +277,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 4<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly002.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 126<OffsetDay>
-                LevelPayment = 9146L<Cent>
-                FinalPayment = 9150L<Cent>
-                PaymentTotal = 45734L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 15734L<Cent>
+                LevelPayment = 91_46L<Cent>
+                FinalPayment = 91_50L<Cent>
+                PaymentTotal = 457_34L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 157_34L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1281.4m)
                 CostToBorrowingRatio = Percent 52.45m
             }
@@ -296,17 +296,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly010.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 130<OffsetDay>
-                LevelPayment = 9429L<Cent>
-                FinalPayment = 9431L<Cent>
-                PaymentTotal = 47147L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 17147L<Cent>
+                LevelPayment = 94_29L<Cent>
+                FinalPayment = 94_31L<Cent>
+                PaymentTotal = 471_47L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 171_47L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.5m)
                 CostToBorrowingRatio = Percent 57.16m
             }
@@ -315,17 +315,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 12<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 12<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly018.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 103<OffsetDay>
-                LevelPayment = 11082L<Cent>
-                FinalPayment = 11084L<Cent>
-                PaymentTotal = 44330L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 14330L<Cent>
+                LevelPayment = 110_82L<Cent>
+                FinalPayment = 110_84L<Cent>
+                PaymentTotal = 443_30L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 143_30L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1312.1m)
                 CostToBorrowingRatio = Percent 47.77m
             }
@@ -334,17 +334,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 16<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 16<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly026.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 107<OffsetDay>
-                LevelPayment = 11405L<Cent>
-                FinalPayment = 11403L<Cent>
-                PaymentTotal = 45618L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 15618L<Cent>
+                LevelPayment = 114_05L<Cent>
+                FinalPayment = 114_03L<Cent>
+                PaymentTotal = 456_18L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 156_18L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1308.8m)
                 CostToBorrowingRatio = Percent 52.06m
             }
@@ -353,17 +353,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly034.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 111<OffsetDay>
-                LevelPayment = 11728L<Cent>
-                FinalPayment = 11728L<Cent>
-                PaymentTotal = 46912L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 16912L<Cent>
+                LevelPayment = 117_28L<Cent>
+                FinalPayment = 117_28L<Cent>
+                PaymentTotal = 469_12L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 169_12L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1299.6m)
                 CostToBorrowingRatio = Percent 56.37m
             }
@@ -372,17 +372,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 24<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 24<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly042.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 115<OffsetDay>
-                LevelPayment = 12017L<Cent>
-                FinalPayment = 12017L<Cent>
-                PaymentTotal = 48068L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 18068L<Cent>
+                LevelPayment = 120_17L<Cent>
+                FinalPayment = 120_17L<Cent>
+                PaymentTotal = 480_68L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 180_68L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1287.8m)
                 CostToBorrowingRatio = Percent 60.23m
             }
@@ -391,17 +391,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 300_00L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly050.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 119<OffsetDay>
-                LevelPayment = 12339L<Cent>
-                FinalPayment = 12338L<Cent>
-                PaymentTotal = 49355L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 19355L<Cent>
+                LevelPayment = 123_39L<Cent>
+                FinalPayment = 123_38L<Cent>
+                PaymentTotal = 493_55L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 193_55L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1269.3m)
                 CostToBorrowingRatio = Percent 64.52m
             }
@@ -410,17 +410,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0300 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 30000L<Cent> 32<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 32<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly058.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 123<OffsetDay>
-                LevelPayment = 12661L<Cent>
-                FinalPayment = 12661L<Cent>
-                PaymentTotal = 50644L<Cent>
-                PrincipalTotal = 30000L<Cent>
-                InterestTotal = 20644L<Cent>
+                LevelPayment = 126_61L<Cent>
+                FinalPayment = 126_61L<Cent>
+                PaymentTotal = 506_44L<Cent>
+                PrincipalTotal = 300_00L<Cent>
+                InterestTotal = 206_44L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1248.6m)
                 CostToBorrowingRatio = Percent 68.81m
             }
@@ -429,17 +429,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 4<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly003.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 126<OffsetDay>
-                LevelPayment = 15244L<Cent>
-                FinalPayment = 15243L<Cent>
-                PaymentTotal = 76219L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 26219L<Cent>
+                LevelPayment = 152_44L<Cent>
+                FinalPayment = 152_43L<Cent>
+                PaymentTotal = 762_19L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 262_19L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1281.2m)
                 CostToBorrowingRatio = Percent 52.44m
             }
@@ -448,17 +448,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly011.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 130<OffsetDay>
-                LevelPayment = 15715L<Cent>
-                FinalPayment = 15719L<Cent>
-                PaymentTotal = 78579L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 28579L<Cent>
+                LevelPayment = 157_15L<Cent>
+                FinalPayment = 157_19L<Cent>
+                PaymentTotal = 785_79L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 285_79L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.6m)
                 CostToBorrowingRatio = Percent 57.16m
             }
@@ -467,17 +467,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 12<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 12<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly019.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 103<OffsetDay>
-                LevelPayment = 18470L<Cent>
-                FinalPayment = 18471L<Cent>
-                PaymentTotal = 73881L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 23881L<Cent>
+                LevelPayment = 184_70L<Cent>
+                FinalPayment = 184_71L<Cent>
+                PaymentTotal = 738_81L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 238_81L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1311.9m)
                 CostToBorrowingRatio = Percent 47.76m
             }
@@ -486,17 +486,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 16<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 500_00L<Cent> 16<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly027.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 107<OffsetDay>
-                LevelPayment = 19008L<Cent>
-                FinalPayment = 19009L<Cent>
-                PaymentTotal = 76033L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 26033L<Cent>
+                LevelPayment = 190_08L<Cent>
+                FinalPayment = 190_09L<Cent>
+                PaymentTotal = 760_33L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 260_33L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1309m)
                 CostToBorrowingRatio = Percent 52.07m
             }
@@ -505,17 +505,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly035.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 111<OffsetDay>
-                LevelPayment = 19546L<Cent>
-                FinalPayment = 19549L<Cent>
-                PaymentTotal = 78187L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 28187L<Cent>
+                LevelPayment = 195_46L<Cent>
+                FinalPayment = 195_49L<Cent>
+                PaymentTotal = 781_87L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 281_87L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1299.6m)
                 CostToBorrowingRatio = Percent 56.37m
             }
@@ -524,17 +524,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 24<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 24<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly043.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 115<OffsetDay>
-                LevelPayment = 20028L<Cent>
-                FinalPayment = 20028L<Cent>
-                PaymentTotal = 80112L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 30112L<Cent>
+                LevelPayment = 200_28L<Cent>
+                FinalPayment = 200_28L<Cent>
+                PaymentTotal = 801_12L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 301_12L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1287.6m)
                 CostToBorrowingRatio = Percent 60.22m
             }
@@ -543,17 +543,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 500_00L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly051.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 119<OffsetDay>
-                LevelPayment = 20565L<Cent>
-                FinalPayment = 20563L<Cent>
-                PaymentTotal = 82258L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 32258L<Cent>
+                LevelPayment = 205_65L<Cent>
+                FinalPayment = 205_63L<Cent>
+                PaymentTotal = 822_58L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 322_58L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1269.3m)
                 CostToBorrowingRatio = Percent 64.52m
             }
@@ -562,17 +562,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0500 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 50000L<Cent> 32<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 32<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly059.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 123<OffsetDay>
-                LevelPayment = 21101L<Cent>
-                FinalPayment = 21103L<Cent>
-                PaymentTotal = 84406L<Cent>
-                PrincipalTotal = 50000L<Cent>
-                InterestTotal = 34406L<Cent>
+                LevelPayment = 211_01L<Cent>
+                FinalPayment = 211_03L<Cent>
+                PaymentTotal = 844_06L<Cent>
+                PrincipalTotal = 500_00L<Cent>
+                InterestTotal = 344_06L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1248.5m)
                 CostToBorrowingRatio = Percent 68.81m
             }
@@ -581,17 +581,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 4<DurationDay> 5 |> calculate BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 700_00L<Cent> 4<DurationDay> 5 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly004.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 126<OffsetDay>
-                LevelPayment = 21342L<Cent>
-                FinalPayment = 21339L<Cent>
-                PaymentTotal = 106707L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 36707L<Cent>
+                LevelPayment = 213_42L<Cent>
+                FinalPayment = 213_39L<Cent>
+                PaymentTotal = 1067_07L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 367_07L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1281.3m)
                 CostToBorrowingRatio = Percent 52.44m
             }
@@ -600,17 +600,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 8<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly012.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 130<OffsetDay>
-                LevelPayment = 22002L<Cent>
-                FinalPayment = 21999L<Cent>
-                PaymentTotal = 110007L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 40007L<Cent>
+                LevelPayment = 220_02L<Cent>
+                FinalPayment = 219_99L<Cent>
+                PaymentTotal = 1100_07L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 400_07L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.5m)
                 CostToBorrowingRatio = Percent 57.15m
             }
@@ -619,17 +619,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 12<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 12<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly020.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 103<OffsetDay>
-                LevelPayment = 25858L<Cent>
-                FinalPayment = 25860L<Cent>
-                PaymentTotal = 103434L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 33434L<Cent>
+                LevelPayment = 258_58L<Cent>
+                FinalPayment = 258_60L<Cent>
+                PaymentTotal = 1034_34L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 334_34L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1311.9m)
                 CostToBorrowingRatio = Percent 47.76m
             }
@@ -638,17 +638,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 16<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 16<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly028.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 107<OffsetDay>
-                LevelPayment = 26612L<Cent>
-                FinalPayment = 26610L<Cent>
-                PaymentTotal = 106446L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 36446L<Cent>
+                LevelPayment = 266_12L<Cent>
+                FinalPayment = 266_10L<Cent>
+                PaymentTotal = 1064_46L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 364_46L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1309.1m)
                 CostToBorrowingRatio = Percent 52.07m
             }
@@ -657,17 +657,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 20<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly036.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 111<OffsetDay>
-                LevelPayment = 27365L<Cent>
-                FinalPayment = 27365L<Cent>
-                PaymentTotal = 109460L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 39460L<Cent>
+                LevelPayment = 273_65L<Cent>
+                FinalPayment = 273_65L<Cent>
+                PaymentTotal = 1094_60L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 394_60L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1299.5m)
                 CostToBorrowingRatio = Percent 56.37m
             }
@@ -676,17 +676,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 24<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 24<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly044.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 115<OffsetDay>
-                LevelPayment = 28039L<Cent>
-                FinalPayment = 28041L<Cent>
-                PaymentTotal = 112158L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 42158L<Cent>
+                LevelPayment = 280_39L<Cent>
+                FinalPayment = 280_41L<Cent>
+                PaymentTotal = 1121_58L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 421_58L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1287.7m)
                 CostToBorrowingRatio = Percent 60.23m
             }
@@ -695,17 +695,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 28<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 28<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly052.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 119<OffsetDay>
-                LevelPayment = 28791L<Cent>
-                FinalPayment = 28790L<Cent>
-                PaymentTotal = 115163L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 45163L<Cent>
+                LevelPayment = 287_91L<Cent>
+                FinalPayment = 287_90L<Cent>
+                PaymentTotal = 1151_63L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 451_63L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1269.4m)
                 CostToBorrowingRatio = Percent 64.52m
             }
@@ -714,17 +714,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0700 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 70000L<Cent> 32<DurationDay> 4 |> calculate AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 32<DurationDay> 4 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly060.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 123<OffsetDay>
-                LevelPayment = 29542L<Cent>
-                FinalPayment = 29539L<Cent>
-                PaymentTotal = 118165L<Cent>
-                PrincipalTotal = 70000L<Cent>
-                InterestTotal = 48165L<Cent>
+                LevelPayment = 295_42L<Cent>
+                FinalPayment = 295_39L<Cent>
+                PaymentTotal = 1181_65L<Cent>
+                PrincipalTotal = 700_00L<Cent>
+                InterestTotal = 481_65L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1248.4m)
                 CostToBorrowingRatio = Percent 68.81m
             }
@@ -733,17 +733,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly005.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 156<OffsetDay>
-                LevelPayment = 24951L<Cent>
-                FinalPayment = 24948L<Cent>
-                PaymentTotal = 149703L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 59703L<Cent>
+                LevelPayment = 249_51L<Cent>
+                FinalPayment = 249_48L<Cent>
+                PaymentTotal = 1497_03L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 597_03L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1277.8m)
                 CostToBorrowingRatio = Percent 66.34m
             }
@@ -752,17 +752,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 8<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 900_00L<Cent> 8<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly013.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 160<OffsetDay>
-                LevelPayment = 25722L<Cent>
-                FinalPayment = 25729L<Cent>
-                PaymentTotal = 154339L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 64339L<Cent>
+                LevelPayment = 257_22L<Cent>
+                FinalPayment = 257_29L<Cent>
+                PaymentTotal = 1543_39L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 643_39L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1291.1m)
                 CostToBorrowingRatio = Percent 71.49m
             }
@@ -771,17 +771,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly021.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 164<OffsetDay>
-                LevelPayment = 26494L<Cent>
-                FinalPayment = 26495L<Cent>
-                PaymentTotal = 158965L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 68965L<Cent>
+                LevelPayment = 264_94L<Cent>
+                FinalPayment = 264_95L<Cent>
+                PaymentTotal = 1589_65L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 689_65L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.2m)
                 CostToBorrowingRatio = Percent 76.63m
             }
@@ -790,17 +790,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly029.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 168<OffsetDay>
-                LevelPayment = 27266L<Cent>
-                FinalPayment = 27264L<Cent>
-                PaymentTotal = 163594L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 73594L<Cent>
+                LevelPayment = 272_66L<Cent>
+                FinalPayment = 272_64L<Cent>
+                PaymentTotal = 1635_94L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 735_94L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1294.9m)
                 CostToBorrowingRatio = Percent 81.77m
             }
@@ -809,17 +809,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 20 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 20<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 20<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly037.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 142<OffsetDay>
-                LevelPayment = 30834L<Cent>
-                FinalPayment = 30835L<Cent>
-                PaymentTotal = 154171L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 64171L<Cent>
+                LevelPayment = 308_34L<Cent>
+                FinalPayment = 308_35L<Cent>
+                PaymentTotal = 1541_71L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 641_71L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1292.9m)
                 CostToBorrowingRatio = Percent 71.3m
             }
@@ -828,17 +828,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 24 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 24<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 24<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly045.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 145<OffsetDay>
-                LevelPayment = 31580L<Cent>
-                FinalPayment = 31581L<Cent>
-                PaymentTotal = 157901L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 67901L<Cent>
+                LevelPayment = 315_80L<Cent>
+                FinalPayment = 315_81L<Cent>
+                PaymentTotal = 1579_01L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 679_01L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1283.5m)
                 CostToBorrowingRatio = Percent 75.45m
             }
@@ -847,17 +847,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 28 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 28<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 28<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly053.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 149<OffsetDay>
-                LevelPayment = 32426L<Cent>
-                FinalPayment = 32426L<Cent>
-                PaymentTotal = 162130L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 72130L<Cent>
+                LevelPayment = 324_26L<Cent>
+                FinalPayment = 324_26L<Cent>
+                PaymentTotal = 1621_30L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 721_30L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1267.9m)
                 CostToBorrowingRatio = Percent 80.14m
             }
@@ -866,17 +866,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£0900 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 90000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly061.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 153<OffsetDay>
-                LevelPayment = 33272L<Cent>
-                FinalPayment = 33272L<Cent>
-                PaymentTotal = 166360L<Cent>
-                PrincipalTotal = 90000L<Cent>
-                InterestTotal = 76360L<Cent>
+                LevelPayment = 332_72L<Cent>
+                FinalPayment = 332_72L<Cent>
+                PaymentTotal = 1663_60L<Cent>
+                PrincipalTotal = 900_00L<Cent>
+                InterestTotal = 763_60L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1249.8m)
                 CostToBorrowingRatio = Percent 84.84m
             }
@@ -885,17 +885,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly006.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 156<OffsetDay>
-                LevelPayment = 30495L<Cent>
-                FinalPayment = 30494L<Cent>
-                PaymentTotal = 182969L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 72969L<Cent>
+                LevelPayment = 304_95L<Cent>
+                FinalPayment = 304_94L<Cent>
+                PaymentTotal = 1829_69L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 729_69L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1277.7m)
                 CostToBorrowingRatio = Percent 66.34m
             }
@@ -904,17 +904,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 8<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly014.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 160<OffsetDay>
-                LevelPayment = 31438L<Cent>
-                FinalPayment = 31442L<Cent>
-                PaymentTotal = 188632L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 78632L<Cent>
+                LevelPayment = 314_38L<Cent>
+                FinalPayment = 314_42L<Cent>
+                PaymentTotal = 1886_32L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 786_32L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1291m)
                 CostToBorrowingRatio = Percent 71.48m
             }
@@ -923,17 +923,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly022.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 164<OffsetDay>
-                LevelPayment = 32382L<Cent>
-                FinalPayment = 32379L<Cent>
-                PaymentTotal = 194289L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 84289L<Cent>
+                LevelPayment = 323_82L<Cent>
+                FinalPayment = 323_79L<Cent>
+                PaymentTotal = 1942_89L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 842_89L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.2m)
                 CostToBorrowingRatio = Percent 76.63m
             }
@@ -942,17 +942,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly030.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 168<OffsetDay>
-                LevelPayment = 33325L<Cent>
-                FinalPayment = 33324L<Cent>
-                PaymentTotal = 199949L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 89949L<Cent>
+                LevelPayment = 333_25L<Cent>
+                FinalPayment = 333_24L<Cent>
+                PaymentTotal = 1999_49L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 899_49L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1294.9m)
                 CostToBorrowingRatio = Percent 81.77m
             }
@@ -961,17 +961,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 20 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 20<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly038.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 142<OffsetDay>
-                LevelPayment = 37686L<Cent>
-                FinalPayment = 37687L<Cent>
-                PaymentTotal = 188431L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 78431L<Cent>
+                LevelPayment = 376_86L<Cent>
+                FinalPayment = 376_87L<Cent>
+                PaymentTotal = 1884_31L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 784_31L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1292.9m)
                 CostToBorrowingRatio = Percent 71.3m
             }
@@ -980,17 +980,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 24 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 24<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly046.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 145<OffsetDay>
-                LevelPayment = 38598L<Cent>
-                FinalPayment = 38597L<Cent>
-                PaymentTotal = 192989L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 82989L<Cent>
+                LevelPayment = 385_98L<Cent>
+                FinalPayment = 385_97L<Cent>
+                PaymentTotal = 1929_89L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 829_89L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1283.5m)
                 CostToBorrowingRatio = Percent 75.44m
             }
@@ -999,17 +999,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 28 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 28<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly054.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 149<OffsetDay>
-                LevelPayment = 39632L<Cent>
-                FinalPayment = 39630L<Cent>
-                PaymentTotal = 198158L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 88158L<Cent>
+                LevelPayment = 396_32L<Cent>
+                FinalPayment = 396_30L<Cent>
+                PaymentTotal = 1981_58L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 881_58L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1267.9m)
                 CostToBorrowingRatio = Percent 80.14m
             }
@@ -1018,17 +1018,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1100 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 110000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly062.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 153<OffsetDay>
-                LevelPayment = 40666L<Cent>
-                FinalPayment = 40666L<Cent>
-                PaymentTotal = 203330L<Cent>
-                PrincipalTotal = 110000L<Cent>
-                InterestTotal = 93330L<Cent>
+                LevelPayment = 406_66L<Cent>
+                FinalPayment = 406_66L<Cent>
+                PaymentTotal = 2033_30L<Cent>
+                PrincipalTotal = 1100_00L<Cent>
+                InterestTotal = 933_30L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1249.8m)
                 CostToBorrowingRatio = Percent 84.85m
             }
@@ -1037,17 +1037,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly007.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 156<OffsetDay>
-                LevelPayment = 36040L<Cent>
-                FinalPayment = 36037L<Cent>
-                PaymentTotal = 216237L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 86237L<Cent>
+                LevelPayment = 360_40L<Cent>
+                FinalPayment = 360_37L<Cent>
+                PaymentTotal = 2162_37L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 862_37L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1277.7m)
                 CostToBorrowingRatio = Percent 66.34m
             }
@@ -1056,17 +1056,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 8<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 8<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly015.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 160<OffsetDay>
-                LevelPayment = 37154L<Cent>
-                FinalPayment = 37158L<Cent>
-                PaymentTotal = 222928L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 92928L<Cent>
+                LevelPayment = 371_54L<Cent>
+                FinalPayment = 371_58L<Cent>
+                PaymentTotal = 2229_28L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 929_28L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1290.9m)
                 CostToBorrowingRatio = Percent 71.48m
             }
@@ -1075,17 +1075,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly023.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 164<OffsetDay>
-                LevelPayment = 38269L<Cent>
-                FinalPayment = 38274L<Cent>
-                PaymentTotal = 229619L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 99619L<Cent>
+                LevelPayment = 382_69L<Cent>
+                FinalPayment = 382_74L<Cent>
+                PaymentTotal = 2296_19L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 996_19L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.2m)
                 CostToBorrowingRatio = Percent 76.63m
             }
@@ -1094,17 +1094,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly031.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 168<OffsetDay>
-                LevelPayment = 39384L<Cent>
-                FinalPayment = 39386L<Cent>
-                PaymentTotal = 236306L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 106306L<Cent>
+                LevelPayment = 393_84L<Cent>
+                FinalPayment = 393_86L<Cent>
+                PaymentTotal = 2363_06L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 1063_06L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1295m)
                 CostToBorrowingRatio = Percent 81.77m
             }
@@ -1113,17 +1113,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 20 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 20<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly039.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 172<OffsetDay>
-                LevelPayment = 40499L<Cent>
-                FinalPayment = 40497L<Cent>
-                PaymentTotal = 242992L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 112992L<Cent>
+                LevelPayment = 404_99L<Cent>
+                FinalPayment = 404_97L<Cent>
+                PaymentTotal = 2429_92L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 1129_92L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1288.6m)
                 CostToBorrowingRatio = Percent 86.92m
             }
@@ -1132,17 +1132,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 24 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 24<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly047.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 176<OffsetDay>
-                LevelPayment = 41491L<Cent>
-                FinalPayment = 41490L<Cent>
-                PaymentTotal = 248945L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 118945L<Cent>
+                LevelPayment = 414_91L<Cent>
+                FinalPayment = 414_90L<Cent>
+                PaymentTotal = 2489_45L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 1189_45L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1280.4m)
                 CostToBorrowingRatio = Percent 91.5m
             }
@@ -1151,17 +1151,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 28 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 28<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 28<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly055.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 180<OffsetDay>
-                LevelPayment = 42602L<Cent>
-                FinalPayment = 42604L<Cent>
-                PaymentTotal = 255614L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 125614L<Cent>
+                LevelPayment = 426_02L<Cent>
+                FinalPayment = 426_04L<Cent>
+                PaymentTotal = 2556_14L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 1256_14L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1266.6m)
                 CostToBorrowingRatio = Percent 96.63m
             }
@@ -1170,17 +1170,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1300 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 130000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly063.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 153<OffsetDay>
-                LevelPayment = 48060L<Cent>
-                FinalPayment = 48058L<Cent>
-                PaymentTotal = 240298L<Cent>
-                PrincipalTotal = 130000L<Cent>
-                InterestTotal = 110298L<Cent>
+                LevelPayment = 480_60L<Cent>
+                FinalPayment = 480_58L<Cent>
+                PaymentTotal = 2402_98L<Cent>
+                PrincipalTotal = 1300_00L<Cent>
+                InterestTotal = 1102_98L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1249.8m)
                 CostToBorrowingRatio = Percent 84.84m
             }
@@ -1189,17 +1189,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 4<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly008.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 156<OffsetDay>
-                LevelPayment = 41584L<Cent>
-                FinalPayment = 41586L<Cent>
-                PaymentTotal = 249506L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 99506L<Cent>
+                LevelPayment = 415_84L<Cent>
+                FinalPayment = 415_86L<Cent>
+                PaymentTotal = 2495_06L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 995_06L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1277.7m)
                 CostToBorrowingRatio = Percent 66.34m
             }
@@ -1208,17 +1208,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 8<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly016.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 160<OffsetDay>
-                LevelPayment = 42871L<Cent>
-                FinalPayment = 42865L<Cent>
-                PaymentTotal = 257220L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 107220L<Cent>
+                LevelPayment = 428_71L<Cent>
+                FinalPayment = 428_65L<Cent>
+                PaymentTotal = 2572_20L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1072_20L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1290.9m)
                 CostToBorrowingRatio = Percent 71.48m
             }
@@ -1227,17 +1227,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 12<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly024.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 164<OffsetDay>
-                LevelPayment = 44157L<Cent>
-                FinalPayment = 44157L<Cent>
-                PaymentTotal = 264942L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 114942L<Cent>
+                LevelPayment = 441_57L<Cent>
+                FinalPayment = 441_57L<Cent>
+                PaymentTotal = 2649_42L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1149_42L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1296.2m)
                 CostToBorrowingRatio = Percent 76.63m
             }
@@ -1246,17 +1246,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 16<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly032.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 168<OffsetDay>
-                LevelPayment = 45443L<Cent>
-                FinalPayment = 45445L<Cent>
-                PaymentTotal = 272660L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 122660L<Cent>
+                LevelPayment = 454_43L<Cent>
+                FinalPayment = 454_45L<Cent>
+                PaymentTotal = 2726_60L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1226_60L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1295m)
                 CostToBorrowingRatio = Percent 81.77m
             }
@@ -1265,17 +1265,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 20 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 20<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 1500_00L<Cent> 20<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly040.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 172<OffsetDay>
-                LevelPayment = 46729L<Cent>
-                FinalPayment = 46733L<Cent>
-                PaymentTotal = 280378L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 130378L<Cent>
+                LevelPayment = 467_29L<Cent>
+                FinalPayment = 467_33L<Cent>
+                PaymentTotal = 2803_78L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1303_78L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1288.6m)
                 CostToBorrowingRatio = Percent 86.92m
             }
@@ -1284,17 +1284,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 24 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 24<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 24<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly048.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 176<OffsetDay>
-                LevelPayment = 47874L<Cent>
-                FinalPayment = 47876L<Cent>
-                PaymentTotal = 287246L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 137246L<Cent>
+                LevelPayment = 478_74L<Cent>
+                FinalPayment = 478_76L<Cent>
+                PaymentTotal = 2872_46L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1372_46L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1280.4m)
                 CostToBorrowingRatio = Percent 91.5m
             }
@@ -1303,17 +1303,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 28 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 28<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly056.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 180<OffsetDay>
-                LevelPayment = 49157L<Cent>
-                FinalPayment = 49152L<Cent>
-                PaymentTotal = 294937L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 144937L<Cent>
+                LevelPayment = 491_57L<Cent>
+                FinalPayment = 491_52L<Cent>
+                PaymentTotal = 2949_37L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1449_37L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1266.6m)
                 CostToBorrowingRatio = Percent 96.62m
             }
@@ -1322,17 +1322,17 @@ module ScheduledPaymentTests =
 
         [<Fact>]
         let ``£1500 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 150000L<Cent> 32<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
             actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/ScheduledPaymentTest.Monthly064.md")
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
                 FinalPaymentDay = 153<OffsetDay>
-                LevelPayment = 55453L<Cent>
-                FinalPayment = 55457L<Cent>
-                PaymentTotal = 277269L<Cent>
-                PrincipalTotal = 150000L<Cent>
-                InterestTotal = 127269L<Cent>
+                LevelPayment = 554_53L<Cent>
+                FinalPayment = 554_57L<Cent>
+                PaymentTotal = 2772_69L<Cent>
+                PrincipalTotal = 1500_00L<Cent>
+                InterestTotal = 1272_69L<Cent>
                 Apr = fst actual.Value.Apr, ValueSome(Percent 1249.8m)
                 CostToBorrowingRatio = Percent 84.85m
             }

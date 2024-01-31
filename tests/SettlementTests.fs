@@ -18,13 +18,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 9, 28)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -44,7 +44,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (2500L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
             )
 
         let actual =
@@ -54,23 +54,23 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (196970L<Cent>, {
+        let expected = ValueSome (1969_70L<Cent>, {
             OffsetDate = (Date(2024, 10, 1).AddDays -3)
             OffsetDay = 57<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 32315L<Cent>
-            ActualPayments = [| 196970L<Cent> |]
-            NetEffect = 196970L<Cent>
+            ScheduledPayment = 323_15L<Cent>
+            ActualPayments = [| 1969_70L<Cent> |]
+            NetEffect = 1969_70L<Cent>
             PaymentStatus = ValueSome Overpayment
             BalanceStatus = Settlement
-            CumulativeInterest = 5359L<Cent>
-            NewInterest = 371L<Cent>
+            CumulativeInterest = 53_59L<Cent>
+            NewInterest = 3_71L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 117580L<Cent>
-            FeesPortion = 79019L<Cent>
-            InterestPortion = 371L<Cent>
+            PrincipalPortion = 1175_80L<Cent>
+            FeesPortion = 790_19L<Cent>
+            InterestPortion = 3_71L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 143753L<Cent>
+            FeesRefund = 1437_53L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
@@ -86,13 +86,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -112,7 +112,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (2500L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
             )
 
         let actual =
@@ -122,23 +122,23 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (202648L<Cent>, {
+        let expected = ValueSome (2026_48L<Cent>, {
             OffsetDate = Date(2024, 10, 1)
             OffsetDay = 60<OffsetDay>
             Advances = [||]
             ScheduledPayment = 0L<Cent>
-            ActualPayments = [| 202648L<Cent> |]
-            NetEffect = 202648L<Cent>
+            ActualPayments = [| 2026_48L<Cent> |]
+            NetEffect = 2026_48L<Cent>
             PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settlement
-            CumulativeInterest = 5637L<Cent>
-            NewInterest = 278L<Cent>
+            CumulativeInterest = 56_37L<Cent>
+            NewInterest = 2_78L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 117580L<Cent>
-            FeesPortion = 83419L<Cent>
-            InterestPortion = 649L<Cent>
-            ChargesPortion = 1000L<Cent>
-            FeesRefund = 139353L<Cent>
+            PrincipalPortion = 1175_80L<Cent>
+            FeesPortion = 834_19L<Cent>
+            InterestPortion = 6_49L<Cent>
+            ChargesPortion = 10_00L<Cent>
+            FeesRefund = 1393_53L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
@@ -154,13 +154,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -180,7 +180,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (2500L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
             )
 
         let actual =
@@ -190,23 +190,23 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (200148L<Cent>, {
+        let expected = ValueSome (2001_48L<Cent>, {
             OffsetDate = Date(2024, 10, 1)
             OffsetDay = 60<OffsetDay>
             Advances = [||]
             ScheduledPayment = 0L<Cent>
-            ActualPayments = [| 2500L<Cent>; 200148L<Cent> |]
-            NetEffect = 202648L<Cent>
+            ActualPayments = [| 25_00L<Cent>; 2001_48L<Cent> |]
+            NetEffect = 2026_48L<Cent>
             PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settlement
-            CumulativeInterest = 5637L<Cent>
-            NewInterest = 278L<Cent>
+            CumulativeInterest = 56_37L<Cent>
+            NewInterest = 2_78L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 117580L<Cent>
-            FeesPortion = 83419L<Cent>
-            InterestPortion = 649L<Cent>
-            ChargesPortion = 1000L<Cent>
-            FeesRefund = 139353L<Cent>
+            PrincipalPortion = 1175_80L<Cent>
+            FeesPortion = 834_19L<Cent>
+            InterestPortion = 6_49L<Cent>
+            ChargesPortion = 10_00L<Cent>
+            FeesRefund = 1393_53L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
@@ -222,13 +222,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
             PaymentCount = 5
             FeesAndCharges = {
                 Fees = [||]
                 FeesSettlement = Fees.Settlement.ProRataRefund
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -254,19 +254,19 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (120000L<Cent>, {
+        let expected = ValueSome (1200_00L<Cent>, {
             OffsetDate = Date(2024, 10, 1)
             OffsetDay = 3<OffsetDay>
             Advances = [||]
             ScheduledPayment = 0L<Cent>
-            ActualPayments = [| 120000L<Cent> |]
-            NetEffect = 120000L<Cent>
+            ActualPayments = [| 1200_00L<Cent> |]
+            NetEffect = 1200_00L<Cent>
             PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settlement
             CumulativeInterest = 0L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 120000L<Cent>
+            PrincipalPortion = 1200_00L<Cent>
             FeesPortion = 0L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
@@ -286,13 +286,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
             PaymentCount = 5
             FeesAndCharges = {
                 Fees = [||]
                 FeesSettlement = Fees.Settlement.ProRataRefund
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -318,21 +318,21 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (123840L<Cent>, {
+        let expected = ValueSome (1238_40L<Cent>, {
             OffsetDate = Date(2024, 10, 1)
             OffsetDay = 4<OffsetDay>
             Advances = [||]
             ScheduledPayment = 0L<Cent>
-            ActualPayments = [| 123840L<Cent> |]
-            NetEffect = 123840L<Cent>
+            ActualPayments = [| 1238_40L<Cent> |]
+            NetEffect = 1238_40L<Cent>
             PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settlement
-            CumulativeInterest = 3840L<Cent>
-            NewInterest = 3840L<Cent>
+            CumulativeInterest = 38_40L<Cent>
+            NewInterest = 38_40L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 120000L<Cent>
+            PrincipalPortion = 1200_00L<Cent>
             FeesPortion = 0L<Cent>
-            InterestPortion = 3840L<Cent>
+            InterestPortion = 38_40L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
@@ -350,13 +350,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -376,7 +376,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (2500L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
             )
 
         let actual =
@@ -386,22 +386,22 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (342001L<Cent>, {
+        let expected = ValueSome (3420_01L<Cent>, {
             OffsetDate = Date(2024, 10, 1)
             OffsetDay = 60<OffsetDay>
             Advances = [||]
             ScheduledPayment = 0L<Cent>
-            ActualPayments = [| 342001L<Cent> |]
-            NetEffect = 342001L<Cent>
+            ActualPayments = [| 3420_01L<Cent> |]
+            NetEffect = 3420_01L<Cent>
             PaymentStatus = ValueSome ExtraPayment
             BalanceStatus = Settlement
-            CumulativeInterest = 5637L<Cent>
-            NewInterest = 278L<Cent>
+            CumulativeInterest = 56_37L<Cent>
+            NewInterest = 2_78L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 117580L<Cent>
-            FeesPortion = 222772L<Cent>
-            InterestPortion = 649L<Cent>
-            ChargesPortion = 1000L<Cent>
+            PrincipalPortion = 1175_80L<Cent>
+            FeesPortion = 2227_72L<Cent>
+            InterestPortion = 6_49L<Cent>
+            ChargesPortion = 10_00L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
@@ -418,13 +418,13 @@ module SettlementTests =
         let sp = {
             StartDate = startDate
             AsOfDate = Date(2024, 10, 1)
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -444,7 +444,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (32315L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (323_15L<Cent>, [||]) }
             )
 
         let actual =
@@ -454,25 +454,25 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (32315L<Cent>, {
+        let expected = ValueSome (323_15L<Cent>, {
             OffsetDate = startDate.AddDays 155
             OffsetDay = 155<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 32310L<Cent>
+            ScheduledPayment = 323_10L<Cent>
             ActualPayments = [||]
-            NetEffect = 32310L<Cent>
+            NetEffect = 323_10L<Cent>
             PaymentStatus = ValueSome NotYetDue
             BalanceStatus = OpenBalance
-            CumulativeInterest = 10003L<Cent>
-            NewInterest = 383L<Cent>
+            CumulativeInterest = 100_03L<Cent>
+            NewInterest = 3_83L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 11029L<Cent>
-            FeesPortion = 20898L<Cent>
-            InterestPortion = 383L<Cent>
+            PrincipalPortion = 110_29L<Cent>
+            FeesPortion = 208_98L<Cent>
+            InterestPortion = 3_83L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
-            PrincipalBalance = 23682L<Cent>
-            FeesBalance = 44855L<Cent>
+            PrincipalBalance = 236_82L<Cent>
+            FeesBalance = 448_55L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
         })
@@ -486,13 +486,13 @@ module SettlementTests =
         let sp = {
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
-            Principal = 120000L<Cent>
+            Principal = 1200_00L<Cent>
             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
             PaymentCount = 11
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 750L<Cent>); Charge.LatePayment (Amount.Simple 1000L<Cent>) |]
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -512,7 +512,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (32315L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (323_15L<Cent>, [||]) }
             )
 
         let actual =
@@ -522,21 +522,21 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (68808L<Cent>, {
+        let expected = ValueSome (688_08L<Cent>, {
             OffsetDate = startDate.AddDays 155
             OffsetDay = 155<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 30250L<Cent>
+            ScheduledPayment = 302_50L<Cent>
             ActualPayments = [||]
-            NetEffect = 30250L<Cent>
+            NetEffect = 302_50L<Cent>
             PaymentStatus = ValueSome NotYetDue
             BalanceStatus = Settlement
-            CumulativeInterest = 8214L<Cent>
-            NewInterest = 115L<Cent>
+            CumulativeInterest = 82_14L<Cent>
+            NewInterest = 1_15L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 10416L<Cent>
-            FeesPortion = 19719L<Cent>
-            InterestPortion = 115L<Cent>
+            PrincipalPortion = 104_16L<Cent>
+            FeesPortion = 197_19L<Cent>
+            InterestPortion = 1_15L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
