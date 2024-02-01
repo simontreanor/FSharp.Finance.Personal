@@ -7,6 +7,9 @@
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <Compile Include="AssemblyInfo.fs" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="ValueOption.fs" />
     <Compile Include="Calculation.fs" />
@@ -18,7 +21,7 @@
     <Compile Include="Interest.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Apr.fs" />
-    <Compile Include="Payments.fs" />
+    <Compile Include="CustomerPayments.fs" />
     <Compile Include="PaymentSchedule.fs" />
     <Compile Include="AppliedPayment.fs" />
     <Compile Include="AmortisationSchedule.fs" />
