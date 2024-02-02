@@ -117,7 +117,7 @@ module ActualPaymentTestsExtra =
                 return
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
@@ -135,7 +135,7 @@ module ActualPaymentTestsExtra =
             let principalPortionTotal = aa |> Array.sumBy _.PrincipalPortion
             if finalPayment > levelPayment
                 || (principalBalance, feesBalance, interestBalance, chargesBalance) <> (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>)
-                || balanceStatus <> BalanceStatus.Settlement
+                || balanceStatus <> BalanceStatus.ClosedBalance
                 || cumulativeInterest <> interestPortionTotal
                 || principalPortionTotal <> advanceTotal
                 then
@@ -328,7 +328,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule
@@ -340,9 +340,10 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = 407_64L<Cent>
             ActualPayments = [| 407_64L<Cent> |]
+            GeneratedPayment = 0L<Cent>
             NetEffect = 407_64L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settlement
+            BalanceStatus = BalanceStatus.ClosedBalance
             CumulativeInterest = 38_32L<Cent>
             NewInterest = 3_30L<Cent>
             NewCharges = [||]
@@ -395,7 +396,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule
@@ -407,9 +408,10 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = 142_40L<Cent>
             ActualPayments = [||]
+            GeneratedPayment = 0L<Cent>
             NetEffect = 142_40L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settlement
+            BalanceStatus = BalanceStatus.ClosedBalance
             CumulativeInterest = 43_53L<Cent>
             NewInterest = 1_28L<Cent>
             NewCharges = [||]
@@ -464,7 +466,7 @@ module ActualPaymentTestsExtra =
                 |]
                 let amortisationSchedule =
                     scheduledPayments
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 // calculate revised schedule including new payment plan
                 let amount = 20_00L<Cent>
@@ -475,7 +477,7 @@ module ActualPaymentTestsExtra =
                 let payments = Array.concat [| actualPayments; extraScheduledPayments |]
                 let amortisationSchedule' =
                     scheduledPayments
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) payments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone payments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
                 return amortisationSchedule'
@@ -487,9 +489,10 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = 9_49L<Cent>
             ActualPayments = [||]
+            GeneratedPayment = 0L<Cent>
             NetEffect = 9_49L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settlement
+            BalanceStatus = BalanceStatus.ClosedBalance
             CumulativeInterest = 616_09L<Cent>
             NewInterest = 3L<Cent>
             NewCharges = [||]
@@ -540,7 +543,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule
@@ -552,9 +555,10 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = 137_36L<Cent>
             ActualPayments = [| 137_36L<Cent> |]
+            GeneratedPayment = 0L<Cent>
             NetEffect = 137_36L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settlement
+            BalanceStatus = BalanceStatus.ClosedBalance
             CumulativeInterest = 500_00L<Cent>
             NewInterest = 0L<Cent>
             NewCharges = [||]
@@ -605,7 +609,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule
@@ -617,9 +621,10 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = 51_53L<Cent>
             ActualPayments = [| 51_53L<Cent> |]
+            GeneratedPayment = 0L<Cent>
             NetEffect = 51_53L<Cent>
             PaymentStatus = ValueSome PaymentMade
-            BalanceStatus = BalanceStatus.Settlement
+            BalanceStatus = BalanceStatus.ClosedBalance
             CumulativeInterest = 161_19L<Cent>
             NewInterest = 9_43L<Cent>
             NewCharges = [||]
@@ -672,7 +677,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
                     |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay true
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
@@ -684,9 +689,10 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = 142_40L<Cent>
             ActualPayments = [||]
+            GeneratedPayment = 0L<Cent>
             NetEffect = 142_40L<Cent>
             PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.Settlement
+            BalanceStatus = BalanceStatus.ClosedBalance
             CumulativeInterest = 43_53L<Cent>
             NewInterest = 1_28L<Cent>
             NewCharges = [||]
