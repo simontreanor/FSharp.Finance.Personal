@@ -34,14 +34,14 @@ module Settlement =
             let! currentAmortisationSchedule = Amortisation.generate sp' ValueNone false applyNegativeInterest ValueNone actualPayments
             let generatedPayment = {
                 PaymentDay = int (sp.AsOfDate - sp'.StartDate).Days * 1<OffsetDay>
-                PaymentDetails = GeneratedPayment (SettlementPayment (sp'.Principal * 10L))
+                PaymentDetails = GeneratedPayment (sp'.Principal * 10L, SettlementPayment)
             }
             let! amortisationSchedule = Amortisation.generate sp' (ValueSome sp.AsOfDate) false applyNegativeInterest (ValueSome generatedPayment) actualPayments
             let finalItem = amortisationSchedule.ScheduleItems |> Array.filter(fun a -> a.OffsetDate <= sp.AsOfDate) |> Array.last
             let actualPaymentsTotal = finalItem.ActualPayments |> Array.sum
             let paymentAmount = finalItem.NetEffect + finalItem.PrincipalBalance - actualPaymentsTotal
             let settlementPayment = {
-                generatedPayment with PaymentDetails = paymentAmount |> SettlementPayment |> GeneratedPayment
+                generatedPayment with PaymentDetails = GeneratedPayment(paymentAmount, SettlementPayment)
             }
             let! revisedAmortisationSchedule = Amortisation.generate sp' (ValueSome sp.AsOfDate) false applyNegativeInterest (ValueSome settlementPayment) actualPayments
             return { QuoteType = Settlement; PaymentAmount = paymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
@@ -60,7 +60,7 @@ module Settlement =
             let paymentAmount = item.ScheduledPayment
             let generatedPayment = {
                 PaymentDay = item.OffsetDay
-                PaymentDetails = paymentAmount |> NextScheduledPayment |> GeneratedPayment
+                PaymentDetails = GeneratedPayment(paymentAmount, NextScheduledPayment)
             }
             let! revisedAmortisationSchedule = Amortisation.generate sp' ValueNone false false (ValueSome generatedPayment) actualPayments
             return { QuoteType = NextScheduled; PaymentAmount = paymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }
@@ -83,7 +83,7 @@ module Settlement =
             let paymentAmount = missedPayments + interestAndCharges
             let generatedPayment = {
                 PaymentDay = int (sp.AsOfDate - sp'.StartDate).Days * 1<OffsetDay>
-                PaymentDetails = paymentAmount |> AllOverduePayment |> GeneratedPayment
+                PaymentDetails = GeneratedPayment(paymentAmount, AllOverduePayment)
             }
             let! revisedAmortisationSchedule = Amortisation.generate sp' ValueNone false false (ValueSome generatedPayment) actualPayments
             return { QuoteType = AllOverdue; PaymentAmount = paymentAmount; CurrentSchedule = currentAmortisationSchedule; RevisedSchedule = revisedAmortisationSchedule }

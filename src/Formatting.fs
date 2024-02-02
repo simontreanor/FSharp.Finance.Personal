@@ -29,7 +29,7 @@ module Formatting =
     let internal regexInt64 = Regex(@"(\d+)L")
     let internal regexInt32 = Regex(@"(\d+)\b")
     let internal regexNone = Regex(@"ValueNone")
-    let internal regexSome = Regex(@"ValueSome (\w+)")
+    let internal regexSome = Regex(@"ValueSome \(?([^)]+)\)?")
 
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
     let formatHtmlTableCell item (propertyInfo: PropertyInfo) =
@@ -38,12 +38,13 @@ module Formatting =
         |> sprintf "%A"
         |> fun s -> if s |> regexArray.IsMatch then regexArray.Replace(s, "$1") else s
         |> fun s -> if s |> regexSimple.IsMatch then regexSimple.Replace(s, "$1") else s
+        |> fun s -> if s |> regexSome.IsMatch then regexSome.Replace(s, "$1") else s
+        |> fun s -> s.Replace(" ", "&nbsp;")
         |> fun s ->
             if s |> regexDate.IsMatch then $"""<td style="white-space: nowrap;">{s}</td>"""
             elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> Cent.toDecimal |> (_.ToString("N2"))) |> fun s -> $"""<td style="text-align: right;">{s}</td>"""
             elif s |> regexInt32.IsMatch then $"""<td style="text-align: right;">{s}</td>"""
             elif s |> regexNone.IsMatch then """<td>&nbsp;</td>"""
-            elif s |> regexSome.IsMatch then $"""<td>{regexSome.Replace(s, "$1")}</td>"""
             else $"<td>{s}</td>"
 
     /// writes table rows from an array
