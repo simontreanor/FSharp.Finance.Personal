@@ -5,6 +5,27 @@ open System
 [<AutoOpen>]
 module Calculation =
 
+    [<RequireQualifiedAccess; Struct>]
+    type IntendedPurpose =
+        /// intended to quote a calculated amount, e.g. for settlement purposes
+        | Quote
+        /// intended just for information, e.g. to view the current status of a loan
+        | Statement
+
+    [<Struct>]
+    type FinalAprOption =
+        /// calculate the final APR (can be compute-intensive)
+        | CalculateFinalApr
+        /// do not calculate the final APR (not needed)
+        | DoNotCalculateFinalApr
+
+    [<Struct>]
+    type NegativeInterestOption =
+        /// apply negative interest (e.g. statutory interest on outstanding refunds)
+        | ApplyNegativeInterest
+        /// do not apply negative interest (e.g. if the customer has volutarily overpaid)
+        | DoNotApplyNegativeInterest
+
     /// holds the result of a devision, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {

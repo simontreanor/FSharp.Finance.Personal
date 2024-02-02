@@ -24,8 +24,8 @@ module AppliedPayment =
         PaymentStatus: CustomerPaymentStatus voption
     }
 
-    /// applies actual payments, adds a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) (generatedPayment: CustomerPayment voption) actualPayments scheduledPayments =
+    /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
+    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) (generatedPayment: CustomerPayment voption) actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else
         let nonZero = Array.filter(fun cp -> CustomerPaymentDetails.total cp.PaymentDetails <> 0L<Cent>)
         let generatedPayments = match generatedPayment with ValueSome { PaymentDetails = cpd } when CustomerPaymentDetails.total cpd <> 0L<Cent> -> [| generatedPayment.Value |] | _ -> [||]
@@ -49,7 +49,8 @@ module AppliedPayment =
                     | 0L<Cent>, 0L<Cent> -> 0L<Cent>, ValueNone
                     | 0L<Cent>, ap when ap < 0L<Cent> -> ap, ValueSome Refunded
                     | 0L<Cent>, ap -> ap, ValueSome ExtraPayment
-                    | sp, ap when ap < sp && (offsetDay <= asOfDay) && (int offsetDay + int latePaymentGracePeriod >= int asOfDay) -> sp, ValueSome WithinGracePeriod
+                    | sp, ap when ap < sp && (offsetDay <= asOfDay) && (int offsetDay + int latePaymentGracePeriod >= int asOfDay) ->
+                        (match intendedPurpose with IntendedPurpose.Quote -> 0L<Cent> | IntendedPurpose.Statement -> sp), ValueSome PaymentDue
                     | sp, _ when offsetDay > asOfDay -> sp, ValueSome NotYetDue
                     | _, 0L<Cent> -> 0L<Cent>, ValueSome MissedPayment
                     | sp, ap when ap < sp -> ap, ValueSome Underpayment

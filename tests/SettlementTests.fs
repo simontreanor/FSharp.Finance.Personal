@@ -49,7 +49,7 @@ module SettlementTests =
 
         let actual =
             voption{
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -118,7 +118,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -187,7 +187,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -252,7 +252,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -317,7 +317,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -386,7 +386,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -589,7 +589,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -662,7 +662,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -732,7 +732,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -797,7 +797,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement012.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -829,7 +829,7 @@ module SettlementTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13a) Settled loan`` () =
+    let ``13a) Loan is settled the day before the last scheduled payment is due`` () =
         let sp =
             {
                 AsOfDate = Date(2023, 3, 14)
@@ -861,12 +861,11 @@ module SettlementTests =
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
             { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            // { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
         |]
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013a.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
@@ -897,7 +896,7 @@ module SettlementTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13b) Settled loan`` () =
+    let ``13b) Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)`` () =
         let sp =
             {
                 AsOfDate = Date(2023, 3, 15)
@@ -929,32 +928,31 @@ module SettlementTests =
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
             { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            // { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
         |]
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013b.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (-72_73L<Cent>, {
-            OffsetDate = Date(2024, 1, 31)
-            OffsetDay = 456<OffsetDay>
+        let expected = ValueSome (432_07L<Cent>, {
+            OffsetDate = Date(2023, 3, 15)
+            OffsetDay = 134<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 0L<Cent>
-            ActualPayments = [| -72_73L<Cent> |]
-            GeneratedPayment = 0L<Cent>
-            NetEffect = -72_73L<Cent>
-            PaymentStatus = ValueSome Refunded
+            ScheduledPayment = 491_53L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = 432_07L<Cent>
+            NetEffect = 432_07L<Cent>
+            PaymentStatus = ValueSome (Generated SettlementPayment)
             BalanceStatus = ClosedBalance
-            CumulativeInterest = 927_27L<Cent>
-            NewInterest = -4_80L<Cent>
+            CumulativeInterest = 932_07L<Cent>
+            NewInterest = 79_07L<Cent>
             NewCharges = [||]
-            PrincipalPortion = -67_93L<Cent>
+            PrincipalPortion = 353_00L<Cent>
             FeesPortion = 0L<Cent>
-            InterestPortion = -4_80L<Cent>
+            InterestPortion = 79_07L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
@@ -965,7 +963,7 @@ module SettlementTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13c) Settled loan`` () =
+    let ``13c) Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee`` () =
         let sp =
             {
                 AsOfDate = Date(2023, 3, 16)
@@ -997,32 +995,31 @@ module SettlementTests =
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
             { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            // { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
         |]
 
         let actual =
             voption {
-                let! settlement = Settlement.getSettlement sp true actualPayments
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013c.md"
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (-72_73L<Cent>, {
-            OffsetDate = Date(2024, 1, 31)
-            OffsetDay = 456<OffsetDay>
+        let expected = ValueSome (434_89L<Cent>, {
+            OffsetDate = Date(2023, 3, 16)
+            OffsetDay = 135<OffsetDay>
             Advances = [||]
             ScheduledPayment = 0L<Cent>
-            ActualPayments = [| -72_73L<Cent> |]
-            GeneratedPayment = 0L<Cent>
-            NetEffect = -72_73L<Cent>
-            PaymentStatus = ValueSome Refunded
+            ActualPayments = [||]
+            GeneratedPayment = 434_89L<Cent>
+            NetEffect = 434_89L<Cent>
+            PaymentStatus = ValueSome (Generated SettlementPayment)
             BalanceStatus = ClosedBalance
-            CumulativeInterest = 927_27L<Cent>
-            NewInterest = -4_80L<Cent>
+            CumulativeInterest = 934_89L<Cent>
+            NewInterest = 2_82L<Cent>
             NewCharges = [||]
-            PrincipalPortion = -67_93L<Cent>
+            PrincipalPortion = 353_00L<Cent>
             FeesPortion = 0L<Cent>
-            InterestPortion = -4_80L<Cent>
+            InterestPortion = 81_89L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
@@ -1031,3 +1028,275 @@ module SettlementTests =
             ChargesBalance = 0L<Cent>
         })
         actual |> should equal expected
+
+    [<Fact>]
+    let ``13d) Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee`` () =
+        let sp =
+            {
+                AsOfDate = Date(2023, 3, 19)
+                StartDate = Date(2022, 11, 1)
+                Principal = 1500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013d.md"
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+            }
+
+        let expected = ValueSome (453_36L<Cent>, {
+            OffsetDate = Date(2023, 3, 19)
+            OffsetDay = 138<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = 453_36L<Cent>
+            NetEffect = 453_36L<Cent>
+            PaymentStatus = ValueSome (Generated SettlementPayment)
+            BalanceStatus = ClosedBalance
+            CumulativeInterest = 943_36L<Cent>
+            NewInterest = 11_29L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 353_00L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 90_36L<Cent>
+            ChargesPortion = 10_00L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``14a) Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)`` () =
+        let sp =
+            {
+                AsOfDate = Date(2023, 3, 14)
+                StartDate = Date(2022, 11, 1)
+                Principal = 1500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014a.md"
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+            }
+
+        let expected = ValueSome (429_24L<Cent>, {
+            OffsetDate = Date(2023, 3, 14)
+            OffsetDay = 133<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = 429_24L<Cent>
+            NetEffect = 429_24L<Cent>
+            PaymentStatus = ValueSome (Generated SettlementPayment)
+            BalanceStatus = ClosedBalance
+            CumulativeInterest = 929_24L<Cent>
+            NewInterest = 76_24L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 353_00L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 76_24L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``14b) Loan is settled the same day as an overpayment`` () =
+        let sp =
+            {
+                AsOfDate = Date(2023, 3, 15)
+                StartDate = Date(2022, 11, 1)
+                Principal = 1500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014b.md"
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+            }
+
+        let expected = ValueSome (-67_93L<Cent>, {
+            OffsetDate = Date(2023, 3, 15)
+            OffsetDay = 134<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = 491_53L<Cent>
+            ActualPayments = [| 500_00L<Cent> |]
+            GeneratedPayment = -67_93L<Cent>
+            NetEffect = 432_07L<Cent>
+            PaymentStatus = ValueSome (Generated SettlementPayment)
+            BalanceStatus = ClosedBalance
+            CumulativeInterest = 932_07L<Cent>
+            NewInterest = 79_07L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 353_00L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 79_07L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``14c) Loan is settled the day after an overpayment`` () =
+        let sp =
+            {
+                AsOfDate = Date(2023, 3, 16)
+                StartDate = Date(2022, 11, 1)
+                Principal = 1500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014c.md"
+                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+            }
+
+        let expected = ValueSome (-67_95L<Cent>, {
+            OffsetDate = Date(2023, 3, 16)
+            OffsetDay = 135<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = 0L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = -67_95L<Cent>
+            NetEffect = -67_95L<Cent>
+            PaymentStatus = ValueSome (Generated SettlementPayment)
+            BalanceStatus = ClosedBalance
+            CumulativeInterest = 932_05L<Cent>
+            NewInterest = -2L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = -67_93L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = -2L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+        actual |> should equal expected
+
