@@ -2,6 +2,12 @@ namespace FSharp.Finance.Personal
 
 module CustomerPayments =
 
+    [<Struct>]
+    type GeneratedPayment = // to-do: add other options here
+        | SettlementPayment of SettlementPayment:int64<Cent>
+        | NextScheduledPayment of NextScheduledPayment:int64<Cent>
+        | AllOverduePayment of AllOverduePayment:int64<Cent>
+
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
     [<Struct>]
     type CustomerPaymentDetails =
@@ -9,6 +15,13 @@ module CustomerPayments =
         | ScheduledPayment of ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day, with any charges incurred
         | ActualPayment of ActualPayment: int64<Cent> * Charges: Charge array
+        /// the amounts of any generated payments made on the current day and their type
+        | GeneratedPayment of GeneratedPayment
+        with
+            static member total = function
+                | ScheduledPayment sp -> sp
+                | ActualPayment (ap, _) -> ap
+                | GeneratedPayment gp -> match gp with SettlementPayment p | NextScheduledPayment p | AllOverduePayment p -> p
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     [<Struct>]
