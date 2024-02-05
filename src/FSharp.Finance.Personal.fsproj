@@ -62,6 +62,6 @@
     <FsDocsLicenseLink>https://github.com/simontreanor/FSharp.Finance.Personal/blob/main/LICENSE</FsDocsLicenseLink>
     <FsDocsReleaseNotesLink>https://github.com/simontreanor/FSharp.Finance.Personal/blob/main/README.md</FsDocsReleaseNotesLink>
     <PackageProjectUrl>https://simontreanor.github.io/FSharp.Finance.Personal</PackageProjectUrl>
-    <FsDocsLogoLink>https://raw.githubusercontent.com/simontreanor/FSharp.Finance.Personal/main/img/logo.png</FsDocsLogoLink>
+    <FsDocsLogoSource>https://raw.githubusercontent.com/simontreanor/FSharp.Finance.Personal/main/img/logo.png</FsDocsLogoSource>
   </PropertyGroup>
 </Project>
