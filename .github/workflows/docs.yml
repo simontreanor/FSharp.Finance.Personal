@@ -15,9 +15,9 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
       - name: Build code
-        run: dotnet build -c Release
+        run: dotnet build
       - name: Generate the documentation'
-        run: dotnet fsdocs build --properties Configuration=Release
+        run: dotnet fsdocs build
       - name: Upload documentation
         uses: actions/upload-pages-artifact@v3
         with:
