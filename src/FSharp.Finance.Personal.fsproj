@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <OutputType>library</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <Optimize>true</Optimize>
@@ -61,6 +62,6 @@
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
     <FsDocsLicenseLink>https://github.com/simontreanor/FSharp.Finance.Personal/blob/master/License.md</FsDocsLicenseLink>
     <FsDocsReleaseNotesLink>https://github.com/simontreanor/FSharp.Finance.Personal/blob/master/RELEASE_NOTES.md</FsDocsReleaseNotesLink>
-    <PackageProjectUrl>https://simontreanor.github.io/FSharp.Finance.Personal</PackageProjectUrl>
+    <PackageProjectUrl>https://simontreanor.github.io</PackageProjectUrl>
   </PropertyGroup>
 </Project>
