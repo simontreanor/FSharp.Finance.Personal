@@ -58,9 +58,9 @@
     <PackageReference Update="FSharp.Core" Version="8.0.100" />
   </ItemGroup>
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/fsprojects/FSharp.Finance.Personal</RepositoryUrl>
-    <FsDocsLicenseLink>https://github.com/fsprojects/FSharp.Finance.Personal/blob/master/License.md</FsDocsLicenseLink>
-    <FsDocsReleaseNotesLink>https://github.com/fsprojects/FSharp.Finance.Personal/blob/master/RELEASE_NOTES.md</FsDocsReleaseNotesLink>
-    <PackageProjectUrl>https://fsprojects.github.io/FSharp.Finance.Personal</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
+    <FsDocsLicenseLink>https://github.com/simontreanor/FSharp.Finance.Personal/blob/master/License.md</FsDocsLicenseLink>
+    <FsDocsReleaseNotesLink>https://github.com/simontreanor/FSharp.Finance.Personal/blob/master/RELEASE_NOTES.md</FsDocsReleaseNotesLink>
+    <PackageProjectUrl>https://simontreanor.github.io/FSharp.Finance.Personal</PackageProjectUrl>
   </PropertyGroup>
 </Project>
