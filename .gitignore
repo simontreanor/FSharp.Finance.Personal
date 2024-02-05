@@ -10,3 +10,8 @@ obj/
 .vs/*
 
 io/out/*
+
+# FSharp.Formatting
+.fsdocs/
+output/
+tmp/
