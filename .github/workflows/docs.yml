@@ -1,16 +1,9 @@
 name: Docs
 
-# Trigger this Action when new code is pushed to the main branch
 on:
   push:
     branches:
       - main
-
-# We need some permissions to publish to Github Pages
-permissions:
-  contents: write
-  pages: write
-  id-token: write
 
 jobs:
   build:
@@ -30,10 +23,16 @@ jobs:
         with:
           path: ./output
   
-  # GitHub Actions recommends deploying in a separate job.
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
