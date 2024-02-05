@@ -22,7 +22,7 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
       - name: Build code
-        run: dotnet build -c Release YourSolution.sln
+        run: dotnet build -c Release
       - name: Generate the documentation'
         run: dotnet fsdocs build --properties Configuration=Release
       - name: Upload documentation
