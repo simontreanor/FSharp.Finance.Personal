@@ -16,5 +16,5 @@ module Percentages =
         let round (places: int) (Percent p) = roundTo places p |> Percent
         /// convert a percent value to a decimal
         let toDecimal (Percent p) = p / 100m
-        // multiply two percentages together
+        /// multiply two percentages together
         let multiply (Percent p1) (Percent p2) = p1 * p2 |> fromDecimal

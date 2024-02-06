@@ -272,5 +272,3 @@ module Amortisation =
                 |> calculate sp earlySettlementDate schedule.FinalPaymentDay negativeInterestOption
             return items |> calculateStats sp finalAprOption
         }
-
-// to-do: if final balance status is not settled and as-of date is in the future, create a new item on the as-of date to calculate any interest owing to the customer
