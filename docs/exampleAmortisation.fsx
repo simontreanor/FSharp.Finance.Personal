@@ -65,3 +65,15 @@ amortisationSchedule
 
 (*** include-it ***)
 
+(**
+It is possible to format the `Items` property as an HTML table:
+*)
+
+voption {
+    let! asch = amortisationSchedule
+    return
+        asch.ScheduleItems
+        |> Formatting.generateHtmlFromArray
+}
+
+(*** include-it ***)
