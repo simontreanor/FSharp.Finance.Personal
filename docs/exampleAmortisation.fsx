@@ -51,6 +51,7 @@ let scheduleParameters =
             FinalPaymentAdjustment = AdjustFinalPayment
         }
     }
+
 let actualPayments = [|
     { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
     { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
@@ -58,6 +59,7 @@ let actualPayments = [|
     { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
     { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (456_84L<Cent>, [||]) }
 |]
+
 let amortisationSchedule =
     actualPayments
     |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ValueNone DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
@@ -75,4 +77,4 @@ let html =
     |> ValueOption.defaultValue "[could not format]"
 html
 
-(*** include-it-raw ***)
+(*** include-it ***)
