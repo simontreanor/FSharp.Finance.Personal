@@ -2,14 +2,18 @@ namespace FSharp.Finance.Personal
 
 open System
 
+/// categorising (penalty) charges and (product) fees, their types and restrictions
 [<AutoOpen>]
 module FeesAndCharges =
 
     /// the type of restriction placed on a possible value
     [<Struct>]
     type Restriction =
+        /// prevent values below a certain limit
         | LowerLimit of LowerLimit:int64<Cent>
+        /// prevent values above a certain limit
         | UpperLimit of UpperLimit:int64<Cent>
+        /// constrain values to within a range
         | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
 
     [<RequireQualifiedAccess>]
@@ -44,8 +48,11 @@ module FeesAndCharges =
     /// the type and amount of any fees, such as facilitation fees or CSO/CAB fees, taking into account any constraints
     [<RequireQualifiedAccess; Struct>]
     type Fee =
+        /// a fee enabling the provision of a financial product
         | FacilitationFee of FacilitationFee:Amount
+        /// a fee charged by a Credit Access Business (CAB) or Credit Services Organisation (CSO) assisting access to third-party financial products
         | CabOrCsoFee of CabOrCsoFee:Amount
+        /// any other type of product fee
         | CustomFee of FeeType:string * FeeAmount:Amount
 
     /// NOTE: differences between fees and charges:
@@ -76,6 +83,7 @@ module FeesAndCharges =
         | LatePayment of LatePayment:Amount
         /// a charge incurred to cover banking costs when a payment attempt is rejected due to a lack of funds
         | InsufficientFunds of InsufficientFunds:Amount
+        /// any other type of penalty charge
         | CustomCharge of ChargeType:string * FeeAmount:Amount
 
     /// NOTE: differences between charges and fees:
@@ -91,11 +99,16 @@ module FeesAndCharges =
                 | Charge.CustomCharge (_, amount) -> amount |> Amount.total baseAmount
             )
 
+    /// options specifying the types of fees and charges, their amounts, and any restrictions on these
     [<Struct>]
     type FeesAndCharges = {
+        /// a list of product fees applicable to a product
         Fees: Fee array
+        /// how fees are treated when a product is repaid early
         FeesSettlement: Fees.Settlement
+        /// a list of penalty charges applicable to a product
         Charges: Charge array
+        /// the number of days' grace period after which late-payment charges apply
         LatePaymentGracePeriod: int<DurationDay>
     }
 

@@ -2,6 +2,7 @@ namespace FSharp.Finance.Personal
 
 open System
 
+/// methods for calculating interest and unambiguously expressing interest rates, as well as enforcing regulatory caps on interest chargeable
 module Interest =
 
     /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped bya daily amount
@@ -52,7 +53,9 @@ module Interest =
     /// the interest cap options
     [<RequireQualifiedAccess; Struct>]
     type Cap = {
+        /// a cap on the total amount of interest chargeable over the lifetime of a product
         Total: TotalCap voption
+        /// a cap on the daily amount of interest chargeable
         Daily: DailyCap voption
     }
 
@@ -74,17 +77,24 @@ module Interest =
     /// an interest holiday, i.e. a period when no interest is accrued
     [<RequireQualifiedAccess; Struct>]
     type Holiday = {
+        /// the first date of the holiday period
         Start: Date
+        /// the last date of the holiday period
         End: Date
     }
 
     /// interest options
     [<Struct>]
     type Options = {
+        /// the rate of interest
         Rate: Rate
+        /// any total or daily caps on interest
         Cap: Cap
+        /// any grace period at the start of a product, if a product is settled before which no interest is payable
         GracePeriod: int<DurationDay>
+        /// any date ranges during which no interest is applicable
         Holidays: Holiday array
+        /// the interest rate applicable for any period in which a refund is owing
         RateOnNegativeBalance: Rate voption
     }
 

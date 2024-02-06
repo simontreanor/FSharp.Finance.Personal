@@ -101,7 +101,7 @@ module Settlement =
             let paymentAmount = missedPayments + interestAndCharges
             let generatedPayment = {
                 PaymentDay = int (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
-                PaymentDetails = GeneratedPayment(paymentAmount, AllOverduePayment)
+                PaymentDetails = GeneratedPayment(paymentAmount, AllOverduePayments)
             }
             let! revisedAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Quote ValueNone DoNotCalculateFinalApr DoNotApplyNegativeInterest (ValueSome generatedPayment) actualPayments
             let finalRevisedItem = revisedAmortisationSchedule.ScheduleItems |> Array.last

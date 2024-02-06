@@ -52,7 +52,9 @@ module PaymentSchedule =
     /// how to handle the principal balance overpayment (due to rounding) on the final payment of a schedule
     [<Struct>]
     type FinalPaymentAdjustment =
+        /// adjust the final payment to account for the difference
         | AdjustFinalPayment
+        /// spread the difference over the level payments (not yet implemented)
         | SpreadOverLevelPayments
 
     /// technical calculation options
@@ -60,7 +62,9 @@ module PaymentSchedule =
     type Calculation = {
         /// which APR calculation method to use
         AprMethod: Apr.CalculationMethod
+        /// which rounding method to use
         RoundingOptions: RoundingOptions
+        /// how to adjust the final payment
         FinalPaymentAdjustment: FinalPaymentAdjustment
     }
 

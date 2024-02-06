@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal
 
+/// calculating the principal balance over time, taking into account the effects of charges, interest and fees
 module Amortisation =
 
     open CustomerPayments

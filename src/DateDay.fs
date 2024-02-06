@@ -2,6 +2,7 @@ namespace FSharp.Finance.Personal
 
 open System
 
+/// a .NET Framework polyfill equivalent to the DateOnly structure in .NET Core
 [<AutoOpen>]
 module DateDay =
 

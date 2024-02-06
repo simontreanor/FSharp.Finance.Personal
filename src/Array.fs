@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal
 
+/// extension to the array module of a solve function, allowing an unknown value to be calculated through iteration
 [<AutoOpen>]
 module Array =
 

@@ -1,12 +1,17 @@
 namespace FSharp.Finance.Personal
 
+/// categorising the types of incoming payments based on whether they are scheduled, actual or generated
 module CustomerPayments =
 
+    /// the type of the generated payment
     [<Struct>]
-    type GeneratedPaymentType = // to-do: add other options here
+    type GeneratedPaymentType =
+        /// a payment generated to settle a loan
         | SettlementPayment
+        /// a payment generated to pay the next scheduled payment without consideration of any fees or interest owing
         | NextScheduledPayment
-        | AllOverduePayment
+        /// a payment generated to pay all outstanding payments plus any fees or interest owing
+        | AllOverduePayments
 
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
     [<Struct>]

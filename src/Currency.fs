@@ -2,6 +2,7 @@ namespace FSharp.Finance.Personal
 
 open System
 
+/// a unit-of-measure and associated functions for a base currency unit to represent real nonfractional currency amounts
 [<AutoOpen>]
 module Currency =
 

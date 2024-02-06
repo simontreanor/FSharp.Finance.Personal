@@ -1,15 +1,18 @@
 ﻿namespace FSharp.Finance.Personal
 
-open System
-
-// note: unit-period definitions are based on US federal legislation but the definitions are universally applicable
+/// an unambiguous way to represent regular date intervals and generate schedules based on them
+/// 
+/// note: unit-period definitions are based on US federal legislation but the definitions are universally applicable
 module UnitPeriod =
 
-    /// a transaction term is the length of a transaction, from the start date to the final payment
+    /// a transaction term is the length of a transaction (i.e. a financial product), from the start date to the final payment
     [<Struct>]
     type TransactionTerm = {
+        /// the first date of the transaction
         Start: Date
+        /// the last date of the transaction
         End: Date
+        /// the length of the transaction in days
         Duration: int<DurationDay>
     }
 
@@ -22,10 +25,15 @@ module UnitPeriod =
     /// interval between payments
     [<Struct>]
     type UnitPeriod =
+        /// non-recurring
         | NoInterval of UnitPeriodDays:int<DurationDay> // cf. (b)(5)(vii)
+        /// a day
         | Day
+        /// a week or a multiple of weeks
         | Week of WeekMultiple:int
+        /// half a month
         | SemiMonth
+        /// a month or a multiple of months
         | Month of MonthMultiple:int
 
     /// all unit-periods, excluding unlikely ones (opinionated!)
@@ -181,7 +189,9 @@ module UnitPeriod =
     /// direction in which to generate the schedule: forward works forwards from a given date and reverse works backwards
     [<Struct;RequireQualifiedAccess>]
     type Direction =
+        /// create a schedule starting on the given date
         | Forward
+        /// create a schedule ending on the given date
         | Reverse
 
     /// generate a payment schedule based on a unit-period config

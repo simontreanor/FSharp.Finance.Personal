@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal
 
+/// a way to unambiguously express percentages and avoid potential confusion with decimal values
 [<AutoOpen>]
 module Percentages =
 

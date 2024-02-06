@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal
 
+/// convenience module for generating HTML tables, optimised for amortisation schedules
 module Formatting =
 
     open System

@@ -15,7 +15,7 @@
     <Compile Include="Calculation.fs" />
     <Compile Include="Percentages.fs" />
     <Compile Include="Array.fs" />
-    <Compile Include="Date.fs" />
+    <Compile Include="DateDay.fs" />
     <Compile Include="Currency.fs" />
     <Compile Include="FeesAndCharges.fs" />
     <Compile Include="Interest.fs" />
@@ -24,7 +24,7 @@
     <Compile Include="CustomerPayments.fs" />
     <Compile Include="PaymentSchedule.fs" />
     <Compile Include="AppliedPayment.fs" />
-    <Compile Include="AmortisationSchedule.fs" />
+    <Compile Include="Amortisation.fs" />
     <Compile Include="Settlement.fs" />
     <Compile Include="Rescheduling.fs" />
     <Compile Include="Formatting.fs" />

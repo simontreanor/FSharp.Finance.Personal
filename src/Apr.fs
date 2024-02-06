@@ -2,6 +2,7 @@ namespace FSharp.Finance.Personal
 
 open System
 
+/// calculating the APR according to various country-specific regulations
 module Apr =
 
     /// the calculation method used to determine the APR
@@ -11,6 +12,7 @@ module Apr =
         | UnitedKingdom of UkPrecision:int
         /// calculates the APR according to the US CFPB actuarial method to the stated decimal precision (note that this is two places more than the percent precision)
         | UsActuarial of UsPrecision:int
+        /// calculates the APR according to the United States rule (not yet implemented)
         | UnitedStatesRule
 
     /// basic calculation to determine the APR
@@ -20,14 +22,19 @@ module Apr =
     /// whether a transfer is an advance or a payment
     [<Struct>]
     type TransferType =
+        /// outgoing transfer
         | Advance
+        /// incoming transfer
         | Payment
 
     /// details of an advance or a payment
     [<Struct>]
     type Transfer = {
+        /// advance or payment
         TransferType: TransferType
+        /// the date of the transfer
         TransferDate: Date
+        /// the amount of the transfer
         Amount: int64<Cent>
     }
 
