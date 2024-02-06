@@ -16,6 +16,7 @@ module FeesAndCharges =
         /// constrain values to within a range
         | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
 
+    /// either a simple amount or an amount constrained by limits
     [<RequireQualifiedAccess>]
     module Restriction =
         /// calculate a permitted value based on a restriction
@@ -34,6 +35,7 @@ module FeesAndCharges =
         /// a percentage of the principal, optionally restricted
         | Percentage of Percentage:Percent * Restriction:Restriction voption
 
+    /// convenience functions for handling amounts
     [<RequireQualifiedAccess>]
     module Amount =
         /// calculates the total amount based on any restrictions
@@ -112,6 +114,7 @@ module FeesAndCharges =
         LatePaymentGracePeriod: int<DurationDay>
     }
 
+    /// convenience functions for fees and charges
     module FeesAndCharges =
         /// recommended fees options
         let recommended = {
