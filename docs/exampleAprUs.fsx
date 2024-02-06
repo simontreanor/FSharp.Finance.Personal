@@ -31,7 +31,7 @@ let transfers =
     |> generatePaymentSchedule 24 Direction.Forward
     |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = 230_00L<Cent> })
 
-let aprMethod = CalculationMethod.UsActuarial 2
+let aprMethod = CalculationMethod.UsActuarial 4
 
 let solution = Apr.calculate aprMethod principal startDate transfers
 solution

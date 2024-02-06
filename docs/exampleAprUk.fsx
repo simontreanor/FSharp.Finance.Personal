@@ -30,7 +30,7 @@ let transfers = [|
     { TransferType = Payment; TransferDate = Date(2012, 12, 10); Amount = 270_00L<Cent> }
 |]
 
-let aprMethod = CalculationMethod.UnitedKingdom 1
+let aprMethod = CalculationMethod.UnitedKingdom 3
 
 let solution = Apr.calculate aprMethod principal startDate transfers
 solution
