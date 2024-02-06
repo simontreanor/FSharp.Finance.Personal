@@ -1,16 +1,16 @@
 (**
 ---
-title: US APR examples
+title: US APR example
 category: Examples
 categoryindex: 2
 index: 2
-description: Examples of US APR calculations
+description: Example of US APR calculation
 keywords: APR US
 ---
 *)
 
 (**
-# US APR calculations
+# US APR calculation
 
 ## Basic example
 
