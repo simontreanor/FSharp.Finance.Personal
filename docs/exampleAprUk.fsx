@@ -30,7 +30,9 @@ let transfers = [|
     { TransferType = Payment; TransferDate = Date(2012, 12, 10); Amount = 270_00L<Cent> }
 |]
 
-let solution = UnitedKingdom.calculateApr startDate principal transfers
+let aprMethod = CalculationMethod.UnitedKingdom 1
+
+let solution = Apr.calculate aprMethod principal startDate transfers
 solution
 
 (*** include-it ***)
@@ -41,9 +43,7 @@ The APR, expressed as a decimal, is returned as the first item of the tuple. The
 which can easily be done as follows:
 *)
 
-match solution with
-| Solution.Found(apr, _, _) -> apr | _ -> 0m
-|> Percent.fromDecimal
+solution |> toPercent aprMethod
 
 (*** include-it ***)
 
@@ -52,7 +52,7 @@ match solution with
 
 - The current implementation only supports single-advance transactions
 - The solver tries to find a solution that stabilises at 8 decimal places, using no more than 100 iterations
-- If it cannot find a solution within these confined, it will return `IterationLimitReached` along with a tuple giving
+- If it cannot find a solution within these confines, it will return `IterationLimitReached` along with a tuple giving
 the partial solution as the first item (which may or may not be a good approximation of the answer)
 - If the transfers list is empty, it will return `Solution.Impossible`
 - The remaining parts of the solution tuples return information about the number of iterations used and details of any
