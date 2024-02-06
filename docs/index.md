@@ -10,7 +10,7 @@ Calculating APRs is highly regulated. Initially this library supports two method
 
 Of the two, the US calculation method is the more complicated, and this library attempts to comply with the regulations as closely as possible, though sometimes the implementation requires a certain interpretation of the rules. No warranty is provided for the accuracy of the results but the library has been tested against all of the single-advance examples provided by the CFPB.
 
-[UK APR calculation examples](exampleAprUk.fsx)
+[UK APR calculation example](exampleAprUk.fsx)
 
 [US APR calculation examples](exampleAprUs.fsx)
 
