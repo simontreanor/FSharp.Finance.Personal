@@ -23,4 +23,4 @@ let transfers = [|
 
 UnitedKingdom.calculateApr startDate principal transfers
 
-(*** include-fsi-output ***)
+(*** include-it ***)
