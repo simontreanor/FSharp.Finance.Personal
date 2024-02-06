@@ -9,6 +9,13 @@ keywords: APR UK
 ---
 *)
 
+(**
+# Basic example
+
+The following example shows a loan of £500.00 taken out on 10th October 2012 and repaid in two monthly instalments:
+
+*)
+
 #r "nuget:FSharp.Finance.Personal"
 
 open FSharp.Finance.Personal
@@ -21,6 +28,23 @@ let transfers = [|
     { TransferType = Payment; TransferDate = Date(2012, 12, 10); Amount = 270_00L<Cent> }
 |]
 
-UnitedKingdom.calculateApr startDate principal transfers
+let solution = UnitedKingdom.calculateApr startDate principal transfers
+solution
+
+(**
+Running this yields the following result:
+*)
+
+(*** include-it ***)
+
+(**
+This result is of a `FSharp.Finance.Personal.Array.Solution` type. `Found` means that it was able to find a solution.
+The APR, expressed as a decimal, is returned as the first item of the tuple. The APR is more usefully shown as a percentage,
+which can easily be done as follows:
+*)
+
+match solution with
+| Solution.Found(apr, _, _) -> apr | _ -> 0m
+|> Percent.fromDecimal
 
 (*** include-it ***)
