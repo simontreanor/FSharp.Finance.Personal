@@ -69,11 +69,8 @@ amortisationSchedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-voption {
-    let! asch = amortisationSchedule
-    return
-        asch.ScheduleItems
-        |> Formatting.generateHtmlFromArray
-}
+amortisationSchedule
+|> ValueOption.map (_.ScheduleItems >> Formatting.generateHtmlFromArray)
+|> ValueOption.defaultValue "[could not format]"
 
-(*** include-it ***)
+(*** include-it-raw ***)
