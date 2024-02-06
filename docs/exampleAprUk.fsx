@@ -31,14 +31,10 @@ let transfers = [|
 let solution = UnitedKingdom.calculateApr startDate principal transfers
 solution
 
-(**
-Running this yields the following result:
-*)
-
 (*** include-it ***)
 
 (**
-This result is of a `FSharp.Finance.Personal.Array.Solution` type. `Found` means that it was able to find a solution.
+This result is of a `Array.Solution` type. `Found` means that it was able to find a solution.
 The APR, expressed as a decimal, is returned as the first item of the tuple. The APR is more usefully shown as a percentage,
 which can easily be done as follows:
 *)
