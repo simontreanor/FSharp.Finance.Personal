@@ -45,7 +45,7 @@ module Settlement =
             let! revisedAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Quote (ValueSome sp.AsOfDate) DoNotCalculateFinalApr negativeInterestOption (ValueSome settlementPayment) actualPayments
             let finalRevisedItem = revisedAmortisationSchedule.ScheduleItems |> Array.last
             let ofWhichPrincipal, ofWhichInterest =
-                if paymentAmount < 0L<Cent> && finalRevisedItem.PrincipalPortion > 0L<Cent> then // when an overpayment and settlement occur on the same day
+                if paymentAmount <= 0L<Cent> && finalRevisedItem.PrincipalPortion > 0L<Cent> then // when an overpayment/settlement occur on the same day this quote is for
                     0L<Cent>, 0L<Cent>
                 else
                     finalRevisedItem.PrincipalPortion, finalRevisedItem.InterestPortion

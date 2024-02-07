@@ -1368,3 +1368,45 @@ module SettlementTests =
         })
         actual |> should equal expected
 
+    [<Fact>]
+    let ``16) Settlement quote on the same day a loan is closed has zero payment and zero principal and interest components`` () =
+        let sp =
+            {
+                AsOfDate = Date(2022, 12, 20)
+                StartDate = Date(2022, 12, 19)
+                Principal = 250_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20)
+                PaymentCount = 4
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 0<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment ( 252_00L<Cent>, [||]) }
+        |]
+
+        let actual =
+            voption {
+                let! settlement = Settlement.getSettlement sp ApplyNegativeInterest actualPayments
+                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement016.md"
+                return settlement.PaymentAmount, settlement.OfWhichPrincipal, settlement.OfWhichInterest
+            }
+
+        let expected = ValueSome (0L<Cent>, 0L<Cent>, 0L<Cent>)
+        actual |> should equal expected
+
