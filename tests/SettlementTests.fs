@@ -1409,4 +1409,3 @@ module SettlementTests =
 
         let expected = ValueSome (0L<Cent>, 0L<Cent>, 0L<Cent>)
         actual |> should equal expected
-
