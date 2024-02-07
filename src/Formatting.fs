@@ -40,7 +40,7 @@ module Formatting =
         |> fun s -> if s |> regexArray.IsMatch then regexArray.Replace(s, "$1") else s
         |> fun s -> if s |> regexSimple.IsMatch then regexSimple.Replace(s, "$1") else s
         |> fun s -> if s |> regexSome.IsMatch then regexSome.Replace(s, "$1") else s
-        |> fun s -> s.Replace(" ", "&nbsp;")
+        |> _.Replace(" ", "&nbsp;")
         |> fun s ->
             if s |> regexDate.IsMatch then $"""<td style="white-space: nowrap;">{s}</td>"""
             elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> Cent.toDecimal |> (_.ToString("N2"))) |> fun s -> $"""<td style="text-align: right;">{s}</td>"""

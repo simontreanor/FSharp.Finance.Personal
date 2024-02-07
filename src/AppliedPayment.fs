@@ -33,12 +33,12 @@ module AppliedPayment =
         |> Array.concat
         |> Array.groupBy _.PaymentDay
         |> Array.map(fun (offsetDay, payments) ->
-            let scheduledPayment' = payments |> Array.map(fun p -> p.PaymentDetails |> function ScheduledPayment sp -> sp | _ -> 0L<Cent>) |> Array.sum
+            let scheduledPayment' = payments |> Array.map(_.PaymentDetails >> function ScheduledPayment sp -> sp | _ -> 0L<Cent>) |> Array.sum
 
-            let actualPayments' = payments |> Array.choose(fun p -> p.PaymentDetails |> function ActualPayment (ap, _) -> Some ap | _ -> None)
+            let actualPayments' = payments |> Array.choose(_.PaymentDetails >> function ActualPayment (ap, _) -> Some ap | _ -> None)
             let actualPaymentsTotal = actualPayments' |> Array.sum
 
-            let generatedPayment' = payments |> Array.tryPick(fun p -> p.PaymentDetails |> function GeneratedPayment (gp, gpt) -> Some (gp, gpt) | _ -> None)
+            let generatedPayment' = payments |> Array.tryPick(_.PaymentDetails >> function GeneratedPayment (gp, gpt) -> Some (gp, gpt) | _ -> None)
             let generatedPaymentTotal = generatedPayment' |> Option.map fst |> Option.defaultValue 0L<Cent>
 
             let netEffect, paymentStatus =
@@ -59,7 +59,7 @@ module AppliedPayment =
 
             let charges =
                 payments
-                |> Array.collect(fun p -> p.PaymentDetails |> function ActualPayment (_, c) -> c | _ -> [||])
+                |> Array.collect(_.PaymentDetails >> function ActualPayment (_, c) -> c | _ -> [||])
                 |> fun pcc ->
                     if latePaymentCharge.IsSome then
                         pcc |> Array.append(match paymentStatus with ValueSome MissedPayment | ValueSome Underpayment -> [| Charge.LatePayment latePaymentCharge.Value |] | _ -> [||])

@@ -61,7 +61,7 @@ It is possible to format the `Items` property as an HTML table:
 
 let html =
     schedule
-    |> ValueOption.map (fun s -> s.Items |> Formatting.generateHtmlFromArray)
+    |> ValueOption.map (_.Items >> Formatting.generateHtmlFromArray)
     |> ValueOption.defaultValue ""
 html
 
