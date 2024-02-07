@@ -14,7 +14,7 @@ keywords: amortisation amortization
 
 ## Basic example #1
 
-The following example shows a loan of £1,500 taken out on 26 November 2022 and repaid on time in 5 monthly instalments,
+The following example shows a small personal loan of £1,500 taken out on 26 November 2022 and repaid on time in 5 monthly instalments,
 with a level payment of £456.88 and a final payment of £456.84:
 
 *)
@@ -74,7 +74,7 @@ It is possible to format the `Items` property as an HTML table:
 let html =
     amortisationSchedule
     |> ValueOption.map (fun s -> s.ScheduleItems |> Formatting.generateHtmlFromArray)
-    |> ValueOption.defaultValue "[could not format]"
+    |> ValueOption.defaultValue ""
 html
 
 (*** include-it-raw ***)

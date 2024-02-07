@@ -754,3 +754,45 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
         }
         actual |> should equal expected
+
+    [<Fact>]
+    let ``13) Scheduled payment total can be less than principal when early actual payments are made but net effect is never less`` () =
+        let sp =
+            {
+                AsOfDate = Date(2024, 2, 7)
+                StartDate = Date(2024, 2, 2)
+                Principal = 250_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 22)
+                PaymentCount = 4
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  0<OffsetDay>; PaymentDetails = ActualPayment ( 97_01L<Cent>, [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ValueNone DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest013.md")
+
+        let actual = irregularSchedule |> ValueOption.map (fun s -> (s.ScheduleItems |> Array.sumBy _.NetEffect) >= sp.Principal)
+        let expected = ValueSome true
+        actual |> should equal expected

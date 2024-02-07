@@ -13,7 +13,7 @@
     <Compile Include="AprUnitedKingdomTests.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
-    <Compile Include="ScheduledPaymentTests.fs" />
+    <Compile Include="PaymentScheduleTests.fs" />
     <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
     <Compile Include="SettlementTests.fs" />

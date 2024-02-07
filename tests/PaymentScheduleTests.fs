@@ -6,7 +6,7 @@ open FsUnit.Xunit
 
 open FSharp.Finance.Personal
 
-module ScheduledPaymentTests =
+module PaymentScheduleTests =
 
     open PaymentSchedule
 

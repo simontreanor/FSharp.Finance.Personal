@@ -155,12 +155,13 @@ module PaymentSchedule =
                 |> Array.filter(fun si -> si.Payment > 0L<Cent>)
                 |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
+            let finalPayment = items |> Array.last |> _.Payment
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
                 FinalPaymentDay = finalPaymentDay
-                LevelPayment = items |> Array.countBy _.Payment |> Array.maxByOrDefault snd fst 0L<Cent>
-                FinalPayment = items |> Array.last |> _.Payment
+                LevelPayment = items |> Array.countBy _.Payment |> Array.maxByOrDefault snd fst finalPayment
+                FinalPayment = finalPayment
                 PaymentTotal = items |> Array.sumBy _.Payment
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
