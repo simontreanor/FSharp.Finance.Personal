@@ -12,10 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ValueOption.fs" />
+    <Compile Include="DateDay.fs" />
     <Compile Include="Calculation.fs" />
     <Compile Include="Percentages.fs" />
     <Compile Include="Array.fs" />
-    <Compile Include="DateDay.fs" />
     <Compile Include="Currency.fs" />
     <Compile Include="FeesAndCharges.fs" />
     <Compile Include="Interest.fs" />
