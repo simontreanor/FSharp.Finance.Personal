@@ -152,13 +152,18 @@ module Amortisation =
             let newInterest' = a.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
             let interestPortion = newInterest' + a.InterestBalance //|> ``don't apportion for a refund`` ap.NetEffect
             
-            let feesDue =
+            let feesRemaining =
                 match sp.FeesAndCharges.FeesSettlement with
-                | Fees.Settlement.ProRataRefund when originalFinalPaymentDay > 0<OffsetDay> -> 
-                    decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
-                | Fees.Settlement.DueInFull 
-                | _ -> feesTotal
-            let feesRemaining = if ap.AppliedPaymentDay > originalFinalPaymentDay then 0L<Cent> else Cent.max 0L<Cent> (feesTotal - feesDue)
+                | Fees.Settlement.ProRataRefund ->
+                    if ap.AppliedPaymentDay = 0<OffsetDay> then
+                        feesTotal
+                    elif ap.AppliedPaymentDay > originalFinalPaymentDay then
+                        0L<Cent>
+                    else
+                        let feesDue = decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
+                        Cent.max 0L<Cent> (feesTotal - feesDue)
+                | Fees.Settlement.DueInFull ->
+                    feesTotal
 
             let settlementFigure = a.PrincipalBalance + a.FeesBalance - feesRemaining + interestPortion + chargesPortion
             let isSettlement = ap.NetEffect = settlementFigure
