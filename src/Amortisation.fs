@@ -265,15 +265,22 @@ module Amortisation =
 
 
     /// generates an amortisation schedule and final statistics
-    let generate sp intendedPurpose (earlySettlementDate: Date voption) finalAprOption negativeInterestOption generatedPayment actualPayments =
+    let generate sp intendedPurpose finalAprOption negativeInterestOption generatedPayment actualPayments =
         voption {
             let! schedule = PaymentSchedule.calculate BelowZero sp
             let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment amount -> Some amount | _ -> None) |> Option.map ValueSome |> Option.defaultValue ValueNone
             let items =
                 schedule
                 |> _.Items
+                |> Array.filter(fun si ->
+                    match intendedPurpose with
+                    | IntendedPurpose.Quote (ValueSome earlySettlementDate) ->
+                        let earlySettlementDay = earlySettlementDate |> OffsetDay.fromDate sp.StartDate
+                        si.Day <= earlySettlementDay
+                    | _ -> true
+                )
                 |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                 |> applyPayments schedule.AsOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge generatedPayment actualPayments
-                |> calculate sp earlySettlementDate schedule.FinalPaymentDay negativeInterestOption
+                |> calculate sp intendedPurpose schedule.FinalPaymentDay negativeInterestOption
             return items |> calculateStats sp finalAprOption
         }

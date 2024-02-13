@@ -118,7 +118,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
             let a = Array.last aa
@@ -329,7 +329,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule
             }
@@ -397,7 +397,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule
             }
@@ -467,7 +467,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule =
                     scheduledPayments
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 // calculate revised schedule including new payment plan
                 let amount = 20_00L<Cent>
                 let paymentPlanStartDate = Date(2022, 9, 1)
@@ -478,7 +478,7 @@ module ActualPaymentTestsExtra =
                 let amortisationSchedule' =
                     scheduledPayments
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone payments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
                 return amortisationSchedule'
             }
@@ -544,7 +544,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule
             }
@@ -610,7 +610,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule
             }
@@ -678,7 +678,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
-                    |> Amortisation.calculate sp ValueNone schedule.FinalPaymentDay ApplyNegativeInterest
+                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }

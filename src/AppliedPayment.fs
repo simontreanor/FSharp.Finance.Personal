@@ -50,7 +50,7 @@ module AppliedPayment =
                     | 0L<Cent>, ap when ap < 0L<Cent> -> ap, ValueSome Refunded
                     | 0L<Cent>, ap -> ap, ValueSome ExtraPayment
                     | sp, ap when ap < sp && (offsetDay <= asOfDay) && (int offsetDay + int latePaymentGracePeriod >= int asOfDay) ->
-                        (match intendedPurpose with IntendedPurpose.Quote -> 0L<Cent> | IntendedPurpose.Statement -> sp), ValueSome PaymentDue
+                        (match intendedPurpose with IntendedPurpose.Quote _ -> 0L<Cent> | _ -> sp), ValueSome PaymentDue
                     | sp, _ when offsetDay > asOfDay -> sp, ValueSome NotYetDue
                     | _, 0L<Cent> -> 0L<Cent>, ValueSome MissedPayment
                     | sp, ap when ap < sp -> ap, ValueSome Underpayment

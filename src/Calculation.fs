@@ -10,7 +10,7 @@ module Calculation =
     [<RequireQualifiedAccess; Struct>]
     type IntendedPurpose =
         /// intended to quote a calculated amount, e.g. for settlement purposes
-        | Quote
+        | Quote of EarlySettlementDate: Date voption
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 
