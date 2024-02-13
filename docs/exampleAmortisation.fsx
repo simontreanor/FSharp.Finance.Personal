@@ -62,7 +62,7 @@ let actualPayments = [|
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ValueNone DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 amortisationSchedule
 
 (*** include-it ***)
