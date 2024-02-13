@@ -31,6 +31,7 @@ module Formatting =
     let internal regexInt32 = Regex(@"(\d+)\b")
     let internal regexNone = Regex(@"ValueNone")
     let internal regexSome = Regex(@"ValueSome \(?([^)]+)\)?")
+    let internal regexZero = Regex(@"\b0L\b")
 
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
     let formatHtmlTableCell item (propertyInfo: PropertyInfo) =
@@ -43,6 +44,7 @@ module Formatting =
         |> _.Replace(" ", "&nbsp;")
         |> fun s ->
             if s |> regexDate.IsMatch then $"""<td style="white-space: nowrap;">{s}</td>"""
+            elif s |> regexZero.IsMatch then """<td style="color: #808080; text-align: right;">0.00</td>"""
             elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> Cent.toDecimal |> (_.ToString("N2"))) |> fun s -> $"""<td style="text-align: right;">{s}</td>"""
             elif s |> regexInt32.IsMatch then $"""<td style="text-align: right;">{s}</td>"""
             elif s |> regexNone.IsMatch then """<td>&nbsp;</td>"""
