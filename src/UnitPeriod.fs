@@ -123,7 +123,7 @@ module UnitPeriod =
                 elif trackingDay1 = 31 then 15, 1
                 else trackingDay1 - 15, 1
             let monthEndDay2 = startDate.AddMonths monthOffset |> fun d -> Date.DaysInMonth(d.Year, d.Month)
-            let trackingDay2 = if day2 = monthEndDay2 then 31 else day2
+            let trackingDay2 = if day1 >= 15 && day2 = monthEndDay2 then 31 else day2
             SemiMonthly (startDate.Year, startDate.Month, trackingDay1, trackingDay2)
 
         let defaultMonthly multiple (startDate: Date) =
