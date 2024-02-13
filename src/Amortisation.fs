@@ -82,7 +82,7 @@ module Amortisation =
     }
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
-    let calculate sp (earlySettlementDate: Date voption) originalFinalPaymentDay negativeInterestOption appliedPayments =
+    let calculate sp intendedPurpose originalFinalPaymentDay negativeInterestOption (appliedPayments: AppliedPayment array) =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
@@ -136,6 +136,7 @@ module Amortisation =
             let newChargesTotal = Charges.total underpayment ap.IncurredCharges
             let chargesPortion = newChargesTotal + a.ChargesBalance |> ``don't apportion for a refund`` ap.NetEffect
 
+            let earlySettlementDate = match intendedPurpose with IntendedPurpose.Quote (ValueSome esd) -> ValueSome esd | _ -> ValueNone
             let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.GracePeriod sp.Interest.Holidays a.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
