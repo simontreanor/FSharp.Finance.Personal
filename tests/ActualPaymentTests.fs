@@ -796,3 +796,197 @@ module ActualPaymentTests =
         let actual = irregularSchedule |> ValueOption.map (fun s -> (s.ScheduleItems |> Array.sumBy _.NetEffect) >= sp.Principal)
         let expected = ValueSome true
         actual |> should equal expected
+
+    [<Fact>]
+    let ``14) Something TH spotted`` () =
+        let sp =
+            {
+                AsOfDate = Date(2024, 2, 13)
+                StartDate = Date(2022, 4, 30)
+                Principal = 2500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
+                PaymentCount = 24
+                FeesAndCharges = {
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Annual (Percent 9.95m)
+                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  13<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  23<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  31<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  38<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  42<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  58<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  67<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  73<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  79<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  86<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  93<OffsetDay>; PaymentDetails = ActualPayment ( 271_37L<Cent>, [||]) }
+            { PaymentDay =  100<OffsetDay>; PaymentDetails = ActualPayment ( 276_37L<Cent>, [||]) }
+            { PaymentDay =  107<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  115<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  122<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  129<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  137<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  143<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  149<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  156<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  166<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  171<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  177<OffsetDay>; PaymentDetails = ActualPayment ( 278_38L<Cent>, [||]) }
+            { PaymentDay =  185<OffsetDay>; PaymentDetails = ActualPayment ( 278_33L<Cent>, [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest014.md")
+
+        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_40L<Cent>)
+        let expected = ValueSome true
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``15) Large overpayment should not result in runaway fee refunds`` () =
+        let sp =
+            {
+                AsOfDate = Date(2024, 2, 13)
+                StartDate = Date(2022, 4, 30)
+                Principal = 2500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
+                PaymentCount = 24
+                FeesAndCharges = {
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Annual (Percent 9.95m)
+                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  13<OffsetDay>; PaymentDetails = ActualPayment ( 5000_00L<Cent>, [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
+
+        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_86L<Cent>)
+        let expected = ValueSome true
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``16) Large overpayment should not result in runaway fee refunds (2 actual payments)`` () =
+        let sp =
+            {
+                AsOfDate = Date(2024, 2, 13)
+                StartDate = Date(2022, 4, 30)
+                Principal = 2500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
+                PaymentCount = 24
+                FeesAndCharges = {
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Annual (Percent 9.95m)
+                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  13<OffsetDay>; PaymentDetails = ActualPayment ( 5000_00L<Cent>, [||]) }
+            { PaymentDay =  20<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
+
+        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_86L<Cent>)
+        let expected = ValueSome true
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``17) Large overpayment should not result in runaway fee refunds (3 actual payments)`` () =
+        let sp =
+            {
+                AsOfDate = Date(2024, 2, 13)
+                StartDate = Date(2022, 4, 30)
+                Principal = 2500_00L<Cent>
+                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
+                PaymentCount = 24
+                FeesAndCharges = {
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                    LatePaymentGracePeriod = 3<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Rate.Annual (Percent 9.95m)
+                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    GracePeriod = 3<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    FinalPaymentAdjustment = AdjustFinalPayment
+                }
+            }
+        let actualPayments = [|
+            { PaymentDay =  13<OffsetDay>; PaymentDetails = ActualPayment ( 5000_00L<Cent>, [||]) }
+            { PaymentDay =  20<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  27<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+        |]
+
+        let irregularSchedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+
+        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
+
+        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_86L<Cent>)
+        let expected = ValueSome true
+        actual |> should equal expected
