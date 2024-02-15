@@ -16,3 +16,5 @@ module ValueOptionCE =
 
     let voption = ValueOptionBuilder()
     
+    /// convert an option to a value option
+    let toValueOption = function Some x -> ValueSome x | None -> ValueNone
