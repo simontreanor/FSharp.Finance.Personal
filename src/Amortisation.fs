@@ -141,7 +141,7 @@ module Amortisation =
                 else
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (si.PrincipalBalance + si.FeesBalance) interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     Interest.calculate dailyInterestCap (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
-            let newInterest' = si.CumulativeInterest + newInterest |> fun i -> if i >= totalInterestCap then totalInterestCap - si.CumulativeInterest else newInterest
+            let newInterest' = si.CumulativeInterest + if newInterest >= totalInterestCap then totalInterestCap - si.CumulativeInterest else newInterest
             let interestPortion = newInterest' + si.InterestBalance //|> ``don't apportion for a refund`` ap.NetEffect
             
             let feesDue =

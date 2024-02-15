@@ -120,7 +120,7 @@ module PaymentSchedule =
                     let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.GracePeriod sp.Interest.Holidays si.Day d
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.Balance interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
-                    let interest' = si.AggregateInterest + interest |> fun i -> if i >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
+                    let interest' = si.AggregateInterest + if interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
                     let payment' = Cent.round sp.Calculation.RoundingOptions.PaymentRounding payment
                     let principalPortion = payment' - interest'
                     {
