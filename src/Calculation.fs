@@ -6,11 +6,21 @@ open System
 [<AutoOpen>]
 module Calculation =
 
+    /// the type of settlement quote requested
+    [<Struct>]
+    type QuoteType =
+        /// calculate the single final payment required to settle in full
+        | Settlement
+        /// get the first outstanding payment
+        | FirstOutstanding
+        /// calculate the total of all overdue payments
+        | AllOverdue
+
     /// the intended purpose of the calculation
     [<RequireQualifiedAccess; Struct>]
     type IntendedPurpose =
         /// intended to quote a calculated amount, e.g. for settlement purposes
-        | Quote of EarlySettlementDate: Date voption
+        | Quote of QuoteType: QuoteType
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 
@@ -44,7 +54,7 @@ module Calculation =
         left % right
         |> fun r -> { Quotient = int(left - r); Remainder = r }
 
-    /// rounds to the nearest number, and when a number is halfway between two others, it's rounded toward the nearest number that's towards zero
+    /// rounds to the nearest number, and when a number is halfway between two others, it's rounded toward the nearest number that's towards 0L<Cent>
     let roundMidpointTowardsZero m =
         divRem m 1m
         |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1

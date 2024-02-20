@@ -86,7 +86,6 @@ module ActualPaymentTestsExtra =
         InterestBalance: int64<Cent>
         ChargesBalance: int64<Cent>
         BalanceStatus: BalanceStatus
-        CumulativeInterest: int64<Cent>
         InterestPortionTotal: int64<Cent>
         AdvanceTotal: int64<Cent>
         PrincipalPortionTotal: int64<Cent>
@@ -113,11 +112,12 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment, [||]) })
+                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment.Value, [||]) })
                 return
                     scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
@@ -129,14 +129,11 @@ module ActualPaymentTestsExtra =
             let interestBalance = a.InterestBalance 
             let chargesBalance = a.ChargesBalance 
             let balanceStatus = a.BalanceStatus
-            let cumulativeInterest = a.CumulativeInterest
-            let interestPortionTotal = aa |> Array.sumBy _.InterestPortion
             let advanceTotal = aa |> Array.collect _.Advances |> Array.sum
             let principalPortionTotal = aa |> Array.sumBy _.PrincipalPortion
             if finalPayment > levelPayment
                 || (principalBalance, feesBalance, interestBalance, chargesBalance) <> (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>)
-                || balanceStatus <> BalanceStatus.ClosedBalance
-                || cumulativeInterest <> interestPortionTotal
+                || balanceStatus <> ClosedBalance
                 || principalPortionTotal <> advanceTotal
                 then
                     aa |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md"
@@ -253,7 +250,6 @@ module ActualPaymentTestsExtra =
                     InterestBalance = a.InterestBalance
                     ChargesBalance = a.ChargesBalance
                     BalanceStatus = a.BalanceStatus
-                    CumulativeInterest = a.CumulativeInterest
                     InterestPortionTotal = aa |> Array.sumBy _.InterestPortion
                     AdvanceTotal = aa |> Array.collect _.Advances |> Array.sum
                     PrincipalPortionTotal = aa |> Array.sumBy _.PrincipalPortion
@@ -275,7 +271,7 @@ module ActualPaymentTestsExtra =
 
     // [<Theory>]
     // [<MemberData(nameof(regularPaymentTestData))>]
-    // let ``Final balances should all be zero`` (testItem: ScheduledPaymentTestItem) =
+    // let ``Final balances should all be 0L<Cent>`` (testItem: ScheduledPaymentTestItem) =
     //     (testItem.PrincipalBalance, testItem.FeesBalance, testItem.InterestBalance, testItem.ChargesBalance) |> should equal (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>)
 
     // [<Theory>]
@@ -327,8 +323,9 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule
@@ -338,13 +335,13 @@ module ActualPaymentTestsExtra =
             OffsetDate = Date(2023, 12, 1)
             OffsetDay = 131<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 407_64L<Cent>
+            ScheduledPayment = ValueSome 407_64L<Cent>
+            PaymentDue = 407_64L<Cent>
             ActualPayments = [| 407_64L<Cent> |]
-            GeneratedPayment = 0L<Cent>
+            GeneratedPayment = ValueNone
             NetEffect = 407_64L<Cent>
-            PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.ClosedBalance
-            CumulativeInterest = 38_32L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
             NewInterest = 3_30L<Cent>
             NewCharges = [||]
             PrincipalPortion = 161_76L<Cent>
@@ -360,7 +357,7 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2) Schedule with a payment on day zero, seen from a date before scheduled payments are due to start`` () =
+    let ``2) Schedule with a payment on day 0L<Cent>, seen from a date before scheduled payments are due to start`` () =
         let sp = ({
             AsOfDate = Date(2022, 3, 25)
             StartDate = Date(2022, 3, 8)
@@ -395,31 +392,32 @@ module ActualPaymentTestsExtra =
                 |]
                 let amortisationSchedule =
                     scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
-            OffsetDate = Date(2022, 7, 30)
-            OffsetDay = 144<OffsetDay>
+            OffsetDate = Date(2022, 8, 27)
+            OffsetDay = 172<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 142_40L<Cent>
+            ScheduledPayment = ValueSome 170_90L<Cent>
+            PaymentDue = 170_03L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = 0L<Cent>
-            NetEffect = 142_40L<Cent>
-            PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.ClosedBalance
-            CumulativeInterest = 43_53L<Cent>
-            NewInterest = 1_28L<Cent>
+            GeneratedPayment = ValueNone
+            NetEffect = 170_03L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
+            NewInterest = 64L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 134_62L<Cent>
-            FeesPortion = 6_50L<Cent>
-            InterestPortion = 1_28L<Cent>
+            PrincipalPortion = 67_79L<Cent>
+            FeesPortion = 101_60L<Cent>
+            InterestPortion = 64L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 195_35L<Cent>
+            FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
@@ -428,7 +426,7 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``3) Schedule with a payment on day zero, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
+    let ``3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
         let sp = ({
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
@@ -460,13 +458,14 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduledPayments =
                     schedule.Items
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (166_60L<Cent>, [||]) })
                 |]
                 let amortisationSchedule =
                     scheduledPayments
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 // calculate revised schedule including new payment plan
                 let amount = 20_00L<Cent>
@@ -477,23 +476,23 @@ module ActualPaymentTestsExtra =
                 let payments = Array.concat [| actualPayments; extraScheduledPayments |]
                 let amortisationSchedule' =
                     scheduledPayments
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone payments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) payments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
                 return amortisationSchedule'
             }
-            |> ValueOption.map Array.last
+            |> ValueOption.map (Array.lastBut 13)
         let expected = ValueSome ({
             OffsetDate = Date(2027, 7, 29)
             OffsetDay = 1969<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 9_49L<Cent>
+            ScheduledPayment = ValueSome 20_00L<Cent>
+            PaymentDue = 9_49L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = 0L<Cent>
+            GeneratedPayment = ValueNone
             NetEffect = 9_49L<Cent>
-            PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.ClosedBalance
-            CumulativeInterest = 616_09L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
             NewInterest = 3L<Cent>
             NewCharges = [||]
             PrincipalPortion = 4_25L<Cent>
@@ -542,8 +541,9 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule
@@ -553,13 +553,13 @@ module ActualPaymentTestsExtra =
             OffsetDate = Date(2026, 8, 27)
             OffsetDay = 1025<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 137_36L<Cent>
+            ScheduledPayment = ValueSome 137_36L<Cent>
+            PaymentDue = 137_36L<Cent>
             ActualPayments = [| 137_36L<Cent> |]
-            GeneratedPayment = 0L<Cent>
+            GeneratedPayment = ValueNone
             NetEffect = 137_36L<Cent>
-            PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.ClosedBalance
-            CumulativeInterest = 500_00L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
             NewInterest = 0L<Cent>
             NewCharges = [||]
             PrincipalPortion = 52_14L<Cent>
@@ -608,8 +608,9 @@ module ActualPaymentTestsExtra =
                 let actualPayments = scheduleItems |> allPaidOnTime
                 let amortisationSchedule =
                     scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule
@@ -619,13 +620,13 @@ module ActualPaymentTestsExtra =
             OffsetDate = Date(2023, 3, 15)
             OffsetDay = 185<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 51_53L<Cent>
+            ScheduledPayment = ValueSome 51_53L<Cent>
+            PaymentDue = 51_53L<Cent>
             ActualPayments = [| 51_53L<Cent> |]
-            GeneratedPayment = 0L<Cent>
+            GeneratedPayment = ValueNone
             NetEffect = 51_53L<Cent>
-            PaymentStatus = ValueSome PaymentMade
-            BalanceStatus = BalanceStatus.ClosedBalance
-            CumulativeInterest = 161_19L<Cent>
+            PaymentStatus = PaymentMade
+            BalanceStatus = ClosedBalance
             NewInterest = 9_43L<Cent>
             NewCharges = [||]
             PrincipalPortion = 42_10L<Cent>
@@ -641,7 +642,7 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``6) Schedule with a payment on day zero, seen from a date after the first unpaid scheduled payment, but within late-payment grace period`` () =
+    let ``6) Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period`` () =
         let sp = ({
             AsOfDate = Date(2022, 4, 1)
             StartDate = Date(2022, 3, 8)
@@ -676,31 +677,32 @@ module ActualPaymentTestsExtra =
                 |]
                 let amortisationSchedule =
                     scheduleItems
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) ValueNone actualPayments
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }
-            |> ValueOption.map Array.last
+            |> ValueOption.map (Array.lastBut 1)
         let expected = ValueSome ({
-            OffsetDate = Date(2022, 7, 30)
-            OffsetDay = 144<OffsetDay>
+            OffsetDate = Date(2022, 8, 13)
+            OffsetDay = 158<OffsetDay>
             Advances = [||]
-            ScheduledPayment = 142_40L<Cent>
+            ScheduledPayment = ValueSome 171_02L<Cent>
+            PaymentDue = 167_36L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = 0L<Cent>
-            NetEffect = 142_40L<Cent>
-            PaymentStatus = ValueSome NotYetDue
-            BalanceStatus = BalanceStatus.ClosedBalance
-            CumulativeInterest = 43_53L<Cent>
-            NewInterest = 1_28L<Cent>
+            GeneratedPayment = ValueNone
+            NetEffect = 167_36L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
+            NewInterest = 63L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 134_62L<Cent>
-            FeesPortion = 6_50L<Cent>
-            InterestPortion = 1_28L<Cent>
+            PrincipalPortion = 66_73L<Cent>
+            FeesPortion = 100_00L<Cent>
+            InterestPortion = 63L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 195_35L<Cent>
+            FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>

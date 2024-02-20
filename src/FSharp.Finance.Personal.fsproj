@@ -25,7 +25,7 @@
     <Compile Include="PaymentSchedule.fs" />
     <Compile Include="AppliedPayment.fs" />
     <Compile Include="Amortisation.fs" />
-    <Compile Include="Settlement.fs" />
+    <Compile Include="Quotes.fs" />
     <Compile Include="Rescheduling.fs" />
     <Compile Include="Formatting.fs" />
   </ItemGroup>

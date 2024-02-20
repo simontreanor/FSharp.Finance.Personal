@@ -25,22 +25,22 @@ module Array =
     /// what range of values the solver should aim for
     [<Struct>]
     type ToleranceOption =
-        /// find a solution less than or equal to zero
+        /// find a solution less than or equal to 0L<Cent>
         | BelowZero
-        /// find a solution either side of zero
+        /// find a solution either side of 0L<Cent>
         | AroundZero
-        /// find a solution greater than or equal to zero
+        /// find a solution greater than or equal to 0L<Cent>
         | AboveZero
 
     /// utility functions for arrays
     module Array =
         /// gets the last but one member of an array
-        let lastButOne a = a |> Array.rev |> Array.tail |> Array.head
+        let lastBut n a = a |> Array.rev |> Array.skip n |> Array.head
         /// equivalent of Array.last but yields a default value instead of an error if the array is empty
         let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
         /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
         let maxByOrDefault maxByProp getProp defaultValue a = if Array.isEmpty a then defaultValue else a |> Array.maxBy maxByProp |> getProp
-        /// iteratively solves for a given input using a generator function until the output is zero or within a set tolerance,
+        /// iteratively solves for a given input using a generator function until the output is 0L<Cent> or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
         [<TailCall>]
         let solve (generator: decimal -> decimal) iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps voption) =

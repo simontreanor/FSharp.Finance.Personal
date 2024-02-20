@@ -28,16 +28,16 @@ module Rescheduling =
     }
 
     /// creates a payment plan for fully amortising an outstanding balance based on a payment amount, unit-period config and interest rate
-    let createPaymentPlan (amount: int64<Cent>) unitPeriodConfig interestRate (outstandingBalance: int64<Cent>) originalStartDate =
+    let createPaymentPlan (payment: int64<Cent>) unitPeriodConfig interestRate (outstandingBalance: int64<Cent>) originalStartDate =
         let count = // to-do: add a function that takes this count as a parameter
             let roughUnitPeriodLength = unitPeriodConfig |> UnitPeriod.Config.roughLength
-            let initialCount = decimal outstandingBalance / decimal amount |> Math.Ceiling
+            let initialCount = decimal outstandingBalance / decimal payment |> Math.Ceiling
             let estimatedYears = (roughUnitPeriodLength * initialCount) / 365m
             let annualInterestRate = interestRate |> Interest.Rate.annual |> Percent.toDecimal
             (1m + (annualInterestRate * estimatedYears)) * initialCount |> Math.Ceiling |> int
         unitPeriodConfig
         |> UnitPeriod.generatePaymentSchedule count UnitPeriod.Direction.Forward
-        |> Array.map(fun d -> { PaymentDay = d |> OffsetDay.fromDate originalStartDate ; PaymentDetails = ScheduledPayment amount })
+        |> Array.map(fun d -> { PaymentDay = d |> OffsetDay.fromDate originalStartDate ; PaymentDetails = ScheduledPayment payment })
 
     /// to-do: create a function to disapply all interest paid so far
     let disapplyInterest =

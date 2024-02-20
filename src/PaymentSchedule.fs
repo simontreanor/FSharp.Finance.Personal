@@ -10,10 +10,8 @@ module PaymentSchedule =
     type Item = {
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
-        /// the principal
-        Advance: int64<Cent>
         /// the scheduled payment amount
-        Payment: int64<Cent>
+        Payment: int64<Cent> voption
         /// the interest accrued since the previous payment
         Interest: int64<Cent>
         /// the total interest accrued from the start date to the current date
@@ -108,8 +106,8 @@ module PaymentSchedule =
         let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
-        let roughPayment = decimal sp.Principal / decimal paymentCount
-        let advance = { Day = 0<OffsetDay>; Advance = sp.Principal + fees; Payment = 0L<Cent>; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; Balance = sp.Principal + fees }
+        let roughPayment = (decimal sp.Principal + decimal fees) / decimal paymentCount
+        let initial = { Day = 0<OffsetDay>; Payment = ValueNone; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; Balance = sp.Principal + fees }
         let toleranceSteps = ValueSome { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 2 }
         let paymentDays = paymentDates |> Array.map(fun d -> (d - sp.StartDate).Days * 1<OffsetDay>)
         let mutable schedule = [||]
@@ -120,19 +118,18 @@ module PaymentSchedule =
                     let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.GracePeriod sp.Interest.Holidays si.Day d
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.Balance interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
-                    let interest' = si.AggregateInterest + if interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
+                    let interest' = if si.AggregateInterest + interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
                     let payment' = Cent.round sp.Calculation.RoundingOptions.PaymentRounding payment
                     let principalPortion = payment' - interest'
                     {
                         Day = d
-                        Advance = 0L<Cent>
-                        Payment = payment'
+                        Payment = ValueSome payment'
                         Interest = interest'
                         AggregateInterest = si.AggregateInterest + interest'
                         Principal = principalPortion
                         Balance = si.Balance - principalPortion
                     }
-                ) advance
+                ) initial
             let principalBalance = schedule |> Array.last |> _.Balance |> decimal
             principalBalance
         match Array.solve generator 100 roughPayment toleranceOption toleranceSteps with
@@ -143,7 +140,7 @@ module PaymentSchedule =
                     schedule
                     |> Array.map(fun si ->
                         if si.Day = finalPaymentDay then
-                            { si with Payment = si.Payment + si.Balance; Principal = si.Principal + si.Balance; Balance = 0L<Cent> }
+                            { si with Payment = si.Payment |> ValueOption.map(fun p -> p + si.Balance); Principal = si.Principal + si.Balance; Balance = 0L<Cent> }
                         else si
                     )
                 | SpreadOverLevelPayments ->
@@ -152,17 +149,17 @@ module PaymentSchedule =
             let interestTotal = items |> Array.sumBy _.Interest
             let aprSolution =
                 items
-                |> Array.filter(fun si -> si.Payment > 0L<Cent>)
-                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment })
+                |> Array.filter(fun si -> si.Payment.IsSome)
+                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment.Value })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
-            let finalPayment = items |> Array.last |> _.Payment
+            let finalPayment = items |> Array.filter _.Payment.IsSome |> Array.last |> _.Payment.Value
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
                 FinalPaymentDay = finalPaymentDay
-                LevelPayment = items |> Array.filter(fun i -> i.Payment <> 0L<Cent>) |> Array.countBy _.Payment |> Array.maxByOrDefault snd fst finalPayment
+                LevelPayment = items |> Array.filter _.Payment.IsSome |> Array.countBy _.Payment.Value |> Array.maxByOrDefault snd fst finalPayment
                 FinalPayment = finalPayment
-                PaymentTotal = items |> Array.sumBy _.Payment
+                PaymentTotal = items |> Array.filter _.Payment.IsSome |> Array.sumBy _.Payment.Value
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
                 Apr = aprSolution, Apr.toPercent sp.Calculation.AprMethod aprSolution
@@ -176,4 +173,5 @@ module PaymentSchedule =
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
     let internal allPaidOnTime (scheduleItems: Item array) =
         scheduleItems
-        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment, [||]) })
+        |> Array.filter(fun si -> si.Payment.IsSome)
+        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment.Value, [||]) })

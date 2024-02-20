@@ -11,7 +11,7 @@ module AprUnitedKingdomTests =
     module Quirky =
 
         [<Fact>]
-        let ``APR calculation 1 payment zero`` () =
+        let ``APR calculation 1 payment 0L<Cent>`` () =
             UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [| { TransferType = Payment; TransferDate = Date(2012, 10, 10); Amount = 500_00L<Cent> } |]
             |> getAprOr -1m
             |> should (equalWithin 0.001) 0m
