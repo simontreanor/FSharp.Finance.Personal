@@ -72,6 +72,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 456_88L<Cent> 456_84L<Cent>
@@ -112,6 +113,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 556_05L<Cent> 556_00L<Cent>
@@ -152,6 +154,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 491_53L<Cent> 491_53L<Cent>
@@ -192,6 +195,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 491_53L<Cent> 1193_91L<Cent>
@@ -254,6 +258,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 491_53L<Cent> (491_53L<Cent> * 3L)
@@ -316,6 +321,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -383,6 +389,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -448,6 +455,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -514,6 +522,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -581,6 +590,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -647,6 +657,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -713,6 +724,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -781,6 +793,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -823,6 +836,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -888,6 +902,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -930,6 +945,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -973,6 +989,7 @@ module ActualPaymentTests =
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|

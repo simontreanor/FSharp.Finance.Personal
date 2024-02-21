@@ -5,11 +5,12 @@ open FsUnit.Xunit
 
 open FSharp.Finance.Personal
 
-module SettlementTests =
+module QuoteTests =
 
     open CustomerPayments
     open PaymentSchedule
     open Amortisation
+    open Quotes
 
     [<Fact>]
     let ``1) Settlement falling on a scheduled payment date`` () =
@@ -38,6 +39,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -49,14 +51,14 @@ module SettlementTests =
 
         let actual =
             voption{
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
-                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 1969_70L<Cent>,
+            PaymentQuote (1969_70L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
@@ -111,6 +113,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -122,14 +125,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
-                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 2026_48L<Cent>,
+            PaymentQuote (2026_48L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -184,6 +187,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -195,14 +199,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
-                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 2001_48L<Cent>,
+            PaymentQuote (2001_48L<Cent>, 1161_30L<Cent>, 640L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -257,6 +261,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -264,14 +269,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
-                let! item = Array.vTryLastBut 5 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
+                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 1200_00L<Cent>,
+            PaymentQuote (1200_00L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
@@ -326,6 +331,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -333,14 +339,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
-                let! item = Array.vTryLastBut 5 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
+                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 1238_40L<Cent>,
+            PaymentQuote (1238_40L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
@@ -395,6 +401,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -406,14 +413,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
-                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 3420_01L<Cent>,
+            PaymentQuote (3420_01L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -468,6 +475,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -479,13 +487,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote FirstOutstanding sp DoNotApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement007.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote FirstOutstanding sp DoNotApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement007.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 323_15L<Cent>, {
+            PaymentQuote (323_15L<Cent>, 0L<Cent>, 0L<Cent>), {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
@@ -539,6 +547,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -550,13 +559,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote AllOverdue sp DoNotApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement008.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote AllOverdue sp DoNotApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement008.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 690_41L<Cent>,
+            PaymentQuote (690_41L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
@@ -611,6 +620,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -618,13 +628,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement009.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 1311_66L<Cent>,
+            PaymentQuote (1311_66L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
@@ -679,6 +689,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -694,13 +705,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement010.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 1261_68L<Cent>,
+            PaymentQuote (1261_68L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
@@ -729,7 +740,7 @@ module SettlementTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``11) When settling a loan with 3-day late-payment grace period, scheduled payments within the grace period should be treated as missed payments, otherwise the settlement balance is too low`` () =
+    let ``11) When settling a loan with 3-day late-payment grace period, scheduled payments within the grace period should be treated as missed payments, otherwise the quote balance is too low`` () =
         let startDate = Date(2022, 11, 28)
 
         let sp = {
@@ -755,6 +766,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -767,14 +779,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
-                let! item = Array.vTryLastBut 6 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
+                let! item = Array.vTryLastBut 6 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 973_52L<Cent>,
+            PaymentQuote (973_52L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
@@ -829,6 +841,7 @@ module SettlementTests =
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPaymentAmount = 50L<Cent>
             }
         }
 
@@ -836,14 +849,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement012.md"
-                let! item = Array.vTryLastBut 3 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement012.md"
+                let! item = Array.vTryLastBut 3 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 495_76L<Cent>,
+            PaymentQuote (495_76L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 30
                 OffsetDay = 30<OffsetDay>
@@ -897,6 +910,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -908,14 +922,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013a.md"
-                let! item = Array.vTryLastBut 1 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013a.md"
+                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 429_24L<Cent>,
+            PaymentQuote (429_24L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -969,6 +983,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -980,13 +995,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013b.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013b.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 432_07L<Cent>,
+            PaymentQuote (432_07L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1040,6 +1055,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1051,13 +1067,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013c.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013c.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 434_89L<Cent>,
+            PaymentQuote (434_89L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1111,6 +1127,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1122,13 +1139,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013d.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013d.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome 453_36L<Cent>,
+            PaymentQuote (453_36L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
@@ -1182,6 +1199,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1194,14 +1212,14 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014a.md"
-                let! item = Array.vTryLastBut 1 settlement.RevisedSchedule.ScheduleItems
-                return settlement.PaymentAmount, item
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014a.md"
+                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            ValueSome 429_24L<Cent>,
+            PaymentQuote (429_24L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -1255,6 +1273,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1267,13 +1286,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014b.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014b.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome -67_93L<Cent>,
+            PaymentQuote (-67_93L<Cent>, -55_49L<Cent>, -12_44L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1327,6 +1346,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1339,13 +1359,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014c.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014c.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome -67_95L<Cent>,
+            PaymentQuote (-67_95L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1399,6 +1419,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1411,13 +1432,13 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement015.md"
-                return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement015.md"
+                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            ValueSome -72_80L<Cent>,
+            PaymentQuote (-72_80L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
@@ -1471,6 +1492,7 @@ module SettlementTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
+                    MinimumPaymentAmount = 50L<Cent>
                 }
             }
         let actualPayments = [|
@@ -1479,10 +1501,10 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
-                settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement016.md"
-                return settlement.PaymentAmount, settlement.OfWhichPrincipal, settlement.OfWhichInterest
+                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement016.md"
+                return quote.QuoteResult
             }
 
-        let expected = ValueSome (ValueSome 0L<Cent>, 0L<Cent>, 0L<Cent>)
+        let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected

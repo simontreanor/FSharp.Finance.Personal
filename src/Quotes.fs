@@ -5,13 +5,17 @@ module Quotes =
 
     open CustomerPayments
 
+    [<Struct>]
+    type QuoteResult =
+        | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichInterest: int64<Cent>
+        | AwaitPaymentConfirmation
+        | UnableToGenerateQuote
+
     /// a settlement quote
     [<Struct>]
     type Quote = {
         QuoteType: QuoteType
-        PaymentAmount: int64<Cent> voption
-        OfWhichPrincipal: int64<Cent>
-        OfWhichInterest: int64<Cent>
+        QuoteResult: QuoteResult
         CurrentSchedule: Amortisation.Schedule
         RevisedSchedule: Amortisation.Schedule
     }
@@ -24,18 +28,22 @@ module Quotes =
             let! si = revisedAmortisationSchedule.ScheduleItems |> Array.tryFind(_.GeneratedPayment.IsSome) |> toValueOption
             let confirmedPayments = si.ActualPayments |> Array.sumBy(function ActualPayment.Confirmed ap -> ap | _ -> 0L<Cent>)
             let pendingPayments = si.ActualPayments |> Array.sumBy(function ActualPayment.Pending ap -> ap | _ -> 0L<Cent>)
-            let generatedPayment = if pendingPayments = 0L<Cent> then si.GeneratedPayment else ValueNone
-            let principalPortion, interestPortion =
-                if si.GeneratedPayment.IsNone || si.GeneratedPayment.Value = 0L<Cent> || confirmedPayments = 0L<Cent> then
-                    0L<Cent>, 0L<Cent>
+            let quoteResult =
+                if si.GeneratedPayment.IsNone then
+                    UnableToGenerateQuote
+                elif pendingPayments <> 0L<Cent> then 
+                    AwaitPaymentConfirmation
                 else
-                    let ratio = decimal si.GeneratedPayment.Value / (decimal si.NetEffect)
-                    Cent.round RoundUp (decimal si.PrincipalPortion * ratio), Cent.round RoundDown (decimal si.InterestPortion * ratio)
+                    let principalPortion, interestPortion =
+                        if si.GeneratedPayment.IsNone || si.GeneratedPayment.Value = 0L<Cent> || confirmedPayments = 0L<Cent> then
+                            0L<Cent>, 0L<Cent>
+                        else
+                            let ratio = decimal si.GeneratedPayment.Value / (decimal si.NetEffect)
+                            Cent.round RoundUp (decimal si.PrincipalPortion * ratio), Cent.round RoundDown (decimal si.InterestPortion * ratio)
+                    PaymentQuote (si.GeneratedPayment.Value, principalPortion, interestPortion)
             return {
                 QuoteType = quoteType
-                PaymentAmount = generatedPayment
-                OfWhichPrincipal = principalPortion
-                OfWhichInterest = interestPortion
+                QuoteResult = quoteResult
                 CurrentSchedule = currentAmortisationSchedule
                 RevisedSchedule = revisedAmortisationSchedule
             }
