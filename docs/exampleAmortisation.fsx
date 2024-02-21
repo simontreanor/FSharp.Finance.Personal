@@ -49,6 +49,7 @@ let scheduleParameters =
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
+            MinimumPaymentAmount = 50L<Cent>
         }
     }
 
@@ -62,7 +63,7 @@ let actualPayments = [|
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 amortisationSchedule
 
 (*** include-it ***)
@@ -78,3 +79,4 @@ let html =
 html
 
 (*** include-it-raw ***)
+
