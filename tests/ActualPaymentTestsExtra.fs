@@ -112,7 +112,7 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (si.Payment.Value, [||]) })
+                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (ActualPayment.Confirmed si.Payment.Value) })
                 return
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
@@ -337,7 +337,7 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = ValueSome 407_64L<Cent>
             PaymentDue = 407_64L<Cent>
-            ActualPayments = [| 407_64L<Cent> |]
+            ActualPayments = [| ActualPayment.Confirmed 407_64L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 407_64L<Cent>
             PaymentStatus = NotYetDue
@@ -388,7 +388,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (166_60L<Cent>, [||]) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
                 |]
                 let amortisationSchedule =
                     scheduleItems
@@ -461,7 +461,7 @@ module ActualPaymentTestsExtra =
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (166_60L<Cent>, [||]) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
                 |]
                 let amortisationSchedule =
                     scheduledPayments
@@ -555,7 +555,7 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = ValueSome 137_36L<Cent>
             PaymentDue = 137_36L<Cent>
-            ActualPayments = [| 137_36L<Cent> |]
+            ActualPayments = [| ActualPayment.Confirmed 137_36L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 137_36L<Cent>
             PaymentStatus = NotYetDue
@@ -622,7 +622,7 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = ValueSome 51_53L<Cent>
             PaymentDue = 51_53L<Cent>
-            ActualPayments = [| 51_53L<Cent> |]
+            ActualPayments = [| ActualPayment.Confirmed 51_53L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 51_53L<Cent>
             PaymentStatus = PaymentMade
@@ -673,7 +673,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (166_60L<Cent>, [||]) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
                 |]
                 let amortisationSchedule =
                     scheduleItems

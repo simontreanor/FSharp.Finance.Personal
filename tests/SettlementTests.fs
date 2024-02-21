@@ -44,7 +44,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -55,29 +55,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (1969_70L<Cent>, {
-            OffsetDate = (Date(2024, 10, 1).AddDays -3)
-            OffsetDay = 57<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueSome 323_15L<Cent>
-            PaymentDue = 323_15L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 1969_70L<Cent>
-            NetEffect = 1969_70L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 3_71L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 1175_80L<Cent>
-            FeesPortion = 790_19L<Cent>
-            InterestPortion = 3_71L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 1437_53L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 1969_70L<Cent>,
+            {
+                OffsetDate = (Date(2024, 10, 1).AddDays -3)
+                OffsetDay = 57<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueSome 323_15L<Cent>
+                PaymentDue = 323_15L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 1969_70L<Cent>
+                NetEffect = 1969_70L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 3_71L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1175_80L<Cent>
+                FeesPortion = 790_19L<Cent>
+                InterestPortion = 3_71L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 1437_53L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -114,7 +117,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -125,29 +128,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (2026_48L<Cent>, {
-            OffsetDate = Date(2024, 10, 1)
-            OffsetDay = 60<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 2026_48L<Cent>
-            NetEffect = 2026_48L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 2_78L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 1175_80L<Cent>
-            FeesPortion = 834_19L<Cent>
-            InterestPortion = 6_49L<Cent>
-            ChargesPortion = 10_00L<Cent>
-            FeesRefund = 1393_53L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 2026_48L<Cent>,
+            {
+                OffsetDate = Date(2024, 10, 1)
+                OffsetDay = 60<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 2026_48L<Cent>
+                NetEffect = 2026_48L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 2_78L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1175_80L<Cent>
+                FeesPortion = 834_19L<Cent>
+                InterestPortion = 6_49L<Cent>
+                ChargesPortion = 10_00L<Cent>
+                FeesRefund = 1393_53L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -184,7 +190,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -195,29 +201,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (2001_48L<Cent>, {
-            OffsetDate = Date(2024, 10, 1)
-            OffsetDay = 60<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [| 25_00L<Cent> |]
-            GeneratedPayment = ValueSome 2001_48L<Cent>
-            NetEffect = 2026_48L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 2_78L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 1175_80L<Cent>
-            FeesPortion = 834_19L<Cent>
-            InterestPortion = 6_49L<Cent>
-            ChargesPortion = 10_00L<Cent>
-            FeesRefund = 1393_53L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 2001_48L<Cent>,
+            {
+                OffsetDate = Date(2024, 10, 1)
+                OffsetDay = 60<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [| ActualPayment.Confirmed 25_00L<Cent> |]
+                GeneratedPayment = ValueSome 2001_48L<Cent>
+                NetEffect = 2026_48L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 2_78L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1175_80L<Cent>
+                FeesPortion = 834_19L<Cent>
+                InterestPortion = 6_49L<Cent>
+                ChargesPortion = 10_00L<Cent>
+                FeesRefund = 1393_53L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -261,29 +270,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (1200_00L<Cent>, {
-            OffsetDate = Date(2024, 10, 1)
-            OffsetDay = 3<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 1200_00L<Cent>
-            NetEffect = 1200_00L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 0L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 1200_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 0L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 1200_00L<Cent>,
+            {
+                OffsetDate = Date(2024, 10, 1)
+                OffsetDay = 3<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 1200_00L<Cent>
+                NetEffect = 1200_00L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 0L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1200_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 0L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -327,29 +339,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (1238_40L<Cent>, {
-            OffsetDate = Date(2024, 10, 1)
-            OffsetDay = 4<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 1238_40L<Cent>
-            NetEffect = 1238_40L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 38_40L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 1200_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 38_40L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 1238_40L<Cent>,
+            {
+                OffsetDate = Date(2024, 10, 1)
+                OffsetDay = 4<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 1238_40L<Cent>
+                NetEffect = 1238_40L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 38_40L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1200_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 38_40L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -386,7 +401,7 @@ module SettlementTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (25_00L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -397,29 +412,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (3420_01L<Cent>, {
-            OffsetDate = Date(2024, 10, 1)
-            OffsetDay = 60<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 3420_01L<Cent>
-            NetEffect = 3420_01L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 2_78L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 1175_80L<Cent>
-            FeesPortion = 2227_72L<Cent>
-            InterestPortion = 6_49L<Cent>
-            ChargesPortion = 10_00L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 3420_01L<Cent>,
+            {
+                OffsetDate = Date(2024, 10, 1)
+                OffsetDay = 60<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 3420_01L<Cent>
+                NetEffect = 3420_01L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 2_78L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1175_80L<Cent>
+                FeesPortion = 2227_72L<Cent>
+                InterestPortion = 6_49L<Cent>
+                ChargesPortion = 10_00L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -456,7 +474,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (323_15L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 323_15L<Cent>) }
             )
 
         let actual =
@@ -466,29 +484,31 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (323_15L<Cent>, {
-            OffsetDate = startDate.AddDays 155
-            OffsetDay = 155<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueSome 323_10L<Cent>
-            PaymentDue = 323_10L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueNone
-            NetEffect = 323_10L<Cent>
-            PaymentStatus = NotYetDue
-            BalanceStatus = OpenBalance
-            NewInterest = 2_57L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 110_72L<Cent>
-            FeesPortion = 209_81L<Cent>
-            InterestPortion = 2_57L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 122_33L<Cent>
-            FeesBalance = 231_57L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 323_15L<Cent>, {
+                OffsetDate = startDate.AddDays 155
+                OffsetDay = 155<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueSome 323_10L<Cent>
+                PaymentDue = 323_10L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueNone
+                NetEffect = 323_10L<Cent>
+                PaymentStatus = NotYetDue
+                BalanceStatus = OpenBalance
+                NewInterest = 2_57L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 110_72L<Cent>
+                FeesPortion = 209_81L<Cent>
+                InterestPortion = 2_57L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 122_33L<Cent>
+                FeesBalance = 231_57L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -525,7 +545,7 @@ module SettlementTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (323_15L<Cent>, [||]) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 323_15L<Cent>) }
             )
 
         let actual =
@@ -535,29 +555,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (690_41L<Cent>, {
-            OffsetDate = startDate.AddDays 155
-            OffsetDay = 155<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueSome 323_10L<Cent>
-            PaymentDue = 300_11L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueNone
-            NetEffect = 300_11L<Cent>
-            PaymentStatus = NotYetDue
-            BalanceStatus = ClosedBalance
-            NewInterest = 1_14L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 103_33L<Cent>
-            FeesPortion = 195_64L<Cent>
-            InterestPortion = 1_14L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 690_41L<Cent>,
+            {
+                OffsetDate = startDate.AddDays 155
+                OffsetDay = 155<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueSome 323_10L<Cent>
+                PaymentDue = 300_11L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueNone
+                NetEffect = 300_11L<Cent>
+                PaymentStatus = NotYetDue
+                BalanceStatus = ClosedBalance
+                NewInterest = 1_14L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 103_33L<Cent>
+                FeesPortion = 195_64L<Cent>
+                InterestPortion = 1_14L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -600,29 +623,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (1311_66L<Cent>, {
-            OffsetDate = startDate.AddDays 181
-            OffsetDay = 181<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 1311_66L<Cent>
-            NetEffect = 1311_66L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 16_35L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 500_00L<Cent>
-            FeesPortion = 750_00L<Cent>
-            InterestPortion = 61_66L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 1311_66L<Cent>,
+            {
+                OffsetDate = startDate.AddDays 181
+                OffsetDay = 181<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 1311_66L<Cent>
+                NetEffect = 1311_66L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 16_35L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 500_00L<Cent>
+                FeesPortion = 750_00L<Cent>
+                InterestPortion = 61_66L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -657,13 +683,13 @@ module SettlementTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
-            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
-            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
-            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (272_84L<Cent>, [||]) }
+            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
         |]
 
         let actual =
@@ -673,29 +699,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (1261_68L<Cent>, {
-            OffsetDate = startDate.AddDays 388
-            OffsetDay = 388<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 1261_68L<Cent>
-            NetEffect = 1261_68L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 75_11L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 471_06L<Cent>
-            FeesPortion = 706_53L<Cent>
-            InterestPortion = 84_09L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 1261_68L<Cent>,
+            {
+                OffsetDate = startDate.AddDays 388
+                OffsetDay = 388<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 1261_68L<Cent>
+                NetEffect = 1261_68L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 75_11L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 471_06L<Cent>
+                FeesPortion = 706_53L<Cent>
+                InterestPortion = 84_09L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -730,10 +759,10 @@ module SettlementTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
-            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
-            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (279_01L<Cent>, [||]) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
         |]
 
         let actual =
@@ -744,29 +773,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (973_52L<Cent>, {
-            OffsetDate = startDate.AddDays 72
-            OffsetDay = 72<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 973_52L<Cent>
-            NetEffect = 973_52L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 1_04L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 769_46L<Cent>
-            FeesPortion = 195_68L<Cent>
-            InterestPortion = 8_38L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 958_45L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 973_52L<Cent>,
+            {
+                OffsetDate = startDate.AddDays 72
+                OffsetDay = 72<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 973_52L<Cent>
+                NetEffect = 973_52L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 1_04L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 769_46L<Cent>
+                FeesPortion = 195_68L<Cent>
+                InterestPortion = 8_38L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 958_45L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -810,29 +842,32 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (495_76L<Cent>, {
-            OffsetDate = startDate.AddDays 30
-            OffsetDay = 30<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueSome 165_90L<Cent>
-            PaymentDue = 165_90L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 495_76L<Cent>
-            NetEffect = 495_76L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 95_76L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 400_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 95_76L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 495_76L<Cent>,
+            {
+                OffsetDate = startDate.AddDays 30
+                OffsetDay = 30<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueSome 165_90L<Cent>
+                PaymentDue = 165_90L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 495_76L<Cent>
+                NetEffect = 495_76L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 95_76L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 400_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 95_76L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
 
         actual |> should equal expected
 
@@ -865,10 +900,10 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -879,29 +914,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (429_24L<Cent>, {
-            OffsetDate = Date(2023, 3, 14)
-            OffsetDay = 133<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 429_24L<Cent>
-            NetEffect = 429_24L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 76_24L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 353_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 76_24L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 429_24L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 14)
+                OffsetDay = 133<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 429_24L<Cent>
+                NetEffect = 429_24L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 76_24L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 353_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 76_24L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -933,10 +972,10 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -946,29 +985,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (432_07L<Cent>, {
-            OffsetDate = Date(2023, 3, 15)
-            OffsetDay = 134<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueSome 491_53L<Cent>
-            PaymentDue = 457_65L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 432_07L<Cent>
-            NetEffect = 432_07L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 79_07L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 353_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 79_07L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 432_07L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 15)
+                OffsetDay = 134<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueSome 491_53L<Cent>
+                PaymentDue = 457_65L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 432_07L<Cent>
+                NetEffect = 432_07L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 79_07L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 353_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 79_07L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1000,10 +1043,10 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1013,29 +1056,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (434_89L<Cent>, {
-            OffsetDate = Date(2023, 3, 16)
-            OffsetDay = 135<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 434_89L<Cent>
-            NetEffect = 434_89L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 2_82L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 353_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 81_89L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 434_89L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 16)
+                OffsetDay = 135<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 434_89L<Cent>
+                NetEffect = 434_89L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 2_82L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 353_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 81_89L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1067,10 +1114,10 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1080,29 +1127,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (453_36L<Cent>, {
-            OffsetDate = Date(2023, 3, 19)
-            OffsetDay = 138<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 453_36L<Cent>
-            NetEffect = 453_36L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 11_29L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 353_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 90_36L<Cent>
-            ChargesPortion = 10_00L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 453_36L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 19)
+                OffsetDay = 138<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 453_36L<Cent>
+                NetEffect = 453_36L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 11_29L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 353_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 90_36L<Cent>
+                ChargesPortion = 10_00L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1134,11 +1185,11 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1149,29 +1200,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, item
             }
 
-        let expected = ValueSome (429_24L<Cent>, {
-            OffsetDate = Date(2023, 3, 14)
-            OffsetDay = 133<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome 429_24L<Cent>
-            NetEffect = 429_24L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 76_24L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 353_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 76_24L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome 429_24L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 14)
+                OffsetDay = 133<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome 429_24L<Cent>
+                NetEffect = 429_24L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 76_24L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 353_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 76_24L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1203,11 +1258,11 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1217,29 +1272,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (-67_93L<Cent>, {
-            OffsetDate = Date(2023, 3, 15)
-            OffsetDay = 134<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueSome 491_53L<Cent>
-            PaymentDue = 457_65L<Cent>
-            ActualPayments = [| 500_00L<Cent> |]
-            GeneratedPayment = ValueSome -67_93L<Cent>
-            NetEffect = 432_07L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = 79_07L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 353_00L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 79_07L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome -67_93L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 15)
+                OffsetDay = 134<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueSome 491_53L<Cent>
+                PaymentDue = 457_65L<Cent>
+                ActualPayments = [| ActualPayment.Confirmed 500_00L<Cent> |]
+                GeneratedPayment = ValueSome -67_93L<Cent>
+                NetEffect = 432_07L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = 79_07L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 353_00L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 79_07L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1271,11 +1330,11 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1285,29 +1344,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (-67_95L<Cent>, {
-            OffsetDate = Date(2023, 3, 16)
-            OffsetDay = 135<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome -67_95L<Cent>
-            NetEffect = -67_95L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = -2L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = -67_93L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = -2L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome -67_95L<Cent>,
+            {
+                OffsetDate = Date(2023, 3, 16)
+                OffsetDay = 135<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome -67_95L<Cent>
+                NetEffect = -67_95L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = -2L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = -67_93L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = -2L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1339,11 +1402,11 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1353,29 +1416,33 @@ module SettlementTests =
                 return settlement.PaymentAmount, Array.last settlement.RevisedSchedule.ScheduleItems
             }
 
-        let expected = ValueSome (-72_80L<Cent>, {
-            OffsetDate = Date(2024, 2, 5)
-            OffsetDay = 461<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ValueNone
-            PaymentDue = 0L<Cent>
-            ActualPayments = [||]
-            GeneratedPayment = ValueSome -72_80L<Cent>
-            NetEffect = -72_80L<Cent>
-            PaymentStatus = (Generated Settlement)
-            BalanceStatus = ClosedBalance
-            NewInterest = -4_87L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = -67_93L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = -4_87L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-        })
+        let expected = ValueSome (
+            ValueSome -72_80L<Cent>,
+            {
+                OffsetDate = Date(2024, 2, 5)
+                OffsetDay = 461<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ValueNone
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueSome -72_80L<Cent>
+                NetEffect = -72_80L<Cent>
+                PaymentStatus = (Generated Settlement)
+                BalanceStatus = ClosedBalance
+                NewInterest = -4_87L<Cent>
+                NewCharges = [||]
+                PrincipalPortion = -67_93L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = -4_87L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0L<Cent>
+                ChargesBalance = 0L<Cent>
+            }
+        )
+
         actual |> should equal expected
 
     [<Fact>]
@@ -1407,7 +1474,7 @@ module SettlementTests =
                 }
             }
         let actualPayments = [|
-            { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment ( 252_00L<Cent>, [||]) }
+            { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 252_00L<Cent>) }
         |]
 
         let actual =
@@ -1417,5 +1484,5 @@ module SettlementTests =
                 return settlement.PaymentAmount, settlement.OfWhichPrincipal, settlement.OfWhichInterest
             }
 
-        let expected = ValueSome (0L<Cent>, 0L<Cent>, 0L<Cent>)
+        let expected = ValueSome (ValueSome 0L<Cent>, 0L<Cent>, 0L<Cent>)
         actual |> should equal expected

@@ -53,11 +53,11 @@ let scheduleParameters =
     }
 
 let actualPayments = [|
-    { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
-    { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
-    { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
-    { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (456_88L<Cent>, [||]) }
-    { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (456_84L<Cent>, [||]) }
+    { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_84L<Cent>) }
 |]
 
 let amortisationSchedule =

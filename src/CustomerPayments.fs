@@ -3,19 +3,32 @@ namespace FSharp.Finance.Personal
 /// categorising the types of incoming payments based on whether they are scheduled, actual or generated
 module CustomerPayments =
 
+    /// the status of the payment, allowing for delays due to payment-provider processing times
+    [<RequireQualifiedAccess; Struct>]
+    type ActualPayment =
+        /// the payment has been initiated but is not yet confirmed
+        | Pending of PendingAmount: int64<Cent>
+        /// the payment has been confirmed
+        | Confirmed of ConfirmedAmount: int64<Cent>
+        /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
+        | Failed of FailedAmount: int64<Cent> * Charges: Charge array
+
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
     [<Struct>]
     type CustomerPaymentDetails =
         /// the amount of any extra scheduled payment due on the current day
         | ScheduledPayment of ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day, with any charges incurred
-        | ActualPayment of ActualPayment: int64<Cent> * Charges: Charge array
+        | ActualPayment of ActualPayment: ActualPayment
         /// the amounts of any generated payments made on the current day and their type
         | GeneratedPayment of GeneratedPayment: int64<Cent>
         with
+            /// the total amount of the payment
             static member total = function
                 | ScheduledPayment sp -> sp
-                | ActualPayment (ap, _) -> ap
+                | ActualPayment (ActualPayment.Pending ap) -> ap
+                | ActualPayment (ActualPayment.Confirmed ap) -> ap
+                | ActualPayment (ActualPayment.Failed (ap, _)) -> ap
                 | GeneratedPayment gp -> gp
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
@@ -32,6 +45,8 @@ module CustomerPayments =
     type CustomerPaymentStatus =
         /// no payment is required on the specified day
         | NoneScheduled
+        /// a payment has been initiated but not yet confirmed
+        | PaymentPending
         /// a scheduled payment was made in full and on time
         | PaymentMade
         /// no payment is due on the specified day because of earlier extra-/overpayments
