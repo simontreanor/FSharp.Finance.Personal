@@ -64,6 +64,8 @@ module PaymentSchedule =
         RoundingOptions: RoundingOptions
         /// how to adjust the final payment
         FinalPaymentAdjustment: FinalPaymentAdjustment
+        /// the minimum payment that can be taken, usually due to payment-provider restrictions
+        MinimumPaymentAmount: int64<Cent>
     }
 
     module Calculation =
@@ -72,6 +74,7 @@ module PaymentSchedule =
             AprMethod = Apr.CalculationMethod.UsActuarial 8
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
+            MinimumPaymentAmount = 50L<Cent>
         }
 
     /// parameters for creating a payment schedule
