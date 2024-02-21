@@ -395,7 +395,7 @@ module ActualPaymentTests =
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md")
 
-        let actual = schedule |> ValueOption.bind (_.ScheduleItems >> (Array.lastBut 5))
+        let actual = schedule |> ValueOption.bind (_.ScheduleItems >> (Array.vTryLastBut 5))
         let expected = ValueSome {
             OffsetDate = Date(2022, 11, 1)
             OffsetDay = 0<OffsetDay>

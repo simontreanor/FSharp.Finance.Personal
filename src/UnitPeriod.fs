@@ -236,7 +236,7 @@ module UnitPeriod =
         | SemiMonth ->
             if Array.length transferDates % 2 = 1 then // deal with odd numbers of transfer dates
                 transferDates
-                |> Array.lastBut 1
+                |> Array.vTryLastBut 1
                 |> ValueOption.map(fun a -> [| transferDates; [| a |] |] |> Array.concat)
                 |> ValueOption.defaultValue transferDates
             else transferDates

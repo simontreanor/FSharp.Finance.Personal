@@ -123,7 +123,7 @@ module ActualPaymentTestsExtra =
         amortisationSchedule |> ValueOption.iter(fun aa -> 
             let a = Array.last aa
             let finalPayment = a.NetEffect
-            let levelPayment = aa |> Array.filter(fun a -> a.NetEffect > 0L<Cent>) |> Array.countBy _.NetEffect |> Array.maxByOrDefault snd fst 0L<Cent>
+            let levelPayment = aa |> Array.filter(fun a -> a.NetEffect > 0L<Cent>) |> Array.countBy _.NetEffect |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue 0L<Cent>
             let principalBalance = a.PrincipalBalance 
             let feesBalance = a.FeesBalance 
             let interestBalance = a.InterestBalance 
@@ -244,7 +244,7 @@ module ActualPaymentTestsExtra =
                 {
                     TestId = testId
                     FinalPayment = a |> _.NetEffect
-                    LevelPayment = aa |> Array.countBy _.NetEffect |> Array.maxByOrDefault snd fst 0L<Cent>
+                    LevelPayment = aa |> Array.countBy _.NetEffect |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue 0L<Cent>
                     PrincipalBalance = a.PrincipalBalance
                     FeesBalance = a.FeesBalance
                     InterestBalance = a.InterestBalance
@@ -481,7 +481,7 @@ module ActualPaymentTestsExtra =
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
                 return amortisationSchedule'
             }
-            |> ValueOption.bind (Array.lastBut 13)
+            |> ValueOption.bind (Array.vTryLastBut 13)
         let expected = ValueSome ({
             OffsetDate = Date(2027, 7, 29)
             OffsetDay = 1969<OffsetDay>
@@ -684,7 +684,7 @@ module ActualPaymentTestsExtra =
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }
-            |> ValueOption.bind (Array.lastBut 1)
+            |> ValueOption.bind (Array.vTryLastBut 1)
         let expected = ValueSome ({
             OffsetDate = Date(2022, 8, 13)
             OffsetDay = 158<OffsetDay>

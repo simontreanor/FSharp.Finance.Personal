@@ -51,7 +51,7 @@ module SettlementTests =
             voption{
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
-                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -121,7 +121,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
-                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -191,7 +191,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
-                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -257,7 +257,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
-                let! item = Array.lastBut 5 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 5 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -323,7 +323,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
-                let! item = Array.lastBut 5 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 5 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -393,7 +393,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
-                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -740,7 +740,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
-                let! item = Array.lastBut 6 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 6 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -806,7 +806,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement012.md"
-                let! item = Array.lastBut 3 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 3 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -875,7 +875,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013a.md"
-                let! item = Array.lastBut 1 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 1 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
@@ -1145,7 +1145,7 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014a.md"
-                let! item = Array.lastBut 1 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 1 settlement.RevisedSchedule.ScheduleItems
                 return settlement.PaymentAmount, item
             }
 
