@@ -18,7 +18,6 @@ module Amortisation =
         | RefundDue
 
     /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
-    [<Struct>]
     type ScheduleItem = {
         /// the date of amortisation
         OffsetDate: Date
