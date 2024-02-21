@@ -35,7 +35,10 @@ module Array =
     /// utility functions for arrays
     module Array =
         /// gets the last but one member of an array
-        let lastBut n a = a |> Array.rev |> Array.skip n |> Array.head
+        let lastBut n a =
+            if Array.isEmpty a then None
+            else a |> Array.rev |> Array.skip n |> Array.tryHead
+            |> toValueOption
         /// equivalent of Array.last but yields a default value instead of an error if the array is empty
         let lastOrDefault defaultValue a = if Array.isEmpty a then defaultValue else Array.last a
         /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty

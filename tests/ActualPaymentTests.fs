@@ -76,13 +76,13 @@ module ActualPaymentTests =
             }
         let actualPayments = quickActualPayments [| 4; 35; 66; 94; 125 |] 456_88L<Cent> 456_84L<Cent>
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest001.md")
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest001.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 784_36L<Cent> 90_78L<Cent> 366_06L<Cent>
         actual |> should equal expected
 
@@ -116,13 +116,13 @@ module ActualPaymentTests =
             }
         let actualPayments = quickActualPayments [| 32; 63; 94; 122; 153 |] 556_05L<Cent> 556_00L<Cent>
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest002.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest002.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 1280_20L<Cent> 110_48L<Cent> 445_52L<Cent>
         actual |> should equal expected
 
@@ -156,13 +156,13 @@ module ActualPaymentTests =
             }
         let actualPayments = quickActualPayments [| 14; 44; 75; 106; 134 |] 491_53L<Cent> 491_53L<Cent>
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest003.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest003.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 957_65L<Cent> 89_95L<Cent> 401_58L<Cent>
         actual |> should equal expected
 
@@ -196,13 +196,13 @@ module ActualPaymentTests =
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 491_53L<Cent> 1193_91L<Cent>
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest004.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest004.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
@@ -258,13 +258,13 @@ module ActualPaymentTests =
             }
         let actualPayments = quickActualPayments [| 2; 4; 140 |] 491_53L<Cent> (491_53L<Cent> * 3L)
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest005.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest005.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
@@ -325,13 +325,13 @@ module ActualPaymentTests =
             { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayment (-280_68L<Cent>     , [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest006.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest006.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
@@ -389,13 +389,13 @@ module ActualPaymentTests =
             { PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (1500_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> (Array.lastBut 5))
+        let actual = schedule |> ValueOption.bind (_.ScheduleItems >> (Array.lastBut 5))
         let expected = ValueSome {
             OffsetDate = Date(2022, 11, 1)
             OffsetDay = 0<OffsetDay>
@@ -456,13 +456,13 @@ module ActualPaymentTests =
             { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (243_86L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest008.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest008.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = startDate.AddDays 154
             OffsetDay = 154<OffsetDay>
@@ -523,13 +523,13 @@ module ActualPaymentTests =
             { PaymentDay = 143<OffsetDay>; PaymentDetails = ActualPayment (-280_87L<Cent>     , [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest009.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest009.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
@@ -589,13 +589,13 @@ module ActualPaymentTests =
             { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment ( 400_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest010.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest010.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 15)
             OffsetDay = 134<OffsetDay>
@@ -655,13 +655,13 @@ module ActualPaymentTests =
             { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment ( 400_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest011.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest011.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 15)
             OffsetDay = 134<OffsetDay>
@@ -723,13 +723,13 @@ module ActualPaymentTests =
             { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest012.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest012.md")
 
-        let actual = irregularSchedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {
             OffsetDate = Date(2023, 3, 15)
             OffsetDay = 134<OffsetDay>
@@ -787,13 +787,13 @@ module ActualPaymentTests =
             { PaymentDay =  0<OffsetDay>; PaymentDetails = ActualPayment ( 97_01L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest013.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest013.md")
 
-        let actual = irregularSchedule |> ValueOption.map (fun s -> (s.ScheduleItems |> Array.sumBy _.NetEffect) >= sp.Principal)
+        let actual = schedule |> ValueOption.map (fun s -> (s.ScheduleItems |> Array.sumBy _.NetEffect) >= sp.Principal)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -852,13 +852,13 @@ module ActualPaymentTests =
             { PaymentDay =  185<OffsetDay>; PaymentDetails = ActualPayment ( 278_33L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest014.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest014.md")
 
-        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_40L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_40L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -894,13 +894,13 @@ module ActualPaymentTests =
             { PaymentDay =  13<OffsetDay>; PaymentDetails = ActualPayment ( 5000_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
 
-        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 543_99L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 543_99L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -937,13 +937,13 @@ module ActualPaymentTests =
             { PaymentDay =  20<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
 
-        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 348_55L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 348_55L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -981,12 +981,12 @@ module ActualPaymentTests =
             { PaymentDay =  27<OffsetDay>; PaymentDetails = ActualPayment ( 500_00L<Cent>, [||]) }
         |]
 
-        let irregularSchedule =
+        let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
 
-        irregularSchedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
 
-        let actual = irregularSchedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 152_73L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 152_73L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected

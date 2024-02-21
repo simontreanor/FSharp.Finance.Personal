@@ -51,7 +51,8 @@ module SettlementTests =
             voption{
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement001.md"
-                return settlement.PaymentAmount, Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (1969_70L<Cent>, {
@@ -120,7 +121,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement002.md"
-                return settlement.PaymentAmount, Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (2026_48L<Cent>, {
@@ -189,7 +191,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement003.md"
-                return settlement.PaymentAmount, Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (2001_48L<Cent>, {
@@ -254,7 +257,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement004.md"
-                return settlement.PaymentAmount, Array.lastBut 5 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 5 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (1200_00L<Cent>, {
@@ -319,7 +323,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement005.md"
-                return settlement.PaymentAmount, Array.lastBut 5 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 5 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (1238_40L<Cent>, {
@@ -388,7 +393,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement006.md"
-                return settlement.PaymentAmount, Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 7 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (3420_01L<Cent>, {
@@ -734,7 +740,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement011.md"
-                return settlement.PaymentAmount, Array.lastBut 6 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 6 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (973_52L<Cent>, {
@@ -799,7 +806,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement012.md"
-                return settlement.PaymentAmount, Array.lastBut 3 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 3 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (495_76L<Cent>, {
@@ -867,7 +875,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement013a.md"
-                return settlement.PaymentAmount, Array.lastBut 1 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 1 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (429_24L<Cent>, {
@@ -1136,7 +1145,8 @@ module SettlementTests =
             voption {
                 let! settlement = Quotes.getQuote Settlement sp ApplyNegativeInterest actualPayments
                 settlement.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Settlement014a.md"
-                return settlement.PaymentAmount, Array.lastBut 1 settlement.RevisedSchedule.ScheduleItems
+                let! item = Array.lastBut 1 settlement.RevisedSchedule.ScheduleItems
+                return settlement.PaymentAmount, item
             }
 
         let expected = ValueSome (429_24L<Cent>, {

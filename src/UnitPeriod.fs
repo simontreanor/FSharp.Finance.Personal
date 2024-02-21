@@ -235,7 +235,10 @@ module UnitPeriod =
         | Week multiple -> Weekly (multiple, firstTransferDate)
         | SemiMonth ->
             if Array.length transferDates % 2 = 1 then // deal with odd numbers of transfer dates
-                transferDates |> Array.lastBut 1 |> fun a -> [| transferDates; [| a |] |] |> Array.concat
+                transferDates
+                |> Array.lastBut 1
+                |> ValueOption.map(fun a -> [| transferDates; [| a |] |] |> Array.concat)
+                |> ValueOption.defaultValue transferDates
             else transferDates
             |> Array.chunkBySize 2
             |> Array.transpose

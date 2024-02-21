@@ -481,7 +481,7 @@ module ActualPaymentTestsExtra =
                 amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
                 return amortisationSchedule'
             }
-            |> ValueOption.map (Array.lastBut 13)
+            |> ValueOption.bind (Array.lastBut 13)
         let expected = ValueSome ({
             OffsetDate = Date(2027, 7, 29)
             OffsetDay = 1969<OffsetDay>
@@ -684,7 +684,7 @@ module ActualPaymentTestsExtra =
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }
-            |> ValueOption.map (Array.lastBut 1)
+            |> ValueOption.bind (Array.lastBut 1)
         let expected = ValueSome ({
             OffsetDate = Date(2022, 8, 13)
             OffsetDay = 158<OffsetDay>
