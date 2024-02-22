@@ -179,6 +179,12 @@ module Amortisation =
                     Cent.min (si.PrincipalBalance + si.FeesBalance + interestPortion) ap.ScheduledPayment.Value
                 else 0L<Cent>
                 |> Cent.max 0L<Cent>
+                |> fun p ->
+                    match sp.Calculation.MinimumPayment with
+                    | NoMinimumPayment -> p
+                    | DeferOrWriteOff minimumPayment when p < minimumPayment -> 0L<Cent>
+                    | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
+                    | _ -> p
 
             let underpayment =
                 match ap.PaymentStatus with

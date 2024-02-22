@@ -55,7 +55,17 @@ module PaymentSchedule =
         /// spread the difference over the level payments (not yet implemented)
         | SpreadOverLevelPayments
 
-    /// technical calculation options
+    /// how to handle cases where the payment due is less than the minimum that payment providers can process
+     [<Struct>]
+    type MinimumPayment =
+        /// no minimum payment
+        | NoMinimumPayment
+        /// add the payment due to the next payment or close the balance if the final payment
+        | DeferOrWriteOff of DeferOrWriteOff: int64<Cent>
+        /// take the minimum payment regardless
+        | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
+
+   /// technical calculation options
     [<Struct>]
     type Calculation = {
         /// which APR calculation method to use
@@ -64,8 +74,8 @@ module PaymentSchedule =
         RoundingOptions: RoundingOptions
         /// how to adjust the final payment
         FinalPaymentAdjustment: FinalPaymentAdjustment
-        /// the minimum payment that can be taken, usually due to payment-provider restrictions
-        MinimumPaymentAmount: int64<Cent>
+        /// the minimum payment that can be taken and how to handle it
+        MinimumPayment: MinimumPayment
     }
 
     module Calculation =
@@ -74,7 +84,7 @@ module PaymentSchedule =
             AprMethod = Apr.CalculationMethod.UsActuarial 8
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
-            MinimumPaymentAmount = 50L<Cent>
+            MinimumPayment = DeferOrWriteOff 50L<Cent>
         }
 
     /// parameters for creating a payment schedule

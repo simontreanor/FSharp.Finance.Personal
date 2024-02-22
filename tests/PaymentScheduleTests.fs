@@ -36,7 +36,7 @@ module PaymentScheduleTests =
                     AprMethod = Apr.CalculationMethod.UsActuarial 8
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPaymentAmount = 50L<Cent>
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
                 }
             }
 
@@ -121,7 +121,7 @@ module PaymentScheduleTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
                     FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPaymentAmount = 50L<Cent>
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
                 }
             }
 
@@ -1367,7 +1367,7 @@ module PaymentScheduleTests =
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                     FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPaymentAmount = 50L<Cent>
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
                 }
             }
 
