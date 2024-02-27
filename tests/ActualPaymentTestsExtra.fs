@@ -11,6 +11,7 @@ module ActualPaymentTestsExtra =
     open CustomerPayments
     open PaymentSchedule
     open Amortisation
+    open Rescheduling
 
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
@@ -39,7 +40,7 @@ module ActualPaymentTestsExtra =
     let interestGracePeriods = [| 0<DurationDay> .. 1<DurationDay> .. 7<DurationDay> |]
     let interestHolidays =
         let none = [||]
-        let some = [| { Interest.Holiday.Start = Date(2024, 3, 1); Interest.Holiday.End = Date(2024, 12, 31)} |]
+        let some = [| { Holiday.Start = Date(2024, 3, 1); Holiday.End = Date(2024, 12, 31)} |]
         [| none; some |]
     let unitPeriodConfigs (startDate: Date) =
         let daily = [| 4 .. 32 |] |> Array.map (startDate.AddDays >> UnitPeriod.Config.Daily)
@@ -99,10 +100,13 @@ module ActualPaymentTestsExtra =
         let pfs = sp.FeesAndCharges.FeesSettlement
         let ir = Interest.Rate.serialise sp.Interest.Rate
         let ic = sp.Interest.Cap
-        let igp = sp.Interest.GracePeriod
+        let igp = sp.Interest.InitialGracePeriod
         let ih = match sp.Interest.Holidays with [||] -> "()" | ihh -> ihh |> Array.map(fun ih -> $"""({ih.Start.ToString()}-{ih.End.ToString()})""") |> String.concat ";" |> fun s -> $"({s})"
-        let upc = UnitPeriod.Config.serialise sp.UnitPeriodConfig
-        let pc = sp.PaymentCount
+        let upc, pc =
+            match sp.PaymentSchedule with
+            | RegularSchedule(unitPeriodConfig, paymentCount) ->
+                (UnitPeriod.Config.serialise unitPeriodConfig), paymentCount
+            | _ -> failwith "Not implemented"
         let acm = sp.Calculation.AprMethod
         let pcc = sp.FeesAndCharges.Charges
         let ro = sp.Calculation.RoundingOptions
@@ -166,18 +170,21 @@ module ActualPaymentTestsExtra =
                 AsOfDate = asOfDate
                 StartDate = sd
                 Principal = aa
-                UnitPeriodConfig = upc
-                PaymentCount = pc
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = upc,
+                    PaymentCount = pc
+                )
                 FeesAndCharges = {
                     Fees = pf
                     FeesSettlement = pfs
                     Charges = pcc
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = ir
                     Cap = { Total = tic; Daily = dic }
-                    GracePeriod = igp
+                    InitialGracePeriod = igp
                     Holidays = ih
                     RateOnNegativeBalance = ValueNone
                 }
@@ -212,18 +219,21 @@ module ActualPaymentTestsExtra =
                 AsOfDate = asOfDate
                 StartDate = sd
                 Principal = aa
-                UnitPeriodConfig = upc
-                PaymentCount = pc
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = upc,
+                    PaymentCount = pc
+                )
                 FeesAndCharges = {
                     Fees = pf
                     FeesSettlement = pfs
                     Charges = pcc
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = ir
                     Cap = { Total = tic; Daily = dic }
-                    GracePeriod = igp
+                    InitialGracePeriod = igp
                     Holidays = ih
                     RateOnNegativeBalance = ValueNone
                 }
@@ -297,18 +307,21 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2023, 7, 23)
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1)
-            PaymentCount = 5
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1),
+                PaymentCount = 5
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -365,18 +378,21 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 3, 25)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-            PaymentCount = 12
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
+                PaymentCount = 12
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -435,18 +451,21 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-            PaymentCount = 12
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
+                PaymentCount = 12
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -459,50 +478,37 @@ module ActualPaymentTestsExtra =
         })
         let actual =
             voption {
-                // calculate schedule based on existing payments
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduledPayments =
-                    schedule.Items
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
                 |]
-                let amortisationSchedule =
-                    scheduledPayments
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
-                // calculate revised schedule including new payment plan
-                let amount = 20_00L<Cent>
-                let paymentPlanStartDate = Date(2022, 9, 1)
-                let unitPeriodConfig = UnitPeriod.Config.Weekly(2, paymentPlanStartDate)
-                let outstandingBalance = amortisationSchedule |> Array.last |> fun asi -> asi.PrincipalBalance + asi.FeesBalance + asi.InterestBalance + asi.ChargesBalance
-                let extraScheduledPayments = Rescheduling.createPaymentPlan amount unitPeriodConfig sp.Interest.Rate outstandingBalance sp.StartDate
-                let payments = Array.concat [| actualPayments; extraScheduledPayments |]
-                let amortisationSchedule' =
-                    scheduledPayments
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) payments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
-                amortisationSchedule' |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra003.md"
-                return amortisationSchedule'
+                let rp : RescheduleParameters = {
+                    PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
+                    InterestHolidays = [||]
+                    ChargesHolidays = [||]
+                }
+                let! oldSchedule, newSchedule = reschedule sp rp actualPayments
+                let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
+                let newHtml = newSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
+                $"{title}<br />{newHtml}" |> Formatting.outputToFile' $"out/ActualPaymentTestsExtra003.md"
+                return newSchedule.ScheduleItems
             }
-            |> ValueOption.bind (Array.vTryLastBut 13)
+            |> ValueOption.bind (Array.vTryLastBut 0)
         let expected = ValueSome ({
-            OffsetDate = Date(2027, 7, 29)
-            OffsetDay = 1969<OffsetDay>
+            OffsetDate = Date(2028, 2, 24)
+            OffsetDay = 2179<OffsetDay>
             Advances = [||]
             ScheduledPayment = ValueSome 20_00L<Cent>
-            PaymentDue = 9_49L<Cent>
+            PaymentDue = 54L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 9_49L<Cent>
+            NetEffect = 54L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 3L<Cent>
+            NewInterest = 0L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 4_25L<Cent>
-            FeesPortion = 5_21L<Cent>
-            InterestPortion = 3L<Cent>
+            PrincipalPortion = 54L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
@@ -518,18 +524,21 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2023, 12, 1)
             StartDate = Date(2023, 11, 6)
             Principal = 800_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23))
-            PaymentCount = 19
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23)),
+                PaymentCount = 19
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.12m)
                 Cap = { Total = ValueSome <| Interest.TotalFixedCap 500_00L<Cent>; Daily = ValueNone }
-                GracePeriod = 7<DurationDay>
+                InitialGracePeriod = 7<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -586,18 +595,21 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2023, 12, 11)
             StartDate = Date(2022, 9, 11)
             Principal = 200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15)
-            PaymentCount = 7
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15),
+                PaymentCount = 7
+            )
             FeesAndCharges = {
                 Fees = [||]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -654,18 +666,21 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 4, 1)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-            PaymentCount = 12
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
+                PaymentCount = 12
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 7<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -709,6 +724,158 @@ module ActualPaymentTestsExtra =
             PrincipalPortion = 66_73L<Cent>
             FeesPortion = 100_00L<Cent>
             InterestPortion = 63L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)`` () =
+        let sp = ({
+            AsOfDate = Date(2022, 8, 31)
+            StartDate = Date(2022, 3, 8)
+            Principal = 800_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
+                PaymentCount = 12
+            )
+            FeesAndCharges = {
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Rate.Annual (Percent 9.95m)
+                Cap = { Total = ValueNone; Daily = ValueNone }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UsActuarial 8
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+            }
+        })
+        let actual =
+            voption {
+                let actualPayments = [|
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                |]
+                let rp : RolloverParameters = {
+                    PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
+                    FeesAndCharges = ValueNone
+                    Interest = ValueNone
+                    Calculation = ValueNone
+                    RolloverOptions = RollOverFees
+                }
+                let! oldSchedule, newSchedule = rollOver sp rp actualPayments
+                let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
+                let oldHtml = oldSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
+                let newHtml = newSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
+                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> Formatting.outputToFile' $"out/ActualPaymentTestsExtra007.md"
+                return newSchedule.ScheduleItems
+            }
+            |> ValueOption.bind (Array.vTryLastBut 0)
+        let expected = ValueSome ({
+            OffsetDate = Date(2027, 7, 29)
+            OffsetDay = 1793<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = ValueSome 20_00L<Cent>
+            PaymentDue = 18_58L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = ValueNone
+            NetEffect = 18_58L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
+            NewInterest = 7L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 9_20L<Cent>
+            FeesPortion = 9_31L<Cent>
+            InterestPortion = 7L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+        })
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)`` () =
+        let sp = ({
+            AsOfDate = Date(2022, 8, 31)
+            StartDate = Date(2022, 3, 8)
+            Principal = 800_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
+                PaymentCount = 12
+            )
+            FeesAndCharges = {
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Rate.Annual (Percent 9.95m)
+                Cap = { Total = ValueNone; Daily = ValueNone }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UsActuarial 8
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+            }
+        })
+        let actual =
+            voption {
+                let actualPayments = [|
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                |]
+                let rp : RolloverParameters = {
+                    PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
+                    FeesAndCharges = ValueNone
+                    Interest = ValueNone
+                    Calculation = ValueNone
+                    RolloverOptions = DoNotRollOverFees
+                }
+                let! oldSchedule, newSchedule = rollOver sp rp actualPayments
+                let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
+                let oldHtml = oldSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
+                let newHtml = newSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
+                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> Formatting.outputToFile' $"out/ActualPaymentTestsExtra008.md"
+                return newSchedule.ScheduleItems
+            }
+            |> ValueOption.bind (Array.vTryLastBut 0)
+        let expected = ValueSome ({
+            OffsetDate = Date(2027, 7, 29)
+            OffsetDay = 1793<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = ValueSome 20_00L<Cent>
+            PaymentDue = 18_58L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = ValueNone
+            NetEffect = 18_58L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
+            NewInterest = 7L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 18_51L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>

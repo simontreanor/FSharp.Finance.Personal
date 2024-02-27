@@ -128,7 +128,9 @@ module Amortisation =
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
 
         let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees
-        let feesPercentage = decimal feesTotal / decimal sp.Principal |> Percent.fromDecimal
+        let feesPercentage =
+            if sp.Principal = 0L<Cent> then Percent 0m
+            else decimal feesTotal / decimal sp.Principal |> Percent.fromDecimal
 
         let getBalanceStatus principalBalance =
             if principalBalance = 0L<Cent> then
@@ -143,7 +145,7 @@ module Amortisation =
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0L<Cent>
 
             let earlySettlementDate = match intendedPurpose with IntendedPurpose.Quote _ -> ValueSome sp.AsOfDate | _ -> ValueNone
-            let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.GracePeriod sp.Interest.Holidays si.OffsetDay ap.AppliedPaymentDay
+            let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.InitialGracePeriod sp.Interest.Holidays si.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
                 if si.PrincipalBalance <= 0L<Cent> then // note: should this also inspect fees balance: problably not, as fees can be 0L<Cent> and also principal balance is always settled last
@@ -235,7 +237,12 @@ module Amortisation =
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
 
             let assignable = sign netEffect - sign chargesPortion - sign interestPortion
-            let feesPortion = feesPercentage |> Percent.toDecimal |> fun m -> decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
+            let feesPortion =
+                feesPercentage
+                |> Percent.toDecimal
+                |> fun m ->
+                    if (1m + m) = 0m then 0L<Cent>
+                    else decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
             let principalPortion = Cent.max 0L<Cent> (assignable - feesPortion)
                 
             let principalBalance = si.PrincipalBalance - sign principalPortion
@@ -299,7 +306,8 @@ module Amortisation =
                     let proRatedFees =
                         match sp.FeesAndCharges.FeesSettlement with
                         | Fees.Settlement.ProRataRefund when originalFinalPaymentDay > 0<OffsetDay> -> 
-                            decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
+                            if originalFinalPaymentDay = 0<OffsetDay> then 0L<Cent>
+                            else decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
                         | Fees.Settlement.DueInFull 
                         | _ -> feesTotal
 
@@ -389,15 +397,36 @@ module Amortisation =
         }
 
     /// generates an amortisation schedule and final statistics
-    let generate sp intendedPurpose finalAprOption negativeInterestOption actualPayments =
-        voption {
-            let! schedule = PaymentSchedule.calculate BelowZero sp
-            let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment amount -> Some amount | _ -> None) |> Option.map ValueSome |> Option.defaultValue ValueNone
-            let items =
-                schedule.Items
-                |> Array.filter _.Payment.IsSome
-                |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                |> applyPayments schedule.AsOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge actualPayments
-                |> calculate sp intendedPurpose schedule.FinalPaymentDay negativeInterestOption
-            return items |> calculateStats sp finalAprOption
-        }
+    let generate sp intendedPurpose finalAprOption negativeInterestOption originalFinalPaymentDay actualPayments =
+        let payments =
+            match sp.PaymentSchedule with
+            | RegularSchedule _ ->
+                let schedule = PaymentSchedule.calculate BelowZero sp
+                match schedule with
+                | ValueSome s ->
+                    s.Items
+                    |> Array.filter _.Payment.IsSome
+                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
+                | ValueNone ->
+                    [||]
+            | RegularFixedSchedule (unitPeriodConfig, paymentCount, paymentAmount) ->
+                UnitPeriod.generatePaymentSchedule paymentCount UnitPeriod.Direction.Forward unitPeriodConfig
+                |> Array.map(fun d ->
+                    { PaymentDay = OffsetDay.fromDate sp.AsOfDate d; PaymentDetails = ScheduledPayment paymentAmount }
+                )
+            | IrregularSchedule payments ->
+                payments
+
+        if Array.isEmpty payments then ValueNone else
+
+        let originalFinalPaymentDay' = originalFinalPaymentDay |> ValueOption.defaultValue (payments |> Array.last |> _.PaymentDay)
+
+        let asOfDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+        let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment amount -> Some amount | _ -> None) |> Option.map ValueSome |> Option.defaultValue ValueNone
+
+        payments
+        |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge actualPayments
+        |> calculate sp intendedPurpose originalFinalPaymentDay' negativeInterestOption
+        |> Array.takeWhile(fun si -> originalFinalPaymentDay.IsNone || si.PaymentStatus <> NoLongerRequired) // remove extra items from rescheduling
+        |> calculateStats sp finalAprOption
+        |> ValueSome

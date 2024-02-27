@@ -56,7 +56,8 @@ module Apr =
             let calc transfers unitPeriodRate =
                 transfers
                 |> Array.sumBy(fun (amount, years) ->
-                    Cent.toDecimal amount / ((1m + unitPeriodRate) |> powm years)
+                    let divisor = ((1m + unitPeriodRate) |> powm years)
+                    if divisor = 0m then 0m else Cent.toDecimal amount / divisor
                 )
             let generator unitPeriodRate =
                 let aa = calc ak unitPeriodRate
@@ -100,6 +101,7 @@ module Apr =
         ///
         /// > (B) The remaining number of days divided by 365 if the remaining interval is not equal to a whole number of months.
         let monthlyUnitPeriods (multiple: int) termStart transfers =
+            let multiple = Math.Max(1, multiple)
             let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
             let unitPeriod = transferDates |> UnitPeriod.detect UnitPeriod.Direction.Reverse (UnitPeriod.Month 1)
@@ -147,6 +149,7 @@ module Apr =
         /// per unit-period. [...] If the unit-period is a week or a multiple of a week, the number of unit-periods per year shall be 
         /// 52 divided by the number of weeks per unit-period.
         let weeklyUnitPeriods (multiple: int) termStart transfers =
+            let multiple = Math.Max(1, multiple)
             let transferDates = transfers |> Array.map _.TransferDate
             let dr  = decimal (daysBetween termStart (transferDates |> Array.head)) / (7m * decimal multiple) |> fun d -> divRem d 1m
             transfers
@@ -179,6 +182,7 @@ module Apr =
         let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
             if Array.isEmpty advances || Array.isEmpty payments then Solution.Impossible else
             let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
+            if advanceTotal = 0m then Solution.Impossible else
             let paymentTotal = payments |> Array.sumBy (_.Amount >> Cent.toDecimal)
             if advanceTotal = paymentTotal then Solution.Found(0m, 0, 0) else
             let advanceDates = advances |> Array.map _.TransferDate

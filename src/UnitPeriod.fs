@@ -90,11 +90,12 @@ module UnitPeriod =
 
     /// number of unit-periods in a year
     let numberPerYear = function
-        | (NoInterval unitPeriodDays) -> 365m / decimal unitPeriodDays
+        | NoInterval unitPeriodDays when unitPeriodDays > 0<DurationDay> -> 365m / decimal unitPeriodDays
         | Day -> 365m
-        | (Week multiple) -> 52m / decimal multiple
+        | Week multiple when multiple > 0 -> 52m / decimal multiple
         | SemiMonth -> 24m
-        | (Month multiple) -> 12m / decimal multiple
+        | Month multiple when multiple > 0 -> 12m / decimal multiple
+        | _ -> 0m
 
     /// unit period combined with a
     [<Struct>]
@@ -181,9 +182,10 @@ module UnitPeriod =
         match config with
         | Single d -> maxLoanLength - offset d.Year d.Month d.Day
         | Daily d -> maxLoanLength - offset d.Year d.Month d.Day
-        | Weekly (multiple, d) -> (maxLoanLength - offset d.Year d.Month d.Day) / (multiple * 7)
+        | Weekly (multiple, d) when multiple > 0 -> (maxLoanLength - offset d.Year d.Month d.Day) / (multiple * 7)
         | SemiMonthly (y, m, d1, _) -> (maxLoanLength - offset y m (int d1)) / 15
-        | Monthly (multiple, y, m, d) -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
+        | Monthly (multiple, y, m, d) when multiple > 0 -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
+        | _ -> 0<DurationDay>
         |> int
 
     /// direction in which to generate the schedule: forward works forwards from a given date and reverse works backwards
@@ -196,6 +198,7 @@ module UnitPeriod =
 
     /// generate a payment schedule based on a unit-period config
     let generatePaymentSchedule count direction unitPeriodConfig =
+        if count = 0 then [||] else
         let adjustMonthEnd (monthEndTrackingDay: int) (d: Date) =
             if d.Day > 15 && monthEndTrackingDay > 28 then
                 TrackingDay.toDate d.Year d.Month monthEndTrackingDay

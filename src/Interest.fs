@@ -74,15 +74,6 @@ module Interest =
             | ValueSome (DailyFixedCap i) -> i
             | ValueNone -> Int64.MaxValue * 1L<Cent>
 
-    /// an interest holiday, i.e. a period when no interest is accrued
-    [<RequireQualifiedAccess; Struct>]
-    type Holiday = {
-        /// the first date of the holiday period
-        Start: Date
-        /// the last date of the holiday period
-        End: Date
-    }
-
     /// interest options
     [<Struct>]
     type Options = {
@@ -91,7 +82,7 @@ module Interest =
         /// any total or daily caps on interest
         Cap: Cap
         /// any grace period at the start of a product, if a product is settled before which no interest is payable
-        GracePeriod: int<DurationDay>
+        InitialGracePeriod: int<DurationDay>
         /// any date ranges during which no interest is applicable
         Holidays: Holiday array
         /// the interest rate applicable for any period in which a refund is owing
@@ -103,7 +94,7 @@ module Interest =
         let recommended = {
             Rate = Daily (Percent 0.8m)
             Cap = { Total = ValueSome (TotalPercentageCap (Percent 100m)); Daily = ValueSome (DailyPercentageCap (Percent 0.8m)) }
-            GracePeriod = 3<DurationDay>
+            InitialGracePeriod = 3<DurationDay>
             Holidays = [||]
             RateOnNegativeBalance = ValueSome (Annual (Percent 8m))
         }

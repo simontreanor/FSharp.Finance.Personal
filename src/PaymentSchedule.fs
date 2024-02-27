@@ -96,10 +96,8 @@ module PaymentSchedule =
         StartDate: Date
         /// the principal
         Principal: int64<Cent>
-        /// the unit-period config, specifying the payment frequency, first payment date and optionally whether the payments track a particular day of the month
-        UnitPeriodConfig: UnitPeriod.Config
-        /// the number of payments
-        PaymentCount: int
+        /// the scheduled payments or the parameters for generating them
+        PaymentSchedule: CustomerPaymentSchedule
         /// options relating to fees
         FeesAndCharges: FeesAndCharges
         /// options relating to interest
@@ -110,25 +108,41 @@ module PaymentSchedule =
 
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
-        if sp.PaymentCount = 0 then ValueNone else
-        if sp.StartDate > UnitPeriod.Config.startDate sp.UnitPeriodConfig then ValueNone else
-        let paymentDates = UnitPeriod.generatePaymentSchedule sp.PaymentCount UnitPeriod.Direction.Forward sp.UnitPeriodConfig
+        match sp.PaymentSchedule with
+        | IrregularSchedule _ -> failwith "Do not call this function for irregular schedules"
+        | RegularFixedSchedule _ -> failwith "Do not call this function for regular fixed schedules"
+        | RegularSchedule (unitPeriodConfig, paymentCount) ->
+
+        if paymentCount = 0 then ValueNone else
+        if sp.StartDate > UnitPeriod.Config.startDate unitPeriodConfig then ValueNone else
+
+        let paymentDates = UnitPeriod.generatePaymentSchedule paymentCount UnitPeriod.Direction.Forward unitPeriodConfig
+
         let finalPaymentDate = paymentDates |> Array.max
         let finalPaymentDay = (finalPaymentDate - sp.StartDate).Days * 1<OffsetDay>
+
         let paymentCount = paymentDates |> Array.length
+
         let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees
+
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
-        let roughPayment = (decimal sp.Principal + decimal fees) / decimal paymentCount
+
+        let roughPayment = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees) / decimal paymentCount
+
         let initial = { Day = 0<OffsetDay>; Payment = ValueNone; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; Balance = sp.Principal + fees }
+
         let toleranceSteps = ValueSome { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 2 }
-        let paymentDays = paymentDates |> Array.map(fun d -> (d - sp.StartDate).Days * 1<OffsetDay>)
+
+        let paymentDays = paymentDates |> Array.map (OffsetDay.fromDate sp.StartDate)
+
         let mutable schedule = [||]
+
         let generator payment =
             schedule <-
                 paymentDays
                 |> Array.scan(fun si d ->
-                    let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.GracePeriod sp.Interest.Holidays si.Day d
+                    let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.InitialGracePeriod sp.Interest.Holidays si.Day d
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.Balance interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     let interest' = if si.AggregateInterest + interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
@@ -145,6 +159,7 @@ module PaymentSchedule =
                 ) initial
             let principalBalance = schedule |> Array.last |> _.Balance |> decimal
             principalBalance
+
         match Array.solve generator 100 roughPayment toleranceOption toleranceSteps with
         | Solution.Found _ -> // note: payment is discarded because it is in the schedule
             let items =

@@ -20,18 +20,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 9, 28)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -53,12 +56,12 @@ module QuoteTests =
             voption{
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote001.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1969_70L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1969_70L<Cent>, 1175_80L<Cent>, 790_19L<Cent>, 3_71L<Cent>, 0L<Cent>),
             {
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
@@ -94,18 +97,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -127,12 +133,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote002.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (2026_48L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (2026_48L<Cent>, 1175_80L<Cent>, 834_19L<Cent>, 6_49L<Cent>, 10_00L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -168,18 +174,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -201,12 +210,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote003.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (2001_48L<Cent>, 1161_30L<Cent>, 640L<Cent>),
+            PaymentQuote (2001_48L<Cent>, 1175_80L<Cent>, 825_68L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -242,18 +251,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
-            PaymentCount = 5
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)),
+                PaymentCount = 5
+            )
             FeesAndCharges = {
                 Fees = [||]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -271,12 +283,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote004.md"
-                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1200_00L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1200_00L<Cent>, 1200_00L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
@@ -312,18 +324,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)
-            PaymentCount = 5
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)),
+                PaymentCount = 5
+            )
             FeesAndCharges = {
                 Fees = [||]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -341,12 +356,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote005.md"
-                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1238_40L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1238_40L<Cent>, 1200_00L<Cent>, 0L<Cent>, 38_40L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
@@ -382,18 +397,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -415,12 +433,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote006.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (3420_01L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (3420_01L<Cent>, 1175_80L<Cent>, 2227_72L<Cent>, 6_49L<Cent>, 10_00L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -456,18 +474,21 @@ module QuoteTests =
             StartDate = startDate
             AsOfDate = Date(2024, 10, 1)
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -493,7 +514,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (323_15L<Cent>, 0L<Cent>, 0L<Cent>), {
+            PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>), {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
@@ -528,18 +549,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -565,7 +589,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (690_41L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>),
             {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
@@ -601,18 +625,21 @@ module QuoteTests =
             AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 500_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2023, 6, 30))
-            PaymentCount = 10
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2023, 6, 30)),
+                PaymentCount = 10
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -634,7 +661,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1311_66L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1311_66L<Cent>, 500_00L<Cent>, 750_00L<Cent>, 61_66L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
@@ -670,18 +697,21 @@ module QuoteTests =
             AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12)),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -711,7 +741,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1261_68L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1261_68L<Cent>, 471_06L<Cent>, 706_53L<Cent>, 84_09L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
@@ -747,18 +777,21 @@ module QuoteTests =
             AsOfDate = Date(2023, 2, 8)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
-            PaymentCount = 11
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12)),
+                PaymentCount = 11
+            )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = { Total = ValueNone; Daily = ValueNone }
-                GracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -781,12 +814,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote011.md"
-                let! item = Array.vTryLastBut 6 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (973_52L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (973_52L<Cent>, 769_46L<Cent>, 195_68L<Cent>, 8_38L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
@@ -822,18 +855,21 @@ module QuoteTests =
             AsOfDate = Date(2024, 2, 28)
             StartDate = startDate
             Principal = 400_00L<Cent>
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 28)
-            PaymentCount = 4
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 28),
+                PaymentCount = 4
+            )
             FeesAndCharges = {
                 Fees = [||]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
+                ChargesHolidays = [||]
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.798m)
                 Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                GracePeriod = 1<DurationDay>
+                InitialGracePeriod = 1<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             }
@@ -851,12 +887,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote012.md"
-                let! item = Array.vTryLastBut 3 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (495_76L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (495_76L<Cent>, 400_00L<Cent>, 0L<Cent>, 95_76L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 30
                 OffsetDay = 30<OffsetDay>
@@ -891,18 +927,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 14)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -924,12 +963,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote013a.md"
-                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (429_24L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -964,18 +1003,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 15)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1001,7 +1043,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (432_07L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (432_07L<Cent>, 353_00L<Cent>, 0L<Cent>, 79_07L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1036,18 +1078,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 16)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1073,7 +1118,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (434_89L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (434_89L<Cent>, 353_00L<Cent>, 0L<Cent>, 81_89L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1108,18 +1153,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 19)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1145,7 +1193,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (453_36L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (453_36L<Cent>, 353_00L<Cent>, 0L<Cent>, 90_36L<Cent>, 10_00L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
@@ -1180,18 +1228,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 14)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1214,12 +1265,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote014a.md"
-                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (429_24L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -1254,18 +1305,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 15)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1292,7 +1346,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (-67_93L<Cent>, -55_49L<Cent>, -12_44L<Cent>),
+            PaymentQuote (-67_93L<Cent>, -67_93L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1327,18 +1381,21 @@ module QuoteTests =
                 AsOfDate = Date(2023, 3, 16)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1365,7 +1422,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (-67_95L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (-67_95L<Cent>, -67_93L<Cent>, 0L<Cent>, -2L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1400,18 +1457,21 @@ module QuoteTests =
                 AsOfDate = Date(2024, 2, 5)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1438,7 +1498,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (-72_80L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (-72_80L<Cent>, -67_93L<Cent>, 0L<Cent>, -4_87L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
@@ -1473,18 +1533,21 @@ module QuoteTests =
                 AsOfDate = Date(2022, 12, 20)
                 StartDate = Date(2022, 12, 19)
                 Principal = 250_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20)
-                PaymentCount = 4
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20),
+                    PaymentCount = 4
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 0<DurationDay>
+                    InitialGracePeriod = 0<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -1506,5 +1569,5 @@ module QuoteTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected

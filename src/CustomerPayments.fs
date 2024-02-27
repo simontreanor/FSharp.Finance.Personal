@@ -3,6 +3,8 @@ namespace FSharp.Finance.Personal
 /// categorising the types of incoming payments based on whether they are scheduled, actual or generated
 module CustomerPayments =
 
+    open System
+
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
     type ActualPayment =
@@ -69,3 +71,36 @@ module CustomerPayments =
         | Generated of QuoteType
         /// no payment needed because the loan has already been settled
         | NoLongerRequired
+
+    /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
+    [<Struct>]
+    type CustomerPaymentSchedule =
+        /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
+        | RegularSchedule of UnitPeriodConfig: UnitPeriod.Config * PaymentCount: int
+        /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
+        | RegularFixedSchedule of FixedUnitPeriodConfig: UnitPeriod.Config * FixedPaymentCount: int * PaymentAmount: int64<Cent>
+        /// just a bunch of payments
+        | IrregularSchedule of IrregularSchedule: CustomerPayment array
+
+    [<RequireQualifiedAccess; Struct>]
+    type PaymentCountCalculation =
+        | Manual of Count: int
+        | Automatic of InterestRate: Interest.Rate
+
+    /// calculates an estimated number of payments required to pay off an amount given a specific unitPeriod and interest rate
+    let calculateCount unitPeriodConfig (outstandingBalance: int64<Cent>) (payment: int64<Cent>) interestRate =
+        let roughUnitPeriodLength = unitPeriodConfig |> UnitPeriod.Config.roughLength
+        let initialCount = if payment = 0L<Cent> then 0m else decimal outstandingBalance / decimal payment |> Math.Ceiling
+        let estimatedYears = (roughUnitPeriodLength * initialCount) / 365m
+        let annualInterestRate = interestRate |> Interest.Rate.annual |> Percent.toDecimal
+        (1m + (annualInterestRate * estimatedYears)) * initialCount |> Math.Ceiling |> int
+
+    /// creates a payment plan for fully amortising an outstanding balance based on a payment amount, unit-period config and interest rate
+    let createPaymentSchedule (payment: int64<Cent>) paymentCountCalculation unitPeriodConfig (outstandingBalance: int64<Cent>) originalStartDate =
+        let count =
+            match paymentCountCalculation with
+            | PaymentCountCalculation.Manual count -> count
+            | PaymentCountCalculation.Automatic interestRate -> calculateCount unitPeriodConfig outstandingBalance payment interestRate
+        unitPeriodConfig
+        |> UnitPeriod.generatePaymentSchedule count UnitPeriod.Direction.Forward
+        |> Array.map(fun d -> { PaymentDay = d |> OffsetDay.fromDate originalStartDate ; PaymentDetails = ScheduledPayment payment })

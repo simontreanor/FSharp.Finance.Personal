@@ -29,8 +29,10 @@ let scheduleParameters =
         AsOfDate = Date(2024, 02, 07)
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
-        UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
-        PaymentCount = 36
+        PaymentSchedule = RegularSchedule (
+	        UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
+	        PaymentCount = 36
+        )
         FeesAndCharges = {
             Fees = [||]
             FeesSettlement = Fees.Settlement.DueInFull

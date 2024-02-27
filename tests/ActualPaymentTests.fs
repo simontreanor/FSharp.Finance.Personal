@@ -53,18 +53,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -79,7 +82,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest001.md")
 
@@ -94,18 +97,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 10, 29)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -120,7 +126,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest002.md")
 
@@ -135,18 +141,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 3, 16)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -161,7 +170,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest003.md")
 
@@ -176,18 +185,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 3, 22)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -202,7 +214,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest004.md")
 
@@ -239,18 +251,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 3, 22)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -265,7 +280,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest005.md")
 
@@ -302,18 +317,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 3, 25)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -333,7 +351,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest006.md")
 
@@ -370,18 +388,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2022, 11, 1)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -398,7 +419,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md")
 
@@ -436,18 +457,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2024, 10, 1)
                 StartDate = startDate
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14)
-                PaymentCount = 11
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 14),
+                    PaymentCount = 11
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -466,7 +490,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest008.md")
 
@@ -503,18 +527,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 3, 25)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -534,7 +561,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest009.md")
 
@@ -571,18 +598,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 1, 18)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -601,7 +631,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest010.md")
 
@@ -638,18 +668,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2023, 1, 19)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -668,7 +701,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest011.md")
 
@@ -705,18 +738,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2034, 1, 31)
                 StartDate = Date(2022, 11, 1)
                 Principal = 1500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                    PaymentCount = 5
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -737,7 +773,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest012.md")
 
@@ -774,18 +810,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2024, 2, 7)
                 StartDate = Date(2024, 2, 2)
                 Principal = 250_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 22)
-                PaymentCount = 4
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 22),
+                    PaymentCount = 4
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }
@@ -802,7 +841,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest013.md")
 
@@ -817,18 +856,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2024, 2, 13)
                 StartDate = Date(2022, 4, 30)
                 Principal = 2500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
-                PaymentCount = 24
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6)),
+                    PaymentCount = 24
+                )
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = { Total = ValueNone; Daily = ValueNone }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -868,7 +910,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest014.md")
 
@@ -883,18 +925,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2024, 2, 13)
                 StartDate = Date(2022, 4, 30)
                 Principal = 2500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
-                PaymentCount = 24
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6)),
+                    PaymentCount = 24
+                )
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = { Total = ValueNone; Daily = ValueNone }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -911,7 +956,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
 
@@ -926,18 +971,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2024, 2, 13)
                 StartDate = Date(2022, 4, 30)
                 Principal = 2500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
-                PaymentCount = 24
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6)),
+                    PaymentCount = 24
+                )
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = { Total = ValueNone; Daily = ValueNone }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -955,7 +1003,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
 
@@ -970,18 +1018,21 @@ module ActualPaymentTests =
                 AsOfDate = Date(2024, 2, 13)
                 StartDate = Date(2022, 4, 30)
                 Principal = 2500_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6))
-                PaymentCount = 24
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Weekly(1, Date(2022, 5, 6)),
+                    PaymentCount = 24
+                )
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = { Total = ValueNone; Daily = ValueNone }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -1000,7 +1051,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest
+            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
 

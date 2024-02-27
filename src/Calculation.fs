@@ -86,3 +86,12 @@ module Calculation =
         /// how to round payments
         PaymentRounding: Rounding
     }
+
+    /// a holiday, i.e. a period when no interest and/or charges are accrued
+    [<RequireQualifiedAccess; Struct>]
+    type Holiday = {
+        /// the first date of the holiday period
+        Start: Date
+        /// the last date of the holiday period
+        End: Date
+    }

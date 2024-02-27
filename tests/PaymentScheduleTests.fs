@@ -8,6 +8,7 @@ open FSharp.Finance.Personal
 
 module PaymentScheduleTests =
 
+    open CustomerPayments
     open PaymentSchedule
 
     module Biweekly =
@@ -17,18 +18,21 @@ module PaymentScheduleTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = principal
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(int offset))
-                PaymentCount = 11
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(int offset)),
+                    PaymentCount = 11
+                )
                 FeesAndCharges = {
                     Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = { Total = ValueNone; Daily = ValueNone }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -102,18 +106,21 @@ module PaymentScheduleTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = principal
-                UnitPeriodConfig = startDate.AddDays(int offset) |> fun d -> UnitPeriod.Monthly(1, d.Year, d.Month, d.Day * 1)
-                PaymentCount = paymentCount
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = (startDate.AddDays(int offset) |> fun d -> UnitPeriod.Monthly(1, d.Year, d.Month, d.Day * 1)),
+                    PaymentCount = paymentCount
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.798m)
                     Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)); Daily = ValueSome (Interest.DailyPercentageCap (Percent 0.8m)) }
-                    GracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
@@ -1348,18 +1355,21 @@ module PaymentScheduleTests =
                 AsOfDate = Date(2022, 12, 19)
                 StartDate = Date(2022, 12, 19)
                 Principal = 300_00L<Cent>
-                UnitPeriodConfig = UnitPeriod.Daily(Date(2023, 1, 3))
-                PaymentCount = 1
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Daily(Date(2023, 1, 3)),
+                    PaymentCount = 1
+                )
                 FeesAndCharges = {
                     Fees = [||]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                    ChargesHolidays = [||]
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    GracePeriod = 0<DurationDay>
+                    InitialGracePeriod = 0<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
                 }

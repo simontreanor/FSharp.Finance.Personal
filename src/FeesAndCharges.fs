@@ -110,6 +110,8 @@ module FeesAndCharges =
         FeesSettlement: Fees.Settlement
         /// a list of penalty charges applicable to a product
         Charges: Charge array
+        /// any period during which charges are not payable
+        ChargesHolidays: Holiday array
         /// the number of days' grace period after which late-payment charges apply
         LatePaymentGracePeriod: int<DurationDay>
     }
@@ -121,5 +123,6 @@ module FeesAndCharges =
             Fees = [||]
             FeesSettlement = Fees.Settlement.ProRataRefund
             Charges = [||]
+            ChargesHolidays = [||]
             LatePaymentGracePeriod = 3<DurationDay>
         }
