@@ -101,6 +101,15 @@ module FeesAndCharges =
                 | Charge.CustomCharge (_, amount) -> amount |> Amount.total baseAmount
             )
 
+        /// determines whether charge are applicable on a given day
+        let areApplicable (startDate: Date) holidays (onDay: int<OffsetDay>) =
+            holidays
+            |> Array.collect(fun (ih: Holiday) ->
+                [| (ih.Start - startDate).Days .. (ih.End - startDate).Days |]
+            )
+            |> Array.exists(fun d -> d = int onDay)
+            |> not
+
     /// options specifying the types of fees and charges, their amounts, and any restrictions on these
     [<Struct>]
     type FeesAndCharges = {

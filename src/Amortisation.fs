@@ -201,7 +201,10 @@ module Amortisation =
                 if paymentDue = 0L<Cent> then
                     0L<Cent>, [||]
                 else
-                    Charges.total underpayment ap.IncurredCharges, ap.IncurredCharges
+                    if Charges.areApplicable sp.StartDate sp.FeesAndCharges.ChargesHolidays si.OffsetDay then
+                        Charges.total underpayment ap.IncurredCharges, ap.IncurredCharges
+                    else
+                        0L<Cent>, [||]
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
 
             let generatedPayment, netEffect =
