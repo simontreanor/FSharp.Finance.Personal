@@ -72,6 +72,8 @@ module PaymentSchedule =
         AprMethod: Apr.CalculationMethod
         /// which rounding method to use
         RoundingOptions: RoundingOptions
+        /// how to handle interest on negative principal balances
+        NegativeInterestOption: NegativeInterestOption
         /// how to adjust the final payment
         FinalPaymentAdjustment: FinalPaymentAdjustment
         /// the minimum payment that can be taken and how to handle it
@@ -85,6 +87,7 @@ module PaymentSchedule =
         let recommended = {
             AprMethod = Apr.CalculationMethod.UsActuarial 8
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            NegativeInterestOption = DoNotApplyNegativeInterest
             FinalPaymentAdjustment = AdjustFinalPayment
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>

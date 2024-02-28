@@ -44,6 +44,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -55,7 +56,7 @@ module QuoteTests =
 
         let actual =
             voption{
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote001.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -122,6 +123,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -133,7 +135,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote002.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -200,6 +202,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -211,7 +214,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote003.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -278,6 +281,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -285,7 +289,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote004.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -352,6 +356,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -359,7 +364,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote005.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -426,6 +431,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -437,7 +443,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote006.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -504,6 +510,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = DoNotApplyNegativeInterest
             }
         }
 
@@ -515,7 +522,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote FirstOutstanding sp DoNotApplyNegativeInterest actualPayments
+                let! quote = getQuote FirstOutstanding sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote007.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -580,6 +587,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = DoNotApplyNegativeInterest
             }
         }
 
@@ -591,7 +599,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote AllOverdue sp DoNotApplyNegativeInterest actualPayments
+                let! quote = getQuote AllOverdue sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote008.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -657,6 +665,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -664,7 +673,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote009.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -730,6 +739,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -745,7 +755,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote010.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -811,6 +821,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -823,7 +834,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote011.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -890,6 +901,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -897,7 +909,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote012.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -962,6 +974,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -974,7 +987,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote013a.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1039,6 +1052,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1051,7 +1065,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote013b.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1115,6 +1129,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1127,7 +1142,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote013c.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1191,6 +1206,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1203,7 +1219,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote013d.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1267,6 +1283,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
         let actualPayments = [|
@@ -1279,7 +1296,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote014a.md"
                 let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1344,6 +1361,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1357,7 +1375,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote014b.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1421,6 +1439,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1434,7 +1453,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote014c.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1498,6 +1517,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1511,7 +1531,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote015.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1575,6 +1595,7 @@ module QuoteTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1584,7 +1605,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp ApplyNegativeInterest actualPayments
+                let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote016.md"
                 return quote.QuoteResult
             }

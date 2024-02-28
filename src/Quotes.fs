@@ -23,11 +23,11 @@ module Quotes =
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
-    let getQuote quoteType sp negativeInterestOption (actualPayments: CustomerPayment array) =
+    let getQuote quoteType sp (actualPayments: CustomerPayment array) =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement negativeInterestOption ValueNone actualPayments
+            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ValueNone actualPayments
             let originalFinalPaymentDay = currentAmortisationSchedule.ScheduleItems |> Array.last |> _.OffsetDay
-            let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Quote quoteType) negativeInterestOption (ValueSome originalFinalPaymentDay) actualPayments
+            let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Quote quoteType) (ValueSome originalFinalPaymentDay) actualPayments
             let! si = revisedAmortisationSchedule.ScheduleItems |> Array.tryFind(_.GeneratedPayment.IsSome) |> toValueOption
             let confirmedPayments = si.ActualPayments |> Array.sumBy(function ActualPayment.Confirmed ap -> ap | _ -> 0L<Cent>)
             let pendingPayments = si.ActualPayments |> Array.sumBy(function ActualPayment.Pending ap -> ap | _ -> 0L<Cent>)

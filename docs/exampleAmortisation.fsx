@@ -19,7 +19,8 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 *)
 
-#r "nuget:FSharp.Finance.Personal"
+// #r "nuget:FSharp.Finance.Personal"
+#r @"..\src\bin\Debug\netstandard2.1\FSharp.Finance.Personal.dll"
 
 open FSharp.Finance.Personal
 open CustomerPayments
@@ -38,12 +39,13 @@ let scheduleParameters =
             Fees = [||]
             FeesSettlement = Fees.Settlement.ProRataRefund
             Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+            ChargesHolidays = [||]
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {
             Rate = Interest.Rate.Daily (Percent 0.8m)
             Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-            GracePeriod = 3<DurationDay>
+            InitialGracePeriod = 3<DurationDay>
             Holidays = [||]
             RateOnNegativeBalance = ValueNone
         }
@@ -52,6 +54,7 @@ let scheduleParameters =
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
             MinimumPayment = DeferOrWriteOff 50L<Cent>
+            PaymentTimeout = 3<DurationDay>
         }
     }
 
@@ -65,7 +68,7 @@ let actualPayments = [|
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ApplyNegativeInterest
+    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement
 amortisationSchedule
 
 (*** include-it ***)
