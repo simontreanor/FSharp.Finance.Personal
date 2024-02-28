@@ -19,8 +19,7 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 *)
 
-// #r "nuget:FSharp.Finance.Personal"
-#r @"..\src\bin\Debug\netstandard2.1\FSharp.Finance.Personal.dll"
+#r "nuget:FSharp.Finance.Personal, 0.10.0"
 
 open FSharp.Finance.Personal
 open CustomerPayments
@@ -32,7 +31,7 @@ let scheduleParameters =
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
         PaymentSchedule = RegularSchedule (
-	        UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+	        UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
 	        PaymentCount = 5
         )
         FeesAndCharges = {
@@ -54,6 +53,7 @@ let scheduleParameters =
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
+            NegativeInterestOption = ApplyNegativeInterest
         }
     }
 
@@ -67,7 +67,7 @@ let actualPayments = [|
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement
+    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ValueNone
 amortisationSchedule
 
 (*** include-it ***)
