@@ -76,7 +76,6 @@ module ActualPaymentTestsExtra =
         let paymentRoundings = [| RoundDown; RoundUp; Round MidpointRounding.ToEven; Round MidpointRounding.AwayFromZero; |]
         interestRoundings
         |> Array.collect(fun ir -> paymentRoundings |> Array.map(fun pr -> { InterestRounding = ir; PaymentRounding = pr }))
-    let finalPaymentAdjustments = [| AdjustFinalPayment; SpreadOverLevelPayments |]
 
     type ScheduledPaymentTestItem = {
         TestId: string
@@ -110,8 +109,7 @@ module ActualPaymentTestsExtra =
         let acm = sp.Calculation.AprMethod
         let pcc = sp.FeesAndCharges.Charges
         let ro = sp.Calculation.RoundingOptions
-        let fpa = sp.Calculation.FinalPaymentAdjustment
-        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}_fpa{fpa}"""
+        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}"""
         let amortisationSchedule = 
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
@@ -165,7 +163,6 @@ module ActualPaymentTestsExtra =
             let acm = takeRandomFrom aprCalculationMethods
             let pcc = takeRandomFrom charges
             let ro = takeRandomFrom roundingOptions
-            let fpa = takeRandomFrom finalPaymentAdjustments
             {
                 AsOfDate = asOfDate
                 StartDate = sd
@@ -191,7 +188,6 @@ module ActualPaymentTestsExtra =
                 Calculation = {
                     AprMethod = acm
                     RoundingOptions = ro
-                    FinalPaymentAdjustment = fpa
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -214,9 +210,8 @@ module ActualPaymentTestsExtra =
         paymentCounts |> Seq.collect(fun pc ->
         aprCalculationMethods |> Seq.collect(fun acm ->
         charges |> Seq.collect(fun pcc ->
-        roundingOptions |> Seq.collect(fun ro ->
-        finalPaymentAdjustments
-        |> Seq.map(fun fpa ->
+        roundingOptions
+        |> Seq.map(fun ro ->
             {
                 AsOfDate = asOfDate
                 StartDate = sd
@@ -242,13 +237,12 @@ module ActualPaymentTestsExtra =
                 Calculation = {
                     AprMethod = acm
                     RoundingOptions = ro
-                    FinalPaymentAdjustment = fpa
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
                 }
             }
-        )))))))))))))))
+        ))))))))))))))
         |> Seq.map applyPayments
 
     let generateRegularPaymentTestData (amortisationSchedule: (string * Amortisation.ScheduleItem array voption) seq) =
@@ -332,7 +326,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -405,7 +398,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -480,7 +472,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -556,7 +547,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -629,7 +619,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -702,7 +691,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -777,7 +765,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest
@@ -855,7 +842,6 @@ module ActualPaymentTestsExtra =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest

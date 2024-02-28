@@ -39,7 +39,6 @@ module PaymentScheduleTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 8
                     RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -129,7 +128,6 @@ module PaymentScheduleTests =
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
-                    FinalPaymentAdjustment = AdjustFinalPayment
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -1379,7 +1377,6 @@ module PaymentScheduleTests =
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest

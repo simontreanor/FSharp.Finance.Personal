@@ -49,7 +49,6 @@ let scheduleParameters =
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
-            FinalPaymentAdjustment = AdjustFinalPayment
         }
     }
 let schedule = scheduleParameters |> calculate AroundZero

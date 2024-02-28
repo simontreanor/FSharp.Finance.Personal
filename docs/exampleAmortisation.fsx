@@ -52,7 +52,6 @@ let scheduleParameters =
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-            FinalPaymentAdjustment = AdjustFinalPayment
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
         }

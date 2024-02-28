@@ -47,14 +47,6 @@ module PaymentSchedule =
         CostToBorrowingRatio: Percent
     }
 
-    /// how to handle the principal balance overpayment (due to rounding) on the final payment of a schedule
-    [<Struct>]
-    type FinalPaymentAdjustment =
-        /// adjust the final payment to account for the difference
-        | AdjustFinalPayment
-        /// spread the difference over the level payments (not yet implemented)
-        | SpreadOverLevelPayments
-
     /// how to handle cases where the payment due is less than the minimum that payment providers can process
      [<Struct>]
     type MinimumPayment =
@@ -74,8 +66,6 @@ module PaymentSchedule =
         RoundingOptions: RoundingOptions
         /// how to handle interest on negative principal balances
         NegativeInterestOption: NegativeInterestOption
-        /// how to adjust the final payment
-        FinalPaymentAdjustment: FinalPaymentAdjustment
         /// the minimum payment that can be taken and how to handle it
         MinimumPayment: MinimumPayment
         /// the minimum payment that can be taken and how to handle it
@@ -88,7 +78,6 @@ module PaymentSchedule =
             AprMethod = Apr.CalculationMethod.UsActuarial 8
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             NegativeInterestOption = DoNotApplyNegativeInterest
-            FinalPaymentAdjustment = AdjustFinalPayment
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
         }
@@ -167,18 +156,15 @@ module PaymentSchedule =
             principalBalance
 
         match Array.solve generator 100 roughPayment toleranceOption toleranceSteps with
-        | Solution.Found _ -> // note: payment is discarded because it is in the schedule
+        | Solution.Found _ ->
+            // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
             let items =
-                match sp.Calculation.FinalPaymentAdjustment with
-                | AdjustFinalPayment ->
-                    schedule
-                    |> Array.map(fun si ->
-                        if si.Day = finalPaymentDay then
-                            { si with Payment = si.Payment |> ValueOption.map(fun p -> p + si.Balance); Principal = si.Principal + si.Balance; Balance = 0L<Cent> }
-                        else si
-                    )
-                | SpreadOverLevelPayments ->
-                    failwith "Not yet implemented" // to-do: this is tricky because adjusting payments pays off principal and affects interest calculations during the loan
+                schedule
+                |> Array.map(fun si ->
+                    if si.Day = finalPaymentDay then
+                        { si with Payment = si.Payment |> ValueOption.map(fun p -> p + si.Balance); Principal = si.Principal + si.Balance; Balance = 0L<Cent> }
+                    else si
+                )
             let principalTotal = items |> Array.sumBy _.Principal
             let interestTotal = items |> Array.sumBy _.Interest
             let aprSolution =
