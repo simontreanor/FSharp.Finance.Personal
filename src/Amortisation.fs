@@ -148,7 +148,7 @@ module Amortisation =
             let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.InitialGracePeriod sp.Interest.Holidays si.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
-                if si.PrincipalBalance <= 0L<Cent> then // note: should this also inspect fees balance: problably not, as fees can be 0L<Cent> and also principal balance is always settled last
+                if si.PrincipalBalance <= 0L<Cent> then
                     match sp.Calculation.NegativeInterestOption with
                     | ApplyNegativeInterest ->
                         let dailyInterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.map Interest.Rate.daily |> ValueOption.defaultValue (Percent 0m)
@@ -254,7 +254,6 @@ module Amortisation =
                 | Fees.Settlement.ProRataRefund when originalFinalPaymentDay > 0<OffsetDay> -> 
                     if originalFinalPaymentDay = 0<OffsetDay> then 0L<Cent>
                     else decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
-                | Fees.Settlement.DueInFull 
                 | _ -> feesTotal
 
             let feesRefund =
