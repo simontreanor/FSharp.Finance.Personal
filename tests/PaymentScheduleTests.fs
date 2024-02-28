@@ -42,6 +42,7 @@ module PaymentScheduleTests =
                     FinalPaymentAdjustment = AdjustFinalPayment
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
+                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -131,6 +132,7 @@ module PaymentScheduleTests =
                     FinalPaymentAdjustment = AdjustFinalPayment
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
+                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -1380,6 +1382,7 @@ module PaymentScheduleTests =
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
+                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
