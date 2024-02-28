@@ -76,6 +76,8 @@ module PaymentSchedule =
         FinalPaymentAdjustment: FinalPaymentAdjustment
         /// the minimum payment that can be taken and how to handle it
         MinimumPayment: MinimumPayment
+        /// the minimum payment that can be taken and how to handle it
+        PaymentTimeout: int<DurationDay>
     }
 
     module Calculation =
@@ -85,6 +87,7 @@ module PaymentSchedule =
             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
             FinalPaymentAdjustment = AdjustFinalPayment
             MinimumPayment = DeferOrWriteOff 50L<Cent>
+            PaymentTimeout = 3<DurationDay>
         }
 
     /// parameters for creating a payment schedule

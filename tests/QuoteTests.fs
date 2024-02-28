@@ -43,6 +43,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -120,6 +121,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -197,6 +199,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -274,6 +277,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -347,6 +351,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -420,6 +425,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -497,6 +503,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -572,6 +579,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -648,6 +656,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -720,6 +729,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -800,6 +810,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -878,6 +889,7 @@ module QuoteTests =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         }
 
@@ -922,36 +934,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``13a) Loan is settled the day before the last scheduled payment is due`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 14)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 14)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -998,36 +1011,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``13b) Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 15)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 15)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1073,36 +1087,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``13c) Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 16)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 16)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1148,36 +1163,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``13d) Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 19)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 19)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1223,36 +1239,36 @@ module QuoteTests =
 
     [<Fact>]
     let ``14a) Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 14)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 14)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1300,36 +1316,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``14b) Loan is settled the same day as an overpayment`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 15)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 15)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1376,36 +1393,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``14c) Loan is settled the day after an overpayment`` () =
-        let sp =
-            {
-                AsOfDate = Date(2023, 3, 16)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2023, 3, 16)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1452,36 +1470,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``15) Loan refund due for a long time, showing interest owed back`` () =
-        let sp =
-            {
-                AsOfDate = Date(2024, 2, 5)
-                StartDate = Date(2022, 11, 1)
-                Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                    PaymentCount = 5
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2024, 2, 5)
+            StartDate = Date(2022, 11, 1)
+            Principal = 1500_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
+                PaymentCount = 5
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 3<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
             { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
@@ -1528,36 +1547,37 @@ module QuoteTests =
 
     [<Fact>]
     let ``16) Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components`` () =
-        let sp =
-            {
-                AsOfDate = Date(2022, 12, 20)
-                StartDate = Date(2022, 12, 19)
-                Principal = 250_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20),
-                    PaymentCount = 4
-                )
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
-                    Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    ChargesHolidays = [||]
-                    LatePaymentGracePeriod = 3<DurationDay>
-                }
-                Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
-                    InitialGracePeriod = 0<DurationDay>
-                    Holidays = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                    FinalPaymentAdjustment = AdjustFinalPayment
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                }
+        let sp = {
+            AsOfDate = Date(2022, 12, 20)
+            StartDate = Date(2022, 12, 19)
+            Principal = 250_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20),
+                PaymentCount = 4
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 3<DurationDay>
             }
+            Interest = {
+                Rate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                InitialGracePeriod = 0<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                FinalPaymentAdjustment = AdjustFinalPayment
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
         let actualPayments = [|
             { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 252_00L<Cent>) }
         |]

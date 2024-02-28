@@ -10,6 +10,8 @@ module CustomerPayments =
     type ActualPayment =
         /// the payment has been initiated but is not yet confirmed
         | Pending of PendingAmount: int64<Cent>
+        /// the payment had been initiated but was not confirmed within the timeout
+        | TimedOut of TimedOutAmount: int64<Cent>
         /// the payment has been confirmed
         | Confirmed of ConfirmedAmount: int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
@@ -29,8 +31,9 @@ module CustomerPayments =
             static member total = function
                 | ScheduledPayment sp -> sp
                 | ActualPayment (ActualPayment.Pending ap) -> ap
+                | ActualPayment (ActualPayment.TimedOut _) -> 0L<Cent>
                 | ActualPayment (ActualPayment.Confirmed ap) -> ap
-                | ActualPayment (ActualPayment.Failed (ap, _)) -> ap
+                | ActualPayment (ActualPayment.Failed _) -> 0L<Cent>
                 | GeneratedPayment gp -> gp
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule

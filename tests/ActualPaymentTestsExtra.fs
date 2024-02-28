@@ -121,7 +121,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
@@ -193,6 +193,7 @@ module ActualPaymentTestsExtra =
                     RoundingOptions = ro
                     FinalPaymentAdjustment = fpa
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
                 }
             }
             |> applyPayments
@@ -242,6 +243,7 @@ module ActualPaymentTestsExtra =
                     RoundingOptions = ro
                     FinalPaymentAdjustment = fpa
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
                 }
             }
         )))))))))))))))
@@ -330,6 +332,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -341,7 +344,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule
@@ -401,6 +404,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -414,7 +418,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule
@@ -474,6 +478,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -547,6 +552,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -558,7 +564,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule
@@ -618,6 +624,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -629,7 +636,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule
@@ -689,6 +696,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -702,7 +710,7 @@ module ActualPaymentTestsExtra =
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) actualPayments
+                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay ApplyNegativeInterest
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
@@ -762,6 +770,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =
@@ -838,6 +847,7 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
                 FinalPaymentAdjustment = AdjustFinalPayment
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
             }
         })
         let actual =

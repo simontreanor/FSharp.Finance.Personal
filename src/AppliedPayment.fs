@@ -25,13 +25,20 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) actualPayments scheduledPayments =
+    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) paymentTimeout actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else
 
-        let nonZero = Array.filter(fun cp -> CustomerPaymentDetails.total cp.PaymentDetails <> 0L<Cent>)
+        let actualPayments =
+            actualPayments
+            |> Array.map(fun x ->
+                let isTimedOut = x.PaymentDay |> timedOut paymentTimeout asOfDay
+                match x.PaymentDetails with
+                | ActualPayment (ActualPayment.Pending ap) when isTimedOut -> { x with PaymentDetails = ActualPayment (ActualPayment.TimedOut ap) }
+                | _ -> x
+            )
 
         let payments =
-            [| scheduledPayments; nonZero actualPayments |]
+            [| scheduledPayments; actualPayments |]
             |> Array.concat
             |> Array.groupBy _.PaymentDay
             |> Array.map(fun (offsetDay, payments) ->
@@ -61,7 +68,7 @@ module AppliedPayment =
                         | ValueNone, ap -> ap, ExtraPayment
                         | ValueSome sp, ap when ap < sp && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
                             match intendedPurpose with
-                            | IntendedPurpose.Quote quoteType when offsetDay < asOfDay -> 0L<Cent>, PaymentDue
+                            | IntendedPurpose.Quote _ when offsetDay < asOfDay -> 0L<Cent>, PaymentDue
                             | IntendedPurpose.Quote quoteType when offsetDay = asOfDay -> 0L<Cent>, Generated quoteType
                             | _ -> sp, PaymentDue
                         | ValueSome sp, _ when offsetDay > asOfDay -> sp, NotYetDue

@@ -95,3 +95,7 @@ module Calculation =
         /// the last date of the holiday period
         End: Date
     }
+
+    /// determines whether a pending payment has timed out
+    let timedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
+        (int asOfDay - int paymentDay) * 1<DurationDay> > paymentTimeout

@@ -162,6 +162,7 @@ module Amortisation =
             let interestPortion = newInterest' + si.InterestBalance
 
             let confirmedPayments = ap.ActualPayments |> Array.sumBy(function ActualPayment.Confirmed ap -> ap | _ -> 0L<Cent>)
+
             let pendingPayments = ap.ActualPayments |> Array.sumBy(function ActualPayment.Pending ap -> ap | _ -> 0L<Cent>)
 
             let accumulator =
@@ -428,7 +429,7 @@ module Amortisation =
         let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment amount -> Some amount | _ -> None) |> Option.map ValueSome |> Option.defaultValue ValueNone
 
         payments
-        |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge actualPayments
+        |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose originalFinalPaymentDay' negativeInterestOption
         |> Array.takeWhile(fun si -> originalFinalPaymentDay.IsNone || si.PaymentStatus <> NoLongerRequired) // remove extra items from rescheduling
         |> calculateStats sp finalAprOption
