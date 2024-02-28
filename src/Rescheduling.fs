@@ -60,7 +60,7 @@ module Rescheduling =
                     Interest = { sp.Interest with InitialGracePeriod = 0<DurationDay>; Holidays = rp.InterestHolidays }
                 }
             // create the new amortiation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement DoNotCalculateFinalApr DoNotApplyNegativeInterest (ValueSome quote.OriginalFinalPaymentDay) [||]
+            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement DoNotApplyNegativeInterest (ValueSome quote.OriginalFinalPaymentDay) [||]
             return quote.RevisedSchedule, rescheduledSchedule
         }
 
@@ -116,7 +116,7 @@ module Rescheduling =
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }
             // create the new amortiation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement DoNotCalculateFinalApr DoNotApplyNegativeInterest (ValueSome quote.OriginalFinalPaymentDay) [||]
+            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement DoNotApplyNegativeInterest (ValueSome quote.OriginalFinalPaymentDay) [||]
             return quote.RevisedSchedule, rescheduledSchedule
         }
 

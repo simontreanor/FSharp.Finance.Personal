@@ -24,14 +24,6 @@ module Calculation =
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 
-    /// whether to calculate the final APR
-    [<Struct>]
-    type FinalAprOption =
-        /// calculate the final APR (can be compute-intensive)
-        | CalculateFinalApr
-        /// do not calculate the final APR (not needed)
-        | DoNotCalculateFinalApr
-
     /// whether to apply interest on a negative balance (i.e. while a refund is owing)
     [<Struct>]
     type NegativeInterestOption =

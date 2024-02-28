@@ -366,7 +366,7 @@ module Amortisation =
         |> fst
 
     /// wraps the amortisation schedule in some statistics, and optionally calculate the final APR (optional because it can be processor-intensive)
-    let calculateStats sp finalAprOption items =
+    let calculateStats sp intendedPurpose items =
         let finalItem = Array.last items
         let principalTotal = items |> Array.sumBy _.PrincipalPortion
         let feesTotal = items |> Array.sumBy _.FeesPortion
@@ -376,15 +376,14 @@ module Amortisation =
         let finalPaymentDay = finalItem.OffsetDay
         let finalBalanceStatus = finalItem.BalanceStatus
         let finalAprSolution =
-            match finalAprOption with
-            | CalculateFinalApr when finalBalanceStatus = ClosedBalance ->
+            match intendedPurpose with
+            | IntendedPurpose.Quote Settlement when finalBalanceStatus = ClosedBalance ->
                 items
                 |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
                 |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                 |> ValueSome
-            | CalculateFinalApr
-            | DoNotCalculateFinalApr ->
+            | _ ->
                  ValueNone
         {
             ScheduleItems = items
@@ -401,7 +400,7 @@ module Amortisation =
         }
 
     /// generates an amortisation schedule and final statistics
-    let generate sp intendedPurpose finalAprOption negativeInterestOption originalFinalPaymentDay actualPayments =
+    let generate sp intendedPurpose negativeInterestOption originalFinalPaymentDay actualPayments =
         let payments =
             match sp.PaymentSchedule with
             | RegularSchedule _ ->
@@ -432,5 +431,5 @@ module Amortisation =
         |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose originalFinalPaymentDay' negativeInterestOption
         |> Array.takeWhile(fun si -> originalFinalPaymentDay.IsNone || si.PaymentStatus <> NoLongerRequired) // remove extra items from rescheduling
-        |> calculateStats sp finalAprOption
+        |> calculateStats sp intendedPurpose
         |> ValueSome

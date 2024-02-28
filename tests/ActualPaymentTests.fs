@@ -83,7 +83,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest001.md")
 
@@ -128,7 +128,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest002.md")
 
@@ -173,7 +173,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest003.md")
 
@@ -218,7 +218,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest004.md")
 
@@ -285,7 +285,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest005.md")
 
@@ -357,7 +357,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest006.md")
 
@@ -426,7 +426,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md")
 
@@ -498,7 +498,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest008.md")
 
@@ -570,7 +570,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest009.md")
 
@@ -641,7 +641,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest010.md")
 
@@ -712,7 +712,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest011.md")
 
@@ -785,7 +785,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest012.md")
 
@@ -854,7 +854,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest013.md")
 
@@ -924,7 +924,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp  IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest014.md")
 
@@ -971,7 +971,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp  IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp  IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
 
@@ -1019,7 +1019,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
 
@@ -1068,7 +1068,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
 
@@ -1117,7 +1117,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest018.md")
 
@@ -1166,7 +1166,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement DoNotCalculateFinalApr ApplyNegativeInterest ValueNone
+            |> Amortisation.generate sp IntendedPurpose.Statement ApplyNegativeInterest ValueNone
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest019.md")
 
