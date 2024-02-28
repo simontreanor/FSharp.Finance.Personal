@@ -975,7 +975,7 @@ module ActualPaymentTests =
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 543_99L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_86L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1023,7 +1023,7 @@ module ActualPaymentTests =
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 348_55L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_86L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1072,7 +1072,7 @@ module ActualPaymentTests =
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 152_73L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_86L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 

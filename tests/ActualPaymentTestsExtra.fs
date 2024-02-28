@@ -300,9 +300,9 @@ module ActualPaymentTestsExtra =
     //     testItem.PrincipalPortionTotal |> should equal testItem.AdvanceTotal
 
     [<Fact>]
-    let ``1) Simple schedule looked at from a date in the past showing projected to be fully settled on time`` () =
+    let ``1) Simple schedule fully settled on time`` () =
         let sp = ({
-            AsOfDate = Date(2023, 7, 23)
+            AsOfDate = Date(2023, 12, 1)
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -355,7 +355,7 @@ module ActualPaymentTestsExtra =
             ActualPayments = [| ActualPayment.Confirmed 407_64L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 407_64L<Cent>
-            PaymentStatus = NotYetDue
+            PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
             NewInterest = 3_30L<Cent>
             NewCharges = [||]
@@ -712,25 +712,25 @@ module ActualPaymentTestsExtra =
                 amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }
-            |> ValueOption.bind (Array.vTryLastBut 1)
+            |> ValueOption.bind (Array.vTryLastBut 2)
         let expected = ValueSome ({
-            OffsetDate = Date(2022, 8, 13)
-            OffsetDay = 158<OffsetDay>
+            OffsetDate = Date(2022, 7, 30)
+            OffsetDay = 144<OffsetDay>
             Advances = [||]
             ScheduledPayment = ValueSome 171_02L<Cent>
-            PaymentDue = 167_36L<Cent>
+            PaymentDue = 142_40L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 167_36L<Cent>
+            NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 63L<Cent>
+            NewInterest = 1_28L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 66_73L<Cent>
-            FeesPortion = 100_00L<Cent>
-            InterestPortion = 63L<Cent>
+            PrincipalPortion = 134_62L<Cent>
+            FeesPortion = 6_50L<Cent>
+            InterestPortion = 1_28L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeesRefund = 195_35L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>

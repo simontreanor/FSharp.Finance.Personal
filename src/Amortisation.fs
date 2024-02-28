@@ -174,7 +174,7 @@ module Amortisation =
 
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
             let paymentDue =
-                if si.BalanceStatus = ClosedBalance then
+                if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
                     0L<Cent>
                 elif ap.ScheduledPayment.IsSome && extraPaymentsBalance > 0L<Cent> then
                     ap.ScheduledPayment.Value - extraPaymentsBalance
@@ -241,15 +241,44 @@ module Amortisation =
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
 
             let assignable = sign netEffect - sign chargesPortion - sign interestPortion
+
             let feesPortion =
                 feesPercentage
                 |> Percent.toDecimal
                 |> fun m ->
                     if (1m + m) = 0m then 0L<Cent>
                     else decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
-            let principalPortion = Cent.max 0L<Cent> (assignable - feesPortion)
+
+            let proRatedFees =
+                match sp.FeesAndCharges.FeesSettlement with
+                | Fees.Settlement.ProRataRefund when originalFinalPaymentDay > 0<OffsetDay> -> 
+                    if originalFinalPaymentDay = 0<OffsetDay> then 0L<Cent>
+                    else decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
+                | Fees.Settlement.DueInFull 
+                | _ -> feesTotal
+
+            let feesRefund =
+                match sp.FeesAndCharges.FeesSettlement with
+                | Fees.Settlement.DueInFull -> 0L<Cent>
+                | Fees.Settlement.ProRataRefund -> Cent.max 0L<Cent> (feesTotal - proRatedFees)
+
+            let generatedSettlementPayment = si.PrincipalBalance + si.FeesBalance - feesRefund + interestPortion + chargesPortion
+
+            let feesPortion', feesRefund' =
+                if feesPortion > 0L<Cent> && generatedSettlementPayment <= netEffect then
+                    Cent.max 0L<Cent> (si.FeesBalance - feesRefund), feesRefund
+                else
+                    sign feesPortion, 0L<Cent>
+
+            let principalPortion = Cent.max 0L<Cent> (assignable - feesPortion')
                 
             let principalBalance = si.PrincipalBalance - sign principalPortion
+
+            let paymentDue', netEffect', principalPortion', principalBalance' =
+                if ap.PaymentStatus = NotYetDue && feesRefund' > 0L<Cent> && principalBalance < 0L<Cent> then
+                    paymentDue + principalBalance, netEffect + principalBalance, sign principalPortion + principalBalance, 0L<Cent>
+                else
+                    paymentDue, netEffect, sign principalPortion, principalBalance
 
             let carriedCharges, carriedInterest =
                 if sign chargesPortion > sign netEffect then
@@ -272,10 +301,12 @@ module Amortisation =
                         match si.BalanceStatus with
                         | ClosedBalance ->
                             NoLongerRequired
-                        | RefundDue ->
+                        | RefundDue when netEffect' < 0L<Cent> ->
                             Refunded
+                        | RefundDue ->
+                            NoLongerRequired
                         | _ ->
-                            if paymentDue = 0L<Cent> && confirmedPayments = 0L<Cent> && pendingPayments = 0L<Cent> && (generatedPayment.IsNone || generatedPayment.Value = 0L<Cent>) then
+                            if paymentDue' = 0L<Cent> && confirmedPayments = 0L<Cent> && pendingPayments = 0L<Cent> && (generatedPayment.IsNone || generatedPayment.Value = 0L<Cent>) then
                                 NothingDue
                             else
                                 ap.PaymentStatus
@@ -285,42 +316,27 @@ module Amortisation =
                         OffsetDay = ap.AppliedPaymentDay
                         Advances = advances
                         ScheduledPayment = ap.ScheduledPayment
-                        PaymentDue = paymentDue
+                        PaymentDue = paymentDue'
                         ActualPayments = ap.ActualPayments
                         GeneratedPayment = generatedPayment
-                        NetEffect = netEffect
+                        NetEffect = netEffect'
                         PaymentStatus = paymentStatus
-                        BalanceStatus = getBalanceStatus principalBalance
+                        BalanceStatus = getBalanceStatus principalBalance'
                         NewInterest = newInterest'
                         NewCharges = incurredCharges
-                        PrincipalPortion = sign principalPortion
-                        FeesPortion = sign feesPortion
+                        PrincipalPortion = principalPortion'
+                        FeesPortion = feesPortion'
                         InterestPortion = interestPortion - carriedInterest
                         ChargesPortion = chargesPortion - carriedCharges
-                        FeesRefund = 0L<Cent>
-                        PrincipalBalance = principalBalance
-                        FeesBalance = si.FeesBalance - sign feesPortion
+                        FeesRefund = feesRefund'
+                        PrincipalBalance = principalBalance'
+                        FeesBalance = si.FeesBalance - feesPortion' - feesRefund'
                         InterestBalance = si.InterestBalance + newInterest' - interestPortion + carriedInterest
                         ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                     }, 0L<Cent>
 
 
                 | ValueSome _, IntendedPurpose.Quote Settlement ->
-
-                    let proRatedFees =
-                        match sp.FeesAndCharges.FeesSettlement with
-                        | Fees.Settlement.ProRataRefund when originalFinalPaymentDay > 0<OffsetDay> -> 
-                            if originalFinalPaymentDay = 0<OffsetDay> then 0L<Cent>
-                            else decimal feesTotal * decimal ap.AppliedPaymentDay / decimal originalFinalPaymentDay |> Cent.round RoundDown
-                        | Fees.Settlement.DueInFull 
-                        | _ -> feesTotal
-
-                    let feesRefund =
-                        match sp.FeesAndCharges.FeesSettlement with
-                        | Fees.Settlement.DueInFull -> 0L<Cent>
-                        | Fees.Settlement.ProRataRefund -> Cent.max 0L<Cent> (feesTotal - proRatedFees)
-
-                    let generatedPayment = si.PrincipalBalance + si.FeesBalance - feesRefund + interestPortion + chargesPortion - confirmedPayments
 
                     let paymentStatus =
                         match si.BalanceStatus with
@@ -329,6 +345,8 @@ module Amortisation =
                         | _ ->
                             Generated Settlement
 
+                    let generatedSettlementPayment' = generatedSettlementPayment - confirmedPayments
+
                     {
                         OffsetDate = offsetDate
                         OffsetDay = ap.AppliedPaymentDay
@@ -336,8 +354,8 @@ module Amortisation =
                         ScheduledPayment = ap.ScheduledPayment
                         PaymentDue = paymentDue
                         ActualPayments = ap.ActualPayments
-                        GeneratedPayment = ValueSome generatedPayment
-                        NetEffect = netEffect + generatedPayment
+                        GeneratedPayment = ValueSome generatedSettlementPayment'
+                        NetEffect = netEffect + generatedSettlementPayment'
                         PaymentStatus = paymentStatus
                         BalanceStatus = ClosedBalance
                         NewInterest = newInterest'
@@ -351,7 +369,7 @@ module Amortisation =
                         FeesBalance = 0L<Cent>
                         InterestBalance = 0L<Cent>
                         ChargesBalance = 0L<Cent>
-                    }, generatedPayment
+                    }, generatedSettlementPayment'
 
             let accumulator = { accumulator with CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment }
 
