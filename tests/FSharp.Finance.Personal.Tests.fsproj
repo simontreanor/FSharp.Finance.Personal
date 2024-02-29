@@ -18,6 +18,7 @@
     <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
     <Compile Include="QuoteTests.fs" />
+    <Compile Include="MortgageTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

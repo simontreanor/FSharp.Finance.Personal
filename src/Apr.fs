@@ -47,21 +47,21 @@ module Apr =
             let paymentTotal = payments |> Array.sumBy _.Amount
             if principal = paymentTotal then Solution.Found(0m, 0, 0) else
             let roughApr = 4.2m
-            let ak = [| principal, 0m |]
+            let ak = [| principal, 0. |]
             let a'k' =
                 payments
                 |> Array.map(fun t ->
-                    t.Amount, decimal (t.TransferDate - startDate).Days / 365m
+                    t.Amount, double (t.TransferDate - startDate).Days / 365.
                 )
             let calc transfers unitPeriodRate =
                 transfers
                 |> Array.sumBy(fun (amount, years) ->
-                    let divisor = ((1m + unitPeriodRate) |> powm years)
-                    if divisor = 0m then 0m else Cent.toDecimal amount / divisor
+                    let divisor = ((1. + double unitPeriodRate) ** years)
+                    if divisor = 0. then 0. else double (Cent.toDecimal amount) / divisor
                 )
             let generator unitPeriodRate =
-                let aa = calc ak unitPeriodRate
-                let pp = calc a'k' unitPeriodRate
+                let aa = calc ak unitPeriodRate |> decimal
+                let pp = calc a'k' unitPeriodRate |> decimal
                 let difference = Decimal.Round(pp - aa, 8)
                 difference
             Array.solve generator 100 roughApr AroundZero ValueNone
