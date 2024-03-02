@@ -68,7 +68,7 @@ module PaymentSchedule =
         NegativeInterestOption: NegativeInterestOption
         /// the minimum payment that can be taken and how to handle it
         MinimumPayment: MinimumPayment
-        /// the minimum payment that can be taken and how to handle it
+        /// the duration after which a pending payment is considered a missed payment
         PaymentTimeout: int<DurationDay>
     }
 
