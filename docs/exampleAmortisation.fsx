@@ -78,7 +78,7 @@ It is possible to format the `Items` property as an HTML table:
 
 let html =
     amortisationSchedule
-    |> ValueOption.map (_.ScheduleItems >> Formatting.generateHtmlFromArray)
+    |> ValueOption.map (_.ScheduleItems >> Formatting.generateHtmlFromArray None)
     |> ValueOption.defaultValue ""
 html
 

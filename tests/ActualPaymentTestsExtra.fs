@@ -12,6 +12,7 @@ module ActualPaymentTestsExtra =
     open PaymentSchedule
     open Amortisation
     open Rescheduling
+    open Formatting
 
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
@@ -138,7 +139,7 @@ module ActualPaymentTestsExtra =
                 || balanceStatus <> ClosedBalance
                 || principalPortionTotal <> advanceTotal
                 then
-                    aa |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md"
+                    aa |> outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md"
             else
                 ()
         )
@@ -342,7 +343,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra001.md"
+                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -416,7 +417,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra002.md"
+                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -490,8 +491,9 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = reschedule sp rp actualPayments
                 let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-                let newHtml = newSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
-                $"{title}<br />{newHtml}" |> Formatting.outputToFile' $"out/ActualPaymentTestsExtra003.md"
+                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement }
+                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray generationOptions
+                $"{title}<br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md"
                 return newSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 0)
@@ -563,7 +565,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra004.md"
+                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -635,7 +637,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra005.md"
+                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule
             }
             |> ValueOption.map Array.last
@@ -709,7 +711,7 @@ module ActualPaymentTestsExtra =
                     |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment si.Payment.Value })
                     |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.Calculation.PaymentTimeout actualPayments
                     |> Amortisation.calculate sp IntendedPurpose.Statement schedule.FinalPaymentDay
-                amortisationSchedule |> Formatting.outputListToHtml $"out/ActualPaymentTestsExtra006.md"
+                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule
             }
             |> ValueOption.bind (Array.vTryLastBut 2)
@@ -784,9 +786,9 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = rollOver sp rp actualPayments
                 let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
-                let oldHtml = oldSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
-                let newHtml = newSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> Formatting.outputToFile' $"out/ActualPaymentTestsExtra007.md"
+                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray None
+                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray None
+                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md"
                 return newSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 0)
@@ -861,9 +863,9 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = rollOver sp rp actualPayments
                 let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
-                let oldHtml = oldSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
-                let newHtml = newSchedule.ScheduleItems |> Formatting.generateHtmlFromArray
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> Formatting.outputToFile' $"out/ActualPaymentTestsExtra008.md"
+                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray None
+                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray None
+                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md"
                 return newSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 0)
