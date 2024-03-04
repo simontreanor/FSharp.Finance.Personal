@@ -39,6 +39,7 @@ module Formatting =
 
     let internal regexSimple = Regex(@"\(Simple (.+?)\)")
     let internal regexDate = Regex(@"\d{4}-\d{2}-\d{2}")
+    let internal regexFailed = Regex(@"(Failed )\((.+?), \[\|.*?\|\]\)")
     let internal regexArray = Regex(@"\[\|(.*?)\|\]")
     let internal regexInt64 = Regex(@"(\d+)L")
     let internal regexInt32 = Regex(@"(\d+)\b")
@@ -51,6 +52,7 @@ module Formatting =
         item
         |> propertyInfo.GetValue
         |> sprintf "%A"
+        |> fun s -> if s |> regexFailed.IsMatch then regexFailed.Replace(s, "$1$2") else s
         |> fun s -> if s |> regexArray.IsMatch then regexArray.Replace(s, "$1") else s
         |> fun s -> if s |> regexSimple.IsMatch then regexSimple.Replace(s, "$1") else s
         |> fun s -> if s |> regexSome.IsMatch then regexSome.Replace(s, "$1") else s
