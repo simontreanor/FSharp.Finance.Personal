@@ -449,6 +449,6 @@ module Amortisation =
         payments
         |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose originalFinalPaymentDay'
-        |> Array.takeWhile(fun si -> originalFinalPaymentDay.IsNone || si.PaymentStatus <> NoLongerRequired) // remove extra items from rescheduling
+        |> Array.trimEnd(fun si -> originalFinalPaymentDay.IsSome && si.PaymentStatus = NoLongerRequired) // remove extra items from rescheduling
         |> calculateStats sp intendedPurpose
         |> ValueSome

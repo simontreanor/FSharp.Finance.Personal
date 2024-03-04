@@ -1591,3 +1591,53 @@ module QuoteTests =
 
         let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
+
+    [<Fact>]
+    let ``17) Generated settlement figure is correct`` () =
+        let sp = {
+            AsOfDate = Date(2024, 3, 4)
+            StartDate = Date(2018, 2, 3)
+            Principal = 230_00L<Cent>
+            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                InitialGracePeriod = 0<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RoundingOptions = {
+                    InterestRounding = RoundDown
+                    PaymentRounding = RoundUp
+                }
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+                NegativeInterestOption = ApplyNegativeInterest
+            }
+        }
+        let actualPayments = [|
+            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Failed(72_54L<Cent>, [||])) }
+            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 145_07L<Cent>) }
+        |]
+
+        let actual =
+            voption {
+                let! quote = getQuote Settlement sp actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote017.md"
+                return quote.QuoteResult
+            }
+
+        let expected = ValueSome (PaymentQuote (-5_83L<Cent>, -5_83L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
+        actual |> should equal expected
