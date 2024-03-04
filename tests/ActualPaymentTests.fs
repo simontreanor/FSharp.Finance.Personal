@@ -1173,3 +1173,53 @@ module ActualPaymentTests =
         let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 222_71L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
+
+    [<Fact>]
+    let ``20) Generated settlement figure is correct`` () =
+        let sp = {
+            AsOfDate = Date(2024, 3, 2)
+            StartDate = Date(2023, 8, 20)
+            Principal = 250_00L<Cent>
+            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 9, 5), 4)
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+                ChargesHolidays = [||]
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                InitialGracePeriod = 0<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RoundingOptions = {
+                    InterestRounding = RoundDown
+                    PaymentRounding = RoundUp
+                }
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+                NegativeInterestOption = ApplyNegativeInterest
+            }
+        }
+
+        let actualPayments = [|
+            { PaymentDay =  16<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 116_00L<Cent>) }
+            { PaymentDay =  46<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 116_00L<Cent>) }
+            { PaymentDay =  77<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 116_00L<Cent>) }
+            { PaymentDay = 107<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 116_00L<Cent>) }
+        |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ValueNone
+
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest020.md")
+
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = ClosedBalance && si.GeneratedPayment = ValueSome -119_88L<Cent>)
+        let expected = ValueSome true
+        actual |> should equal expected

@@ -302,6 +302,8 @@ module Amortisation =
                             NoLongerRequired
                         | RefundDue when netEffect' < 0L<Cent> ->
                             Refunded
+                        | RefundDue when netEffect' > 0L<Cent> ->
+                            Overpayment
                         | RefundDue ->
                             NoLongerRequired
                         | _ ->
