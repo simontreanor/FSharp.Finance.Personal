@@ -50,7 +50,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -128,7 +128,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -206,7 +206,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -225,7 +225,7 @@ module QuoteTests =
                 Advances = [||]
                 ScheduledPayment = ValueNone
                 PaymentDue = 0L<Cent>
-                ActualPayments = [| ActualPayment.Confirmed 25_00L<Cent> |]
+                ActualPayments = [| PaymentStatus.Confirmed 25_00L<Cent> |]
                 GeneratedPayment = ValueSome 2001_48L<Cent>
                 NetEffect = 2026_48L<Cent>
                 PaymentStatus = (Generated Settlement)
@@ -432,7 +432,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -510,7 +510,7 @@ module QuoteTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 323_15L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 323_15L<Cent>) }
             )
 
         let actual =
@@ -586,7 +586,7 @@ module QuoteTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 323_15L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 323_15L<Cent>) }
             )
 
         let actual =
@@ -734,13 +734,13 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
         |]
 
         let actual =
@@ -815,10 +815,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
-            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
-            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
         |]
 
         let actual =
@@ -966,10 +966,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1043,10 +1043,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1119,10 +1119,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1195,10 +1195,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1270,11 +1270,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1348,11 +1348,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1370,7 +1370,7 @@ module QuoteTests =
                 Advances = [||]
                 ScheduledPayment = ValueSome 491_53L<Cent>
                 PaymentDue = 457_65L<Cent>
-                ActualPayments = [| ActualPayment.Confirmed 500_00L<Cent> |]
+                ActualPayments = [| PaymentStatus.Confirmed 500_00L<Cent> |]
                 GeneratedPayment = ValueSome -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = (Generated Settlement)
@@ -1425,11 +1425,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1502,11 +1502,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1579,7 +1579,7 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 252_00L<Cent>) }
+            { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 252_00L<Cent>) }
         |]
 
         let actual =
@@ -1625,11 +1625,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Failed(72_54L<Cent>, [||])) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 145_07L<Cent>) }
+            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [||])) }
+            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
         |]
 
         let actual =
@@ -1675,11 +1675,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 145_07L<Cent>) }
+            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])) }
+            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
         |]
 
         let actual =

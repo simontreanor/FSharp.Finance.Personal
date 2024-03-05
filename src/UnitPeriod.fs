@@ -164,17 +164,32 @@ module UnitPeriod =
             | SemiMonthly (y, m, d1, _) -> TrackingDay.toDate y m d1
             | Monthly (_, y, m, d) -> TrackingDay.toDate y m d
 
+        /// if a month or day are out of range, constrain them to within range
+        let internal fixDate year month day =
+            let m = if month < 1 then 1 elif month > 12 then 12 else month
+            let daysInMonth = Date.DaysInMonth(year, m)
+            let d = if day < 1 then 1 elif day > daysInMonth then daysInMonth else day
+            Date(year, m, d)
+
+        /// fixes an incorrect config by using a default configuration
+        let internal fix = function
+            | Single _ | Daily _ | Weekly _ as c -> c
+            | SemiMonthly (year, month, day1, _) ->
+                fixDate year month day1 |> defaultSemiMonthly
+            | Monthly (multiple, year, month, day) ->
+                fixDate year month day |> defaultMonthly multiple
+
         /// constrains the freqencies to valid values
         let constrain = function
-            | Single _ | Daily _ | Weekly _ as f -> f
-            | SemiMonthly (_, _, day1, day2) as f
+            | Single _ | Daily _ | Weekly _ as c -> c
+            | SemiMonthly (_, _, day1, day2) as c
                 when day1 >= 1 && day1 <= 15 && day2 >= 16 && day2 <= 31 &&
-                    ((day2 < 31 && day2 - day1 = 15) || (day2 = 31 && day1 = 15)) -> f
-            | SemiMonthly (_, _, day1, day2) as f
+                    ((day2 < 31 && day2 - day1 = 15) || (day2 = 31 && day1 = 15)) -> c
+            | SemiMonthly (_, _, day1, day2) as c
                 when day2 >= 1 && day2 <= 15 && day1 >= 16 && day1 <= 31 &&
-                    ((day1 < 31 && day1 - day2 = 15) || (day1 = 31 && day2 = 15)) -> f
-            | Monthly (_, _, _, day) as f when day >= 1 && day <= 31 -> f
-            | f -> failwith $"Unit-period config `%O{f}` is out-of-bounds of constraints"
+                    ((day1 < 31 && day1 - day2 = 15) || (day1 = 31 && day2 = 15)) -> c
+            | Monthly (_, _, _, day) as c when day >= 1 && day <= 31 -> c
+            | invalidConfig -> fix invalidConfig
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxLoanLength: int<DurationDay>) (startDate: Date) (config: Config) =
@@ -203,8 +218,8 @@ module UnitPeriod =
             if d.Day > 15 && monthEndTrackingDay > 28 then
                 TrackingDay.toDate d.Year d.Month monthEndTrackingDay
             else d
-        let generate =
-            match unitPeriodConfig |> Config.constrain with
+        let generate upc =
+            match upc |> Config.constrain with
             | Single startDate ->
                 Array.map (fun _ -> startDate)
             | Daily startDate ->
@@ -223,8 +238,8 @@ module UnitPeriod =
                 let startDate = TrackingDay.toDate year month td
                 Array.map (fun c -> startDate.AddMonths (c * multiple) |> adjustMonthEnd td)
         match direction with
-        | Direction.Forward -> [| 0 .. (count - 1) |] |> generate
-        | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |] |> generate |> Array.sort
+        | Direction.Forward -> [| 0 .. (count - 1) |] |> generate unitPeriodConfig
+        | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |] |> generate unitPeriodConfig |> Array.sort
 
     /// for a given interval and array of dates, devise the unit-period config
     let detect direction interval (transferDates: Date array) =

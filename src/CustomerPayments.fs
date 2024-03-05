@@ -7,7 +7,7 @@ module CustomerPayments =
 
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
-    type ActualPayment =
+    type PaymentStatus =
         /// the payment has been initiated but is not yet confirmed
         | Pending of PendingAmount: int64<Cent>
         /// the payment had been initiated but was not confirmed within the timeout
@@ -23,17 +23,17 @@ module CustomerPayments =
         /// the amount of any extra scheduled payment due on the current day
         | ScheduledPayment of ScheduledPayment: int64<Cent>
         /// the amounts of any actual payments made on the current day, with any charges incurred
-        | ActualPayment of ActualPayment: ActualPayment
+        | ActualPayment of ActualPayment: PaymentStatus
         /// the amounts of any generated payments made on the current day and their type
         | GeneratedPayment of GeneratedPayment: int64<Cent>
         with
             /// the total amount of the payment
             static member total = function
                 | ScheduledPayment sp -> sp
-                | ActualPayment (ActualPayment.Pending ap) -> ap
-                | ActualPayment (ActualPayment.TimedOut _) -> 0L<Cent>
-                | ActualPayment (ActualPayment.Confirmed ap) -> ap
-                | ActualPayment (ActualPayment.Failed _) -> 0L<Cent>
+                | ActualPayment (PaymentStatus.Pending ap) -> ap
+                | ActualPayment (PaymentStatus.TimedOut _) -> 0L<Cent>
+                | ActualPayment (PaymentStatus.Confirmed ap) -> ap
+                | ActualPayment (PaymentStatus.Failed _) -> 0L<Cent>
                 | GeneratedPayment gp -> gp
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule

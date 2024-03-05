@@ -196,6 +196,6 @@ module PaymentSchedule =
         |> Array.filter(fun si -> si.Payment.IsSome)
         |> Array.map(fun si -> {
             PaymentDay = si.Day
-            PaymentDetails = ActualPayment (ActualPayment.Confirmed si.Payment.Value)
+            PaymentDetails = ActualPayment (PaymentStatus.Confirmed si.Payment.Value)
             }
         )

@@ -115,7 +115,7 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (ActualPayment.Confirmed si.Payment.Value) })
+                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment (PaymentStatus.Confirmed si.Payment.Value) })
                 return
                     scheduleItems
                     |> Array.filter _.Payment.IsSome
@@ -353,7 +353,7 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = ValueSome 407_64L<Cent>
             PaymentDue = 407_64L<Cent>
-            ActualPayments = [| ActualPayment.Confirmed 407_64L<Cent> |]
+            ActualPayments = [| PaymentStatus.Confirmed 407_64L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 407_64L<Cent>
             PaymentStatus = PaymentMade
@@ -409,7 +409,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 166_60L<Cent>) })
                 |]
                 let amortisationSchedule =
                     scheduleItems
@@ -481,7 +481,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 166_60L<Cent>) })
                 |]
                 let rp : RescheduleParameters = {
                     PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
@@ -575,7 +575,7 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = ValueSome 137_36L<Cent>
             PaymentDue = 137_36L<Cent>
-            ActualPayments = [| ActualPayment.Confirmed 137_36L<Cent> |]
+            ActualPayments = [| PaymentStatus.Confirmed 137_36L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 137_36L<Cent>
             PaymentStatus = NotYetDue
@@ -647,7 +647,7 @@ module ActualPaymentTestsExtra =
             Advances = [||]
             ScheduledPayment = ValueSome 51_53L<Cent>
             PaymentDue = 51_53L<Cent>
-            ActualPayments = [| ActualPayment.Confirmed 51_53L<Cent> |]
+            ActualPayments = [| PaymentStatus.Confirmed 51_53L<Cent> |]
             GeneratedPayment = ValueNone
             NetEffect = 51_53L<Cent>
             PaymentStatus = PaymentMade
@@ -703,7 +703,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 166_60L<Cent>) })
                 |]
                 let amortisationSchedule =
                     scheduleItems
@@ -775,7 +775,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 166_60L<Cent>) })
                 |]
                 let rp : RolloverParameters = {
                     PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
@@ -852,7 +852,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 166_60L<Cent>) })
+                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 166_60L<Cent>) })
                 |]
                 let rp : RolloverParameters = {
                     PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
