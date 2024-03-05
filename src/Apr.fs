@@ -138,7 +138,7 @@ module Apr =
             let offset = scheduleCount - transferCount
             [| 0 .. (transferCount - 1) |]
             |> Array.map(fun i ->
-                let lastWholeMonthBackIndex = (i + offset) % 2
+                let lastWholeMonthBackIndex = Math.Max(0, (i + offset) % 2)
                 let wholeUnitPeriods = i + offset - lastWholeMonthBackIndex
                 let fractional = decimal (schedule[lastWholeMonthBackIndex] - termStart).Days / 15m |> fun d -> divRem d 1m
                 transfers[i], { Quotient = wholeUnitPeriods + fractional.Quotient; Remainder = fractional.Remainder }
