@@ -12,6 +12,7 @@ module Formatting =
     let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance" |] else [||]
     let chargesProperties hide = if hide then [| "NewCharges"; "ChargesPortion"; "ChargesBalance" |] else [||]
     let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
+    let extraProperties hide = if hide then [| "ProRatedFees"; "SettlementFigure" |] else [||]
 
     let filterColumns hideProperties =
         match hideProperties with
@@ -80,15 +81,17 @@ module Formatting =
     type GenerationOptions = {
         GoParameters: PaymentSchedule.Parameters
         GoPurpose: IntendedPurpose
+        GoExtra: bool
     }
 
     let getHideProperties generationOptions =
         match generationOptions with
         | Some go ->
             [|
-                go.GoParameters.FeesAndCharges.Fees = [||] |> not |> feesProperties
-                go.GoParameters.FeesAndCharges.Charges = [||] |> not |> chargesProperties
+                go.GoParameters.FeesAndCharges.Fees |> Array.isEmpty |> feesProperties
+                go.GoParameters.FeesAndCharges.Charges |> Array.isEmpty |> chargesProperties
                 (match go.GoPurpose with IntendedPurpose.Quote _ -> false | _ -> true) |> quoteProperties
+                go.GoExtra |> not |> extraProperties
             |]
             |> Array.concat
         | None ->

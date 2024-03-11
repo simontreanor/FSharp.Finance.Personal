@@ -16,6 +16,7 @@ module PaymentScheduleTests =
             let startDate = Date(2023, 11, 15)
             {
                 AsOfDate = startDate
+                ScheduleType = OriginalSchedule
                 StartDate = startDate
                 Principal = principal
                 PaymentSchedule = RegularSchedule (
@@ -105,6 +106,7 @@ module PaymentScheduleTests =
             let startDate = Date(2023, 12, 07)
             {
                 AsOfDate = startDate
+                ScheduleType = OriginalSchedule
                 StartDate = startDate
                 Principal = principal
                 PaymentSchedule = RegularSchedule (
@@ -1354,6 +1356,7 @@ module PaymentScheduleTests =
     let ``1) If there are no other payments, level payment should equal final payment`` () =
         let sp = {
             AsOfDate = Date(2022, 12, 19)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 12, 19)
             Principal = 300_00L<Cent>
             PaymentSchedule = RegularSchedule (

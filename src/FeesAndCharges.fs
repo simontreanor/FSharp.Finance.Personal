@@ -75,8 +75,18 @@ module FeesAndCharges =
         type Settlement =
             /// the initial fees are due in full with no discount or refund
             | DueInFull
-            /// the fees are refunded proportionately to the number of days elapsed compared to the original scheduled number of days
+            /// the fees are refunded proportionately to the number of days elapsed in the current schedule
             | ProRataRefund
+
+        /// how to handle fees when rescheduling or rolling over
+        [<Struct>]
+        type FeeHandling =
+            /// move any outstanding fee balance to the principal balance
+            | CapitaliseAsPrincipal
+            /// carry any outstanding fee balance over as an initial fee balance, maintaining the original final payment day if pro-rated
+            | CarryOverAsIs
+            /// write off any outstanding fee balance
+            | WriteOffFeeBalance
 
     /// the type and amount of any charge
     [<RequireQualifiedAccess; Struct>]
@@ -124,14 +134,3 @@ module FeesAndCharges =
         /// the number of days' grace period after which late-payment charges apply
         LatePaymentGracePeriod: int<DurationDay>
     }
-
-    /// convenience functions for fees and charges
-    module FeesAndCharges =
-        /// recommended fees options
-        let recommended = {
-            Fees = [||]
-            FeesSettlement = Fees.Settlement.ProRataRefund
-            Charges = [||]
-            ChargesHolidays = [||]
-            LatePaymentGracePeriod = 3<DurationDay>
-        }

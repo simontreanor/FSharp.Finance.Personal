@@ -18,6 +18,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 9, 28)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -57,12 +58,12 @@ module QuoteTests =
             voption{
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote001.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1969_70L<Cent>, 1175_80L<Cent>, 790_19L<Cent>, 3_71L<Cent>, 0L<Cent>),
+            PaymentQuote (1969_70L<Cent>, 1175_80L<Cent>, 790_19L<Cent>, 3_71L<Cent>, 0L<Cent>, 1437_53L<Cent>),
             {
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
@@ -85,6 +86,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 1969_70L<Cent>
+                ProRatedFees = 1437_53L<Cent>
             }
         )
 
@@ -96,6 +99,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -135,12 +139,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote002.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (2026_48L<Cent>, 1175_80L<Cent>, 834_19L<Cent>, 6_49L<Cent>, 10_00L<Cent>),
+            PaymentQuote (2026_48L<Cent>, 1175_80L<Cent>, 834_19L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 1393_53L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -163,6 +167,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 2026_48L<Cent>
+                ProRatedFees = 1393_53L<Cent>
             }
         )
 
@@ -174,6 +180,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -213,12 +220,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote003.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (2001_48L<Cent>, 1175_80L<Cent>, 825_68L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (2001_48L<Cent>, 1175_80L<Cent>, 825_68L<Cent>, 0L<Cent>, 0L<Cent>, 1393_53L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -241,6 +248,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 2001_48L<Cent>
+                ProRatedFees = 1393_53L<Cent>
             }
         )
 
@@ -252,6 +261,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -287,12 +297,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote004.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1200_00L<Cent>, 1200_00L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1200_00L<Cent>, 1200_00L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
@@ -315,6 +325,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 1200_00L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -326,6 +338,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -361,12 +374,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote005.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1238_40L<Cent>, 1200_00L<Cent>, 0L<Cent>, 38_40L<Cent>, 0L<Cent>),
+            PaymentQuote (1238_40L<Cent>, 1200_00L<Cent>, 0L<Cent>, 38_40L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
@@ -389,6 +402,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 1238_40L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -400,6 +415,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -439,12 +455,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote006.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (3420_01L<Cent>, 1175_80L<Cent>, 2227_72L<Cent>, 6_49L<Cent>, 10_00L<Cent>),
+            PaymentQuote (3420_01L<Cent>, 1175_80L<Cent>, 2227_72L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 2227_72L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -467,6 +483,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 3420_01L<Cent>
+                ProRatedFees = 2227_72L<Cent>
             }
         )
 
@@ -477,6 +495,7 @@ module QuoteTests =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             AsOfDate = Date(2024, 10, 1)
             Principal = 1200_00L<Cent>
@@ -521,7 +540,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>), {
+            PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 1685_14L<Cent>), {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
@@ -543,6 +562,8 @@ module QuoteTests =
                 FeesBalance = 231_57L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 677_00L<Cent>
+                ProRatedFees = 231_57L<Cent>
             }
         )
 
@@ -554,6 +575,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -597,7 +619,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>),
+            PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 1444_76L<Cent>),
             {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
@@ -620,6 +642,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 300_11L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -631,6 +655,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2023, 12, 21)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -670,7 +695,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1311_66L<Cent>, 500_00L<Cent>, 750_00L<Cent>, 61_66L<Cent>, 0L<Cent>),
+            PaymentQuote (1311_66L<Cent>, 500_00L<Cent>, 750_00L<Cent>, 61_66L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
@@ -693,6 +718,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 1311_66L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -704,6 +731,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2023, 12, 21)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -751,7 +779,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1261_68L<Cent>, 471_06L<Cent>, 706_53L<Cent>, 84_09L<Cent>, 0L<Cent>),
+            PaymentQuote (1261_68L<Cent>, 471_06L<Cent>, 706_53L<Cent>, 84_09L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
@@ -774,6 +802,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 1261_68L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -785,6 +815,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2023, 2, 8)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -825,12 +856,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote011.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 6 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (973_52L<Cent>, 769_46L<Cent>, 195_68L<Cent>, 8_38L<Cent>, 0L<Cent>),
+            PaymentQuote (973_52L<Cent>, 769_46L<Cent>, 195_68L<Cent>, 8_38L<Cent>, 0L<Cent>, 958_45L<Cent>),
             {
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
@@ -853,6 +884,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 973_52L<Cent>
+                ProRatedFees = 958_45L<Cent>
             }
         )
 
@@ -864,6 +897,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 2, 28)
+            ScheduleType = OriginalSchedule
             StartDate = startDate
             Principal = 400_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -899,12 +933,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote012.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 3 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (495_76L<Cent>, 400_00L<Cent>, 0L<Cent>, 95_76L<Cent>, 0L<Cent>),
+            PaymentQuote (495_76L<Cent>, 400_00L<Cent>, 0L<Cent>, 95_76L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 30
                 OffsetDay = 30<OffsetDay>
@@ -927,6 +961,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 495_76L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -936,6 +972,7 @@ module QuoteTests =
     let ``13a) Loan is settled the day before the last scheduled payment is due`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 14)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -976,12 +1013,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote013a.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>),
+            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -1004,6 +1041,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 429_24L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1013,6 +1052,7 @@ module QuoteTests =
     let ``13b) Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 15)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1057,7 +1097,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (432_07L<Cent>, 353_00L<Cent>, 0L<Cent>, 79_07L<Cent>, 0L<Cent>),
+            PaymentQuote (432_07L<Cent>, 353_00L<Cent>, 0L<Cent>, 79_07L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1080,6 +1120,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 432_07L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1089,6 +1131,7 @@ module QuoteTests =
     let ``13c) Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 16)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1133,7 +1176,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (434_89L<Cent>, 353_00L<Cent>, 0L<Cent>, 81_89L<Cent>, 0L<Cent>),
+            PaymentQuote (434_89L<Cent>, 353_00L<Cent>, 0L<Cent>, 81_89L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1156,6 +1199,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 434_89L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1165,6 +1210,7 @@ module QuoteTests =
     let ``13d) Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 19)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1209,7 +1255,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (453_36L<Cent>, 353_00L<Cent>, 0L<Cent>, 90_36L<Cent>, 10_00L<Cent>),
+            PaymentQuote (453_36L<Cent>, 353_00L<Cent>, 0L<Cent>, 90_36L<Cent>, 10_00L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
@@ -1232,6 +1278,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 453_36L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1241,6 +1289,7 @@ module QuoteTests =
     let ``14a) Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 14)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1281,12 +1330,12 @@ module QuoteTests =
             voption {
                 let! quote = getQuote Settlement sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote014a.md"
-                let! item = Array.vTryLastBut 0 quote.RevisedSchedule.ScheduleItems
+                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>),
+            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -1309,6 +1358,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = 429_24L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1318,6 +1369,7 @@ module QuoteTests =
     let ``14b) Loan is settled the same day as an overpayment`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 15)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1363,7 +1415,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (-67_93L<Cent>, -67_93L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (-67_93L<Cent>, -67_93L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1386,6 +1438,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = -67_93L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1395,6 +1449,7 @@ module QuoteTests =
     let ``14c) Loan is settled the day after an overpayment`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 16)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1440,7 +1495,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (-67_95L<Cent>, -67_93L<Cent>, 0L<Cent>, -2L<Cent>, 0L<Cent>),
+            PaymentQuote (-67_95L<Cent>, -67_93L<Cent>, 0L<Cent>, -2L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1463,6 +1518,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = -67_95L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1472,6 +1529,7 @@ module QuoteTests =
     let ``15) Loan refund due for a long time, showing interest owed back`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 5)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1517,7 +1575,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (-72_80L<Cent>, -67_93L<Cent>, 0L<Cent>, -4_87L<Cent>, 0L<Cent>),
+            PaymentQuote (-72_80L<Cent>, -67_93L<Cent>, 0L<Cent>, -4_87L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
@@ -1527,7 +1585,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome -72_80L<Cent>
                 NetEffect = -72_80L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
                 NewInterest = -4_87L<Cent>
                 NewCharges = [||]
@@ -1540,6 +1598,8 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 ChargesBalance = 0L<Cent>
+                SettlementFigure = -72_80L<Cent>
+                ProRatedFees = 0L<Cent>
             }
         )
 
@@ -1549,6 +1609,7 @@ module QuoteTests =
     let ``16) Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components`` () =
         let sp = {
             AsOfDate = Date(2022, 12, 20)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2022, 12, 19)
             Principal = 250_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1589,13 +1650,14 @@ module QuoteTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
     let ``17) Generated settlement figure is correct`` () =
         let sp = {
             AsOfDate = Date(2024, 3, 4)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
@@ -1639,13 +1701,14 @@ module QuoteTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-5_83L<Cent>, -5_83L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-5_83L<Cent>, -5_83L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
     let ``18) Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment`` () =
         let sp = {
             AsOfDate = Date(2024, 3, 4)
+            ScheduleType = OriginalSchedule
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
@@ -1689,5 +1752,56 @@ module QuoteTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (57_51L<Cent>, 3_17L<Cent>, 0L<Cent>, 54_34L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (57_51L<Cent>, 3_17L<Cent>, 0L<Cent>, 54_34L<Cent>, 0L<Cent>, 0L<Cent>))
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``19) Curveball`` () =
+        let sp = {
+                AsOfDate = Date(2024, 3, 7)
+                ScheduleType = OriginalSchedule
+                StartDate = Date(2024, 2, 2)
+                Principal = 25000L<Cent>
+                PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4)
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    Charges = [||]
+                    ChargesHolidays = [||]
+                    LatePaymentGracePeriod = 0<DurationDay>
+                }
+                Interest = {
+                    Rate = Interest.Daily (Percent 0.8m)
+                    Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                    InitialGracePeriod = 0<DurationDay>
+                    Holidays = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                    RoundingOptions = {
+                        InterestRounding = RoundDown
+                        PaymentRounding = RoundUp
+                    }
+                    PaymentTimeout = 0<DurationDay>
+                    MinimumPayment = NoMinimumPayment
+                    NegativeInterestOption = ApplyNegativeInterest
+                }
+            }
+
+        let actualPayments = [|
+            { PaymentDay =  5<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed -5_10L<Cent>) }
+            { PaymentDay =  6<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 2_00L<Cent>) }
+            { PaymentDay =  16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay =  16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+        |]
+
+        let actual =
+            voption {
+                let! quote = getQuote Settlement sp actualPayments
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/Quote019.md"
+                return quote.QuoteResult
+            }
+
+        let expected = ValueSome (PaymentQuote (105_69L<Cent>, 92_40L<Cent>, 0L<Cent>, 13_29L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected

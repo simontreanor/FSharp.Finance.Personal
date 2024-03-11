@@ -4,6 +4,7 @@ namespace FSharp.Finance.Personal
 module PaymentSchedule =
 
     open CustomerPayments
+    open UnitPeriod
 
     /// a scheduled payment item, with running calculations of interest and principal balance
     [<Struct>]
@@ -82,11 +83,18 @@ module PaymentSchedule =
             PaymentTimeout = 3<DurationDay>
         }
 
+    [<Struct>]
+    type ScheduleType =
+        | OriginalSchedule
+        | Reschedule of OriginalFinalPaymentDay: int<OffsetDay>
+
     /// parameters for creating a payment schedule
     [<Struct>]
     type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
         AsOfDate: Date
+        /// the type of schedule, whether it is an original schedule or a reschedule
+        ScheduleType: ScheduleType
         /// the start date of the schedule, typically the day on which the principal is advanced
         StartDate: Date
         /// the principal
@@ -101,22 +109,31 @@ module PaymentSchedule =
         Calculation: Calculation
     }
 
+    let paymentDays startDate paymentSchedule =
+        match paymentSchedule with
+        | IrregularSchedule payments ->
+            if Array.isEmpty payments then
+                [||]
+            else
+                payments |> Array.map _.PaymentDay
+        | RegularFixedSchedule (unitPeriodConfig, paymentCount, _)
+        | RegularSchedule (unitPeriodConfig, paymentCount) ->
+            if paymentCount = 0 then
+                [||]
+            else
+                let unitPeriodConfigStartDate = Config.startDate unitPeriodConfig
+                if startDate > unitPeriodConfigStartDate then
+                    [||]
+                else
+                    generatePaymentSchedule paymentCount Direction.Forward unitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
-        match sp.PaymentSchedule with
-        | IrregularSchedule _ -> failwith "Do not call this function for irregular schedules"
-        | RegularFixedSchedule _ -> failwith "Do not call this function for regular fixed schedules"
-        | RegularSchedule (unitPeriodConfig, paymentCount) ->
+        let paymentDays = paymentDays sp.StartDate sp.PaymentSchedule
 
-        if paymentCount = 0 then ValueNone else
-        if sp.StartDate > UnitPeriod.Config.startDate unitPeriodConfig then ValueNone else
+        let finalPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
 
-        let paymentDates = UnitPeriod.generatePaymentSchedule paymentCount UnitPeriod.Direction.Forward unitPeriodConfig
-
-        let finalPaymentDate = paymentDates |> Array.max
-        let finalPaymentDay = (finalPaymentDate - sp.StartDate).Days * 1<OffsetDay>
-
-        let paymentCount = paymentDates |> Array.length
+        let paymentCount = paymentDays |> Array.length
 
         let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees
 
@@ -128,8 +145,6 @@ module PaymentSchedule =
         let initial = { Day = 0<OffsetDay>; Payment = ValueNone; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; Balance = sp.Principal + fees }
 
         let toleranceSteps = ValueSome { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 2 }
-
-        let paymentDays = paymentDates |> Array.map (OffsetDay.fromDate sp.StartDate)
 
         let mutable schedule = [||]
 
