@@ -120,6 +120,14 @@ module FeesAndCharges =
             |> Array.exists(fun d -> d = int onDay)
             |> not
 
+    /// options on how to handle multiple charges
+    [<Struct>]
+    type ChargesGrouping =
+        /// only one charge of any type may be applied per day
+        | OneChargeTypePerDay
+        /// all charges are applied
+        | AllChargesApplied
+
     /// options specifying the types of fees and charges, their amounts, and any restrictions on these
     [<Struct>]
     type FeesAndCharges = {
@@ -131,6 +139,8 @@ module FeesAndCharges =
         Charges: Charge array
         /// any period during which charges are not payable
         ChargesHolidays: Holiday array
+        /// whether to group charges by type per day
+        ChargesGrouping: ChargesGrouping
         /// the number of days' grace period after which late-payment charges apply
         LatePaymentGracePeriod: int<DurationDay>
     }

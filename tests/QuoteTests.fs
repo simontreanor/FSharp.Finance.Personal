@@ -30,6 +30,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -111,6 +112,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -192,6 +194,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -273,6 +276,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -350,6 +354,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -427,6 +432,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -508,6 +514,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -587,6 +594,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -667,6 +675,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -743,6 +752,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -827,6 +837,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -909,6 +920,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -984,6 +996,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1003,9 +1016,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
@@ -1064,6 +1077,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1083,9 +1097,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
@@ -1143,6 +1157,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1162,9 +1177,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
@@ -1222,6 +1237,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1241,9 +1257,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
@@ -1301,6 +1317,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1319,9 +1336,9 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
@@ -1381,6 +1398,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1400,9 +1418,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
@@ -1461,6 +1479,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1480,9 +1499,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
@@ -1541,6 +1560,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1560,9 +1580,9 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay =  75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
             { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
         |]
@@ -1621,6 +1641,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
@@ -1640,7 +1661,7 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay =  1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 252_00L<Cent>) }
+            { PaymentDay = 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 252_00L<Cent>) }
         |]
 
         let actual =
@@ -1666,6 +1687,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -1687,11 +1709,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [||])) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
+            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [||])) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
         |]
 
         let actual =
@@ -1717,6 +1739,7 @@ module QuoteTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
@@ -1738,11 +1761,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay =  25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])) }
-            { PaymentDay =  53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay =  78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
+            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
         |]
 
         let actual =
@@ -1768,6 +1791,7 @@ module QuoteTests =
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
                     ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
@@ -1790,10 +1814,10 @@ module QuoteTests =
             }
 
         let actualPayments = [|
-            { PaymentDay =  5<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed -5_10L<Cent>) }
-            { PaymentDay =  6<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 2_00L<Cent>) }
-            { PaymentDay =  16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
-            { PaymentDay =  16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed -5_10L<Cent>) }
+            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 2_00L<Cent>) }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
         |]
 
         let actual =

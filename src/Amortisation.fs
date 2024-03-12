@@ -484,7 +484,7 @@ module Amortisation =
         let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment amount -> Some amount | _ -> None) |> Option.map ValueSome |> Option.defaultValue ValueNone
 
         payments
-        |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.Calculation.PaymentTimeout actualPayments
+        |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose
         |> Array.trimEnd(fun si -> match sp.ScheduleType with Reschedule _ when si.PaymentStatus = NoLongerRequired -> true | _ -> false) // remove extra items from rescheduling
         |> calculateStats sp intendedPurpose

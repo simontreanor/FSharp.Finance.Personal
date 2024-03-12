@@ -39,6 +39,7 @@ let scheduleParameters =
             FeesSettlement = Fees.Settlement.DueInFull
             Charges = [||]
             ChargesHolidays = [||]
+            ChargesGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {

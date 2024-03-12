@@ -39,6 +39,7 @@ let scheduleParameters =
             FeesSettlement = Fees.Settlement.ProRataRefund
             Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
             ChargesHolidays = [||]
+            ChargesGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {
@@ -58,10 +59,10 @@ let scheduleParameters =
     }
 
 let actualPayments = [|
-    { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay =  4<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 35<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 66<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 94<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
     { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_84L<Cent>) }
 |]
 

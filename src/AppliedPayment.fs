@@ -25,7 +25,7 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) paymentTimeout actualPayments scheduledPayments =
+    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) chargesGrouping paymentTimeout actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else
 
         let actualPayments =
@@ -77,9 +77,15 @@ module AppliedPayment =
                         | ValueSome sp, ap when ap > sp -> ap, Overpayment
                         | _, ap -> ap, PaymentMade
 
+                let groupCharges =
+                    match chargesGrouping with
+                    | OneChargeTypePerDay -> Array.groupBy id >> Array.map fst
+                    | AllChargesApplied -> id
+
                 let charges =
                     payments
                     |> Array.collect(_.PaymentDetails >> function ActualPayment (PaymentStatus.Failed (_, c)) -> c | _ -> [||])
+                    |> groupCharges
                     |> fun pcc ->
                         if latePaymentCharge.IsSome then
                             pcc |> Array.append(match paymentStatus with MissedPayment | Underpayment -> [| Charge.LatePayment latePaymentCharge.Value |] | _ -> [||])

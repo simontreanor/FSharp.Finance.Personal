@@ -28,6 +28,7 @@ module PaymentScheduleTests =
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
@@ -118,6 +119,7 @@ module PaymentScheduleTests =
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
                     ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
@@ -1368,6 +1370,7 @@ module PaymentScheduleTests =
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
