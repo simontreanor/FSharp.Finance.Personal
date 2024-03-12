@@ -29,35 +29,43 @@ module Formatting =
     let outputToFile' fileName content =
         outputToFile $"{__SOURCE_DIRECTORY__}/../io/{fileName}" content
 
+    let internal regexSimple = Regex(@"\( simple (.+?)\)")
+    let internal regexDate = Regex(@"\d{4}-\d{2}-\d{2}")
+    let internal regexFailed = Regex(@"(failed )\((.+?), \[\|.*?\|\]\)")
+    let internal regexArray = Regex(@"\[\|(.*?)\|\]")
+    let internal regexInt64 = Regex(@"(\d+)L")
+    let internal regexInt32 = Regex(@"(\d+)\b")
+    let internal regexNone = Regex(@"value&nbsp;none")
+    let internal regexSome = Regex(@"value some \(?([^)]+)\)?")
+    let internal regexZero = Regex(@"\b0L\b")
+    let internal regexLineReturn = Regex(@"\s*[\r\n]\s*")
+    let internal regexWhitespace = Regex(@"\s+")
+    let internal regexPascaleCase = Regex(@"(?<=\b|\p{Ll})(\p{Lu})")
+
+    let internal splitPascale s = regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[0].Value}")
+
     /// creates a table header row from a record's fields
     let formatHtmlTableHeader hideProperties propertyInfos =
         let thh =
             propertyInfos
             |> filterColumns hideProperties
-            |> Array.mapi(fun i pi -> $"""<th class="ci{i}">{pi.Name}</th>""")
+            |> Array.mapi(fun i pi -> $"""<th class="ci{i}">{splitPascale pi.Name |> (_.Trim().Replace(" ", "&nbsp;"))}</th>""")
             |> String.concat ""
         $"<thead>{thh}</thead>"
-
-    let internal regexSimple = Regex(@"\(Simple (.+?)\)")
-    let internal regexDate = Regex(@"\d{4}-\d{2}-\d{2}")
-    let internal regexFailed = Regex(@"(Failed )\((.+?), \[\|.*?\|\]\)")
-    let internal regexArray = Regex(@"\[\|(.*?)\|\]")
-    let internal regexInt64 = Regex(@"(\d+)L")
-    let internal regexInt32 = Regex(@"(\d+)\b")
-    let internal regexNone = Regex(@"ValueNone")
-    let internal regexSome = Regex(@"ValueSome \(?([^)]+)\)?")
-    let internal regexZero = Regex(@"\b0L\b")
 
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
     let formatHtmlTableCell item index (propertyInfo: PropertyInfo) =
         item
         |> propertyInfo.GetValue
         |> sprintf "%A"
+        // |> fun s -> $"""<td class="ci{index}">{s}</td>"""
+        |> fun s -> regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[1].Value |> (_.ToLower())}")
+        |> fun s -> if s |> regexLineReturn.IsMatch then regexLineReturn.Replace(s, " ") else s
         |> fun s -> if s |> regexFailed.IsMatch then regexFailed.Replace(s, "$1$2") else s
-        |> fun s -> if s |> regexArray.IsMatch then regexArray.Replace(s, "$1") else s
         |> fun s -> if s |> regexSimple.IsMatch then regexSimple.Replace(s, "$1") else s
+        |> fun s -> if s |> regexArray.IsMatch then regexArray.Replace(s, "$1") else s
         |> fun s -> if s |> regexSome.IsMatch then regexSome.Replace(s, "$1") else s
-        |> _.Replace(" ", "&nbsp;")
+        |> fun s -> if s |> regexWhitespace.IsMatch then regexWhitespace.Replace(s, "&nbsp;") else s
         |> fun s ->
             if s |> regexDate.IsMatch then $"""<td class="ci{index} cDateValue" style="white-space: nowrap;">{s}</td>"""
             elif s |> regexZero.IsMatch then $"""<td class="ci{index} cZeroValue" style="color: #808080; text-align: right;">0.00</td>"""
