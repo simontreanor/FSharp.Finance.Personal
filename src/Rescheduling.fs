@@ -62,7 +62,7 @@ module Rescheduling =
                     Calculation = { sp.Calculation with NegativeInterestOption = rp.NegativeInterestOption }
                 }
             // create the new amortiation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement [||]
+            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement actualPayments
             return quote.RevisedSchedule, rescheduledSchedule
         }
 

@@ -11,6 +11,7 @@ module EdgeCaseTests =
     open PaymentSchedule
     open Amortisation
     open Quotes
+    open Rescheduling
 
     [<Fact>]
     let ``1) Quote returning nothing`` () =
@@ -592,3 +593,85 @@ module EdgeCaseTests =
         let expected = ValueSome (PaymentQuote (-76_80L<Cent>, -76_80L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
+
+    [<Fact>]
+    let ``7) Quote returning nothing`` () =
+        let sp = {
+            AsOfDate = Date(2024, 3, 14)
+            ScheduleType = OriginalSchedule
+            StartDate = Date(2024, 2, 2)
+            Principal = 25000L<Cent>
+            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4)
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Daily (Percent 0.8m)
+                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                InitialGracePeriod = 0<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RoundingOptions = {
+                    InterestRounding = RoundDown
+                    PaymentRounding = RoundUp
+                }
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+                NegativeInterestOption = ApplyNegativeInterest
+            }
+        }
+
+        let actualPayments = [|
+            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed (2_00L<Cent>, [||])) }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+        |]
+
+        let (rp: RescheduleParameters) = {
+            OriginalFinalPaymentDay =((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
+            FeesSettlement = Fees.Settlement.ProRataRefund
+            PaymentSchedule = IrregularSchedule [||]
+            NegativeInterestOption = DoNotApplyNegativeInterest
+            InterestHolidays = [||]
+            ChargesHolidays = [||]
+        }
+
+        let result = reschedule sp rp actualPayments
+        result |> ValueOption.iter(snd >> _.ScheduleItems >> Formatting.outputListToHtml "out/EdgeCaseTest007.md")
+
+        let actual = result |> ValueOption.map (fun (_, s) -> s.ScheduleItems |> Array.last)
+
+        let expected = ValueSome ({
+            OffsetDate = Date(2024, 5, 22)
+            OffsetDay = 110<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = ValueSome 97_09L<Cent>
+            PaymentDue = 44_30L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = ValueNone
+            NetEffect = 44_30L<Cent>
+            PaymentStatus = NotYetDue
+            BalanceStatus = ClosedBalance
+            NewInterest = 8_57L<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 35_73L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 8_57L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = 0L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = 0L<Cent>
+            ChargesBalance = 0L<Cent>
+            SettlementFigure = 44_30L<Cent>
+            ProRatedFees = 0L<Cent>
+        })
+        actual |> should equal expected

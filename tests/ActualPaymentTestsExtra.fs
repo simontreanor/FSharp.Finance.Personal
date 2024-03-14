@@ -517,28 +517,28 @@ module ActualPaymentTestsExtra =
             }
             |> ValueOption.bind (Array.vTryLastBut 0)
         let expected = ValueSome ({
-            OffsetDate = Date(2028, 2, 24)
-            OffsetDay = 2179<OffsetDay>
+            OffsetDate = Date(2027, 7, 29)
+            OffsetDay = 1969<OffsetDay>
             Advances = [||]
             ScheduledPayment = ValueSome 20_00L<Cent>
-            PaymentDue = 54L<Cent>
+            PaymentDue = 9_49L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 54L<Cent>
+            NetEffect = 9_49L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 0L<Cent>
+            NewInterest = 3L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 54L<Cent>
-            FeesPortion = 0L<Cent>
-            InterestPortion = 0L<Cent>
+            PrincipalPortion = 4_25L<Cent>
+            FeesPortion = 5_21L<Cent>
+            InterestPortion = 3L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 54L<Cent>
+            SettlementFigure = 9_49L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected
