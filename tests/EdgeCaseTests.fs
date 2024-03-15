@@ -638,7 +638,13 @@ module EdgeCaseTests =
         let (rp: RescheduleParameters) = {
             OriginalFinalPaymentDay =((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
             FeesSettlement = Fees.Settlement.ProRataRefund
-            PaymentSchedule = IrregularSchedule [||]
+            PaymentSchedule = IrregularSchedule [|
+                { PaymentDay =  42<OffsetDay>; PaymentDetails = ScheduledPayment 5000L<Cent> }
+                { PaymentDay =  49<OffsetDay>; PaymentDetails = ScheduledPayment 5000L<Cent> }
+                { PaymentDay =  76<OffsetDay>; PaymentDetails = ScheduledPayment 5000L<Cent> }
+                { PaymentDay =  85<OffsetDay>; PaymentDetails = ScheduledPayment 5000L<Cent> }
+                { PaymentDay =  95<OffsetDay>; PaymentDetails = ScheduledPayment 1500L<Cent> }
+            |]
             NegativeInterestOption = DoNotApplyNegativeInterest
             InterestHolidays = [||]
             ChargesHolidays = [||]
@@ -650,28 +656,28 @@ module EdgeCaseTests =
         let actual = result |> ValueOption.map (fun (_, s) -> s.ScheduleItems |> Array.last)
 
         let expected = ValueSome ({
-            OffsetDate = Date(2024, 5, 22)
-            OffsetDay = 110<OffsetDay>
+            OffsetDate = Date(2024, 5, 7)
+            OffsetDay = 95<OffsetDay>
             Advances = [||]
-            ScheduledPayment = ValueSome 97_09L<Cent>
-            PaymentDue = 44_30L<Cent>
+            ScheduledPayment = ValueSome 15_00L<Cent>
+            PaymentDue = 15_00L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 44_30L<Cent>
+            NetEffect = 15_00L<Cent>
             PaymentStatus = NotYetDue
-            BalanceStatus = ClosedBalance
-            NewInterest = 8_57L<Cent>
+            BalanceStatus = OpenBalance
+            NewInterest = 2_61L<Cent>
             NewCharges = [||]
-            PrincipalPortion = 35_73L<Cent>
+            PrincipalPortion = 12_39L<Cent>
             FeesPortion = 0L<Cent>
-            InterestPortion = 8_57L<Cent>
+            InterestPortion = 2_61L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
+            PrincipalBalance = 20_27L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0L<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 44_30L<Cent>
+            SettlementFigure = 35_27L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected

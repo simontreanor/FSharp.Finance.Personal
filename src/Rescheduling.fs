@@ -51,6 +51,7 @@ module Rescheduling =
             let oldPaymentSchedule =
                 quote.RevisedSchedule.ScheduleItems
                 |> Array.filter _.ScheduledPayment.IsSome
+                |> Array.filter(fun si -> si.OffsetDate < sp.AsOfDate)
                 |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment.Value })
             // configure the parameters for the new schedule
             let spNew =
