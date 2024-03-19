@@ -11,6 +11,8 @@ module Calculation =
     type QuoteType =
         /// calculate the single final payment required to settle in full
         | Settlement
+        /// calculate the single final payment required to settle in full on a future day
+        | FutureSettlement of SettlementDay: int<OffsetDay>
         /// get the first outstanding payment
         | FirstOutstanding
         /// calculate the total of all overdue payments

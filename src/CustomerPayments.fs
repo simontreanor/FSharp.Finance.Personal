@@ -3,11 +3,30 @@ namespace FSharp.Finance.Personal
 /// categorising the types of incoming payments based on whether they are scheduled, actual or generated
 module CustomerPayments =
 
-    open System
+    /// the type of the scheduled payment, affecting how any payment due is calculated
+    [<RequireQualifiedAccess; Struct>]
+    type ScheduledPaymentType =
+        /// no scheduled payment
+        | None
+        /// the payment due may be reduced by prior extra/overpayments
+        | Original of OriginalAmount: int64<Cent>
+        /// the payment due remains the same regardless of any prior extra/overpayments (though it may be reduced if the amount is sufficient to close the balance)
+        | Rescheduled of RescheduledAmount: int64<Cent>
+        with
+            /// the amount of the scheduled payment
+            member x.Value =
+                match x with
+                | None -> 0L<Cent>
+                | Original sp -> sp
+                | Rescheduled sp -> sp
+            member x.IsSome =
+                match x with
+                | None -> false
+                | _ -> true
 
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
-    type PaymentStatus =
+    type ActualPaymentStatus =
         /// the payment has been initiated but is not yet confirmed
         | Pending of PendingAmount: int64<Cent>
         /// the payment had been initiated but was not confirmed within the timeout
@@ -16,25 +35,23 @@ module CustomerPayments =
         | Confirmed of ConfirmedAmount: int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
         | Failed of FailedAmount: int64<Cent> * Charges: Charge array
+        with
+            /// the total amount of the payment
+            static member total = function
+                | Pending ap -> ap
+                | TimedOut _ -> 0L<Cent>
+                | Confirmed ap -> ap
+                | Failed _ -> 0L<Cent>
 
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
     [<Struct>]
     type CustomerPaymentDetails =
         /// the amount of any extra scheduled payment due on the current day
-        | ScheduledPayment of ScheduledPayment: int64<Cent>
+        | ScheduledPayment of ScheduledPayment: ScheduledPaymentType
         /// the amounts of any actual payments made on the current day, with any charges incurred
-        | ActualPayment of ActualPayment: PaymentStatus
+        | ActualPayment of ActualPayment: ActualPaymentStatus
         /// the amounts of any generated payments made on the current day and their type
         | GeneratedPayment of GeneratedPayment: int64<Cent>
-        with
-            /// the total amount of the payment
-            static member total = function
-                | ScheduledPayment sp -> sp
-                | ActualPayment (PaymentStatus.Pending ap) -> ap
-                | ActualPayment (PaymentStatus.TimedOut _) -> 0L<Cent>
-                | ActualPayment (PaymentStatus.Confirmed ap) -> ap
-                | ActualPayment (PaymentStatus.Failed _) -> 0L<Cent>
-                | GeneratedPayment gp -> gp
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     [<Struct>]
@@ -84,26 +101,3 @@ module CustomerPayments =
         | RegularFixedSchedule of FixedUnitPeriodConfig: UnitPeriod.Config * FixedPaymentCount: int * PaymentAmount: int64<Cent>
         /// just a bunch of payments
         | IrregularSchedule of IrregularSchedule: CustomerPayment array
-
-    [<RequireQualifiedAccess; Struct>]
-    type PaymentCountCalculation =
-        | Manual of Count: int
-        | Automatic of InterestRate: Interest.Rate
-
-    /// calculates an estimated number of payments required to pay off an amount given a specific unitPeriod and interest rate
-    let calculateCount unitPeriodConfig (outstandingBalance: int64<Cent>) (payment: int64<Cent>) interestRate =
-        let roughUnitPeriodLength = unitPeriodConfig |> UnitPeriod.Config.roughLength
-        let initialCount = if payment = 0L<Cent> then 0m else decimal outstandingBalance / decimal payment |> Math.Ceiling
-        let estimatedYears = (roughUnitPeriodLength * initialCount) / 365m
-        let annualInterestRate = interestRate |> Interest.Rate.annual |> Percent.toDecimal
-        (1m + (annualInterestRate * estimatedYears)) * initialCount |> Math.Ceiling |> int
-
-    /// creates a payment plan for fully amortising an outstanding balance based on a payment amount, unit-period config and interest rate
-    let createPaymentSchedule (payment: int64<Cent>) paymentCountCalculation unitPeriodConfig (outstandingBalance: int64<Cent>) originalStartDate =
-        let count =
-            match paymentCountCalculation with
-            | PaymentCountCalculation.Manual count -> count
-            | PaymentCountCalculation.Automatic interestRate -> calculateCount unitPeriodConfig outstandingBalance payment interestRate
-        unitPeriodConfig
-        |> UnitPeriod.generatePaymentSchedule count UnitPeriod.Direction.Forward
-        |> Array.map(fun d -> { PaymentDay = d |> OffsetDay.fromDate originalStartDate ; PaymentDetails = ScheduledPayment payment })

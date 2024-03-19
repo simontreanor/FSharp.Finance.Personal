@@ -83,10 +83,13 @@ module PaymentSchedule =
             PaymentTimeout = 3<DurationDay>
         }
 
-    [<Struct>]
+    /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
+    [<RequireQualifiedAccess; Struct>]
     type ScheduleType =
-        | OriginalSchedule
-        | Reschedule of OriginalFinalPaymentDay: int<OffsetDay>
+        /// an original schedule
+        | Original
+        /// a schedule based on a previous one; the original final payment day is carried over to ensure any pro-rating is based on the original schedule
+        | Rescheduled of OriginalFinalPaymentDay: int<OffsetDay>
 
     /// parameters for creating a payment schedule
     [<Struct>]
@@ -211,6 +214,6 @@ module PaymentSchedule =
         |> Array.filter(fun si -> si.Payment.IsSome)
         |> Array.map(fun si -> {
             PaymentDay = si.Day
-            PaymentDetails = ActualPayment (PaymentStatus.Confirmed si.Payment.Value)
+            PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed si.Payment.Value)
             }
         )

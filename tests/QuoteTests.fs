@@ -18,7 +18,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 9, 28)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -52,7 +52,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -69,7 +69,7 @@ module QuoteTests =
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueSome 323_15L<Cent>
+                ScheduledPayment = ScheduledPaymentType.Original 323_15L<Cent>
                 PaymentDue = 323_15L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1969_70L<Cent>
@@ -100,7 +100,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -134,7 +134,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -151,7 +151,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 2026_48L<Cent>
@@ -182,7 +182,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -216,7 +216,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -233,9 +233,9 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
-                ActualPayments = [| PaymentStatus.Confirmed 25_00L<Cent> |]
+                ActualPayments = [| ActualPaymentStatus.Confirmed 25_00L<Cent> |]
                 GeneratedPayment = ValueSome 2001_48L<Cent>
                 NetEffect = 2026_48L<Cent>
                 PaymentStatus = (Generated Settlement)
@@ -264,7 +264,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -311,7 +311,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1200_00L<Cent>
@@ -342,7 +342,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -389,7 +389,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1238_40L<Cent>
@@ -420,7 +420,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -454,7 +454,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 25_00L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>) }
             )
 
         let actual =
@@ -471,7 +471,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 3420_01L<Cent>
@@ -501,7 +501,7 @@ module QuoteTests =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             AsOfDate = Date(2024, 10, 1)
             Principal = 1200_00L<Cent>
@@ -536,7 +536,7 @@ module QuoteTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 323_15L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 323_15L<Cent>) }
             )
 
         let actual =
@@ -551,7 +551,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueSome 323_10L<Cent>
+                ScheduledPayment = ScheduledPaymentType.Original 323_10L<Cent>
                 PaymentDue = 323_10L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueNone
@@ -582,7 +582,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -616,7 +616,7 @@ module QuoteTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 323_15L<Cent>) }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 323_15L<Cent>) }
             )
 
         let actual =
@@ -632,7 +632,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueSome 323_10L<Cent>
+                ScheduledPayment = ScheduledPaymentType.Original 323_10L<Cent>
                 PaymentDue = 300_11L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueNone
@@ -663,7 +663,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2023, 12, 21)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -709,7 +709,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1311_66L<Cent>
@@ -740,7 +740,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2023, 12, 21)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -772,13 +772,13 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
-            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
+            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>) }
         |]
 
         let actual =
@@ -794,7 +794,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1261_68L<Cent>
@@ -825,7 +825,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2023, 2, 8)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1200_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -857,10 +857,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
-            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
-            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>) }
+            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>) }
         |]
 
         let actual =
@@ -877,7 +877,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 973_52L<Cent>
@@ -908,7 +908,7 @@ module QuoteTests =
 
         let sp = {
             AsOfDate = Date(2024, 2, 28)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 400_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -955,7 +955,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 30
                 OffsetDay = 30<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueSome 165_90L<Cent>
+                ScheduledPayment = ScheduledPaymentType.Original 165_90L<Cent>
                 PaymentDue = 165_90L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 495_76L<Cent>
@@ -984,7 +984,7 @@ module QuoteTests =
     let ``13a) Loan is settled the day before the last scheduled payment is due`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 14)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1016,10 +1016,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1036,7 +1036,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 429_24L<Cent>
@@ -1065,7 +1065,7 @@ module QuoteTests =
     let ``13b) Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 15)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1097,10 +1097,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1116,7 +1116,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueSome 491_53L<Cent>
+                ScheduledPayment = ScheduledPaymentType.Original 491_53L<Cent>
                 PaymentDue = 457_65L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 432_07L<Cent>
@@ -1145,7 +1145,7 @@ module QuoteTests =
     let ``13c) Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 16)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1177,10 +1177,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1196,7 +1196,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 434_89L<Cent>
@@ -1225,7 +1225,7 @@ module QuoteTests =
     let ``13d) Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 19)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1257,10 +1257,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1276,7 +1276,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 453_36L<Cent>
@@ -1305,7 +1305,7 @@ module QuoteTests =
     let ``14a) Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 14)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1336,11 +1336,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1357,7 +1357,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 429_24L<Cent>
@@ -1386,7 +1386,7 @@ module QuoteTests =
     let ``14b) Loan is settled the same day as an overpayment`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 15)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1418,11 +1418,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1438,9 +1438,9 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueSome 491_53L<Cent>
+                ScheduledPayment = ScheduledPaymentType.Original 491_53L<Cent>
                 PaymentDue = 457_65L<Cent>
-                ActualPayments = [| PaymentStatus.Confirmed 500_00L<Cent> |]
+                ActualPayments = [| ActualPaymentStatus.Confirmed 500_00L<Cent> |]
                 GeneratedPayment = ValueSome -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = (Generated Settlement)
@@ -1467,7 +1467,7 @@ module QuoteTests =
     let ``14c) Loan is settled the day after an overpayment`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 16)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1499,11 +1499,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1519,7 +1519,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome -67_95L<Cent>
@@ -1548,7 +1548,7 @@ module QuoteTests =
     let ``15) Loan refund due for a long time, showing interest owed back`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 5)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1580,11 +1580,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
         |]
 
         let actual =
@@ -1600,7 +1600,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ValueNone
+                ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome -72_80L<Cent>
@@ -1629,7 +1629,7 @@ module QuoteTests =
     let ``16) Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components`` () =
         let sp = {
             AsOfDate = Date(2022, 12, 20)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 12, 19)
             Principal = 250_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1661,7 +1661,7 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 1<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 252_00L<Cent>) }
+            { PaymentDay = 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 252_00L<Cent>) }
         |]
 
         let actual =
@@ -1678,7 +1678,7 @@ module QuoteTests =
     let ``17) Generated settlement figure is correct`` () =
         let sp = {
             AsOfDate = Date(2024, 3, 4)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
@@ -1709,11 +1709,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [||])) }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
+            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed(72_54L<Cent>, [||])) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 145_07L<Cent>) }
         |]
 
         let actual =
@@ -1730,7 +1730,7 @@ module QuoteTests =
     let ``18) Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment`` () =
         let sp = {
             AsOfDate = Date(2024, 3, 4)
-            ScheduleType = OriginalSchedule
+            ScheduleType = ScheduleType.Original
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
@@ -1761,11 +1761,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])) }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 72_54L<Cent>) }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 145_07L<Cent>) }
+            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])) }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>) }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 145_07L<Cent>) }
         |]
 
         let actual =
@@ -1782,7 +1782,7 @@ module QuoteTests =
     let ``19) Curveball`` () =
         let sp = {
                 AsOfDate = Date(2024, 3, 7)
-                ScheduleType = OriginalSchedule
+                ScheduleType = ScheduleType.Original
                 StartDate = Date(2024, 2, 2)
                 Principal = 25000L<Cent>
                 PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4)
@@ -1814,10 +1814,10 @@ module QuoteTests =
             }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed -5_10L<Cent>) }
-            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 2_00L<Cent>) }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (PaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed -5_10L<Cent>) }
+            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 2_00L<Cent>) }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
         |]
 
         let actual =
