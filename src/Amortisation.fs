@@ -168,7 +168,7 @@ module Amortisation =
                     Interest.calculate dailyInterestCap (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
             let newInterest' = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
-            let confirmedPayments = ap.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Confirmed ap -> ap | _ -> 0L<Cent>)
+            let confirmedPayments = ap.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
 
             let pendingPayments = ap.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
 

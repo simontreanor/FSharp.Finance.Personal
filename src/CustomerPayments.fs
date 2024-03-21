@@ -27,6 +27,8 @@ module CustomerPayments =
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
     type ActualPaymentStatus =
+        /// a write-off payment has been applied
+        | WriteOff of WriteOffAmount: int64<Cent>
         /// the payment has been initiated but is not yet confirmed
         | Pending of PendingAmount: int64<Cent>
         /// the payment had been initiated but was not confirmed within the timeout
@@ -38,6 +40,7 @@ module CustomerPayments =
         with
             /// the total amount of the payment
             static member total = function
+                | WriteOff ap -> ap
                 | Pending ap -> ap
                 | TimedOut _ -> 0L<Cent>
                 | Confirmed ap -> ap

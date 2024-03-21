@@ -50,7 +50,7 @@ module AppliedPayment =
 
                 let confirmedPayments =
                     actualPayments'
-                    |> Array.choose(function ActualPaymentStatus.Confirmed ap -> Some ap | _ -> None)
+                    |> Array.choose(function ActualPaymentStatus.Confirmed ap -> Some ap | ActualPaymentStatus.WriteOff ap -> Some ap | _ -> None)
                     |> Array.sum
 
                 let pendingPayments =
