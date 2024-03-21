@@ -167,7 +167,6 @@ module Amortisation =
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (si.PrincipalBalance + si.FeesBalance) interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
                     Interest.calculate dailyInterestCap (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
             let newInterest' = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
-            let interestPortion = newInterest' + si.InterestBalance
 
             let confirmedPayments = ap.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Confirmed ap -> ap | _ -> 0L<Cent>)
 
@@ -183,6 +182,9 @@ module Amortisation =
                 }
 
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
+
+            let interestPortion = if confirmedPayments < 0L<Cent> && si.SettlementFigure >= 0L<Cent> then 0L<Cent> else newInterest' + si.InterestBalance
+
             let paymentDue =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
                     0L<Cent>
