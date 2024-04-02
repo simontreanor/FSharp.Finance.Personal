@@ -256,7 +256,11 @@ module Amortisation =
 
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
 
-            let assignable = sign netEffect - sign chargesPortion - sign interestPortion
+            let assignable =
+                if netEffect = 0L<Cent> then
+                    0L<Cent>
+                else
+                    sign netEffect - sign chargesPortion - sign interestPortion
 
             let feesPortion =
                 feesPercentage
@@ -313,6 +317,8 @@ module Amortisation =
             let carriedCharges, carriedInterest =
                 if sign chargesPortion > sign netEffect then
                     chargesPortion - netEffect, interestPortion
+                elif netEffect = 0L<Cent> && interestPortion < 0L<Cent> then
+                    0L<Cent>, interestPortion
                 elif sign chargesPortion + sign interestPortion > sign netEffect then
                     0L<Cent>, interestPortion - (netEffect - chargesPortion)
                 else
