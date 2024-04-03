@@ -69,7 +69,7 @@ module Calculation =
     /// raises a decimal to a decimal power
     let powm (power: decimal) (base': decimal) = decimal (Math.Pow(double base', double power))
 
-    /// round a percent value to n decimal places
+    /// round a value to n decimal places
     let roundTo (places: int) (m: decimal) = Math.Round(m, places)
 
     /// how to round calculated interest and payments

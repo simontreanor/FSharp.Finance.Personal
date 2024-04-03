@@ -125,7 +125,7 @@ module UnitPeriodConfigTests =
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 
-            let expected = ValueSome (Percent 56.51100m)
+            let expected = ValueSome (Percent 56.51300m)
             actual |> should equal expected
 
         [<Fact>]
@@ -657,6 +657,6 @@ module UnitPeriodConfigTests =
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 
-            let expected = ValueSome (Percent 699.50300m)
+            let expected = ValueSome (Percent 699.52500m)
             actual |> should equal expected
 

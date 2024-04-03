@@ -61,7 +61,7 @@ module EdgeCaseTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (500_78L<Cent>, 177_81L<Cent>, 274_64L<Cent>, 48_33L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (500_79L<Cent>, 177_81L<Cent>, 274_64L<Cent>, 48_34L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -112,7 +112,7 @@ module EdgeCaseTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (455_53L<Cent>, 148_17L<Cent>, 228_86L<Cent>, 78_50L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (455_55L<Cent>, 148_17L<Cent>, 228_86L<Cent>, 78_52L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -163,7 +163,7 @@ module EdgeCaseTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (1221_51L<Cent>, 427_28L<Cent>, 660_00L<Cent>, 134_23L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (1221_54L<Cent>, 427_28L<Cent>, 660_00L<Cent>, 134_26L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -286,7 +286,7 @@ module EdgeCaseTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (466_35L<Cent>, 151_29L<Cent>, 233_64L<Cent>, 81_42L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (466_41L<Cent>, 151_32L<Cent>, 233_66L<Cent>, 81_43L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -409,7 +409,7 @@ module EdgeCaseTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (479_76L<Cent>, 155_64L<Cent>, 240_36L<Cent>, 83_76L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (479_92L<Cent>, 155_70L<Cent>, 240_43L<Cent>, 83_79L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -659,22 +659,22 @@ module EdgeCaseTests =
             ScheduledPayment = ScheduledPaymentType.None
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueSome 83_73L<Cent>
-            NetEffect = 83_73L<Cent>
+            GeneratedPayment = ValueSome 83_74L<Cent>
+            NetEffect = 83_74L<Cent>
             PaymentStatus = Generated Settlement
             BalanceStatus = ClosedBalance
-            NewInterest = 16_20L<Cent>
+            NewInterest = 16_20.960m<Cent>
             NewCharges = [||]
-            PrincipalPortion = 67_53L<Cent>
+            PrincipalPortion = 67_54L<Cent>
             FeesPortion = 0L<Cent>
             InterestPortion = 16_20L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 83_73L<Cent>
+            SettlementFigure = 83_74L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected
@@ -744,22 +744,22 @@ module EdgeCaseTests =
             ScheduledPayment = ScheduledPaymentType.None
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueSome 10_18L<Cent>
-            NetEffect = 10_18L<Cent>
+            GeneratedPayment = ValueSome 10_19L<Cent>
+            NetEffect = 10_19L<Cent>
             PaymentStatus = Generated Settlement
             BalanceStatus = ClosedBalance
-            NewInterest = 1_97L<Cent>
+            NewInterest = 1_97.280m<Cent>
             NewCharges = [||]
-            PrincipalPortion = 8_21L<Cent>
+            PrincipalPortion = 8_22L<Cent>
             FeesPortion = 0L<Cent>
             InterestPortion = 1_97L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 10_18L<Cent>
+            SettlementFigure = 10_19L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected

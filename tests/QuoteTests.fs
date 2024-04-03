@@ -64,7 +64,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1969_70L<Cent>, 1175_80L<Cent>, 790_19L<Cent>, 3_71L<Cent>, 0L<Cent>, 1437_53L<Cent>),
+            PaymentQuote (1969_72L<Cent>, 1175_80L<Cent>, 790_21L<Cent>, 3_71L<Cent>, 0L<Cent>, 1437_53L<Cent>),
             {
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
@@ -72,22 +72,22 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.Original 323_15L<Cent>
                 PaymentDue = 323_15L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 1969_70L<Cent>
-                NetEffect = 1969_70L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 1969_72L<Cent>
+                NetEffect = 1969_72L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 3_71L<Cent>
+                NewInterest = 3_71.12573150684931506849318800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 790_19L<Cent>
+                FeesPortion = 790_21L<Cent>
                 InterestPortion = 3_71L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 1437_53L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1969_70L<Cent>
+                SettlementFigure = 1969_72L<Cent>
                 ProRatedFees = 1437_53L<Cent>
             }
         )
@@ -146,7 +146,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (2026_48L<Cent>, 1175_80L<Cent>, 834_19L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 1393_53L<Cent>),
+            PaymentQuote (2026_50L<Cent>, 1175_80L<Cent>, 834_21L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 1393_53L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -154,22 +154,22 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 2026_48L<Cent>
-                NetEffect = 2026_48L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 2026_50L<Cent>
+                NetEffect = 2026_50L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 2_78L<Cent>
+                NewInterest = 2_78.34429863013698630136989100m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 834_19L<Cent>
+                FeesPortion = 834_21L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 10_00L<Cent>
                 FeesRefund = 1393_53L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 2026_48L<Cent>
+                SettlementFigure = 2026_50L<Cent>
                 ProRatedFees = 1393_53L<Cent>
             }
         )
@@ -228,7 +228,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (2001_48L<Cent>, 1175_80L<Cent>, 825_68L<Cent>, 0L<Cent>, 0L<Cent>, 1393_53L<Cent>),
+            PaymentQuote (2001_50L<Cent>, 1175_80L<Cent>, 825_70L<Cent>, 0L<Cent>, 0L<Cent>, 1393_53L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -236,22 +236,22 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [| ActualPaymentStatus.Confirmed 25_00L<Cent> |]
-                GeneratedPayment = ValueSome 2001_48L<Cent>
-                NetEffect = 2026_48L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 2001_50L<Cent>
+                NetEffect = 2026_50L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 2_78L<Cent>
+                NewInterest = 2_78.34429863013698630136989100m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 834_19L<Cent>
+                FeesPortion = 834_21L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 10_00L<Cent>
                 FeesRefund = 1393_53L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 2001_48L<Cent>
+                SettlementFigure = 2001_50L<Cent>
                 ProRatedFees = 1393_53L<Cent>
             }
         )
@@ -316,9 +316,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1200_00L<Cent>
                 NetEffect = 1200_00L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 0L<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1200_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -327,7 +327,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1200_00L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -394,9 +394,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1238_40L<Cent>
                 NetEffect = 1238_40L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 38_40L<Cent>
+                NewInterest = 38_40m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1200_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -405,7 +405,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1238_40L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -466,7 +466,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (3420_01L<Cent>, 1175_80L<Cent>, 2227_72L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 2227_72L<Cent>),
+            PaymentQuote (3420_03L<Cent>, 1175_80L<Cent>, 2227_74L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 2227_74L<Cent>),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -474,23 +474,23 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 3420_01L<Cent>
-                NetEffect = 3420_01L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 3420_03L<Cent>
+                NetEffect = 3420_03L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 2_78L<Cent>
+                NewInterest = 2_78.34429863013698630136989100m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 2227_72L<Cent>
+                FeesPortion = 2227_74L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 10_00L<Cent>
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 3420_01L<Cent>
-                ProRatedFees = 2227_72L<Cent>
+                SettlementFigure = 3420_03L<Cent>
+                ProRatedFees = 2227_74L<Cent>
             }
         )
 
@@ -558,7 +558,7 @@ module QuoteTests =
                 NetEffect = 323_10L<Cent>
                 PaymentStatus = NotYetDue
                 BalanceStatus = OpenBalance
-                NewInterest = 2_57L<Cent>
+                NewInterest = 2_57.39205205479452054794523135m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 110_72L<Cent>
                 FeesPortion = 209_81L<Cent>
@@ -567,7 +567,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 122_33L<Cent>
                 FeesBalance = 231_57L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 677_00L<Cent>
                 ProRatedFees = 231_57L<Cent>
@@ -639,7 +639,7 @@ module QuoteTests =
                 NetEffect = 300_11L<Cent>
                 PaymentStatus = NotYetDue
                 BalanceStatus = ClosedBalance
-                NewInterest = 1_14L<Cent>
+                NewInterest = 1_14.10005753424657534246576489m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 103_33L<Cent>
                 FeesPortion = 195_64L<Cent>
@@ -648,7 +648,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 300_11L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -704,7 +704,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1311_66L<Cent>, 500_00L<Cent>, 750_00L<Cent>, 61_66L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1311_67L<Cent>, 500_00L<Cent>, 750_00L<Cent>, 61_67L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
@@ -712,22 +712,22 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 1311_66L<Cent>
-                NetEffect = 1311_66L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 1311_67L<Cent>
+                NetEffect = 1311_67L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 16_35L<Cent>
+                NewInterest = 16_35.6164383561643835616440000m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 500_00L<Cent>
                 FeesPortion = 750_00L<Cent>
-                InterestPortion = 61_66L<Cent>
+                InterestPortion = 61_67L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1311_66L<Cent>
+                SettlementFigure = 1311_67L<Cent>
                 ProRatedFees = 0L<Cent>
             }
         )
@@ -789,7 +789,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (1261_68L<Cent>, 471_06L<Cent>, 706_53L<Cent>, 84_09L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1261_73L<Cent>, 471_07L<Cent>, 706_56L<Cent>, 84_10L<Cent>, 0L<Cent>, 0L<Cent>),
             {
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
@@ -797,22 +797,22 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 1261_68L<Cent>
-                NetEffect = 1261_68L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 1261_73L<Cent>
+                NetEffect = 1261_73L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 75_11L<Cent>
+                NewInterest = 75_11.9888465753424657534254125m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 471_06L<Cent>
-                FeesPortion = 706_53L<Cent>
-                InterestPortion = 84_09L<Cent>
+                PrincipalPortion = 471_07L<Cent>
+                FeesPortion = 706_56L<Cent>
+                InterestPortion = 84_10L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1261_68L<Cent>
+                SettlementFigure = 1261_73L<Cent>
                 ProRatedFees = 0L<Cent>
             }
         )
@@ -872,7 +872,7 @@ module QuoteTests =
             }
 
         let expected = ValueSome (
-            PaymentQuote (973_52L<Cent>, 769_46L<Cent>, 195_68L<Cent>, 8_38L<Cent>, 0L<Cent>, 958_45L<Cent>),
+            PaymentQuote (973_53L<Cent>, 769_46L<Cent>, 195_68L<Cent>, 8_39L<Cent>, 0L<Cent>, 958_45L<Cent>),
             {
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
@@ -880,22 +880,22 @@ module QuoteTests =
                 ScheduledPayment = ScheduledPaymentType.None
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 973_52L<Cent>
-                NetEffect = 973_52L<Cent>
-                PaymentStatus = (Generated Settlement)
+                GeneratedPayment = ValueSome 973_53L<Cent>
+                NetEffect = 973_53L<Cent>
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 1_04L<Cent>
+                NewInterest = 1_04.87518082191780821917809273m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 769_46L<Cent>
                 FeesPortion = 195_68L<Cent>
-                InterestPortion = 8_38L<Cent>
+                InterestPortion = 8_39L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 958_45L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 973_52L<Cent>
+                SettlementFigure = 973_53L<Cent>
                 ProRatedFees = 958_45L<Cent>
             }
         )
@@ -960,9 +960,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 495_76L<Cent>
                 NetEffect = 495_76L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 95_76L<Cent>
+                NewInterest = 95_76m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 400_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -971,7 +971,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 495_76L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1041,9 +1041,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 429_24L<Cent>
                 NetEffect = 429_24L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 76_24L<Cent>
+                NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1052,7 +1052,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 429_24L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1121,9 +1121,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 432_07L<Cent>
                 NetEffect = 432_07L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 79_07L<Cent>
+                NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1132,7 +1132,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 432_07L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1201,9 +1201,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 434_89L<Cent>
                 NetEffect = 434_89L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 2_82L<Cent>
+                NewInterest = 2_82.400m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1212,7 +1212,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 434_89L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1281,9 +1281,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 453_36L<Cent>
                 NetEffect = 453_36L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 11_29L<Cent>
+                NewInterest = 11_29.600m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1292,7 +1292,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 453_36L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1362,9 +1362,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 429_24L<Cent>
                 NetEffect = 429_24L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 76_24L<Cent>
+                NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1373,7 +1373,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 429_24L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1443,9 +1443,9 @@ module QuoteTests =
                 ActualPayments = [| ActualPaymentStatus.Confirmed 500_00L<Cent> |]
                 GeneratedPayment = ValueSome -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = 79_07L<Cent>
+                NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1454,7 +1454,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = -67_93L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1524,9 +1524,9 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome -67_95L<Cent>
                 NetEffect = -67_95L<Cent>
-                PaymentStatus = (Generated Settlement)
+                PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = -2L<Cent>
+                NewInterest = -1.4888767123287671232876711026M<Cent>
                 NewCharges = [||]
                 PrincipalPortion = -67_93L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1535,7 +1535,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = -67_95L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1607,7 +1607,7 @@ module QuoteTests =
                 NetEffect = -72_80L<Cent>
                 PaymentStatus = Generated Settlement
                 BalanceStatus = ClosedBalance
-                NewInterest = -4_87L<Cent>
+                NewInterest = -4_86.86268493150684931506845055M<Cent>
                 NewCharges = [||]
                 PrincipalPortion = -67_93L<Cent>
                 FeesPortion = 0L<Cent>
@@ -1616,7 +1616,7 @@ module QuoteTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
-                InterestBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = -72_80L<Cent>
                 ProRatedFees = 0L<Cent>
@@ -1877,5 +1877,5 @@ module QuoteTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-91_08L<Cent>, -88_40L<Cent>, 0L<Cent>, -2_68L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-89_88L<Cent>, -88_40L<Cent>, 0L<Cent>, -1_48L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected

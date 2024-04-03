@@ -6,10 +6,10 @@ open System
 module Interest =
 
     /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped bya daily amount
-    let calculate (dailyCap: int64<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<DurationDay>) rounding =
+    let calculate (dailyCap: decimal<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<DurationDay>) =
         decimal balance * Percent.toDecimal dailyRate * decimal chargeableDays
-        |> min (decimal dailyCap) 
-        |> Cent.round rounding
+        |> min (decimal dailyCap)
+        |> ( * ) 1m<Cent>
 
     /// the interest rate expressed as either an annual or a daily rate
     [<Struct>]
@@ -63,16 +63,16 @@ module Interest =
     module Cap =
 
         /// calculates the total interest cap
-        let total (initialPrincipal: int64<Cent>) rounding = function
-            | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage |> Cent.round rounding
-            | ValueSome (TotalFixedCap i) -> i
-            | ValueNone -> Int64.MaxValue * 1L<Cent>
+        let total (initialPrincipal: int64<Cent>) = function
+            | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage * 1m<Cent>
+            | ValueSome (TotalFixedCap i) -> decimal i * 1m<Cent>
+            | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
         /// calculates the daily interest cap
-        let daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDay>) rounding = function
-            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays |> Cent.round rounding
-            | ValueSome (DailyFixedCap i) -> i
-            | ValueNone -> Int64.MaxValue * 1L<Cent>
+        let daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDay>) = function
+            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays * 1m<Cent>
+            | ValueSome (DailyFixedCap i) -> decimal i * 1m<Cent>
+            | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
     /// interest options
     [<Struct>]

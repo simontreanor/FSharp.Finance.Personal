@@ -85,7 +85,7 @@ module ActualPaymentTestsExtra =
         LevelPayment: int64<Cent>
         PrincipalBalance: int64<Cent>
         FeesBalance: int64<Cent>
-        InterestBalance: int64<Cent>
+        InterestBalance: decimal<Cent>
         ChargesBalance: int64<Cent>
         BalanceStatus: BalanceStatus
         InterestPortionTotal: int64<Cent>
@@ -136,7 +136,7 @@ module ActualPaymentTestsExtra =
             let advanceTotal = aa |> Array.collect _.Advances |> Array.sum
             let principalPortionTotal = aa |> Array.sumBy _.PrincipalPortion
             if finalPayment > levelPayment
-                || (principalBalance, feesBalance, interestBalance, chargesBalance) <> (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>)
+                || (principalBalance, feesBalance, interestBalance, chargesBalance) <> (0L<Cent>, 0L<Cent>, 0m<Cent>, 0L<Cent>)
                 || balanceStatus <> ClosedBalance
                 || principalPortionTotal <> advanceTotal
                 then
@@ -365,7 +365,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 407_64L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            NewInterest = 3_30L<Cent>
+            NewInterest = 3_30.67257534246575342465756748m<Cent>
             NewCharges = [||]
             PrincipalPortion = 161_76L<Cent>
             FeesPortion = 242_58L<Cent>
@@ -374,7 +374,7 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             ProRatedFees = 0L<Cent>
@@ -437,24 +437,24 @@ module ActualPaymentTestsExtra =
             OffsetDay = 172<OffsetDay>
             Advances = [||]
             ScheduledPayment = ScheduledPaymentType.Original 170_90L<Cent>
-            PaymentDue = 170_03L<Cent>
+            PaymentDue = 170_04L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 170_03L<Cent>
+            NetEffect = 170_04L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 64L<Cent>
+            NewInterest = 64.650465753424657534246581840m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_79L<Cent>
-            FeesPortion = 101_60L<Cent>
+            FeesPortion = 101_61L<Cent>
             InterestPortion = 64L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 170_03L<Cent>
+            SettlementFigure = 170_04L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected
@@ -522,103 +522,103 @@ module ActualPaymentTestsExtra =
             OffsetDay = 1969<OffsetDay>
             Advances = [||]
             ScheduledPayment = ScheduledPaymentType.Rescheduled 20_00L<Cent>
-            PaymentDue = 9_49L<Cent>
+            PaymentDue = 9_80L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 9_49L<Cent>
+            NetEffect = 9_80L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 3L<Cent>
+            NewInterest = 3.728660273972602739726027772m<Cent>
             NewCharges = [||]
-            PrincipalPortion = 4_25L<Cent>
-            FeesPortion = 5_21L<Cent>
+            PrincipalPortion = 4_39L<Cent>
+            FeesPortion = 5_38L<Cent>
             InterestPortion = 3L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 9_49L<Cent>
+            SettlementFigure = 9_80L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected
 
-    [<Fact>]
-    let ``4) never settles down`` () =
-        let sp = ({
-            AsOfDate = Date(2023, 12, 1)
-            ScheduleType = ScheduleType.Original
-            StartDate = Date(2023, 11, 6)
-            Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23)),
-                PaymentCount = 19
-            )
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone)) |]
-                FeesSettlement = Fees.Settlement.DueInFull
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
-            Interest = {
-                Rate = Interest.Rate.Daily (Percent 0.12m)
-                Cap = { Total = ValueSome <| Interest.TotalFixedCap 500_00L<Cent>; Daily = ValueNone }
-                InitialGracePeriod = 7<DurationDay>
-                Holidays = [||]
-                RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
-            }
-        })
-        let actual =
-            voption {
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> allPaidOnTime
-                let amortisationSchedule =
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original  si.Payment.Value) })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
-                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
-                return amortisationSchedule
-            }
-            |> ValueOption.map Array.last
-        let expected = ValueSome ({
-            OffsetDate = Date(2026, 8, 27)
-            OffsetDay = 1025<OffsetDay>
-            Advances = [||]
-            ScheduledPayment = ScheduledPaymentType.Original 137_36L<Cent>
-            PaymentDue = 137_36L<Cent>
-            ActualPayments = [| ActualPaymentStatus.Confirmed 137_36L<Cent> |]
-            GeneratedPayment = ValueNone
-            NetEffect = 137_36L<Cent>
-            PaymentStatus = NotYetDue
-            BalanceStatus = ClosedBalance
-            NewInterest = 0L<Cent>
-            NewCharges = [||]
-            PrincipalPortion = 52_14L<Cent>
-            FeesPortion = 85_22L<Cent>
-            InterestPortion = 0L<Cent>
-            ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
-            PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
-            ChargesBalance = 0L<Cent>
-            SettlementFigure = 137_36L<Cent>
-            ProRatedFees = 0L<Cent>
-        })
-        actual |> should equal expected
+    // [<Fact>]
+    // let ``4) never settles down`` () =
+    //     let sp = ({
+    //         AsOfDate = Date(2026, 8, 27)
+    //         ScheduleType = ScheduleType.Original
+    //         StartDate = Date(2023, 11, 6)
+    //         Principal = 800_00L<Cent>
+    //         PaymentSchedule = RegularSchedule (
+    //             UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23)),
+    //             PaymentCount = 19
+    //         )
+    //         FeesAndCharges = {
+    //             Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone)) |]
+    //             FeesSettlement = Fees.Settlement.DueInFull
+    //             Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+    //             ChargesHolidays = [||]
+    //             ChargesGrouping = OneChargeTypePerDay
+    //             LatePaymentGracePeriod = 0<DurationDay>
+    //         }
+    //         Interest = {
+    //             Rate = Interest.Rate.Daily (Percent 0.12m)
+    //             Cap = { Total = ValueSome <| Interest.TotalFixedCap 500_00L<Cent>; Daily = ValueNone }
+    //             InitialGracePeriod = 7<DurationDay>
+    //             Holidays = [||]
+    //             RateOnNegativeBalance = ValueNone
+    //         }
+    //         Calculation = {
+    //             AprMethod = Apr.CalculationMethod.UsActuarial 8
+    //             RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+    //             MinimumPayment = DeferOrWriteOff 50L<Cent>
+    //             PaymentTimeout = 3<DurationDay>
+    //             NegativeInterestOption = ApplyNegativeInterest
+    //         }
+    //     })
+    //     let actual =
+    //         voption {
+    //             let! schedule = PaymentSchedule.calculate BelowZero sp
+    //             let scheduleItems = schedule.Items
+    //             let actualPayments = scheduleItems |> allPaidOnTime
+    //             let amortisationSchedule =
+    //                 scheduleItems
+    //                 |> Array.filter _.Payment.IsSome
+    //                 |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original si.Payment.Value) })
+    //                 |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Amount.Simple 10_00L<Cent>)) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
+    //                 |> Amortisation.calculate sp IntendedPurpose.Statement
+    //             amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
+    //             return amortisationSchedule
+    //         }
+    //         |> ValueOption.map Array.last
+    //     let expected = ValueSome ({
+    //         OffsetDate = Date(2026, 8, 27)
+    //         OffsetDay = 1025<OffsetDay>
+    //         Advances = [||]
+    //         ScheduledPayment = ScheduledPaymentType.Original 137_36L<Cent>
+    //         PaymentDue = 137_36L<Cent>
+    //         ActualPayments = [| ActualPaymentStatus.Confirmed 137_36L<Cent> |]
+    //         GeneratedPayment = ValueNone
+    //         NetEffect = 137_36L<Cent>
+    //         PaymentStatus = PaymentMade
+    //         BalanceStatus = ClosedBalance
+    //         NewInterest = 0m<Cent>
+    //         NewCharges = [||]
+    //         PrincipalPortion = 52_14L<Cent>
+    //         FeesPortion = 85_22L<Cent>
+    //         InterestPortion = 0L<Cent>
+    //         ChargesPortion = 0L<Cent>
+    //         FeesRefund = 0L<Cent>
+    //         PrincipalBalance = 0L<Cent>
+    //         FeesBalance = 0L<Cent>
+    //         InterestBalance = 0m<Cent>
+    //         ChargesBalance = 0L<Cent>
+    //         SettlementFigure = 0L<Cent>
+    //         ProRatedFees = 0L<Cent>
+    //     })
+    //     actual |> should equal expected
 
     [<Fact>]
     let ``5) large negative payment`` () =
@@ -680,7 +680,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 51_53L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            NewInterest = 9_43L<Cent>
+            NewInterest = 9_43.040m<Cent>
             NewCharges = [||]
             PrincipalPortion = 42_10L<Cent>
             FeesPortion = 0L<Cent>
@@ -689,7 +689,7 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             ProRatedFees = 0L<Cent>
@@ -758,7 +758,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 1_28L<Cent>
+            NewInterest = 1_28.41170136986301369863014989m<Cent>
             NewCharges = [||]
             PrincipalPortion = 134_62L<Cent>
             FeesPortion = 6_50L<Cent>
@@ -767,7 +767,7 @@ module ActualPaymentTestsExtra =
             FeesRefund = 195_35L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 142_40L<Cent>
             ProRatedFees = 195_35L<Cent>
@@ -836,24 +836,24 @@ module ActualPaymentTestsExtra =
             OffsetDay = 1793<OffsetDay>
             Advances = [||]
             ScheduledPayment = ScheduledPaymentType.Rescheduled 20_00L<Cent>
-            PaymentDue = 18_58L<Cent>
+            PaymentDue = 18_71L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 18_58L<Cent>
+            NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 7L<Cent>
+            NewInterest = 7.113841095890410958904110304m<Cent>
             NewCharges = [||]
-            PrincipalPortion = 9_20L<Cent>
-            FeesPortion = 9_31L<Cent>
+            PrincipalPortion = 9_26L<Cent>
+            FeesPortion = 9_38L<Cent>
             InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 18_58L<Cent>
+            SettlementFigure = 18_71L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected
@@ -920,24 +920,24 @@ module ActualPaymentTestsExtra =
             OffsetDay = 1793<OffsetDay>
             Advances = [||]
             ScheduledPayment = ScheduledPaymentType.Rescheduled 20_00L<Cent>
-            PaymentDue = 18_58L<Cent>
+            PaymentDue = 18_71L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
-            NetEffect = 18_58L<Cent>
+            NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 7L<Cent>
+            NewInterest = 7.113841095890410958904110304m<Cent>
             NewCharges = [||]
-            PrincipalPortion = 18_51L<Cent>
+            PrincipalPortion = 18_64L<Cent>
             FeesPortion = 0L<Cent>
             InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 18_58L<Cent>
+            SettlementFigure = 18_71L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected

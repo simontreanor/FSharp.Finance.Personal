@@ -40,7 +40,7 @@ module Amortisation =
         /// the overall balance status
         BalanceStatus: BalanceStatus
         /// the new interest charged between the previous amortisation day and the current day
-        NewInterest: int64<Cent>
+        NewInterest: decimal<Cent>
         /// any new charges incurred between the previous amortisation day and the current day
         NewCharges: Charge array
         /// the portion of the net effect assigned to the principal
@@ -58,7 +58,7 @@ module Amortisation =
         /// the fees balance to be carried forward
         FeesBalance: int64<Cent>
         /// the interest balance to be carried forward
-        InterestBalance: int64<Cent>
+        InterestBalance: decimal<Cent>
         /// the charges balance to be carried forward
         ChargesBalance: int64<Cent>
         /// the settlement figure as of the current day
@@ -78,7 +78,7 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
-            NewInterest = 0L<Cent>
+            NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
             FeesPortion = 0L<Cent>
@@ -87,7 +87,7 @@ module Amortisation =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = 0L<Cent>
+            InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             ProRatedFees = 0L<Cent>
@@ -102,7 +102,7 @@ module Amortisation =
         /// the total of generated payments made up to and including the current day
         CumulativeGeneratedPayments: int64<Cent>
         /// the total of interest accrued up to and including the current day
-        CumulativeInterest: int64<Cent>
+        CumulativeInterest: decimal<Cent>
         /// the first missed payment
         FirstMissedPayment: int64<Cent> voption
         /// the total of missed payments up to and including the current day
@@ -133,7 +133,7 @@ module Amortisation =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
 
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
-        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal sp.Calculation.RoundingOptions.InterestRounding
+        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
 
         let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees
         let feesPercentage =
@@ -160,12 +160,13 @@ module Amortisation =
                     match sp.Calculation.NegativeInterestOption with
                     | ApplyNegativeInterest ->
                         let dailyInterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.map Interest.Rate.daily |> ValueOption.defaultValue (Percent 0m)
-                        Interest.calculate 0L<Cent> (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
+                        Interest.calculate 0m<Cent> (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays
                     | DoNotApplyNegativeInterest ->
-                        0L<Cent>
+                        0m<Cent>
                 else
-                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (si.PrincipalBalance + si.FeesBalance) interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
-                    Interest.calculate dailyInterestCap (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays sp.Calculation.RoundingOptions.InterestRounding
+                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (si.PrincipalBalance + si.FeesBalance) interestChargeableDays
+                    Interest.calculate dailyInterestCap (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays
+
             let newInterest' = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
             let confirmedPayments = ap.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
@@ -183,7 +184,13 @@ module Amortisation =
 
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
 
-            let interestPortion = if confirmedPayments < 0L<Cent> && si.SettlementFigure >= 0L<Cent> then 0L<Cent> else newInterest' + si.InterestBalance
+            let interestPortion =
+                if confirmedPayments < 0L<Cent> && si.SettlementFigure >= 0L<Cent> then
+                    0L<Cent>
+                else
+                    newInterest' + si.InterestBalance
+                    |> decimal
+                    |> Cent.round sp.Calculation.RoundingOptions.InterestRounding
 
             let paymentDue =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
@@ -316,13 +323,15 @@ module Amortisation =
 
             let carriedCharges, carriedInterest =
                 if sign chargesPortion > sign netEffect then
-                    chargesPortion - netEffect, interestPortion
+                    chargesPortion - netEffect, Cent.toDecimalCent interestPortion
                 elif netEffect = 0L<Cent> && interestPortion < 0L<Cent> then
-                    0L<Cent>, interestPortion
+                    0L<Cent>, Cent.toDecimalCent interestPortion
                 elif sign chargesPortion + sign interestPortion > sign netEffect then
-                    0L<Cent>, interestPortion - (netEffect - chargesPortion)
+                    0L<Cent>, Cent.toDecimalCent (interestPortion - (netEffect - chargesPortion))
                 else
-                    0L<Cent>, 0L<Cent>
+                    0L<Cent>, 0m<Cent>
+
+            let carriedInterest' = carriedInterest |> decimal |> Cent.round sp.Calculation.RoundingOptions.InterestRounding
 
             let offsetDate = sp.StartDate.AddDays(int ap.AppliedPaymentDay)
 
@@ -358,7 +367,7 @@ module Amortisation =
                     FeesRefund = feesRefund
                     PrincipalBalance = 0L<Cent>
                     FeesBalance = 0L<Cent>
-                    InterestBalance = 0L<Cent>
+                    InterestBalance = 0m<Cent>
                     ChargesBalance = 0L<Cent>
                     SettlementFigure = generatedSettlementPayment'
                     ProRatedFees = proRatedFees
@@ -416,12 +425,14 @@ module Amortisation =
                         NewCharges = incurredCharges
                         PrincipalPortion = principalPortion'
                         FeesPortion = feesPortion'
-                        InterestPortion = interestPortion - carriedInterest
+                        InterestPortion = interestPortion - carriedInterest'
                         ChargesPortion = chargesPortion - carriedCharges
                         FeesRefund = feesRefund'
                         PrincipalBalance = principalBalance'
                         FeesBalance = si.FeesBalance - feesPortion' - feesRefund'
-                        InterestBalance = si.InterestBalance + newInterest' - interestPortion + carriedInterest
+                        InterestBalance =
+                            si.InterestBalance + newInterest' - Cent.toDecimalCent interestPortion + carriedInterest
+                            |> fun ib -> if ib < 1m<Cent> then 0m<Cent> else ib
                         ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                         SettlementFigure = if paymentStatus = NoLongerRequired then 0L<Cent> else generatedSettlementPayment'
                         ProRatedFees = if paymentStatus = NoLongerRequired then 0L<Cent> else proRatedFees
@@ -433,7 +444,7 @@ module Amortisation =
 
         ) (
             { ScheduleItem.Default with OffsetDate = sp.StartDate; Advances = [| sp.Principal |]; PrincipalBalance = sp.Principal; FeesBalance = feesTotal; SettlementFigure = sp.Principal + feesTotal; ProRatedFees = feesTotal },
-            { CumulativeScheduledPayments = 0L<Cent>; CumulativeActualPayments = 0L<Cent>; CumulativeGeneratedPayments = 0L<Cent>; CumulativeInterest = 0L<Cent>; FirstMissedPayment = ValueNone; CumulativeMissedPayments = 0L<Cent> }
+            { CumulativeScheduledPayments = 0L<Cent>; CumulativeActualPayments = 0L<Cent>; CumulativeGeneratedPayments = 0L<Cent>; CumulativeInterest = 0m<Cent>; FirstMissedPayment = ValueNone; CumulativeMissedPayments = 0L<Cent> }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
         |> Array.unzip

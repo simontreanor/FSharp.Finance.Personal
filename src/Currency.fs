@@ -28,8 +28,11 @@ module Currency =
             |> int64
             |> (( * ) 1L<Cent>)
 
-        /// lower to the base currency unit
-        let fromDecimal (m: decimal) = round (Round MidpointRounding.AwayFromZero) (m * 100m)
+        /// lower to the base currency unit, e.g. $12.34 -> 1234¢
+        let fromDecimal (m: decimal) = round (Rounding.Round MidpointRounding.AwayFromZero) (m * 100m)
 
-        /// raise to the standard currency unit
+        /// raise to the standard currency unit, e.g. 1234¢ -> $12.34
         let toDecimal (c: int64<Cent>) = decimal c / 100m
+
+        /// convert an integer cent value to a decimal cent value, e.g. for precise interest calculation, 1234¢ -> 1234.0000¢
+        let toDecimalCent (c: int64<Cent>) = decimal c * 1m<Cent>
