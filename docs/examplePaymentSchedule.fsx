@@ -18,7 +18,7 @@ The following example shows the scheduled for a car loan of £10,000 taken out o
 
 *)
 
-#r "nuget:FSharp.Finance.Personal, 0.10.0"
+#r "nuget:FSharp.Finance.Personal, 0.14.1"
 
 open System
 open FSharp.Finance.Personal
@@ -44,14 +44,14 @@ let scheduleParameters =
         }
         Interest = {
             Rate = Interest.Rate.Annual (Percent 6.9m)
-            Cap = { Total = ValueNone; Daily = ValueNone }
+            Cap = Interest.Cap.none
             InitialGracePeriod = 0<DurationDay>
             Holidays = [||]
             RateOnNegativeBalance = ValueNone
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-            RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
+            RoundingOptions = RoundingOptions.recommended
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
             NegativeInterestOption = ApplyNegativeInterest

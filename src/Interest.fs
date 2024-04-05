@@ -44,17 +44,24 @@ module Interest =
         /// a cap on the daily amount of interest chargeable
         Daily: Amount voption
     }
-
-    [<RequireQualifiedAccess>]
-    module Cap =
+    with
+        static member none = {
+            Total = ValueNone
+            Daily = ValueNone
+        }
+        /// recommended settings for UK FCA (as of 2024-04-04)
+        static member ukFca = {
+            Total = ValueSome (Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+            Daily = ValueSome (Percentage (Percent 0.8m, ValueNone, ValueNone))
+        }
 
         /// calculates the total interest cap
-        let total (initialPrincipal: int64<Cent>) = function
+        static member total (initialPrincipal: int64<Cent>) = function
             | ValueSome amount -> Amount.total initialPrincipal amount
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
         /// calculates the daily interest cap
-        let daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDay>) = function
+        static member daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDay>) = function
             | ValueSome amount -> Amount.total balance amount * decimal interestChargeableDays
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 

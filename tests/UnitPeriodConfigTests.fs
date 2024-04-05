@@ -70,14 +70,14 @@ module UnitPeriodConfigTests =
                     }
                     Interest = {
                         Rate = Interest.Rate.Annual (Percent 9.95m)
-                        Cap = { Total = ValueNone; Daily = ValueNone }
+                        Cap = Interest.Cap.none
                         InitialGracePeriod = 3<DurationDay>
                         Holidays = [||]
                         RateOnNegativeBalance = ValueNone
                     }
                     Calculation = {
                         AprMethod = Apr.CalculationMethod.UsActuarial 5
-                        RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                        RoundingOptions = RoundingOptions.recommended
                         MinimumPayment = DeferOrWriteOff 50L<Cent>
                         PaymentTimeout = 3<DurationDay>
                         NegativeInterestOption = ApplyNegativeInterest
@@ -147,14 +147,14 @@ module UnitPeriodConfigTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
-                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -211,14 +211,14 @@ module UnitPeriodConfigTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
-                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -304,14 +304,14 @@ module UnitPeriodConfigTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
-                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -388,14 +388,14 @@ module UnitPeriodConfigTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
-                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest

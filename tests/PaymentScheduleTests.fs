@@ -34,14 +34,14 @@ module PaymentScheduleTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Annual (Percent 9.95m)
-                    Cap = { Total = ValueNone; Daily = ValueNone }
+                    Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 8
-                    RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                    RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -125,14 +125,14 @@ module PaymentScheduleTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.798m)
-                    Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)); Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
+                    Cap = Interest.Cap.ukFca
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    RoundingOptions = { InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
+                    RoundingOptions = { ChargesRounding = RoundDown; FeesRounding = RoundDown; InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                     NegativeInterestOption = ApplyNegativeInterest
@@ -1376,14 +1376,14 @@ module PaymentScheduleTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                Cap = Interest.Cap.ukFca
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+                RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
                 NegativeInterestOption = ApplyNegativeInterest

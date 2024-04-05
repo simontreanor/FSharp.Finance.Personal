@@ -136,7 +136,7 @@ module Amortisation =
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
 
-        let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent
+        let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.FeesRounding)
 
         let feesPercentage =
             if sp.Principal = 0L<Cent> then Percent 0m
@@ -228,9 +228,10 @@ module Amortisation =
                     0L<Cent>, [||]
                 else
                     if Charges.areApplicable sp.StartDate sp.FeesAndCharges.ChargesHolidays si.OffsetDay then
-                        Charges.total underpayment ap.IncurredCharges |> Cent.fromDecimalCent, ap.IncurredCharges
+                        Charges.total underpayment ap.IncurredCharges |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.ChargesRounding), ap.IncurredCharges
                     else
                         0L<Cent>, [||]
+
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
 
             let generatedPayment, netEffect =

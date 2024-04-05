@@ -44,14 +44,14 @@ let scheduleParameters =
         }
         Interest = {
             Rate = Interest.Rate.Daily (Percent 0.8m)
-            Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+            Cap = Interest.Cap.ukFca
             InitialGracePeriod = 3<DurationDay>
             Holidays = [||]
             RateOnNegativeBalance = ValueNone
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
+            RoundingOptions = RoundingOptions.recommended
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
             NegativeInterestOption = ApplyNegativeInterest

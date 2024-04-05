@@ -33,7 +33,7 @@ module Currency =
         let toDecimal (c: int64<Cent>) = decimal c / 100m
 
         /// convert a decimal cent value to an integer cent value, dropping any fractional value, 1234.5678¢ -> 1234¢
-        let fromDecimalCent (c: decimal<Cent>) = c |> decimal |> floor |> int64 |> ( * ) 1L<Cent>
+        let fromDecimalCent rounding (c: decimal<Cent>) = c |> decimal |> round rounding
         
         /// convert an integer cent value to a decimal cent value, e.g. for precise interest calculation, 1234¢ -> 1234.0000¢
         let toDecimalCent (c: int64<Cent>) = decimal c * 1m<Cent>

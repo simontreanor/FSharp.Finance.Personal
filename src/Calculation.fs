@@ -83,11 +83,22 @@ module Calculation =
     /// how to round calculated interest and payments
     [<Struct>]
     type RoundingOptions = {
+        /// how to round charges
+        ChargesRounding: Rounding
+        /// how to round fees
+        FeesRounding: Rounding
         /// how to round interest
         InterestRounding: Rounding
         /// how to round payments
         PaymentRounding: Rounding
     }
+    with
+        static member recommended = {
+            ChargesRounding = RoundDown
+            FeesRounding = RoundDown
+            InterestRounding = RoundDown
+            PaymentRounding = RoundUp
+        }
 
     /// a holiday, i.e. a period when no interest and/or charges are accrued
     [<RequireQualifiedAccess; Struct>]
