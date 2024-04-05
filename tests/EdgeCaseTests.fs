@@ -752,3 +752,74 @@ module EdgeCaseTests =
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected
+
+    [<Fact>]
+    let ``9) Negative principal balance accruing interest`` () =
+        let sp = {
+            AsOfDate = Date(2024, 4, 5)
+            ScheduleType = ScheduleType.Original
+            StartDate = Date(2023, 5, 5)
+            Principal = 25000L<Cent>
+            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 5, 10), 4)
+            FeesAndCharges = {
+                Fees = [||]
+                FeesSettlement = Fees.Settlement.ProRataRefund
+                Charges = [||]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Rate = Interest.Daily (Percent 0.8m)
+                Cap = Interest.Cap.ukFca
+                InitialGracePeriod = 0<DurationDay>
+                Holidays = [||]
+                RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RoundingOptions = RoundingOptions.recommended
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+                NegativeInterestOption = ApplyNegativeInterest
+            }
+        }
+
+        let actualPayments = [|
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 111_00L<Cent>) }
+            { PaymentDay = 21<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 181_01L<Cent>) }
+        |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+
+        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/EdgeCaseTest009.md")
+
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let expected = ValueSome {
+            OffsetDate = Date(2023, 8, 10)
+            OffsetDay = 97<OffsetDay>
+            Advances = [||]
+            ScheduledPayment = ScheduledPaymentType.Original 87_67L<Cent>
+            PaymentDue = 0L<Cent>
+            ActualPayments = [||]
+            GeneratedPayment = ValueNone
+            NetEffect = 0L<Cent>
+            PaymentStatus = NoLongerRequired
+            BalanceStatus = RefundDue
+            NewInterest = -8.792109589041095890410958135m<Cent>
+            NewCharges = [||]
+            PrincipalPortion = 0L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 0L<Cent>
+            ChargesPortion = 0L<Cent>
+            FeesRefund = 0L<Cent>
+            PrincipalBalance = -12_94L<Cent>
+            FeesBalance = 0L<Cent>
+            InterestBalance = -21.554849315068493150684929621m<Cent>
+            ChargesBalance = 0L<Cent>
+            SettlementFigure = 0L<Cent>
+            ProRatedFees = 0L<Cent>
+        }
+        actual |> should equal expected
