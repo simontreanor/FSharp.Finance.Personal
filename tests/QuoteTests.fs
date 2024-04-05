@@ -1866,5 +1866,5 @@ module QuoteTests =
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-89_88L<Cent>, -88_40L<Cent>, 0L<Cent>, -1_48L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-91_06L<Cent>, -88_40L<Cent>, 0L<Cent>, -2_66L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected

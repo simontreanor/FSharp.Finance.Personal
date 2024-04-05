@@ -129,7 +129,7 @@ module PaymentSchedule =
 
         let paymentCount = paymentDays |> Array.length
 
-        let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome RoundDown)
+        let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.FeesRounding)
 
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
