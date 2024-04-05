@@ -5,7 +5,9 @@ open System
 /// methods for calculating interest and unambiguously expressing interest rates, as well as enforcing regulatory caps on interest chargeable
 module Interest =
 
-    /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped bya daily amount
+    open Amount
+
+    /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
     let calculate (dailyCap: decimal<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<DurationDay>) =
         decimal balance * Percent.toDecimal dailyRate * decimal chargeableDays
         |> min (decimal dailyCap)
@@ -34,29 +36,13 @@ module Interest =
             | Annual (Percent air) -> air / 365m |> Percent
             | Daily (Percent dir) -> dir |> Percent
 
-    /// the maximum interest that can accrue over the full schedule
-    [<Struct>]
-    type TotalCap =
-        /// total interest is capped at a percentage of the initial principal
-        | TotalPercentageCap of TotalPercentageCap:Percent
-        /// total interest is capped at a fixed amount
-        | TotalFixedCap of TotalFixedCap:int64<Cent>
-
-    /// the maximum interest that can accrue over a single day
-    [<Struct>]
-    type DailyCap =
-        /// daily interest is capped at a percentage of the principal balance
-        | DailyPercentageCap of DailyPercentageCap:Percent
-        /// daily interest is capped at a fixed amount
-        | DailyFixedCap of DailyFixedCap:int64<Cent>
-
     /// the interest cap options
     [<RequireQualifiedAccess; Struct>]
     type Cap = {
         /// a cap on the total amount of interest chargeable over the lifetime of a product
-        Total: TotalCap voption
+        Total: Amount voption
         /// a cap on the daily amount of interest chargeable
-        Daily: DailyCap voption
+        Daily: Amount voption
     }
 
     [<RequireQualifiedAccess>]
@@ -64,14 +50,12 @@ module Interest =
 
         /// calculates the total interest cap
         let total (initialPrincipal: int64<Cent>) = function
-            | ValueSome (TotalPercentageCap percentage) -> decimal initialPrincipal * Percent.toDecimal percentage * 1m<Cent>
-            | ValueSome (TotalFixedCap i) -> decimal i * 1m<Cent>
+            | ValueSome amount -> Amount.total initialPrincipal amount
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
         /// calculates the daily interest cap
         let daily (balance: int64<Cent>) (interestChargeableDays: int<DurationDay>) = function
-            | ValueSome (DailyPercentageCap percentage) -> decimal balance * Percent.toDecimal percentage * decimal interestChargeableDays * 1m<Cent>
-            | ValueSome (DailyFixedCap i) -> decimal i * 1m<Cent>
+            | ValueSome amount -> Amount.total balance amount * decimal interestChargeableDays
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
     /// interest options
@@ -88,16 +72,6 @@ module Interest =
         /// the interest rate applicable for any period in which a refund is owing
         RateOnNegativeBalance: Rate voption
     }
-
-    module Options =
-        /// recommended interest options
-        let recommended = {
-            Rate = Daily (Percent 0.8m)
-            Cap = { Total = ValueSome (TotalPercentageCap (Percent 100m)); Daily = ValueSome (DailyPercentageCap (Percent 0.8m)) }
-            InitialGracePeriod = 3<DurationDay>
-            Holidays = [||]
-            RateOnNegativeBalance = ValueSome (Annual (Percent 8m))
-        }
 
     /// calculates the number of interest-chargeable days between two dates
     let chargeableDays (startDate: Date) (earlySettlementDate: Date voption) (gracePeriod: int<DurationDay>) holidays (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =

@@ -21,18 +21,19 @@ module Currency =
 
         /// derive a rounded cent value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
-            match rounding with
-            | RoundDown -> floor m
-            | RoundUp -> ceil m
-            | Round mpr -> Math.Round(m, 0, mpr)
+            m
+            |> Rounding.round rounding
             |> int64
             |> (( * ) 1L<Cent>)
 
         /// lower to the base currency unit, e.g. $12.34 -> 1234¢
-        let fromDecimal (m: decimal) = round (Rounding.Round MidpointRounding.AwayFromZero) (m * 100m)
+        let fromDecimal (m: decimal) = round (ValueSome (Round MidpointRounding.AwayFromZero)) (m * 100m)
 
         /// raise to the standard currency unit, e.g. 1234¢ -> $12.34
         let toDecimal (c: int64<Cent>) = decimal c / 100m
 
+        /// convert a decimal cent value to an integer cent value, dropping any fractional value, 1234.5678¢ -> 1234¢
+        let fromDecimalCent (c: decimal<Cent>) = c |> decimal |> floor |> int64 |> ( * ) 1L<Cent>
+        
         /// convert an integer cent value to a decimal cent value, e.g. for precise interest calculation, 1234¢ -> 1234.0000¢
         let toDecimalCent (c: int64<Cent>) = decimal c * 1m<Cent>

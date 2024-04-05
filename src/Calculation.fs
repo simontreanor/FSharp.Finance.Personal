@@ -62,6 +62,14 @@ module Calculation =
         | RoundDown
         /// round up or down to the specified precision based on the given midpoint rounding rules
         | Round of MidpointRounding
+        with
+            /// derive a rounded value from a decimal according to the specified rounding method
+            static member round rounding (m: decimal) =
+                match rounding with
+                | ValueSome (RoundDown) -> floor m
+                | ValueSome (RoundUp) -> ceil m
+                | ValueSome (Round mpr) -> Math.Round(m, 0, mpr)
+                | ValueNone -> m
 
     /// raises a decimal to an int power
     let powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))

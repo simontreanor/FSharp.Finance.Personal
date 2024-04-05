@@ -7,9 +7,10 @@ open FSharp.Finance.Personal
 
 module SettlementTests =
 
-    open CustomerPayments
-    open PaymentSchedule
     open Amortisation
+    open CustomerPayments
+    open FeesAndCharges
+    open PaymentSchedule
     open Quotes
 
     [<Fact>]
@@ -30,7 +31,7 @@ module SettlementTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -110,7 +111,7 @@ module SettlementTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -190,7 +191,7 @@ module SettlementTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone

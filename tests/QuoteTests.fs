@@ -7,9 +7,10 @@ open FSharp.Finance.Personal
 
 module QuoteTests =
 
-    open CustomerPayments
-    open PaymentSchedule
     open Amortisation
+    open CustomerPayments
+    open FeesAndCharges
+    open PaymentSchedule
     open Quotes
 
     [<Fact>]
@@ -26,7 +27,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
@@ -108,7 +109,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
@@ -190,7 +191,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
@@ -281,7 +282,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -359,7 +360,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueNone }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -428,7 +429,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
@@ -510,7 +511,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
@@ -590,7 +591,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.DueInFull
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
@@ -671,7 +672,7 @@ module QuoteTests =
                 PaymentCount = 10
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -748,7 +749,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -833,7 +834,7 @@ module QuoteTests =
                 PaymentCount = 11
             )
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -925,7 +926,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.798m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 1<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
@@ -1001,7 +1002,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1082,7 +1083,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1162,7 +1163,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1242,7 +1243,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1322,7 +1323,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1403,7 +1404,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1484,7 +1485,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1565,7 +1566,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1646,7 +1647,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1692,7 +1693,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -1744,7 +1745,7 @@ module QuoteTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -1796,7 +1797,7 @@ module QuoteTests =
                 }
                 Interest = {
                     Rate = Interest.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                    Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                     InitialGracePeriod = 0<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
@@ -1848,7 +1849,7 @@ module QuoteTests =
                 }
                 Interest = {
                     Rate = Interest.Daily (Percent 0.8m)
-                    Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                    Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                     InitialGracePeriod = 0<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))

@@ -7,9 +7,10 @@ open FSharp.Finance.Personal
 
 module EdgeCaseTests =
 
-    open CustomerPayments
-    open PaymentSchedule
     open Amortisation
+    open CustomerPayments
+    open FeesAndCharges
+    open PaymentSchedule
     open Quotes
     open Rescheduling
 
@@ -27,7 +28,7 @@ module EdgeCaseTests =
                 { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>) }
             |]
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -78,7 +79,7 @@ module EdgeCaseTests =
                 { PaymentDay = 105<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>) }
             |]
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -129,7 +130,7 @@ module EdgeCaseTests =
                 { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>) }
             |]
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -182,7 +183,7 @@ module EdgeCaseTests =
                 { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 27600L<Cent>) }
             |]
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -305,7 +306,7 @@ module EdgeCaseTests =
                 { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 27600L<Cent>) }
             |]
             FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesSettlement = Fees.Settlement.ProRataRefund
                 Charges = [||]
                 ChargesHolidays = [||]
@@ -431,7 +432,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -555,7 +556,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -612,7 +613,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -697,7 +698,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)) ; Daily = ValueSome (Interest.DailyPercentageCap(Percent 0.8m)) }
+                Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)) ; Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueSome RoundDown)) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -744,22 +745,22 @@ module EdgeCaseTests =
             ScheduledPayment = ScheduledPaymentType.None
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueSome 10_19L<Cent>
-            NetEffect = 10_19L<Cent>
+            GeneratedPayment = ValueSome 9_66L<Cent>
+            NetEffect = 9_66L<Cent>
             PaymentStatus = Generated Settlement
             BalanceStatus = ClosedBalance
-            NewInterest = 1_97.280m<Cent>
+            NewInterest = 1_80m<Cent>
             NewCharges = [||]
-            PrincipalPortion = 8_22L<Cent>
+            PrincipalPortion = 7_86L<Cent>
             FeesPortion = 0L<Cent>
-            InterestPortion = 1_97L<Cent>
+            InterestPortion = 1_80L<Cent>
             ChargesPortion = 0L<Cent>
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 10_19L<Cent>
+            SettlementFigure = 9_66L<Cent>
             ProRatedFees = 0L<Cent>
         })
         actual |> should equal expected

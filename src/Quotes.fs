@@ -3,7 +3,6 @@ namespace FSharp.Finance.Personal
 /// functions for settling outstanding payments
 module Quotes =
 
-    open System
     open CustomerPayments
 
     [<Struct>]

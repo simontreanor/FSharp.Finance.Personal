@@ -6,7 +6,7 @@ open Quotes
 /// functions for rescheduling payments after an original schedule failed to amortise
 module Rescheduling =
 
-    open Fees
+    open FeesAndCharges
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
     [<RequireQualifiedAccess; Struct>]
@@ -87,7 +87,7 @@ module Rescheduling =
         /// technical calculation options
         Calculation: PaymentSchedule.Calculation voption
         /// how to handle any outstanding fee balance
-        FeeHandling: FeeHandling
+        FeeHandling: Fees.FeeHandling
     }
         /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
     let rollOver sp (rp: RolloverParameters) (actualPayments: CustomerPayment array) =
@@ -99,9 +99,9 @@ module Rescheduling =
                 match quote.QuoteResult with
                 | PaymentQuote (paymentQuote, ofWhichPrincipal, ofWhichFees, ofWhichInterest, ofWhichCharges, proRatedFees) ->
                     match rp.FeeHandling with
-                    | CapitaliseAsPrincipal -> ofWhichPrincipal + ofWhichFees + ofWhichInterest + ofWhichCharges, 0L<Cent>, proRatedFees
-                    | CarryOverAsIs -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, proRatedFees
-                    | WriteOffFeeBalance -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, proRatedFees
+                    | Fees.FeeHandling.CapitaliseAsPrincipal -> ofWhichPrincipal + ofWhichFees + ofWhichInterest + ofWhichCharges, 0L<Cent>, proRatedFees
+                    | Fees.FeeHandling.CarryOverAsIs -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, proRatedFees
+                    | Fees.FeeHandling.WriteOffFeeBalance -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, proRatedFees
                     |> ValueSome
                 | AwaitPaymentConfirmation -> ValueNone
                 | UnableToGenerateQuote -> ValueNone
@@ -114,18 +114,13 @@ module Rescheduling =
                     PaymentSchedule = rp.PaymentSchedule
                     FeesAndCharges =
                         match rp.FeeHandling with
-                        | CarryOverAsIs ->
+                        | Fees.FeeHandling.CarryOverAsIs ->
                             { sp.FeesAndCharges with
                                 Fees = [| Fee.CustomFee ("Rolled-Over Fee", Amount.Simple feesPortion) |]
-                                FeesSettlement =
-                                    if proRatedFees = 0L<Cent> then DueInFull else
-                                    match rp.FeeHandling with
-                                    | CapitaliseAsPrincipal -> DueInFull
-                                    | CarryOverAsIs -> ProRataRefund
-                                    | WriteOffFeeBalance -> DueInFull
+                                FeesSettlement = if proRatedFees = 0L<Cent> then Fees.Settlement.DueInFull else Fees.Settlement.ProRataRefund
                             }
                         | _ ->
-                            { sp.FeesAndCharges with Fees = [||]; FeesSettlement = DueInFull }
+                            { sp.FeesAndCharges with Fees = [||]; FeesSettlement = Fees.Settlement.DueInFull }
                     Interest = rp.Interest |> ValueOption.defaultValue sp.Interest
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }
@@ -133,7 +128,3 @@ module Rescheduling =
             let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduledPaymentType.Original [||] // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
             return quote.RevisedSchedule, rescheduledSchedule
         }
-
-    /// to-do: create a function to disapply all interest paid so far
-    let disapplyInterest =
-        ()

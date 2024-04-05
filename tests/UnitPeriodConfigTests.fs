@@ -7,6 +7,12 @@ open FSharp.Finance.Personal
 
 module UnitPeriodConfigTests =
 
+    open Amortisation
+    open CustomerPayments
+    open FeesAndCharges
+    open PaymentSchedule
+    open Quotes
+
     open UnitPeriod
     module DefaultConfig =
 
@@ -40,11 +46,6 @@ module UnitPeriodConfigTests =
             let expected = [||]
             actual |> should equal expected
 
-    open CustomerPayments
-    open PaymentSchedule
-    open Amortisation
-    open Quotes
-
     module ConfigEdges =
 
         let finalAprPercent = function
@@ -60,7 +61,7 @@ module UnitPeriodConfigTests =
                     Principal = 100000L<Cent>
                     PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 5, 13)), 12)
                     FeesAndCharges = {
-                        Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                        Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                         FeesSettlement = Fees.Settlement.ProRataRefund
                         Charges = [||]
                         ChargesHolidays = [||]
@@ -137,7 +138,7 @@ module UnitPeriodConfigTests =
                 Principal = 70000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 4, 20)), 12)
                 FeesAndCharges = {
-                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
                     ChargesHolidays = [||]
@@ -201,7 +202,7 @@ module UnitPeriodConfigTests =
                 Principal = 65000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 2, 2)), 11)
                 FeesAndCharges = {
-                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
                     ChargesHolidays = [||]
@@ -294,7 +295,7 @@ module UnitPeriodConfigTests =
                 Principal = 50000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 10, 28)), 11)
                 FeesAndCharges = {
-                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone)) |]
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
                     ChargesHolidays = [||]
@@ -378,7 +379,7 @@ module UnitPeriodConfigTests =
                 Principal = 100000L<Cent>
                 PaymentSchedule = IrregularSchedule originalScheduledPayments
                 FeesAndCharges = {
-                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                    Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [||]
                     ChargesHolidays = [||]

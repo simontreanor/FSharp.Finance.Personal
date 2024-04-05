@@ -17,6 +17,7 @@
     <Compile Include="Percentages.fs" />
     <Compile Include="Array.fs" />
     <Compile Include="Currency.fs" />
+    <Compile Include="Amount.fs" />
     <Compile Include="FeesAndCharges.fs" />
     <Compile Include="Interest.fs" />
     <Compile Include="UnitPeriod.fs" />
@@ -32,7 +33,7 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>FSharp.Finance.Personal</PackageId>
-    <Version>0.13.0</Version>
+    <Version>0.14.0</Version>
     <Authors>Simon Treanor</Authors>
     <PackageDescription>F# Personal Finance Library</PackageDescription>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>

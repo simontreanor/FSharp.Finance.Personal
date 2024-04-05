@@ -4,6 +4,7 @@ namespace FSharp.Finance.Personal
 module PaymentSchedule =
 
     open CustomerPayments
+    open FeesAndCharges
     open UnitPeriod
 
     /// a scheduled payment item, with running calculations of interest and principal balance
@@ -73,16 +74,6 @@ module PaymentSchedule =
         PaymentTimeout: int<DurationDay>
     }
 
-    module Calculation =
-        /// the recommended default calculation options
-        let recommended = {
-            AprMethod = Apr.CalculationMethod.UsActuarial 8
-            RoundingOptions = { InterestRounding = RoundDown; PaymentRounding = RoundUp }
-            NegativeInterestOption = DoNotApplyNegativeInterest
-            MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>
-        }
-
     /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
     [<RequireQualifiedAccess; Struct>]
     type ScheduleType =
@@ -138,10 +129,10 @@ module PaymentSchedule =
 
         let paymentCount = paymentDays |> Array.length
 
-        let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees
+        let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent
 
         let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
-        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal |> decimal |> Cent.round sp.Calculation.RoundingOptions.InterestRounding
+        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal |> Cent.fromDecimalCent
 
         let roughPayment = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees) / decimal paymentCount
 
@@ -157,9 +148,9 @@ module PaymentSchedule =
                 |> Array.scan(fun si d ->
                     let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.InitialGracePeriod sp.Interest.Holidays si.Day d
                     let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.Balance interestChargeableDays
-                    let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays |> decimal |> Cent.round sp.Calculation.RoundingOptions.InterestRounding
+                    let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                     let interest' = if si.AggregateInterest + interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
-                    let payment' = Cent.round sp.Calculation.RoundingOptions.PaymentRounding payment
+                    let payment' = Cent.round (ValueSome sp.Calculation.RoundingOptions.PaymentRounding) payment
                     let principalPortion = payment' - interest'
                     {
                         Day = d

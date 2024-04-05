@@ -44,7 +44,7 @@ let scheduleParameters =
         }
         Interest = {
             Rate = Interest.Rate.Daily (Percent 0.8m)
-            Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+            Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
             InitialGracePeriod = 3<DurationDay>
             Holidays = [||]
             RateOnNegativeBalance = ValueNone

@@ -1,51 +1,9 @@
 namespace FSharp.Finance.Personal
 
-open System
-
 /// categorising (penalty) charges and (product) fees, their types and restrictions
-[<AutoOpen>]
 module FeesAndCharges =
 
-    /// the type of restriction placed on a possible value
-    [<Struct>]
-    type Restriction =
-        /// prevent values below a certain limit
-        | LowerLimit of LowerLimit:int64<Cent>
-        /// prevent values above a certain limit
-        | UpperLimit of UpperLimit:int64<Cent>
-        /// constrain values to within a range
-        | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
-
-    /// either a simple amount or an amount constrained by limits
-    [<RequireQualifiedAccess>]
-    module Restriction =
-        /// calculate a permitted value based on a restriction
-        let calculate restriction amount =
-            match restriction with
-            | ValueSome (LowerLimit a) -> amount |> Cent.max a
-            | ValueSome (UpperLimit a) -> amount |> Cent.min a
-            | ValueSome (WithinRange (min, max)) -> amount |> Cent.min max |> Cent.max min
-            | ValueNone -> amount
-
-    /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
-    [<RequireQualifiedAccess; Struct>]
-    type Amount =
-        /// a fixed fee
-        | Simple of Simple:int64<Cent>
-        /// a percentage of the principal, optionally restricted
-        | Percentage of Percentage:Percent * Restriction:Restriction voption
-
-    /// convenience functions for handling amounts
-    [<RequireQualifiedAccess>]
-    module Amount =
-        /// calculates the total amount based on any restrictions
-        let total (baseAmount: int64<Cent>) amount =
-            match amount with
-            | Amount.Percentage (Percent percentage, restriction) ->
-                Decimal.Floor(decimal baseAmount * decimal percentage) / 100m |> fun m -> (int64 m * 1L<Cent>)
-                |> Restriction.calculate restriction
-            | Amount.Simple simple -> simple
-
+    open Amount
 
     /// the type and amount of any fees, such as facilitation fees or CSO/CAB fees, taking into account any constraints
     [<RequireQualifiedAccess; Struct>]

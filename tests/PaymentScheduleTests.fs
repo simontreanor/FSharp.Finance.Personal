@@ -9,6 +9,7 @@ open FSharp.Finance.Personal
 module PaymentScheduleTests =
 
     open CustomerPayments
+    open FeesAndCharges
     open PaymentSchedule
 
     module Biweekly =
@@ -24,7 +25,7 @@ module PaymentScheduleTests =
                     PaymentCount = 11
                 )
                 FeesAndCharges = {
-                    Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone)) |]
+                    Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesSettlement = Fees.Settlement.ProRataRefund
                     Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     ChargesHolidays = [||]
@@ -124,7 +125,7 @@ module PaymentScheduleTests =
                 }
                 Interest = {
                     Rate = Interest.Rate.Daily (Percent 0.798m)
-                    Cap = { Total = ValueSome (Interest.TotalPercentageCap (Percent 100m)); Daily = ValueSome (Interest.DailyPercentageCap (Percent 0.8m)) }
+                    Cap = { Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)); Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)) }
                     InitialGracePeriod = 3<DurationDay>
                     Holidays = [||]
                     RateOnNegativeBalance = ValueNone
@@ -1375,7 +1376,7 @@ module PaymentScheduleTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { Total = ValueSome <| Interest.TotalPercentageCap (Percent 100m); Daily = ValueSome <| Interest.DailyPercentageCap (Percent 0.8m) }
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)

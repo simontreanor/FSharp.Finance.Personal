@@ -5,6 +5,8 @@ open CustomerPayments
 /// functions for handling received payments and calculating interest and/or charges where necessary
 module AppliedPayment =
 
+    open FeesAndCharges
+
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     [<Struct>]
     type AppliedPayment = {
@@ -25,7 +27,7 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Amount voption) chargesGrouping paymentTimeout actualPayments scheduledPayments =
+    let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Charge voption) chargesGrouping paymentTimeout actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else
 
         let actualPayments =
@@ -98,7 +100,7 @@ module AppliedPayment =
                     |> groupCharges
                     |> fun pcc ->
                         if latePaymentCharge.IsSome then
-                            pcc |> Array.append(match paymentStatus with MissedPayment | Underpayment -> [| Charge.LatePayment latePaymentCharge.Value |] | _ -> [||])
+                            pcc |> Array.append(match paymentStatus with MissedPayment | Underpayment -> [| latePaymentCharge.Value |] | _ -> [||])
                         else pcc
 
                 { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus }
