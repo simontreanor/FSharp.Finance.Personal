@@ -2,6 +2,10 @@ namespace FSharp.Finance.Personal
 
 module Amount =
 
+    open Calculation
+    open Currency
+    open Percentages
+
     /// the type of restriction placed on a possible value
     [<RequireQualifiedAccess; Struct>]
     type Restriction =

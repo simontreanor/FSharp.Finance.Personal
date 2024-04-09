@@ -8,12 +8,17 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTestsExtra =
 
+    open ArrayExtension
     open Amortisation
+    open Calculation
+    open Currency
     open CustomerPayments
     open FeesAndCharges
     open Formatting
     open PaymentSchedule
+    open Percentages
     open Rescheduling
+    open Util
 
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)

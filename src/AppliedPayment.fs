@@ -5,7 +5,11 @@ open CustomerPayments
 /// functions for handling received payments and calculating interest and/or charges where necessary
 module AppliedPayment =
 
+    open Calculation
+    open Currency
+    open DateDay
     open FeesAndCharges
+    open ValueOptionCE
 
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     [<Struct>]

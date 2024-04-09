@@ -8,9 +8,12 @@ open FSharp.Finance.Personal
 module EdgeCaseTests =
 
     open Amortisation
+    open Calculation
+    open Currency
     open CustomerPayments
     open FeesAndCharges
     open PaymentSchedule
+    open Percentages
     open Quotes
     open Rescheduling
 

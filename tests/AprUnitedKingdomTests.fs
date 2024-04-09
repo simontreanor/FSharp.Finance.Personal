@@ -8,6 +8,10 @@ open FSharp.Finance.Personal
 module AprUnitedKingdomTests =
 
     open Apr
+    open Currency
+    open Percentages
+    open Util
+    
     module Quirky =
 
         [<Fact>]

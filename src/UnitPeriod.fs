@@ -5,6 +5,10 @@
 /// note: unit-period definitions are based on US federal legislation but the definitions are universally applicable
 module UnitPeriod =
 
+    open ArrayExtension
+    open Calculation
+    open DateDay
+
     /// a transaction term is the length of a transaction (i.e. a financial product), from the start date to the final payment
     [<Struct>]
     type TransactionTerm = {

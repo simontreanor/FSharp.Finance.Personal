@@ -6,6 +6,10 @@ open System
 module Interest =
 
     open Amount
+    open Calculation
+    open Currency
+    open DateDay
+    open Percentages
 
     /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
     let calculate (dailyCap: decimal<Cent>) (balance: int64<Cent>) (dailyRate: Percent) (chargeableDays: int<DurationDay>) =

@@ -3,6 +3,9 @@ namespace FSharp.Finance.Personal
 /// categorising the types of incoming payments based on whether they are scheduled, actual or generated
 module CustomerPayments =
 
+    open Calculation
+    open Currency
+    open DateDay
     open FeesAndCharges
 
     /// the type of the scheduled payment, affecting how any payment due is calculated

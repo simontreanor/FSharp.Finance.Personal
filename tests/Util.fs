@@ -4,8 +4,9 @@ open System
 
 open FSharp.Finance.Personal
 
-[<AutoOpen>]
 module Util =
+
+    open ArrayExtension
 
     /// specifies if a result is exact, almost exact, or way out
     type ToleranceResult =

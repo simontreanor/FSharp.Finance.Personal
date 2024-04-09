@@ -3,10 +3,16 @@ namespace FSharp.Finance.Personal
 /// calculating the principal balance over time, taking into account the effects of charges, interest and fees
 module Amortisation =
 
+    open ArrayExtension
     open AppliedPayment
+    open Calculation
+    open Currency
     open CustomerPayments
+    open DateDay
     open FeesAndCharges
     open PaymentSchedule
+    open Percentages
+    open ValueOptionCE
 
     /// the status of the balance on a given offset day
     [<Struct>]

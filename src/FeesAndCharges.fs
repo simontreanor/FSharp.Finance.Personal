@@ -4,6 +4,8 @@ namespace FSharp.Finance.Personal
 module FeesAndCharges =
 
     open Amount
+    open Calculation
+    open DateDay
 
     /// the type and amount of any fees, such as facilitation fees or CSO/CAB fees, taking into account any constraints
     [<RequireQualifiedAccess; Struct>]

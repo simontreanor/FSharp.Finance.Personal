@@ -3,8 +3,9 @@ namespace FSharp.Finance.Personal
 open System
 
 /// convenience functions and options to help with calculations
-[<AutoOpen>]
 module Calculation =
+
+    open DateDay
 
     /// the type of settlement quote requested
     [<Struct>]

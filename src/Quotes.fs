@@ -3,7 +3,10 @@ namespace FSharp.Finance.Personal
 /// functions for settling outstanding payments
 module Quotes =
 
+    open Calculation
+    open Currency
     open CustomerPayments
+    open ValueOptionCE
 
     [<Struct>]
     type QuoteResult =

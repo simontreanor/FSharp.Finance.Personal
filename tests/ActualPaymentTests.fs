@@ -8,9 +8,13 @@ open FSharp.Finance.Personal
 module ActualPaymentTests =
 
     open Amortisation
+    open ArrayExtension
+    open Calculation
+    open Currency
     open CustomerPayments
     open FeesAndCharges
     open PaymentSchedule
+    open Percentages
 
     let quickActualPayments days levelPayment finalPayment =
         days

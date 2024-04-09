@@ -1,8 +1,9 @@
 namespace FSharp.Finance.Personal
 
 /// a way to unambiguously express percentages and avoid potential confusion with decimal values
-[<AutoOpen>]
 module Percentages =
+
+    open Calculation
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
     type Percent = Percent of decimal

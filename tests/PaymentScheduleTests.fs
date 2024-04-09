@@ -8,9 +8,13 @@ open FSharp.Finance.Personal
 
 module PaymentScheduleTests =
 
+    open ArrayExtension
+    open Calculation
+    open Currency
     open CustomerPayments
     open FeesAndCharges
     open PaymentSchedule
+    open Percentages
 
     module Biweekly =
         let biweeklyParameters principal offset =

@@ -14,6 +14,9 @@ open FSharp.Finance.Personal
 module AprUsActuarialTests =
 
     open Apr
+    open Currency
+    open Percentages
+    open Util
     open UnitPeriod
 
     /// (c)(1) Single advance transaction, with or without an odd first period, and otherwise regular

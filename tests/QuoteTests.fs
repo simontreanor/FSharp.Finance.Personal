@@ -7,10 +7,14 @@ open FSharp.Finance.Personal
 
 module QuoteTests =
 
+    open ArrayExtension
     open Amortisation
+    open Calculation
+    open Currency
     open CustomerPayments
     open FeesAndCharges
     open PaymentSchedule
+    open Percentages
     open Quotes
 
     [<Fact>]

@@ -8,6 +8,9 @@ module Formatting =
     open System.Reflection
     open Microsoft.FSharp.Reflection
     open System.Text.RegularExpressions
+
+    open Calculation
+    open Currency
  
     let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "ProRatedFees" |] else [||]
     let chargesProperties hide = if hide then [| "NewCharges"; "ChargesPortion"; "ChargesBalance" |] else [||]

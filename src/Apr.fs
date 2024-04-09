@@ -5,6 +5,12 @@ open System
 /// calculating the APR according to various country-specific regulations
 module Apr =
 
+    open ArrayExtension
+    open Calculation
+    open Currency
+    open DateDay
+    open Percentages
+
     /// the calculation method used to determine the APR
     [<RequireQualifiedAccess; Struct>]
     type CalculationMethod =
