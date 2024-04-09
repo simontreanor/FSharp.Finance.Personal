@@ -32,7 +32,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -93,7 +93,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1969_72L<Cent>
-                ProRatedFees = 1437_53L<Cent>
+                FeesDue = 1437_53L<Cent>
             }
         )
 
@@ -114,7 +114,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -175,7 +175,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 2026_50L<Cent>
-                ProRatedFees = 1393_53L<Cent>
+                FeesDue = 1393_53L<Cent>
             }
         )
 
@@ -196,7 +196,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -257,7 +257,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 2001_50L<Cent>
-                ProRatedFees = 1393_53L<Cent>
+                FeesDue = 1393_53L<Cent>
             }
         )
 
@@ -278,7 +278,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -335,7 +335,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1200_00L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -356,7 +356,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -413,7 +413,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1238_40L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -434,7 +434,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.DueInFull
+                FeesSettlement = Fees.SettlementRefund.None
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -495,7 +495,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 3420_03L<Cent>
-                ProRatedFees = 2227_74L<Cent>
+                FeesDue = 2227_74L<Cent>
             }
         )
 
@@ -516,7 +516,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.DueInFull
+                FeesSettlement = Fees.SettlementRefund.None
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -575,7 +575,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 677_00L<Cent>
-                ProRatedFees = 231_57L<Cent>
+                FeesDue = 231_57L<Cent>
             }
         )
 
@@ -596,7 +596,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.DueInFull
+                FeesSettlement = Fees.SettlementRefund.None
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -656,7 +656,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 300_11L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -677,7 +677,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -733,7 +733,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1311_67L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -754,7 +754,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -818,7 +818,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1261_73L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -839,7 +839,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -901,7 +901,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 973_53L<Cent>
-                ProRatedFees = 958_45L<Cent>
+                FeesDue = 958_45L<Cent>
             }
         )
 
@@ -922,7 +922,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -979,7 +979,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 495_76L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -998,7 +998,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1060,7 +1060,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 429_24L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1079,7 +1079,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1140,7 +1140,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 432_07L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1159,7 +1159,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1220,7 +1220,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 434_89L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1239,7 +1239,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1300,7 +1300,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 453_36L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1319,7 +1319,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1381,7 +1381,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 429_24L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1400,7 +1400,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1462,7 +1462,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = -67_93L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1481,7 +1481,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1543,7 +1543,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = -67_95L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1562,7 +1562,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1624,7 +1624,7 @@ module QuoteTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = -72_80L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -1643,7 +1643,7 @@ module QuoteTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1689,7 +1689,7 @@ module QuoteTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1738,7 +1738,7 @@ module QuoteTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -1787,7 +1787,7 @@ module QuoteTests =
                 PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4)
                 FeesAndCharges = {
                     Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    FeesSettlement = Fees.SettlementRefund.ProRata
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -1836,7 +1836,7 @@ module QuoteTests =
                 PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 9, 22), 4)
                 FeesAndCharges = {
                     Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    FeesSettlement = Fees.SettlementRefund.ProRata
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -1883,7 +1883,7 @@ module QuoteTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 5, 10), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay

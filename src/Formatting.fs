@@ -12,10 +12,10 @@ module Formatting =
     open Calculation
     open Currency
  
-    let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "ProRatedFees" |] else [||]
+    let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "FeesDue" |] else [||]
     let chargesProperties hide = if hide then [| "NewCharges"; "ChargesPortion"; "ChargesBalance" |] else [||]
     let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
-    let extraProperties hide = if hide then [| "ProRatedFees"; "SettlementFigure" |] else [||]
+    let extraProperties hide = if hide then [| "FeesDue"; "SettlementFigure" |] else [||]
 
     let filterColumns hideProperties =
         match hideProperties with

@@ -43,7 +43,7 @@ module Quotes =
                 else
                     let principalPortion, feesPortion, interestPortion, chargesPortion, proRatedFees =
                         if si.GeneratedPayment.Value = 0L<Cent> then
-                            0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.ProRatedFees
+                            0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesDue
                         else
                             if confirmedPayments <> 0L<Cent> then
                                 if si.GeneratedPayment.Value > 0L<Cent> then
@@ -51,11 +51,11 @@ module Quotes =
                                     let interestPortion = Cent.min si.InterestPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion))
                                     let feesPortion = Cent.min si.FeesPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion - interestPortion))
                                     let principalPortion = Cent.max 0L<Cent> (confirmedPayments - feesPortion - chargesPortion - interestPortion)
-                                    si.PrincipalPortion - principalPortion, si.FeesPortion - feesPortion, si.InterestPortion - interestPortion, si.ChargesPortion - chargesPortion, si.ProRatedFees
+                                    si.PrincipalPortion - principalPortion, si.FeesPortion - feesPortion, si.InterestPortion - interestPortion, si.ChargesPortion - chargesPortion, si.FeesDue
                                 else
-                                    si.GeneratedPayment.Value, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.ProRatedFees
+                                    si.GeneratedPayment.Value, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesDue
                             else
-                                si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.ProRatedFees
+                                si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesDue
                     PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, proRatedFees)
             return {
                 QuoteType = quoteType

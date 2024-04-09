@@ -31,12 +31,14 @@ module FeesAndCharges =
             )
 
         /// how the fees are treated in the event of an early settlement
-        [<Struct>]
-        type Settlement =
-            /// the initial fees are due in full with no discount or refund
-            | DueInFull
-            /// the fees are refunded proportionately to the number of days elapsed in the current schedule
-            | ProRataRefund
+        [<RequireQualifiedAccess; Struct>]
+        type SettlementRefund =
+            /// fees are due in full with no discount or refund
+            | None
+            /// fees are refunded proportionately to the number of days elapsed in the current schedule
+            | ProRata
+            /// the current fee balance is refunded
+            | Balance
 
         /// how to handle fees when rescheduling or rolling over
         [<Struct>]
@@ -94,7 +96,7 @@ module FeesAndCharges =
         /// a list of product fees applicable to a product
         Fees: Fee array
         /// how fees are treated when a product is repaid early
-        FeesSettlement: Fees.Settlement
+        FeesSettlement: Fees.SettlementRefund
         /// a list of penalty charges applicable to a product
         Charges: Charge array
         /// any period during which charges are not payable

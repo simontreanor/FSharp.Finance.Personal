@@ -30,7 +30,7 @@ module PaymentScheduleTests =
                 )
                 FeesAndCharges = {
                     Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    FeesSettlement = Fees.SettlementRefund.ProRata
                     Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -121,7 +121,7 @@ module PaymentScheduleTests =
                 )
                 FeesAndCharges = {
                     Fees = [||]
-                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    FeesSettlement = Fees.SettlementRefund.ProRata
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -1372,7 +1372,7 @@ module PaymentScheduleTests =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay

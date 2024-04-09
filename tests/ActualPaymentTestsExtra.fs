@@ -29,7 +29,7 @@ module ActualPaymentTestsExtra =
         let percentageCapped = [| 1m .. 200m |] |> Array.map(fun m -> Amount.Percentage(Percent m, ValueSome (Amount.Restriction.UpperLimit 50_00L<Cent>), ValueSome RoundDown) |> Fee.FacilitationFee)
         let simple = [| 10_00L<Cent> .. 10_00L<Cent> .. 100_00L<Cent> |] |> Array.map (Amount.Simple >> Fee.FacilitationFee)
         [| none; percentage; percentageCapped; simple |]
-    let feesSettlements = [| Fees.Settlement.DueInFull; Fees.Settlement.ProRataRefund |]
+    let feesSettlements = [| Fees.SettlementRefund.None; Fees.SettlementRefund.ProRata |]
     let interestRates =
         let daily = [| 0.02m .. 0.02m .. 0.2m |] |> Array.map (Percent >> Interest.Rate.Daily)
         let annual = [| 1m .. 20m |] |> Array.map (Percent >> Interest.Rate.Annual)
@@ -323,7 +323,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -382,7 +382,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -399,7 +399,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -460,7 +460,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 170_04L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -477,7 +477,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -507,7 +507,7 @@ module ActualPaymentTestsExtra =
                 |]
                 let rp : RescheduleParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    FeesSettlement = Fees.Settlement.ProRataRefund
+                    FeesSettlement = Fees.SettlementRefund.ProRata
                     PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
                     NegativeInterestOption = DoNotApplyNegativeInterest
                     InterestHolidays = [||]
@@ -545,7 +545,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 9_80L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -562,7 +562,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.DueInFull
+                FeesSettlement = Fees.SettlementRefund.None
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -621,7 +621,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -638,7 +638,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -697,7 +697,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -714,7 +714,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -775,7 +775,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 142_40L<Cent>
-            ProRatedFees = 195_35L<Cent>
+            FeesDue = 195_35L<Cent>
         })
         actual |> should equal expected
 
@@ -792,7 +792,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -859,7 +859,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -876,7 +876,7 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -943,7 +943,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         })
         actual |> should equal expected
 

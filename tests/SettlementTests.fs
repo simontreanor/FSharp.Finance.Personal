@@ -27,7 +27,7 @@ module SettlementTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -88,7 +88,7 @@ module SettlementTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 98_52L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -104,7 +104,7 @@ module SettlementTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -165,7 +165,7 @@ module SettlementTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 105_04L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 
@@ -181,7 +181,7 @@ module SettlementTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.Settlement.ProRataRefund
+                FeesSettlement = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -243,7 +243,7 @@ module SettlementTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 53_30L<Cent>
-                ProRatedFees = 0L<Cent>
+                FeesDue = 0L<Cent>
             }
         )
 

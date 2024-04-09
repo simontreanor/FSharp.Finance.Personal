@@ -71,7 +71,7 @@ module Amortisation =
         /// the settlement figure as of the current day
         SettlementFigure: int64<Cent>
         /// the pro-rated fees as of the current day
-        ProRatedFees: int64<Cent>
+        FeesDue: int64<Cent>
     }
     with
         static member Default = {
@@ -97,7 +97,7 @@ module Amortisation =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            ProRatedFees = 0L<Cent>
+            FeesDue = 0L<Cent>
         }
 
     [<Struct>]
@@ -108,6 +108,8 @@ module Amortisation =
         CumulativeActualPayments: int64<Cent>
         /// the total of generated payments made up to and including the current day
         CumulativeGeneratedPayments: int64<Cent>
+        /// the total of fees paid up to and including the current day
+        CumulativeFees: int64<Cent>
         /// the total of interest accrued up to and including the current day
         CumulativeInterest: decimal<Cent>
         /// the first missed payment
@@ -293,24 +295,26 @@ module Amortisation =
                 else
                     decimal feesTotal * (decimal originalFinalPaymentDay - decimal ap.AppliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round (ValueSome RoundUp)
 
-            let proRatedFees =
+            let feesDue =
                 match sp.FeesAndCharges.FeesSettlement with
-                | Fees.Settlement.ProRataRefund ->
+                | Fees.SettlementRefund.None ->
+                    si.FeesBalance - feesPortion
+                | Fees.SettlementRefund.ProRata ->
                     match sp.ScheduleType with
                     | ScheduleType.Original ->
                         let originalFinalPaymentDay = sp.PaymentSchedule |> paymentDays sp.StartDate |> Array.vTryLastBut 0 |> ValueOption.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
                     | ScheduleType.Rescheduled originalFinalPaymentDay ->
                         calculateFees originalFinalPaymentDay
-                | _ ->
-                    si.FeesBalance - feesPortion
+                | Fees.SettlementRefund.Balance ->
+                    a.CumulativeFees
 
             let feesRefund =
                 match sp.FeesAndCharges.FeesSettlement with
-                | Fees.Settlement.DueInFull ->
+                | Fees.SettlementRefund.None ->
                     0L<Cent>
-                | Fees.Settlement.ProRataRefund ->
-                    Cent.max 0L<Cent> proRatedFees
+                | _ ->
+                    Cent.max 0L<Cent> feesDue
 
             let generatedSettlementPayment = si.PrincipalBalance + si.FeesBalance - feesRefund + roundedInterestPortion + chargesPortion
 
@@ -383,7 +387,7 @@ module Amortisation =
                     InterestBalance = 0m<Cent>
                     ChargesBalance = 0L<Cent>
                     SettlementFigure = generatedSettlementPayment'
-                    ProRatedFees = proRatedFees
+                    FeesDue = feesDue
                 }, generatedSettlementPayment'
 
             let scheduleItem, generatedPayment =
@@ -446,20 +450,21 @@ module Amortisation =
                         InterestBalance = if abs interestBalance < 1m<Cent> then Cent.toDecimalCent roundedInterestBalance else interestBalance
                         ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                         SettlementFigure = if paymentStatus = NoLongerRequired then 0L<Cent> else generatedSettlementPayment'
-                        ProRatedFees = if paymentStatus = NoLongerRequired then 0L<Cent> else proRatedFees
+                        FeesDue = if paymentStatus = NoLongerRequired then 0L<Cent> else feesDue
                     }, 0L<Cent>
 
             let accumulator'' =
                 { accumulator' with
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
+                    CumulativeFees = a.CumulativeFees + feesPortion'
                     CumulativeInterest = accumulator'.CumulativeInterest - interestRoundingDifference
                 }
 
             scheduleItem, accumulator''
 
         ) (
-            { ScheduleItem.Default with OffsetDate = sp.StartDate; Advances = [| sp.Principal |]; PrincipalBalance = sp.Principal; FeesBalance = feesTotal; SettlementFigure = sp.Principal + feesTotal; ProRatedFees = feesTotal },
-            { CumulativeScheduledPayments = 0L<Cent>; CumulativeActualPayments = 0L<Cent>; CumulativeGeneratedPayments = 0L<Cent>; CumulativeInterest = 0m<Cent>; FirstMissedPayment = ValueNone; CumulativeMissedPayments = 0L<Cent> }
+            { ScheduleItem.Default with OffsetDate = sp.StartDate; Advances = [| sp.Principal |]; PrincipalBalance = sp.Principal; FeesBalance = feesTotal; SettlementFigure = sp.Principal + feesTotal; FeesDue = feesTotal },
+            { CumulativeScheduledPayments = 0L<Cent>; CumulativeActualPayments = 0L<Cent>; CumulativeGeneratedPayments = 0L<Cent>; CumulativeFees = 0L<Cent>; CumulativeInterest = 0m<Cent>; FirstMissedPayment = ValueNone; CumulativeMissedPayments = 0L<Cent> }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
         |> Array.unzip
