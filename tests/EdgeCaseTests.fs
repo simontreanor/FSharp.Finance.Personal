@@ -432,7 +432,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -553,7 +553,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -607,7 +607,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -689,7 +689,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -771,7 +771,7 @@ module EdgeCaseTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))

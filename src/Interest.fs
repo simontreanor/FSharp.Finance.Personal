@@ -45,12 +45,14 @@ module Interest =
         Daily: Amount voption
     }
     with
+        /// no cap
         static member none = {
             Total = ValueNone
             Daily = ValueNone
         }
-        /// recommended settings for UK FCA (as of 2024-04-04)
-        static member ukFca = {
+
+        /// example settings
+        static member example = {
             Total = ValueSome (Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
             Daily = ValueSome (Percentage (Percent 0.8m, ValueNone, ValueNone))
         }

@@ -70,7 +70,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -117,7 +117,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -164,7 +164,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -211,7 +211,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -282,7 +282,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -353,7 +353,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -429,7 +429,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -503,7 +503,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
@@ -578,7 +578,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -654,7 +654,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -729,7 +729,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -804,7 +804,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -881,7 +881,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1251,7 +1251,7 @@ module ActualPaymentTests =
             }
             Interest = {
                 Rate = Interest.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone

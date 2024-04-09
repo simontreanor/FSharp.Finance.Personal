@@ -641,7 +641,7 @@ module ActualPaymentTestsExtra =
             }
             Interest = {
                 Rate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.ukFca
+                Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
                 Holidays = [||]
                 RateOnNegativeBalance = ValueNone
