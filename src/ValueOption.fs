@@ -1,7 +1,6 @@
 namespace FSharp.Finance.Personal
 
 /// a computation expression enabling easier handling of functions that return value options
-[<AutoOpen>]
 module ValueOptionCE =
 
     type ValueOptionBuilder() = 

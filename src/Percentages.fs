@@ -1,5 +1,7 @@
 namespace FSharp.Finance.Personal
 
+open System
+
 /// a way to unambiguously express percentages and avoid potential confusion with decimal values
 module Percentages =
 
@@ -14,7 +16,7 @@ module Percentages =
         /// create a percent value from a decimal
         let fromDecimal (m: decimal) = m * 100m |> Percent
         /// round a percent value to two decimal places
-        let round (places: int) (Percent p) = roundTo places p |> Percent
+        let round (places: int) (Percent p) = roundTo (MidpointRounding.AwayFromZero |> Round |> ValueSome) places p |> Percent
         /// convert a percent value to a decimal
         let toDecimal (Percent p) = p / 100m
         /// multiply two percentages together

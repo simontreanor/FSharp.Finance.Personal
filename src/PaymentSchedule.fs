@@ -136,7 +136,6 @@ module PaymentSchedule =
 
         let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.FeesRounding)
 
-        let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
 
         let roughPayment = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees) / decimal paymentCount
@@ -151,9 +150,8 @@ module PaymentSchedule =
             schedule <-
                 paymentDays
                 |> Array.scan(fun si d ->
-                    let interestChargeableDays = Interest.chargeableDays sp.StartDate ValueNone sp.Interest.InitialGracePeriod sp.Interest.Holidays si.Day d
-                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily si.Balance interestChargeableDays
-                    let interest = Interest.calculate dailyInterestCap si.Balance dailyInterestRate interestChargeableDays |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                    let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates si.Day d
+                    let interest = Interest.calculate si.Balance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                     let interest' = if si.AggregateInterest + interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
                     let payment' = Cent.round (ValueSome sp.Calculation.RoundingOptions.PaymentRounding) payment
                     let principalPortion = payment' - interest'

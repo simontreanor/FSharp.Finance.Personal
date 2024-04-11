@@ -12,6 +12,7 @@ module AprActuarialTestsExtra =
     open ArrayExtension
     open Apr
     open Currency
+    open DateDay
     open Percentages
     open Util
 

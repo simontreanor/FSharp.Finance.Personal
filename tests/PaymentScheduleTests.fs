@@ -12,9 +12,11 @@ module PaymentScheduleTests =
     open Calculation
     open Currency
     open CustomerPayments
+    open DateDay
     open FeesAndCharges
     open PaymentSchedule
     open Percentages
+    open ValueOptionCE
 
     module Biweekly =
         let biweeklyParameters principal offset =
@@ -37,10 +39,10 @@ module PaymentScheduleTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Rate = Interest.Rate.Annual (Percent 9.95m)
+                    StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
+                    PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
@@ -128,10 +130,10 @@ module PaymentScheduleTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Rate = Interest.Rate.Daily (Percent 0.798m)
+                    StandardRate = Interest.Rate.Daily (Percent 0.798m)
                     Cap = Interest.Cap.example
                     InitialGracePeriod = 3<DurationDay>
-                    Holidays = [||]
+                    PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
@@ -1379,10 +1381,10 @@ module PaymentScheduleTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {

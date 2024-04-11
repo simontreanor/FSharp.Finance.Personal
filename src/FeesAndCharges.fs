@@ -14,6 +14,8 @@ module FeesAndCharges =
         | FacilitationFee of FacilitationFee:Amount
         /// a fee charged by a Credit Access Business (CAB) or Credit Services Organisation (CSO) assisting access to third-party financial products
         | CabOrCsoFee of CabOrCsoFee:Amount
+        /// a fee charged by a bank or building society for arranging a mortgage 
+        | MortageFee of MortageFee:Amount
         /// any other type of product fee
         | CustomFee of FeeType:string * FeeAmount:Amount
 
@@ -27,6 +29,7 @@ module FeesAndCharges =
             |> Array.sumBy(function
                 | Fee.FacilitationFee amount
                 | Fee.CabOrCsoFee amount
+                | Fee.MortageFee amount
                 | Fee.CustomFee (_, amount) -> amount |> Amount.total baseAmount
             )
 
@@ -76,7 +79,7 @@ module FeesAndCharges =
         /// determines whether charge are applicable on a given day
         let areApplicable (startDate: Date) holidays (onDay: int<OffsetDay>) =
             holidays
-            |> Array.collect(fun (ih: Holiday) ->
+            |> Array.collect(fun (ih: DateRange) ->
                 [| (ih.Start - startDate).Days .. (ih.End - startDate).Days |]
             )
             |> Array.exists(fun d -> d = int onDay)
@@ -100,7 +103,7 @@ module FeesAndCharges =
         /// a list of penalty charges applicable to a product
         Charges: Charge array
         /// any period during which charges are not payable
-        ChargesHolidays: Holiday array
+        ChargesHolidays: DateRange array
         /// whether to group charges by type per day
         ChargesGrouping: ChargesGrouping
         /// the number of days' grace period after which late-payment charges apply

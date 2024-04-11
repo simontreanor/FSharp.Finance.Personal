@@ -24,10 +24,10 @@ module Rescheduling =
         PaymentSchedule: CustomerPaymentSchedule
         /// how to handle interest on negative principal balances
         NegativeInterestOption: NegativeInterestOption
-        /// any periods during which interest is not payable
-        InterestHolidays: Holiday array
+        /// any promotional or introductory offers during which a different interest rate is applicable
+        PromotionalInterestRates: Interest.PromotionalRate array
         /// any period during which charges are not payable
-        ChargesHolidays: Holiday array
+        ChargesHolidays: DateRange array
         /// whether and when to generate a settlement figure
         FutureSettlementDay: int<OffsetDay> voption
     }
@@ -66,7 +66,7 @@ module Rescheduling =
                     ScheduleType = PaymentSchedule.ScheduleType.Rescheduled rp.OriginalFinalPaymentDay
                     PaymentSchedule = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> IrregularSchedule
                     FeesAndCharges = { sp.FeesAndCharges with ChargesHolidays = rp.ChargesHolidays }
-                    Interest = { sp.Interest with InitialGracePeriod = 0<DurationDay>; Holidays = rp.InterestHolidays }
+                    Interest = { sp.Interest with InitialGracePeriod = 0<DurationDay>; PromotionalRates = rp.PromotionalInterestRates }
                     Calculation = { sp.Calculation with NegativeInterestOption = rp.NegativeInterestOption }
                 }
             // create the new amortiation schedule

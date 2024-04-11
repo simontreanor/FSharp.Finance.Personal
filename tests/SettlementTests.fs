@@ -12,10 +12,12 @@ module SettlementTests =
     open Calculation
     open Currency
     open CustomerPayments
+    open DateDay
     open FeesAndCharges
     open PaymentSchedule
     open Percentages
     open Quotes
+    open ValueOptionCE
 
     [<Fact>]
     let ``1) Final payment due on Friday: what would I pay if I paid it today?`` () =
@@ -34,10 +36,10 @@ module SettlementTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -111,10 +113,10 @@ module SettlementTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -188,10 +190,10 @@ module SettlementTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {

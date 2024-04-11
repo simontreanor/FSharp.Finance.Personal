@@ -10,7 +10,7 @@ module Quotes =
 
     [<Struct>]
     type QuoteResult =
-        | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichFees: int64<Cent> * OfWhichInterest: int64<Cent> * OfWhichCharges: int64<Cent> * ProRatedFees: int64<Cent>
+        | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichFees: int64<Cent> * OfWhichInterest: int64<Cent> * OfWhichCharges: int64<Cent> * FeesDue: int64<Cent>
         | AwaitPaymentConfirmation
         | UnableToGenerateQuote
 
@@ -41,7 +41,7 @@ module Quotes =
                 elif pendingPayments <> 0L<Cent> then 
                     AwaitPaymentConfirmation
                 else
-                    let principalPortion, feesPortion, interestPortion, chargesPortion, proRatedFees =
+                    let principalPortion, feesPortion, interestPortion, chargesPortion, feesDue =
                         if si.GeneratedPayment.Value = 0L<Cent> then
                             0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesDue
                         else
@@ -56,7 +56,7 @@ module Quotes =
                                     si.GeneratedPayment.Value, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesDue
                             else
                                 si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesDue
-                    PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, proRatedFees)
+                    PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, feesDue)
             return {
                 QuoteType = quoteType
                 QuoteResult = quoteResult

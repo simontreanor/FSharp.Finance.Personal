@@ -13,12 +13,14 @@ module ActualPaymentTestsExtra =
     open Calculation
     open Currency
     open CustomerPayments
+    open DateDay
     open FeesAndCharges
     open Formatting
     open PaymentSchedule
     open Percentages
     open Rescheduling
     open Util
+    open ValueOptionCE
 
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
@@ -45,9 +47,9 @@ module ActualPaymentTestsExtra =
         let dailyPercentageCap = [| 0.02m .. 0.02m .. 0.2m |] |> Array.map (fun p -> Amount.Percentage(Percent p, ValueNone, ValueNone) |> ValueSome)
         [| none; dailyFixed; dailyPercentageCap |] |> Array.concat
     let interestGracePeriods = [| 0<DurationDay> .. 1<DurationDay> .. 7<DurationDay> |]
-    let interestHolidays =
+    let promotionalInterestRates =
         let none = [||]
-        let some = [| { Holiday.Start = Date(2024, 3, 1); Holiday.End = Date(2024, 12, 31)} |]
+        let some = [| ({ DateRange = { DateRange.Start = Date(2024, 3, 1); DateRange.End = Date(2024, 12, 31) }; Rate = Interest.Rate.Daily (Percent 0.02m) } : Interest.PromotionalRate) |]
         [| none; some |]
     let unitPeriodConfigs (startDate: Date) =
         let daily = [| 4 .. 32 |] |> Array.map (startDate.AddDays >> UnitPeriod.Config.Daily)
@@ -104,10 +106,10 @@ module ActualPaymentTestsExtra =
         let p = sp.Principal
         let pf = sp.FeesAndCharges.Fees
         let pfs = sp.FeesAndCharges.FeesSettlement
-        let ir = Interest.Rate.serialise sp.Interest.Rate
+        let ir = Interest.Rate.serialise sp.Interest.StandardRate
         let ic = sp.Interest.Cap
         let igp = sp.Interest.InitialGracePeriod
-        let ih = match sp.Interest.Holidays with [||] -> "()" | ihh -> ihh |> Array.map(fun ih -> $"""({ih.Start.ToString()}-{ih.End.ToString()})""") |> String.concat ";" |> fun s -> $"({s})"
+        let pir = match sp.Interest.PromotionalRates with [||] -> "()" | pirr -> pirr |> Array.map(fun pr -> $"""({pr.DateRange.Start.ToString()}-{pr.DateRange.End.ToString()}__{Interest.Rate.serialise pr.Rate})""") |> String.concat ";" |> fun s -> $"({s})"
         let upc, pc =
             match sp.PaymentSchedule with
             | RegularSchedule(unitPeriodConfig, paymentCount) ->
@@ -116,7 +118,7 @@ module ActualPaymentTestsExtra =
         let acm = sp.Calculation.AprMethod
         let pcc = sp.FeesAndCharges.Charges
         let ro = sp.Calculation.RoundingOptions
-        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_ih{ih}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}"""
+        let testId = $"""aod{aod}_sd{sd}_p{p}_pf{pf}_pfs{pfs}_ir{ir}_ic{ic}_igp{igp}_pir{pir}_upc{upc}_pc{pc}_acm{acm}_pcc{pcc}_ro{ro}"""
         let amortisationSchedule = 
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
@@ -164,7 +166,7 @@ module ActualPaymentTestsExtra =
             let tic  = takeRandomFrom totalInterestCaps
             let dic  = takeRandomFrom dailyInterestCaps
             let igp = takeRandomFrom interestGracePeriods
-            let ih  = takeRandomFrom interestHolidays
+            let pir  = takeRandomFrom promotionalInterestRates
             let upc = takeRandomFrom <| unitPeriodConfigs sd
             let pc  = takeRandomFrom paymentCounts
             let acm = takeRandomFrom aprCalculationMethods
@@ -188,10 +190,10 @@ module ActualPaymentTestsExtra =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Rate = ir
+                    StandardRate = ir
                     Cap = { Total = tic; Daily = dic }
                     InitialGracePeriod = igp
-                    Holidays = ih
+                    PromotionalRates = pir
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
@@ -214,7 +216,7 @@ module ActualPaymentTestsExtra =
         totalInterestCaps |> Seq.collect(fun tic ->
         dailyInterestCaps |> Seq.collect(fun dic ->
         interestGracePeriods |> Seq.collect(fun igp ->
-        interestHolidays |> Seq.collect(fun ih ->
+        promotionalInterestRates |> Seq.collect(fun ih ->
         unitPeriodConfigs sd |> Seq.collect(fun upc ->
         paymentCounts |> Seq.collect(fun pc ->
         aprCalculationMethods |> Seq.collect(fun acm ->
@@ -239,10 +241,10 @@ module ActualPaymentTestsExtra =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Rate = ir
+                    StandardRate = ir
                     Cap = { Total = tic; Daily = dic }
                     InitialGracePeriod = igp
-                    Holidays = ih
+                    PromotionalRates = ih
                     RateOnNegativeBalance = ValueNone
                 }
                 Calculation = {
@@ -330,10 +332,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -370,7 +372,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 407_64L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            NewInterest = 3_30.67257534246575342465756748m<Cent>
+            NewInterest = 3_30.67257534m<Cent>
             NewCharges = [||]
             PrincipalPortion = 161_76L<Cent>
             FeesPortion = 242_58L<Cent>
@@ -406,10 +408,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -448,7 +450,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 170_04L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 64.650465753424657534246581840m<Cent>
+            NewInterest = 64.65046575m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_79L<Cent>
             FeesPortion = 101_61L<Cent>
@@ -484,10 +486,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -510,7 +512,7 @@ module ActualPaymentTestsExtra =
                     FeesSettlement = Fees.SettlementRefund.ProRata
                     PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
                     NegativeInterestOption = DoNotApplyNegativeInterest
-                    InterestHolidays = [||]
+                    PromotionalInterestRates = [||]
                     ChargesHolidays = [||]
                     FutureSettlementDay = ValueNone
                 }
@@ -533,7 +535,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 9_80L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 3.728660273972602739726027772m<Cent>
+            NewInterest = 3.72866027m<Cent>
             NewCharges = [||]
             PrincipalPortion = 4_39L<Cent>
             FeesPortion = 5_38L<Cent>
@@ -569,10 +571,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Daily (Percent 0.12m)
+                StandardRate = Interest.Rate.Daily (Percent 0.12m)
                 Cap = { Total = ValueSome <| Amount.Simple 500_00L<Cent>; Daily = ValueNone }
                 InitialGracePeriod = 7<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -645,10 +647,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -721,10 +723,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 7<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -763,7 +765,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 1_28.41170136986301369863014989m<Cent>
+            NewInterest = 1_28.41170136m<Cent>
             NewCharges = [||]
             PrincipalPortion = 134_62L<Cent>
             FeesPortion = 6_50L<Cent>
@@ -799,10 +801,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -847,7 +849,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 7.113841095890410958904110304m<Cent>
+            NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 9_26L<Cent>
             FeesPortion = 9_38L<Cent>
@@ -883,10 +885,10 @@ module ActualPaymentTestsExtra =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -931,7 +933,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            NewInterest = 7.113841095890410958904110304m<Cent>
+            NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 18_64L<Cent>
             FeesPortion = 0L<Cent>

@@ -11,11 +11,13 @@ module EdgeCaseTests =
     open Calculation
     open Currency
     open CustomerPayments
+    open DateDay
     open FeesAndCharges
     open PaymentSchedule
     open Percentages
     open Quotes
     open Rescheduling
+    open ValueOptionCE
 
     [<Fact>]
     let ``1) Quote returning nothing`` () =
@@ -39,10 +41,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -90,10 +92,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -141,10 +143,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -194,10 +196,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -317,10 +319,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
-                Rate = Interest.Rate.Annual (Percent 9.95m)
+                StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -434,10 +436,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -555,10 +557,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -609,10 +611,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -637,7 +639,7 @@ module EdgeCaseTests =
                 { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
             |]
             NegativeInterestOption = DoNotApplyNegativeInterest
-            InterestHolidays = [||]
+            PromotionalInterestRates = [||]
             ChargesHolidays = [||]
             FutureSettlementDay = ValueSome 88<OffsetDay>
         }
@@ -691,10 +693,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
             Calculation = {
@@ -719,7 +721,7 @@ module EdgeCaseTests =
                 { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
             |]
             NegativeInterestOption = DoNotApplyNegativeInterest
-            InterestHolidays = [||]
+            PromotionalInterestRates = [||]
             ChargesHolidays = [||]
             FutureSettlementDay = ValueSome 88<OffsetDay>
         }
@@ -773,10 +775,10 @@ module EdgeCaseTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Rate = Interest.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = Interest.Cap.example
                 InitialGracePeriod = 0<DurationDay>
-                Holidays = [||]
+                PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             }
             Calculation = {
@@ -811,7 +813,7 @@ module EdgeCaseTests =
             NetEffect = 0L<Cent>
             PaymentStatus = NoLongerRequired
             BalanceStatus = RefundDue
-            NewInterest = -8.792109589041095890410958135m<Cent>
+            NewInterest = -8.79210959m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
             FeesPortion = 0L<Cent>
@@ -820,7 +822,7 @@ module EdgeCaseTests =
             FeesRefund = 0L<Cent>
             PrincipalBalance = -12_94L<Cent>
             FeesBalance = 0L<Cent>
-            InterestBalance = -21.554849315068493150684929621m<Cent>
+            InterestBalance = -21.55484933m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesDue = 0L<Cent>

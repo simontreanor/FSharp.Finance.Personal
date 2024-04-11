@@ -15,6 +15,7 @@ module AprUsActuarialTests =
 
     open Apr
     open Currency
+    open DateDay
     open Percentages
     open Util
     open UnitPeriod

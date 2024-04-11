@@ -3,7 +3,6 @@ namespace FSharp.Finance.Personal
 open System
 
 /// a .NET Framework polyfill equivalent to the DateOnly structure in .NET Core
-[<AutoOpen>]
 module DateDay =
 
     /// the date at the customer's location - ensure any time-zone conversion is performed before using this - as all calculations are date-only with no time component, summer time or other such time artefacts

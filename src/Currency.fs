@@ -25,7 +25,14 @@ module Currency =
             m
             |> Rounding.round rounding
             |> int64
-            |> (( * ) 1L<Cent>)
+            |> ( * ) 1L<Cent>
+
+        /// round a decimal cent value to the specified number of places
+        let roundTo rounding decimalPlaces (m: decimal<Cent>) =
+            m
+            |> decimal
+            |> roundTo rounding decimalPlaces
+            |> ( * ) 1m<Cent>
 
         /// lower to the base currency unit, e.g. $12.34 -> 1234¢
         let fromDecimal (m: decimal) = round (ValueSome (Round MidpointRounding.AwayFromZero)) (m * 100m)

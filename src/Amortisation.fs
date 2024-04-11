@@ -141,7 +141,6 @@ module Amortisation =
     let calculate sp intendedPurpose (appliedPayments: AppliedPayment array) =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
 
-        let dailyInterestRate = sp.Interest.Rate |> Interest.Rate.daily
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
 
         let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.FeesRounding)
@@ -158,24 +157,33 @@ module Amortisation =
             else
                 OpenBalance
 
+        let earlySettlementDate = match intendedPurpose with IntendedPurpose.Quote _ -> ValueSome sp.AsOfDate | _ -> ValueNone
+
+        let isWithinGracePeriod d = int d <= int sp.Interest.InitialGracePeriod
+
+        let isSettledWithinGracePeriod =
+            earlySettlementDate
+            |> ValueOption.map ((OffsetDay.fromDate sp.StartDate) >> int >> isWithinGracePeriod)
+            |> ValueOption.defaultValue false
+
+        let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate isSettledWithinGracePeriod sp.Interest.StandardRate sp.Interest.PromotionalRates fromDay toDay
+
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0L<Cent>
-
-            let earlySettlementDate = match intendedPurpose with IntendedPurpose.Quote _ -> ValueSome sp.AsOfDate | _ -> ValueNone
-            let interestChargeableDays = Interest.chargeableDays sp.StartDate earlySettlementDate sp.Interest.InitialGracePeriod sp.Interest.Holidays si.OffsetDay ap.AppliedPaymentDay
 
             let newInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
                     match sp.Calculation.NegativeInterestOption with
                     | ApplyNegativeInterest ->
-                        let dailyInterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.map Interest.Rate.daily |> ValueOption.defaultValue (Percent 0m)
-                        Interest.calculate 0m<Cent> (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays
+                        dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
+                        |> Array.map(fun dr -> { dr with InterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.defaultValue Interest.Rate.Zero })
+                        |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                     | DoNotApplyNegativeInterest ->
                         0m<Cent>
                 else
-                    let dailyInterestCap = sp.Interest.Cap.Daily |> Interest.Cap.daily (si.PrincipalBalance + si.FeesBalance) interestChargeableDays
-                    Interest.calculate dailyInterestCap (si.PrincipalBalance + si.FeesBalance) dailyInterestRate interestChargeableDays
+                    dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
+                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
 
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
@@ -503,7 +511,7 @@ module Amortisation =
             EffectiveInterestRate =
                 if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
                 else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
-                |> Percent |> Interest.Daily
+                |> Percent |> Interest.Rate.Daily
         }
 
     /// generates an amortisation schedule and final statistics

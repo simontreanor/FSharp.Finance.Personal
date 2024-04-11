@@ -9,6 +9,7 @@ module AprUnitedKingdomTests =
 
     open Apr
     open Currency
+    open DateDay
     open Percentages
     open Util
     

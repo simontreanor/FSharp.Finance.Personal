@@ -76,10 +76,15 @@ module Calculation =
     let powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))
 
     /// raises a decimal to a decimal power
-    let powm (power: decimal) (base': decimal) = decimal (Math.Pow(double base', double power))
+    let powm (power: decimal) (base': decimal) = Math.Pow(double base', double power)
 
     /// round a value to n decimal places
-    let roundTo (places: int) (m: decimal) = Math.Round(m, places)
+    let roundTo rounding (places: int) (m: decimal) =
+        match rounding with
+        | ValueSome (RoundDown) -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> floor |> fun m -> m / f
+        | ValueSome (RoundUp) -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> ceil |> fun m -> m / f
+        | ValueSome (Round mpr) -> Math.Round(m, places, mpr)
+        | ValueNone -> m
 
     /// how to round calculated interest and payments
     [<Struct>]
@@ -103,7 +108,7 @@ module Calculation =
 
     /// a holiday, i.e. a period when no interest and/or charges are accrued
     [<RequireQualifiedAccess; Struct>]
-    type Holiday = {
+    type DateRange = {
         /// the first date of the holiday period
         Start: Date
         /// the last date of the holiday period
