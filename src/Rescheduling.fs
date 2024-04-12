@@ -49,9 +49,13 @@ module Rescheduling =
                         |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value) })
                     | ValueNone ->
                         [||]
-                | RegularFixedSchedule (unitPeriodConfig, paymentCount, paymentAmount) ->
-                    UnitPeriod.generatePaymentSchedule paymentCount UnitPeriod.Direction.Forward unitPeriodConfig
-                    |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled paymentAmount) })
+                | RegularFixedSchedule regularFixedSchedules ->
+                    regularFixedSchedules
+                    |> Array.map(fun rfs ->
+                        UnitPeriod.generatePaymentSchedule rfs.PaymentCount UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
+                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount) })
+                    )
+                    |> Array.concat
                 | IrregularSchedule payments ->
                     payments
             // append the new schedule to the old schedule up to the point of settlement
@@ -100,13 +104,13 @@ module Rescheduling =
             // get the settlement quote
             let! quote = getQuote QuoteType.Settlement sp actualPayments
             // process the quote and extract the portions if applicable
-            let! principalPortion, feesPortion, feesDue =
+            let! principalPortion, feesPortion, feesRefundIfSettled =
                 match quote.QuoteResult with
-                | PaymentQuote (paymentQuote, ofWhichPrincipal, ofWhichFees, ofWhichInterest, ofWhichCharges, feesDue) ->
+                | PaymentQuote (paymentQuote, ofWhichPrincipal, ofWhichFees, ofWhichInterest, ofWhichCharges, feesRefundIfSettled) ->
                     match rp.FeeHandling with
-                    | Fees.FeeHandling.CapitaliseAsPrincipal -> ofWhichPrincipal + ofWhichFees + ofWhichInterest + ofWhichCharges, 0L<Cent>, feesDue
-                    | Fees.FeeHandling.CarryOverAsIs -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesDue
-                    | Fees.FeeHandling.WriteOffFeeBalance -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesDue
+                    | Fees.FeeHandling.CapitaliseAsPrincipal -> ofWhichPrincipal + ofWhichFees + ofWhichInterest + ofWhichCharges, 0L<Cent>, feesRefundIfSettled
+                    | Fees.FeeHandling.CarryOverAsIs -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesRefundIfSettled
+                    | Fees.FeeHandling.WriteOffFeeBalance -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesRefundIfSettled
                     |> ValueSome
                 | AwaitPaymentConfirmation -> ValueNone
                 | UnableToGenerateQuote -> ValueNone
@@ -122,10 +126,10 @@ module Rescheduling =
                         | Fees.FeeHandling.CarryOverAsIs ->
                             { sp.FeesAndCharges with
                                 Fees = [| Fee.CustomFee ("Rolled-Over Fee", Amount.Simple feesPortion) |]
-                                FeesSettlement = if feesDue = 0L<Cent> then Fees.SettlementRefund.None else Fees.SettlementRefund.ProRata
+                                FeesSettlementRefund = if feesRefundIfSettled = 0L<Cent> then Fees.SettlementRefund.None else Fees.SettlementRefund.ProRata
                             }
                         | _ ->
-                            { sp.FeesAndCharges with Fees = [||]; FeesSettlement = Fees.SettlementRefund.None }
+                            { sp.FeesAndCharges with Fees = [||]; FeesSettlementRefund = Fees.SettlementRefund.None }
                     Interest = rp.Interest |> ValueOption.defaultValue sp.Interest
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }

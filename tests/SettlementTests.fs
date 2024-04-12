@@ -29,7 +29,8 @@ module SettlementTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -90,7 +91,7 @@ module SettlementTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 98_52L<Cent>
-                FeesDue = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
         )
 
@@ -106,7 +107,8 @@ module SettlementTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -167,7 +169,7 @@ module SettlementTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 105_04L<Cent>
-                FeesDue = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
         )
 
@@ -183,7 +185,8 @@ module SettlementTests =
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4)
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -245,7 +248,7 @@ module SettlementTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 53_30L<Cent>
-                FeesDue = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
         )
 

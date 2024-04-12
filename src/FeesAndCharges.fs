@@ -33,6 +33,14 @@ module FeesAndCharges =
                 | Fee.CustomFee (_, amount) -> amount |> Amount.total baseAmount
             )
 
+        /// how to amortise fees
+        [<Struct>]
+        type FeeAmortisation =
+            /// amortise any fee before amortising principal
+            | AmortiseBeforePrincipal
+            /// amortise any fee and principal proportionately
+            | AmortiseProportionately
+
         /// how the fees are treated in the event of an early settlement
         [<RequireQualifiedAccess; Struct>]
         type SettlementRefund =
@@ -98,8 +106,10 @@ module FeesAndCharges =
     type FeesAndCharges = {
         /// a list of product fees applicable to a product
         Fees: Fee array
+        /// how to amortise fees in relation to principal
+        FeesAmortisation: Fees.FeeAmortisation
         /// how fees are treated when a product is repaid early
-        FeesSettlement: Fees.SettlementRefund
+        FeesSettlementRefund: Fees.SettlementRefund
         /// a list of penalty charges applicable to a product
         Charges: Charge array
         /// any period during which charges are not payable

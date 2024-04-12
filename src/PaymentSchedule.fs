@@ -115,7 +115,19 @@ module PaymentSchedule =
                 [||]
             else
                 payments |> Array.map _.PaymentDay
-        | RegularFixedSchedule (unitPeriodConfig, paymentCount, _)
+        | RegularFixedSchedule regularFixedSchedules ->
+            regularFixedSchedules
+            |> Array.map(fun rfs ->
+                if rfs.PaymentCount = 0 then
+                    [||]
+                else
+                    let unitPeriodConfigStartDate = Config.startDate rfs.UnitPeriodConfig
+                    if startDate > unitPeriodConfigStartDate then
+                        [||]
+                    else
+                        generatePaymentSchedule rfs.PaymentCount Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+            )
+            |> Array.concat
         | RegularSchedule (unitPeriodConfig, paymentCount) ->
             if paymentCount = 0 then
                 [||]

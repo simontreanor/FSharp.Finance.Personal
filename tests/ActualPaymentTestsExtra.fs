@@ -31,6 +31,7 @@ module ActualPaymentTestsExtra =
         let percentageCapped = [| 1m .. 200m |] |> Array.map(fun m -> Amount.Percentage(Percent m, ValueSome (Amount.Restriction.UpperLimit 50_00L<Cent>), ValueSome RoundDown) |> Fee.FacilitationFee)
         let simple = [| 10_00L<Cent> .. 10_00L<Cent> .. 100_00L<Cent> |] |> Array.map (Amount.Simple >> Fee.FacilitationFee)
         [| none; percentage; percentageCapped; simple |]
+    let feesAmortisations = [| Fees.FeeAmortisation.AmortiseBeforePrincipal; Fees.FeeAmortisation.AmortiseProportionately |]
     let feesSettlements = [| Fees.SettlementRefund.None; Fees.SettlementRefund.ProRata |]
     let interestRates =
         let daily = [| 0.02m .. 0.02m .. 0.2m |] |> Array.map (Percent >> Interest.Rate.Daily)
@@ -105,7 +106,7 @@ module ActualPaymentTestsExtra =
         let sd = sp.StartDate.ToString()
         let p = sp.Principal
         let pf = sp.FeesAndCharges.Fees
-        let pfs = sp.FeesAndCharges.FeesSettlement
+        let pfs = sp.FeesAndCharges.FeesSettlementRefund
         let ir = Interest.Rate.serialise sp.Interest.StandardRate
         let ic = sp.Interest.Cap
         let igp = sp.Interest.InitialGracePeriod
@@ -160,8 +161,9 @@ module ActualPaymentTestsExtra =
             let takeRandomFrom (a: _ array) = a |> Array.length |> rnd.Next |> fun r -> Array.item r a
             let sd  = takeRandomFrom startDates
             let aa  = takeRandomFrom advanceAmounts
-            let pf  = takeRandomFrom fees
-            let pfs = takeRandomFrom feesSettlements
+            let f  = takeRandomFrom fees
+            let fa = takeRandomFrom feesAmortisations
+            let fs = takeRandomFrom feesSettlements
             let ir  = takeRandomFrom interestRates
             let tic  = takeRandomFrom totalInterestCaps
             let dic  = takeRandomFrom dailyInterestCaps
@@ -170,7 +172,7 @@ module ActualPaymentTestsExtra =
             let upc = takeRandomFrom <| unitPeriodConfigs sd
             let pc  = takeRandomFrom paymentCounts
             let acm = takeRandomFrom aprCalculationMethods
-            let pcc = takeRandomFrom charges
+            let c = takeRandomFrom charges
             let ro = takeRandomFrom roundingOptions
             {
                 AsOfDate = asOfDate
@@ -182,9 +184,10 @@ module ActualPaymentTestsExtra =
                     PaymentCount = pc
                 )
                 FeesAndCharges = {
-                    Fees = pf
-                    FeesSettlement = pfs
-                    Charges = pcc
+                    Fees = f
+                    FeesAmortisation = fa
+                    FeesSettlementRefund = fs
+                    Charges = c
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
                     LatePaymentGracePeriod = 0<DurationDay>
@@ -210,8 +213,9 @@ module ActualPaymentTestsExtra =
     let generateAllAppliedPayments asOfDate = // warning: very large seq
         startDates |> Seq.collect(fun sd ->
         advanceAmounts |> Seq.collect(fun aa ->
-        fees |> Seq.collect(fun pf ->
-        feesSettlements |> Seq.collect(fun pfs ->
+        fees |> Seq.collect(fun f ->
+        feesAmortisations |> Seq.collect(fun fa ->
+        feesSettlements |> Seq.collect(fun fs ->
         interestRates |> Seq.collect(fun ir ->
         totalInterestCaps |> Seq.collect(fun tic ->
         dailyInterestCaps |> Seq.collect(fun dic ->
@@ -220,7 +224,7 @@ module ActualPaymentTestsExtra =
         unitPeriodConfigs sd |> Seq.collect(fun upc ->
         paymentCounts |> Seq.collect(fun pc ->
         aprCalculationMethods |> Seq.collect(fun acm ->
-        charges |> Seq.collect(fun pcc ->
+        charges |> Seq.collect(fun c ->
         roundingOptions
         |> Seq.map(fun ro ->
             {
@@ -233,9 +237,10 @@ module ActualPaymentTestsExtra =
                     PaymentCount = pc
                 )
                 FeesAndCharges = {
-                    Fees = pf
-                    FeesSettlement = pfs
-                    Charges = pcc
+                    Fees = f
+                    FeesAmortisation = fa
+                    FeesSettlementRefund = fs
+                    Charges = c
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
                     LatePaymentGracePeriod = 0<DurationDay>
@@ -255,7 +260,7 @@ module ActualPaymentTestsExtra =
                     NegativeInterestOption = ApplyNegativeInterest
                 }
             }
-        ))))))))))))))
+        )))))))))))))))
         |> Seq.map applyPayments
 
     let generateRegularPaymentTestData (amortisationSchedule: (string * Amortisation.ScheduleItem array voption) seq) =
@@ -325,7 +330,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -384,7 +390,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -401,7 +407,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -462,7 +469,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 170_04L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -479,7 +486,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -510,7 +518,7 @@ module ActualPaymentTestsExtra =
                 let rp : RescheduleParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
                     FeesSettlement = Fees.SettlementRefund.ProRata
-                    PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
+                    PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent> } |]
                     NegativeInterestOption = DoNotApplyNegativeInterest
                     PromotionalInterestRates = [||]
                     ChargesHolidays = [||]
@@ -547,7 +555,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 9_80L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -564,7 +572,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.None
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.None
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -623,7 +632,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -640,7 +649,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [||]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -699,7 +709,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -716,7 +726,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -777,7 +788,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 142_40L<Cent>
-            FeesDue = 195_35L<Cent>
+            FeesRefundIfSettled = 195_35L<Cent>
         })
         actual |> should equal expected
 
@@ -794,7 +805,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -824,7 +836,7 @@ module ActualPaymentTestsExtra =
                 |]
                 let rp : RolloverParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
+                    PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent> } |]
                     FeesAndCharges = ValueNone
                     Interest = ValueNone
                     Calculation = ValueNone
@@ -861,7 +873,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -878,7 +890,8 @@ module ActualPaymentTestsExtra =
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                FeesSettlement = Fees.SettlementRefund.ProRata
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata
                 Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -908,7 +921,7 @@ module ActualPaymentTestsExtra =
                 |]
                 let rp : RolloverParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    PaymentSchedule = RegularFixedSchedule (UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)), 155, 20_00L<Cent>)
+                    PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent> } |]
                     FeesAndCharges = ValueNone
                     Interest = ValueNone
                     Calculation = ValueNone
@@ -945,7 +958,7 @@ module ActualPaymentTestsExtra =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
 

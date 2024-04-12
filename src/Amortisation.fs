@@ -71,7 +71,7 @@ module Amortisation =
         /// the settlement figure as of the current day
         SettlementFigure: int64<Cent>
         /// the pro-rated fees as of the current day
-        FeesDue: int64<Cent>
+        FeesRefundIfSettled: int64<Cent>
     }
     with
         static member Default = {
@@ -97,7 +97,7 @@ module Amortisation =
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
-            FeesDue = 0L<Cent>
+            FeesRefundIfSettled = 0L<Cent>
         }
 
     [<Struct>]
@@ -289,11 +289,15 @@ module Amortisation =
                     sign netEffect - sign chargesPortion - sign roundedInterestPortion
 
             let feesPortion =
-                feesPercentage
-                |> Percent.toDecimal
-                |> fun m ->
-                    if (1m + m) = 0m then 0L<Cent>
-                    else decimal assignable * m / (1m + m) |> Cent.round (ValueSome RoundUp) |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
+                match sp.FeesAndCharges.FeesAmortisation with
+                | Fees.FeeAmortisation.AmortiseBeforePrincipal ->
+                    Cent.min si.FeesBalance assignable
+                | Fees.FeeAmortisation.AmortiseProportionately ->
+                    feesPercentage
+                    |> Percent.toDecimal
+                    |> fun m ->
+                        if (1m + m) = 0m then 0L<Cent>
+                        else decimal assignable * m / (1m + m) |> Cent.round (ValueSome RoundUp) |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
 
             let calculateFees originalFinalPaymentDay =
                 if originalFinalPaymentDay <= 0<OffsetDay> then
@@ -303,10 +307,10 @@ module Amortisation =
                 else
                     decimal feesTotal * (decimal originalFinalPaymentDay - decimal ap.AppliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round (ValueSome RoundUp)
 
-            let feesDue =
-                match sp.FeesAndCharges.FeesSettlement with
+            let feesRefundIfSettled =
+                match sp.FeesAndCharges.FeesSettlementRefund with
                 | Fees.SettlementRefund.None ->
-                    si.FeesBalance - feesPortion
+                    0L<Cent>
                 | Fees.SettlementRefund.ProRata ->
                     match sp.ScheduleType with
                     | ScheduleType.Original ->
@@ -317,12 +321,7 @@ module Amortisation =
                 | Fees.SettlementRefund.Balance ->
                     a.CumulativeFees
 
-            let feesRefund =
-                match sp.FeesAndCharges.FeesSettlement with
-                | Fees.SettlementRefund.None ->
-                    0L<Cent>
-                | _ ->
-                    Cent.max 0L<Cent> feesDue
+            let feesRefund = Cent.max 0L<Cent> feesRefundIfSettled
 
             let generatedSettlementPayment = si.PrincipalBalance + si.FeesBalance - feesRefund + roundedInterestPortion + chargesPortion
 
@@ -395,7 +394,7 @@ module Amortisation =
                     InterestBalance = 0m<Cent>
                     ChargesBalance = 0L<Cent>
                     SettlementFigure = generatedSettlementPayment'
-                    FeesDue = feesDue
+                    FeesRefundIfSettled = feesRefundIfSettled
                 }, generatedSettlementPayment'
 
             let scheduleItem, generatedPayment =
@@ -458,7 +457,7 @@ module Amortisation =
                         InterestBalance = if abs interestBalance < 1m<Cent> then Cent.toDecimalCent roundedInterestBalance else interestBalance
                         ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                         SettlementFigure = if paymentStatus = NoLongerRequired then 0L<Cent> else generatedSettlementPayment'
-                        FeesDue = if paymentStatus = NoLongerRequired then 0L<Cent> else feesDue
+                        FeesRefundIfSettled = if paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
                     }, 0L<Cent>
 
             let accumulator'' =
@@ -471,8 +470,22 @@ module Amortisation =
             scheduleItem, accumulator''
 
         ) (
-            { ScheduleItem.Default with OffsetDate = sp.StartDate; Advances = [| sp.Principal |]; PrincipalBalance = sp.Principal; FeesBalance = feesTotal; SettlementFigure = sp.Principal + feesTotal; FeesDue = feesTotal },
-            { CumulativeScheduledPayments = 0L<Cent>; CumulativeActualPayments = 0L<Cent>; CumulativeGeneratedPayments = 0L<Cent>; CumulativeFees = 0L<Cent>; CumulativeInterest = 0m<Cent>; FirstMissedPayment = ValueNone; CumulativeMissedPayments = 0L<Cent> }
+            { ScheduleItem.Default with
+                OffsetDate = sp.StartDate
+                Advances = [| sp.Principal |]
+                PrincipalBalance = sp.Principal
+                FeesBalance = feesTotal
+                SettlementFigure = sp.Principal + feesTotal
+                FeesRefundIfSettled = match sp.FeesAndCharges.FeesSettlementRefund with Fees.SettlementRefund.None -> 0L<Cent> | _ -> feesTotal
+            }, {
+                CumulativeScheduledPayments = 0L<Cent>
+                CumulativeActualPayments = 0L<Cent>
+                CumulativeGeneratedPayments = 0L<Cent>
+                CumulativeFees = 0L<Cent>
+                CumulativeInterest = 0m<Cent>
+                FirstMissedPayment = ValueNone
+                CumulativeMissedPayments = 0L<Cent>
+            }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
         |> Array.unzip
@@ -533,17 +546,21 @@ module Amortisation =
                     })
                 | ValueNone ->
                     [||]
-            | RegularFixedSchedule (unitPeriodConfig, paymentCount, paymentAmount) ->
-                UnitPeriod.generatePaymentSchedule paymentCount UnitPeriod.Direction.Forward unitPeriodConfig
-                |> Array.map(fun d ->
-                    {
-                        PaymentDay = OffsetDay.fromDate sp.AsOfDate d
-                        PaymentDetails =
-                            match sp.ScheduleType with
-                            | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original paymentAmount)
-                            | ScheduleType.Rescheduled _ -> ScheduledPayment (ScheduledPaymentType.Rescheduled paymentAmount)
-                    }
+            | RegularFixedSchedule regularFixedSchedules ->
+                regularFixedSchedules
+                |> Array.map(fun rfs ->
+                    UnitPeriod.generatePaymentSchedule rfs.PaymentCount UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
+                    |> Array.map(fun d ->
+                        {
+                            PaymentDay = OffsetDay.fromDate sp.AsOfDate d
+                            PaymentDetails =
+                                match sp.ScheduleType with
+                                | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original rfs.PaymentAmount)
+                                | ScheduleType.Rescheduled _ -> ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount)
+                        }
+                    )
                 )
+                |> Array.concat
             | IrregularSchedule payments ->
                 payments
 

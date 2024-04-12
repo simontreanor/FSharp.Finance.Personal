@@ -10,7 +10,7 @@ module Quotes =
 
     [<Struct>]
     type QuoteResult =
-        | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichFees: int64<Cent> * OfWhichInterest: int64<Cent> * OfWhichCharges: int64<Cent> * FeesDue: int64<Cent>
+        | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichFees: int64<Cent> * OfWhichInterest: int64<Cent> * OfWhichCharges: int64<Cent> * FeesRefundIfSettled: int64<Cent>
         | AwaitPaymentConfirmation
         | UnableToGenerateQuote
 
@@ -41,9 +41,9 @@ module Quotes =
                 elif pendingPayments <> 0L<Cent> then 
                     AwaitPaymentConfirmation
                 else
-                    let principalPortion, feesPortion, interestPortion, chargesPortion, feesDue =
+                    let principalPortion, feesPortion, interestPortion, chargesPortion, feesRefundIfSettled =
                         if si.GeneratedPayment.Value = 0L<Cent> then
-                            0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesDue
+                            0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesRefundIfSettled
                         else
                             if confirmedPayments <> 0L<Cent> then
                                 if si.GeneratedPayment.Value > 0L<Cent> then
@@ -51,12 +51,12 @@ module Quotes =
                                     let interestPortion = Cent.min si.InterestPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion))
                                     let feesPortion = Cent.min si.FeesPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion - interestPortion))
                                     let principalPortion = Cent.max 0L<Cent> (confirmedPayments - feesPortion - chargesPortion - interestPortion)
-                                    si.PrincipalPortion - principalPortion, si.FeesPortion - feesPortion, si.InterestPortion - interestPortion, si.ChargesPortion - chargesPortion, si.FeesDue
+                                    si.PrincipalPortion - principalPortion, si.FeesPortion - feesPortion, si.InterestPortion - interestPortion, si.ChargesPortion - chargesPortion, si.FeesRefundIfSettled
                                 else
-                                    si.GeneratedPayment.Value, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesDue
+                                    si.GeneratedPayment.Value, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesRefundIfSettled
                             else
-                                si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesDue
-                    PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, feesDue)
+                                si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled
+                    PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, feesRefundIfSettled)
             return {
                 QuoteType = quoteType
                 QuoteResult = quoteResult

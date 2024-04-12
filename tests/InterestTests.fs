@@ -106,3 +106,85 @@ module InterestTests =
                 |> Array.concat
             actual |> should equal expected
 
+    module PromotionalRatesTests =
+
+        open Amortisation
+        open Calculation
+        open CustomerPayments
+        open FeesAndCharges
+        open PaymentSchedule
+
+        [<Fact>]
+        let ``Mortgage quote with a five-year fixed interest deal and a mortgage fee added to the loan`` () =
+            let sp = {
+                AsOfDate = Date(2024, 4, 11)
+                ScheduleType = ScheduleType.Original
+                StartDate = Date(2024, 4, 11)
+                Principal = 192_000_00L<Cent>
+                PaymentSchedule = RegularFixedSchedule [|
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentAmount = 1225_86L<Cent> }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentAmount = 1525_12L<Cent> }
+                |]
+                FeesAndCharges = {
+                    Fees = [| Fee.MortageFee <| Amount.Simple 999_00L<Cent> |]
+                    FeesAmortisation = Fees.FeeAmortisation.AmortiseBeforePrincipal
+                    FeesSettlementRefund = Fees.SettlementRefund.None
+                    Charges = [||]
+                    ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
+                    LatePaymentGracePeriod = 1<DurationDay>
+                }
+                Interest = {
+                    StandardRate = Rate.Annual <| Percent 7.985m
+                    Cap = Cap.none
+                    InitialGracePeriod = 3<DurationDay>
+                    PromotionalRates = [|
+                        { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
+                    |]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = RoundingOptions.recommended
+                    MinimumPayment = NoMinimumPayment
+                    PaymentTimeout = 3<DurationDay>
+                    NegativeInterestOption = DoNotApplyNegativeInterest
+                }
+            }
+
+            let actualPayments = [||]
+
+            let schedule =
+                actualPayments
+                |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+
+            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/PromotionalRatesTest001.md")
+
+            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+            let expected = ValueSome {
+                OffsetDate = Date(2044, 4, 11)
+                OffsetDay = 7305<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = ScheduledPaymentType.Original 1525_12L<Cent>
+                PaymentDue = 1523_25L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueNone
+                NetEffect = 1523_25L<Cent>
+                PaymentStatus = NotYetDue
+                BalanceStatus = ClosedBalance
+                NewInterest = 10_26.07665657m<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1512_99L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 10_26L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
+                ChargesBalance = 0L<Cent>
+                SettlementFigure = 1523_25L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
+            }
+            actual |> should equal expected
+

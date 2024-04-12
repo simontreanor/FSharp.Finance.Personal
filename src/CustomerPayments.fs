@@ -100,12 +100,20 @@ module CustomerPayments =
         /// no payment needed because the loan has already been settled
         | NoLongerRequired
 
+    /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
+    [<RequireQualifiedAccess; Struct>]
+    type RegularFixedSchedule = {
+        UnitPeriodConfig: UnitPeriod.Config
+        PaymentCount: int
+        PaymentAmount: int64<Cent>
+    }
+
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     [<Struct>]
     type CustomerPaymentSchedule =
         /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
         | RegularSchedule of UnitPeriodConfig: UnitPeriod.Config * PaymentCount: int
-        /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
-        | RegularFixedSchedule of FixedUnitPeriodConfig: UnitPeriod.Config * FixedPaymentCount: int * PaymentAmount: int64<Cent>
+        /// a regular schedule based on one or more unit-period configs each with a specific number of payments of a specified amount
+        | RegularFixedSchedule of RegularFixedSchedule array
         /// just a bunch of payments
         | IrregularSchedule of IrregularSchedule: CustomerPayment array
