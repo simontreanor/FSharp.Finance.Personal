@@ -53,9 +53,7 @@ let scheduleParameters =
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             RoundingOptions = RoundingOptions.recommended
             MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>
-            NegativeInterestOption = ApplyNegativeInterest
-        }
+            PaymentTimeout = 3<DurationDay>        }
     }
 
 let actualPayments = [|

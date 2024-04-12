@@ -53,7 +53,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -136,7 +135,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -219,7 +217,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -302,7 +299,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -381,7 +377,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -460,7 +455,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -543,7 +537,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = DoNotApplyNegativeInterest
             }
         }
 
@@ -624,7 +617,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = DoNotApplyNegativeInterest
             }
         }
 
@@ -706,7 +698,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -784,7 +775,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -870,7 +860,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -954,7 +943,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1031,7 +1019,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1113,7 +1100,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1194,7 +1180,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1275,7 +1260,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1356,7 +1340,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
         let actualPayments = [|
@@ -1438,7 +1421,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1520,7 +1502,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1602,7 +1583,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1684,7 +1664,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1731,7 +1710,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
         let actualPayments = [|
@@ -1781,7 +1759,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
         let actualPayments = [|
@@ -1831,7 +1808,6 @@ module QuoteTests =
                     RoundingOptions = RoundingOptions.recommended
                     PaymentTimeout = 0<DurationDay>
                     MinimumPayment = NoMinimumPayment
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -1881,7 +1857,6 @@ module QuoteTests =
                     RoundingOptions = RoundingOptions.recommended
                     PaymentTimeout = 0<DurationDay>
                     MinimumPayment = NoMinimumPayment
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -1929,7 +1904,6 @@ module QuoteTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 

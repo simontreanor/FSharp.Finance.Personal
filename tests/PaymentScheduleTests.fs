@@ -51,7 +51,6 @@ module PaymentScheduleTests =
                     RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -143,7 +142,6 @@ module PaymentScheduleTests =
                     RoundingOptions = { ChargesRounding = RoundDown; FeesRounding = RoundDown; InterestRounding = Round MidpointRounding.AwayFromZero; PaymentRounding = Round MidpointRounding.AwayFromZero }
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -1395,7 +1393,6 @@ module PaymentScheduleTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 

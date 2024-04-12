@@ -71,8 +71,6 @@ module PaymentSchedule =
         AprMethod: Apr.CalculationMethod
         /// which rounding method to use
         RoundingOptions: RoundingOptions
-        /// how to handle interest on negative principal balances
-        NegativeInterestOption: NegativeInterestOption
         /// the minimum payment that can be taken and how to handle it
         MinimumPayment: MinimumPayment
         /// the duration after which a pending payment is considered a missed payment

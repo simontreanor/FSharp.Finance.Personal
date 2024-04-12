@@ -54,7 +54,6 @@ let scheduleParameters =
             RoundingOptions = RoundingOptions.recommended
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
-            NegativeInterestOption = ApplyNegativeInterest
         }
     }
 let schedule = scheduleParameters |> calculate AroundZero

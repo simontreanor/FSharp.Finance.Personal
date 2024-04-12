@@ -204,7 +204,6 @@ module ActualPaymentTestsExtra =
                     RoundingOptions = ro
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
             |> applyPayments
@@ -257,7 +256,6 @@ module ActualPaymentTestsExtra =
                     RoundingOptions = ro
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
         )))))))))))))))
@@ -349,7 +347,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let actual =
@@ -426,7 +423,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let actual =
@@ -505,7 +501,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let originalFinalPaymentDay = paymentDays sp.StartDate sp.PaymentSchedule |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
@@ -518,8 +513,9 @@ module ActualPaymentTestsExtra =
                 let rp : RescheduleParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
                     FeesSettlement = Fees.SettlementRefund.ProRata
-                    PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent> } |]
-                    NegativeInterestOption = DoNotApplyNegativeInterest
+                    PaymentSchedule = RegularFixedSchedule [|
+                        { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent> } |]
+                    RateOnNegativeBalance = ValueNone
                     PromotionalInterestRates = [||]
                     ChargesHolidays = [||]
                     FutureSettlementDay = ValueNone
@@ -591,7 +587,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let actual =
@@ -668,7 +663,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let actual =
@@ -745,7 +739,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let actual =
@@ -824,7 +817,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let originalFinalPaymentDay = paymentDays sp.StartDate sp.PaymentSchedule |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
@@ -909,7 +901,6 @@ module ActualPaymentTestsExtra =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         })
         let originalFinalPaymentDay = paymentDays sp.StartDate sp.PaymentSchedule |> Array.tryLast |> Option.defaultValue 0<OffsetDay>

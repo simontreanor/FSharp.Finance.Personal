@@ -174,12 +174,12 @@ module Amortisation =
 
             let newInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
-                    match sp.Calculation.NegativeInterestOption with
-                    | ApplyNegativeInterest ->
+                    match sp.Interest.RateOnNegativeBalance with
+                    | ValueSome _ ->
                         dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
                         |> Array.map(fun dr -> { dr with InterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.defaultValue Interest.Rate.Zero })
                         |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                    | DoNotApplyNegativeInterest ->
+                    | ValueNone ->
                         0m<Cent>
                 else
                     dailyInterestRates si.OffsetDay ap.AppliedPaymentDay

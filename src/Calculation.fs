@@ -27,14 +27,6 @@ module Calculation =
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 
-    /// whether to apply interest on a negative balance (i.e. while a refund is owing)
-    [<Struct>]
-    type NegativeInterestOption =
-        /// apply negative interest (e.g. statutory interest on outstanding refunds)
-        | ApplyNegativeInterest
-        /// do not apply negative interest (e.g. if the customer has volutarily overpaid)
-        | DoNotApplyNegativeInterest
-
     /// holds the result of a devision, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {

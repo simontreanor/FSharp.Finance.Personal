@@ -148,7 +148,6 @@ module InterestTests =
                     RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = NoMinimumPayment
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = DoNotApplyNegativeInterest
                 }
             }
 

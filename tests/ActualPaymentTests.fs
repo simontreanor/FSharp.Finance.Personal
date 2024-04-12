@@ -86,7 +86,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -134,7 +133,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -182,7 +180,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -230,7 +227,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
  
@@ -302,7 +298,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -374,7 +369,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -451,7 +445,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -526,7 +519,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -602,7 +594,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -679,7 +670,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -755,7 +745,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -831,7 +820,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -909,7 +897,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -959,7 +946,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1032,7 +1018,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1082,7 +1067,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1133,7 +1117,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1185,7 +1168,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1237,7 +1219,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -1286,7 +1267,6 @@ module ActualPaymentTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 

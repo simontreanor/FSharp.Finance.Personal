@@ -87,7 +87,6 @@ module UnitPeriodConfigTests =
                         RoundingOptions = RoundingOptions.recommended
                         MinimumPayment = DeferOrWriteOff 50L<Cent>
                         PaymentTimeout = 3<DurationDay>
-                        NegativeInterestOption = ApplyNegativeInterest
                     }
                 }
             
@@ -165,7 +164,6 @@ module UnitPeriodConfigTests =
                     RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -230,7 +228,6 @@ module UnitPeriodConfigTests =
                     RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -324,7 +321,6 @@ module UnitPeriodConfigTests =
                     RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 
@@ -409,7 +405,6 @@ module UnitPeriodConfigTests =
                     RoundingOptions = RoundingOptions.recommended
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
-                    NegativeInterestOption = ApplyNegativeInterest
                 }
             }
 

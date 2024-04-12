@@ -48,7 +48,6 @@ module SettlementTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -126,7 +125,6 @@ module SettlementTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -204,7 +202,6 @@ module SettlementTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 

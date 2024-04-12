@@ -53,7 +53,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -105,7 +104,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -157,7 +155,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -211,7 +208,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -335,7 +331,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -453,7 +448,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -575,7 +569,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -630,7 +623,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -646,7 +638,7 @@ module EdgeCaseTests =
             PaymentSchedule = IrregularSchedule [|
                 { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
             |]
-            NegativeInterestOption = DoNotApplyNegativeInterest
+            RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargesHolidays = [||]
             FutureSettlementDay = ValueSome 88<OffsetDay>
@@ -713,7 +705,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
@@ -729,7 +720,7 @@ module EdgeCaseTests =
             PaymentSchedule = IrregularSchedule [|
                 { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
             |]
-            NegativeInterestOption = DoNotApplyNegativeInterest
+            RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargesHolidays = [||]
             FutureSettlementDay = ValueSome 88<OffsetDay>
@@ -796,7 +787,6 @@ module EdgeCaseTests =
                 RoundingOptions = RoundingOptions.recommended
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
-                NegativeInterestOption = ApplyNegativeInterest
             }
         }
 
