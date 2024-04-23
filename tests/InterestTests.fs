@@ -7,10 +7,16 @@ open FSharp.Finance.Personal
 
 module InterestTests =
 
+    open Calculation
     open Currency
     open DateDay
     open Interest
     open Percentages
+
+    let interestCapExample : Interest.Cap = {
+        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    }
 
     module RateTests =
 
@@ -60,7 +66,7 @@ module InterestTests =
 
         [<Fact>]
         let ``100% cap total on a €100 principal yields €100`` () =
-            let actual = Cap.example.Total |> Cap.total 100_00L<Cent>
+            let actual = interestCapExample.Total |> Cap.total 100_00L<Cent>
             let expected = 100_00m<Cent>
             actual |> should equal expected
 

@@ -51,7 +51,7 @@ let scheduleParameters =
         }
         Interest = {
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
-            Cap = Interest.Cap.example
+            Cap = interestCapExample
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = ValueNone

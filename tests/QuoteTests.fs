@@ -19,6 +19,11 @@ module QuoteTests =
     open Quotes
     open ValueOptionCE
 
+    let interestCapExample : Interest.Cap = {
+        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    }
+
     [<Fact>]
     let ``1) Settlement falling on a scheduled payment date`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
@@ -921,7 +926,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.798m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 1<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
@@ -996,7 +1001,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1076,7 +1081,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1155,7 +1160,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1234,7 +1239,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1313,7 +1318,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1393,7 +1398,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1473,7 +1478,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1553,7 +1558,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1633,7 +1638,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -1678,7 +1683,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -1726,7 +1731,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -1774,7 +1779,7 @@ module QuoteTests =
                 }
                 Interest = {
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = Interest.Cap.example
+                    Cap = interestCapExample
                     InitialGracePeriod = 0<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
@@ -1822,7 +1827,7 @@ module QuoteTests =
                 }
                 Interest = {
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = Interest.Cap.example
+                    Cap = interestCapExample
                     InitialGracePeriod = 0<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
@@ -1868,7 +1873,7 @@ module QuoteTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))

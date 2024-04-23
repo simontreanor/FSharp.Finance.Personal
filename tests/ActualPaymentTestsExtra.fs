@@ -22,6 +22,11 @@ module ActualPaymentTestsExtra =
     open Util
     open ValueOptionCE
 
+    let interestCapExample : Interest.Cap = {
+        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    }
+
     let asOfDate = Date(2023, 12, 1)
     let startDates = [| -90 .. 5 .. 90 |] |> Array.map (asOfDate.AddDays)
     let advanceAmounts = [| 100_00L<Cent> .. 50_00L<Cent> .. 2500_00L<Cent> |]
@@ -645,7 +650,7 @@ module ActualPaymentTestsExtra =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone

@@ -17,6 +17,11 @@ module FeesAndChargesTests =
     open Percentages
     open PaymentSchedule
 
+    let interestCapExample : Interest.Cap = {
+        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    }
+
     module ChargesTests =
 
         [<Fact>]
@@ -40,7 +45,7 @@ module FeesAndChargesTests =
                 }
                 Interest = {
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = Interest.Cap.example
+                    Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
@@ -120,7 +125,7 @@ module FeesAndChargesTests =
                 }
                 Interest = {
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = Interest.Cap.example
+                    Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
@@ -200,7 +205,7 @@ module FeesAndChargesTests =
                 }
                 Interest = {
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = Interest.Cap.example
+                    Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone

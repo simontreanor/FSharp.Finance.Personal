@@ -19,6 +19,11 @@ module SettlementTests =
     open Quotes
     open ValueOptionCE
 
+    let interestCapExample : Interest.Cap = {
+        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    }
+
     [<Fact>]
     let ``1) Final payment due on Friday: what would I pay if I paid it today?`` () =
         let sp = {
@@ -37,7 +42,7 @@ module SettlementTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -113,7 +118,7 @@ module SettlementTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -189,7 +194,7 @@ module SettlementTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone

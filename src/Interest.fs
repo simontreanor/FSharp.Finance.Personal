@@ -63,12 +63,6 @@ module Interest =
             Daily = ValueNone
         }
 
-        /// example settings
-        static member example = {
-            Total = ValueSome (Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-            Daily = ValueSome (Percentage (Percent 0.8m, ValueNone, ValueNone))
-        }
-
         /// calculates the total interest cap
         static member total (initialPrincipal: int64<Cent>) = function
             | ValueSome amount -> Amount.total initialPrincipal amount

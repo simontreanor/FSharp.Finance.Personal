@@ -18,6 +18,11 @@ module PaymentScheduleTests =
     open Percentages
     open ValueOptionCE
 
+    let interestCapExample : Interest.Cap = {
+        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    }
+
     module Biweekly =
         let biweeklyParameters principal offset =
             let startDate = Date(2023, 11, 15)
@@ -130,7 +135,7 @@ module PaymentScheduleTests =
                 }
                 Interest = {
                     StandardRate = Interest.Rate.Daily (Percent 0.798m)
-                    Cap = Interest.Cap.example
+                    Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
@@ -1380,7 +1385,7 @@ module PaymentScheduleTests =
             }
             Interest = {
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = Interest.Cap.example
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
