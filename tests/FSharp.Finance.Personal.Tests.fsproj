@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Util.fs" />
+    <Compile Include="FeesAndChargesTests.fs" />
     <Compile Include="InterestTests.fs" />
     <Compile Include="UnitPeriodConfigTests.fs" />
     <Compile Include="EdgeCaseTests.fs" />

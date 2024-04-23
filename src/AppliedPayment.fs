@@ -30,6 +30,8 @@ module AppliedPayment =
         PaymentStatus: CustomerPaymentStatus
     }
 
+    let aggregateCharges = Array.empty<Charge>
+
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
     let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Charge voption) chargesGrouping paymentTimeout actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else
@@ -42,6 +44,8 @@ module AppliedPayment =
                 | ActualPayment (ActualPaymentStatus.Pending ap) when isTimedOut -> { x with PaymentDetails = ActualPayment (ActualPaymentStatus.TimedOut ap) }
                 | _ -> x
             )
+
+        let mutable aggregateCharges = Array.empty<Charge>
 
         let payments =
             [| scheduledPayments; actualPayments |]
@@ -93,19 +97,28 @@ module AppliedPayment =
                             ap, Overpayment
                         | _, ap -> ap, PaymentMade
 
-                let groupCharges =
-                    match chargesGrouping with
-                    | OneChargeTypePerDay -> Array.groupBy id >> Array.map fst
-                    | AllChargesApplied -> id
-
                 let charges =
                     payments
                     |> Array.collect(_.PaymentDetails >> function ActualPayment (ActualPaymentStatus.Failed (_, c)) -> c | _ -> [||])
-                    |> groupCharges
-                    |> fun pcc ->
+                    |> fun cc ->
                         if latePaymentCharge.IsSome then
-                            pcc |> Array.append(match paymentStatus with MissedPayment | Underpayment -> [| latePaymentCharge.Value |] | _ -> [||])
-                        else pcc
+                            cc |> Array.append(match paymentStatus with MissedPayment | Underpayment -> [| latePaymentCharge.Value |] | _ -> [||])
+                        else cc
+                    |> fun cc ->
+                        match chargesGrouping with
+                        | OneChargeTypePerDay -> cc |> Array.groupBy id |> Array.map fst
+                        | OneChargeTypePerProduct ->
+                            cc
+                            |> Array.groupBy id
+                            |> Array.map fst
+                            |> Array.collect(fun c ->
+                                match aggregateCharges |> Array.tryFind((=) c) with
+                                | Some _ -> [||]
+                                | None ->
+                                    aggregateCharges <- aggregateCharges |> Array.append [| c |]
+                                    [| c |]
+                            )
+                        | AllChargesApplied -> cc
 
                 { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus }
             )

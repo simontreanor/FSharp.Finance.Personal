@@ -98,6 +98,8 @@ module FeesAndCharges =
     type ChargesGrouping =
         /// only one charge of any type may be applied per day
         | OneChargeTypePerDay
+        /// only one charge of any type may be applied per product
+        | OneChargeTypePerProduct
         /// all charges are applied
         | AllChargesApplied
 
