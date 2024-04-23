@@ -11,6 +11,7 @@ module Rescheduling =
     open Currency
     open DateDay
     open FeesAndCharges
+    open PaymentSchedule
     open ValueOptionCE
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
@@ -65,7 +66,6 @@ module Rescheduling =
             // configure the parameters for the new schedule
             let spNew =
                 { sp with
-                    ScheduleType = PaymentSchedule.ScheduleType.Rescheduled
                     PaymentSchedule = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> IrregularSchedule
                     FeesAndCharges =
                         { sp.FeesAndCharges with
@@ -84,7 +84,7 @@ module Rescheduling =
                 match rp.FutureSettlementDay with
                 | ValueSome futureSettlementDay -> IntendedPurpose.Quote (FutureSettlement futureSettlementDay)
                 | ValueNone -> IntendedPurpose.Statement
-            let! rescheduledSchedule = Amortisation.generate spNew intendedPurpose ScheduledPaymentType.Rescheduled actualPayments
+            let! rescheduledSchedule = Amortisation.generate spNew intendedPurpose ScheduleType.Rescheduled true actualPayments
             return quote.RevisedSchedule, rescheduledSchedule
         }
 
@@ -124,7 +124,6 @@ module Rescheduling =
             let spNew =
                 { sp with
                     StartDate = sp.AsOfDate
-                    ScheduleType = PaymentSchedule.ScheduleType.Rescheduled
                     Principal = principalPortion
                     PaymentSchedule = rp.PaymentSchedule
                     FeesAndCharges =
@@ -146,6 +145,6 @@ module Rescheduling =
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }
             // create the new amortiation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduledPaymentType.Original [||] // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
+            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduleType.Original true [||] // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
             return quote.RevisedSchedule, rescheduledSchedule
         }

@@ -6,6 +6,7 @@ module Quotes =
     open Calculation
     open Currency
     open CustomerPayments
+    open PaymentSchedule
     open ValueOptionCE
 
     [<Struct>]
@@ -30,8 +31,8 @@ module Quotes =
     /// <returns>the requested quote, if possible</returns>
     let getQuote quoteType sp (actualPayments: CustomerPayment array) =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original actualPayments
-            let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Quote quoteType) ScheduledPaymentType.Original actualPayments
+            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+            let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Quote quoteType) ScheduleType.Original false actualPayments
             let! si = revisedAmortisationSchedule.ScheduleItems |> Array.tryFind(_.GeneratedPayment.IsSome) |> toValueOption
             let confirmedPayments = si.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             let pendingPayments = si.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)

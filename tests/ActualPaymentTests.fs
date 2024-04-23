@@ -58,7 +58,6 @@ module ActualPaymentTests =
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
         let sp = {
             AsOfDate = Date(2023, 4, 1)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 26)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -93,7 +92,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest001.md")
 
@@ -105,7 +104,6 @@ module ActualPaymentTests =
     let ``2) Standard schedule with month-end payments from 32 days and paid off on time`` () =
         let sp = {
             AsOfDate = Date(2023, 4, 1)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 10, 29)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -140,7 +138,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest002.md")
 
@@ -152,7 +150,6 @@ module ActualPaymentTests =
     let ``3) Standard schedule with mid-monthly payments from 14 days and paid off on time`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 16)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -187,7 +184,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest003.md")
 
@@ -199,7 +196,6 @@ module ActualPaymentTests =
     let ``4) Made 2 payments on early repayment, then one single payment after the full balance is overdue`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 22)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -234,7 +230,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest004.md")
 
@@ -270,7 +266,6 @@ module ActualPaymentTests =
     let ``5) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 22)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -305,7 +300,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest005.md")
 
@@ -341,7 +336,6 @@ module ActualPaymentTests =
     let ``6) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 25)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -381,7 +375,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest006.md")
 
@@ -417,7 +411,6 @@ module ActualPaymentTests =
     let ``7) 0L<Cent>-day loan`` () =
         let sp = {
             AsOfDate = Date(2022, 11, 1)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -454,7 +447,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest007.md")
 
@@ -491,7 +484,6 @@ module ActualPaymentTests =
         let startDate = Date(2024, 10, 1).AddDays -56
         let sp = {
             AsOfDate = Date(2024, 10, 1)
-            ScheduleType = ScheduleType.Original
             StartDate = startDate
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -530,7 +522,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest008.md")
 
@@ -566,7 +558,6 @@ module ActualPaymentTests =
     let ``9) Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)`` () =
         let sp = {
             AsOfDate = Date(2023, 3, 25)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -606,7 +597,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest009.md")
 
@@ -642,7 +633,6 @@ module ActualPaymentTests =
     let ``10) Underpayment made should show scheduled payment as net effect while in grace period`` () =
         let sp = {
             AsOfDate = Date(2023, 1, 18)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -681,7 +671,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest010.md")
 
@@ -717,7 +707,6 @@ module ActualPaymentTests =
     let ``11) Underpayment made should show scheduled payment as underpayment after grace period has expired`` () =
         let sp = {
             AsOfDate = Date(2023, 1, 19)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -756,7 +745,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest011.md")
 
@@ -792,7 +781,6 @@ module ActualPaymentTests =
     let ``12) Settled loan`` () =
         let sp = {
             AsOfDate = Date(2034, 1, 31)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -833,7 +821,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest012.md")
 
@@ -869,7 +857,6 @@ module ActualPaymentTests =
     let ``13) Scheduled payment total can be less than principal when early actual payments are made but net effect is never less`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 7)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2024, 2, 2)
             Principal = 250_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -906,7 +893,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest013.md")
 
@@ -918,7 +905,6 @@ module ActualPaymentTests =
     let ``14) Something TH spotted`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 13)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 4, 30)
             Principal = 2500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -978,7 +964,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest014.md")
 
@@ -990,7 +976,6 @@ module ActualPaymentTests =
     let ``15) Large overpayment should not result in runaway fee refunds`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 13)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 4, 30)
             Principal = 2500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1027,7 +1012,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest015.md")
 
@@ -1039,7 +1024,6 @@ module ActualPaymentTests =
     let ``16) Large overpayment should not result in runaway fee refunds (2 actual payments)`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 13)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 4, 30)
             Principal = 2500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1077,7 +1061,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest016.md")
 
@@ -1089,7 +1073,6 @@ module ActualPaymentTests =
     let ``17) Large overpayment should not result in runaway fee refunds (3 actual payments)`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 13)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2022, 4, 30)
             Principal = 2500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1128,7 +1111,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest017.md")
 
@@ -1140,7 +1123,6 @@ module ActualPaymentTests =
     let ``18) Pending payments should only apply if not timed out`` () =
         let sp = {
             AsOfDate = Date(2024, 1, 30)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2024, 1, 1)
             Principal = 2500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1179,7 +1161,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest018.md")
 
@@ -1191,7 +1173,6 @@ module ActualPaymentTests =
     let ``19) Pending payments should only apply if not timed out`` () =
         let sp = {
             AsOfDate = Date(2024, 2, 1)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2024, 1, 1)
             Principal = 2500_00L<Cent>
             PaymentSchedule = RegularSchedule (
@@ -1230,7 +1211,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest019.md")
 
@@ -1242,7 +1223,6 @@ module ActualPaymentTests =
     let ``20) Generated settlement figure is correct`` () =
         let sp = {
             AsOfDate = Date(2024, 3, 2)
-            ScheduleType = ScheduleType.Original
             StartDate = Date(2023, 8, 20)
             Principal = 250_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 9, 5), 4)
@@ -1279,7 +1259,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ScheduledPaymentType.Original
+            |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest020.md")
 

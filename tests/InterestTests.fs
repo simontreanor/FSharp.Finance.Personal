@@ -118,7 +118,6 @@ module InterestTests =
         let ``Mortgage quote with a five-year fixed interest deal and a mortgage fee added to the loan`` () =
             let sp = {
                 AsOfDate = Date(2024, 4, 11)
-                ScheduleType = ScheduleType.Original
                 StartDate = Date(2024, 4, 11)
                 Principal = 192_000_00L<Cent>
                 PaymentSchedule = RegularFixedSchedule [|
@@ -155,7 +154,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduledPaymentType.Original
+                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
             schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/PromotionalRatesTest001.md")
 

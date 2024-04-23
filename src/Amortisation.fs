@@ -528,7 +528,7 @@ module Amortisation =
         }
 
     /// generates an amortisation schedule and final statistics
-    let generate sp intendedPurpose scheduledPaymentType actualPayments =
+    let generate sp intendedPurpose scheduleType trimEnd actualPayments =
         let payments =
             match sp.PaymentSchedule with
             | RegularSchedule _ ->
@@ -540,7 +540,7 @@ module Amortisation =
                     |> Array.map(fun si -> {
                         PaymentDay = si.Day
                         PaymentDetails =
-                            match sp.ScheduleType with
+                            match scheduleType with
                             | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original si.Payment.Value)
                             | ScheduleType.Rescheduled -> ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value)
                     })
@@ -554,7 +554,7 @@ module Amortisation =
                         {
                             PaymentDay = OffsetDay.fromDate sp.AsOfDate d
                             PaymentDetails =
-                                match sp.ScheduleType with
+                                match scheduleType with
                                 | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original rfs.PaymentAmount)
                                 | ScheduleType.Rescheduled -> ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount)
                         }
@@ -572,6 +572,6 @@ module Amortisation =
         payments
         |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose
-        |> Array.trimEnd(fun si -> match sp.ScheduleType with ScheduleType.Rescheduled when si.PaymentStatus = NoLongerRequired -> true | _ -> false) // remove extra items from rescheduling
+        |> Array.trimEnd(fun si -> trimEnd && si.PaymentStatus = NoLongerRequired) // remove extra items from rescheduling
         |> calculateStats sp intendedPurpose
         |> ValueSome

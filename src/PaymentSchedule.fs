@@ -90,8 +90,6 @@ module PaymentSchedule =
     type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
         AsOfDate: Date
-        /// the type of schedule, whether it is an original schedule or a reschedule
-        ScheduleType: ScheduleType
         /// the start date of the schedule, typically the day on which the principal is advanced
         StartDate: Date
         /// the principal

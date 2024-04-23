@@ -62,7 +62,6 @@ module UnitPeriodConfigTests =
         let ``1) Irregular payment schedule does not break detect function`` () =
             let sp = {
                     AsOfDate = Date(2024, 3, 5)
-                    ScheduleType = ScheduleType.Original
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
                     PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 5, 13)), 12)
@@ -139,7 +138,6 @@ module UnitPeriodConfigTests =
         let ``2) Irregular payment schedule does not break APR calculation`` () =
             let sp = {
                 AsOfDate = Date(2024, 3, 5)
-                ScheduleType = ScheduleType.Original
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 4, 20)), 12)
@@ -203,7 +201,6 @@ module UnitPeriodConfigTests =
         let ``3) Irregular payment schedule does not break APR calculation`` () =
             let sp = {
                 AsOfDate = Date(2024, 3, 5)
-                ScheduleType = ScheduleType.Original
                 StartDate = Date(2023, 1, 20)
                 Principal = 65000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 2, 2)), 11)
@@ -296,7 +293,6 @@ module UnitPeriodConfigTests =
         let ``4) Irregular payment schedule does not break APR calculation`` () =
             let sp = {
                 AsOfDate = Date(2024, 3, 5)
-                ScheduleType = ScheduleType.Original
                 StartDate = Date(2022, 10, 13)
                 Principal = 50000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 10, 28)), 11)
@@ -380,7 +376,6 @@ module UnitPeriodConfigTests =
 
             let sp = {
                 AsOfDate = startDate
-                ScheduleType = ScheduleType.Original
                 StartDate = startDate
                 Principal = 100000L<Cent>
                 PaymentSchedule = IrregularSchedule originalScheduledPayments
@@ -640,7 +635,6 @@ module UnitPeriodConfigTests =
                     let quoteSp =
                         { sp with
                             AsOfDate = Date(2024, 3, 6)
-                            ScheduleType = ScheduleType.Rescheduled
                             PaymentSchedule =
                                 [|
                                     originalScheduledPayments
