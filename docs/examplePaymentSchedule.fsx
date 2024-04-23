@@ -33,7 +33,6 @@ open Percentages
 let scheduleParameters =
     {
         AsOfDate = Date(2024, 02, 07)
-        ScheduleType = ScheduleType.Original
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
         PaymentSchedule = RegularSchedule (

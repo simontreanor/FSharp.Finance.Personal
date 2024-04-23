@@ -33,7 +33,6 @@ open Percentages
 let scheduleParameters =
     {
         AsOfDate = Date(2023, 4, 1)
-        ScheduleType = ScheduleType.Original
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
         PaymentSchedule = RegularSchedule (
@@ -51,7 +50,10 @@ let scheduleParameters =
         }
         Interest = {
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
-            Cap = interestCapExample
+            Cap = {
+                Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+                Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+            }
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = ValueNone
@@ -74,7 +76,7 @@ let actualPayments = [|
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ScheduleType.Original
+    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ScheduleType.Original false
 
 amortisationSchedule
 
