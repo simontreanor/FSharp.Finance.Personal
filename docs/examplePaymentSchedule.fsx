@@ -79,6 +79,6 @@ let html =
     |> ValueOption.map (_.Items >> Formatting.generateHtmlFromArray None)
     |> ValueOption.defaultValue ""
 
-html
+$"""<div style="overflow-x: auto;">{html}</div>"""
 
 (*** include-it-raw ***)
