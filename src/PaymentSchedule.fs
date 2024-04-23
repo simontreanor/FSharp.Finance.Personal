@@ -82,8 +82,8 @@ module PaymentSchedule =
     type ScheduleType =
         /// an original schedule
         | Original
-        /// a schedule based on a previous one; the original final payment day is carried over to ensure any pro-rating is based on the original schedule
-        | Rescheduled of OriginalFinalPaymentDay: int<OffsetDay>
+        /// a schedule based on a previous one
+        | Rescheduled
 
     /// parameters for creating a payment schedule
     [<Struct>]

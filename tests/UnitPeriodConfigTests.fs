@@ -69,7 +69,7 @@ module UnitPeriodConfigTests =
                     FeesAndCharges = {
                         Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                         FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                        FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                        FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                         Charges = [||]
                         ChargesHolidays = [||]
                         ChargesGrouping = OneChargeTypePerDay
@@ -146,7 +146,7 @@ module UnitPeriodConfigTests =
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                    FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                    FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -210,7 +210,7 @@ module UnitPeriodConfigTests =
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                    FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                    FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -303,7 +303,7 @@ module UnitPeriodConfigTests =
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                    FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                    FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -387,7 +387,7 @@ module UnitPeriodConfigTests =
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                    FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                    FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                     Charges = [||]
                     ChargesHolidays = [||]
                     ChargesGrouping = OneChargeTypePerDay
@@ -640,7 +640,7 @@ module UnitPeriodConfigTests =
                     let quoteSp =
                         { sp with
                             AsOfDate = Date(2024, 3, 6)
-                            ScheduleType = ScheduleType.Rescheduled originalFinalPaymentDay
+                            ScheduleType = ScheduleType.Rescheduled
                             PaymentSchedule =
                                 [|
                                     originalScheduledPayments
@@ -655,6 +655,13 @@ module UnitPeriodConfigTests =
                                 |]
                                 |> Array.concat
                                 |> IrregularSchedule
+                            FeesAndCharges =
+                                { sp.FeesAndCharges with
+                                    FeesSettlementRefund =
+                                        match sp.FeesAndCharges.FeesSettlementRefund with
+                                        | Fees.SettlementRefund.ProRata _ -> Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
+                                        | _ as fsr -> fsr
+                                }
                         }
                     let! quote = getQuote Settlement quoteSp actualPayments
                     let title = "5) Checking that the fees refund behaves correctly"

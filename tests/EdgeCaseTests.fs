@@ -35,7 +35,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -86,7 +86,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -137,7 +137,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -190,7 +190,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -313,7 +313,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -430,7 +430,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -551,7 +551,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -605,7 +605,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -632,9 +632,10 @@ module EdgeCaseTests =
             { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
         |]
 
+        let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
+
         let (rp: RescheduleParameters) = {
-            OriginalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
-            FeesSettlement = Fees.SettlementRefund.ProRata
+            FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = IrregularSchedule [|
                 { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
             |]
@@ -687,7 +688,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay
@@ -714,9 +715,10 @@ module EdgeCaseTests =
             { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
         |]
 
+        let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
+
         let (rp: RescheduleParameters) = {
-            OriginalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
-            FeesSettlement = Fees.SettlementRefund.ProRata
+            FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = IrregularSchedule [|
                 { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
             |]
@@ -769,7 +771,7 @@ module EdgeCaseTests =
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
                 Charges = [||]
                 ChargesHolidays = [||]
                 ChargesGrouping = OneChargeTypePerDay

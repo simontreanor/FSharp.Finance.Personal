@@ -311,13 +311,13 @@ module Amortisation =
                 match sp.FeesAndCharges.FeesSettlementRefund with
                 | Fees.SettlementRefund.None ->
                     0L<Cent>
-                | Fees.SettlementRefund.ProRata ->
-                    match sp.ScheduleType with
-                    | ScheduleType.Original ->
+                | Fees.SettlementRefund.ProRata originalFinalPaymentDay ->
+                    match originalFinalPaymentDay with
+                    | ValueNone ->
                         let originalFinalPaymentDay = sp.PaymentSchedule |> paymentDays sp.StartDate |> Array.vTryLastBut 0 |> ValueOption.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
-                    | ScheduleType.Rescheduled originalFinalPaymentDay ->
-                        calculateFees originalFinalPaymentDay
+                    | ValueSome ofpd ->
+                        calculateFees ofpd
                 | Fees.SettlementRefund.Balance ->
                     a.CumulativeFees
 
@@ -542,7 +542,7 @@ module Amortisation =
                         PaymentDetails =
                             match sp.ScheduleType with
                             | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original si.Payment.Value)
-                            | ScheduleType.Rescheduled _ -> ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value)
+                            | ScheduleType.Rescheduled -> ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value)
                     })
                 | ValueNone ->
                     [||]
@@ -556,7 +556,7 @@ module Amortisation =
                             PaymentDetails =
                                 match sp.ScheduleType with
                                 | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original rfs.PaymentAmount)
-                                | ScheduleType.Rescheduled _ -> ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount)
+                                | ScheduleType.Rescheduled -> ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount)
                         }
                     )
                 )
@@ -572,6 +572,6 @@ module Amortisation =
         payments
         |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose
-        |> Array.trimEnd(fun si -> match sp.ScheduleType with ScheduleType.Rescheduled _ when si.PaymentStatus = NoLongerRequired -> true | _ -> false) // remove extra items from rescheduling
+        |> Array.trimEnd(fun si -> match sp.ScheduleType with ScheduleType.Rescheduled when si.PaymentStatus = NoLongerRequired -> true | _ -> false) // remove extra items from rescheduling
         |> calculateStats sp intendedPurpose
         |> ValueSome

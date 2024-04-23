@@ -46,8 +46,8 @@ module FeesAndCharges =
         type SettlementRefund =
             /// fees are due in full with no discount or refund
             | None
-            /// fees are refunded proportionately to the number of days elapsed in the current schedule
-            | ProRata
+            /// fees are refunded proportionately to the number of days elapsed in the current schedule, based on the original final payment day
+            | ProRata of OriginalFinalPaymentDay: int<OffsetDay> voption
             /// the current fee balance is refunded
             | Balance
 
