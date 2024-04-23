@@ -18,16 +18,22 @@ The following example shows the scheduled for a car loan of £10,000 taken out o
 
 *)
 
-#r "nuget:FSharp.Finance.Personal, 0.14.1"
+#r "nuget:FSharp.Finance.Personal"
 
-open System
 open FSharp.Finance.Personal
+open ArrayExtension
+open Calculation
+open Currency
 open CustomerPayments
+open DateDay
+open FeesAndCharges
 open PaymentSchedule
+open Percentages
 
 let scheduleParameters =
     {
         AsOfDate = Date(2024, 02, 07)
+        ScheduleType = ScheduleType.Original
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
         PaymentSchedule = RegularSchedule (
@@ -36,17 +42,18 @@ let scheduleParameters =
         )
         FeesAndCharges = {
             Fees = [||]
-            FeesSettlement = Fees.Settlement.DueInFull
+            FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+            FeesSettlementRefund = Fees.SettlementRefund.None
             Charges = [||]
             ChargesHolidays = [||]
             ChargesGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {
-            Rate = Interest.Rate.Annual (Percent 6.9m)
+            StandardRate = Interest.Rate.Annual (Percent 6.9m)
             Cap = Interest.Cap.none
             InitialGracePeriod = 0<DurationDay>
-            Holidays = [||]
+            PromotionalRates = [||]
             RateOnNegativeBalance = ValueNone
         }
         Calculation = {
@@ -56,7 +63,9 @@ let scheduleParameters =
             PaymentTimeout = 3<DurationDay>
         }
     }
+    
 let schedule = scheduleParameters |> calculate AroundZero
+
 schedule
 
 (*** include-it ***)
@@ -69,6 +78,7 @@ let html =
     schedule
     |> ValueOption.map (_.Items >> Formatting.generateHtmlFromArray None)
     |> ValueOption.defaultValue ""
+
 html
 
 (*** include-it-raw ***)

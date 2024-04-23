@@ -22,9 +22,13 @@ The following example shows a loan of £500.00 taken out on 10th October 2012 an
 
 open FSharp.Finance.Personal
 open Apr
+open Currency
+open DateDay
 
 let startDate = Date(2012, 10, 10)
+
 let principal = 500_00L<Cent>
+
 let transfers = [|
     { TransferType = Payment; TransferDate = Date(2012, 11, 10); Amount = 270_00L<Cent> }
     { TransferType = Payment; TransferDate = Date(2012, 12, 10); Amount = 270_00L<Cent> }

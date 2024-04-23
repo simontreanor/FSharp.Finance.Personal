@@ -22,10 +22,14 @@ The following example shows a loan of $5,000.00 taken out on 10th January 1978 a
 
 open FSharp.Finance.Personal
 open Apr
+open Currency
+open DateDay
 open UnitPeriod
 
 let startDate = Date(1978, 1, 10)
+
 let principal = 5000_00L<Cent>
+
 let transfers =
     Monthly (1, 1978, 2, 10)
     |> generatePaymentSchedule 24 Direction.Forward
@@ -34,6 +38,7 @@ let transfers =
 let aprMethod = CalculationMethod.UsActuarial 4
 
 let solution = Apr.calculate aprMethod principal startDate transfers
+
 solution
 
 (*** include-it ***)

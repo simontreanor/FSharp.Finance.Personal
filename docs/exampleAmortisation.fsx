@@ -19,15 +19,21 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 *)
 
-#r "nuget:FSharp.Finance.Personal, 0.10.0"
+#r "nuget:FSharp.Finance.Personal"
 
 open FSharp.Finance.Personal
+open Calculation
+open Currency
 open CustomerPayments
+open DateDay
+open FeesAndCharges
 open PaymentSchedule
+open Percentages
 
 let scheduleParameters =
     {
         AsOfDate = Date(2023, 4, 1)
+        ScheduleType = ScheduleType.Original
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
         PaymentSchedule = RegularSchedule (
@@ -36,37 +42,40 @@ let scheduleParameters =
         )
         FeesAndCharges = {
             Fees = [||]
-            FeesSettlement = Fees.Settlement.ProRataRefund
+            FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+            FeesSettlementRefund = Fees.SettlementRefund.ProRata
             Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
             ChargesHolidays = [||]
             ChargesGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {
-            Rate = Interest.Rate.Daily (Percent 0.8m)
-            Cap = Interest.Cap.ukFca
+            StandardRate = Interest.Rate.Daily (Percent 0.8m)
+            Cap = Interest.Cap.example
             InitialGracePeriod = 3<DurationDay>
-            Holidays = [||]
+            PromotionalRates = [||]
             RateOnNegativeBalance = ValueNone
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             RoundingOptions = RoundingOptions.recommended
             MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>        }
+            PaymentTimeout = 3<DurationDay>
+        }
     }
 
 let actualPayments = [|
-    { PaymentDay =  4<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 35<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 66<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 94<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPayment.Confirmed 456_84L<Cent>) }
+    { PaymentDay =  4<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 35<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 94<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
+    { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>) }
 |]
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ValueNone
+    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ScheduledPaymentType.Original
+
 amortisationSchedule
 
 (*** include-it ***)
@@ -79,7 +88,7 @@ let html =
     amortisationSchedule
     |> ValueOption.map (_.ScheduleItems >> Formatting.generateHtmlFromArray None)
     |> ValueOption.defaultValue ""
+
 html
 
 (*** include-it-raw ***)
-
