@@ -37,8 +37,8 @@ let scheduleParameters =
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
         PaymentSchedule = RegularSchedule (
-	        UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7),
-	        PaymentCount = 36
+            UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7),
+            PaymentCount = 36
         )
         FeesAndCharges = {
             Fees = [||]
