@@ -7,10 +7,14 @@ open FSharp.Finance.Personal
 
 module InterestTests =
 
+    open Amortisation
     open Calculation
     open Currency
+    open CustomerPayments
     open DateDay
+    open FeesAndCharges
     open Interest
+    open PaymentSchedule
     open Percentages
 
     let interestCapExample : Interest.Cap = {
@@ -69,6 +73,96 @@ module InterestTests =
             let actual = interestCapExample.Total |> Cap.total 100_00L<Cent>
             let expected = 100_00m<Cent>
             actual |> should equal expected
+
+        [<Fact>]
+        let ``1) Total interest in amortised schedule does not exceed interest cap`` () =
+            let sp = {
+                AsOfDate = Date(2024, 4, 25)
+                StartDate = Date(2023, 2, 9)
+                Principal = 499_00L<Cent>
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14),
+                    PaymentCount = 4
+                )
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                    FeesSettlementRefund = Fees.SettlementRefund.None
+                    Charges = [||]
+                    ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
+                    LatePaymentGracePeriod = 0<DurationDay>
+                }
+                Interest = {
+                    StandardRate = Rate.Daily (Percent 0.8m)
+                    Cap = interestCapExample
+                    InitialGracePeriod = 3<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = RoundingOptions.recommended
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
+                }
+            }
+
+            let actualPayments = [||]
+
+            let schedule =
+                actualPayments
+                |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ScheduleType.Original false
+
+            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestCapTest001.md")
+
+            let interestPortion = schedule |> ValueOption.map (_.ScheduleItems >> Array.last >> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            interestPortion |> should be (lessThanOrEqualTo 499_00L<Cent>)
+
+        [<Fact>]
+        let ``2) Total interest in amortised schedule does not exceed interest cap, using unrounded percentages`` () =
+            let sp = {
+                AsOfDate = Date(2024, 4, 25)
+                StartDate = Date(2023, 2, 9)
+                Principal = 499_00L<Cent>
+                PaymentSchedule = RegularSchedule (
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14),
+                    PaymentCount = 4
+                )
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                    FeesSettlementRefund = Fees.SettlementRefund.None
+                    Charges = [||]
+                    ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
+                    LatePaymentGracePeriod = 0<DurationDay>
+                }
+                Interest = {
+                    StandardRate = Rate.Daily (Percent 0.876m)
+                    Cap = { interestCapExample with Total = ValueSome (Amount.Percentage (Percent 123.45m, ValueNone, ValueSome RoundDown)) }
+                    InitialGracePeriod = 3<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = RoundingOptions.recommended
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
+                }
+            }
+
+            let actualPayments = [||]
+
+            let schedule =
+                actualPayments
+                |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ScheduleType.Original false
+
+            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestCapTest002.md")
+
+            let interestPortion = schedule |> ValueOption.map (_.ScheduleItems >> Array.last >> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            interestPortion |> should be (lessThanOrEqualTo 616_01L<Cent>)
 
     module DailyRatesTests =
 

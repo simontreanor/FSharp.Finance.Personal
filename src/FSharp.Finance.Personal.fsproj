@@ -33,7 +33,7 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>FSharp.Finance.Personal</PackageId>
-    <Version>0.14.2</Version>
+    <Version>0.14.3</Version>
     <Authors>Simon Treanor</Authors>
     <PackageDescription>F# Personal Finance Library</PackageDescription>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>

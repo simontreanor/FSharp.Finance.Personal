@@ -359,7 +359,6 @@ module Amortisation =
 
             let interestBalance = si.InterestBalance + cappedNewInterest - Cent.toDecimalCent (roundedInterestPortion - roundedCarriedInterest)
             let roundedInterestBalance = interestBalance |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-            let interestRoundingDifference = interestBalance - Cent.toDecimalCent roundedInterestBalance
 
             let settlementItem () =
                 let paymentStatus =
@@ -395,9 +394,9 @@ module Amortisation =
                     ChargesBalance = 0L<Cent>
                     SettlementFigure = generatedSettlementPayment'
                     FeesRefundIfSettled = feesRefundIfSettled
-                }, generatedSettlementPayment'
+                }, generatedSettlementPayment', 0m<Cent>
 
-            let scheduleItem, generatedPayment =
+            let scheduleItem, generatedPayment, interestRoundingDifference =
                 match ap.GeneratedPayment, intendedPurpose with
                 | ValueSome _, IntendedPurpose.Quote Settlement ->
                     settlementItem ()
@@ -434,6 +433,8 @@ module Amortisation =
                         else
                             generatedSettlementPayment - netEffect'
 
+                    let interestPortion' = roundedInterestPortion - roundedCarriedInterest
+
                     {
                         OffsetDate = offsetDate
                         OffsetDay = ap.AppliedPaymentDay
@@ -449,7 +450,7 @@ module Amortisation =
                         NewCharges = incurredCharges
                         PrincipalPortion = principalPortion'
                         FeesPortion = feesPortion'
-                        InterestPortion = roundedInterestPortion - roundedCarriedInterest
+                        InterestPortion = interestPortion'
                         ChargesPortion = chargesPortion - carriedCharges
                         FeesRefund = feesRefund'
                         PrincipalBalance = principalBalance'
@@ -458,7 +459,7 @@ module Amortisation =
                         ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                         SettlementFigure = if paymentStatus = NoLongerRequired then 0L<Cent> else generatedSettlementPayment'
                         FeesRefundIfSettled = if paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
-                    }, 0L<Cent>
+                    }, 0L<Cent>, if interestPortion' = 0L<Cent> then 0m<Cent> else interestBalance - Cent.toDecimalCent roundedInterestBalance
 
             let accumulator'' =
                 { accumulator' with
