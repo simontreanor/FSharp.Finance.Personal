@@ -19,4 +19,5 @@ none of which are conferred by the use of this library.
 
 Note: this is a work in progress so breaking changes can happen at any time while in version 0.
 
-https://www.nuget.org/packages/FSharp.Finance.Personal/
+NuGet package: https://www.nuget.org/packages/FSharp.Finance.Personal/
+Documentation: https://simontreanor.github.io/FSharp.Finance.Personal/
