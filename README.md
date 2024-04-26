@@ -8,6 +8,7 @@ and interest calculations for things like mortgages, loans, hire purchases, debt
 Initial features:
 
 > APR calculation
+
 > amortisation
 
 This library operates partially in area where business is regulated by various regulators.
