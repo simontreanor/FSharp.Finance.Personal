@@ -25,7 +25,7 @@ module AprUsActuarialTests =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
         let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> UnitPeriod.generatePaymentSchedule paymentCount Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = payment })
+        let payments = intervalSchedule |> UnitPeriod.generatePaymentSchedule paymentCount ValueNone Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = payment })
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
@@ -64,7 +64,7 @@ module AprUsActuarialTests =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
         let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = regularPaymentAmount })
+        let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount ValueNone Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = regularPaymentAmount })
         let payments' = Array.concat [| [| firstPayment |]; payments |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
@@ -88,7 +88,7 @@ module AprUsActuarialTests =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
         let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = regularPaymentAmount })
+        let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount ValueNone Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = regularPaymentAmount })
         let payments' = Array.concat [| payments; [| lastPayment |] |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
@@ -112,7 +112,7 @@ module AprUsActuarialTests =
         let consummationDate = advanceDate
         let firstFinanceChargeEarnedDate = consummationDate
         let advances = [| { TransferType = Advance; TransferDate = consummationDate; Amount = advanceAmount } |]
-        let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = regularPaymentAmount })
+        let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount ValueNone Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = regularPaymentAmount })
         let payments' = Array.concat [| [| firstPayment |]; payments; [| lastPayment |] |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
         |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2

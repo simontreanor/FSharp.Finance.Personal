@@ -121,10 +121,10 @@ module PaymentSchedule =
                     if startDate > unitPeriodConfigStartDate then
                         [||]
                     else
-                        generatePaymentSchedule rfs.PaymentCount Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+                        generatePaymentSchedule rfs.PaymentCount ValueNone Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
             )
             |> Array.concat
-        | RegularSchedule (unitPeriodConfig, paymentCount) ->
+        | RegularSchedule (unitPeriodConfig, paymentCount, maxDuration) ->
             if paymentCount = 0 then
                 [||]
             else
@@ -132,7 +132,7 @@ module PaymentSchedule =
                 if startDate > unitPeriodConfigStartDate then
                     [||]
                 else
-                    generatePaymentSchedule paymentCount Direction.Forward unitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+                    generatePaymentSchedule paymentCount maxDuration Direction.Forward unitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
 
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =

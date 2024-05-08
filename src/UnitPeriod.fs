@@ -196,14 +196,14 @@ module UnitPeriod =
             | invalidConfig -> fix invalidConfig
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
-    let maxPaymentCount (maxLoanLength: int<DurationDay>) (startDate: Date) (config: Config) =
+    let maxPaymentCount (maxDuration: int<DurationDay>) (config: Config) (startDate: Date) =
         let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<DurationDay>
         match config with
-        | Single d -> maxLoanLength - offset d.Year d.Month d.Day
-        | Daily d -> maxLoanLength - offset d.Year d.Month d.Day
-        | Weekly (multiple, d) when multiple > 0 -> (maxLoanLength - offset d.Year d.Month d.Day) / (multiple * 7)
-        | SemiMonthly (y, m, d1, _) -> (maxLoanLength - offset y m (int d1)) / 15
-        | Monthly (multiple, y, m, d) when multiple > 0 -> (maxLoanLength - offset y m (int d)) / (multiple * 30)
+        | Single d -> maxDuration - offset d.Year d.Month d.Day
+        | Daily d -> maxDuration - offset d.Year d.Month d.Day
+        | Weekly (multiple, d) when multiple > 0 -> (maxDuration - offset d.Year d.Month d.Day) / (multiple * 7)
+        | SemiMonthly (y, m, d1, _) -> (maxDuration - offset y m (int d1)) / 15
+        | Monthly (multiple, y, m, d) when multiple > 0 -> (maxDuration - offset y m (int d)) / (multiple * 30)
         | _ -> 0<DurationDay>
         |> int
 
@@ -216,8 +216,12 @@ module UnitPeriod =
         | Reverse
 
     /// generate a payment schedule based on a unit-period config
-    let generatePaymentSchedule count direction unitPeriodConfig =
+    let generatePaymentSchedule count maxDuration direction unitPeriodConfig =
         if count = 0 then [||] else
+        let limitedCount =
+            match maxDuration with
+            | ValueSome { Duration.Length = d; Duration.FromDate = fd } -> maxPaymentCount d unitPeriodConfig fd
+            | ValueNone -> count
         let adjustMonthEnd (monthEndTrackingDay: int) (d: Date) =
             if d.Day > 15 && monthEndTrackingDay > 28 then
                 TrackingDay.toDate d.Year d.Month monthEndTrackingDay
@@ -237,13 +241,13 @@ module UnitPeriod =
                     startDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
                     startDate.AddMonths (c + offset) |> fun d -> TrackingDay.toDate d.Year d.Month td2 |> adjustMonthEnd monthEndTrackingDay
                 |])
-                >> Array.take count
+                >> Array.take limitedCount
             | Monthly (multiple, year, month, td) ->
                 let startDate = TrackingDay.toDate year month td
                 Array.map (fun c -> startDate.AddMonths (c * multiple) |> adjustMonthEnd td)
         match direction with
-        | Direction.Forward -> [| 0 .. (count - 1) |] |> generate unitPeriodConfig
-        | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |] |> generate unitPeriodConfig |> Array.sort
+        | Direction.Forward -> [| 0 .. (limitedCount - 1) |] |> generate unitPeriodConfig
+        | Direction.Reverse -> [| 0 .. -1 .. -(limitedCount - 1) |] |> generate unitPeriodConfig |> Array.sort
 
     /// for a given interval and array of dates, devise the unit-period config
     let detect direction interval (transferDates: Date array) =

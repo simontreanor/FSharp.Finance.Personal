@@ -550,7 +550,7 @@ module Amortisation =
             | RegularFixedSchedule regularFixedSchedules ->
                 regularFixedSchedules
                 |> Array.map(fun rfs ->
-                    UnitPeriod.generatePaymentSchedule rfs.PaymentCount UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
+                    UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
                     |> Array.map(fun d ->
                         {
                             PaymentDay = OffsetDay.fromDate sp.AsOfDate d

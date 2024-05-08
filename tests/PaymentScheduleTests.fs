@@ -32,7 +32,8 @@ module PaymentScheduleTests =
                 Principal = principal
                 PaymentSchedule = RegularSchedule (
                     UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(int offset)),
-                    PaymentCount = 11
+                    PaymentCount = 11,
+                    MaxDuration = ValueNone
                 )
                 FeesAndCharges = {
                     Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
@@ -122,7 +123,8 @@ module PaymentScheduleTests =
                 Principal = principal
                 PaymentSchedule = RegularSchedule (
                     UnitPeriodConfig = (startDate.AddDays(int offset) |> fun d -> UnitPeriod.Monthly(1, d.Year, d.Month, d.Day * 1)),
-                    PaymentCount = paymentCount
+                    PaymentCount = paymentCount,
+                    MaxDuration = ValueNone
                 )
                 FeesAndCharges = {
                     Fees = [||]
@@ -1372,7 +1374,8 @@ module PaymentScheduleTests =
             Principal = 300_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Daily(Date(2023, 1, 3)),
-                PaymentCount = 1
+                PaymentCount = 1,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [||]
@@ -1406,4 +1409,94 @@ module PaymentScheduleTests =
             }
 
         let expected = ValueSome (336_00L<Cent>, 336_00L<Cent>)
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``2) Term must not exceed maximum duration`` () =
+        let sp = {
+            AsOfDate = Date(2024, 5, 8)
+            StartDate = Date(2024, 5, 8)
+            Principal = 1000_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 8),
+                PaymentCount = 7,
+                MaxDuration = ValueSome { Length = 183<DurationDay>; FromDate = Date(2024, 5, 8) }
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 3<DurationDay>
+            }
+            Interest = {
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = interestCapExample
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = RoundingOptions.recommended
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
+        let actual =
+            voption {
+                let! schedule = sp |> calculate BelowZero
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule002.md"
+                return schedule.LevelPayment, schedule.FinalPayment
+            }
+
+        let expected = ValueSome (269_20L<Cent>, 269_11L<Cent>)
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``3) Term must not exceed maximum duration`` () =
+        let sp = {
+            AsOfDate = Date(2024, 5, 8)
+            StartDate = Date(2024, 5, 8)
+            Principal = 1000_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 8),
+                PaymentCount = 7,
+                MaxDuration = ValueSome { Length = 184<DurationDay>; FromDate = Date(2024, 5, 8) }
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
+                Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 3<DurationDay>
+            }
+            Interest = {
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = interestCapExample
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = RoundingOptions.recommended
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
+        let actual =
+            voption {
+                let! schedule = sp |> calculate BelowZero
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule003.md"
+                return schedule.LevelPayment, schedule.FinalPayment
+            }
+
+        let expected = ValueSome (251_08L<Cent>, 250_99L<Cent>)
         actual |> should equal expected

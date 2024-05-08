@@ -38,6 +38,12 @@ module DateDay =
     /// a duration of a number of days
     [<Measure>] type DurationDay
 
+    [<RequireQualifiedAccess; Struct>]
+    type Duration = {
+        Length: int<DurationDay>
+        FromDate: Date
+    }
+
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
     /// possible to start with e.g. (2024, 02, 31) and this will yield 2024-02-29 29 2024-03-31 2024-04-30 etc.

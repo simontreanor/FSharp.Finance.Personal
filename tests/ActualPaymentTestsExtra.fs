@@ -118,7 +118,7 @@ module ActualPaymentTestsExtra =
         let pir = match sp.Interest.PromotionalRates with [||] -> "()" | pirr -> pirr |> Array.map(fun pr -> $"""({pr.DateRange.Start.ToString()}-{pr.DateRange.End.ToString()}__{Interest.Rate.serialise pr.Rate})""") |> String.concat ";" |> fun s -> $"({s})"
         let upc, pc =
             match sp.PaymentSchedule with
-            | RegularSchedule(unitPeriodConfig, paymentCount) ->
+            | RegularSchedule(unitPeriodConfig, paymentCount, maxDuration) ->
                 (UnitPeriod.Config.serialise unitPeriodConfig), paymentCount
             | _ -> failwith "Not implemented"
         let acm = sp.Calculation.AprMethod
@@ -185,7 +185,8 @@ module ActualPaymentTestsExtra =
                 Principal = aa
                 PaymentSchedule = RegularSchedule (
                     UnitPeriodConfig = upc,
-                    PaymentCount = pc
+                    PaymentCount = pc,
+                    MaxDuration = ValueNone
                 )
                 FeesAndCharges = {
                     Fees = f
@@ -236,7 +237,8 @@ module ActualPaymentTestsExtra =
                 Principal = aa
                 PaymentSchedule = RegularSchedule (
                     UnitPeriodConfig = upc,
-                    PaymentCount = pc
+                    PaymentCount = pc,
+                    MaxDuration = ValueNone
                 )
                 FeesAndCharges = {
                     Fees = f
@@ -326,7 +328,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1),
-                PaymentCount = 5
+                PaymentCount = 5,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
@@ -401,7 +404,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12
+                PaymentCount = 12,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
@@ -478,7 +482,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12
+                PaymentCount = 12,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
@@ -562,7 +567,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23)),
-                PaymentCount = 19
+                PaymentCount = 19,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone, ValueSome RoundDown)) |]
@@ -637,7 +643,8 @@ module ActualPaymentTestsExtra =
             Principal = 200_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15),
-                PaymentCount = 7
+                PaymentCount = 7,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [||]
@@ -712,7 +719,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12
+                PaymentCount = 12,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
@@ -789,7 +797,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12
+                PaymentCount = 12,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
@@ -872,7 +881,8 @@ module ActualPaymentTestsExtra =
             Principal = 800_00L<Cent>
             PaymentSchedule = RegularSchedule (
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12
+                PaymentCount = 12,
+                MaxDuration = ValueNone
             )
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]

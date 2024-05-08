@@ -82,7 +82,8 @@ module InterestTests =
                 Principal = 499_00L<Cent>
                 PaymentSchedule = RegularSchedule (
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14),
-                    PaymentCount = 4
+                    PaymentCount = 4,
+                    MaxDuration = ValueNone
                 )
                 FeesAndCharges = {
                     Fees = [||]
@@ -127,7 +128,8 @@ module InterestTests =
                 Principal = 499_00L<Cent>
                 PaymentSchedule = RegularSchedule (
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14),
-                    PaymentCount = 4
+                    PaymentCount = 4,
+                    MaxDuration = ValueNone
                 )
                 FeesAndCharges = {
                     Fees = [||]

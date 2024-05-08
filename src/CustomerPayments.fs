@@ -112,7 +112,7 @@ module CustomerPayments =
     [<Struct>]
     type CustomerPaymentSchedule =
         /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
-        | RegularSchedule of UnitPeriodConfig: UnitPeriod.Config * PaymentCount: int
+        | RegularSchedule of UnitPeriodConfig: UnitPeriod.Config * PaymentCount: int * MaxDuration: Duration voption
         /// a regular schedule based on one or more unit-period configs each with a specific number of payments of a specified amount
         | RegularFixedSchedule of RegularFixedSchedule array
         /// just a bunch of payments
