@@ -12,13 +12,13 @@ Initial features:
 > amortisation
 
 This library operates partially in area where business is regulated by various regulators.
-Though every care has been taken to ensure the accuracy of the results, care should be taken to validate figures produced by it.
+Though every care has been taken to ensure the accuracy of the results, please independently validate figures produced by it.
 It is not audited or validated by any of the regulators.
+
+If you have any suggestions or corrections, please feel free to comment or create a pull request.
 
 For commercial use the user might need an operating license and to fulfil various statutory and regulatory requirements,
 none of which are conferred by the use of this library.
-
-Note: this is a work in progress so breaking changes can happen at any time while in version 0.
 
 NuGet package: https://www.nuget.org/packages/FSharp.Finance.Personal/
 

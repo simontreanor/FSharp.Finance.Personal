@@ -144,7 +144,7 @@ module Rescheduling =
                     Interest = rp.Interest |> ValueOption.defaultValue sp.Interest
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }
-            // create the new amortiation schedule
+            // create the new amortisation schedule
             let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduleType.Original true [||] // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
             return quote.RevisedSchedule, rescheduledSchedule
         }
