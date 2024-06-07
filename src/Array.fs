@@ -82,6 +82,7 @@ module ArrayExtension =
                         loop (i + 1) lowerBound newBound tolerance
             loop 0 0m (approximation * 100m) toleranceSteps'.Min // to-do: improve approximation
 
+        /// removes items matching the predicate from the end of an array
         let trimEnd f a =
             let a' = a |> Array.rev |> Array.takeWhile f
             a |> Array.except a'
