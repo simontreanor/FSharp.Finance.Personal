@@ -47,6 +47,7 @@ module Apr =
     /// APR as in https://www.handbook.fca.org.uk/handbook/MCOB/10/?view=chapter
     module UnitedKingdom =
 
+        /// calculates the APR
         let calculateApr (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
             if principal = 0L<Cent> || Array.isEmpty transfers then Solution.Impossible else
             let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)

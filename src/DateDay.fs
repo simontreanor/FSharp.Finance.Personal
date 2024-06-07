@@ -27,6 +27,7 @@ module DateDay =
     [<Measure>]
     type OffsetDay
 
+    /// functions for converting offset days to and from dates
     [<RequireQualifiedAccess>]
     module OffsetDay =
         /// convert an offset date to an offset day based on a given start date

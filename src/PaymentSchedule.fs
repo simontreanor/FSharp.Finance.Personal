@@ -104,6 +104,7 @@ module PaymentSchedule =
         Calculation: Calculation
     }
 
+    /// generates an array of offset days based on a start date and payment schedule
     let paymentDays startDate paymentSchedule =
         match paymentSchedule with
         | IrregularSchedule payments ->

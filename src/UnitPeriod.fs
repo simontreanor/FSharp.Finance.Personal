@@ -132,6 +132,7 @@ module UnitPeriod =
             let trackingDay2 = if day1 >= 15 && day2 = monthEndDay2 then 31 else day2
             SemiMonthly (startDate.Year, startDate.Month, trackingDay1, trackingDay2)
 
+        /// creates a monthly config, using month-end tracking where appropriate
         let defaultMonthly multiple (startDate: Date) =
             let monthEndDay = Date.DaysInMonth(startDate.Year, startDate.Month)
             let trackingDay = if startDate.Day = monthEndDay then 31 else startDate.Day

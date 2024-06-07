@@ -30,8 +30,6 @@ module AppliedPayment =
         PaymentStatus: CustomerPaymentStatus
     }
 
-    let aggregateCharges = Array.empty<Charge>
-
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
     let applyPayments asOfDay intendedPurpose (latePaymentGracePeriod: int<DurationDay>) (latePaymentCharge: Charge voption) chargesGrouping paymentTimeout actualPayments scheduledPayments =
         if Array.isEmpty scheduledPayments then [||] else

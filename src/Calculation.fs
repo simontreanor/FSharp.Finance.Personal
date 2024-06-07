@@ -91,6 +91,7 @@ module Calculation =
         PaymentRounding: Rounding
     }
     with
+        /// suggestion for default rounding options
         static member recommended = {
             ChargesRounding = RoundDown
             FeesRounding = RoundDown

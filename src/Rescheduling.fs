@@ -31,7 +31,7 @@ module Rescheduling =
         FutureSettlementDay: int<OffsetDay> voption
     }
 
-    /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
+    /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
     let reschedule sp (rp: RescheduleParameters) (actualPayments: CustomerPayment array) =
         voption {
             // get the settlement quote
