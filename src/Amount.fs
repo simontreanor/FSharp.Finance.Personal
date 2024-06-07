@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal
 
+/// a way to represent a quantity as either simple or calculated
 module Amount =
 
     open Calculation
