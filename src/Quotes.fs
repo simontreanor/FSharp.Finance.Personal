@@ -9,6 +9,7 @@ module Quotes =
     open PaymentSchedule
     open ValueOptionCE
 
+    /// the result of a quote with a breakdown of constituent amounts where relevant
     [<Struct>]
     type QuoteResult =
         | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichFees: int64<Cent> * OfWhichInterest: int64<Cent> * OfWhichCharges: int64<Cent> * FeesRefundIfSettled: int64<Cent>

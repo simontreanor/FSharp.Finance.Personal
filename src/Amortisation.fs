@@ -100,6 +100,7 @@ module Amortisation =
             FeesRefundIfSettled = 0L<Cent>
         }
 
+    /// a container for aggregating figures separately from the main schedule
     [<Struct>]
     type Accumulator = {
         /// the total of scheduled payments up to and including the current day

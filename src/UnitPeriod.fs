@@ -101,7 +101,7 @@ module UnitPeriod =
         | Month multiple when multiple > 0 -> 12m / decimal multiple
         | _ -> 0m
 
-    /// unit period combined with a
+    /// unit period combined with start date and multiple where appropriate
     [<Struct>]
     type Config =
         /// single on the given date
@@ -115,6 +115,7 @@ module UnitPeriod =
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
         | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int
 
+    /// functions for creating and handling unit-period configs
     module Config =
 
         /// creates a semi-monthly config specifying the first day only, using month-end tracking where appropriate

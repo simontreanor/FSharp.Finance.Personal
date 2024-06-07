@@ -38,7 +38,7 @@ module DateDay =
     /// a duration of a number of days
     [<Measure>] type DurationDay
 
-    [<RequireQualifiedAccess; Struct>]
+    /// a length of time in whole days measured from a start date
     type Duration = {
         Length: int<DurationDay>
         FromDate: Date

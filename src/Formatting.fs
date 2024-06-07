@@ -12,11 +12,16 @@ module Formatting =
     open Calculation
     open Currency
  
+    /// an array of properties relating to (product) fees
     let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "FeesRefundIfSettled" |] else [||]
+    /// an array of properties relating to (penalty) charges
     let chargesProperties hide = if hide then [| "NewCharges"; "ChargesPortion"; "ChargesBalance" |] else [||]
+    /// an array of properties relating to quotes
     let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
+    /// an array of properties representing extra information
     let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure" |] else [||]
 
+    /// filter out hidden fields 
     let filterColumns hideProperties =
         match hideProperties with
         | [||] -> id
@@ -90,12 +95,14 @@ module Formatting =
         )
         |> String.concat ""
 
+    /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {
         GoParameters: PaymentSchedule.Parameters
         GoPurpose: IntendedPurpose
         GoExtra: bool
     }
 
+    /// determines which fields to hide
     let getHideProperties generationOptions =
         match generationOptions with
         | Some go ->

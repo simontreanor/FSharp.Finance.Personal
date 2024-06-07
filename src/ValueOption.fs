@@ -3,6 +3,7 @@ namespace FSharp.Finance.Personal
 /// a computation expression enabling easier handling of functions that return value options
 module ValueOptionCE =
 
+    /// builds the value option CE
     type ValueOptionBuilder() = 
 
         member inline _.Bind(value: 'a voption, [<InlineIfLambda>] f: 'a -> 'b voption) : 'b voption = ValueOption.bind f value
