@@ -58,10 +58,6 @@ module DateDay =
         let FromDate (d:Date) =
             DateOnly(d.Year, d.Month, d.Day)
 
-        [<System.Runtime.CompilerServices.Extension>]
-        let ToDate (d:DateOnly) =
-            Date(d.Year, d.Month, d.Day)
-
     type DateOnly with
         member this.ToDate () =
             Date(this.Year, this.Month, this.Day)
