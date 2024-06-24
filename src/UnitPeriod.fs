@@ -198,15 +198,14 @@ module UnitPeriod =
             | invalidConfig -> fix invalidConfig
 
     /// generates a suggested number of payments to constrain the loan within a certain duration
-    let maxPaymentCount (maxDuration: int<DurationDay>) (config: Config) (startDate: Date) =
-        let offset y m td = ((TrackingDay.toDate y m td) - startDate).Days |> fun f -> int f * 1<DurationDay>
+    let maxPaymentCount (maxDuration: int<DurationDay>) (config: Config) =
         match config with
-        | Single d -> maxDuration - offset d.Year d.Month d.Day
-        | Daily d -> maxDuration - offset d.Year d.Month d.Day
-        | Weekly (multiple, d) when multiple > 0 -> (maxDuration - offset d.Year d.Month d.Day) / (multiple * 7)
-        | SemiMonthly (y, m, d1, _) -> (maxDuration - offset y m (int d1)) / 15
-        | Monthly (multiple, y, m, d) when multiple > 0 -> (maxDuration - offset y m (int d)) / (multiple * 30)
-        | _ -> 0<DurationDay>
+        | Single _ -> 1.
+        | Daily _ -> float maxDuration
+        | Weekly (multiple, _) when multiple > 0 -> ((float maxDuration) / (float multiple * 7.))
+        | SemiMonthly _ -> ((float maxDuration) / 15.)
+        | Monthly (multiple, _, _, _) when multiple > 0 -> ((float maxDuration) / (float multiple * 30.))
+        | _ -> 1.
         |> int
 
     /// direction in which to generate the schedule: forward works forwards from a given date and reverse works backwards
@@ -222,7 +221,7 @@ module UnitPeriod =
         if count = 0 then [||] else
         let limitedCount =
             match maxDuration with
-            | ValueSome { Duration.Length = d; Duration.FromDate = fd } -> maxPaymentCount d unitPeriodConfig fd
+            | ValueSome { Duration.Length = d; Duration.FromDate = fd } -> min count (maxPaymentCount d unitPeriodConfig)
             | ValueNone -> count
         let adjustMonthEnd (monthEndTrackingDay: int) (d: Date) =
             if d.Day > 15 && monthEndTrackingDay > 28 then

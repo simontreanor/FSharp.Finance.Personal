@@ -1463,7 +1463,7 @@ module PaymentScheduleTests =
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
             PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 8),
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 18),
                 PaymentCount = 7,
                 MaxDuration = ValueSome { Length = 184<DurationDay>; FromDate = Date(2024, 5, 8) }
             )
@@ -1498,5 +1498,55 @@ module PaymentScheduleTests =
                 return schedule.LevelPayment, schedule.FinalPayment
             }
 
-        let expected = ValueSome (251_08L<Cent>, 250_99L<Cent>)
+        let expected = ValueSome (290_73L<Cent>, 290_71L<Cent>)
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``4) Payment count must not be exceeded`` () =
+        let sp = {
+            AsOfDate = Date(2024, 6, 24)
+            StartDate = Date(2024, 6, 24)
+            Principal = 100_00L<Cent>
+            PaymentSchedule = RegularSchedule (
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4),
+                PaymentCount = 4,
+                MaxDuration = ValueSome { Length = 190<DurationDay>; FromDate = Date(2024, 6, 24) }
+            )
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
+                Charges = [| Charge.LatePayment (Amount.Percentage(Percent 5m, ValueSome(Amount.Restriction.UpperLimit 750L<Cent>), ValueSome (Round MidpointRounding.ToEven))) |]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 3<DurationDay>
+            }
+            Interest = {
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = Interest.Cap.none
+                InitialGracePeriod = 1<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = {
+                    ChargesRounding = Round MidpointRounding.ToEven
+                    FeesRounding = Round MidpointRounding.ToEven
+                    InterestRounding = Round MidpointRounding.ToEven
+                    PaymentRounding = Round MidpointRounding.ToEven
+                }
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
+        let actual =
+            voption {
+                let! schedule = sp |> calculate BelowZero
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule004.md"
+                return schedule.LevelPayment, schedule.FinalPayment
+            }
+
+        let expected = ValueSome (36_48L<Cent>, 36_44L<Cent>)
         actual |> should equal expected
