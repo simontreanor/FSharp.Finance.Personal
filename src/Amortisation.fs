@@ -34,6 +34,8 @@ module Amortisation =
         Advances: int64<Cent> array
         /// any payment scheduled on the current day
         ScheduledPayment: ScheduledPaymentType
+        /// the window during which a scheduled payment can be made; if the date is missed, the payment is late, but if the window is missed, the payment is missed
+        Window: int
         /// any payment scheduled on the current day
         PaymentDue: int64<Cent>
         /// any payments actually made on the current day
@@ -75,6 +77,7 @@ module Amortisation =
     }
     with
         static member Default = {
+            Window = 0
             OffsetDate = Unchecked.defaultof<Date>
             OffsetDay = 0<OffsetDay>
             Advances = [||]
@@ -169,8 +172,42 @@ module Amortisation =
 
         let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate isSettledWithinGracePeriod sp.Interest.StandardRate sp.Interest.PromotionalRates fromDay toDay
 
+        let markMissedPaymentsAsLate schedule =
+            schedule
+            |> Array.groupBy _.Window
+            |> Array.map snd
+            |> Array.filter (Array.isEmpty >> not)
+            |> Array.map(fun v ->
+                {|
+                    OffsetDay = v |> Array.head |> _.OffsetDay
+                    PaymentDueTotal = v |> Array.sumBy _.PaymentDue
+                    ActualPaymentTotal = v |> Array.sumBy (_.ActualPayments >> Array.sumBy ActualPaymentStatus.total)
+                    PaymentStatus = v |> Array.head |> _.PaymentStatus
+                |}
+            )
+            |> Array.filter(fun a -> a.PaymentStatus = MissedPayment)
+            |> Array.choose(fun a -> if a.ActualPaymentTotal >= a.PaymentDueTotal then Some a.OffsetDay else None)
+            |> fun a ->
+                if a |> Array.isEmpty then
+                    schedule
+                else
+                    schedule
+                    |> Array.map(fun si ->
+                        match a |> Array.tryFind ((=) si.OffsetDay) with
+                        | Some _ -> { si with PaymentStatus = PaidLater }
+                        | None -> si
+                    )
+
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
+            let window =
+                match ap.ScheduledPayment with
+                | ScheduledPaymentType.Original _
+                | ScheduledPaymentType.Rescheduled _
+                    -> si.Window + 1
+                | ScheduledPaymentType.None
+                    -> si.Window
+
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0L<Cent>
 
             let newInterest =
@@ -372,6 +409,7 @@ module Amortisation =
                 let generatedSettlementPayment' = generatedSettlementPayment - netEffect'
 
                 {
+                    Window = window
                     OffsetDate = offsetDate
                     OffsetDay = ap.AppliedPaymentDay
                     Advances = advances
@@ -437,6 +475,7 @@ module Amortisation =
                     let interestPortion' = roundedInterestPortion - roundedCarriedInterest
 
                     {
+                        Window = window
                         OffsetDate = offsetDate
                         OffsetDay = ap.AppliedPaymentDay
                         Advances = advances
@@ -492,6 +531,7 @@ module Amortisation =
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
         |> Array.unzip
         |> fst
+        |> markMissedPaymentsAsLate
 
     /// wraps the amortisation schedule in some statistics, and optionally calculate the final APR (optional because it can be processor-intensive)
     let calculateStats sp intendedPurpose items =

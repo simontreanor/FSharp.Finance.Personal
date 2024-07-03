@@ -81,7 +81,9 @@ module CustomerPayments =
         | PaymentMade
         /// no payment is due on the specified day because of earlier extra-/overpayments
         | NothingDue
-        /// a scheduled payment was missed completely
+        /// a scheduled payment is paid late but within the window
+        | PaidLater
+        /// a scheduled payment was missed completely, i.e. not paid within the window
         | MissedPayment
         /// a scheduled payment was made on time but not in the full amount
         | Underpayment

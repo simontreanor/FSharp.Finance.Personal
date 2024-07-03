@@ -266,6 +266,7 @@ module InterestTests =
                 OffsetDay = 7305<OffsetDay>
                 Advances = [||]
                 ScheduledPayment = ScheduledPaymentType.Original 1525_12L<Cent>
+                Window = 240
                 PaymentDue = 1523_25L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueNone

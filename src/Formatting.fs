@@ -19,7 +19,7 @@ module Formatting =
     /// an array of properties relating to quotes
     let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
     /// an array of properties representing extra information
-    let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure" |] else [||]
+    let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure"; "Window" |] else [||]
 
     /// filter out hidden fields 
     let filterColumns hideProperties =
