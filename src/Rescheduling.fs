@@ -15,7 +15,7 @@ module Rescheduling =
     open ValueOptionCE
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess>]
     type RescheduleParameters = {
         /// whether the fees should be pro-rated or due in full in the new schedule
         FeesSettlementRefund: Fees.SettlementRefund
@@ -45,14 +45,14 @@ module Rescheduling =
                     | ValueSome s ->
                         s.Items
                         |> Array.filter(fun si -> si.Payment.IsSome)
-                        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value); Metadata = Map.empty })
+                        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty } })
                     | ValueNone ->
                         [||]
                 | RegularFixedSchedule regularFixedSchedules ->
                     regularFixedSchedules
                     |> Array.map(fun rfs ->
                         UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
-                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount); Metadata = Map.empty })
+                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled rfs.PaymentAmount; Metadata = Map.empty } })
                     )
                     |> Array.concat
                 | IrregularSchedule payments ->
@@ -62,7 +62,7 @@ module Rescheduling =
                 quote.RevisedSchedule.ScheduleItems
                 |> Array.filter _.ScheduledPayment.IsSome
                 |> Array.filter(fun si -> si.OffsetDate < sp.AsOfDate)
-                |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment; Metadata = Map.empty })
+                |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment })
             // configure the parameters for the new schedule
             let spNew =
                 { sp with
@@ -89,7 +89,7 @@ module Rescheduling =
         }
 
     /// parameters for creating a rolled-over schedule
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess>]
     type RolloverParameters = {
         /// the final payment day of the original schedule
         OriginalFinalPaymentDay: int<OffsetDay>

@@ -265,7 +265,7 @@ module InterestTests =
                 OffsetDate = Date(2044, 4, 11)
                 OffsetDay = 7305<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 1525_12L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 1525_12L<Cent>; Metadata = Map.empty }
                 Window = 240
                 PaymentDue = 1523_25L<Cent>
                 ActualPayments = [||]

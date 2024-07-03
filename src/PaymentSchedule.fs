@@ -86,7 +86,6 @@ module PaymentSchedule =
         | Rescheduled
 
     /// parameters for creating a payment schedule
-    [<Struct>]
     type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
         AsOfDate: Date
@@ -218,7 +217,6 @@ module PaymentSchedule =
         |> Array.map(fun si ->
             {
                 PaymentDay = si.Day
-                PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed si.Payment.Value)
-                Metadata = Map.empty
+                PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed si.Payment.Value; Metadata = Map.empty }
             }
         )

@@ -64,7 +64,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>); Metadata = Map.empty }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
             )
 
         let actual =
@@ -81,7 +81,7 @@ module QuoteTests =
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 323_15L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_15L<Cent>; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 323_15L<Cent>
                 ActualPayments = [||]
@@ -147,7 +147,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>); Metadata = Map.empty }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
             )
 
         let actual =
@@ -164,7 +164,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -230,7 +230,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 60 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>); Metadata = Map.empty }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
             )
 
         let actual =
@@ -247,10 +247,10 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
-                ActualPayments = [| ActualPaymentStatus.Confirmed 25_00L<Cent> |]
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueSome 2001_50L<Cent>
                 NetEffect = 2026_50L<Cent>
                 PaymentStatus = Generated Settlement
@@ -326,7 +326,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 0
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -405,7 +405,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 0
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -471,7 +471,7 @@ module QuoteTests =
         let actualPayments =
             [| 18 .. 7 .. 53 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 25_00L<Cent>); Metadata = Map.empty }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
             )
 
         let actual =
@@ -488,7 +488,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -554,7 +554,7 @@ module QuoteTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 323_15L<Cent>); Metadata = Map.empty }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
             )
 
         let actual =
@@ -569,7 +569,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 323_10L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
                 Window = 11
                 PaymentDue = 323_10L<Cent>
                 ActualPayments = [||]
@@ -635,7 +635,7 @@ module QuoteTests =
         let actualPayments =
             [| 15 .. 14 .. 29 |]
             |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 323_15L<Cent>); Metadata = Map.empty }
+                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
             )
 
         let actual =
@@ -651,7 +651,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 323_10L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
                 Window = 11
                 PaymentDue = 300_11L<Cent>
                 ActualPayments = [||]
@@ -729,7 +729,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 10
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -793,13 +793,13 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 272_84L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -815,7 +815,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 11
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -879,10 +879,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 279_01L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -899,7 +899,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -978,7 +978,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 30
                 OffsetDay = 30<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 165_90L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 165_90L<Cent>; Metadata = Map.empty }
                 Window = 1
                 PaymentDue = 165_90L<Cent>
                 ActualPayments = [||]
@@ -1040,10 +1040,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1060,7 +1060,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1122,10 +1122,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1141,7 +1141,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 491_53L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 491_53L<Cent>; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 457_65L<Cent>
                 ActualPayments = [||]
@@ -1203,10 +1203,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1222,7 +1222,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1284,10 +1284,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1303,7 +1303,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1364,11 +1364,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1385,7 +1385,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1447,11 +1447,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1467,10 +1467,10 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 491_53L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 491_53L<Cent>; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 457_65L<Cent>
-                ActualPayments = [| ActualPaymentStatus.Confirmed 500_00L<Cent> |]
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueSome -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated Settlement
@@ -1529,11 +1529,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1549,7 +1549,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1611,11 +1611,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1631,7 +1631,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.None
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1693,7 +1693,7 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 1<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 252_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 252_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1737,11 +1737,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed(72_54L<Cent>, [||])); Metadata = Map.empty }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 145_07L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed(72_54L<Cent>, [||]); Metadata = Map.empty } }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 145_07L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1785,11 +1785,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |])); Metadata = Map.empty }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 72_54L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 145_07L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |]); Metadata = Map.empty } }
+            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 145_07L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1834,10 +1834,10 @@ module QuoteTests =
             }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed -5_10L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 2_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed -5_10L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 2_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 97_01L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 97_01L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1882,8 +1882,8 @@ module QuoteTests =
             }
 
         let actualPayments = [|
-            { PaymentDay = 20<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 200_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 50<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 200_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 20<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 200_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 50<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 200_00L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =
@@ -1928,8 +1928,8 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 111_00L<Cent>); Metadata = Map.empty }
-            { PaymentDay = 21<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 181_01L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 111_00L<Cent>; Metadata = Map.empty } }
+            { PaymentDay = 21<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_01L<Cent>; Metadata = Map.empty } }
         |]
 
         let actual =

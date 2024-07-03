@@ -60,15 +60,15 @@ module FeesAndChargesTests =
             }
 
             let actualPayments = [|
-                { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  36<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  40<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  70<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>); Metadata = Map.empty }
+                { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  36<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  40<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  70<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } }
             |]
 
             let schedule =
@@ -82,10 +82,10 @@ module FeesAndChargesTests =
                 OffsetDate = Date(2023, 3, 31)
                 OffsetDay = 125<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 456_84L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 456_84L<Cent>; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 456_84L<Cent>
-                ActualPayments = [| ActualPaymentStatus.Confirmed 456_84L<Cent> |]
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueNone
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
@@ -142,15 +142,15 @@ module FeesAndChargesTests =
             }
 
             let actualPayments = [|
-                { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  36<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  40<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  70<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>); Metadata = Map.empty }
+                { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  36<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  40<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  70<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } }
             |]
 
             let schedule =
@@ -164,10 +164,10 @@ module FeesAndChargesTests =
                 OffsetDate = Date(2023, 3, 31)
                 OffsetDay = 125<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 456_84L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 456_84L<Cent>; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 456_84L<Cent>
-                ActualPayments = [| ActualPaymentStatus.Confirmed 456_84L<Cent> |]
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueNone
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
@@ -224,15 +224,15 @@ module FeesAndChargesTests =
             }
 
             let actualPayments = [|
-                { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  36<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  40<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
-                { PaymentDay =  70<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>); Metadata = Map.empty }
-                { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>); Metadata = Map.empty }
-                { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>); Metadata = Map.empty }
+                { PaymentDay =   4<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  35<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  36<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  40<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  66<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (456_88L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]); Metadata = Map.empty } }
+                { PaymentDay =  70<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } }
+                { PaymentDay =  94<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_88L<Cent>; Metadata = Map.empty } }
+                { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } }
             |]
 
             let schedule =
@@ -246,10 +246,10 @@ module FeesAndChargesTests =
                 OffsetDate = Date(2023, 3, 31)
                 OffsetDay = 125<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = ScheduledPaymentType.Original 456_84L<Cent>
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 456_84L<Cent>; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 456_84L<Cent>
-                ActualPayments = [| ActualPaymentStatus.Confirmed 456_84L<Cent> |]
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueNone
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade

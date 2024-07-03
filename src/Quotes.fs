@@ -35,8 +35,8 @@ module Quotes =
             let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
             let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Quote quoteType) ScheduleType.Original false actualPayments
             let! si = revisedAmortisationSchedule.ScheduleItems |> Array.tryFind(_.GeneratedPayment.IsSome) |> toValueOption
-            let confirmedPayments = si.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
-            let pendingPayments = si.ActualPayments |> Array.sumBy(function ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
+            let confirmedPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Confirmed ap } -> ap | { ActualPaymentStatus = ActualPaymentStatus.WriteOff ap } -> ap | _ -> 0L<Cent>)
+            let pendingPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Pending ap } -> ap | _ -> 0L<Cent>)
             let quoteResult =
                 if si.GeneratedPayment.IsNone then
                     UnableToGenerateQuote

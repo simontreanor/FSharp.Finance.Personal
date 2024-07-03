@@ -37,6 +37,9 @@ module Formatting =
     let outputToFile' fileName content =
         outputToFile $"{__SOURCE_DIRECTORY__}/../io/{fileName}" content
 
+    let internal regexMetadata = Regex(@"metadata = map \[.*?\]")
+    let internal regexObject = Regex(@"[{}]")
+    let internal regexType = Regex(@"(scheduled payment type|actual payment status) = ")
     let internal regexSimple = Regex(@"\( simple (.+?)\)")
     let internal regexDate = Regex(@"\d{4}-\d{2}-\d{2}")
     let internal regexFailed = Regex(@"(failed )\((.+?), \[\|.*?\|\]\)")
@@ -68,6 +71,9 @@ module Formatting =
         |> propertyInfo.GetValue
         |> sprintf "%A"
         |> fun s -> regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[1].Value |> (_.ToLower())}")
+        |> fun s -> if s |> regexObject.IsMatch then regexObject.Replace(s, "") else s
+        |> fun s -> if s |> regexType.IsMatch then regexType.Replace(s, "") else s
+        |> fun s -> if s |> regexMetadata.IsMatch then regexMetadata.Replace(s, "") else s
         |> fun s -> if s |> regexLineReturn.IsMatch then regexLineReturn.Replace(s, " ") else s
         |> fun s -> if s |> regexFailed.IsMatch then regexFailed.Replace(s, "$1$2") else s
         |> fun s -> if s |> regexSimple.IsMatch then regexSimple.Replace(s, "$1") else s

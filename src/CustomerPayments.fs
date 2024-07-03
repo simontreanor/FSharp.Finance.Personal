@@ -29,6 +29,15 @@ module CustomerPayments =
                 | None -> false
                 | _ -> true
 
+    type ScheduledPaymentInfo =
+        {
+            ScheduledPaymentType: ScheduledPaymentType
+            Metadata: Map<string, obj>
+        }
+        with
+            member x.Value = match x with { ScheduledPaymentType = spt } -> spt.Value
+            member x.IsSome = match x with { ScheduledPaymentType = spt } -> spt.IsSome
+
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
     type ActualPaymentStatus =
@@ -51,25 +60,29 @@ module CustomerPayments =
                 | Confirmed ap -> ap
                 | Failed _ -> 0L<Cent>
 
+    type ActualPaymentInfo =
+        {
+            ActualPaymentStatus: ActualPaymentStatus
+            Metadata: Map<string, obj>
+        }
+        with
+            static member total = function { ActualPaymentStatus = aps } -> ActualPaymentStatus.total aps
+
     /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
-    [<Struct>]
     type CustomerPaymentDetails =
         /// the amount of any extra scheduled payment due on the current day
-        | ScheduledPayment of ScheduledPayment: ScheduledPaymentType
+        | ScheduledPayment of ScheduledPayment: ScheduledPaymentInfo
         /// the amounts of any actual payments made on the current day, with any charges incurred
-        | ActualPayment of ActualPayment: ActualPaymentStatus
+        | ActualPayment of ActualPayment: ActualPaymentInfo
         /// the amounts of any generated payments made on the current day and their type
         | GeneratedPayment of GeneratedPayment: int64<Cent>
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
-    [<Struct>]
     type CustomerPayment = {
         /// the day the payment is made, as an offset of days from the start date
         PaymentDay: int<OffsetDay>
         /// the details of the payment
         PaymentDetails: CustomerPaymentDetails
-        /// any additional information pertaining to the payment, e.g. IDs or reference numbers
-        Metadata: Map<string, obj>
     }
  
     /// the status of a payment made by the customer
@@ -83,7 +96,7 @@ module CustomerPayments =
         | PaymentMade
         /// no payment is due on the specified day because of earlier extra-/overpayments
         | NothingDue
-        /// a scheduled payment is paid late but within the window
+        /// a scheduled payment is not paid on time, but is paid within the window
         | PaidLater
         /// a scheduled payment was missed completely, i.e. not paid within the window
         | MissedPayment
@@ -113,7 +126,6 @@ module CustomerPayments =
     }
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
-    [<Struct>]
     type CustomerPaymentSchedule =
         /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
         | RegularSchedule of UnitPeriodConfig: UnitPeriod.Config * PaymentCount: int * MaxDuration: Duration voption
