@@ -31,10 +31,10 @@ module EdgeCaseTests =
             StartDate = Date(2023, 2, 9)
             Principal = 30000L<Cent>
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay = 15<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>) }
-                { PaymentDay = 43<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>) }
-                { PaymentDay = 74<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>) }
-                { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>) }
+                { PaymentDay = 15<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 43<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 74<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 137_40L<Cent>); Metadata = Map.empty }
             |]
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -61,7 +61,7 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 31200L<Cent>) }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 31200L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -81,10 +81,10 @@ module EdgeCaseTests =
             StartDate = Date(2022, 2, 2)
             Principal = 25000L<Cent>
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay = 16<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>) }
-                { PaymentDay = 44<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>) }
-                { PaymentDay = 75<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>) }
-                { PaymentDay = 105<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>) }
+                { PaymentDay = 16<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 44<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 75<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 105<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 11500L<Cent>); Metadata = Map.empty }
             |]
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -111,7 +111,7 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 26000L<Cent>) }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 26000L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -131,10 +131,10 @@ module EdgeCaseTests =
             StartDate = Date(2022, 12, 2)
             Principal = 75000L<Cent>
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay = 14<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>) }
-                { PaymentDay = 45<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>) }
-                { PaymentDay = 76<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>) }
-                { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>) }
+                { PaymentDay = 14<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 45<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 76<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 34350L<Cent>); Metadata = Map.empty }
             |]
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -161,7 +161,7 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 13<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 82800L<Cent>) }
+            { PaymentDay = 13<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 82800L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -181,12 +181,12 @@ module EdgeCaseTests =
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay = 8<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 39<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 69<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 100<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 214<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 25000L<Cent>) }
-                { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 27600L<Cent>) }
+                { PaymentDay = 8<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 39<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 69<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 100<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 214<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 25000L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 27600L<Cent>); Metadata = Map.empty }
             |]
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -213,77 +213,77 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 22500L<Cent>) }
-            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])) }
-            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])) }
-            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 24900L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])) }
-            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])) }
-            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])) }
-            { PaymentDay = 380<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>) }
-            { PaymentDay = 407<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 475<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17600L<Cent>) }
+            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 22500L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 24900L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 380<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 407<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 475<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17600L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -303,12 +303,12 @@ module EdgeCaseTests =
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay = 8<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 39<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 69<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 100<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>) }
-                { PaymentDay = 214<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 25000L<Cent>) }
-                { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 27600L<Cent>) }
+                { PaymentDay = 8<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 39<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 69<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 100<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 22500L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 214<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 25000L<Cent>); Metadata = Map.empty }
+                { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Original 27600L<Cent>); Metadata = Map.empty }
             |]
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -335,77 +335,77 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])) }
-            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])) }
-            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])) }
-            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 22500L<Cent>) }
-            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])) }
-            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])) }
-            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 24900L<Cent>) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])) }
-            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])) }
-            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])) }
-            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])) }
-            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])) }
-            { PaymentDay = 380<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>) }
-            { PaymentDay = 407<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])) }
-            { PaymentDay = 475<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17600L<Cent>) }
+            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
+            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
+            { PaymentDay = 8<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |])); Metadata = Map.empty }
+            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 11<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 39<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 69<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 22500L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 72<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 100<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 103<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (23700L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 24900L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (22500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 214<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 217<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 220<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 245<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 248<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 251<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (25000L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 379<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17500L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 380<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 407<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17500L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 435<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 438<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 441<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (17600L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 475<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17600L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -451,82 +451,82 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 23<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (166_67L<Cent>, [||])) }
-            { PaymentDay = 23<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 23<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 26<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 26<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 26<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 29<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 29<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 29<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 54<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 54<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 54<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 57<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 57<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 57<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 60<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 60<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 60<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 88<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 88<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 88<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 91<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 91<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 91<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])) }
-            { PaymentDay = 135<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 83_33L<Cent>) }
-            { PaymentDay = 165<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 83_33L<Cent>) }
-            { PaymentDay = 196<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 196<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 196<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 199<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 199<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 199<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 202<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 202<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 202<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 227<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 227<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 227<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 230<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 230<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 230<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 233<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 233<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 233<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 255<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 255<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 255<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 258<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 258<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 258<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 261<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 261<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 261<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 286<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 286<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 286<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 289<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 289<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 289<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 292<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 292<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 292<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])) }
-            { PaymentDay = 322<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>) }
-            { PaymentDay = 353<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>) }
-            { PaymentDay = 384<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>) }
-            { PaymentDay = 408<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>) }
-            { PaymentDay = 449<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>) }
-            { PaymentDay = 476<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>) }
-            { PaymentDay = 499<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>) }
-            { PaymentDay = 531<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>) }
-            { PaymentDay = 574<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>) }
-            { PaymentDay = 595<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>) }
-            { PaymentDay = 629<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>) }
+            { PaymentDay = 23<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (166_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 23<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 23<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 26<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 26<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 26<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 29<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 29<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 29<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 54<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 54<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 54<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 57<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 57<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 57<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 60<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 60<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 60<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 88<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 88<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 88<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 91<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 91<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 91<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (66_67L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 135<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 83_33L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 165<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 83_33L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 196<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 196<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 196<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 199<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 199<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 199<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 202<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 202<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 202<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 227<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 227<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 227<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 230<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 230<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 230<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 233<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 233<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 233<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 255<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 255<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 255<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 258<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 258<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 258<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 261<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 261<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 261<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 286<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 286<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 286<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 289<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 289<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 289<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 292<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 292<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 292<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (83_33L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 322<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 353<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 384<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 408<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 449<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 476<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 17_58L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 499<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 531<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 574<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 595<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 629<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 15_74L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -571,14 +571,14 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 12<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])) }
-            { PaymentDay = 12<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])) }
-            { PaymentDay = 15<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])) }
-            { PaymentDay = 15<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])) }
-            { PaymentDay = 15<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>) }
-            { PaymentDay = 43<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])) }
-            { PaymentDay = 43<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])) }
-            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 1540_00L<Cent>) }
+            { PaymentDay = 12<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 12<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 15<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 15<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 15<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 500_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 43<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 43<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (500_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 45<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 1540_00L<Cent>); Metadata = Map.empty }
         |]
 
         let actual =
@@ -624,9 +624,9 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (2_00L<Cent>, [||])) }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Failed (2_00L<Cent>, [||])); Metadata = Map.empty }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>); Metadata = Map.empty }
         |]
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
@@ -634,7 +634,7 @@ module EdgeCaseTests =
         let (rp: RescheduleParameters) = {
             FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
+                { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>); Metadata = Map.empty }
             |]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
@@ -707,9 +707,9 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.WriteOff 42_00L<Cent>) }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>) }
+            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.WriteOff 42_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 97_01L<Cent>); Metadata = Map.empty }
         |]
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
@@ -717,7 +717,7 @@ module EdgeCaseTests =
         let (rp: RescheduleParameters) = {
             FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = IrregularSchedule [|
-                { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>) }
+                { PaymentDay =  58<OffsetDay>; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled 5000L<Cent>); Metadata = Map.empty }
             |]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
@@ -790,8 +790,8 @@ module EdgeCaseTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 111_00L<Cent>) }
-            { PaymentDay = 21<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 181_01L<Cent>) }
+            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 111_00L<Cent>); Metadata = Map.empty }
+            { PaymentDay = 21<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 181_01L<Cent>); Metadata = Map.empty }
         |]
 
         let schedule =

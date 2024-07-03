@@ -45,14 +45,14 @@ module Rescheduling =
                     | ValueSome s ->
                         s.Items
                         |> Array.filter(fun si -> si.Payment.IsSome)
-                        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value) })
+                        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value); Metadata = Map.empty })
                     | ValueNone ->
                         [||]
                 | RegularFixedSchedule regularFixedSchedules ->
                     regularFixedSchedules
                     |> Array.map(fun rfs ->
                         UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
-                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount) })
+                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount); Metadata = Map.empty })
                     )
                     |> Array.concat
                 | IrregularSchedule payments ->
@@ -62,7 +62,7 @@ module Rescheduling =
                 quote.RevisedSchedule.ScheduleItems
                 |> Array.filter _.ScheduledPayment.IsSome
                 |> Array.filter(fun si -> si.OffsetDate < sp.AsOfDate)
-                |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment })
+                |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment; Metadata = Map.empty })
             // configure the parameters for the new schedule
             let spNew =
                 { sp with

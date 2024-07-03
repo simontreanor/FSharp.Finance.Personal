@@ -68,6 +68,8 @@ module CustomerPayments =
         PaymentDay: int<OffsetDay>
         /// the details of the payment
         PaymentDetails: CustomerPaymentDetails
+        /// any additional information pertaining to the payment, e.g. IDs or reference numbers
+        Metadata: Map<string, obj>
     }
  
     /// the status of a payment made by the customer

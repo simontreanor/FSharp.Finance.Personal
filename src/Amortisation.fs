@@ -585,6 +585,7 @@ module Amortisation =
                             match scheduleType with
                             | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original si.Payment.Value)
                             | ScheduleType.Rescheduled -> ScheduledPayment (ScheduledPaymentType.Rescheduled si.Payment.Value)
+                        Metadata = Map.empty
                     })
                 | ValueNone ->
                     [||]
@@ -599,6 +600,7 @@ module Amortisation =
                                 match scheduleType with
                                 | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original rfs.PaymentAmount)
                                 | ScheduleType.Rescheduled -> ScheduledPayment (ScheduledPaymentType.Rescheduled rfs.PaymentAmount)
+                            Metadata = Map.empty
                         }
                     )
                 )

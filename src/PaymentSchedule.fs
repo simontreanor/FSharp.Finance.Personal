@@ -215,8 +215,10 @@ module PaymentSchedule =
     let internal allPaidOnTime (scheduleItems: Item array) =
         scheduleItems
         |> Array.filter(fun si -> si.Payment.IsSome)
-        |> Array.map(fun si -> {
-            PaymentDay = si.Day
-            PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed si.Payment.Value)
+        |> Array.map(fun si ->
+            {
+                PaymentDay = si.Day
+                PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed si.Payment.Value)
+                Metadata = Map.empty
             }
         )
