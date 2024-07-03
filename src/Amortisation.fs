@@ -594,7 +594,7 @@ module Amortisation =
                     UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
                     |> Array.map(fun d ->
                         {
-                            PaymentDay = OffsetDay.fromDate sp.AsOfDate d
+                            PaymentDay = OffsetDay.fromDate sp.StartDate d
                             PaymentDetails =
                                 match scheduleType with
                                 | ScheduleType.Original -> ScheduledPayment (ScheduledPaymentType.Original rfs.PaymentAmount)
