@@ -229,17 +229,6 @@ module Amortisation =
 
             let pendingPayments = ap.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Pending ap } -> ap | _ -> 0L<Cent>)
 
-            let scheduledPaymentAmount = ap.ScheduledPayment.Value 
-
-            let accumulator =
-                { a with
-                    CumulativeScheduledPayments = a.CumulativeScheduledPayments + scheduledPaymentAmount
-                    CumulativeActualPayments = a.CumulativeActualPayments + confirmedPayments + pendingPayments
-                    CumulativeInterest = a.CumulativeInterest + cappedNewInterest
-                }
-
-            let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
-
             let interestPortion =
                 if confirmedPayments < 0L<Cent> && si.SettlementFigure >= 0L<Cent> then
                     0m<Cent>
@@ -247,6 +236,15 @@ module Amortisation =
                     cappedNewInterest + si.InterestBalance
 
             let roundedInterestPortion = interestPortion |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+
+            let accumulator =
+                { a with
+                    CumulativeScheduledPayments = a.CumulativeScheduledPayments + ap.ScheduledPayment.Value
+                    CumulativeActualPayments = a.CumulativeActualPayments + confirmedPayments + pendingPayments
+                    CumulativeInterest = a.CumulativeInterest + cappedNewInterest
+                }
+
+            let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
 
             let paymentDue =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
@@ -320,11 +318,24 @@ module Amortisation =
 
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
 
-            let assignable =
+            let assignable, scheduledPaymentAmendment =
                 if netEffect = 0L<Cent> then
-                    0L<Cent>
+                    0L<Cent>, 0L<Cent>
                 else
-                    sign netEffect - sign chargesPortion - sign roundedInterestPortion
+                    match sp.PaymentOptions.ScheduledPaymentOption with
+                    | AsScheduled ->
+                        sign netEffect - sign chargesPortion - sign roundedInterestPortion, 0L<Cent>
+                    | AddChargesAndInterest ->
+                        sign netEffect, sign chargesPortion - sign roundedInterestPortion
+
+            let scheduledPayment =
+                { ap.ScheduledPayment with
+                    ScheduledPaymentType =
+                        match ap.ScheduledPayment.ScheduledPaymentType with
+                        | ScheduledPaymentType.None as spt -> spt
+                        | ScheduledPaymentType.Original sp -> ScheduledPaymentType.Original (sp + scheduledPaymentAmendment)
+                        | ScheduledPaymentType.Rescheduled sp -> ScheduledPaymentType.Rescheduled (sp + scheduledPaymentAmendment)
+                }
 
             let feesPortion =
                 match sp.FeesAndCharges.FeesAmortisation with
@@ -413,7 +424,7 @@ module Amortisation =
                     OffsetDate = offsetDate
                     OffsetDay = ap.AppliedPaymentDay
                     Advances = advances
-                    ScheduledPayment = ap.ScheduledPayment
+                    ScheduledPayment = scheduledPayment
                     PaymentDue = paymentDue
                     ActualPayments = ap.ActualPayments
                     GeneratedPayment = ValueSome generatedSettlementPayment'
@@ -479,7 +490,7 @@ module Amortisation =
                         OffsetDate = offsetDate
                         OffsetDay = ap.AppliedPaymentDay
                         Advances = advances
-                        ScheduledPayment = ap.ScheduledPayment
+                        ScheduledPayment = scheduledPayment
                         PaymentDue = paymentDue'
                         ActualPayments = ap.ActualPayments
                         GeneratedPayment = generatedPayment
@@ -503,6 +514,7 @@ module Amortisation =
 
             let accumulator'' =
                 { accumulator' with
+                    CumulativeScheduledPayments = accumulator'.CumulativeScheduledPayments + scheduledPaymentAmendment
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
                     CumulativeFees = a.CumulativeFees + feesPortion'
                     CumulativeInterest = accumulator'.CumulativeInterest - interestRoundingDifference

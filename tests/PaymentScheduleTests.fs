@@ -35,6 +35,10 @@ module PaymentScheduleTests =
                     PaymentCount = 11,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [| Fee.FacilitationFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -126,6 +130,10 @@ module PaymentScheduleTests =
                     PaymentCount = paymentCount,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [||]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1377,6 +1385,10 @@ module PaymentScheduleTests =
                 PaymentCount = 1,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1422,6 +1434,10 @@ module PaymentScheduleTests =
                 PaymentCount = 7,
                 MaxDuration = ValueSome { Length = 183<DurationDay>; FromDate = Date(2024, 5, 8) }
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1467,6 +1483,10 @@ module PaymentScheduleTests =
                 PaymentCount = 7,
                 MaxDuration = ValueSome { Length = 184<DurationDay>; FromDate = Date(2024, 5, 8) }
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1512,6 +1532,10 @@ module PaymentScheduleTests =
                 PaymentCount = 4,
                 MaxDuration = ValueSome { Length = 190<DurationDay>; FromDate = Date(2024, 6, 24) }
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately

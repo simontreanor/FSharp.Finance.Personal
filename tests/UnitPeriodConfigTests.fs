@@ -65,6 +65,10 @@ module UnitPeriodConfigTests =
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
                     PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 5, 13)), 12, ValueNone)
+                    PaymentOptions = {
+                        ScheduledPaymentOption = AsScheduled
+                        CloseBalanceOption = LeaveOpenBalance
+                    }
                     FeesAndCharges = {
                         Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                         FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -141,6 +145,10 @@ module UnitPeriodConfigTests =
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 4, 20)), 12, ValueNone)
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -204,6 +212,10 @@ module UnitPeriodConfigTests =
                 StartDate = Date(2023, 1, 20)
                 Principal = 65000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 2, 2)), 11, ValueNone)
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -296,6 +308,10 @@ module UnitPeriodConfigTests =
                 StartDate = Date(2022, 10, 13)
                 Principal = 50000L<Cent>
                 PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 10, 28)), 11, ValueNone)
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -379,6 +395,10 @@ module UnitPeriodConfigTests =
                 StartDate = startDate
                 Principal = 100000L<Cent>
                 PaymentSchedule = IrregularSchedule originalScheduledPayments
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately

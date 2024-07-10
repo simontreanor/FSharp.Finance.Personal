@@ -36,6 +36,10 @@ module EdgeCaseTests =
                 { PaymentDay = 74<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 137_40L<Cent>; Metadata = Map.empty } }
                 { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 137_40L<Cent>; Metadata = Map.empty } }
             |]
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -86,6 +90,10 @@ module EdgeCaseTests =
                 { PaymentDay = 75<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 11500L<Cent>; Metadata = Map.empty } }
                 { PaymentDay = 105<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 11500L<Cent>; Metadata = Map.empty } }
             |]
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -136,6 +144,10 @@ module EdgeCaseTests =
                 { PaymentDay = 76<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 34350L<Cent>; Metadata = Map.empty } }
                 { PaymentDay = 104<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 34350L<Cent>; Metadata = Map.empty } }
             |]
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -188,6 +200,10 @@ module EdgeCaseTests =
                 { PaymentDay = 214<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 25000L<Cent>; Metadata = Map.empty } }
                 { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 27600L<Cent>; Metadata = Map.empty } }
             |]
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -310,6 +326,10 @@ module EdgeCaseTests =
                 { PaymentDay = 214<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 25000L<Cent>; Metadata = Map.empty } }
                 { PaymentDay = 245<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 27600L<Cent>; Metadata = Map.empty } }
             |]
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -426,6 +446,10 @@ module EdgeCaseTests =
             StartDate = Date(2022, 6, 22)
             Principal = 500_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2022, 7, 15), 6, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -546,6 +570,10 @@ module EdgeCaseTests =
             StartDate = Date(2021, 12, 26)
             Principal = 150000L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2022, 1, 7), 6, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -599,6 +627,10 @@ module EdgeCaseTests =
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -682,6 +714,10 @@ module EdgeCaseTests =
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -765,6 +801,10 @@ module EdgeCaseTests =
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 5, 10), 4, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately

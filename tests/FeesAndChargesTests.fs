@@ -35,6 +35,10 @@ module FeesAndChargesTests =
                     PaymentCount = 5,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [||]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -117,6 +121,10 @@ module FeesAndChargesTests =
                     PaymentCount = 5,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [||]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -199,6 +207,10 @@ module FeesAndChargesTests =
                     PaymentCount = 5,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [||]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately

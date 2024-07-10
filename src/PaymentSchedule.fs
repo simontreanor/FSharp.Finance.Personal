@@ -85,6 +85,34 @@ module PaymentSchedule =
         /// a schedule based on a previous one
         | Rescheduled
 
+    /// whether to stick to scheduled payment amounts or add charges and interest to them
+    [<Struct>]
+    type ScheduledPaymentOption =
+        /// keep to the scheduled payment amounts even if this results in an open balance
+        | AsScheduled
+        /// add any charges and interest to the payment in order to close the balance at the end of the schedule
+        | AddChargesAndInterest
+
+    /// how to handle a final balance if not closed: leave it open or modify/add payments at the end of the schedule
+    [<Struct>]
+    type CloseBalanceOption =
+        /// do not modify the final payment and leave any open balance as is
+        | LeaveOpenBalance
+        /// increase the final payment to close any open balance
+        | IncreaseFinalPayment
+        /// add a single payment to the schedule to close any open balance immediately (interval based on unit-period config)
+        | AddSingleExtraPayment
+        /// add multiple payments to the schedule to close any open balance gradually (interval based on unit-period config)
+        | AddMultipleExtraPayments
+
+    /// how to treat scheduled payments
+    type PaymentOptions = {
+        /// whether to modify scheduled payment amounts to keep the schedule on-track
+        ScheduledPaymentOption: ScheduledPaymentOption
+        /// whether to leave a final balance open or close it using various methods
+        CloseBalanceOption: CloseBalanceOption
+    }
+
     /// parameters for creating a payment schedule
     type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
@@ -95,6 +123,8 @@ module PaymentSchedule =
         Principal: int64<Cent>
         /// the scheduled payments or the parameters for generating them
         PaymentSchedule: CustomerPaymentSchedule
+        /// options relating to scheduled payments
+        PaymentOptions: PaymentOptions
         /// options relating to fees
         FeesAndCharges: FeesAndCharges
         /// options relating to interest

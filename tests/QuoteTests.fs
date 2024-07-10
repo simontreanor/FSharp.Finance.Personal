@@ -37,6 +37,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -120,6 +124,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -203,6 +211,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -286,6 +298,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -365,6 +381,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -444,6 +464,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -527,6 +551,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -608,6 +636,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -690,6 +722,10 @@ module QuoteTests =
                 PaymentCount = 10,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -768,6 +804,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -854,6 +894,10 @@ module QuoteTests =
                 PaymentCount = 11,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -938,6 +982,10 @@ module QuoteTests =
                 PaymentCount = 4,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1015,6 +1063,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1097,6 +1149,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1178,6 +1234,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1259,6 +1319,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1340,6 +1404,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1422,6 +1490,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1504,6 +1576,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1586,6 +1662,10 @@ module QuoteTests =
                 PaymentCount = 5,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1668,6 +1748,10 @@ module QuoteTests =
                 PaymentCount = 4,
                 MaxDuration = ValueNone
             )
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1713,6 +1797,10 @@ module QuoteTests =
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1761,6 +1849,10 @@ module QuoteTests =
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -1805,33 +1897,37 @@ module QuoteTests =
     [<Fact>]
     let ``19) Curveball`` () =
         let sp = {
-                AsOfDate = Date(2024, 3, 7)
-                StartDate = Date(2024, 2, 2)
-                Principal = 25000L<Cent>
-                PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4, ValueNone)
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                    FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                    Charges = [||]
-                    ChargesHolidays = [||]
-                    ChargesGrouping = OneChargeTypePerDay
-                    LatePaymentGracePeriod = 0<DurationDay>
-                }
-                Interest = {
-                    StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = interestCapExample
-                    InitialGracePeriod = 0<DurationDay>
-                    PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueNone
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                    RoundingOptions = RoundingOptions.recommended
-                    PaymentTimeout = 0<DurationDay>
-                    MinimumPayment = NoMinimumPayment
-                }
+            AsOfDate = Date(2024, 3, 7)
+            StartDate = Date(2024, 2, 2)
+            Principal = 25000L<Cent>
+            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
             }
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
+                Charges = [||]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = interestCapExample
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RoundingOptions = RoundingOptions.recommended
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+            }
+        }
 
         let actualPayments = [|
             { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed -5_10L<Cent>; Metadata = Map.empty } }
@@ -1853,33 +1949,37 @@ module QuoteTests =
     [<Fact>]
     let ``20) Negative interest should accrue to interest balance not principal balance`` () =
         let sp = {
-                AsOfDate = Date(2024, 3, 7)
-                StartDate = Date(2023, 9, 2)
-                Principal = 25000L<Cent>
-                PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 9, 22), 4, ValueNone)
-                FeesAndCharges = {
-                    Fees = [||]
-                    FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                    FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                    Charges = [||]
-                    ChargesHolidays = [||]
-                    ChargesGrouping = OneChargeTypePerDay
-                    LatePaymentGracePeriod = 0<DurationDay>
-                }
-                Interest = {
-                    StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                    Cap = interestCapExample
-                    InitialGracePeriod = 0<DurationDay>
-                    PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
-                }
-                Calculation = {
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                    RoundingOptions = RoundingOptions.recommended
-                    PaymentTimeout = 0<DurationDay>
-                    MinimumPayment = NoMinimumPayment
-                }
+            AsOfDate = Date(2024, 3, 7)
+            StartDate = Date(2023, 9, 2)
+            Principal = 25000L<Cent>
+            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 9, 22), 4, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
             }
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
+                Charges = [||]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = interestCapExample
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RoundingOptions = RoundingOptions.recommended
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+            }
+        }
 
         let actualPayments = [|
             { PaymentDay = 20<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 200_00L<Cent>; Metadata = Map.empty } }
@@ -1903,6 +2003,10 @@ module QuoteTests =
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
             PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 5, 10), 4, ValueNone)
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
             FeesAndCharges = {
                 Fees = [||]
                 FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately

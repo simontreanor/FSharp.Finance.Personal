@@ -85,6 +85,10 @@ module InterestTests =
                     PaymentCount = 4,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [||]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -131,6 +135,10 @@ module InterestTests =
                     PaymentCount = 4,
                     MaxDuration = ValueNone
                 )
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [||]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -226,6 +234,10 @@ module InterestTests =
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentAmount = 1225_86L<Cent> }
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentAmount = 1525_12L<Cent> }
                 |]
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
                 FeesAndCharges = {
                     Fees = [| Fee.MortageFee <| Amount.Simple 999_00L<Cent> |]
                     FeesAmortisation = Fees.FeeAmortisation.AmortiseBeforePrincipal
