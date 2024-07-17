@@ -67,7 +67,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/SettlementTest001.md"
                 let! scheduledItem = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, scheduledItem
@@ -85,7 +85,7 @@ module SettlementTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 98_52L<Cent>
                 NetEffect = 98_52L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 16_96.448m<Cent>
                 NewCharges = [||]
@@ -148,7 +148,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/SettlementTest002.md"
                 let scheduledItem = Array.last quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, scheduledItem
@@ -166,7 +166,7 @@ module SettlementTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 105_04L<Cent>
                 NetEffect = 105_04L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 4_56.736m<Cent>
                 NewCharges = [||]
@@ -230,7 +230,7 @@ module SettlementTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/SettlementTest003.md"
                 let scheduledItem = Array.last quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, scheduledItem
@@ -248,7 +248,7 @@ module SettlementTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 53_30L<Cent>
                 NetEffect = 53_30L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 2_82.688m<Cent>
                 NewCharges = [||]

@@ -28,14 +28,14 @@ module Rescheduling =
         /// any period during which charges are not payable
         ChargesHolidays: DateRange array
         /// whether and when to generate a settlement figure
-        FutureSettlementDay: int<OffsetDay> voption
+        IntendedPurpose: IntendedPurpose
     }
 
     /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
     let reschedule sp (rp: RescheduleParameters) (actualPayments: CustomerPayment array) =
         voption {
             // get the settlement quote
-            let! quote = getQuote QuoteType.Settlement sp actualPayments
+            let! quote = getQuote ValueNone sp actualPayments
             // create a new payment schedule either by auto-generating it or using manual payments
             let newPaymentSchedule =
                 match rp.PaymentSchedule with
@@ -80,11 +80,7 @@ module Rescheduling =
                         }
                 }
             // create the new amortiation schedule
-            let intendedPurpose =
-                match rp.FutureSettlementDay with
-                | ValueSome futureSettlementDay -> IntendedPurpose.Quote (FutureSettlement futureSettlementDay)
-                | ValueNone -> IntendedPurpose.Statement
-            let! rescheduledSchedule = Amortisation.generate spNew intendedPurpose ScheduleType.Rescheduled true actualPayments
+            let! rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose ScheduleType.Rescheduled true actualPayments
             return quote.RevisedSchedule, rescheduledSchedule
         }
 
@@ -108,7 +104,7 @@ module Rescheduling =
     let rollOver sp (rp: RolloverParameters) (actualPayments: CustomerPayment array) =
         voption {
             // get the settlement quote
-            let! quote = getQuote QuoteType.Settlement sp actualPayments
+            let! quote = getQuote ValueNone sp actualPayments
             // process the quote and extract the portions if applicable
             let! principalPortion, feesPortion, feesRefundIfSettled =
                 match quote.QuoteResult with

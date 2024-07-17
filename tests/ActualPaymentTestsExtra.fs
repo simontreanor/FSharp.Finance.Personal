@@ -544,7 +544,7 @@ module ActualPaymentTestsExtra =
                     RateOnNegativeBalance = ValueNone
                     PromotionalInterestRates = [||]
                     ChargesHolidays = [||]
-                    FutureSettlementDay = ValueNone
+                    IntendedPurpose = IntendedPurpose.Statement
                 }
                 let! oldSchedule, newSchedule = reschedule sp rp actualPayments
                 let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"

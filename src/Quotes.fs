@@ -6,6 +6,7 @@ module Quotes =
     open Calculation
     open Currency
     open CustomerPayments
+    open DateDay
     open PaymentSchedule
     open ValueOptionCE
 
@@ -19,21 +20,21 @@ module Quotes =
     /// a settlement quote
     [<Struct>]
     type Quote = {
-        QuoteType: QuoteType
+        SettlementDay: int<OffsetDay> voption
         QuoteResult: QuoteResult
         CurrentSchedule: Amortisation.Schedule
         RevisedSchedule: Amortisation.Schedule
     }
 
     /// <summary>calculates a revised schedule showing the generated payment for the given quote type</summary>
-    /// <param name="quoteType">the type of quote</param>
+    /// <param name="settlementDay">the day for which to generate the settlement quote</param>
     /// <param name="sp">the parameters for creating the schedule</param>
     /// <param name="actualPayments">an array of the actual payments</param>
     /// <returns>the requested quote, if possible</returns>
-    let getQuote quoteType sp (actualPayments: CustomerPayment array) =
+    let getQuote settlementDay sp (actualPayments: CustomerPayment array) =
         voption {
             let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-            let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Quote quoteType) ScheduleType.Original false actualPayments
+            let! revisedAmortisationSchedule = Amortisation.generate sp (IntendedPurpose.Settlement settlementDay) ScheduleType.Original false actualPayments
             let! si = revisedAmortisationSchedule.ScheduleItems |> Array.tryFind(_.GeneratedPayment.IsSome) |> toValueOption
             let confirmedPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Confirmed ap } -> ap | { ActualPaymentStatus = ActualPaymentStatus.WriteOff ap } -> ap | _ -> 0L<Cent>)
             let pendingPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Pending ap } -> ap | _ -> 0L<Cent>)
@@ -60,7 +61,7 @@ module Quotes =
                                 si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled
                     PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, feesRefundIfSettled)
             return {
-                QuoteType = quoteType
+                SettlementDay = settlementDay
                 QuoteResult = quoteResult
                 CurrentSchedule = currentAmortisationSchedule
                 RevisedSchedule = revisedAmortisationSchedule

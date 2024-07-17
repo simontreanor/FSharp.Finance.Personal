@@ -70,7 +70,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest001.md"
                 return quote.QuoteResult
             }
@@ -124,7 +124,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest002.md"
                 return quote.QuoteResult
             }
@@ -178,7 +178,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest003.md"
                 return quote.QuoteResult
             }
@@ -304,7 +304,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004.md"
                 return quote.QuoteResult
             }
@@ -430,7 +430,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004a.md"
                 return quote.QuoteResult
             }
@@ -555,7 +555,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest005.md"
                 return quote.QuoteResult
             }
@@ -611,7 +611,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest006.md"
                 return quote.QuoteResult
             }
@@ -671,7 +671,7 @@ module EdgeCaseTests =
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargesHolidays = [||]
-            FutureSettlementDay = ValueSome 88<OffsetDay>
+            IntendedPurpose = IntendedPurpose.Settlement <| ValueSome 88<OffsetDay>
         }
 
         let result = reschedule sp rp actualPayments
@@ -689,7 +689,7 @@ module EdgeCaseTests =
             ActualPayments = [||]
             GeneratedPayment = ValueSome 83_74L<Cent>
             NetEffect = 83_74L<Cent>
-            PaymentStatus = Generated Settlement
+            PaymentStatus = Generated
             BalanceStatus = ClosedBalance
             NewInterest = 16_20.960m<Cent>
             NewCharges = [||]
@@ -758,7 +758,7 @@ module EdgeCaseTests =
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargesHolidays = [||]
-            FutureSettlementDay = ValueSome 88<OffsetDay>
+            IntendedPurpose = IntendedPurpose.Settlement <| ValueSome 88<OffsetDay>
         }
 
         let result = reschedule sp rp actualPayments
@@ -776,7 +776,7 @@ module EdgeCaseTests =
             ActualPayments = [||]
             GeneratedPayment = ValueSome 10_19L<Cent>
             NetEffect = 10_19L<Cent>
-            PaymentStatus = Generated Settlement
+            PaymentStatus = Generated
             BalanceStatus = ClosedBalance
             NewInterest = 1_97.280m<Cent>
             NewCharges = [||]

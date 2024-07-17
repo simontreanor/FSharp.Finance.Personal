@@ -82,10 +82,10 @@ module AppliedPayment =
                             cp, ExtraPayment
                         | ScheduledPaymentType.Original sp, cp when cp < sp && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
                             match intendedPurpose with
-                            | IntendedPurpose.Quote _ when offsetDay < asOfDay ->
+                            | IntendedPurpose.Settlement _ when offsetDay < asOfDay ->
                                 0L<Cent>, PaymentDue
-                            | IntendedPurpose.Quote quoteType when offsetDay = asOfDay ->
-                                0L<Cent>, Generated quoteType
+                            | IntendedPurpose.Settlement _ when offsetDay = asOfDay ->
+                                0L<Cent>, Generated
                             | _ ->
                                 sp, PaymentDue
                         | sp, _ when offsetDay > asOfDay ->
@@ -124,7 +124,7 @@ module AppliedPayment =
                 { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus }
             )
 
-        let appliedPayments day quoteType =
+        let appliedPayments day =
             let existingPaymentDay = payments |> Array.tryFind(fun ap -> ap.AppliedPaymentDay = day)
             if existingPaymentDay.IsSome then
                 payments
@@ -137,16 +137,16 @@ module AppliedPayment =
                     GeneratedPayment = ValueSome 0L<Cent>
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
-                    PaymentStatus = Generated quoteType
+                    PaymentStatus = Generated
                 }
                 payments
                 |> Array.append [| newAppliedPayment |]
 
         match intendedPurpose with
-            | IntendedPurpose.Quote (FutureSettlement day) ->
-                appliedPayments day (FutureSettlement day)
-            | IntendedPurpose.Quote quoteType ->
-                appliedPayments asOfDay quoteType
+            | IntendedPurpose.Settlement (ValueSome day) ->
+                appliedPayments day
+            | IntendedPurpose.Settlement ValueNone ->
+                appliedPayments asOfDay
             | IntendedPurpose.Statement ->
                 payments
         |> Array.sortBy _.AppliedPaymentDay

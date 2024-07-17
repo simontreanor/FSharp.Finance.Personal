@@ -73,7 +73,7 @@ module QuoteTests =
 
         let actual =
             voption{
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest001.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -91,7 +91,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1969_72L<Cent>
                 NetEffect = 1969_72L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 3_71.12573150m<Cent>
                 NewCharges = [||]
@@ -160,7 +160,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest002.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -178,7 +178,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 2026_50L<Cent>
                 NetEffect = 2026_50L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
@@ -247,7 +247,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest003.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -265,7 +265,7 @@ module QuoteTests =
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueSome 2001_50L<Cent>
                 NetEffect = 2026_50L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
@@ -330,7 +330,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest004.md"
                 let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -348,7 +348,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1200_00L<Cent>
                 NetEffect = 1200_00L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
@@ -413,7 +413,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest005.md"
                 let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -431,7 +431,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1238_40L<Cent>
                 NetEffect = 1238_40L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 38_40m<Cent>
                 NewCharges = [||]
@@ -500,7 +500,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest006.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -518,7 +518,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 3420_03L<Cent>
                 NetEffect = 3420_03L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
@@ -587,7 +587,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote FirstOutstanding sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -672,7 +672,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote AllOverdue sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -754,7 +754,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest009.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -771,7 +771,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1311_67L<Cent>
                 NetEffect = 1311_67L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 16_35.61643835m<Cent>
                 NewCharges = [||]
@@ -844,7 +844,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest010.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -861,7 +861,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 1261_73L<Cent>
                 NetEffect = 1261_73L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 75_11.98884657m<Cent>
                 NewCharges = [||]
@@ -931,7 +931,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest011.md"
                 let! item = Array.vTryLastBut 6 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -949,7 +949,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 973_53L<Cent>
                 NetEffect = 973_53L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 1_04.87518082m<Cent>
                 NewCharges = [||]
@@ -1014,7 +1014,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest012.md"
                 let! item = Array.vTryLastBut 3 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1032,7 +1032,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 495_76L<Cent>
                 NetEffect = 495_76L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 95_76m<Cent>
                 NewCharges = [||]
@@ -1100,7 +1100,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013a.md"
                 let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1118,7 +1118,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 429_24L<Cent>
                 NetEffect = 429_24L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
@@ -1186,7 +1186,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013b.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1203,7 +1203,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 432_07L<Cent>
                 NetEffect = 432_07L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
@@ -1271,7 +1271,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013c.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1288,7 +1288,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 434_89L<Cent>
                 NetEffect = 434_89L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 2_82.400m<Cent>
                 NewCharges = [||]
@@ -1356,7 +1356,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013d.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1373,7 +1373,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 453_36L<Cent>
                 NetEffect = 453_36L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 11_29.600m<Cent>
                 NewCharges = [||]
@@ -1441,7 +1441,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014a.md"
                 let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1459,7 +1459,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 429_24L<Cent>
                 NetEffect = 429_24L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
@@ -1528,7 +1528,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014b.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1545,7 +1545,7 @@ module QuoteTests =
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueSome -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
@@ -1614,7 +1614,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014c.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1631,7 +1631,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome -67_95L<Cent>
                 NetEffect = -67_95L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = -1.48887672M<Cent>
                 NewCharges = [||]
@@ -1700,7 +1700,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest015.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1717,7 +1717,7 @@ module QuoteTests =
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome -72_80L<Cent>
                 NetEffect = -72_80L<Cent>
-                PaymentStatus = Generated Settlement
+                PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 NewInterest = -4_86.86268494M<Cent>
                 NewCharges = [||]
@@ -1782,7 +1782,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest016.md"
                 return quote.QuoteResult
             }
@@ -1834,7 +1834,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest017.md"
                 return quote.QuoteResult
             }
@@ -1886,7 +1886,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest018.md"
                 return quote.QuoteResult
             }
@@ -1938,7 +1938,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest019.md"
                 return quote.QuoteResult
             }
@@ -1988,7 +1988,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest020.md"
                 return quote.QuoteResult
             }
@@ -2038,7 +2038,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote Settlement sp actualPayments
+                let! quote = getQuote ValueNone sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest021.md"
                 return quote.QuoteResult
             }

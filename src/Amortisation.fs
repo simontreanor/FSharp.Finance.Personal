@@ -157,7 +157,7 @@ module Amortisation =
             else
                 OpenBalance
 
-        let earlySettlementDate = match intendedPurpose with IntendedPurpose.Quote _ -> ValueSome sp.AsOfDate | _ -> ValueNone
+        let earlySettlementDate = match intendedPurpose with IntendedPurpose.Settlement _ -> ValueSome sp.AsOfDate | _ -> ValueNone
 
         let isWithinGracePeriod d = int d <= int sp.Interest.InitialGracePeriod
 
@@ -399,7 +399,7 @@ module Amortisation =
                     | ClosedBalance ->
                         NoLongerRequired
                     | _ ->
-                        Generated Settlement
+                        Generated
 
                 let generatedSettlementPayment' = generatedSettlementPayment - netEffect'
 
@@ -432,16 +432,14 @@ module Amortisation =
 
             let scheduleItem, generatedPayment, interestRoundingDifference =
                 match ap.GeneratedPayment, intendedPurpose with
-                | ValueSome _, IntendedPurpose.Quote Settlement ->
+                | ValueSome _, IntendedPurpose.Settlement ValueNone ->
                     settlementItem ()
-                | ValueSome _, IntendedPurpose.Quote (FutureSettlement day) when day = ap.AppliedPaymentDay ->
+                | ValueSome _, IntendedPurpose.Settlement (ValueSome day) when day = ap.AppliedPaymentDay ->
                     settlementItem ()
 
                 | ValueNone, _
                 | ValueSome _, IntendedPurpose.Statement
-                | ValueSome _, IntendedPurpose.Quote FirstOutstanding
-                | ValueSome _, IntendedPurpose.Quote AllOverdue
-                | ValueSome _, IntendedPurpose.Quote (FutureSettlement _) ->
+                | ValueSome _, IntendedPurpose.Settlement _ ->
 
                     let paymentStatus =
                         match si.BalanceStatus with
@@ -539,7 +537,7 @@ module Amortisation =
         let finalBalanceStatus = finalItem.BalanceStatus
         let finalAprSolution =
             match intendedPurpose with
-            | IntendedPurpose.Quote Settlement | IntendedPurpose.Quote (FutureSettlement _) when finalBalanceStatus = ClosedBalance ->
+            | IntendedPurpose.Settlement _ when finalBalanceStatus = ClosedBalance ->
                 items
                 |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
                 |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int asi.OffsetDay); Apr.Amount = asi.NetEffect })

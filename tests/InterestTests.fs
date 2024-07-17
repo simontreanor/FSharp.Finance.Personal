@@ -117,7 +117,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
 
             schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestCapTest001.md")
 
@@ -167,7 +167,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Quote Settlement) ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
 
             schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestCapTest002.md")
 

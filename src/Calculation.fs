@@ -7,23 +7,11 @@ module Calculation =
 
     open DateDay
 
-    /// the type of settlement quote requested
-    [<Struct>]
-    type QuoteType =
-        /// calculate the single final payment required to settle in full
-        | Settlement
-        /// calculate the single final payment required to settle in full on a future day
-        | FutureSettlement of SettlementDay: int<OffsetDay>
-        /// get the first outstanding payment
-        | FirstOutstanding
-        /// calculate the total of all overdue payments
-        | AllOverdue
-
     /// the intended purpose of the calculation
     [<RequireQualifiedAccess; Struct>]
     type IntendedPurpose =
         /// intended to quote a calculated amount, e.g. for settlement purposes
-        | Quote of QuoteType: QuoteType
+        | Settlement of SettlementDay: int<OffsetDay> voption
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 
