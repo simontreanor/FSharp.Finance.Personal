@@ -124,29 +124,33 @@ module AppliedPayment =
                 { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus }
             )
 
-        let appliedPayments day =
+        let appliedPayments day generatedPayment paymentStatus =
             let existingPaymentDay = payments |> Array.tryFind(fun ap -> ap.AppliedPaymentDay = day)
             if existingPaymentDay.IsSome then
                 payments
-                |> Array.map(fun ap -> if ap.AppliedPaymentDay = day then { ap with GeneratedPayment = ValueSome 0L<Cent> } else ap)
+                |> Array.map(fun ap -> if ap.AppliedPaymentDay = day then { ap with GeneratedPayment = generatedPayment } else ap)
             else
                 let newAppliedPayment = {
                     AppliedPaymentDay = day
                     ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
                     ActualPayments = [||]
-                    GeneratedPayment = ValueSome 0L<Cent>
+                    GeneratedPayment = generatedPayment
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
-                    PaymentStatus = Generated
+                    PaymentStatus = paymentStatus
                 }
                 payments
                 |> Array.append [| newAppliedPayment |]
 
         match intendedPurpose with
             | IntendedPurpose.Settlement (ValueSome day) ->
-                appliedPayments day
+                appliedPayments day (ValueSome 0L<Cent>) Generated
             | IntendedPurpose.Settlement ValueNone ->
-                appliedPayments asOfDay
+                appliedPayments asOfDay (ValueSome 0L<Cent>) Generated
             | IntendedPurpose.Statement ->
-                payments
+                let maxPaymentDay = payments |> (Array.maxBy _.AppliedPaymentDay >> _.AppliedPaymentDay)
+                if asOfDay >= maxPaymentDay then
+                    payments
+                else
+                    appliedPayments asOfDay ValueNone InformationOnly
         |> Array.sortBy _.AppliedPaymentDay

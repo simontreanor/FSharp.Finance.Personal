@@ -130,7 +130,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 voption {
-                    let! quote = getQuote ValueNone sp actualPayments
+                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                     quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest001.md"
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
@@ -197,7 +197,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 voption {
-                    let! quote = getQuote ValueNone sp actualPayments
+                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                     quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest002.md"
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
@@ -293,7 +293,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 voption {
-                    let! quote = getQuote ValueNone sp actualPayments
+                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                     quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest003.md"
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
@@ -351,7 +351,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 voption {
-                    let! quote = getQuote ValueNone sp actualPayments
+                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                     quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest004.md"
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
@@ -677,7 +677,7 @@ module UnitPeriodConfigTests =
                                         | _ as fsr -> fsr
                                 }
                         }
-                    let! quote = getQuote ValueNone quoteSp actualPayments
+                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) quoteSp actualPayments
                     let title = "5) Checking that the fees refund behaves correctly"
                     let original = originalScheduledPayments |> Formatting.generateHtmlFromArray None
                     let revised = quote.RevisedSchedule.ScheduleItems |> Formatting.generateHtmlFromArray None

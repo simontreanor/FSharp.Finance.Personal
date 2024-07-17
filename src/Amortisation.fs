@@ -50,18 +50,18 @@ module Amortisation =
         BalanceStatus: BalanceStatus
         /// any new charges incurred between the previous amortisation day and the current day
         NewCharges: Charge array
-        /// the new interest charged between the previous amortisation day and the current day
-        NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
+        /// the new interest charged between the previous amortisation day and the current day
+        NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the interest
         InterestPortion: int64<Cent>
+        /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
+        FeesRefund: int64<Cent>
         /// the portion of the net effect assigned to the fees
         FeesPortion: int64<Cent>
         /// the portion of the net effect assigned to the principal
         PrincipalPortion: int64<Cent>
-        /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
-        FeesRefund: int64<Cent>
         /// the charges balance to be carried forward
         ChargesBalance: int64<Cent>
         /// the interest balance to be carried forward
@@ -138,7 +138,7 @@ module Amortisation =
     }
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
-    let calculate sp intendedPurpose (appliedPayments: AppliedPayment array) =
+    let internal calculate sp intendedPurpose (appliedPayments: AppliedPayment array) =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
 
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
@@ -186,12 +186,13 @@ module Amortisation =
                     OffsetDay = v |> Array.head |> _.OffsetDay
                     PaymentDueTotal = v |> Array.sumBy _.PaymentDue
                     ActualPaymentTotal = v |> Array.sumBy (_.ActualPayments >> Array.sumBy ActualPaymentInfo.total)
+                    GeneratedPaymentTotal = v |> Array.sumBy (_.GeneratedPayment >> (ValueOption.defaultValue 0L<Cent>))
                     PaymentStatus = v |> Array.head |> _.PaymentStatus
                 |}
             )
             |> Array.filter(fun a -> a.PaymentStatus = MissedPayment || a.PaymentStatus = Underpayment)
             |> Array.choose(fun a ->
-                match a.ActualPaymentTotal, a.PaymentDueTotal with
+                match a.ActualPaymentTotal + a.GeneratedPaymentTotal, a.PaymentDueTotal with
                 | NotPaidAtAll -> None
                 | SomePaid shortfall -> Some (a.OffsetDay, PaidLaterOwing shortfall)
                 | FullyPaid -> Some (a.OffsetDay, PaidLaterInFull)
@@ -452,7 +453,7 @@ module Amortisation =
                         | RefundDue ->
                             NoLongerRequired
                         | _ ->
-                            if paymentDue' = 0L<Cent> && confirmedPayments = 0L<Cent> && pendingPayments = 0L<Cent> && (generatedPayment.IsNone || generatedPayment.Value = 0L<Cent>) then
+                            if ap.PaymentStatus <> InformationOnly && paymentDue' = 0L<Cent> && confirmedPayments = 0L<Cent> && pendingPayments = 0L<Cent> && (generatedPayment.IsNone || generatedPayment.Value = 0L<Cent>) then
                                 NothingDue
                             else
                                 ap.PaymentStatus

@@ -70,7 +70,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest001.md"
                 return quote.QuoteResult
             }
@@ -124,7 +124,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest002.md"
                 return quote.QuoteResult
             }
@@ -178,7 +178,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest003.md"
                 return quote.QuoteResult
             }
@@ -304,7 +304,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004.md"
                 return quote.QuoteResult
             }
@@ -430,7 +430,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004a.md"
                 return quote.QuoteResult
             }
@@ -555,7 +555,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest005.md"
                 return quote.QuoteResult
             }
@@ -611,7 +611,7 @@ module EdgeCaseTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest006.md"
                 return quote.QuoteResult
             }

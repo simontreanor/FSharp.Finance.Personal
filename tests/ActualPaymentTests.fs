@@ -1422,7 +1422,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/ActualPaymentTest021.md")
 

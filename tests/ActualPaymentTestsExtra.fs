@@ -130,12 +130,8 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed si.Payment.Value; Metadata = Map.empty } })
-                return
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty } })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Charge.LatePayment (Amount.Simple 10_00L<Cent>))) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                return amortisationSchedule.ScheduleItems
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
             let a = Array.last aa
@@ -328,6 +324,17 @@ module ActualPaymentTestsExtra =
     // let ``The sum of principal portions should equal the sum of advances`` (testItem: ScheduledPaymentTestItem) =
     //     testItem.PrincipalPortionTotal |> should equal testItem.AdvanceTotal
 
+    /// creates an array of actual payments made on time and in full according to an array of scheduled payments
+    let allPaidOnTime (scheduleItems: Item array) =
+        scheduleItems
+        |> Array.filter(fun si -> si.Payment.IsSome)
+        |> Array.map(fun si ->
+            {
+                PaymentDay = si.Day
+                PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed si.Payment.Value; Metadata = Map.empty }
+            }
+        )
+
     [<Fact>]
     let ``1) Simple schedule fully settled on time`` () =
         let sp = ({
@@ -371,14 +378,9 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let amortisationSchedule =
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty } })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Charge.LatePayment (Amount.Simple 10_00L<Cent>))) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
-                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra001.md"
-                return amortisationSchedule
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra001.md"
+                return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -454,14 +456,9 @@ module ActualPaymentTestsExtra =
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
                 |]
-                let amortisationSchedule =
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty } })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Charge.LatePayment (Amount.Simple 10_00L<Cent>))) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
-                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra002.md"
-                return amortisationSchedule
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra002.md"
+                return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -625,14 +622,9 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let amortisationSchedule =
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty } })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Charge.LatePayment (Amount.Simple 10_00L<Cent>))) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
-                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
-                return amortisationSchedule
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
+                return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -706,14 +698,9 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let amortisationSchedule =
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty } })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Charge.LatePayment (Amount.Simple 10_00L<Cent>))) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
-                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra005.md"
-                return amortisationSchedule
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra005.md"
+                return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
         let expected = ValueSome ({
@@ -784,19 +771,12 @@ module ActualPaymentTestsExtra =
         })
         let actual =
             voption {
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduleItems = schedule.Items
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
                 |]
-                let amortisationSchedule =
-                    scheduleItems
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty } })
-                    |> AppliedPayment.applyPayments schedule.AsOfDay IntendedPurpose.Statement sp.FeesAndCharges.LatePaymentGracePeriod (ValueSome (Charge.LatePayment (Amount.Simple 10_00L<Cent>))) sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-                    |> Amortisation.calculate sp IntendedPurpose.Statement
-                amortisationSchedule |> outputListToHtml $"out/ActualPaymentTestsExtra006.md"
-                return amortisationSchedule
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra006.md"
+                return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 2)
         let expected = ValueSome ({

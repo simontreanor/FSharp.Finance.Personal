@@ -35,7 +35,7 @@ module Rescheduling =
     let reschedule sp (rp: RescheduleParameters) (actualPayments: CustomerPayment array) =
         voption {
             // get the settlement quote
-            let! quote = getQuote ValueNone sp actualPayments
+            let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
             // create a new payment schedule either by auto-generating it or using manual payments
             let newPaymentSchedule =
                 match rp.PaymentSchedule with
@@ -104,7 +104,7 @@ module Rescheduling =
     let rollOver sp (rp: RolloverParameters) (actualPayments: CustomerPayment array) =
         voption {
             // get the settlement quote
-            let! quote = getQuote ValueNone sp actualPayments
+            let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
             // process the quote and extract the portions if applicable
             let! principalPortion, feesPortion, feesRefundIfSettled =
                 match quote.QuoteResult with

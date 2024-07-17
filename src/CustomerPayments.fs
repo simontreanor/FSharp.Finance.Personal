@@ -118,6 +118,8 @@ module CustomerPayments =
         | Generated
         /// no payment needed because the loan has already been settled
         | NoLongerRequired
+        /// a schedule item generated to show the balances on the as-of date
+        | InformationOnly
 
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]

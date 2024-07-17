@@ -73,7 +73,7 @@ module QuoteTests =
 
         let actual =
             voption{
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest001.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -160,7 +160,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest002.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -247,7 +247,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest003.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -330,7 +330,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest004.md"
                 let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -413,7 +413,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest005.md"
                 let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -500,7 +500,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest006.md"
                 let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -587,7 +587,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -672,7 +672,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -754,7 +754,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest009.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -844,7 +844,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest010.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -931,7 +931,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest011.md"
                 let! item = Array.vTryLastBut 6 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1014,7 +1014,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest012.md"
                 let! item = Array.vTryLastBut 3 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1100,7 +1100,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013a.md"
                 let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1186,7 +1186,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013b.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1271,7 +1271,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013c.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1356,7 +1356,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013d.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1441,7 +1441,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014a.md"
                 let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
                 return quote.QuoteResult, item
@@ -1528,7 +1528,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014b.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1614,7 +1614,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014c.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1700,7 +1700,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest015.md"
                 return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
             }
@@ -1782,7 +1782,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest016.md"
                 return quote.QuoteResult
             }
@@ -1834,7 +1834,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest017.md"
                 return quote.QuoteResult
             }
@@ -1886,7 +1886,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest018.md"
                 return quote.QuoteResult
             }
@@ -1938,7 +1938,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest019.md"
                 return quote.QuoteResult
             }
@@ -1988,7 +1988,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest020.md"
                 return quote.QuoteResult
             }
@@ -2038,7 +2038,7 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote ValueNone sp actualPayments
+                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest021.md"
                 return quote.QuoteResult
             }
