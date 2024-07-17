@@ -73,14 +73,14 @@ module AppliedPayment =
                     if pendingPayments > 0L<Cent> then
                         pendingPayments + confirmedPayments, PaymentPending
                     else
-                        match scheduledPayment', confirmedPayments with
-                        | { ScheduledPaymentType = ScheduledPaymentType.None }, 0L<Cent> ->
+                        match scheduledPayment'.ScheduledPaymentType, confirmedPayments with
+                        | ScheduledPaymentType.None, 0L<Cent> ->
                             0L<Cent>, NoneScheduled
-                        | { ScheduledPaymentType = ScheduledPaymentType.None }, cp when cp < 0L<Cent> ->
+                        | ScheduledPaymentType.None, cp when cp < 0L<Cent> ->
                             cp, Refunded
-                        | { ScheduledPaymentType = ScheduledPaymentType.None }, cp ->
+                        | ScheduledPaymentType.None, cp ->
                             cp, ExtraPayment
-                        | { ScheduledPaymentType = ScheduledPaymentType.Original sp }, cp when cp < sp && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
+                        | ScheduledPaymentType.Original sp, cp when cp < sp && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
                             match intendedPurpose with
                             | IntendedPurpose.Quote _ when offsetDay < asOfDay ->
                                 0L<Cent>, PaymentDue
@@ -88,13 +88,13 @@ module AppliedPayment =
                                 0L<Cent>, Generated quoteType
                             | _ ->
                                 sp, PaymentDue
-                        | { ScheduledPaymentType = sp }, _ when offsetDay > asOfDay ->
+                        | sp, _ when offsetDay > asOfDay ->
                             sp.Value, NotYetDue
-                        | { ScheduledPaymentType = sp }, 0L<Cent> when sp.Value > 0L<Cent> ->
+                        | sp, 0L<Cent> when sp.Value > 0L<Cent> ->
                             0L<Cent>, MissedPayment
-                        | { ScheduledPaymentType = sp }, cp when cp < sp.Value ->
+                        | sp, cp when cp < sp.Value ->
                             cp, Underpayment
-                        | { ScheduledPaymentType = sp }, cp when cp > sp.Value ->
+                        | sp, cp when cp > sp.Value ->
                             cp, Overpayment
                         | _, cp -> cp, PaymentMade
 
