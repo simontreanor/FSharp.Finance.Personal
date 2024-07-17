@@ -194,7 +194,7 @@ module Amortisation =
                 match a.ActualPaymentTotal, a.PaymentDueTotal with
                 | NotPaidAtAll -> None
                 | SomePaid shortfall -> Some (a.OffsetDay, PaidLaterOwing shortfall)
-                | FullyPaid -> Some (a.OffsetDay, PaidLater)
+                | FullyPaid -> Some (a.OffsetDay, PaidLaterInFull)
             )
             |> Map.ofArray
             |> fun m ->
