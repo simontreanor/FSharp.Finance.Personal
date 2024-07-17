@@ -116,10 +116,6 @@ module Amortisation =
         CumulativeFees: int64<Cent>
         /// the total of interest accrued up to and including the current day
         CumulativeInterest: decimal<Cent>
-        /// the first missed payment
-        FirstMissedPayment: int64<Cent> voption
-        /// the total of missed payments up to and including the current day
-        CumulativeMissedPayments: int64<Cent>
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -172,6 +168,14 @@ module Amortisation =
 
         let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate isSettledWithinGracePeriod sp.Interest.StandardRate sp.Interest.PromotionalRates fromDay toDay
 
+        let (|NotPaidAtAll|SomePaid|FullyPaid|) (actualPaymentTotal, paymentDueTotal) =
+            if actualPaymentTotal = 0L<Cent> then
+                NotPaidAtAll
+            elif actualPaymentTotal < paymentDueTotal then
+                SomePaid (paymentDueTotal - actualPaymentTotal)
+            else
+                FullyPaid
+
         let markMissedPaymentsAsLate schedule =
             schedule
             |> Array.groupBy _.Window
@@ -185,16 +189,22 @@ module Amortisation =
                     PaymentStatus = v |> Array.head |> _.PaymentStatus
                 |}
             )
-            |> Array.filter(fun a -> a.PaymentStatus = MissedPayment)
-            |> Array.choose(fun a -> if a.ActualPaymentTotal >= a.PaymentDueTotal then Some a.OffsetDay else None)
-            |> fun a ->
-                if a |> Array.isEmpty then
+            |> Array.filter(fun a -> a.PaymentStatus = MissedPayment || a.PaymentStatus = Underpayment)
+            |> Array.choose(fun a ->
+                match a.ActualPaymentTotal, a.PaymentDueTotal with
+                | NotPaidAtAll -> None
+                | SomePaid shortfall -> Some (a.OffsetDay, PaidLaterOwing shortfall)
+                | FullyPaid -> Some (a.OffsetDay, PaidLater)
+            )
+            |> Map.ofArray
+            |> fun m ->
+                if m |> Map.isEmpty then
                     schedule
                 else
                     schedule
                     |> Array.map(fun si ->
-                        match a |> Array.tryFind ((=) si.OffsetDay) with
-                        | Some _ -> { si with PaymentStatus = PaidLater }
+                        match m |> Map.tryFind si.OffsetDay with
+                        | Some cps -> { si with PaymentStatus = cps }
                         | None -> si
                     )
 
@@ -288,33 +298,7 @@ module Amortisation =
 
             let generatedPayment, netEffect =
                 let netEffect = if ap.AppliedPaymentDay > asOfDay then Cent.min ap.NetEffect paymentDue else ap.NetEffect
-                match intendedPurpose with
-                | IntendedPurpose.Quote FirstOutstanding when ap.GeneratedPayment.IsSome ->
-                    match a.FirstMissedPayment with
-                    | ValueSome firstMissedPayment ->
-                        ValueSome firstMissedPayment
-                        |> fun p -> p, (p |> ValueOption.defaultValue netEffect)
-                    | ValueNone ->
-                        appliedPayments
-                        |> Array.tryFind(fun a -> a.AppliedPaymentDay >= ap.AppliedPaymentDay && ap.ScheduledPayment.IsSome)
-                        |> toValueOption
-                        |> ValueOption.map _.ScheduledPayment.Value
-                        |> ValueOption.orElse ap.GeneratedPayment
-                        |> fun p -> p, (p |> ValueOption.defaultValue netEffect)
-                | IntendedPurpose.Quote AllOverdue when ap.GeneratedPayment.IsSome ->
-                    ValueSome (accumulator.CumulativeMissedPayments + roundedInterestPortion + chargesPortion - confirmedPayments - pendingPayments)
-                    |> fun p -> p, (p |> ValueOption.defaultValue netEffect)
-                | _ ->
-                    ap.GeneratedPayment, netEffect
-
-            let accumulator' =
-                match ap.PaymentStatus with
-                | MissedPayment | Underpayment when accumulator.FirstMissedPayment.IsNone ->
-                    { accumulator with FirstMissedPayment = ValueSome paymentDue; CumulativeMissedPayments = a.CumulativeMissedPayments + paymentDue }
-                | MissedPayment | Underpayment ->
-                    { accumulator with CumulativeMissedPayments = a.CumulativeMissedPayments + paymentDue }
-                | _ ->
-                    accumulator
+                ap.GeneratedPayment, netEffect
 
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
 
@@ -512,15 +496,15 @@ module Amortisation =
                         FeesRefundIfSettled = if paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
                     }, 0L<Cent>, if interestPortion' = 0L<Cent> then 0m<Cent> else interestBalance - Cent.toDecimalCent roundedInterestBalance
 
-            let accumulator'' =
-                { accumulator' with
-                    CumulativeScheduledPayments = accumulator'.CumulativeScheduledPayments + scheduledPaymentAmendment
+            let accumulator' =
+                { accumulator with
+                    CumulativeScheduledPayments = accumulator.CumulativeScheduledPayments + scheduledPaymentAmendment
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
                     CumulativeFees = a.CumulativeFees + feesPortion'
-                    CumulativeInterest = accumulator'.CumulativeInterest - interestRoundingDifference
+                    CumulativeInterest = accumulator.CumulativeInterest - interestRoundingDifference
                 }
 
-            scheduleItem, accumulator''
+            scheduleItem, accumulator'
 
         ) (
             { ScheduleItem.Default with
@@ -536,8 +520,6 @@ module Amortisation =
                 CumulativeGeneratedPayments = 0L<Cent>
                 CumulativeFees = 0L<Cent>
                 CumulativeInterest = 0m<Cent>
-                FirstMissedPayment = ValueNone
-                CumulativeMissedPayments = 0L<Cent>
             }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a

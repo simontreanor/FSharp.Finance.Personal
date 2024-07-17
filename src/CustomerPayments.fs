@@ -98,6 +98,8 @@ module CustomerPayments =
         | NothingDue
         /// a scheduled payment is not paid on time, but is paid within the window
         | PaidLater
+        /// a scheduled payment is not paid on time, but is partially paid within the window
+        | PaidLaterOwing of Shortfall: int64<Cent>
         /// a scheduled payment was missed completely, i.e. not paid within the window
         | MissedPayment
         /// a scheduled payment was made on time but not in the full amount
