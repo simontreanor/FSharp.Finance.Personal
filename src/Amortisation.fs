@@ -26,10 +26,10 @@ module Amortisation =
 
     /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
     type ScheduleItem = {
-        /// the date of amortisation
-        OffsetDate: Date
         /// the offset expressed as the number of days from the start date
         OffsetDay: int<OffsetDay>
+        /// the date of amortisation
+        OffsetDate: Date
         /// any advance made on the current day, typically the principal on day 0 for a single-advance transaction
         Advances: int64<Cent> array
         /// any payment scheduled on the current day
@@ -48,28 +48,28 @@ module Amortisation =
         PaymentStatus: CustomerPaymentStatus
         /// the overall balance status
         BalanceStatus: BalanceStatus
-        /// the new interest charged between the previous amortisation day and the current day
-        NewInterest: decimal<Cent>
         /// any new charges incurred between the previous amortisation day and the current day
         NewCharges: Charge array
-        /// the portion of the net effect assigned to the principal
-        PrincipalPortion: int64<Cent>
-        /// the portion of the net effect assigned to the fees
-        FeesPortion: int64<Cent>
-        /// the portion of the net effect assigned to the interest
-        InterestPortion: int64<Cent>
+        /// the new interest charged between the previous amortisation day and the current day
+        NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
+        /// the portion of the net effect assigned to the interest
+        InterestPortion: int64<Cent>
+        /// the portion of the net effect assigned to the fees
+        FeesPortion: int64<Cent>
+        /// the portion of the net effect assigned to the principal
+        PrincipalPortion: int64<Cent>
         /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
         FeesRefund: int64<Cent>
-        /// the principal balance to be carried forward
-        PrincipalBalance: int64<Cent>
-        /// the fees balance to be carried forward
-        FeesBalance: int64<Cent>
-        /// the interest balance to be carried forward
-        InterestBalance: decimal<Cent>
         /// the charges balance to be carried forward
         ChargesBalance: int64<Cent>
+        /// the interest balance to be carried forward
+        InterestBalance: decimal<Cent>
+        /// the fees balance to be carried forward
+        FeesBalance: int64<Cent>
+        /// the principal balance to be carried forward
+        PrincipalBalance: int64<Cent>
         /// the settlement figure as of the current day
         SettlementFigure: int64<Cent>
         /// the pro-rated fees as of the current day
