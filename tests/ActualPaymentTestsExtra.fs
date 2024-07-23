@@ -130,7 +130,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed si.Payment.Value; Metadata = Map.empty } })
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false actualPayments
                 return amortisationSchedule.ScheduleItems
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
@@ -378,7 +378,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra001.md"
                 return amortisationSchedule.ScheduleItems
             }
@@ -456,7 +456,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
                 |]
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra002.md"
                 return amortisationSchedule.ScheduleItems
             }
@@ -541,11 +541,11 @@ module ActualPaymentTestsExtra =
                     RateOnNegativeBalance = ValueNone
                     PromotionalInterestRates = [||]
                     ChargesHolidays = [||]
-                    IntendedPurpose = IntendedPurpose.Statement
+                    IntendedPurpose = (IntendedPurpose.Statement StatementType.InformationOnly)
                 }
                 let! oldSchedule, newSchedule = reschedule sp rp actualPayments
                 let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true }
+                let generationOptions = Some { GoParameters = sp; GoPurpose = (IntendedPurpose.Statement StatementType.InformationOnly); GoExtra = true }
                 let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray generationOptions
                 $"{title}<br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md"
                 return newSchedule.ScheduleItems
@@ -622,7 +622,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
                 return amortisationSchedule.ScheduleItems
             }
@@ -698,7 +698,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra005.md"
                 return amortisationSchedule.ScheduleItems
             }
@@ -774,7 +774,7 @@ module ActualPaymentTestsExtra =
                 let actualPayments = [|
                     ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
                 |]
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra006.md"
                 return amortisationSchedule.ScheduleItems
             }

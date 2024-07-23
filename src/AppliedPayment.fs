@@ -57,7 +57,7 @@ module AppliedPayment =
  
                 let actualPayments' = payments |> Array.choose(_.PaymentDetails >> function ActualPayment actualPaymentInfo -> Some actualPaymentInfo | _ -> None)
 
-                let generatedPayment' = payments |> Array.tryPick(_.PaymentDetails >> function GeneratedPayment generatedPayment -> Some generatedPayment | _ -> None) |> toValueOption
+                // let generatedPayment' = payments |> Array.tryPick(_.PaymentDetails >> function GeneratedPayment generatedPayment -> Some generatedPayment | _ -> None) |> toValueOption
 
                 let confirmedPayments =
                     actualPayments'
@@ -93,7 +93,7 @@ module AppliedPayment =
                         | sp, 0L<Cent> when sp.Value > 0L<Cent> ->
                             0L<Cent>, MissedPayment
                         | sp, cp when cp < sp.Value ->
-                            cp, Underpayment
+                            cp, MissedPayment
                         | sp, cp when cp > sp.Value ->
                             cp, Overpayment
                         | _, cp -> cp, PaymentMade
@@ -103,7 +103,7 @@ module AppliedPayment =
                     |> Array.collect(_.PaymentDetails >> function (ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (_, c) }) -> c | _ -> [||])
                     |> fun cc ->
                         if latePaymentCharge.IsSome then
-                            cc |> Array.append(match paymentStatus with MissedPayment | Underpayment -> [| latePaymentCharge.Value |] | _ -> [||])
+                            cc |> Array.append(match paymentStatus with MissedPayment -> [| latePaymentCharge.Value |] | _ -> [||])
                         else cc
                     |> fun cc ->
                         match chargesGrouping with
@@ -136,7 +136,7 @@ module AppliedPayment =
                     ActualPayments = [||]
                     GeneratedPayment = generatedPayment
                     IncurredCharges = [||]
-                    NetEffect = 0L<Cent>
+                    NetEffect = generatedPayment |> ValueOption.defaultValue 0L<Cent>
                     PaymentStatus = paymentStatus
                 }
                 payments
@@ -147,7 +147,9 @@ module AppliedPayment =
                 appliedPayments day (ValueSome 0L<Cent>) Generated
             | IntendedPurpose.Settlement ValueNone ->
                 appliedPayments asOfDay (ValueSome 0L<Cent>) Generated
-            | IntendedPurpose.Statement ->
+            | IntendedPurpose.Statement (StatementType.Internal gp) ->
+                appliedPayments asOfDay (ValueSome gp) Generated
+            | IntendedPurpose.Statement _ ->
                 let maxPaymentDay = payments |> (Array.maxBy _.AppliedPaymentDay >> _.AppliedPaymentDay)
                 if asOfDay >= maxPaymentDay then
                     payments

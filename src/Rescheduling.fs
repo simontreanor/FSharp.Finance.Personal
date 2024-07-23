@@ -59,7 +59,7 @@ module Rescheduling =
                     payments
             // append the new schedule to the old schedule up to the point of settlement
             let oldPaymentSchedule =
-                quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems
                 |> Array.filter _.ScheduledPayment.IsSome
                 |> Array.filter(fun si -> si.OffsetDate < sp.AsOfDate)
                 |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment })
@@ -81,7 +81,7 @@ module Rescheduling =
                 }
             // create the new amortiation schedule
             let! rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose ScheduleType.Rescheduled true actualPayments
-            return quote.RevisedSchedule, rescheduledSchedule
+            return quote.AmendedSchedule, rescheduledSchedule
         }
 
     /// parameters for creating a rolled-over schedule
@@ -108,14 +108,13 @@ module Rescheduling =
             // process the quote and extract the portions if applicable
             let! principalPortion, feesPortion, feesRefundIfSettled =
                 match quote.QuoteResult with
-                | PaymentQuote (paymentQuote, ofWhichPrincipal, ofWhichFees, ofWhichInterest, ofWhichCharges, feesRefundIfSettled) ->
+                | PaymentQuote (paymentQuote, pb) ->
                     match rp.FeeHandling with
-                    | Fees.FeeHandling.CapitaliseAsPrincipal -> ofWhichPrincipal + ofWhichFees + ofWhichInterest + ofWhichCharges, 0L<Cent>, feesRefundIfSettled
-                    | Fees.FeeHandling.CarryOverAsIs -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesRefundIfSettled
-                    | Fees.FeeHandling.WriteOffFeeBalance -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesRefundIfSettled
+                    | Fees.FeeHandling.CapitaliseAsPrincipal -> pb.OfWhichPrincipal + pb.OfWhichFees + pb.OfWhichInterest + pb.OfWhichCharges, 0L<Cent>, pb.FeesRefund
+                    | Fees.FeeHandling.CarryOverAsIs -> pb.OfWhichPrincipal + pb.OfWhichInterest + pb.OfWhichCharges, pb.OfWhichFees, pb.FeesRefund
+                    | Fees.FeeHandling.WriteOffFeeBalance -> pb.OfWhichPrincipal + pb.OfWhichInterest + pb.OfWhichCharges, pb.OfWhichFees, pb.FeesRefund
                     |> ValueSome
                 | AwaitPaymentConfirmation -> ValueNone
-                | UnableToGenerateQuote -> ValueNone
             // configure the parameters for the new schedule
             let spNew =
                 { sp with
@@ -141,6 +140,6 @@ module Rescheduling =
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }
             // create the new amortisation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduleType.Original true [||] // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
-            return quote.RevisedSchedule, rescheduledSchedule
+            let! rescheduledSchedule = Amortisation.generate spNew (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original true [||] // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
+            return quote.AmendedSchedule, rescheduledSchedule
         }

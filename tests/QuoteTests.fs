@@ -74,13 +74,13 @@ module QuoteTests =
         let actual =
             voption{
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest001.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest001.md"
+                let! item = Array.vTryLastBut 7 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1969_72L<Cent>, 1175_80L<Cent>, 790_21L<Cent>, 3_71L<Cent>, 0L<Cent>, 1437_53L<Cent>),
+            PaymentQuote (1969_72L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 3_71L<Cent>; FeesRefund = 1437_53L<Cent>; OfWhichFees = 790_21L<Cent>; OfWhichPrincipal = 1175_80L<Cent> }),
             {
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 OffsetDay = 57<OffsetDay>
@@ -161,13 +161,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest002.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest002.md"
+                let! item = Array.vTryLastBut 7 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (2026_50L<Cent>, 1175_80L<Cent>, 834_21L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 1393_53L<Cent>),
+            PaymentQuote (2026_50L<Cent>, { OfWhichCharges = 10_00L<Cent>; OfWhichInterest = 6_49L<Cent>; FeesRefund = 1393_53L<Cent>; OfWhichFees = 834_21L<Cent>; OfWhichPrincipal = 1175_80L<Cent> }),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -248,13 +248,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest003.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest003.md"
+                let! item = Array.vTryLastBut 7 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (2001_50L<Cent>, 1175_80L<Cent>, 825_70L<Cent>, 0L<Cent>, 0L<Cent>, 1393_53L<Cent>),
+            PaymentQuote (2001_50L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 0L<Cent>; FeesRefund = 1393_53L<Cent>; OfWhichFees = 825_70L<Cent>; OfWhichPrincipal = 1175_80L<Cent> }),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -331,13 +331,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest004.md"
-                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest004.md"
+                let! item = Array.vTryLastBut 5 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1200_00L<Cent>, 1200_00L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1200_00L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 0L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 1200_00L<Cent> }),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
@@ -414,13 +414,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest005.md"
-                let! item = Array.vTryLastBut 5 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest005.md"
+                let! item = Array.vTryLastBut 5 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (1238_40L<Cent>, 1200_00L<Cent>, 0L<Cent>, 38_40L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1238_40L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 38_40L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 1200_00L<Cent> }),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
@@ -501,13 +501,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest006.md"
-                let! item = Array.vTryLastBut 7 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest006.md"
+                let! item = Array.vTryLastBut 7 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (3420_03L<Cent>, 1175_80L<Cent>, 2227_74L<Cent>, 6_49L<Cent>, 10_00L<Cent>, 0L<Cent>),
+            PaymentQuote (3420_03L<Cent>, { OfWhichCharges = 10_00L<Cent>; OfWhichInterest = 6_49L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 2227_74L<Cent>; OfWhichPrincipal = 1175_80L<Cent> }),
             {
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
@@ -539,7 +539,7 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``7) Get next scheduled payment`` () =
+    let ``7) Get payment to cover first outstanding payment`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -587,13 +587,13 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                let! quote = getQuote (IntendedPurpose.Statement StatementType.FirstOutstanding) sp actualPayments
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>), {
+            PaymentQuote (323_15L<Cent>, { OfWhichCharges = 20_00L<Cent>; OfWhichInterest = 24_11L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 182_65L<Cent>; OfWhichPrincipal = 96_39L<Cent> }), {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
                 Advances = [||]
@@ -624,7 +624,7 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``8) Get payment to cover all overdue amounts`` () =
+    let ``8) Get payment to cover all oustanding amounts`` () =
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -672,13 +672,13 @@ module QuoteTests =
 
         let actual =
             voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                let! quote = getQuote (IntendedPurpose.Statement StatementType.AllOutstanding) sp actualPayments
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>),
+            PaymentQuote (690_41L<Cent>, { OfWhichCharges = 20_00L<Cent>; OfWhichInterest = 24_11L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 423_03L<Cent>; OfWhichPrincipal = 223_27L<Cent> }),
             {
                 OffsetDate = startDate.AddDays 155
                 OffsetDay = 155<OffsetDay>
@@ -755,12 +755,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest009.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest009.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (1311_67L<Cent>, 500_00L<Cent>, 750_00L<Cent>, 61_67L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1311_67L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 61_67L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 750_00L<Cent>; OfWhichPrincipal = 500_00L<Cent> }),
             {
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
@@ -845,12 +845,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest010.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest010.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (1261_73L<Cent>, 471_07L<Cent>, 706_56L<Cent>, 84_10L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (1261_73L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 84_10L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 706_56L<Cent>; OfWhichPrincipal = 471_07L<Cent> }),
             {
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
@@ -932,13 +932,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest011.md"
-                let! item = Array.vTryLastBut 6 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest011.md"
+                let! item = Array.vTryLastBut 6 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (973_53L<Cent>, 769_46L<Cent>, 195_68L<Cent>, 8_39L<Cent>, 0L<Cent>, 958_45L<Cent>),
+            PaymentQuote (973_53L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 8_39L<Cent>; FeesRefund = 958_45L<Cent>; OfWhichFees = 195_68L<Cent>; OfWhichPrincipal = 769_46L<Cent> }),
             {
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
@@ -1015,13 +1015,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest012.md"
-                let! item = Array.vTryLastBut 3 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest012.md"
+                let! item = Array.vTryLastBut 3 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (495_76L<Cent>, 400_00L<Cent>, 0L<Cent>, 95_76L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (495_76L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 95_76L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 400_00L<Cent> }),
             {
                 OffsetDate = startDate.AddDays 30
                 OffsetDay = 30<OffsetDay>
@@ -1101,13 +1101,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013a.md"
-                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013a.md"
+                let! item = Array.vTryLastBut 1 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (429_24L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 76_24L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 353_00L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -1187,12 +1187,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013b.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013b.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (432_07L<Cent>, 353_00L<Cent>, 0L<Cent>, 79_07L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (432_07L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 79_07L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 353_00L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1272,12 +1272,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013c.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013c.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (434_89L<Cent>, 353_00L<Cent>, 0L<Cent>, 81_89L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (434_89L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 81_89L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 353_00L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1357,12 +1357,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013d.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest013d.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (453_36L<Cent>, 353_00L<Cent>, 0L<Cent>, 90_36L<Cent>, 10_00L<Cent>, 0L<Cent>),
+            PaymentQuote (453_36L<Cent>, { OfWhichCharges = 10_00L<Cent>; OfWhichInterest = 90_36L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 353_00L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
@@ -1442,13 +1442,13 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014a.md"
-                let! item = Array.vTryLastBut 1 quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014a.md"
+                let! item = Array.vTryLastBut 1 quote.AmendedSchedule.ScheduleItems
                 return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
-            PaymentQuote (429_24L<Cent>, 353_00L<Cent>, 0L<Cent>, 76_24L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (429_24L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 76_24L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 353_00L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
@@ -1529,12 +1529,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014b.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014b.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (-67_93L<Cent>, -67_93L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (-67_93L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 0L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -67_93L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 15)
                 OffsetDay = 134<OffsetDay>
@@ -1615,12 +1615,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014c.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest014c.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (-67_95L<Cent>, -67_93L<Cent>, 0L<Cent>, -2L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (-67_95L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = -2L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -67_93L<Cent> }),
             {
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
@@ -1701,12 +1701,12 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest015.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest015.md"
+                return quote.QuoteResult, Array.last quote.AmendedSchedule.ScheduleItems
             }
 
         let expected = ValueSome (
-            PaymentQuote (-72_80L<Cent>, -67_93L<Cent>, 0L<Cent>, -4_87L<Cent>, 0L<Cent>, 0L<Cent>),
+            PaymentQuote (-72_80L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = -4_87L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -67_93L<Cent> }),
             {
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
@@ -1783,11 +1783,11 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest016.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest016.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (0L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 0L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 0L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -1835,11 +1835,11 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest017.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest017.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-5_83L<Cent>, -5_83L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-5_83L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 0L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -5_83L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -1887,11 +1887,11 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest018.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest018.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (57_51L<Cent>, 3_17L<Cent>, 0L<Cent>, 54_34L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (57_51L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 54_34L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 3_17L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -1939,11 +1939,11 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest019.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest019.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (104_69L<Cent>, 91_52L<Cent>, 0L<Cent>, 13_17L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (104_69L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 13_17L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 91_52L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -1989,11 +1989,11 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest020.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest020.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-91_06L<Cent>, -88_40L<Cent>, 0L<Cent>, -2_66L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-91_06L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = -2_66L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -88_40L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -2039,9 +2039,9 @@ module QuoteTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest021.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest021.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-13_84L<Cent>, -12_94L<Cent>, 0L<Cent>, -90L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-13_84L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = -90L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -12_94L<Cent> }))
         actual |> should equal expected

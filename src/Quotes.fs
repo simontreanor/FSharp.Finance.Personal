@@ -6,24 +6,22 @@ module Quotes =
     open Calculation
     open Currency
     open CustomerPayments
-    open DateDay
+    open FeesAndCharges
     open PaymentSchedule
     open ValueOptionCE
 
     /// the result of a quote with a breakdown of constituent amounts where relevant
     [<Struct>]
     type QuoteResult =
-        | PaymentQuote of PaymentQuote: int64<Cent> * OfWhichPrincipal: int64<Cent> * OfWhichFees: int64<Cent> * OfWhichInterest: int64<Cent> * OfWhichCharges: int64<Cent> * FeesRefundIfSettled: int64<Cent>
+        | PaymentQuote of PaymentQuote: int64<Cent> * PaymentBreakdown: PaymentBreakdown
         | AwaitPaymentConfirmation
-        | UnableToGenerateQuote
 
     /// a settlement quote
     [<Struct>]
     type Quote = {
         IntendedPurpose: IntendedPurpose
         QuoteResult: QuoteResult
-        CurrentSchedule: Amortisation.Schedule
-        RevisedSchedule: Amortisation.Schedule
+        AmendedSchedule: Amortisation.Schedule
     }
 
     /// <summary>calculates a revised schedule showing the generated payment for the given quote type</summary>
@@ -33,37 +31,99 @@ module Quotes =
     /// <returns>the requested quote, if possible</returns>
     let getQuote intendedPurpose sp (actualPayments: CustomerPayment array) =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-            let! revisedAmortisationSchedule = Amortisation.generate sp intendedPurpose ScheduleType.Original false actualPayments
-            let! si = revisedAmortisationSchedule.ScheduleItems |> Array.tryFind(_.GeneratedPayment.IsSome) |> toValueOption
-            let confirmedPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Confirmed ap } -> ap | { ActualPaymentStatus = ActualPaymentStatus.WriteOff ap } -> ap | _ -> 0L<Cent>)
-            let pendingPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Pending ap } -> ap | _ -> 0L<Cent>)
+            let generateSchedule ip = Amortisation.generate sp ip ScheduleType.Original false actualPayments
+
+            let! amendedSchedule = generateSchedule intendedPurpose
+
+            let! si =
+                amendedSchedule.ScheduleItems
+                |> Array.tryFind(fun asi -> asi.OffsetDate = sp.AsOfDate)
+                |> toValueOption
+
+            let! amendedSchedule' =
+                match si.GeneratedPayment, intendedPurpose with
+                | ValueNone, _
+                | _, IntendedPurpose.Settlement _
+                | _, IntendedPurpose.Statement StatementType.InformationOnly
+                | _, IntendedPurpose.Statement (StatementType.Internal _) ->
+                    voption { return amendedSchedule }
+                | _, IntendedPurpose.Statement st ->
+                    amendedSchedule.StatementInfo.Item st
+                    |> StatementType.Internal
+                    |> IntendedPurpose.Statement
+                    |> generateSchedule
+
+            let! si' =
+                amendedSchedule'.ScheduleItems
+                |> Array.tryFind(fun asi -> asi.OffsetDate = sp.AsOfDate)
+                |> toValueOption
+
+            let confirmedPayments =
+                si'.ActualPayments
+                |> Array.sumBy(fun ap ->
+                    match ap.ActualPaymentStatus with
+                    | ActualPaymentStatus.Confirmed ap
+                    | ActualPaymentStatus.WriteOff ap -> ap
+                    | _ -> 0L<Cent>
+                )
+
+            let pendingPayments =
+                si'.ActualPayments
+                |> Array.sumBy(fun ap ->
+                    match ap.ActualPaymentStatus with
+                    | ActualPaymentStatus.Pending ap -> ap
+                    | _ -> 0L<Cent>
+                )
+
+            let feesRefund =
+                match intendedPurpose, sp.FeesAndCharges.FeesSettlementRefund with
+                | IntendedPurpose.Statement _, _
+                | _, Fees.SettlementRefund.None ->
+                    0L<Cent>
+                | _, _ ->
+                    si'.FeesRefundIfSettled
+
             let quoteResult =
-                if si.GeneratedPayment.IsNone then
-                    UnableToGenerateQuote
-                elif pendingPayments <> 0L<Cent> then 
+                if pendingPayments <> 0L<Cent> then 
                     AwaitPaymentConfirmation
                 else
-                    let principalPortion, feesPortion, interestPortion, chargesPortion, feesRefundIfSettled =
-                        if si.GeneratedPayment.Value = 0L<Cent> then
-                            0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesRefundIfSettled
+                    PaymentQuote <|
+                    if si'.GeneratedPayment.IsNone then
+                        si'.SettlementFigure,
+                        {
+                            OfWhichCharges = 0L<Cent>
+                            OfWhichInterest = 0L<Cent>
+                            FeesRefund = 0L<Cent>
+                            OfWhichFees = 0L<Cent>
+                            OfWhichPrincipal = 0L<Cent>
+                        }
+                    else
+                        if confirmedPayments <> 0L<Cent> then
+                            let chargesPortion = Cent.min si'.ChargesPortion confirmedPayments
+                            let interestPortion = Cent.min si'.InterestPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion))
+                            let feesPortion = Cent.min si'.FeesPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion - interestPortion))
+                            let principalPortion = Cent.max 0L<Cent> (confirmedPayments - feesPortion - chargesPortion - interestPortion)
+                            si'.GeneratedPayment.Value,
+                            {
+                                OfWhichCharges = si'.ChargesPortion - chargesPortion
+                                OfWhichInterest = si'.InterestPortion - interestPortion
+                                FeesRefund = feesRefund
+                                OfWhichFees = si'.FeesPortion - feesPortion
+                                OfWhichPrincipal = si'.PrincipalPortion - principalPortion
+                            }
                         else
-                            if confirmedPayments <> 0L<Cent> then
-                                if si.GeneratedPayment.Value > 0L<Cent> then
-                                    let chargesPortion = Cent.min si.ChargesPortion confirmedPayments
-                                    let interestPortion = Cent.min si.InterestPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion))
-                                    let feesPortion = Cent.min si.FeesPortion (Cent.max 0L<Cent> (confirmedPayments - chargesPortion - interestPortion))
-                                    let principalPortion = Cent.max 0L<Cent> (confirmedPayments - feesPortion - chargesPortion - interestPortion)
-                                    si.PrincipalPortion - principalPortion, si.FeesPortion - feesPortion, si.InterestPortion - interestPortion, si.ChargesPortion - chargesPortion, si.FeesRefundIfSettled
-                                else
-                                    si.GeneratedPayment.Value, 0L<Cent>, 0L<Cent>, 0L<Cent>, si.FeesRefundIfSettled
-                            else
-                                si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled
-                    PaymentQuote (si.GeneratedPayment.Value, principalPortion, feesPortion, interestPortion, chargesPortion, feesRefundIfSettled)
+                            si'.GeneratedPayment.Value,
+                            {
+                                OfWhichCharges = si'.ChargesPortion
+                                OfWhichInterest = si'.InterestPortion
+                                FeesRefund = feesRefund
+                                OfWhichFees = si'.FeesPortion
+                                OfWhichPrincipal = si'.PrincipalPortion
+                            }
+
             return {
                 IntendedPurpose = intendedPurpose
                 QuoteResult = quoteResult
-                CurrentSchedule = currentAmortisationSchedule
-                RevisedSchedule = revisedAmortisationSchedule
+                AmendedSchedule = amendedSchedule'
             }
         }

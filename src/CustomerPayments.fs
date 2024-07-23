@@ -102,8 +102,6 @@ module CustomerPayments =
         | PaidLaterOwing of Shortfall: int64<Cent>
         /// a scheduled payment was missed completely, i.e. not paid within the window
         | MissedPayment
-        /// a scheduled payment was made on time but not in the full amount
-        | Underpayment
         /// a scheduled payment was made on time but exceeded the full amount
         | Overpayment
         /// a payment was made on a day when no payments were scheduled
@@ -137,3 +135,38 @@ module CustomerPayments =
         | RegularFixedSchedule of RegularFixedSchedule array
         /// just a bunch of payments
         | IrregularSchedule of IrregularSchedule: CustomerPayment array
+
+    /// the amounts of the components of a payment
+    [<Struct>]
+    type PaymentBreakdown = {
+        /// the penalty charges portion of a payment
+        OfWhichCharges: int64<Cent>
+        /// the interest portion of a payment
+        OfWhichInterest: int64<Cent>
+        /// any product fees refunded before calculating the product fees portion
+        FeesRefund: int64<Cent>
+        /// the product fees portion of a payment
+        OfWhichFees: int64<Cent>
+        /// the principal portion of a payment
+        OfWhichPrincipal: int64<Cent>
+    }
+
+    /// the type of settlement quote requested
+    [<RequireQualifiedAccess; Struct>]
+    type StatementType =
+        /// just create a statement for information only, showing the accrued interest and settlement figure on the as-of day
+        | InformationOnly
+        /// create a statement showing the effect of an as-of-day payment for the outstanding amount of the first missed or late owing payment
+        | FirstOutstanding
+        /// create a statement showing the effect of an as-of-day payment for the total of outstanding amounts from all missed or late owing payments
+        | AllOutstanding
+        /// inject a generated payment on the as-of day
+        | Internal of GeneratedPayment: int64<Cent>
+
+    /// the intended purpose of the calculation
+    [<RequireQualifiedAccess; Struct>]
+    type IntendedPurpose =
+        /// intended to quote a settlement figure
+        | Settlement of SettlementDay: int<OffsetDay> voption
+        /// intended to view the current status of a loan, optionally with calculated payments on the as-of day
+        | Statement of StatementType: StatementType

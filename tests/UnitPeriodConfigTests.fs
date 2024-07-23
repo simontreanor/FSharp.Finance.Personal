@@ -131,8 +131,8 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest001.md"
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
+                    quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest001.md"
+                    return quote.AmendedSchedule.FinalApr |> finalAprPercent
                 }
 
             let expected = ValueSome (Percent 56.51300m)
@@ -198,8 +198,8 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest002.md"
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
+                    quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest002.md"
+                    return quote.AmendedSchedule.FinalApr |> finalAprPercent
                 }
 
             let expected = ValueSome (Percent 986.81300m)
@@ -294,8 +294,8 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest003.md"
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
+                    quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest003.md"
+                    return quote.AmendedSchedule.FinalApr |> finalAprPercent
                 }
 
             let expected = ValueSome (Percent 516.75800m)
@@ -352,8 +352,8 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest004.md"
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
+                    quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest004.md"
+                    return quote.AmendedSchedule.FinalApr |> finalAprPercent
                 }
 
             let expected = ValueSome (Percent 930.55900m)
@@ -680,9 +680,9 @@ module UnitPeriodConfigTests =
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) quoteSp actualPayments
                     let title = "5) Checking that the fees refund behaves correctly"
                     let original = originalScheduledPayments |> Formatting.generateHtmlFromArray None
-                    let revised = quote.RevisedSchedule.ScheduleItems |> Formatting.generateHtmlFromArray None
+                    let revised = quote.AmendedSchedule.ScheduleItems |> Formatting.generateHtmlFromArray None
                     $"{title}<br /><br />{original}<br />{revised}" |> Formatting.outputToFile' "out/UnitPeriodConfigTest005.md"
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
+                    return quote.AmendedSchedule.FinalApr |> finalAprPercent
                 }
 
             let expected = ValueSome (Percent 699.52500m)

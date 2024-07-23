@@ -9,8 +9,8 @@ module Formatting =
     open Microsoft.FSharp.Reflection
     open System.Text.RegularExpressions
 
-    open Calculation
     open Currency
+    open CustomerPayments
  
     /// an array of properties relating to (product) fees
     let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "FeesRefundIfSettled" |] else [||]

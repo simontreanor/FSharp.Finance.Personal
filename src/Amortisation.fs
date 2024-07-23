@@ -119,7 +119,6 @@ module Amortisation =
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
-    [<Struct>]
     type Schedule = {
         /// a list of amortisation items, showing the events and calculations for a particular offset day
         ScheduleItems: ScheduleItem array
@@ -135,6 +134,10 @@ module Amortisation =
         FinalCostToBorrowingRatio: Percent
         /// the daily interest rate derived from interest over (principal + fees), ignoring charges 
         EffectiveInterestRate: Interest.Rate
+        /// the payment required to settle the product as of the specified day
+        SettlementFigure: int64<Cent> voption
+        /// any additional calculations on the schedule
+        StatementInfo: Map<StatementType, int64<Cent>>
     }
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
@@ -190,7 +193,7 @@ module Amortisation =
                     PaymentStatus = v |> Array.head |> _.PaymentStatus
                 |}
             )
-            |> Array.filter(fun a -> a.PaymentStatus = MissedPayment || a.PaymentStatus = Underpayment)
+            |> Array.filter(fun a -> a.PaymentStatus = MissedPayment)
             |> Array.choose(fun a ->
                 match a.ActualPaymentTotal + a.GeneratedPaymentTotal, a.PaymentDueTotal with
                 | NotPaidAtAll -> None
@@ -261,13 +264,13 @@ module Amortisation =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
                     0L<Cent>
                 else
-                    match ap.ScheduledPayment with
-                    | { ScheduledPaymentType = ScheduledPaymentType.Original amount } when extraPaymentsBalance > 0L<Cent>
+                    match ap.ScheduledPayment.ScheduledPaymentType with
+                    | ScheduledPaymentType.Original amount when extraPaymentsBalance > 0L<Cent>
                         -> amount - extraPaymentsBalance
-                    | { ScheduledPaymentType = ScheduledPaymentType.Original amount }
-                    | { ScheduledPaymentType = ScheduledPaymentType.Rescheduled amount }
+                    | ScheduledPaymentType.Original amount
+                    | ScheduledPaymentType.Rescheduled amount
                         -> Cent.min (si.PrincipalBalance + si.FeesBalance + roundedInterestPortion) amount
-                    | { ScheduledPaymentType = ScheduledPaymentType.None }
+                    | ScheduledPaymentType.None
                         -> 0L<Cent>
                 |> Cent.max 0L<Cent>
                 |> fun p ->
@@ -277,20 +280,12 @@ module Amortisation =
                     | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
                     | _ -> p
 
-            let underpayment =
-                match ap.PaymentStatus with
-                | MissedPayment ->
-                    paymentDue
-                | Underpayment ->
-                    paymentDue - ap.NetEffect
-                | _ ->
-                    0L<Cent>
-
             let newChargesTotal, incurredCharges =
                 if paymentDue = 0L<Cent> then
                     0L<Cent>, [||]
                 else
                     if Charges.areApplicable sp.StartDate sp.FeesAndCharges.ChargesHolidays si.OffsetDay then
+                        let underpayment = if ap.PaymentStatus = MissedPayment then paymentDue - ap.NetEffect else 0L<Cent>
                         Charges.total underpayment ap.IncurredCharges |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.ChargesRounding), ap.IncurredCharges
                     else
                         0L<Cent>, [||]
@@ -439,7 +434,7 @@ module Amortisation =
                     settlementItem ()
 
                 | ValueNone, _
-                | ValueSome _, IntendedPurpose.Statement
+                | ValueSome _, IntendedPurpose.Statement _
                 | ValueSome _, IntendedPurpose.Settlement _ ->
 
                     let paymentStatus =
@@ -526,6 +521,13 @@ module Amortisation =
         |> fst
         |> markMissedPaymentsAsLate
 
+    /// find the total of any outstanding payment amounts in a schedule item
+    let outstandingPayment asi =
+        match asi.PaymentStatus with
+        | PaidLaterOwing shortfall -> Some shortfall
+        | MissedPayment -> Some asi.ScheduledPayment.Value
+        | _ -> None
+
     /// wraps the amortisation schedule in some statistics, and optionally calculate the final APR (optional because it can be processor-intensive)
     let calculateStats sp intendedPurpose items =
         let finalItem = Array.last items
@@ -560,6 +562,13 @@ module Amortisation =
                 if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
                 else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
                 |> Percent |> Interest.Rate.Daily
+            SettlementFigure = items |> Array.tryFind(fun asi -> asi.OffsetDate = sp.AsOfDate) |> toValueOption |> ValueOption.map _.SettlementFigure
+            StatementInfo =
+                [|
+                    StatementType.FirstOutstanding, (items |> Array.tryPick outstandingPayment |> Option.defaultValue 0L<Cent>)
+                    StatementType.AllOutstanding, (items |> Array.choose outstandingPayment |> fun a -> if Array.isEmpty a then 0L<Cent> else Array.sum a)
+                |]
+                |> Map.ofArray
         }
 
     /// generates an amortisation schedule and final statistics

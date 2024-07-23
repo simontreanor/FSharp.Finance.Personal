@@ -77,7 +77,7 @@ module FeesAndChargesTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false
 
             schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/FeesAndChargesTest001.md")
 
@@ -163,7 +163,7 @@ module FeesAndChargesTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false
 
             schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/FeesAndChargesTest002.md")
 
@@ -249,7 +249,7 @@ module FeesAndChargesTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false
 
             schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/FeesAndChargesTest003.md")
 

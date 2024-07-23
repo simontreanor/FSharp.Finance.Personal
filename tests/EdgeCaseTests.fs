@@ -71,11 +71,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest001.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest001.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (500_79L<Cent>, 177_81L<Cent>, 274_64L<Cent>, 48_34L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (500_79L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 48_34L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 274_64L<Cent>; OfWhichPrincipal = 177_81L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -125,11 +125,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest002.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest002.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (455_55L<Cent>, 148_17L<Cent>, 228_86L<Cent>, 78_52L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (455_55L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 78_52L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 228_86L<Cent>; OfWhichPrincipal = 148_17L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -179,11 +179,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest003.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest003.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (1221_54L<Cent>, 427_28L<Cent>, 660_00L<Cent>, 134_26L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (1221_54L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 134_26L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 660_00L<Cent>; OfWhichPrincipal = 427_28L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -305,11 +305,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (466_41L<Cent>, 151_32L<Cent>, 233_66L<Cent>, 81_43L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (466_41L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 81_43L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 233_66L<Cent>; OfWhichPrincipal = 151_32L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -431,11 +431,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004a.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004a.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (479_92L<Cent>, 155_70L<Cent>, 240_43L<Cent>, 83_79L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (479_92L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 83_79L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 240_43L<Cent>; OfWhichPrincipal = 155_70L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -556,11 +556,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest005.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest005.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (64916L<Cent>, 500_00L<Cent>, 0L<Cent>, 149_16L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (64916L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 149_16L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = 500_00L<Cent> }))
         actual |> should equal expected
 
     [<Fact>]
@@ -612,11 +612,11 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest006.md"
+                quote.AmendedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest006.md"
                 return quote.QuoteResult
             }
 
-        let expected = ValueSome (PaymentQuote (-76_80L<Cent>, -76_80L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
+        let expected = ValueSome (PaymentQuote (-76_80L<Cent>, { OfWhichCharges = 0L<Cent>; OfWhichInterest = 0L<Cent>; FeesRefund = 0L<Cent>; OfWhichFees = 0L<Cent>; OfWhichPrincipal = -76_80L<Cent> }))
         actual |> should equal expected
 
 
@@ -836,7 +836,7 @@ module EdgeCaseTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Statement StatementType.InformationOnly) ScheduleType.Original false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/EdgeCaseTest009.md")
 

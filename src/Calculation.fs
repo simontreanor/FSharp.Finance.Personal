@@ -7,14 +7,6 @@ module Calculation =
 
     open DateDay
 
-    /// the intended purpose of the calculation
-    [<RequireQualifiedAccess; Struct>]
-    type IntendedPurpose =
-        /// intended to quote a calculated amount, e.g. for settlement purposes
-        | Settlement of SettlementDay: int<OffsetDay> voption
-        /// intended just for information, e.g. to view the current status of a loan
-        | Statement
-
     /// holds the result of a devision, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {
