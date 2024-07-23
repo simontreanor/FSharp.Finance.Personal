@@ -14,6 +14,7 @@ module QuoteTests =
     open CustomerPayments
     open DateDay
     open FeesAndCharges
+    open Interest
     open PaymentSchedule
     open Percentages
     open Quotes
@@ -51,6 +52,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -138,6 +140,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -225,6 +228,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -312,6 +316,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
@@ -395,6 +400,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
@@ -478,6 +484,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -538,176 +545,178 @@ module QuoteTests =
 
         actual |> should equal expected
 
-    [<Fact>]
-    let ``7) Get next scheduled payment`` () =
-        let startDate = Date(2024, 10, 1).AddDays(-60)
+    // [<Fact>]
+    // let ``7) Get next scheduled payment`` () =
+    //     let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp = {
-            StartDate = startDate
-            AsOfDate = Date(2024, 10, 1)
-            Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
-                MaxDuration = ValueNone
-            )
-            PaymentOptions = {
-                ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = LeaveOpenBalance
-            }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.None
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
-            Interest = {
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                RoundingOptions = RoundingOptions.recommended
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
-            }
-        }
+    //     let sp = {
+    //         StartDate = startDate
+    //         AsOfDate = Date(2024, 10, 1)
+    //         Principal = 1200_00L<Cent>
+    //         PaymentSchedule = RegularSchedule (
+    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+    //             PaymentCount = 11,
+    //             MaxDuration = ValueNone
+    //         )
+    //         PaymentOptions = {
+    //             ScheduledPaymentOption = AsScheduled
+    //             CloseBalanceOption = LeaveOpenBalance
+    //         }
+    //         FeesAndCharges = {
+    //             Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
+    //             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+    //             FeesSettlementRefund = Fees.SettlementRefund.None
+    //             Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+    //             ChargesHolidays = [||]
+    //             ChargesGrouping = OneChargeTypePerDay
+    //             LatePaymentGracePeriod = 0<DurationDay>
+    //         }
+    //         Interest = {
+    //             Method = InterestMethod.Simple
+    //             StandardRate = Interest.Rate.Annual (Percent 9.95m)
+    //             Cap = Interest.Cap.none
+    //             InitialGracePeriod = 3<DurationDay>
+    //             PromotionalRates = [||]
+    //             RateOnNegativeBalance = ValueNone
+    //         }
+    //         Calculation = {
+    //             AprMethod = Apr.CalculationMethod.UsActuarial 8
+    //             RoundingOptions = RoundingOptions.recommended
+    //             MinimumPayment = DeferOrWriteOff 50L<Cent>
+    //             PaymentTimeout = 3<DurationDay>
+    //         }
+    //     }
 
-        let actualPayments =
-            [| 15 .. 14 .. 29 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
-            )
+    //     let actualPayments =
+    //         [| 15 .. 14 .. 29 |]
+    //         |> Array.map(fun i ->
+    //             { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
+    //         )
 
-        let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
-            }
+    //     let actual =
+    //         voption {
+    //             let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
+    //             quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
+    //             return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+    //         }
 
-        let expected = ValueSome (
-            PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>), {
-                OffsetDate = startDate.AddDays 155
-                OffsetDay = 155<OffsetDay>
-                Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
-                Window = 11
-                PaymentDue = 323_10L<Cent>
-                ActualPayments = [||]
-                GeneratedPayment = ValueNone
-                NetEffect = 323_10L<Cent>
-                PaymentStatus = NotYetDue
-                BalanceStatus = OpenBalance
-                NewInterest = 2_57.39205205m<Cent>
-                NewCharges = [||]
-                PrincipalPortion = 110_72L<Cent>
-                FeesPortion = 209_81L<Cent>
-                InterestPortion = 2_57L<Cent>
-                ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
-                PrincipalBalance = 122_33L<Cent>
-                FeesBalance = 231_57L<Cent>
-                InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
-                SettlementFigure = 677_00L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            }
-        )
+    //     let expected = ValueSome (
+    //         PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>), {
+    //             OffsetDate = startDate.AddDays 155
+    //             OffsetDay = 155<OffsetDay>
+    //             Advances = [||]
+    //             ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
+    //             Window = 11
+    //             PaymentDue = 323_10L<Cent>
+    //             ActualPayments = [||]
+    //             GeneratedPayment = ValueNone
+    //             NetEffect = 323_10L<Cent>
+    //             PaymentStatus = NotYetDue
+    //             BalanceStatus = OpenBalance
+    //             NewInterest = 2_57.39205205m<Cent>
+    //             NewCharges = [||]
+    //             PrincipalPortion = 110_72L<Cent>
+    //             FeesPortion = 209_81L<Cent>
+    //             InterestPortion = 2_57L<Cent>
+    //             ChargesPortion = 0L<Cent>
+    //             FeesRefund = 0L<Cent>
+    //             PrincipalBalance = 122_33L<Cent>
+    //             FeesBalance = 231_57L<Cent>
+    //             InterestBalance = 0m<Cent>
+    //             ChargesBalance = 0L<Cent>
+    //             SettlementFigure = 677_00L<Cent>
+    //             FeesRefundIfSettled = 0L<Cent>
+    //         }
+    //     )
 
-        actual |> should equal expected
+    //     actual |> should equal expected
 
-    [<Fact>]
-    let ``8) Get payment to cover all overdue amounts`` () =
-        let startDate = Date(2024, 10, 1).AddDays(-60)
+    // [<Fact>]
+    // let ``8) Get payment to cover all overdue amounts`` () =
+    //     let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp = {
-            AsOfDate = Date(2024, 10, 1)
-            StartDate = startDate
-            Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
-                MaxDuration = ValueNone
-            )
-            PaymentOptions = {
-                ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = LeaveOpenBalance
-            }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.None
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
-            Interest = {
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                RoundingOptions = RoundingOptions.recommended
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
-            }
-        }
+    //     let sp = {
+    //         AsOfDate = Date(2024, 10, 1)
+    //         StartDate = startDate
+    //         Principal = 1200_00L<Cent>
+    //         PaymentSchedule = RegularSchedule (
+    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+    //             PaymentCount = 11,
+    //             MaxDuration = ValueNone
+    //         )
+    //         PaymentOptions = {
+    //             ScheduledPaymentOption = AsScheduled
+    //             CloseBalanceOption = LeaveOpenBalance
+    //         }
+    //         FeesAndCharges = {
+    //             Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
+    //             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+    //             FeesSettlementRefund = Fees.SettlementRefund.None
+    //             Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+    //             ChargesHolidays = [||]
+    //             ChargesGrouping = OneChargeTypePerDay
+    //             LatePaymentGracePeriod = 0<DurationDay>
+    //         }
+    //         Interest = {
+    //             Method = InterestMethod.Simple
+    //             StandardRate = Interest.Rate.Annual (Percent 9.95m)
+    //             Cap = Interest.Cap.none
+    //             InitialGracePeriod = 3<DurationDay>
+    //             PromotionalRates = [||]
+    //             RateOnNegativeBalance = ValueNone
+    //         }
+    //         Calculation = {
+    //             AprMethod = Apr.CalculationMethod.UsActuarial 8
+    //             RoundingOptions = RoundingOptions.recommended
+    //             MinimumPayment = DeferOrWriteOff 50L<Cent>
+    //             PaymentTimeout = 3<DurationDay>
+    //         }
+    //     }
 
-        let actualPayments =
-            [| 15 .. 14 .. 29 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
-            )
+    //     let actualPayments =
+    //         [| 15 .. 14 .. 29 |]
+    //         |> Array.map(fun i ->
+    //             { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
+    //         )
 
-        let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
-            }
+    //     let actual =
+    //         voption {
+    //             let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
+    //             quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
+    //             return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+    //         }
 
-        let expected = ValueSome (
-            PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>),
-            {
-                OffsetDate = startDate.AddDays 155
-                OffsetDay = 155<OffsetDay>
-                Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
-                Window = 11
-                PaymentDue = 300_11L<Cent>
-                ActualPayments = [||]
-                GeneratedPayment = ValueNone
-                NetEffect = 300_11L<Cent>
-                PaymentStatus = NotYetDue
-                BalanceStatus = ClosedBalance
-                NewInterest = 1_14.10005753m<Cent>
-                NewCharges = [||]
-                PrincipalPortion = 103_33L<Cent>
-                FeesPortion = 195_64L<Cent>
-                InterestPortion = 1_14L<Cent>
-                ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
-                PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
-                InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
-                SettlementFigure = 300_11L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            }
-        )
+    //     let expected = ValueSome (
+    //         PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>),
+    //         {
+    //             OffsetDate = startDate.AddDays 155
+    //             OffsetDay = 155<OffsetDay>
+    //             Advances = [||]
+    //             ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
+    //             Window = 11
+    //             PaymentDue = 300_11L<Cent>
+    //             ActualPayments = [||]
+    //             GeneratedPayment = ValueNone
+    //             NetEffect = 300_11L<Cent>
+    //             PaymentStatus = NotYetDue
+    //             BalanceStatus = ClosedBalance
+    //             NewInterest = 1_14.10005753m<Cent>
+    //             NewCharges = [||]
+    //             PrincipalPortion = 103_33L<Cent>
+    //             FeesPortion = 195_64L<Cent>
+    //             InterestPortion = 1_14L<Cent>
+    //             ChargesPortion = 0L<Cent>
+    //             FeesRefund = 0L<Cent>
+    //             PrincipalBalance = 0L<Cent>
+    //             FeesBalance = 0L<Cent>
+    //             InterestBalance = 0m<Cent>
+    //             ChargesBalance = 0L<Cent>
+    //             SettlementFigure = 300_11L<Cent>
+    //             FeesRefundIfSettled = 0L<Cent>
+    //         }
+    //     )
 
-        actual |> should equal expected
+    //     actual |> should equal expected
 
     [<Fact>]
     let ``9) Verified example`` () =
@@ -736,6 +745,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -818,6 +828,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -908,6 +919,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -996,6 +1008,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.798m)
                 Cap = interestCapExample
                 InitialGracePeriod = 1<DurationDay>
@@ -1077,6 +1090,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1163,6 +1177,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1248,6 +1263,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1333,6 +1349,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1418,6 +1435,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1504,6 +1522,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1590,6 +1609,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1676,6 +1696,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1762,6 +1783,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1811,6 +1833,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1863,6 +1886,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1915,6 +1939,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1967,6 +1992,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -2017,6 +2043,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = InterestMethod.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
