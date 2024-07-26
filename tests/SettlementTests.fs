@@ -62,9 +62,9 @@ module SettlementTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 24<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 55<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 86<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 24<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 55<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 86<OffsetDay> 100_53L<Cent>
         |]
 
         let actual =
@@ -89,6 +89,7 @@ module SettlementTests =
                 NetEffect = 98_52L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                InitialInterest = 0m<Cent>
                 NewInterest = 16_96.448m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 81_56L<Cent>
@@ -144,9 +145,9 @@ module SettlementTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 24<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 55<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 86<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 24<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 55<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 86<OffsetDay> 100_53L<Cent>
         |]
 
         let actual =
@@ -171,6 +172,7 @@ module SettlementTests =
                 NetEffect = 105_04L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                InitialInterest = 0m<Cent>
                 NewInterest = 4_56.736m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 81_56L<Cent>
@@ -226,10 +228,10 @@ module SettlementTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 24<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 55<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 86<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 100_53L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 115<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 50_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 24<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 55<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 86<OffsetDay> 100_53L<Cent>
+            CustomerPayment.ActualConfirmed 115<OffsetDay> 50_00L<Cent>
         |]
 
         let actual =
@@ -254,6 +256,7 @@ module SettlementTests =
                 NetEffect = 53_30L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                InitialInterest = 0m<Cent>
                 NewInterest = 2_82.688m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 50_48L<Cent>

@@ -130,7 +130,7 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed si.Payment.Value; Metadata = Map.empty } })
+                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> CustomerPayment.ActualConfirmed si.Day si.Payment.Value)
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
                 return amortisationSchedule.ScheduleItems
             }
@@ -331,12 +331,7 @@ module ActualPaymentTestsExtra =
     let allPaidOnTime (scheduleItems: Item array) =
         scheduleItems
         |> Array.filter(fun si -> si.Payment.IsSome)
-        |> Array.map(fun si ->
-            {
-                PaymentDay = si.Day
-                PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed si.Payment.Value; Metadata = Map.empty }
-            }
-        )
+        |> Array.map(fun si -> CustomerPayment.ActualConfirmed si.Day si.Payment.Value)
 
     [<Fact>]
     let ``1) Simple schedule fully settled on time`` () =
@@ -399,6 +394,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 407_64L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 3_30.67257534m<Cent>
             NewCharges = [||]
             PrincipalPortion = 161_76L<Cent>
@@ -459,7 +455,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
+                    (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra002.md"
@@ -478,6 +474,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 170_04L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 64.65046575m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_79L<Cent>
@@ -538,7 +535,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
+                    (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let rp : RescheduleParameters = {
                     FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay')
@@ -569,6 +566,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 9_80L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 3.72866027m<Cent>
             NewCharges = [||]
             PrincipalPortion = 4_39L<Cent>
@@ -646,6 +644,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 137_36L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 52_14L<Cent>
@@ -723,6 +722,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 51_53L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 9_43.040m<Cent>
             NewCharges = [||]
             PrincipalPortion = 42_10L<Cent>
@@ -781,7 +781,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
+                    (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
                 amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra006.md"
@@ -800,6 +800,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 1_28.41170136m<Cent>
             NewCharges = [||]
             PrincipalPortion = 134_62L<Cent>
@@ -860,7 +861,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
+                    (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let rp : RolloverParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -890,6 +891,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 9_26L<Cent>
@@ -950,7 +952,7 @@ module ActualPaymentTestsExtra =
         let actual =
             voption {
                 let actualPayments = [|
-                    ({ PaymentDay = 0<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_60L<Cent>; Metadata = Map.empty } })
+                    (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let rp : RolloverParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -980,6 +982,7 @@ module ActualPaymentTestsExtra =
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 18_64L<Cent>

@@ -288,6 +288,7 @@ module InterestTests =
                 NetEffect = 1523_25L<Cent>
                 PaymentStatus = NotYetDue
                 BalanceStatus = ClosedBalance
+                InitialInterest = 0m<Cent>
                 NewInterest = 10_26.07665657m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1512_99L<Cent>

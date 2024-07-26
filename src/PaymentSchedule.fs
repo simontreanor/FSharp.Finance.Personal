@@ -38,6 +38,8 @@ module PaymentSchedule =
         AsOfDay: int<OffsetDay>
         /// the items of the schedule
         Items: Item array
+        /// the initial interest balance when using the add-on interest method
+        InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
         FinalPaymentDay: int<OffsetDay>
         /// the amount of all the payments except the final one
@@ -279,6 +281,7 @@ module PaymentSchedule =
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items'
+                InitialInterestBalance = match sp.Interest.Method with Interest.InterestMethod.AddOn -> interestTotal | _ -> 0L<Cent>
                 FinalPaymentDay = finalPaymentDay
                 LevelPayment = items' |> Array.filter _.Payment.IsSome |> Array.countBy _.Payment.Value |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue finalPayment
                 FinalPayment = finalPayment

@@ -52,7 +52,9 @@ module Amortisation =
         NewCharges: Charge array
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
-        /// the new interest charged between the previous amortisation day and the current day
+        /// the interest initially calculated at the start date
+        InitialInterest: decimal<Cent>
+        /// the new interest charged between the previous amortisation day and the current day, less any initial interest
         NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the interest
         InterestPortion: int64<Cent>
@@ -88,6 +90,7 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
+            InitialInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
@@ -138,7 +141,7 @@ module Amortisation =
     }
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
-    let internal calculate sp intendedPurpose (appliedPayments: AppliedPayment array) =
+    let internal calculate sp intendedPurpose initialInterestBalance (appliedPayments: AppliedPayment array) =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
 
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
@@ -212,14 +215,13 @@ module Amortisation =
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
             let window =
-                match ap.ScheduledPayment with
-                | { ScheduledPaymentType = ScheduledPaymentType.Original _ }
-                | { ScheduledPaymentType = ScheduledPaymentType.Rescheduled _ }
-                    -> si.Window + 1
-                | { ScheduledPaymentType = ScheduledPaymentType.None }
-                    -> si.Window
+                match ap.ScheduledPayment.ScheduledPaymentType with
+                | ScheduledPaymentType.Original _ | ScheduledPaymentType.Rescheduled _ -> si.Window + 1
+                | ScheduledPaymentType.None -> si.Window
 
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0L<Cent>
+
+            let initialInterest = ap.InitialInterest |> ValueOption.defaultValue 0m<Cent> // to do: is the voption information useful later?
 
             let newInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
@@ -233,6 +235,12 @@ module Amortisation =
                 else
                     dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
                     |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                |> fun i ->
+                    match sp.Interest.Method with
+                    | Interest.InterestMethod.AddOn ->
+                        i //- initialInterest
+                    | _ ->
+                        i
 
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
@@ -261,13 +269,13 @@ module Amortisation =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
                     0L<Cent>
                 else
-                    match ap.ScheduledPayment with
-                    | { ScheduledPaymentType = ScheduledPaymentType.Original amount } when extraPaymentsBalance > 0L<Cent>
+                    match ap.ScheduledPayment.ScheduledPaymentType with
+                    | ScheduledPaymentType.Original amount when extraPaymentsBalance > 0L<Cent>
                         -> amount - extraPaymentsBalance
-                    | { ScheduledPaymentType = ScheduledPaymentType.Original amount }
-                    | { ScheduledPaymentType = ScheduledPaymentType.Rescheduled amount }
+                    | ScheduledPaymentType.Original amount
+                    | ScheduledPaymentType.Rescheduled amount
                         -> Cent.min (si.PrincipalBalance + si.FeesBalance + roundedInterestPortion) amount
-                    | { ScheduledPaymentType = ScheduledPaymentType.None }
+                    | ScheduledPaymentType.None
                         -> 0L<Cent>
                 |> Cent.max 0L<Cent>
                 |> fun p ->
@@ -416,6 +424,7 @@ module Amortisation =
                     NetEffect = netEffect + generatedSettlementPayment'
                     PaymentStatus = paymentStatus
                     BalanceStatus = ClosedBalance
+                    InitialInterest = initialInterest
                     NewInterest = cappedNewInterest
                     NewCharges = incurredCharges
                     PrincipalPortion = si.PrincipalBalance
@@ -480,6 +489,7 @@ module Amortisation =
                         NetEffect = netEffect'
                         PaymentStatus = paymentStatus
                         BalanceStatus = balanceStatus
+                        InitialInterest = initialInterest
                         NewInterest = cappedNewInterest
                         NewCharges = incurredCharges
                         PrincipalPortion = principalPortion'
@@ -511,6 +521,7 @@ module Amortisation =
                 Advances = [| sp.Principal |]
                 PrincipalBalance = sp.Principal
                 FeesBalance = feesTotal
+                InterestBalance = initialInterestBalance |> Cent.toDecimalCent
                 SettlementFigure = sp.Principal + feesTotal
                 FeesRefundIfSettled = match sp.FeesAndCharges.FeesSettlementRefund with Fees.SettlementRefund.None -> 0L<Cent> | _ -> feesTotal
             }, {
@@ -564,7 +575,7 @@ module Amortisation =
 
     /// generates an amortisation schedule and final statistics
     let generate sp intendedPurpose scheduleType trimEnd actualPayments =
-        let payments =
+        let payments, initialInterestBalance =
             match sp.PaymentSchedule with
             | RegularSchedule _ ->
                 let schedule = PaymentSchedule.calculate BelowZero sp
@@ -578,9 +589,15 @@ module Amortisation =
                             match scheduleType with
                             | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty }
                             | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
-                    })
+                        InitialInterest =
+                            match scheduleType, sp.Interest.Method with
+                            | ScheduleType.Original, Interest.InterestMethod.AddOn ->
+                                si.Interest |> Cent.toDecimalCent |> ValueSome
+                            | _ ->
+                                ValueNone
+                    }), s.InitialInterestBalance
                 | ValueNone ->
-                    [||]
+                    [||], 0L<Cent>
             | RegularFixedSchedule regularFixedSchedules ->
                 regularFixedSchedules
                 |> Array.map(fun rfs ->
@@ -592,12 +609,13 @@ module Amortisation =
                                 match scheduleType with
                                 | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original rfs.PaymentAmount; Metadata = Map.empty }
                                 | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled rfs.PaymentAmount; Metadata = Map.empty }
+                            InitialInterest = ValueNone
                         }
                     )
                 )
-                |> Array.concat
+                |> Array.concat, 0L<Cent>
             | IrregularSchedule payments ->
-                payments
+                payments, 0L<Cent>
 
         if Array.isEmpty payments then ValueNone else
 
@@ -606,7 +624,7 @@ module Amortisation =
 
         payments
         |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
-        |> calculate sp intendedPurpose
+        |> calculate sp intendedPurpose initialInterestBalance
         |> Array.trimEnd(fun si -> trimEnd && si.PaymentStatus = NoLongerRequired) // remove extra items from rescheduling
         |> calculateStats sp intendedPurpose
         |> ValueSome
