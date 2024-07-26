@@ -248,9 +248,9 @@ module PaymentSchedule =
 
         let generator payment =
             match sp.Interest.Method with
-            | Interest.InterestMethod.Simple -> generatorSimple payment
-            | Interest.InterestMethod.Compound -> failwith "Compound interest calculation not yet implemented"
-            | Interest.InterestMethod.AddOn -> generatorAddOn payment
+            | Interest.Method.Simple -> generatorSimple payment
+            | Interest.Method.Compound -> failwith "Compound interest calculation not yet implemented"
+            | Interest.Method.AddOn -> generatorAddOn payment
 
         match Array.solve generator 100 roughPayment toleranceOption toleranceSteps with
         | Solution.Found _ ->
@@ -281,7 +281,7 @@ module PaymentSchedule =
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items'
-                InitialInterestBalance = match sp.Interest.Method with Interest.InterestMethod.AddOn -> interestTotal | _ -> 0L<Cent>
+                InitialInterestBalance = match sp.Interest.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
                 FinalPaymentDay = finalPaymentDay
                 LevelPayment = items' |> Array.filter _.Payment.IsSome |> Array.countBy _.Payment.Value |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue finalPayment
                 FinalPayment = finalPayment

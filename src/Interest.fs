@@ -85,7 +85,7 @@ module Interest =
             |> Map.ofArray
 
     [<RequireQualifiedAccess; Struct>]
-    type InterestMethod =
+    type Method =
         | Simple
         | Compound
         | AddOn
@@ -94,7 +94,7 @@ module Interest =
     [<Struct>]
     type Options = {
         /// the method for calculating interest
-        Method: InterestMethod
+        Method: Method
         /// the standard rate of interest
         StandardRate: Rate
         /// any total or daily caps on interest

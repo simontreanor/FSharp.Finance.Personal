@@ -13,7 +13,6 @@ module FeesAndChargesTests =
     open Currency
     open DateDay
     open FeesAndCharges
-    open Interest
     open Percentages
     open PaymentSchedule
 
@@ -49,7 +48,7 @@ module FeesAndChargesTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
@@ -137,7 +136,7 @@ module FeesAndChargesTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
@@ -225,7 +224,7 @@ module FeesAndChargesTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>

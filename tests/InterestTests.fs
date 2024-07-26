@@ -99,7 +99,7 @@ module InterestTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
@@ -150,7 +150,7 @@ module InterestTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
                     Cap = { interestCapExample with Total = ValueSome (Amount.Percentage (Percent 123.45m, ValueNone, ValueSome RoundDown)) }
                     InitialGracePeriod = 3<DurationDay>
@@ -250,7 +250,7 @@ module InterestTests =
                     LatePaymentGracePeriod = 1<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
                     Cap = Cap.none
                     InitialGracePeriod = 3<DurationDay>

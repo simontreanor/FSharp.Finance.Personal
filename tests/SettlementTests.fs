@@ -14,7 +14,6 @@ module SettlementTests =
     open CustomerPayments
     open DateDay
     open FeesAndCharges
-    open Interest
     open PaymentSchedule
     open Percentages
     open Quotes
@@ -46,7 +45,7 @@ module SettlementTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = InterestMethod.Simple
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -129,7 +128,7 @@ module SettlementTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = InterestMethod.Simple
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -212,7 +211,7 @@ module SettlementTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = InterestMethod.Simple
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>

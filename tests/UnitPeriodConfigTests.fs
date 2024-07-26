@@ -14,7 +14,6 @@ module UnitPeriodConfigTests =
     open CustomerPayments
     open DateDay
     open FeesAndCharges
-    open Interest
     open PaymentSchedule
     open Percentages
     open Quotes
@@ -80,7 +79,7 @@ module UnitPeriodConfigTests =
                         LatePaymentGracePeriod = 3<DurationDay>
                     }
                     Interest = {
-                        Method = InterestMethod.Simple
+                        Method = Interest.Method.Simple
                         StandardRate = Interest.Rate.Annual (Percent 9.95m)
                         Cap = Interest.Cap.none
                         InitialGracePeriod = 3<DurationDay>
@@ -161,7 +160,7 @@ module UnitPeriodConfigTests =
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
@@ -229,7 +228,7 @@ module UnitPeriodConfigTests =
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
@@ -326,7 +325,7 @@ module UnitPeriodConfigTests =
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>
@@ -414,7 +413,7 @@ module UnitPeriodConfigTests =
                     LatePaymentGracePeriod = 3<DurationDay>
                 }
                 Interest = {
-                    Method = InterestMethod.Simple
+                    Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.none
                     InitialGracePeriod = 3<DurationDay>

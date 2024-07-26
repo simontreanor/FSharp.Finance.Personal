@@ -43,7 +43,7 @@ module InterestFirstTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = InterestMethod.Simple
+                Method = Interest.Method.Simple
                 StandardRate = Rate.Daily <| Percent 0.8m
                 Cap = {
                     Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)
@@ -98,7 +98,7 @@ module InterestFirstTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = InterestMethod.AddOn
+                Method = Interest.Method.AddOn
                 StandardRate = Rate.Daily <| Percent 0.8m
                 Cap = {
                     Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)

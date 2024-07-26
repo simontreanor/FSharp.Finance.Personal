@@ -237,7 +237,7 @@ module Amortisation =
                     |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                 |> fun i ->
                     match sp.Interest.Method with
-                    | Interest.InterestMethod.AddOn ->
+                    | Interest.Method.AddOn ->
                         i //- initialInterest
                     | _ ->
                         i
@@ -591,7 +591,7 @@ module Amortisation =
                             | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
                         InitialInterest =
                             match scheduleType, sp.Interest.Method with
-                            | ScheduleType.Original, Interest.InterestMethod.AddOn ->
+                            | ScheduleType.Original, Interest.Method.AddOn ->
                                 si.Interest |> Cent.toDecimalCent |> ValueSome
                             | _ ->
                                 ValueNone
