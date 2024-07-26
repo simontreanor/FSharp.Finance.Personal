@@ -29,7 +29,7 @@ module AppliedPayment =
         /// the payment status based on the payments made on the current day
         PaymentStatus: CustomerPaymentStatus
         /// the original, contractually calculated interest
-        InitialInterest: decimal<Cent> voption
+        ContractualInterest: decimal<Cent> voption
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
@@ -123,8 +123,8 @@ module AppliedPayment =
                             )
                         | AllChargesApplied -> cc
 
-                let initialInterest =
-                    let ii = payments |> Array.map (_.InitialInterest >> toOption)
+                let contractualInterest =
+                    let ii = payments |> Array.map (_.ContractualInterest >> toOption)
                     if ii |> Array.isEmpty || ii |> Array.forall _.IsNone then
                         ValueNone
                     else
@@ -133,7 +133,7 @@ module AppliedPayment =
                         |> Array.sum
                         |> ValueSome
 
-                { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus; InitialInterest = initialInterest }
+                { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus; ContractualInterest = contractualInterest }
             )
 
         let appliedPayments day generatedPayment paymentStatus =
@@ -150,7 +150,7 @@ module AppliedPayment =
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
                     PaymentStatus = paymentStatus
-                    InitialInterest = ValueNone
+                    ContractualInterest = ValueNone
                 }
                 payments
                 |> Array.append [| newAppliedPayment |]

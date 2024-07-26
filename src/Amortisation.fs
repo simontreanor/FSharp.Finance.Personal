@@ -53,9 +53,9 @@ module Amortisation =
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
         /// the interest initially calculated at the start date
-        InitialInterest: decimal<Cent>
+        ContractualInterest: decimal<Cent>
         /// the new interest charged between the previous amortisation day and the current day, less any initial interest
-        NewInterest: decimal<Cent>
+        InterestAdjustment: decimal<Cent>
         /// the portion of the net effect assigned to the interest
         InterestPortion: int64<Cent>
         /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
@@ -90,8 +90,8 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
-            InitialInterest = 0m<Cent>
-            NewInterest = 0m<Cent>
+            ContractualInterest = 0m<Cent>
+            InterestAdjustment = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
             FeesPortion = 0L<Cent>
@@ -221,7 +221,7 @@ module Amortisation =
 
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0L<Cent>
 
-            let initialInterest = ap.InitialInterest |> ValueOption.defaultValue 0m<Cent> // to do: is the voption information useful later?
+            let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent> // to do: is the voption information useful later?
 
             let newInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
@@ -238,7 +238,7 @@ module Amortisation =
                 |> fun i ->
                     match sp.Interest.Method with
                     | Interest.Method.AddOn ->
-                        i //- initialInterest
+                        i //- contractualInterest
                     | _ ->
                         i
 
@@ -424,8 +424,8 @@ module Amortisation =
                     NetEffect = netEffect + generatedSettlementPayment'
                     PaymentStatus = paymentStatus
                     BalanceStatus = ClosedBalance
-                    InitialInterest = initialInterest
-                    NewInterest = cappedNewInterest
+                    ContractualInterest = contractualInterest
+                    InterestAdjustment = cappedNewInterest
                     NewCharges = incurredCharges
                     PrincipalPortion = si.PrincipalBalance
                     FeesPortion = si.FeesBalance - feesRefund
@@ -489,8 +489,8 @@ module Amortisation =
                         NetEffect = netEffect'
                         PaymentStatus = paymentStatus
                         BalanceStatus = balanceStatus
-                        InitialInterest = initialInterest
-                        NewInterest = cappedNewInterest
+                        ContractualInterest = contractualInterest
+                        InterestAdjustment = cappedNewInterest
                         NewCharges = incurredCharges
                         PrincipalPortion = principalPortion'
                         FeesPortion = feesPortion'
@@ -589,7 +589,7 @@ module Amortisation =
                             match scheduleType with
                             | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty }
                             | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
-                        InitialInterest =
+                        ContractualInterest =
                             match scheduleType, sp.Interest.Method with
                             | ScheduleType.Original, Interest.Method.AddOn ->
                                 si.Interest |> Cent.toDecimalCent |> ValueSome
@@ -609,7 +609,7 @@ module Amortisation =
                                 match scheduleType with
                                 | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original rfs.PaymentAmount; Metadata = Map.empty }
                                 | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled rfs.PaymentAmount; Metadata = Map.empty }
-                            InitialInterest = ValueNone
+                            ContractualInterest = ValueNone
                         }
                     )
                 )
