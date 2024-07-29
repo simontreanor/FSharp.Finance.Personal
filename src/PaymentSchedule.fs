@@ -13,12 +13,15 @@ module PaymentSchedule =
     open UnitPeriod
 
     /// a scheduled payment item, with running calculations of interest and principal balance
-    [<Struct>]
     type Item = {
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
         /// the scheduled payment amount
         Payment: int64<Cent> voption
+        /// the maximum interest accruable according to relevant regulations
+        InterestLimit: int64<Cent>
+        /// the total maximum interest accruable from the start date to the current date
+        AggregateInterestLimit: int64<Cent>
         /// the interest accrued since the previous payment
         Interest: int64<Cent>
         /// the total interest accrued from the start date to the current date
@@ -32,7 +35,6 @@ module PaymentSchedule =
     }
 
     ///  a schedule of payments, with final statistics based on the payments being made on time and in full
-    [<Struct>]
     type Schedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is inspected
         AsOfDay: int<OffsetDay>
@@ -185,75 +187,86 @@ module PaymentSchedule =
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
 
         let totalAddOnInterest =
-            (sp.Principal |> Cent.toDecimalCent) * dailyInterestRate * decimal finalPaymentDay
-            |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-            |> Cent.min totalInterestCap
+            match sp.Interest.Method with
+            | Interest.Method.AddOn ->
+                (sp.Principal |> Cent.toDecimalCent) * dailyInterestRate * decimal finalPaymentDay
+                |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                |> Cent.min totalInterestCap
+            | _ -> 0L<Cent>
 
-        let roughPayment = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees) / decimal paymentCount
+        let roughPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees + interest) / decimal paymentCount
 
-        let initial = { Day = 0<OffsetDay>; Payment = ValueNone; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; InterestBalance = 0L<Cent>; PrincipalBalance = sp.Principal + fees }
+        let initialItem = { Day = 0<OffsetDay>; Payment = ValueNone; InterestLimit = 0L<Cent>; AggregateInterestLimit = 0L<Cent>; Interest = 0L<Cent>; AggregateInterest = 0L<Cent>; Principal = 0L<Cent>; InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees }
 
         let toleranceSteps = ValueSome { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 4 }
 
         let mutable schedule = [||]
 
-        let generatorSimple payment =
+        let calculateInterest interestMethod payment previousItem day =
+            match interestMethod with
+            | Interest.Method.Simple ->
+                let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates previousItem.Day day
+                let interest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                if previousItem.AggregateInterest + interest >= totalInterestCap then totalInterestCap - previousItem.AggregateInterest else interest
+            | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
+            | Interest.Method.AddOn ->
+                if payment <= previousItem.InterestBalance then
+                    payment
+                else
+                    previousItem.InterestBalance
+
+        let calculateInterestLimit interestMethod payment previousItem day =
+            if sp.Interest.Cap.Daily.IsSome then
+                let dailyCap = Interest.Cap.total previousItem.PrincipalBalance sp.Interest.Cap.Daily
+                let days = decimal (day - previousItem.Day)
+                dailyCap * days
+                |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                |> fun limit -> if previousItem.AggregateInterestLimit + limit >= totalInterestCap then totalInterestCap - previousItem.AggregateInterestLimit else limit
+            else
+                calculateInterest interestMethod payment previousItem day
+
+        let generateItem interestMethod payment previousItem day =
+            let interestLimit = calculateInterestLimit interestMethod payment previousItem day
+            let interest = calculateInterest interestMethod payment previousItem day
+            let principalPortion = payment - interest
+            {
+                Day = day
+                Payment = ValueSome payment
+                InterestLimit = interestLimit
+                AggregateInterestLimit = previousItem.AggregateInterestLimit + interestLimit
+                Interest = interest
+                AggregateInterest = previousItem.AggregateInterest + interest
+                Principal = principalPortion
+                InterestBalance = match interestMethod with Interest.Method.AddOn -> previousItem.InterestBalance - interest | _ -> 0L<Cent>
+                PrincipalBalance = previousItem.PrincipalBalance - principalPortion
+            }
+
+        let generatePaymentAmount firstItem interestMethod roughPayment =
+            let payment = roughPayment |> Cent.round (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
             schedule <-
                 paymentDays
-                |> Array.scan(fun si d ->
-                    let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates si.Day d
-                    let interest = Interest.calculate si.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                    let interest' = if si.AggregateInterest + interest >= totalInterestCap then totalInterestCap - si.AggregateInterest else interest
-                    let payment' = Cent.round (ValueSome sp.Calculation.RoundingOptions.PaymentRounding) payment
-                    let principalPortion = payment' - interest'
-                    {
-                        Day = d
-                        Payment = ValueSome payment'
-                        Interest = interest'
-                        AggregateInterest = si.AggregateInterest + interest'
-                        Principal = principalPortion
-                        InterestBalance = 0L<Cent>
-                        PrincipalBalance = si.PrincipalBalance - principalPortion
-                    }
-                ) initial
+                |> Array.scan (generateItem interestMethod payment) firstItem
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
 
-        let generatorAddOn payment =
+        let generateMaximumInterest firstItem initialInterestBalance =
+            let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
+            let payment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
             schedule <-
                 paymentDays
-                |> Array.scan(fun si d ->
-                    let payment' = Cent.round (ValueSome sp.Calculation.RoundingOptions.PaymentRounding) payment
-                    let interest =
-                        si.InterestBalance
-                        |> Cent.min payment'
-                        |> fun i -> if si.AggregateInterest + i >= totalInterestCap then totalInterestCap - si.AggregateInterest else i
-                        |> Cent.min (
-                            (dailyInterestCap si.PrincipalBalance |> Cent.toDecimalCent) * decimal (d - si.Day)
-                            |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                        )
-                    let principalPortion = Cent.max 0L<Cent> (payment' - interest)
-                    {
-                        Day = d
-                        Payment = ValueSome payment'
-                        Interest = interest
-                        AggregateInterest = si.AggregateInterest + interest
-                        Principal = principalPortion
-                        InterestBalance = si.InterestBalance - interest
-                        PrincipalBalance = si.PrincipalBalance - principalPortion
-                    }
-                ) { initial with InterestBalance = totalAddOnInterest }
-            let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
-            principalBalance
+                |> Array.scan (generateItem Interest.Method.AddOn payment) initialItem
+            let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
+            let diff = initialInterestBalance - finalInterestLimit |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
+            if diff <= 0m && diff > -(decimal paymentCount) then None else Some (initialInterestBalance, finalInterestLimit)
 
-        let generator payment =
-            match sp.Interest.Method with
-            | Interest.Method.Simple -> generatorSimple payment
-            | Interest.Method.Compound -> failwith "Compound interest calculation not yet implemented"
-            | Interest.Method.AddOn -> generatorAddOn payment
-
-        match Array.solve generator 100 roughPayment toleranceOption toleranceSteps with
+        match Array.solve (generatePaymentAmount initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> roughPayment) toleranceOption toleranceSteps with
         | Solution.Found _ ->
+
+            if sp.Interest.Method = Interest.Method.AddOn then
+                let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
+                Array.unfold (generateMaximumInterest initialItem) finalInterestLimit |> ignore // to do: put in a guard to prevent infinite loops
+            else ()
+
             // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
             let items =
                 schedule
@@ -262,30 +275,23 @@ module PaymentSchedule =
                         { si with Payment = si.Payment |> ValueOption.map(fun p -> p + si.PrincipalBalance); Principal = si.Principal + si.PrincipalBalance; PrincipalBalance = 0L<Cent> }
                     else si
                 )
-            // handle any final interest balance due to capping by reducing all interest balances
-            let finalInterestBalance = items |> Array.last |> _.InterestBalance
-            let items' =
-                if finalInterestBalance > 0L<Cent> then
-                    items |> Array.map(fun si -> { si with InterestBalance = si.InterestBalance - finalInterestBalance })
-                else
-                    items
 
-            let principalTotal = items' |> Array.sumBy _.Principal
-            let interestTotal = items' |> Array.sumBy _.Interest
+            let principalTotal = items |> Array.sumBy _.Principal
+            let interestTotal = items |> Array.sumBy _.Interest
             let aprSolution =
-                items'
+                items
                 |> Array.filter(fun si -> si.Payment.IsSome)
                 |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment.Value })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
-            let finalPayment = items' |> Array.filter _.Payment.IsSome |> Array.last |> _.Payment.Value
+            let finalPayment = items |> Array.filter _.Payment.IsSome |> Array.last |> _.Payment.Value
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
-                Items = items'
+                Items = items
                 InitialInterestBalance = match sp.Interest.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
                 FinalPaymentDay = finalPaymentDay
-                LevelPayment = items' |> Array.filter _.Payment.IsSome |> Array.countBy _.Payment.Value |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue finalPayment
+                LevelPayment = items |> Array.filter _.Payment.IsSome |> Array.countBy _.Payment.Value |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue finalPayment
                 FinalPayment = finalPayment
-                PaymentTotal = items' |> Array.filter _.Payment.IsSome |> Array.sumBy _.Payment.Value
+                PaymentTotal = items |> Array.filter _.Payment.IsSome |> Array.sumBy _.Payment.Value
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
                 Apr = aprSolution, Apr.toPercent sp.Calculation.AprMethod aprSolution

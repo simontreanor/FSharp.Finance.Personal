@@ -219,7 +219,7 @@ module Amortisation =
                 | ScheduledPaymentType.Original _ | ScheduledPaymentType.Rescheduled _ -> si.Window + 1
                 | ScheduledPaymentType.None -> si.Window
 
-            let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0L<Cent>
+            let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0
 
             let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent> // to do: is the voption information useful later?
 
@@ -238,7 +238,7 @@ module Amortisation =
                 |> fun i ->
                     match sp.Interest.Method with
                     | Interest.Method.AddOn ->
-                        i //- contractualInterest
+                        0m<Cent> // i //- contractualInterest // to do: figure out how to adjust interest when scheduled payments are not made on time
                     | _ ->
                         i
 
