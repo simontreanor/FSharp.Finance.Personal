@@ -394,7 +394,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 3_30.67257534m<Cent>
+            NewInterest = 3_30.67257534m<Cent>
             NewCharges = [||]
             PrincipalPortion = 161_76L<Cent>
             FeesPortion = 242_58L<Cent>
@@ -403,9 +403,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -474,7 +475,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 64.65046575m<Cent>
+            NewInterest = 64.65046575m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_79L<Cent>
             FeesPortion = 101_61L<Cent>
@@ -483,9 +484,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 170_04L<Cent>
+            SettlementFigure = ValueSome 170_04L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -566,7 +568,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 3.72866027m<Cent>
+            NewInterest = 3.72866027m<Cent>
             NewCharges = [||]
             PrincipalPortion = 4_39L<Cent>
             FeesPortion = 5_38L<Cent>
@@ -575,9 +577,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 9_80L<Cent>
+            SettlementFigure = ValueSome 9_80L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -644,7 +647,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 0m<Cent>
+            NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 52_14L<Cent>
             FeesPortion = 85_22L<Cent>
@@ -653,9 +656,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -722,7 +726,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 9_43.040m<Cent>
+            NewInterest = 9_43.040m<Cent>
             NewCharges = [||]
             PrincipalPortion = 42_10L<Cent>
             FeesPortion = 0L<Cent>
@@ -731,9 +735,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -800,7 +805,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 1_28.41170136m<Cent>
+            NewInterest = 1_28.41170136m<Cent>
             NewCharges = [||]
             PrincipalPortion = 134_62L<Cent>
             FeesPortion = 6_50L<Cent>
@@ -809,9 +814,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 195_35L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 142_40L<Cent>
+            SettlementFigure = ValueSome 142_40L<Cent>
             FeesRefundIfSettled = 195_35L<Cent>
         })
         actual |> should equal expected
@@ -891,7 +897,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 7.11384109m<Cent>
+            NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 9_26L<Cent>
             FeesPortion = 9_38L<Cent>
@@ -900,9 +906,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 18_71L<Cent>
+            SettlementFigure = ValueSome 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -982,7 +989,7 @@ module ActualPaymentTestsExtra =
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 7.11384109m<Cent>
+            NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 18_64L<Cent>
             FeesPortion = 0L<Cent>
@@ -991,9 +998,10 @@ module ActualPaymentTestsExtra =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 18_71L<Cent>
+            SettlementFigure = ValueSome 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected

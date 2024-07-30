@@ -89,7 +89,7 @@ module SettlementTests =
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 ContractualInterest = 0m<Cent>
-                InterestAdjustment = 16_96.448m<Cent>
+                NewInterest = 16_96.448m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 81_56L<Cent>
                 FeesPortion = 0L<Cent>
@@ -98,9 +98,10 @@ module SettlementTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
+                ContractualInterestBalance = 0m<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 98_52L<Cent>
+                SettlementFigure = ValueSome 98_52L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         )
@@ -172,7 +173,7 @@ module SettlementTests =
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 ContractualInterest = 0m<Cent>
-                InterestAdjustment = 4_56.736m<Cent>
+                NewInterest = 4_56.736m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 81_56L<Cent>
                 FeesPortion = 0L<Cent>
@@ -181,9 +182,10 @@ module SettlementTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
+                ContractualInterestBalance = 0m<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 105_04L<Cent>
+                SettlementFigure = ValueSome 105_04L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         )
@@ -256,7 +258,7 @@ module SettlementTests =
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
                 ContractualInterest = 0m<Cent>
-                InterestAdjustment = 2_82.688m<Cent>
+                NewInterest = 2_82.688m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 50_48L<Cent>
                 FeesPortion = 0L<Cent>
@@ -265,9 +267,10 @@ module SettlementTests =
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
+                ContractualInterestBalance = 0m<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 53_30L<Cent>
+                SettlementFigure = ValueSome 53_30L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         )

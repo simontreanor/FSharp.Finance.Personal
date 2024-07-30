@@ -700,7 +700,7 @@ module EdgeCaseTests =
             PaymentStatus = Generated
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 16_20.960m<Cent>
+            NewInterest = 16_20.960m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_54L<Cent>
             FeesPortion = 0L<Cent>
@@ -709,9 +709,10 @@ module EdgeCaseTests =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 83_74L<Cent>
+            SettlementFigure = ValueSome 83_74L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -789,7 +790,7 @@ module EdgeCaseTests =
             PaymentStatus = Generated
             BalanceStatus = ClosedBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 1_97.280m<Cent>
+            NewInterest = 1_97.280m<Cent>
             NewCharges = [||]
             PrincipalPortion = 8_22L<Cent>
             FeesPortion = 0L<Cent>
@@ -798,9 +799,10 @@ module EdgeCaseTests =
             FeesRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = 0m<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 10_19L<Cent>
+            SettlementFigure = ValueSome 10_19L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
         actual |> should equal expected
@@ -866,7 +868,7 @@ module EdgeCaseTests =
             PaymentStatus = NoLongerRequired
             BalanceStatus = RefundDue
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = -8.79210959m<Cent>
+            NewInterest = -8.79210959m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
             FeesPortion = 0L<Cent>
@@ -875,9 +877,10 @@ module EdgeCaseTests =
             FeesRefund = 0L<Cent>
             PrincipalBalance = -12_94L<Cent>
             FeesBalance = 0L<Cent>
+            ContractualInterestBalance = -21.55484933m<Cent>
             InterestBalance = -21.55484933m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
         actual |> should equal expected
