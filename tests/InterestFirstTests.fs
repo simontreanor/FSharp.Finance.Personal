@@ -108,3 +108,107 @@ module InterestFirstTests =
 
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
         interestPortion |> should equal 838_64L<Cent>
+
+    [<Fact>]
+    let ``5) Add-on interest method with early repayment`` () =
+        let sp = 
+            { scheduleParameters Interest.Method.AddOn with
+                AsOfDate = Date(2024, 8, 9)
+            }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed 10<OffsetDay> 271_37L<Cent> //normal
+                CustomerPayment.ActualConfirmed 17<OffsetDay> 271_37L<Cent> //all
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest005.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 838_64L<Cent>
+
+    [<Fact>]
+    let ``6) Add-on interest method with normal but very early repayments`` () =
+        let sp =
+            { scheduleParameters Interest.Method.AddOn with
+                AsOfDate = Date(2024, 7, 29)
+            }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed 1<OffsetDay> 367_73L<Cent>
+                CustomerPayment.ActualConfirmed 2<OffsetDay> 367_73L<Cent>
+                CustomerPayment.ActualConfirmed 3<OffsetDay> 367_73L<Cent>
+                CustomerPayment.ActualConfirmed 4<OffsetDay> 367_73L<Cent>
+                CustomerPayment.ActualConfirmed 5<OffsetDay> 367_72L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest006.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 838_64L<Cent>
+
+    [<Fact>]
+    let ``7) Add-on interest method with normal but with erratic payment timings`` () =
+        let startDate = Date(2022, 1, 10)
+        let sp =
+            { scheduleParameters Interest.Method.AddOn with
+                AsOfDate = Date(2022, 6, 28)
+                StartDate = startDate
+                Principal = 700_00L<Cent>
+                PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
+            }
+
+        // 700 over 108 days with 4 payments, paid on 1ot 2fewdayslate last2 in one go 2months late
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed 18<OffsetDay> 294_91L<Cent>
+                CustomerPayment.ActualConfirmed 35<OffsetDay> 294_91L<Cent>
+                CustomerPayment.ActualConfirmed 168<OffsetDay> 810_18L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest007.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 700_00L<Cent>
+
+    [<Fact>]
+    let ``8) Add-on interest method with normal but with erratic payment timings expecting settlement figure on final day`` () =
+        let startDate = Date(2022, 1, 10)
+        let sp =
+            { scheduleParameters Interest.Method.AddOn with
+                AsOfDate = Date(2022, 4, 28)
+                StartDate = startDate
+                Principal = 700_00L<Cent>
+                PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
+            }
+
+        // 700 over 108 days with 4 payments, paid on 1ot 2fewdayslate last2 in one go 2months late
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed 18<OffsetDay> 294_91L<Cent>
+                CustomerPayment.ActualConfirmed 35<OffsetDay> 294_91L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest008.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 838_64L<Cent>
