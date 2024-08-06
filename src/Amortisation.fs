@@ -55,7 +55,7 @@ module Amortisation =
         /// the interest initially calculated at the start date
         ContractualInterest: decimal<Cent>
         /// the new interest charged between the previous amortisation day and the current day, less any initial interest
-        InterestAdjustment: decimal<Cent>
+        NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the interest
         InterestPortion: int64<Cent>
         /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
@@ -91,7 +91,7 @@ module Amortisation =
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
             ContractualInterest = 0m<Cent>
-            InterestAdjustment = 0m<Cent>
+            NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
             FeesPortion = 0L<Cent>
@@ -425,7 +425,7 @@ module Amortisation =
                     PaymentStatus = paymentStatus
                     BalanceStatus = ClosedBalance
                     ContractualInterest = contractualInterest
-                    InterestAdjustment = cappedNewInterest
+                    NewInterest = cappedNewInterest
                     NewCharges = incurredCharges
                     PrincipalPortion = si.PrincipalBalance
                     FeesPortion = si.FeesBalance - feesRefund
@@ -490,7 +490,7 @@ module Amortisation =
                         PaymentStatus = paymentStatus
                         BalanceStatus = balanceStatus
                         ContractualInterest = contractualInterest
-                        InterestAdjustment = cappedNewInterest
+                        NewInterest = cappedNewInterest
                         NewCharges = incurredCharges
                         PrincipalPortion = principalPortion'
                         FeesPortion = feesPortion'
