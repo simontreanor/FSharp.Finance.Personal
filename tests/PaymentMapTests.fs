@@ -68,10 +68,10 @@ module PaymentMapTests =
         let paymentMap =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some <| CustomerPayment.ScheduledOriginal i.Day i.Payment.Value else None)
-                let actualPayments = [|
-                    CustomerPayment.ActualConfirmed 10<OffsetDay> 250_00L<Cent>
-                    CustomerPayment.ActualConfirmed 17<OffsetDay> 250_00L<Cent>
+                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+                let actualPayments : PaymentMap.Payment array = [|
+                    { Day = 10<OffsetDay>; Amount = 250_00L<Cent> }
+                    { Day = 17<OffsetDay>; Amount = 250_00L<Cent> }
                 |]
                 let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
 
@@ -102,13 +102,13 @@ module PaymentMapTests =
         let paymentMap =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some <| CustomerPayment.ScheduledOriginal i.Day i.Payment.Value else None)
-                let actualPayments = [|
-                    CustomerPayment.ActualConfirmed 1<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 2<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 3<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 4<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 5<OffsetDay> 367_72L<Cent>
+                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+                let actualPayments : PaymentMap.Payment array = [|
+                    { Day = 1<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day = 2<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day = 3<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day = 4<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day = 5<OffsetDay>; Amount = 367_72L<Cent> }
                 |]
                 let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
 
@@ -139,11 +139,11 @@ module PaymentMapTests =
         let paymentMap =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some <| CustomerPayment.ScheduledOriginal i.Day i.Payment.Value else None)
-                let actualPayments = [|
-                    CustomerPayment.ActualConfirmed 18<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 35<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 168<OffsetDay> 1103_18L<Cent>
+                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+                let actualPayments : PaymentMap.Payment array = [|
+                    { Day = 18<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day = 35<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day = 168<OffsetDay>; Amount = 1103_18L<Cent> }
                 |]
                 let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
 
@@ -174,10 +174,10 @@ module PaymentMapTests =
         let paymentMap =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some <| CustomerPayment.ScheduledOriginal i.Day i.Payment.Value else None)
-                let actualPayments = [|
-                    CustomerPayment.ActualConfirmed 18<OffsetDay> 367_73L<Cent>
-                    CustomerPayment.ActualConfirmed 35<OffsetDay> 367_73L<Cent>
+                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+                let actualPayments : PaymentMap.Payment array = [|
+                    { Day =  18<OffsetDay>; Amount = 367_73L<Cent> }
+                    { Day =  35<OffsetDay>; Amount = 367_73L<Cent> }
                 |]
                 let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
 

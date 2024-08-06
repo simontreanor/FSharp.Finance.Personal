@@ -212,6 +212,14 @@ module Amortisation =
                         | None -> si
                     )
 
+        let paymentMap =
+            match sp.Interest.Method with
+            | Interest.Method.AddOn ->
+                let scheduledPayments = appliedPayments |> Array.choose(fun ap -> match ap.ScheduledPayment.ScheduledPaymentType with ScheduledPaymentType.None -> None | _ -> Some ({ Day = ap.AppliedPaymentDay; Amount = ap.ScheduledPayment.Value } : PaymentMap.Payment))
+                let actualPayments = appliedPayments |> Array.map(fun ap -> { Day = ap.AppliedPaymentDay; Amount = ap.ActualPayments |> Array.sumBy ActualPaymentInfo.total } : PaymentMap.Payment)
+                PaymentMap.create sp.AsOfDate sp.StartDate scheduledPayments actualPayments
+            | _ -> Array.empty<PaymentMap.PaymentMap>
+
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
             let window =

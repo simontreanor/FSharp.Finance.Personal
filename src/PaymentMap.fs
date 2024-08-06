@@ -6,7 +6,7 @@ module PaymentMap =
     open CustomerPayments
     open DateDay
 
-    [<Struct>]
+    [<RequireQualifiedAccess; Struct>]
     type Payment = {
         Day: int<OffsetDay>
         Amount: int64<Cent>
@@ -22,26 +22,20 @@ module PaymentMap =
         PaidBalance: int64<Cent>
     }
 
-    let create asOfDate startDate (scheduledPayments: CustomerPayment array) (actualPayments: CustomerPayment array) =
+    let create asOfDate startDate (scheduledPayments: Payment array) (actualPayments: Payment array) =
 
         let asOfDay = asOfDate |> OffsetDay.fromDate startDate
 
         let paymentsDue =
             scheduledPayments
-            |> Array.filter(fun sp -> sp.PaymentDay <= asOfDay)
-            |> Array.mapi(fun i sp -> i, {
-                Day = sp.PaymentDay
-                Amount = sp.PaymentDetails |> function ScheduledPayment sp -> sp.Value | _ -> 0L<Cent>
-            })
+            |> Array.filter(fun sp -> sp.Day <= asOfDay)
+            |> Array.mapi(fun i sp -> i, sp)
             |> Map.ofArray
 
         let paymentsMade =
             actualPayments
-            |> Array.filter(fun ap -> ap.PaymentDay <= asOfDay)
-            |> Array.mapi(fun i ap -> i, {
-                Day = ap.PaymentDay
-                Amount = ap.PaymentDetails |> function ActualPayment ap -> ap.ActualPaymentStatus |> ActualPaymentStatus.total | _ -> 0L<Cent>
-            })
+            |> Array.filter(fun ap -> ap.Day <= asOfDay)
+            |> Array.mapi(fun i ap -> i, ap)
             |> Map.ofArray
 
         let count m = if Map.isEmpty m then 0 else Map.count m
