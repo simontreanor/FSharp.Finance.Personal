@@ -250,13 +250,10 @@ module Amortisation =
             let newInterest =
                 match sp.Interest.Method with
                 | Interest.Method.AddOn ->
-                    match ap.ScheduledPayment.ScheduledPaymentType with
-                    | ScheduledPaymentType.Original _ | ScheduledPaymentType.Rescheduled _ ->
-                        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-                        paymentMap
-                        |> Array.filter(fun pm -> pm.PaymentDueId = window - 1)
-                        |> Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                    | _ -> 0m<Cent>
+                    let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+                    paymentMap
+                    |> Array.filter(fun pm -> pm.PaymentMade.IsSome && pm.PaymentMade.Value |> snd |> _.Day = ap.AppliedPaymentDay)
+                    |> Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
                 | _ ->
                     if si.PrincipalBalance <= 0L<Cent> then
                         match sp.Interest.RateOnNegativeBalance with
