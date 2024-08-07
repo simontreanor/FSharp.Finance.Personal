@@ -141,8 +141,10 @@ module Amortisation =
     }
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
-    let internal calculate sp intendedPurpose initialInterestBalance (appliedPayments: AppliedPayment array) =
+    let internal calculate sp intendedPurpose (initialInterestBalance: int64<Cent>) (appliedPayments: AppliedPayment array) =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
+
+        let initialInterestBalance' = initialInterestBalance |> Cent.toDecimalCent
 
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
 
@@ -215,13 +217,27 @@ module Amortisation =
         let paymentMap =
             match sp.Interest.Method with
             | Interest.Method.AddOn ->
-                let scheduledPayments = appliedPayments |> Array.choose(fun ap -> match ap.ScheduledPayment.ScheduledPaymentType with ScheduledPaymentType.None -> None | _ -> Some ({ Day = ap.AppliedPaymentDay; Amount = ap.ScheduledPayment.Value } : PaymentMap.Payment))
-                let actualPayments = appliedPayments |> Array.map(fun ap -> { Day = ap.AppliedPaymentDay; Amount = ap.ActualPayments |> Array.sumBy ActualPaymentInfo.total } : PaymentMap.Payment)
+                let scheduledPayments =
+                    appliedPayments
+                    |> Array.choose(fun ap ->
+                        match ap.ScheduledPayment.ScheduledPaymentType with
+                        | ScheduledPaymentType.None -> None
+                        | _ -> Some ({ Day = ap.AppliedPaymentDay; Amount = ap.ScheduledPayment.Value } : PaymentMap.Payment)
+                    )
+                let actualPayments =
+                    appliedPayments
+                    |> Array.choose(fun ap ->
+                        let p = { Day = ap.AppliedPaymentDay; Amount = ap.ActualPayments |> Array.sumBy ActualPaymentInfo.total } : PaymentMap.Payment
+                        match p.Amount with
+                        | 0L<Cent> -> None
+                        | _ -> Some p
+                    )
                 PaymentMap.create sp.AsOfDate sp.StartDate scheduledPayments actualPayments
             | _ -> Array.empty<PaymentMap.PaymentMap>
 
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
+
             let window =
                 match ap.ScheduledPayment.ScheduledPaymentType with
                 | ScheduledPaymentType.Original _ | ScheduledPaymentType.Rescheduled _ -> si.Window + 1
@@ -232,23 +248,27 @@ module Amortisation =
             let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent> // to do: is the voption information useful later?
 
             let newInterest =
-                if si.PrincipalBalance <= 0L<Cent> then
-                    match sp.Interest.RateOnNegativeBalance with
-                    | ValueSome _ ->
+                match sp.Interest.Method with
+                | Interest.Method.AddOn ->
+                    match ap.ScheduledPayment.ScheduledPaymentType with
+                    | ScheduledPaymentType.Original _ | ScheduledPaymentType.Rescheduled _ ->
+                        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+                        paymentMap
+                        |> Array.filter(fun pm -> pm.PaymentDueId = window - 1)
+                        |> Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
+                    | _ -> 0m<Cent>
+                | _ ->
+                    if si.PrincipalBalance <= 0L<Cent> then
+                        match sp.Interest.RateOnNegativeBalance with
+                        | ValueSome _ ->
+                            dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
+                            |> Array.map(fun dr -> { dr with InterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.defaultValue Interest.Rate.Zero })
+                            |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                        | ValueNone ->
+                            0m<Cent>
+                    else
                         dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
-                        |> Array.map(fun dr -> { dr with InterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.defaultValue Interest.Rate.Zero })
-                        |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                    | ValueNone ->
-                        0m<Cent>
-                else
-                    dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
-                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                |> fun i ->
-                    match sp.Interest.Method with
-                    | Interest.Method.AddOn ->
-                        0m<Cent> // i //- contractualInterest // to do: figure out how to adjust interest when scheduled payments are not made on time
-                    | _ ->
-                        i
+                        |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
 
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
@@ -537,7 +557,7 @@ module Amortisation =
                 CumulativeActualPayments = 0L<Cent>
                 CumulativeGeneratedPayments = 0L<Cent>
                 CumulativeFees = 0L<Cent>
-                CumulativeInterest = 0m<Cent>
+                CumulativeInterest = initialInterestBalance'
             }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a

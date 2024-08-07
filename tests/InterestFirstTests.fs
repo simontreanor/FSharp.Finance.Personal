@@ -21,7 +21,7 @@ module InterestFirstTests =
     let startDate = Date(2024, 7, 23)
     let scheduleParameters interestMethod =
         {
-            AsOfDate = startDate
+            AsOfDate = startDate.AddDays 180
             StartDate = startDate
             Principal = 1000_00L<Cent>
             PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2), PaymentCount = 5, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
@@ -77,8 +77,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest002.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 596_27L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
+        interestPortion |> should equal 1000_00m<Cent>
 
     [<Fact>]
     let ``3) Add-on interest method initial schedule`` () =
@@ -106,8 +106,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest004.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 838_64L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
+        interestPortion |> should equal 161_36m<Cent>
 
     [<Fact>]
     let ``5) Add-on interest method with early repayment`` () =
@@ -128,15 +128,12 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest005.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 838_64L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
+        interestPortion |> should equal 838_64m<Cent>
 
     [<Fact>]
     let ``6) Add-on interest method with normal but very early repayments`` () =
-        let sp =
-            { scheduleParameters Interest.Method.AddOn with
-                AsOfDate = Date(2024, 7, 29)
-            }
+        let sp = scheduleParameters Interest.Method.AddOn
 
         let actualPayments =
             [|
@@ -153,15 +150,14 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest006.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 838_64L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
+        interestPortion |> should equal 838_64m<Cent>
 
     [<Fact>]
     let ``7) Add-on interest method with normal but with erratic payment timings`` () =
         let startDate = Date(2022, 1, 10)
         let sp =
             { scheduleParameters Interest.Method.AddOn with
-                AsOfDate = Date(2022, 6, 28)
                 StartDate = startDate
                 Principal = 700_00L<Cent>
                 PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
@@ -182,15 +178,14 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest007.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 700_00L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
+        interestPortion |> should equal 700_00m<Cent>
 
     [<Fact>]
     let ``8) Add-on interest method with normal but with erratic payment timings expecting settlement figure on final day`` () =
         let startDate = Date(2022, 1, 10)
         let sp =
             { scheduleParameters Interest.Method.AddOn with
-                AsOfDate = Date(2022, 4, 28)
                 StartDate = startDate
                 Principal = 700_00L<Cent>
                 PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
@@ -210,5 +205,5 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest008.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 838_64L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
+        interestPortion |> should equal 838_64m<Cent>

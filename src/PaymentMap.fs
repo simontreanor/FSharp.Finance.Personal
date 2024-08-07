@@ -34,7 +34,7 @@ module PaymentMap =
 
         let paymentsMade =
             actualPayments
-            |> Array.filter(fun ap -> ap.Day <= asOfDay)
+            |> Array.filter(fun ap -> ap.Day <= asOfDay && ap.Amount <> 0L<Cent>)
             |> Array.mapi(fun i ap -> i, ap)
             |> Map.ofArray
 
@@ -46,7 +46,9 @@ module PaymentMap =
         let paymentMap =
             {| due = 0; made = 0; dbal = 0L<Cent>; mbal = 0L<Cent> |} // bal = negative: too little paid, positive: too much paid
             |> Array.unfold(fun a ->
-                if a.due = paymentsDueCount && a.made = paymentsMadeCount then
+                if paymentsDueCount = 0 then
+                    None
+                elif a.due = paymentsDueCount (* && a.made = paymentsMadeCount *) then
                     None
                 else
                     let paymentDue = paymentsDue[a.due]
@@ -63,20 +65,22 @@ module PaymentMap =
                     let dueBalance = if pm = 0L<Cent> then 0L<Cent> elif pd > pm then pd - pm else 0L<Cent>
                     let madeBalance = if pm > pd then pm - pd else 0L<Cent>
 
-                    let nextDue = if dueBalance = 0L<Cent> || pm = 0L<Cent> then min paymentsDueCount (a.due + 1) else a.due
+                    let nextDue = if dueBalance = 0L<Cent> || pm = 0L<Cent> then a.due + 1 else a.due
                     let nextMade = if madeBalance = 0L<Cent> then min paymentsMadeCount (a.made + 1) else a.made
 
                     let paymentMadeId, amount =
-                        if a.made = paymentsMadeCount then
+                        if paymentMadeAmount = 0L<Cent> || a.made = paymentsMadeCount then
                             ValueNone, pd
                         else
                             ValueSome a.made, Cent.min pd pm
+
+                    let varianceDays = int ((paymentMadeDay |> ValueOption.defaultValue asOfDay) - paymentDue.Day) * 1<DurationDay>
 
                     Some ({
                         PaymentDueId = a.due
                         PaymentMadeId = paymentMadeId
                         Amount = amount
-                        VarianceDays = int ((paymentMadeDay |> ValueOption.defaultValue asOfDay) - paymentDue.Day) * 1<DurationDay>
+                        VarianceDays = varianceDays
                         DueBalance = dueBalance
                         PaidBalance = madeBalance
                     }, {| due = nextDue; made = nextMade; dbal = dueBalance; mbal = madeBalance |})

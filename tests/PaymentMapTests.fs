@@ -199,3 +199,33 @@ module PaymentMapTests =
         let expected = ValueSome 697_21L<Cent>
         actual |> should equal expected
 
+    [<Fact>]
+    let ``5) No payments at all`` () =
+        let startDate = Date(2024, 8, 5)
+        let asOfDate = startDate.AddDays 180
+        let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
+        let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
+        let paymentMap =
+            voption {
+                let! schedule = sp |> calculate BelowZero
+                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+                let actualPayments = Array.empty<PaymentMap.Payment>
+                let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
+
+                let title = "<h3>5) No payments at all</h3>"
+                let newHtml = pm |> generateHtmlFromArray None
+                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest005.md"
+
+                return pm
+            }
+
+        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let actual =
+            paymentMap
+            |> ValueOption.map
+                (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
+                >> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+            )
+
+        let expected = ValueSome 1600_35L<Cent>
+        actual |> should equal expected
