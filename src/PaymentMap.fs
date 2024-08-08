@@ -34,7 +34,7 @@ module PaymentMap =
 
         let paymentsMade =
             actualPayments
-            |> Array.filter(fun ap -> ap.Day <= asOfDay && ap.Amount <> 0L<Cent>)
+            |> Array.filter(fun ap -> ap.Day <= asOfDay && ap.Amount > 0L<Cent>)
             |> Array.mapi(fun i ap -> i, ap)
             |> Map.ofArray
 
