@@ -268,7 +268,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``12) Add-on interest method with small loan and massive payment leading to a refund needed`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2; Principal = 100_00L<Cent> }
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
 
         let actualPayments =
             [|
@@ -282,15 +282,19 @@ module InterestFirstTests =
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest012.md")
 
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 14_65L<Cent>
+        interestPortion |> should equal -25_24L<Cent>
 
     [<Fact>]
-    let ``13) Realistic example`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2; Principal = 100_00L<Cent> }
+    let ``13) Realistic example 501ac58e62a5`` () =
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
             [|
-                CustomerPayment.ActualConfirmed  10<OffsetDay> 1000_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2022,  4, 10) |> OffsetDay.fromDate sp.StartDate)  198_40L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2022,  5, 14) |> OffsetDay.fromDate sp.StartDate)  198_40L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2022,  6, 10) |> OffsetDay.fromDate sp.StartDate)  198_40L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2022,  6, 17) |> OffsetDay.fromDate sp.StartDate)  198_40L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2022,  7, 15) |> OffsetDay.fromDate sp.StartDate)  204_80L<Cent>
             |]
 
         let schedule =
@@ -303,7 +307,7 @@ module InterestFirstTests =
         interestPortion |> should equal 14_65L<Cent>
 
     [<Fact>]
-    let ``14) Realistic example`` () =
+    let ``14) Realistic example 0004ffd74fbb`` () =
         let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
