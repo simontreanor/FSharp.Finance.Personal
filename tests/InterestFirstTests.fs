@@ -39,7 +39,7 @@ module InterestFirstTests =
                 Method = interestMethod
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
-                InitialGracePeriod = 3<DurationDay>
+                InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
             }
@@ -77,8 +77,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest002.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 1000_00m<Cent>
+        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        interestBalance |> should equal 1000_00m<Cent>
 
     [<Fact>]
     let ``3) Add-on interest method initial schedule`` () =
@@ -106,8 +106,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest004.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 161_36m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 2000_00L<Cent>
 
     [<Fact>]
     let ``5) Add-on interest method with early repayment`` () =
@@ -128,8 +128,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest005.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 838_64m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 838_64L<Cent>
 
     [<Fact>]
     let ``6) Add-on interest method with normal but very early repayments`` () =
@@ -140,9 +140,8 @@ module InterestFirstTests =
                 CustomerPayment.ActualConfirmed 1<OffsetDay> 367_73L<Cent>
                 CustomerPayment.ActualConfirmed 2<OffsetDay> 367_73L<Cent>
                 CustomerPayment.ActualConfirmed 3<OffsetDay> 367_73L<Cent>
-                CustomerPayment.ActualConfirmed 4<OffsetDay>  29_61L<Cent>
-                // CustomerPayment.ActualConfirmed 4<OffsetDay> 367_73L<Cent>
-                // CustomerPayment.ActualConfirmed 5<OffsetDay> 367_72L<Cent>
+                CustomerPayment.ActualConfirmed 4<OffsetDay> 367_73L<Cent>
+                CustomerPayment.ActualConfirmed 5<OffsetDay> 367_72L<Cent>
             |]
 
         let schedule =
@@ -151,8 +150,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest006.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 838_64m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 838_64L<Cent>
 
     [<Fact>]
     let ``7) Add-on interest method with normal but with erratic payment timings`` () =
@@ -179,8 +178,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest007.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 700_00m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.PrincipalBalance) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 0L<Cent>
 
     [<Fact>]
     let ``8) Add-on interest method with normal but with erratic payment timings expecting settlement figure on final day`` () =
@@ -206,8 +205,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest008.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 838_64m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 650_63L<Cent>
 
     [<Fact>]
     let ``9) Add-on interest method with normal repayments`` () =
@@ -228,8 +227,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest009.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 838_64m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 838_64L<Cent>
 
     [<Fact>]
     let ``10) Add-on interest method with single early repayment`` () =
@@ -246,6 +245,24 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest010.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.NewInterest) |> ValueOption.defaultValue 0m<Cent>
-        interestPortion |> should equal 838_64m<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 737_36L<Cent>
+
+    [<Fact>]
+    let ``11) Add-on interest method with single early repayment then a quote one day later`` () =
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2 }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed   1<OffsetDay> 1007_00L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest011.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 14_65L<Cent>
 

@@ -289,6 +289,7 @@ module InterestTests =
                 PaymentStatus = NotYetDue
                 BalanceStatus = ClosedBalance
                 ContractualInterest = 0m<Cent>
+                SimpleInterest = 10_26.07665657m<Cent>
                 NewInterest = 10_26.07665657m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1512_99L<Cent>
