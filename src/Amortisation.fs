@@ -124,6 +124,8 @@ module Amortisation =
         CumulativeInterest: decimal<Cent>
         /// the total of simple interest accrued up to and including the current day
         CumulativeSimpleInterest: decimal<Cent>
+        /// the total of negative simple interest accrued up to and including the current day
+        CumulativeNegativeSimpleInterest: decimal<Cent>
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -271,6 +273,7 @@ module Amortisation =
                     CumulativeActualPayments = a.CumulativeActualPayments + confirmedPayments + pendingPayments
                     CumulativeInterest = a.CumulativeInterest + cappedNewInterest
                     CumulativeSimpleInterest = a.CumulativeSimpleInterest + cappedSimpleInterest
+                    CumulativeNegativeSimpleInterest = a.CumulativeNegativeSimpleInterest + (min cappedSimpleInterest 0m<Cent>)
                 }
 
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
@@ -329,6 +332,8 @@ module Amortisation =
                     let interestAdjustment =
                         if (ap.GeneratedPayment.IsSome || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue then
                             accumulator.CumulativeSimpleInterest - (initialInterestBalance |> Cent.toDecimalCent)
+                        elif (ap.GeneratedPayment.IsSome && (match intendedPurpose with IntendedPurpose.Settlement _ -> true | _ -> false)) then
+                            accumulator.CumulativeNegativeSimpleInterest
                         else
                             0m<Cent>
                     settlement, interestAdjustment
@@ -565,6 +570,7 @@ module Amortisation =
                 CumulativeFees = 0L<Cent>
                 CumulativeInterest = initialInterestBalance'
                 CumulativeSimpleInterest = 0m<Cent>
+                CumulativeNegativeSimpleInterest = 0m<Cent>
             }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a

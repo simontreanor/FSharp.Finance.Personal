@@ -41,7 +41,7 @@ module InterestFirstTests =
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
             }
             Calculation = {
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -265,4 +265,80 @@ module InterestFirstTests =
 
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
         interestPortion |> should equal 14_65L<Cent>
+
+    [<Fact>]
+    let ``12) Add-on interest method with small loan and massive payment leading to a refund needed`` () =
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2; Principal = 100_00L<Cent> }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed  10<OffsetDay> 1000_00L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest012.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 14_65L<Cent>
+
+    [<Fact>]
+    let ``13) Realistic example`` () =
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2; Principal = 100_00L<Cent> }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed  10<OffsetDay> 1000_00L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest013.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 14_65L<Cent>
+
+    [<Fact>]
+    let ``14) Realistic example`` () =
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed (Date(2023,  7, 16) |> OffsetDay.fromDate sp.StartDate)   88_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2023, 10, 13) |> OffsetDay.fromDate sp.StartDate)  126_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2023, 10, 17) |> OffsetDay.fromDate sp.StartDate)   98_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2023, 10, 18) |> OffsetDay.fromDate sp.StartDate)   88_00L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest014.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 14_65L<Cent>
+
+    [<Fact>]
+    let ``15) Add-on interest method with big early repayment followed by tiny overpayment`` () =
+        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 1000 }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed   1<OffsetDay> 1007_00L<Cent>
+                CustomerPayment.ActualConfirmed   1<OffsetDay>    2_00L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest015.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 0_22L<Cent>
 
