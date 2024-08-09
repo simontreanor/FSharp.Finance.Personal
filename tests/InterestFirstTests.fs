@@ -151,7 +151,7 @@ module InterestFirstTests =
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest006.md")
 
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 838_64L<Cent>
+        interestPortion |> should equal 24_00L<Cent>
 
     [<Fact>]
     let ``7) Add-on interest method with normal but with erratic payment timings`` () =

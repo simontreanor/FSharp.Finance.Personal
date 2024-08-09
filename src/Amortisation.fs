@@ -327,7 +327,7 @@ module Amortisation =
                     let roundedCumulativeSimpleInterest = accumulator.CumulativeSimpleInterest |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                     let settlement = sp.Principal + roundedCumulativeSimpleInterest - accumulator.CumulativeActualPayments
                     let interestAdjustment =
-                        if ap.GeneratedPayment.IsSome || settlement = 0L<Cent> then
+                        if (ap.GeneratedPayment.IsSome || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue then
                             accumulator.CumulativeSimpleInterest - (initialInterestBalance |> Cent.toDecimalCent)
                         else
                             0m<Cent>
