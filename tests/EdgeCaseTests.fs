@@ -880,7 +880,7 @@ module EdgeCaseTests =
             FeesBalance = 0L<Cent>
             InterestBalance = -21.55484933m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = -13_16L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
         actual |> should equal expected

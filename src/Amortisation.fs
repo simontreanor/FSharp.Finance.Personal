@@ -112,20 +112,22 @@ module Amortisation =
     /// a container for aggregating figures separately from the main schedule
     [<Struct>]
     type Accumulator = {
-        /// the total of scheduled payments up to and including the current day
+        /// the total of scheduled payments up to the current day
         CumulativeScheduledPayments: int64<Cent>
-        /// the total of actual payments made up to and including the current day
+        /// the total of actual payments made up to the current day
         CumulativeActualPayments: int64<Cent>
-        /// the total of generated payments made up to and including the current day
+        /// the total of generated payments made up to the current day
         CumulativeGeneratedPayments: int64<Cent>
-        /// the total of fees paid up to and including the current day
+        /// the total of fees paid up to the current day
         CumulativeFees: int64<Cent>
-        /// the total of interest accrued up to and including the current day
+        /// the total of interest accrued up to the current day
         CumulativeInterest: decimal<Cent>
-        /// the total of simple interest accrued up to and including the current day
+        /// the total of interest adjustments up to the current day
+        CumulativeInterestAdjustments: decimal<Cent>
+        /// the total of interest portions up to the current day
+        CumulativeInterestPortions: int64<Cent>
+        /// the total of simple interest accrued up to the current day
         CumulativeSimpleInterest: decimal<Cent>
-        /// the total of negative simple interest accrued up to and including the current day
-        CumulativeNegativeSimpleInterest: decimal<Cent>
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -221,6 +223,10 @@ module Amortisation =
                         | None -> si
                     )
 
+        let finalAppliedPaymentDay = appliedPayments |> Array.last |> _.AppliedPaymentDay
+
+        let interestRounding = ValueSome sp.Calculation.RoundingOptions.InterestRounding
+
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
 
@@ -239,20 +245,27 @@ module Amortisation =
                     | ValueSome _ ->
                         dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
                         |> Array.map(fun dr -> { dr with InterestRate = sp.Interest.RateOnNegativeBalance |> ValueOption.defaultValue Interest.Rate.Zero })
-                        |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                        |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone interestRounding
                     | ValueNone ->
                         0m<Cent>
                 else
                     dailyInterestRates si.OffsetDay ap.AppliedPaymentDay
-                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily interestRounding
+
+            let cappedSimpleInterest = if a.CumulativeSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - a.CumulativeSimpleInterest else simpleInterest
 
             let newInterest =
                 match sp.Interest.Method with
-                | Interest.Method.AddOn -> 0m<Cent>
+                | Interest.Method.AddOn ->
+                    if ap.AppliedPaymentDay = finalAppliedPaymentDay then
+                        let cumulativeInterestPortions = a.CumulativeInterestPortions |> Cent.toDecimalCent
+                        a.CumulativeSimpleInterest + cappedSimpleInterest - (a.CumulativeInterest + a.CumulativeInterestAdjustments) |> Cent.fromDecimalCent interestRounding |> Cent.toDecimalCent
+                        |> fun i -> if cumulativeInterestPortions + i >= totalInterestCap then totalInterestCap - cumulativeInterestPortions else i
+                    else
+                        0m<Cent>
                 | Interest.Method.Simple -> simpleInterest
                 | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
 
-            let cappedSimpleInterest = if a.CumulativeSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - a.CumulativeSimpleInterest else simpleInterest
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
             let confirmedPayments = ap.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Confirmed ap } -> ap | { ActualPaymentStatus = ActualPaymentStatus.WriteOff ap } -> ap | _ -> 0L<Cent>)
@@ -265,7 +278,7 @@ module Amortisation =
                 else
                     cappedNewInterest + si.InterestBalance
 
-            let roundedInterestPortion = interestPortion |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+            let roundedInterestPortion = interestPortion |> Cent.fromDecimalCent interestRounding
 
             let accumulator =
                 { a with
@@ -273,7 +286,6 @@ module Amortisation =
                     CumulativeActualPayments = a.CumulativeActualPayments + confirmedPayments + pendingPayments
                     CumulativeInterest = a.CumulativeInterest + cappedNewInterest
                     CumulativeSimpleInterest = a.CumulativeSimpleInterest + cappedSimpleInterest
-                    CumulativeNegativeSimpleInterest = a.CumulativeNegativeSimpleInterest + (min cappedSimpleInterest 0m<Cent>)
                 }
 
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
@@ -327,13 +339,11 @@ module Amortisation =
             let generatedSettlementPayment, interestAdjustment =
                 match sp.Interest.Method with
                 | Interest.Method.AddOn ->
-                    let roundedCumulativeSimpleInterest = accumulator.CumulativeSimpleInterest |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                    let roundedCumulativeSimpleInterest = accumulator.CumulativeSimpleInterest |> Cent.fromDecimalCent interestRounding
                     let settlement = sp.Principal + roundedCumulativeSimpleInterest - accumulator.CumulativeActualPayments
                     let interestAdjustment =
-                        if (ap.GeneratedPayment.IsSome || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue then
+                        if (ap.GeneratedPayment.IsSome || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterest = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterest - (initialInterestBalance |> Cent.toDecimalCent)
-                        elif (ap.GeneratedPayment.IsSome && (match intendedPurpose with IntendedPurpose.Settlement _ -> true | _ -> false)) then
-                            accumulator.CumulativeNegativeSimpleInterest
                         else
                             0m<Cent>
                     settlement, interestAdjustment
@@ -341,7 +351,7 @@ module Amortisation =
                     0L<Cent>, 0m<Cent> // this will be calculated later
 
             let cappedNewInterest' = cappedNewInterest + interestAdjustment
-            let roundedInterestAdjustment = interestAdjustment |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+            let roundedInterestAdjustment = interestAdjustment |> Cent.fromDecimalCent interestRounding
             let roundedInterestPortion' = roundedInterestPortion + roundedInterestAdjustment
 
             let assignable, scheduledPaymentAmendment =
@@ -429,14 +439,14 @@ module Amortisation =
                 else
                     0L<Cent>, 0m<Cent>
 
-            let roundedCarriedInterest = carriedInterest |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+            let roundedCarriedInterest = carriedInterest |> Cent.fromDecimalCent interestRounding
 
             let offsetDate = sp.StartDate.AddDays(int ap.AppliedPaymentDay)
 
             let balanceStatus = getBalanceStatus principalBalance'
 
             let interestBalance = si.InterestBalance + cappedNewInterest' - Cent.toDecimalCent (roundedInterestPortion' - roundedCarriedInterest)
-            let roundedInterestBalance = interestBalance |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+            let roundedInterestBalance = interestBalance |> decimal |> Cent.round interestRounding
 
             let settlementItem () =
                 let paymentStatus =
@@ -539,7 +549,7 @@ module Amortisation =
                         FeesBalance = si.FeesBalance - feesPortion' - feesRefund'
                         InterestBalance = if abs interestBalance < 1m<Cent> then Cent.toDecimalCent roundedInterestBalance else interestBalance
                         ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
-                        SettlementFigure = if paymentStatus = NoLongerRequired then 0L<Cent> else generatedSettlementPayment''
+                        SettlementFigure = generatedSettlementPayment''
                         FeesRefundIfSettled = if paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
                     }, 0L<Cent>, if interestPortion' = 0L<Cent> then 0m<Cent> else interestBalance - Cent.toDecimalCent roundedInterestBalance
 
@@ -549,7 +559,8 @@ module Amortisation =
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
                     CumulativeFees = a.CumulativeFees + feesPortion'
                     CumulativeInterest = accumulator.CumulativeInterest - interestRoundingDifference
-                    // CumulativeSimpleInterest = accumulator.CumulativeSimpleInterest - simpleInterestRoundingDifference // to do?
+                    CumulativeInterestAdjustments = accumulator.CumulativeInterestAdjustments + interestAdjustment
+                    CumulativeInterestPortions = a.CumulativeInterestPortions + scheduleItem.InterestPortion
                 }
 
             scheduleItem, accumulator'
@@ -569,8 +580,9 @@ module Amortisation =
                 CumulativeGeneratedPayments = 0L<Cent>
                 CumulativeFees = 0L<Cent>
                 CumulativeInterest = initialInterestBalance'
+                CumulativeInterestAdjustments = 0m<Cent>
+                CumulativeInterestPortions = 0L<Cent>
                 CumulativeSimpleInterest = 0m<Cent>
-                CumulativeNegativeSimpleInterest = 0m<Cent>
             }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a

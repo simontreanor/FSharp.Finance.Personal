@@ -303,8 +303,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest013.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 14_65L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal -324_49L<Cent>
 
     [<Fact>]
     let ``14) Realistic example 0004ffd74fbb`` () =
@@ -324,8 +324,8 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest014.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 14_65L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal -5_81L<Cent>
 
     [<Fact>]
     let ``15) Add-on interest method with big early repayment followed by tiny overpayment`` () =
@@ -343,6 +343,6 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest015.md")
 
-        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        interestPortion |> should equal 0_22L<Cent>
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal -1_22L<Cent>
 
