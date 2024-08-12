@@ -599,7 +599,7 @@ module ActualPaymentTests =
             OffsetDate = startDate.AddDays 154
             OffsetDay = 154<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 243_66L<Cent>; Metadata = Map.empty } // to-do: this should be less than the level payment
+            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 243_66L<Cent>; Metadata = Map.empty }
             Window = 11
             PaymentDue = 243_66L<Cent>
             ActualPayments = [||]

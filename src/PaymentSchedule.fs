@@ -249,7 +249,7 @@ module PaymentSchedule =
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
 
-        let generateMaximumInterest firstItem initialInterestBalance =
+        let generateMaximumInterest (iteration, firstItem) initialInterestBalance = // iteration is an increment to prevent infinite loops
             let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
             let payment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
             schedule <-
@@ -257,14 +257,17 @@ module PaymentSchedule =
                 |> Array.scan (generateItem Interest.Method.AddOn payment) initialItem
             let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
             let diff = initialInterestBalance - finalInterestLimit |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
-            if diff <= 0m && diff > -(decimal paymentCount) then None else Some (initialInterestBalance, finalInterestLimit)
+            if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
+                None
+            else
+                Some ((iteration + 1, initialInterestBalance), finalInterestLimit)
 
         match Array.solve (generatePaymentAmount initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> roughPayment) toleranceOption toleranceSteps with
         | Solution.Found _ ->
 
             if sp.Interest.Method = Interest.Method.AddOn then
                 let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
-                Array.unfold (generateMaximumInterest initialItem) finalInterestLimit |> ignore // to do: put in a guard to prevent infinite loops
+                Array.unfold (generateMaximumInterest (0, initialItem)) finalInterestLimit |> ignore
             else ()
 
             // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
