@@ -99,6 +99,7 @@ module InterestTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
+                    Method = Interest.Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
@@ -149,6 +150,7 @@ module InterestTests =
                     LatePaymentGracePeriod = 0<DurationDay>
                 }
                 Interest = {
+                    Method = Interest.Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
                     Cap = { interestCapExample with Total = ValueSome (Amount.Percentage (Percent 123.45m, ValueNone, ValueSome RoundDown)) }
                     InitialGracePeriod = 3<DurationDay>
@@ -248,6 +250,7 @@ module InterestTests =
                     LatePaymentGracePeriod = 1<DurationDay>
                 }
                 Interest = {
+                    Method = Interest.Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
                     Cap = Cap.none
                     InitialGracePeriod = 3<DurationDay>
@@ -285,6 +288,8 @@ module InterestTests =
                 NetEffect = 1523_25L<Cent>
                 PaymentStatus = NotYetDue
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 10_26.07665657m<Cent>
                 NewInterest = 10_26.07665657m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1512_99L<Cent>

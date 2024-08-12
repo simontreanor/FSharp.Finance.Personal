@@ -83,7 +83,46 @@ module CustomerPayments =
         PaymentDay: int<OffsetDay>
         /// the details of the payment
         PaymentDetails: CustomerPaymentDetails
-    }
+        /// if a scheduled payment, the original contractually calculated interest
+        ContractualInterest: decimal<Cent> voption
+     }
+        with
+            static member ScheduledOriginal paymentDay amount =
+                {
+                    PaymentDay = paymentDay
+                    PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original amount; Metadata = Map.empty }
+                    ContractualInterest = ValueNone
+                }
+            static member ScheduledRescheduled paymentDay amount =
+                {
+                    PaymentDay = paymentDay
+                    PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled amount; Metadata = Map.empty }
+                    ContractualInterest = ValueNone
+                }
+            static member ActualConfirmed paymentDay amount =
+                {
+                    PaymentDay = paymentDay
+                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed amount; Metadata = Map.empty }
+                    ContractualInterest = ValueNone
+                }
+            static member ActualPending paymentDay amount =
+                {
+                    PaymentDay = paymentDay
+                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Pending amount; Metadata = Map.empty }
+                    ContractualInterest = ValueNone
+                }
+            static member ActualFailed paymentDay amount charges =
+                {
+                    PaymentDay = paymentDay
+                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (amount, charges); Metadata = Map.empty }
+                    ContractualInterest = ValueNone
+                }
+            static member ActualWriteOff paymentDay amount =
+                {
+                    PaymentDay = paymentDay
+                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.WriteOff amount; Metadata = Map.empty }
+                    ContractualInterest = ValueNone
+                }
  
     /// the status of a payment made by the customer
     [<Struct>]

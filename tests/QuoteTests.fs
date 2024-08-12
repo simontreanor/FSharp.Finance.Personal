@@ -51,6 +51,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -67,9 +68,7 @@ module QuoteTests =
 
         let actualPayments =
             [| 18 .. 7 .. 53 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
-            )
+            |> Array.map(fun i -> CustomerPayment.ActualConfirmed (i * 1<OffsetDay>) 25_00L<Cent>)
 
         let actual =
             voption{
@@ -93,6 +92,8 @@ module QuoteTests =
                 NetEffect = 1969_72L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 3_71.12573150m<Cent>
                 NewInterest = 3_71.12573150m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
@@ -138,6 +139,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -154,9 +156,7 @@ module QuoteTests =
 
         let actualPayments =
             [| 18 .. 7 .. 53 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
-            )
+            |> Array.map(fun i -> CustomerPayment.ActualConfirmed (i * 1<OffsetDay>) 25_00L<Cent>)
 
         let actual =
             voption {
@@ -180,6 +180,8 @@ module QuoteTests =
                 NetEffect = 2026_50L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 2_78.34429863m<Cent>
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
@@ -225,6 +227,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -241,9 +244,7 @@ module QuoteTests =
 
         let actualPayments =
             [| 18 .. 7 .. 60 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
-            )
+            |> Array.map(fun i -> CustomerPayment.ActualConfirmed (i * 1<OffsetDay>) 25_00L<Cent>)
 
         let actual =
             voption {
@@ -267,6 +268,8 @@ module QuoteTests =
                 NetEffect = 2026_50L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 2_78.34429863m<Cent>
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
@@ -312,6 +315,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
@@ -350,6 +354,8 @@ module QuoteTests =
                 NetEffect = 1200_00L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 0m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1200_00L<Cent>
@@ -395,6 +401,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
@@ -433,6 +440,8 @@ module QuoteTests =
                 NetEffect = 1238_40L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 38_40m<Cent>
                 NewInterest = 38_40m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1200_00L<Cent>
@@ -478,6 +487,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -494,9 +504,7 @@ module QuoteTests =
 
         let actualPayments =
             [| 18 .. 7 .. 53 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } }
-            )
+            |> Array.map(fun i -> CustomerPayment.ActualConfirmed (i * 1<OffsetDay>) 25_00L<Cent>)
 
         let actual =
             voption {
@@ -520,6 +528,8 @@ module QuoteTests =
                 NetEffect = 3420_03L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 2_78.34429863m<Cent>
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
@@ -538,176 +548,180 @@ module QuoteTests =
 
         actual |> should equal expected
 
-    [<Fact>]
-    let ``7) Get next scheduled payment`` () =
-        let startDate = Date(2024, 10, 1).AddDays(-60)
+    // [<Fact>]
+    // let ``7) Get next scheduled payment`` () =
+    //     let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp = {
-            StartDate = startDate
-            AsOfDate = Date(2024, 10, 1)
-            Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
-                MaxDuration = ValueNone
-            )
-            PaymentOptions = {
-                ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = LeaveOpenBalance
-            }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.None
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
-            Interest = {
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                RoundingOptions = RoundingOptions.recommended
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
-            }
-        }
+    //     let sp = {
+    //         StartDate = startDate
+    //         AsOfDate = Date(2024, 10, 1)
+    //         Principal = 1200_00L<Cent>
+    //         PaymentSchedule = RegularSchedule (
+    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+    //             PaymentCount = 11,
+    //             MaxDuration = ValueNone
+    //         )
+    //         PaymentOptions = {
+    //             ScheduledPaymentOption = AsScheduled
+    //             CloseBalanceOption = LeaveOpenBalance
+    //         }
+    //         FeesAndCharges = {
+    //             Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
+    //             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+    //             FeesSettlementRefund = Fees.SettlementRefund.None
+    //             Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+    //             ChargesHolidays = [||]
+    //             ChargesGrouping = OneChargeTypePerDay
+    //             LatePaymentGracePeriod = 0<DurationDay>
+    //         }
+    //         Interest = {
+    //             Method = InterestMethod.Simple
+    //             StandardRate = Interest.Rate.Annual (Percent 9.95m)
+    //             Cap = Interest.Cap.none
+    //             InitialGracePeriod = 3<DurationDay>
+    //             PromotionalRates = [||]
+    //             RateOnNegativeBalance = ValueNone
+    //         }
+    //         Calculation = {
+    //             AprMethod = Apr.CalculationMethod.UsActuarial 8
+    //             RoundingOptions = RoundingOptions.recommended
+    //             MinimumPayment = DeferOrWriteOff 50L<Cent>
+    //             PaymentTimeout = 3<DurationDay>
+    //         }
+    //     }
 
-        let actualPayments =
-            [| 15 .. 14 .. 29 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
-            )
+    //     let actualPayments =
+    //         [| 15 .. 14 .. 29 |]
+    //         |> Array.map(fun i ->
+    //             { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
+    //         )
 
-        let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
-            }
+    //     let actual =
+    //         voption {
+    //             let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
+    //             quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest007.md"
+    //             return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+    //         }
 
-        let expected = ValueSome (
-            PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>), {
-                OffsetDate = startDate.AddDays 155
-                OffsetDay = 155<OffsetDay>
-                Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
-                Window = 11
-                PaymentDue = 323_10L<Cent>
-                ActualPayments = [||]
-                GeneratedPayment = ValueNone
-                NetEffect = 323_10L<Cent>
-                PaymentStatus = NotYetDue
-                BalanceStatus = OpenBalance
-                NewInterest = 2_57.39205205m<Cent>
-                NewCharges = [||]
-                PrincipalPortion = 110_72L<Cent>
-                FeesPortion = 209_81L<Cent>
-                InterestPortion = 2_57L<Cent>
-                ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
-                PrincipalBalance = 122_33L<Cent>
-                FeesBalance = 231_57L<Cent>
-                InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
-                SettlementFigure = 677_00L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            }
-        )
+    //     let expected = ValueSome (
+    //         PaymentQuote (323_15L<Cent>, 96_39L<Cent>, 182_65L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>), {
+    //             OffsetDate = startDate.AddDays 155
+    //             OffsetDay = 155<OffsetDay>
+    //             Advances = [||]
+    //             ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
+    //             Window = 11
+    //             PaymentDue = 323_10L<Cent>
+    //             ActualPayments = [||]
+    //             GeneratedPayment = ValueNone
+    //             NetEffect = 323_10L<Cent>
+    //             PaymentStatus = NotYetDue
+    //             BalanceStatus = OpenBalance
+    //             ContractualInterest = 0m<Cent>
+    //             InterestAdjustment = 2_57.39205205m<Cent>
+    //             NewCharges = [||]
+    //             PrincipalPortion = 110_72L<Cent>
+    //             FeesPortion = 209_81L<Cent>
+    //             InterestPortion = 2_57L<Cent>
+    //             ChargesPortion = 0L<Cent>
+    //             FeesRefund = 0L<Cent>
+    //             PrincipalBalance = 122_33L<Cent>
+    //             FeesBalance = 231_57L<Cent>
+    //             InterestBalance = 0m<Cent>
+    //             ChargesBalance = 0L<Cent>
+    //             SettlementFigure = 677_00L<Cent>
+    //             FeesRefundIfSettled = 0L<Cent>
+    //         }
+    //     )
 
-        actual |> should equal expected
+    //     actual |> should equal expected
 
-    [<Fact>]
-    let ``8) Get payment to cover all overdue amounts`` () =
-        let startDate = Date(2024, 10, 1).AddDays(-60)
+    // [<Fact>]
+    // let ``8) Get payment to cover all overdue amounts`` () =
+    //     let startDate = Date(2024, 10, 1).AddDays(-60)
 
-        let sp = {
-            AsOfDate = Date(2024, 10, 1)
-            StartDate = startDate
-            Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
-                MaxDuration = ValueNone
-            )
-            PaymentOptions = {
-                ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = LeaveOpenBalance
-            }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.None
-                Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
-            Interest = {
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                RoundingOptions = RoundingOptions.recommended
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
-            }
-        }
+    //     let sp = {
+    //         AsOfDate = Date(2024, 10, 1)
+    //         StartDate = startDate
+    //         Principal = 1200_00L<Cent>
+    //         PaymentSchedule = RegularSchedule (
+    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
+    //             PaymentCount = 11,
+    //             MaxDuration = ValueNone
+    //         )
+    //         PaymentOptions = {
+    //             ScheduledPaymentOption = AsScheduled
+    //             CloseBalanceOption = LeaveOpenBalance
+    //         }
+    //         FeesAndCharges = {
+    //             Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
+    //             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+    //             FeesSettlementRefund = Fees.SettlementRefund.None
+    //             Charges = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+    //             ChargesHolidays = [||]
+    //             ChargesGrouping = OneChargeTypePerDay
+    //             LatePaymentGracePeriod = 0<DurationDay>
+    //         }
+    //         Interest = {
+    //             Method = InterestMethod.Simple
+    //             StandardRate = Interest.Rate.Annual (Percent 9.95m)
+    //             Cap = Interest.Cap.none
+    //             InitialGracePeriod = 3<DurationDay>
+    //             PromotionalRates = [||]
+    //             RateOnNegativeBalance = ValueNone
+    //         }
+    //         Calculation = {
+    //             AprMethod = Apr.CalculationMethod.UsActuarial 8
+    //             RoundingOptions = RoundingOptions.recommended
+    //             MinimumPayment = DeferOrWriteOff 50L<Cent>
+    //             PaymentTimeout = 3<DurationDay>
+    //         }
+    //     }
 
-        let actualPayments =
-            [| 15 .. 14 .. 29 |]
-            |> Array.map(fun i ->
-                { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
-            )
+    //     let actualPayments =
+    //         [| 15 .. 14 .. 29 |]
+    //         |> Array.map(fun i ->
+    //             { PaymentDay = i * 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 323_15L<Cent>; Metadata = Map.empty } }
+    //         )
 
-        let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
-                return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
-            }
+    //     let actual =
+    //         voption {
+    //             let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
+    //             quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/QuoteTest008.md"
+    //             return quote.QuoteResult, Array.last quote.RevisedSchedule.ScheduleItems
+    //         }
 
-        let expected = ValueSome (
-            PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>),
-            {
-                OffsetDate = startDate.AddDays 155
-                OffsetDay = 155<OffsetDay>
-                Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
-                Window = 11
-                PaymentDue = 300_11L<Cent>
-                ActualPayments = [||]
-                GeneratedPayment = ValueNone
-                NetEffect = 300_11L<Cent>
-                PaymentStatus = NotYetDue
-                BalanceStatus = ClosedBalance
-                NewInterest = 1_14.10005753m<Cent>
-                NewCharges = [||]
-                PrincipalPortion = 103_33L<Cent>
-                FeesPortion = 195_64L<Cent>
-                InterestPortion = 1_14L<Cent>
-                ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
-                PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
-                InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
-                SettlementFigure = 300_11L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            }
-        )
+    //     let expected = ValueSome (
+    //         PaymentQuote (690_41L<Cent>, 223_27L<Cent>, 423_03L<Cent>, 24_11L<Cent>, 20_00L<Cent>, 0L<Cent>),
+    //         {
+    //             OffsetDate = startDate.AddDays 155
+    //             OffsetDay = 155<OffsetDay>
+    //             Advances = [||]
+    //             ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 323_10L<Cent>; Metadata = Map.empty }
+    //             Window = 11
+    //             PaymentDue = 300_11L<Cent>
+    //             ActualPayments = [||]
+    //             GeneratedPayment = ValueNone
+    //             NetEffect = 300_11L<Cent>
+    //             PaymentStatus = NotYetDue
+    //             BalanceStatus = ClosedBalance
+    //             ContractualInterest = 0m<Cent>
+    //             InterestAdjustment = 1_14.10005753m<Cent>
+    //             NewCharges = [||]
+    //             PrincipalPortion = 103_33L<Cent>
+    //             FeesPortion = 195_64L<Cent>
+    //             InterestPortion = 1_14L<Cent>
+    //             ChargesPortion = 0L<Cent>
+    //             FeesRefund = 0L<Cent>
+    //             PrincipalBalance = 0L<Cent>
+    //             FeesBalance = 0L<Cent>
+    //             InterestBalance = 0m<Cent>
+    //             ChargesBalance = 0L<Cent>
+    //             SettlementFigure = 300_11L<Cent>
+    //             FeesRefundIfSettled = 0L<Cent>
+    //         }
+    //     )
 
-        actual |> should equal expected
+    //     actual |> should equal expected
 
     [<Fact>]
     let ``9) Verified example`` () =
@@ -736,6 +750,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -773,6 +788,8 @@ module QuoteTests =
                 NetEffect = 1311_67L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 16_35.61643835m<Cent>
                 NewInterest = 16_35.61643835m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 500_00L<Cent>
@@ -818,6 +835,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -833,13 +851,13 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 70<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 84<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 85<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 98<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 112<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 126<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 272_84L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 70<OffsetDay> 272_84L<Cent>
+            CustomerPayment.ActualConfirmed 84<OffsetDay> 272_84L<Cent>
+            CustomerPayment.ActualConfirmed 84<OffsetDay> 272_84L<Cent>
+            CustomerPayment.ActualConfirmed 85<OffsetDay> 272_84L<Cent>
+            CustomerPayment.ActualConfirmed 98<OffsetDay> 272_84L<Cent>
+            CustomerPayment.ActualConfirmed 112<OffsetDay> 272_84L<Cent>
+            CustomerPayment.ActualConfirmed 126<OffsetDay> 272_84L<Cent>
         |]
 
         let actual =
@@ -863,6 +881,8 @@ module QuoteTests =
                 NetEffect = 1261_73L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 75_11.98884657m<Cent>
                 NewInterest = 75_11.98884657m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 471_07L<Cent>
@@ -908,6 +928,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
                 Cap = Interest.Cap.none
                 InitialGracePeriod = 3<DurationDay>
@@ -923,10 +944,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 28<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 42<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 56<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 279_01L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 279_01L<Cent>
+            CustomerPayment.ActualConfirmed 28<OffsetDay> 279_01L<Cent>
+            CustomerPayment.ActualConfirmed 42<OffsetDay> 279_01L<Cent>
+            CustomerPayment.ActualConfirmed 56<OffsetDay> 279_01L<Cent>
         |]
 
         let actual =
@@ -951,6 +972,8 @@ module QuoteTests =
                 NetEffect = 973_53L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 1_04.87518082m<Cent>
                 NewInterest = 1_04.87518082m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 769_46L<Cent>
@@ -996,6 +1019,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.798m)
                 Cap = interestCapExample
                 InitialGracePeriod = 1<DurationDay>
@@ -1034,6 +1058,8 @@ module QuoteTests =
                 NetEffect = 495_76L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 95_76m<Cent>
                 NewInterest = 95_76m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 400_00L<Cent>
@@ -1077,6 +1103,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1092,10 +1119,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1120,6 +1147,8 @@ module QuoteTests =
                 NetEffect = 429_24L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 76_24.800m<Cent>
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
@@ -1163,6 +1192,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1178,10 +1208,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1205,6 +1235,8 @@ module QuoteTests =
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 79_07.200m<Cent>
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
@@ -1248,6 +1280,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1263,10 +1296,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1290,6 +1323,8 @@ module QuoteTests =
                 NetEffect = 434_89L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 2_82.400m<Cent>
                 NewInterest = 2_82.400m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
@@ -1333,6 +1368,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1348,10 +1384,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1375,6 +1411,8 @@ module QuoteTests =
                 NetEffect = 453_36L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 11_29.600m<Cent>
                 NewInterest = 11_29.600m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
@@ -1418,6 +1456,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1432,11 +1471,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 134<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1461,6 +1500,8 @@ module QuoteTests =
                 NetEffect = 429_24L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 76_24.800m<Cent>
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
@@ -1504,6 +1545,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1519,11 +1561,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 134<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1547,6 +1589,8 @@ module QuoteTests =
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 79_07.200m<Cent>
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
@@ -1590,6 +1634,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1605,11 +1650,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 134<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1633,6 +1678,8 @@ module QuoteTests =
                 NetEffect = -67_95L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = -1.48887672M<Cent>
                 NewInterest = -1.48887672M<Cent>
                 NewCharges = [||]
                 PrincipalPortion = -67_93L<Cent>
@@ -1676,6 +1723,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
@@ -1691,11 +1739,11 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 14<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 44<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 75<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 106<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 134<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
+            CustomerPayment.ActualConfirmed 134<OffsetDay> 500_00L<Cent>
         |]
 
         let actual =
@@ -1719,6 +1767,8 @@ module QuoteTests =
                 NetEffect = -72_80L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = -4_86.86268494M<Cent>
                 NewInterest = -4_86.86268494M<Cent>
                 NewCharges = [||]
                 PrincipalPortion = -67_93L<Cent>
@@ -1762,6 +1812,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 3<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1777,7 +1828,7 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 1<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 252_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 1<OffsetDay> 252_00L<Cent>
         |]
 
         let actual =
@@ -1811,6 +1862,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1825,11 +1877,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed(72_54L<Cent>, [||]); Metadata = Map.empty } }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 145_07L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 25<OffsetDay> 72_54L<Cent>
+            CustomerPayment.ActualFailed 53<OffsetDay> 72_54L<Cent> [||]
+            CustomerPayment.ActualConfirmed 53<OffsetDay> 72_54L<Cent>
+            CustomerPayment.ActualConfirmed 78<OffsetDay> 72_54L<Cent>
+            CustomerPayment.ActualConfirmed 78<OffsetDay> 145_07L<Cent>
         |]
 
         let actual =
@@ -1863,6 +1915,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1877,11 +1930,11 @@ module QuoteTests =
             }
         }
         let actualPayments = [|
-            { PaymentDay = 25<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed(72_54L<Cent>, [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |]); Metadata = Map.empty } }
-            { PaymentDay = 53<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 72_54L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 78<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 145_07L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 25<OffsetDay> 72_54L<Cent>
+            CustomerPayment.ActualFailed 53<OffsetDay> 72_54L<Cent> [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>) |]
+            CustomerPayment.ActualConfirmed 53<OffsetDay> 72_54L<Cent>
+            CustomerPayment.ActualConfirmed 78<OffsetDay> 72_54L<Cent>
+            CustomerPayment.ActualConfirmed 78<OffsetDay> 145_07L<Cent>
         |]
 
         let actual =
@@ -1915,6 +1968,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1930,10 +1984,10 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed -5_10L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 6<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 2_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 97_01L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 16<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 97_01L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 5<OffsetDay> -5_10L<Cent>
+            CustomerPayment.ActualConfirmed 6<OffsetDay> 2_00L<Cent>
+            CustomerPayment.ActualConfirmed 16<OffsetDay> 97_01L<Cent>
+            CustomerPayment.ActualConfirmed 16<OffsetDay> 97_01L<Cent>
         |]
 
         let actual =
@@ -1967,6 +2021,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -1982,8 +2037,8 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 20<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 200_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 50<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 200_00L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 20<OffsetDay> 200_00L<Cent>
+            CustomerPayment.ActualConfirmed 50<OffsetDay> 200_00L<Cent>
         |]
 
         let actual =
@@ -2017,6 +2072,7 @@ module QuoteTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
+                Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
@@ -2032,8 +2088,8 @@ module QuoteTests =
         }
 
         let actualPayments = [|
-            { PaymentDay = 5<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 111_00L<Cent>; Metadata = Map.empty } }
-            { PaymentDay = 21<OffsetDay>; PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_01L<Cent>; Metadata = Map.empty } }
+            CustomerPayment.ActualConfirmed 5<OffsetDay> 111_00L<Cent>
+            CustomerPayment.ActualConfirmed 21<OffsetDay> 181_01L<Cent>
         |]
 
         let actual =

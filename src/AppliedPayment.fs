@@ -28,6 +28,8 @@ module AppliedPayment =
         NetEffect: int64<Cent>
         /// the payment status based on the payments made on the current day
         PaymentStatus: CustomerPaymentStatus
+        /// the original, contractually calculated interest
+        ContractualInterest: decimal<Cent> voption
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
@@ -52,7 +54,7 @@ module AppliedPayment =
             |> Array.map(fun (offsetDay, payments) ->
                 let scheduledPayment' =
                     payments
-                    |> Array.tryPick(_.PaymentDetails >> function ScheduledPayment scheduledPaymentInfo -> Some scheduledPaymentInfo | _ -> None)
+                    |> Array.tryPick(fun cp -> match cp.PaymentDetails with ScheduledPayment scheduledPaymentInfo -> Some scheduledPaymentInfo | _ -> None)
                     |> Option.defaultValue { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
  
                 let actualPayments' = payments |> Array.choose(_.PaymentDetails >> function ActualPayment actualPaymentInfo -> Some actualPaymentInfo | _ -> None)
@@ -121,7 +123,17 @@ module AppliedPayment =
                             )
                         | AllChargesApplied -> cc
 
-                { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus }
+                let contractualInterest =
+                    let ii = payments |> Array.map (_.ContractualInterest >> toOption)
+                    if ii |> Array.isEmpty || ii |> Array.forall _.IsNone then
+                        ValueNone
+                    else
+                        ii
+                        |> Array.choose id
+                        |> Array.sum
+                        |> ValueSome
+
+                { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus; ContractualInterest = contractualInterest }
             )
 
         let appliedPayments day generatedPayment paymentStatus =
@@ -138,6 +150,7 @@ module AppliedPayment =
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
                     PaymentStatus = paymentStatus
+                    ContractualInterest = ValueNone
                 }
                 payments
                 |> Array.append [| newAppliedPayment |]
