@@ -237,7 +237,7 @@ module Amortisation =
 
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0
 
-            let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent> // to do: is the voption information useful later?
+            let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent>
 
             let simpleInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
