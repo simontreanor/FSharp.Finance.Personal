@@ -668,7 +668,16 @@ module Amortisation =
                 )
                 |> Array.concat, 0L<Cent>
             | IrregularSchedule payments ->
-                payments, 0L<Cent>
+                match scheduleType, sp.Interest.Method with
+                | ScheduleType.Original, Interest.Method.AddOn ->
+                    // Contractual interest has to be solved. 
+                    // Hack to get it here, because the payment schedule days may not match, but this is more correct than zero.
+                    let schedule = PaymentSchedule.calculate BelowZero sp
+                    match schedule with
+                    | ValueSome s -> payments, s.InitialInterestBalance
+                    | ValueNone -> payments, 0L<Cent>
+                | _ ->
+                    payments, 0L<Cent>
 
         if Array.isEmpty payments then ValueNone else
 
