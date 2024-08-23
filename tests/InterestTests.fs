@@ -273,7 +273,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/PromotionalRatesTest001.md")
+            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/InterestTest001.md")
 
             let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
             let expected = ValueSome {

@@ -23,6 +23,7 @@
     <Compile Include="ActualPaymentTestsExtra.fs" />
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
+    <Compile Include="PromotionalRatesTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
