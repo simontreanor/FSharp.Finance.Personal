@@ -14,6 +14,8 @@ module ArrayExtension =
         | IterationLimitReached of PartialSolution:decimal * IterationLimit:int * MaxTolerance:int
         /// a solution was found, returning the solution, the number of iterations required and the final tolerance used
         | Found of Found:decimal * Iteration:int * Tolerance:int
+        /// the solver was bypassed and a manual solution was supplied
+        | Bypassed
 
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     [<RequireQualifiedAccess; Struct>]

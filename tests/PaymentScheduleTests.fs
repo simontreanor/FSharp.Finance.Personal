@@ -1647,3 +1647,78 @@ module PaymentScheduleTests =
 
         let expected = ValueSome (36_48L<Cent>, 36_44L<Cent>)
         actual |> should equal expected
+
+    [<Fact>]
+    let ``5) Calculation with three equivalent but different payment schedules types should be identical`` () =
+
+        let sp paymentSchedule = {
+            AsOfDate = Date(2024, 6, 24)
+            StartDate = Date(2024, 6, 24)
+            Principal = 100_00L<Cent>
+            PaymentSchedule = paymentSchedule
+            PaymentOptions = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+            }
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
+                Charges = [| Charge.LatePayment (Amount.Percentage(Percent 5m, ValueSome(Amount.Restriction.UpperLimit 750L<Cent>), ValueSome (Round MidpointRounding.ToEven))) |]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 3<DurationDay>
+            }
+            Interest = {
+                Method = Interest.Method.Simple
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = Interest.Cap.none
+                InitialGracePeriod = 1<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueNone
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = {
+                    ChargesRounding = Round MidpointRounding.ToEven
+                    FeesRounding = Round MidpointRounding.ToEven
+                    InterestRounding = Round MidpointRounding.ToEven
+                    PaymentRounding = Round MidpointRounding.ToEven
+                }
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
+        let actual =
+            voption {
+
+                let paymentSchedule1 = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4), PaymentCount = 4, MaxDuration = ValueSome { Length = 190<DurationDay>; FromDate = Date(2024, 6, 24) })
+
+                let paymentSchedule2 = RegularFixedSchedule [|
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024,  7, 4); PaymentCount = 3; PaymentAmount = 36_48L<Cent> }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentAmount = 36_44L<Cent> }
+                |]
+
+                let paymentSchedule3 = IrregularSchedule [|
+                    { PaymentDay =  10<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
+                    { PaymentDay =  41<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
+                    { PaymentDay =  72<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
+                    { PaymentDay = 102<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_44L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
+                |]
+
+                let! schedule1 = sp paymentSchedule1 |> calculate BelowZero
+                let! schedule2 = sp paymentSchedule2 |> calculate BelowZero
+                let! schedule3 = sp paymentSchedule3 |> calculate BelowZero
+
+
+                let title = "5) Calculation with three different scheduling methods should be identical"
+                let html1 = schedule1.Items |> Formatting.generateHtmlFromArray None
+                let html2 = schedule2.Items |> Formatting.generateHtmlFromArray None
+                let html3 = schedule3.Items |> Formatting.generateHtmlFromArray None
+                $"{title}<br /><br />{html1}<br />{html2}<br />{html3}" |> Formatting.outputToFile' "out/PaymentSchedule005.md"
+
+                return schedule1 = schedule2 && schedule2 = schedule3
+            }
+
+        actual |> ValueOption.defaultValue false |> should equal true

@@ -76,6 +76,11 @@ module CustomerPayments =
         | ActualPayment of ActualPayment: ActualPaymentInfo
         /// the amounts of any generated payments made on the current day and their type
         | GeneratedPayment of GeneratedPayment: int64<Cent>
+        with
+            static member total = function
+                | ScheduledPayment spi -> spi.Value
+                | ActualPayment api -> ActualPaymentStatus.total api.ActualPaymentStatus
+                | GeneratedPayment gp -> gp
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     type CustomerPayment = {

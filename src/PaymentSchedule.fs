@@ -140,13 +140,13 @@ module PaymentSchedule =
     }
 
     /// generates an array of offset days based on a start date and payment schedule
-    let paymentDays startDate paymentSchedule =
+    let paymentDetails startDate paymentSchedule =
         match paymentSchedule with
         | IrregularSchedule payments ->
             if Array.isEmpty payments then
                 [||]
             else
-                payments |> Array.map _.PaymentDay
+                payments |> Array.map(fun p -> p.PaymentDay, CustomerPaymentDetails.total p.PaymentDetails)
         | RegularFixedSchedule regularFixedSchedules ->
             regularFixedSchedules
             |> Array.map(fun rfs ->
@@ -158,6 +158,7 @@ module PaymentSchedule =
                         [||]
                     else
                         generatePaymentSchedule rfs.PaymentCount ValueNone Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+                        |> Array.map(fun d -> d, rfs.PaymentAmount)
             )
             |> Array.concat
         | RegularSchedule (unitPeriodConfig, paymentCount, maxDuration) ->
@@ -168,11 +169,15 @@ module PaymentSchedule =
                 if startDate > unitPeriodConfigStartDate then
                     [||]
                 else
-                    generatePaymentSchedule paymentCount maxDuration Direction.Forward unitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+                    generatePaymentSchedule paymentCount maxDuration Direction.Forward unitPeriodConfig
+                    |> Array.map(fun d -> OffsetDay.fromDate startDate d, 0L<Cent>)
+        |> Map.ofArray
 
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
-        let paymentDays = paymentDays sp.StartDate sp.PaymentSchedule
+        let paymentMap = paymentDetails sp.StartDate sp.PaymentSchedule
+
+        let paymentDays = paymentMap |> Map.keys |> Seq.toArray
 
         let finalPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
 
@@ -262,8 +267,20 @@ module PaymentSchedule =
             else
                 Some ((iteration + 1, initialInterestBalance), finalInterestLimit)
 
-        match Array.solve (generatePaymentAmount initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> roughPayment) toleranceOption toleranceSteps with
-        | Solution.Found _ ->
+        let solution =
+            match sp.PaymentSchedule with
+            | RegularSchedule _ ->
+                Array.solve (generatePaymentAmount initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> roughPayment) toleranceOption toleranceSteps
+            | RegularFixedSchedule _
+            | IrregularSchedule _ ->
+                schedule <-
+                    paymentDays
+                    |> Array.scan (fun state pd -> generateItem sp.Interest.Method paymentMap[pd] state pd) initialItem
+                Solution.Bypassed
+
+        match solution with
+        | Solution.Found _
+        | Solution.Bypassed ->
 
             if sp.Interest.Method = Interest.Method.AddOn then
                 let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
@@ -274,7 +291,7 @@ module PaymentSchedule =
             let items =
                 schedule
                 |> Array.map(fun si ->
-                    if si.Day = finalPaymentDay then
+                    if si.Day = finalPaymentDay && solution <> Solution.Bypassed then
                         { si with Payment = si.Payment |> ValueOption.map(fun p -> p + si.PrincipalBalance); Principal = si.Principal + si.PrincipalBalance; PrincipalBalance = 0L<Cent> }
                     else si
                 )

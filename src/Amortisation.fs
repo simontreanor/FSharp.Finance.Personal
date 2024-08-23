@@ -399,7 +399,7 @@ module Amortisation =
                 | Fees.SettlementRefund.ProRata originalFinalPaymentDay ->
                     match originalFinalPaymentDay with
                     | ValueNone ->
-                        let originalFinalPaymentDay = sp.PaymentSchedule |> paymentDays sp.StartDate |> Array.vTryLastBut 0 |> ValueOption.defaultValue 0<OffsetDay>
+                        let originalFinalPaymentDay = sp.PaymentSchedule |> paymentDetails sp.StartDate |> Map.keys |> Seq.toArray |> Array.vTryLastBut 0 |> ValueOption.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
                     | ValueSome ofpd ->
                         calculateFees ofpd
@@ -629,55 +629,26 @@ module Amortisation =
     /// generates an amortisation schedule and final statistics
     let generate sp intendedPurpose scheduleType trimEnd actualPayments =
         let payments, initialInterestBalance =
-            match sp.PaymentSchedule with
-            | RegularSchedule _ ->
-                let schedule = PaymentSchedule.calculate BelowZero sp
-                match schedule with
-                | ValueSome s ->
-                    s.Items
-                    |> Array.filter _.Payment.IsSome
-                    |> Array.map(fun si -> {
-                        PaymentDay = si.Day
-                        PaymentDetails =
-                            match scheduleType with
-                            | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty }
-                            | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
-                        ContractualInterest =
-                            match scheduleType, sp.Interest.Method with
-                            | ScheduleType.Original, Interest.Method.AddOn ->
-                                si.Interest |> Cent.toDecimalCent |> ValueSome
-                            | _ ->
-                                ValueNone
-                    }), s.InitialInterestBalance
-                | ValueNone ->
-                    [||], 0L<Cent>
-            | RegularFixedSchedule regularFixedSchedules ->
-                regularFixedSchedules
-                |> Array.map(fun rfs ->
-                    UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
-                    |> Array.map(fun d ->
-                        {
-                            PaymentDay = OffsetDay.fromDate sp.StartDate d
-                            PaymentDetails =
-                                match scheduleType with
-                                | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original rfs.PaymentAmount; Metadata = Map.empty }
-                                | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled rfs.PaymentAmount; Metadata = Map.empty }
-                            ContractualInterest = ValueNone
-                        }
-                    )
-                )
-                |> Array.concat, 0L<Cent>
-            | IrregularSchedule payments ->
-                match scheduleType, sp.Interest.Method with
-                | ScheduleType.Original, Interest.Method.AddOn ->
-                    // Contractual interest has to be solved. 
-                    // Hack to get it here, because the payment schedule days may not match, but this is more correct than zero.
-                    let schedule = PaymentSchedule.calculate BelowZero sp
-                    match schedule with
-                    | ValueSome s -> payments, s.InitialInterestBalance
-                    | ValueNone -> payments, 0L<Cent>
-                | _ ->
-                    payments, 0L<Cent>
+            let schedule = PaymentSchedule.calculate BelowZero sp
+            match schedule with
+            | ValueSome s ->
+                s.Items
+                |> Array.filter _.Payment.IsSome
+                |> Array.map(fun si -> {
+                    PaymentDay = si.Day
+                    PaymentDetails =
+                        match scheduleType with
+                        | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty }
+                        | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
+                    ContractualInterest =
+                        match scheduleType, sp.Interest.Method with
+                        | ScheduleType.Original, Interest.Method.AddOn ->
+                            si.Interest |> Cent.toDecimalCent |> ValueSome
+                        | _ ->
+                            ValueNone
+                }), s.InitialInterestBalance
+            | ValueNone ->
+                [||], 0L<Cent>
 
         if Array.isEmpty payments then ValueNone else
 

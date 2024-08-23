@@ -216,8 +216,10 @@ module Apr =
                 let calc transfers unitPeriodRate =
                     transfers
                     |> Array.sumBy(fun (amount, remainder, quotient) ->
-                        let divisor = (1m + (remainder * unitPeriodRate)) * ((1m + unitPeriodRate) |> powi quotient)
-                        if divisor = 0m then 0m else Cent.toDecimal amount / divisor
+                        try // high quotients will yield oversize decimals but high divisors will yield a zero result anyway
+                            let divisor = (1m + (remainder * unitPeriodRate)) * ((1m + unitPeriodRate) |> powi quotient)
+                            if divisor = 0m then 0m else Cent.toDecimal amount / divisor
+                        with _ -> 0m
                     )
                 let generator unitPeriodRate =
                     let aa = calc eq unitPeriodRate
@@ -253,4 +255,4 @@ module Apr =
             Decimal.Round(apr, precision)
             |> Percent.fromDecimal
             |> ValueSome
-        | Solution.Impossible -> ValueNone
+        | _ -> ValueNone
