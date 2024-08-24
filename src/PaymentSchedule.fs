@@ -257,6 +257,9 @@ module PaymentSchedule =
         let generateMaximumInterest (iteration, firstItem) initialInterestBalance = // iteration is an increment to prevent infinite loops
             let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
             let payment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
+            if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then None
+            else
+
             schedule <-
                 paymentDays
                 |> Array.scan (generateItem Interest.Method.AddOn payment) initialItem
@@ -303,7 +306,7 @@ module PaymentSchedule =
                 |> Array.filter(fun si -> si.Payment.IsSome)
                 |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Amount = si.Payment.Value })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
-            let finalPayment = items |> Array.filter _.Payment.IsSome |> Array.last |> _.Payment.Value
+            let finalPayment = items |> Array.filter _.Payment.IsSome |> Array.tryLast |> Option.map _.Payment.Value |> Option.defaultValue 0L<Cent>
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
