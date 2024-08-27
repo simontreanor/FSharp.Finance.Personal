@@ -40,6 +40,10 @@ let scheduleParameters =
             PaymentCount = 5,
             MaxDuration = ValueNone
         )
+        PaymentOptions = {
+            ScheduledPaymentOption = AsScheduled
+            CloseBalanceOption = LeaveOpenBalance
+        }
         FeesAndCharges = {
             Fees = [||]
             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -50,6 +54,7 @@ let scheduleParameters =
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {
+            Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = {
                 Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
@@ -68,11 +73,11 @@ let scheduleParameters =
     }
 
 let actualPayments = [|
-    { PaymentDay =  4<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 35<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 66<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 94<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_88L<Cent>) }
-    { PaymentDay = 125<OffsetDay>; PaymentDetails = ActualPayment (ActualPaymentStatus.Confirmed 456_84L<Cent>) }
+    (CustomerPayment.ActualConfirmed   4<OffsetDay> 456_88L<Cent>)
+    (CustomerPayment.ActualConfirmed  35<OffsetDay> 456_88L<Cent>)
+    (CustomerPayment.ActualConfirmed  66<OffsetDay> 456_88L<Cent>)
+    (CustomerPayment.ActualConfirmed  94<OffsetDay> 456_88L<Cent>)
+    (CustomerPayment.ActualConfirmed 125<OffsetDay> 456_84L<Cent>)
 |]
 
 let amortisationSchedule =

@@ -40,6 +40,10 @@ let scheduleParameters =
             PaymentCount = 36,
             MaxDuration = ValueNone
         )
+        PaymentOptions = {
+            ScheduledPaymentOption = AsScheduled
+            CloseBalanceOption = LeaveOpenBalance
+        }
         FeesAndCharges = {
             Fees = [||]
             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
@@ -50,6 +54,7 @@ let scheduleParameters =
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {
+            Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Annual (Percent 6.9m)
             Cap = Interest.Cap.none
             InitialGracePeriod = 0<DurationDay>
