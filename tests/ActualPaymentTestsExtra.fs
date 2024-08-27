@@ -549,7 +549,7 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = reschedule sp rp actualPayments
                 let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true }
+                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoInterest = sp.Interest.Method; GoExtra = true }
                 let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray generationOptions
                 $"{title}<br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md"
                 return newSchedule.ScheduleItems

@@ -20,6 +20,8 @@ module Formatting =
     let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
     /// an array of properties representing extra information
     let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure"; "Window" |] else [||]
+    /// an array of properties representing internal interest calculations
+    let interestProperties hide = if hide then [| "ContractualInterest"; "SimpleInterest" |] else [||]
 
     /// filter out hidden fields 
     let filterColumns hideProperties =
@@ -105,6 +107,7 @@ module Formatting =
     type GenerationOptions = {
         GoParameters: PaymentSchedule.Parameters
         GoPurpose: IntendedPurpose
+        GoInterest: Interest.Method
         GoExtra: bool
     }
 
@@ -116,6 +119,7 @@ module Formatting =
                 go.GoParameters.FeesAndCharges.Fees |> Array.isEmpty |> feesProperties
                 go.GoParameters.FeesAndCharges.Charges |> Array.isEmpty |> chargesProperties
                 (match go.GoPurpose with IntendedPurpose.Settlement _ -> false | _ -> true) |> quoteProperties
+                (go.GoInterest <> Interest.Method.AddOn) |> interestProperties
                 go.GoExtra |> not |> extraProperties
             |]
             |> Array.concat
