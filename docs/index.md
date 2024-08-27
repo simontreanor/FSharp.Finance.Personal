@@ -26,6 +26,8 @@ This library is able to generate amortisation schedules based on a highly custom
 
 [General design considerations](generalDesign.md)
 
+[Algorithms in depth](algorithms.md)
+
 ## Future development
 
 ### The `FSharp.Finance` family
