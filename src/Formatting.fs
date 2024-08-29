@@ -107,7 +107,6 @@ module Formatting =
     type GenerationOptions = {
         GoParameters: PaymentSchedule.Parameters
         GoPurpose: IntendedPurpose
-        GoInterest: Interest.Method
         GoExtra: bool
     }
 
@@ -119,7 +118,7 @@ module Formatting =
                 go.GoParameters.FeesAndCharges.Fees |> Array.isEmpty |> feesProperties
                 go.GoParameters.FeesAndCharges.Charges |> Array.isEmpty |> chargesProperties
                 (match go.GoPurpose with IntendedPurpose.Settlement _ -> false | _ -> true) |> quoteProperties
-                (go.GoInterest <> Interest.Method.AddOn) |> interestProperties
+                (match go.GoParameters.Interest.Method with Interest.Method.AddOn _ -> false | _ -> true) |> interestProperties
                 go.GoExtra |> not |> extraProperties
             |]
             |> Array.concat
