@@ -15,7 +15,7 @@ module Calculation =
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 
-    /// holds the result of a devision, separated into quotient and remainder
+    /// holds the result of a division, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {
         /// the whole number resulting from a division
