@@ -256,3 +256,9 @@ module Apr =
             |> Percent.fromDecimal
             |> ValueSome
         | _ -> ValueNone
+
+    let ukUnitPeriodRate unitPeriod apr =
+        apr
+        |> Percent.toDecimal
+        |> fun m -> (((1m + m) |> powm (1m / UnitPeriod.numberPerYear unitPeriod) |> decimal) - 1m) * 100m
+        |> Percent

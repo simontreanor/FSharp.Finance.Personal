@@ -17,6 +17,7 @@ module InterestFirstTests =
     open PaymentSchedule
     open Percentages
     open ValueOptionCE
+    open System
 
     let startDate = Date(2024, 7, 23)
     let scheduleParameters interestMethod =
@@ -346,3 +347,42 @@ module InterestFirstTests =
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
         interestPortion |> should equal -1_22L<Cent>
 
+
+    [<Fact>]
+    let ``18) UK rebate example 1`` () =
+        let principal = 5000_00L<Cent>
+        let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
+        let apr = Percent 14m
+        let settlementPeriod = 12
+        let settlementPartPeriod = ValueNone
+        let unitPeriod = UnitPeriod.Month 1
+        let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
+        let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+        let expected = 3984_00L<Cent>
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``18a) UK rebate example 1a`` () =
+        let principal = 5000_00L<Cent>
+        let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
+        let apr = Percent 14m
+        let settlementPeriod = 12
+        let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 30 }
+        let unitPeriod = UnitPeriod.Month 1
+        let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
+        let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+        let expected = 4024_81L<Cent>
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``18b) UK rebate example 1b`` () =
+        let principal = 5000_00L<Cent>
+        let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
+        let apr = Percent 14m
+        let settlementPeriod = 12
+        let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 31 }
+        let unitPeriod = UnitPeriod.Month 1
+        let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
+        let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+        let expected = 4023_49L<Cent>
+        actual |> should equal expected

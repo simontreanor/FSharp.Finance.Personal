@@ -139,3 +139,34 @@ module Interest =
             |> min dailyCap
         )
         |> Cent.roundTo interestRounding 8
+
+    /// calculate the amount of rebate based on UK legislation:
+    /// The Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1)
+    let internal calculateRebate' (A: Map<int, decimal<Cent>>) (B: Map<int, decimal<Cent>>) (r: decimal) (m: int) (n: int) (a: Map<int, int>) (b: Map<int, int>) =
+        let round = Cent.roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 2
+        let sum1 =
+            [1 .. m]
+            |> List.sumBy(fun i -> A[i] * ((1m + r) |> powi a[i] |> decimal) |> round)
+        let sum2 =
+            [1 .. n]
+            |> List.sumBy(fun j -> B[j] * ((1m + r) |> powi b[j] |> decimal) |> round)
+        sum1 - sum2
+
+    /// calculate the amount of interest to be rebated based on UK legislation following an early settlement
+    let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction voption) unitPeriod paymentRounding =
+        if payments |> Array.isEmpty then
+            0L<Cent>
+        else
+            let advanceMap = [| (1, decimal principal * 1m<Cent>) |] |> Map.ofArray
+            let paymentMap = payments |> Array.mapi(fun i p -> (i, decimal (snd p) * 1m<Cent>)) |> Map.ofArray
+            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
+            let advanceCount = 1
+            let paymentCount = payments |> Array.length |> min settlementPeriod
+            let advanceIntervalMap = [| (1, settlementPeriod) |] |> Map.ofArray
+            let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray // to do: add guard for Array.tail
+            let wholePeriodRebate = calculateRebate' advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
+            if settlementPartPeriod.IsSome then
+                wholePeriodRebate * ((1m + aprDailyRate) |> powm (settlementPartPeriod.Value.toDecimal) |> decimal)
+            else
+                wholePeriodRebate
+            |> Cent.fromDecimalCent paymentRounding
