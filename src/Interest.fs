@@ -142,7 +142,7 @@ module Interest =
 
     /// calculate the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1)
     let internal ``CCA 2004 regulation 4(1) formula`` (A: Map<int, decimal<Cent>>) (B: Map<int, decimal<Cent>>) (r: decimal) (m: int) (n: int) (a: Map<int, int>) (b: Map<int, int>) =
-        if A.Count <> m || B.Count <> n || a.Count <> m || b.Count <> n then
+        if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
             ValueNone
         else
             let round = Cent.roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 2
