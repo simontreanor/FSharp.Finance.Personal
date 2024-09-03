@@ -347,7 +347,6 @@ module InterestFirstTests =
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
         interestPortion |> should equal -1_22L<Cent>
 
-
     [<Fact>]
     let ``18) UK rebate example 1`` () =
         let principal = 5000_00L<Cent>
@@ -386,3 +385,90 @@ module InterestFirstTests =
         let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
         let expected = 4023_49L<Cent>
         actual |> should equal expected
+
+    [<Fact>]
+    let ``19) UK rebate example 2`` () =
+        let principal = 10000_00L<Cent>
+        let payments = [| 1 .. 180 |] |> Array.map(fun i -> i, 139_51L<Cent>)
+        let apr = Percent 16m
+        let settlementPeriod = 73
+        let settlementPartPeriod = ValueNone
+        let unitPeriod = UnitPeriod.Month 1
+        let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
+        let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+        let expected = 8225_12L<Cent>
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``19a) UK rebate example 2a`` () =
+        let principal = 10000_00L<Cent>
+        let payments = [| 1 .. 180 |] |> Array.map(fun i -> i, 139_51L<Cent>)
+        let apr = Percent 16m
+        let settlementPeriod = 73
+        let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 30 }
+        let unitPeriod = UnitPeriod.Month 1
+        let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
+        let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+        let expected = 8320_62L<Cent>
+        actual |> should equal expected
+
+    let scheduleParameters2 =
+        {
+            StartDate = Date(2010, 3, 1)
+            AsOfDate = Date(2011, 3, 1)
+            Principal = 5000_00L<Cent>
+            PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentAmount = 134_57L<Cent> } |]
+            PaymentOptions = { ScheduledPaymentOption = AsScheduled; CloseBalanceOption = LeaveOpenBalance }
+            FeesAndCharges = {
+                Fees = [||]
+                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
+                FeesSettlementRefund = Fees.SettlementRefund.None
+                Charges = [||]
+                ChargesHolidays = [||]
+                ChargesGrouping = OneChargeTypePerDay
+                LatePaymentGracePeriod = 0<DurationDay>
+            }
+            Interest = {
+                Method = Interest.Method.AddOn
+                StandardRate = Interest.Rate.Annual <| Percent 5m
+                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+            }
+            Calculation = {
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RoundingOptions = RoundingOptions.recommended
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+        }
+
+    [<Fact>]
+    let ``20) CCA 2004 rebate example using library method`` () =
+        let sp = scheduleParameters2
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed  31<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed  61<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed  92<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 122<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 153<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 184<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 214<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 245<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 275<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 306<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 337<OffsetDay> 134_57L<Cent>
+                CustomerPayment.ActualConfirmed 365<OffsetDay> 134_57L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original true
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest020.md")
+
+        let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        interestPortion |> should equal 249_99L<Cent>
