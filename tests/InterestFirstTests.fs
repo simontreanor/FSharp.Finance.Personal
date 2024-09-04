@@ -357,7 +357,7 @@ module InterestFirstTests =
         let unitPeriod = UnitPeriod.Month 1
         let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
         let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-        let expected = 3984_00L<Cent>
+        let expected = ValueSome 860_52L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -370,7 +370,7 @@ module InterestFirstTests =
         let unitPeriod = UnitPeriod.Month 1
         let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
         let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-        let expected = 4024_81L<Cent>
+        let expected = ValueSome 819_71L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -383,7 +383,20 @@ module InterestFirstTests =
         let unitPeriod = UnitPeriod.Month 1
         let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
         let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-        let expected = 4023_49L<Cent>
+        let expected = ValueSome 821_03L<Cent>
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``18c) UK rebate example 1c`` () =
+        let principal = 5000_00L<Cent>
+        let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
+        let apr = Percent 14m
+        let settlementPeriod = 13
+        let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 30 }
+        let unitPeriod = UnitPeriod.Month 1
+        let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
+        let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+        let expected = ValueSome 776_90L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -396,7 +409,7 @@ module InterestFirstTests =
         let unitPeriod = UnitPeriod.Month 1
         let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
         let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-        let expected = 8225_12L<Cent>
+        let expected = ValueSome 6702_45L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -409,7 +422,7 @@ module InterestFirstTests =
         let unitPeriod = UnitPeriod.Month 1
         let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
         let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-        let expected = 8320_62L<Cent>
+        let expected = ValueSome 6606_95L<Cent>
         actual |> should equal expected
 
     let scheduleParameters2 =

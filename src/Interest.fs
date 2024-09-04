@@ -10,6 +10,7 @@ module Interest =
     open Currency
     open DateDay
     open Percentages
+    open ValueOptionCE
 
     /// the interest rate expressed as either an annual or a daily rate
     [<RequireQualifiedAccess; Struct>]
@@ -158,22 +159,19 @@ module Interest =
     /// calculate the amount of rebate due following an early settlement
     let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction voption) unitPeriod paymentRounding =
         if payments |> Array.isEmpty then
-            0L<Cent>
+            ValueNone
         else
-            let advanceMap = [| (1, decimal principal * 1m<Cent>) |] |> Map.ofArray
-            let paymentMap = payments |> Array.mapi(fun i p -> (i, decimal (snd p) * 1m<Cent>)) |> Map.ofArray
-            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
-            let advanceCount = 1
-            let paymentCount = payments |> Array.length |> min settlementPeriod
-            let advanceIntervalMap = [| (1, settlementPeriod) |] |> Map.ofArray
-            let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray // to do: add guard for Array.tail
-            let settlementFigure = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
-            settlementFigure
-            |> ValueOption.map(fun r ->
-                if settlementPartPeriod.IsSome then
-                    r * ((1m + aprDailyRate) |> powm (settlementPartPeriod.Value.toDecimal) |> decimal)
-                else
-                    r
-            )
-            |> ValueOption.defaultValue 0m<Cent>
-            |> Cent.fromDecimalCent paymentRounding
+            voption {
+                let advanceMap = [| (1, decimal principal * 1m<Cent>) |] |> Map.ofArray
+                let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
+                let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
+                let advanceCount = 1
+                let paymentCount = payments |> Array.length |> min settlementPeriod
+                let advanceIntervalMap = [| (1, settlementPeriod) |] |> Map.ofArray
+                let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
+                let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> ValueOption.map(fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)) |> ValueOption.defaultValue sf
+                let! wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
+                let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
+                let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd
+                return remainingPaymentTotal - settlementFigure
+            }
