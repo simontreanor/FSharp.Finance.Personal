@@ -66,7 +66,7 @@ module Interest =
 
         /// calculates the total interest cap
         static member total (initialPrincipal: int64<Cent>) = function
-            | ValueSome amount -> Amount.total initialPrincipal amount
+            | ValueSome amount -> Amount.total initialPrincipal amount |> max 0m<Cent>
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
     /// a promotional interest rate valid during the specified date range
