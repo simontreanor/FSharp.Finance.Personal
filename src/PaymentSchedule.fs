@@ -256,13 +256,21 @@ module PaymentSchedule =
 
         let generateMaximumInterest (iteration, firstItem) initialInterestBalance = // iteration is an increment to prevent infinite loops
             let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
-            let payment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
             if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then None
             else
 
+            let regularSchedulePayment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
             schedule <-
                 paymentDays
-                |> Array.scan (generateItem Interest.Method.AddOn payment) initialItem
+                |> Array.scan (fun state pd ->
+                    let payment =
+                        match sp.PaymentSchedule with
+                        | RegularSchedule _ -> regularSchedulePayment
+                        | RegularFixedSchedule _
+                        | IrregularSchedule _ -> paymentMap[pd]
+                    generateItem Interest.Method.AddOn payment state pd
+                ) initialItem
+
             let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
             let diff = initialInterestBalance - finalInterestLimit |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
             if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then

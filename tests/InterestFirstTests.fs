@@ -345,4 +345,3 @@ module InterestFirstTests =
 
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
         interestPortion |> should equal -1_22L<Cent>
-

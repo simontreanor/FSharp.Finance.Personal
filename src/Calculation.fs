@@ -99,3 +99,12 @@ module Calculation =
     /// determines whether a pending payment has timed out
     let timedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
         (int asOfDay - int paymentDay) * 1<DurationDay> > paymentTimeout
+
+    /// a fraction expressed as a numerator and denominator
+    [<Struct>]
+    type Fraction = {
+        Numerator: int
+        Denominator: int
+    }
+    with
+        member x.toDecimal = if x.Denominator = 0 then 0m else decimal x.Numerator / decimal x.Denominator

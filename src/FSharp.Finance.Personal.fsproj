@@ -19,9 +19,9 @@
     <Compile Include="Currency.fs" />
     <Compile Include="Amount.fs" />
     <Compile Include="FeesAndCharges.fs" />
-    <Compile Include="Interest.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Apr.fs" />
+    <Compile Include="Interest.fs" />
     <Compile Include="CustomerPayments.fs" />
     <Compile Include="PaymentSchedule.fs" />
     <Compile Include="AppliedPayment.fs" />
