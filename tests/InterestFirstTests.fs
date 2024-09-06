@@ -19,7 +19,7 @@ module InterestFirstTests =
     open ValueOptionCE
 
     let startDate = Date(2024, 7, 23)
-    let scheduleParameters interestMethod =
+    let scheduleParameters =
         {
             AsOfDate = startDate.AddDays 180
             StartDate = startDate
@@ -36,7 +36,7 @@ module InterestFirstTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = interestMethod
+                Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
@@ -53,7 +53,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``1) Simple interest method initial schedule`` () =
-        let sp = scheduleParameters Interest.Method.Simple
+        let sp = { scheduleParameters with Parameters.Interest.Method = Interest.Method.Simple }
 
         let actual =
             voption {
@@ -67,7 +67,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``2) Simple interest method`` () =
-        let sp = scheduleParameters Interest.Method.Simple
+        let sp = { scheduleParameters with Parameters.Interest.Method = Interest.Method.Simple }
 
         let actualPayments = [||]
 
@@ -82,7 +82,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``3) Add-on interest method initial schedule`` () =
-        let sp = scheduleParameters Interest.Method.AddOn
+        let sp = scheduleParameters
 
         let actual =
             voption {
@@ -96,7 +96,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``4) Add-on interest method`` () =
-        let sp = scheduleParameters Interest.Method.AddOn
+        let sp = scheduleParameters
 
         let actualPayments = [||]
 
@@ -111,10 +111,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``5) Add-on interest method with early repayment`` () =
-        let sp = 
-            { scheduleParameters Interest.Method.AddOn with
-                AsOfDate = Date(2024, 8, 9)
-            }
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9) }
 
         let actualPayments =
             [|
@@ -133,7 +130,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``6) Add-on interest method with normal but very early repayments`` () =
-        let sp = scheduleParameters Interest.Method.AddOn
+        let sp = scheduleParameters
 
         let actualPayments =
             [|
@@ -157,7 +154,7 @@ module InterestFirstTests =
     let ``7) Add-on interest method with normal but with erratic payment timings`` () =
         let startDate = Date(2022, 1, 10)
         let sp =
-            { scheduleParameters Interest.Method.AddOn with
+            { scheduleParameters with
                 StartDate = startDate
                 Principal = 700_00L<Cent>
                 PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
@@ -185,7 +182,7 @@ module InterestFirstTests =
     let ``8) Add-on interest method with normal but with erratic payment timings expecting settlement figure on final day`` () =
         let startDate = Date(2022, 1, 10)
         let sp =
-            { scheduleParameters Interest.Method.AddOn with
+            { scheduleParameters with
                 StartDate = startDate
                 Principal = 700_00L<Cent>
                 PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
@@ -210,7 +207,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``9) Add-on interest method with normal repayments`` () =
-        let sp = scheduleParameters Interest.Method.AddOn
+        let sp = scheduleParameters
 
         let actualPayments =
             [|
@@ -232,7 +229,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``10) Add-on interest method with single early repayment`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2 }
+        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
 
         let actualPayments =
             [|
@@ -250,7 +247,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``11) Add-on interest method with single early repayment then a quote one day later`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 2 }
+        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
 
         let actualPayments =
             [|
@@ -268,7 +265,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``12) Add-on interest method with small loan and massive payment leading to a refund needed`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
+        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
 
         let actualPayments =
             [|
@@ -286,7 +283,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``13) Realistic example 501ac58e62a5`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
             [|
@@ -308,7 +305,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``14) Realistic example 0004ffd74fbb`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
             [|
@@ -329,7 +326,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``15) Add-on interest method with big early repayment followed by tiny overpayment`` () =
-        let sp = { scheduleParameters Interest.Method.AddOn with AsOfDate = startDate.AddDays 1000 }
+        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 1000 }
 
         let actualPayments =
             [|
@@ -345,3 +342,33 @@ module InterestFirstTests =
 
         let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
         interestPortion |> should equal -1_22L<Cent>
+
+    [<Fact>]
+    let ``16) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)`` () =
+        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.Interest.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.Interest.Cap = Interest.Cap.none }
+
+        let actualPayments = [||]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest016.md")
+
+        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems.[0].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        initialInterestBalance |> should equal 362_34m<Cent>
+
+    [<Fact>]
+    let ``17) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)`` () =
+        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.Interest.StandardRate = Interest.Rate.Daily <| Percent 0.4m }
+
+        let actualPayments = [||]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest017.md")
+
+        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems.[0].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        initialInterestBalance |> should equal 362_34m<Cent>

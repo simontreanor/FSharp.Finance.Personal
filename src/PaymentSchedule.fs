@@ -220,18 +220,20 @@ module PaymentSchedule =
                 else
                     previousItem.InterestBalance
 
-        let calculateInterestLimit interestMethod payment previousItem day =
+        let calculateInterestLimit payment previousItem day =
+            let simpleInterest = calculateInterest Interest.Method.Simple payment previousItem day |> Cent.max 0L<Cent>
             if sp.Interest.Cap.Daily.IsSome then
                 let dailyCap = Interest.Cap.total previousItem.PrincipalBalance sp.Interest.Cap.Daily
                 let days = decimal (day - previousItem.Day)
                 dailyCap * days
                 |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                //|> Cent.min simpleInterest // to do: find out why this causes infinite loop (aggregate issue?)
                 |> fun limit -> if previousItem.AggregateInterestLimit + limit >= totalInterestCap then totalInterestCap - previousItem.AggregateInterestLimit else limit
             else
-                calculateInterest interestMethod payment previousItem day
+                simpleInterest
 
         let generateItem interestMethod payment previousItem day =
-            let interestLimit = calculateInterestLimit interestMethod payment previousItem day
+            let interestLimit = calculateInterestLimit payment previousItem day
             let interest = calculateInterest interestMethod payment previousItem day
             let principalPortion = payment - interest
             {
