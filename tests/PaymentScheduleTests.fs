@@ -1713,9 +1713,9 @@ module PaymentScheduleTests =
 
 
                 let title = "5) Calculation with three different scheduling methods should be identical"
-                let html1 = schedule1.Items |> Formatting.generateHtmlFromArray None
-                let html2 = schedule2.Items |> Formatting.generateHtmlFromArray None
-                let html3 = schedule3.Items |> Formatting.generateHtmlFromArray None
+                let html1 = schedule1.Items |> Formatting.generateHtmlFromArray [||]
+                let html2 = schedule2.Items |> Formatting.generateHtmlFromArray [||]
+                let html3 = schedule3.Items |> Formatting.generateHtmlFromArray [||]
                 $"{title}<br /><br />{html1}<br />{html2}<br />{html3}" |> Formatting.outputToFile' "out/PaymentSchedule005.md"
 
                 return schedule1 = schedule2 && schedule2 = schedule3

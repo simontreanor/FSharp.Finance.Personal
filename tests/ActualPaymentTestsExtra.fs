@@ -16,6 +16,7 @@ module ActualPaymentTestsExtra =
     open DateDay
     open FeesAndCharges
     open Formatting
+    open FormattingHelper
     open PaymentSchedule
     open Percentages
     open Rescheduling
@@ -549,7 +550,7 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = reschedule sp rp actualPayments
                 let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true }
+                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
                 let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray generationOptions
                 $"{title}<br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md"
                 return newSchedule.ScheduleItems
@@ -878,8 +879,8 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = rollOver sp rp actualPayments
                 let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
-                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray None
-                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray None
+                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray [||]
+                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray [||]
                 $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md"
                 return newSchedule.ScheduleItems
             }
@@ -970,8 +971,8 @@ module ActualPaymentTestsExtra =
                 }
                 let! oldSchedule, newSchedule = rollOver sp rp actualPayments
                 let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
-                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray None
-                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray None
+                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray [||]
+                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray [||]
                 $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md"
                 return newSchedule.ScheduleItems
             }

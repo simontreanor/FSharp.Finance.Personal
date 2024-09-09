@@ -684,8 +684,8 @@ module UnitPeriodConfigTests =
                         }
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) quoteSp actualPayments
                     let title = "5) Checking that the fees refund behaves correctly"
-                    let original = originalScheduledPayments |> Formatting.generateHtmlFromArray None
-                    let revised = quote.RevisedSchedule.ScheduleItems |> Formatting.generateHtmlFromArray None
+                    let original = originalScheduledPayments |> Formatting.generateHtmlFromArray [||]
+                    let revised = quote.RevisedSchedule.ScheduleItems |> Formatting.generateHtmlFromArray [||]
                     $"{title}<br /><br />{original}<br />{revised}" |> Formatting.outputToFile' "out/UnitPeriodConfigTest005.md"
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
