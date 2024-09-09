@@ -256,9 +256,9 @@ module PaymentSchedule =
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
 
-        let generateMaximumInterest (iteration, firstItem) initialInterestBalance = // iteration is an increment to prevent infinite loops
+        let generateMaximumInterest firstItem initialInterestBalance =
             let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
-            if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then None
+            if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then 0m
             else
 
             let regularSchedulePayment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
@@ -274,11 +274,34 @@ module PaymentSchedule =
                 ) initialItem
 
             let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
-            let diff = initialInterestBalance - finalInterestLimit |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
-            if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
-                None
-            else
-                Some ((iteration + 1, initialInterestBalance), finalInterestLimit)
+            let diff = finalInterestLimit - initialInterestBalance
+            diff
+
+        // let generateMaximumInterest firstItem (iteration, html, initialInterestBalance) = // iteration is an increment to prevent infinite loops
+        //     let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
+        //     if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then None
+        //     else
+
+        //     let regularSchedulePayment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
+        //     schedule <-
+        //         paymentDays
+        //         |> Array.scan (fun state pd ->
+        //             let payment =
+        //                 match sp.PaymentSchedule with
+        //                 | RegularSchedule _ -> regularSchedulePayment
+        //                 | RegularFixedSchedule _
+        //                 | IrregularSchedule _ -> paymentMap[pd]
+        //             generateItem Interest.Method.AddOn payment state pd
+        //         ) initialItem
+
+        //     let html' = schedule |> Formatting.generateHtmlFromArray [||]
+        //     let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
+        //     let diff = initialInterestBalance - finalInterestLimit |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
+        //     if iteration = 100 || (diff >= 0m && diff < (decimal paymentCount * 5m)) then
+        //         $"{html}\r\n{html'}" |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}.md"""
+        //         None
+        //     else
+        //         Some (initialInterestBalance, (iteration + 1, $"{html}\r\n{html'}", finalInterestLimit))
 
         let solution =
             match sp.PaymentSchedule with
@@ -296,8 +319,10 @@ module PaymentSchedule =
         | Solution.Bypassed ->
 
             if sp.Interest.Method = Interest.Method.AddOn then
-                let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
-                Array.unfold (generateMaximumInterest (0, initialItem)) finalInterestLimit |> ignore
+                // let html = "## Generate Maximum Interest"
+                // let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
+                // Array.unfold (generateMaximumInterest initialItem) (0, html, finalInterestLimit) |> ignore
+                Array.solve (generateMaximumInterest initialItem) 100 (schedule |> Array.last |> _.AggregateInterestLimit |> Cent.toDecimal) toleranceOption toleranceSteps |> ignore
             else ()
 
             // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
