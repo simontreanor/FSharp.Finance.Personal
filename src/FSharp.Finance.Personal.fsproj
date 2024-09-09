@@ -17,6 +17,7 @@
     <Compile Include="Percentages.fs" />
     <Compile Include="Array.fs" />
     <Compile Include="Currency.fs" />
+    <Compile Include="Formatting.fs" />
     <Compile Include="Amount.fs" />
     <Compile Include="FeesAndCharges.fs" />
     <Compile Include="UnitPeriod.fs" />
@@ -28,7 +29,7 @@
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />
     <Compile Include="Rescheduling.fs" />
-    <Compile Include="Formatting.fs" />
+    <Compile Include="FormattingHelper.fs" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
