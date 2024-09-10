@@ -79,7 +79,7 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/FeesAndChargesTest001.md")
+            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/FeesAndChargesTest001.md" false))
 
             let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
             let expected = ValueSome {
@@ -168,7 +168,7 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/FeesAndChargesTest002.md")
+            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/FeesAndChargesTest002.md" false))
 
             let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
             let expected = ValueSome {
@@ -257,7 +257,7 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/FeesAndChargesTest003.md")
+            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/FeesAndChargesTest003.md" false))
 
             let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
             let expected = ValueSome {

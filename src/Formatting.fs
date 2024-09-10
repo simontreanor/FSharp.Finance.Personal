@@ -18,14 +18,20 @@ module Formatting =
         | columns -> Array.filter(fun (pi: PropertyInfo) -> columns |> Array.exists(( = ) pi.Name) |> not)
 
     /// writes some content to a specific file path, creating the containing directory if it does not exist
-    let outputToFile filePath content =
+    let outputToFile filePath append content =
         let fi = FileInfo filePath
-        if not fi.Directory.Exists then fi.Directory.Create() else ()
-        File.WriteAllText(filePath, content)
+        if not fi.Directory.Exists then
+            fi.Directory.Create()
+            File.WriteAllText(filePath, content)
+        else
+            if append then
+                File.AppendAllText(filePath, content)
+            else
+                File.WriteAllText(filePath, content)
 
     /// writes content to a file in the application's IO directory
-    let outputToFile' fileName content =
-        outputToFile $"{__SOURCE_DIRECTORY__}/../io/{fileName}" content
+    let outputToFile' fileName append content =
+        outputToFile $"{__SOURCE_DIRECTORY__}/../io/{fileName}" append content
 
     let internal regexMetadata = Regex(@"metadata = map \[.*?\]")
     let internal regexObject = Regex(@"[{}]")
@@ -99,7 +105,7 @@ module Formatting =
         $"<table>{header}{rows}</table>"
 
     /// legacy function for creating HTML files from enumerables
-    let outputListToHtml fileName list =
+    let outputListToHtml fileName append list =
         list
         |> generateHtmlFromArray [||]
-        |> outputToFile' fileName
+        |> outputToFile' fileName append

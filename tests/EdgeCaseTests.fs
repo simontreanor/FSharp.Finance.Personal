@@ -72,7 +72,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest001.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest001.md" false
                 return quote.QuoteResult
             }
 
@@ -127,7 +127,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest002.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest002.md" false
                 return quote.QuoteResult
             }
 
@@ -182,7 +182,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest003.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest003.md" false
                 return quote.QuoteResult
             }
 
@@ -309,7 +309,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004.md" false
                 return quote.QuoteResult
             }
 
@@ -436,7 +436,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004a.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest004a.md" false
                 return quote.QuoteResult
             }
 
@@ -562,7 +562,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest005.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest005.md" false
                 return quote.QuoteResult
             }
 
@@ -619,7 +619,7 @@ module EdgeCaseTests =
         let actual =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest006.md"
+                quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/EdgeCaseTest006.md" false
                 return quote.QuoteResult
             }
 
@@ -683,7 +683,7 @@ module EdgeCaseTests =
         }
 
         let result = reschedule sp rp actualPayments
-        result |> ValueOption.iter(snd >> _.ScheduleItems >> Formatting.outputListToHtml "out/EdgeCaseTest007.md")
+        result |> ValueOption.iter(snd >> _.ScheduleItems >> (Formatting.outputListToHtml "out/EdgeCaseTest007.md" false))
 
         let actual = result |> ValueOption.map (fun (_, s) -> s.ScheduleItems |> Array.last)
 
@@ -773,7 +773,7 @@ module EdgeCaseTests =
         }
 
         let result = reschedule sp rp actualPayments
-        result |> ValueOption.iter(snd >> _.ScheduleItems >> Formatting.outputListToHtml "out/EdgeCaseTest008.md")
+        result |> ValueOption.iter(snd >> _.ScheduleItems >> (Formatting.outputListToHtml "out/EdgeCaseTest008.md" false))
 
         let actual = result |> ValueOption.map (fun (_, s) -> s.ScheduleItems |> Array.last)
 
@@ -852,7 +852,7 @@ module EdgeCaseTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/EdgeCaseTest009.md")
+        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/EdgeCaseTest009.md" false))
 
         let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
         let expected = ValueSome {

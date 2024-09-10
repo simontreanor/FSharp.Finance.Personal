@@ -121,7 +121,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestCapTest001.md")
+            schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestCapTest001.md" false))
 
             let interestPortion = schedule |> ValueOption.map (_.ScheduleItems >> Array.last >> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
             interestPortion |> should be (lessThanOrEqualTo 499_00L<Cent>)
@@ -172,7 +172,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestCapTest002.md")
+            schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestCapTest002.md" false))
 
             let interestPortion = schedule |> ValueOption.map (_.ScheduleItems >> Array.last >> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
             interestPortion |> should be (lessThanOrEqualTo 616_01L<Cent>)
@@ -274,7 +274,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> Formatting.outputListToHtml "out/InterestTest001.md")
+            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestTest001.md" false))
 
             let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
             let expected = ValueSome {
@@ -429,7 +429,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original true
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/Cca2004Test003.md")
+            schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/Cca2004Test003.md" false))
 
             let levelPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[47].ScheduledPayment.Value) |> ValueOption.defaultValue 0L<Cent>
             let finalPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[48].ScheduledPayment.Value) |> ValueOption.defaultValue 0L<Cent>
@@ -446,7 +446,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original true
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/Cca2004Test003a.md")
+            schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/Cca2004Test003a.md" false))
 
             let levelPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[47].ScheduledPayment.Value) |> ValueOption.defaultValue 0L<Cent>
             let finalPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[48].ScheduledPayment.Value) |> ValueOption.defaultValue 0L<Cent>
@@ -477,7 +477,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original true
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/Cca2004Test003b.md")
+            schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/Cca2004Test003b.md" false))
 
             let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
             interestPortion |> should equal 598_08L<Cent>

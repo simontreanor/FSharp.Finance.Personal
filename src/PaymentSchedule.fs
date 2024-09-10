@@ -227,8 +227,8 @@ module PaymentSchedule =
                 let days = decimal (day - previousItem.Day)
                 dailyCap * days
                 |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                //|> Cent.min simpleInterest // to do: find out why this causes infinite loop (aggregate issue?)
                 |> fun limit -> if previousItem.AggregateInterestLimit + limit >= totalInterestCap then totalInterestCap - previousItem.AggregateInterestLimit else limit
+                |> Cent.min simpleInterest
             else
                 simpleInterest
 
@@ -272,36 +272,14 @@ module PaymentSchedule =
                         | IrregularSchedule _ -> paymentMap[pd]
                     generateItem Interest.Method.AddOn payment state pd
                 ) initialItem
+            
+            schedule
+            |> Formatting.generateHtmlFromArray [||]
+            |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
 
             let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
             let diff = finalInterestLimit - initialInterestBalance
             diff
-
-        // let generateMaximumInterest firstItem (iteration, html, initialInterestBalance) = // iteration is an increment to prevent infinite loops
-        //     let initialItem = { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
-        //     if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then None
-        //     else
-
-        //     let regularSchedulePayment = initialInterestBalance |> roughPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
-        //     schedule <-
-        //         paymentDays
-        //         |> Array.scan (fun state pd ->
-        //             let payment =
-        //                 match sp.PaymentSchedule with
-        //                 | RegularSchedule _ -> regularSchedulePayment
-        //                 | RegularFixedSchedule _
-        //                 | IrregularSchedule _ -> paymentMap[pd]
-        //             generateItem Interest.Method.AddOn payment state pd
-        //         ) initialItem
-
-        //     let html' = schedule |> Formatting.generateHtmlFromArray [||]
-        //     let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
-        //     let diff = initialInterestBalance - finalInterestLimit |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
-        //     if iteration = 100 || (diff >= 0m && diff < (decimal paymentCount * 5m)) then
-        //         $"{html}\r\n{html'}" |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}.md"""
-        //         None
-        //     else
-        //         Some (initialInterestBalance, (iteration + 1, $"{html}\r\n{html'}", finalInterestLimit))
 
         let solution =
             match sp.PaymentSchedule with
@@ -319,10 +297,7 @@ module PaymentSchedule =
         | Solution.Bypassed ->
 
             if sp.Interest.Method = Interest.Method.AddOn then
-                // let html = "## Generate Maximum Interest"
-                // let finalInterestLimit = schedule |> Array.last |> _.AggregateInterestLimit |> decimal
-                // Array.unfold (generateMaximumInterest initialItem) (0, html, finalInterestLimit) |> ignore
-                Array.solve (generateMaximumInterest initialItem) 100 (schedule |> Array.last |> _.AggregateInterestLimit |> Cent.toDecimal) toleranceOption toleranceSteps |> ignore
+                Array.solve (generateMaximumInterest initialItem) 100 (schedule |> Array.last |> _.AggregateInterestLimit |> Cent.toDecimal) BelowZero ValueNone |> ignore
             else ()
 
             // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
