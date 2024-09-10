@@ -150,7 +150,7 @@ module ActualPaymentTestsExtra =
                 || balanceStatus <> ClosedBalance
                 || principalPortionTotal <> advanceTotal
                 then
-                    aa |> outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md"
+                    aa |> outputListToHtml $"out/ActualPaymentTestsExtra_{testId}.md" false
             else
                 ()
         )
@@ -378,7 +378,7 @@ module ActualPaymentTestsExtra =
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra001.md"
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra001.md" false
                 return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
@@ -459,7 +459,7 @@ module ActualPaymentTestsExtra =
                     (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra002.md"
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra002.md" false
                 return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
@@ -552,7 +552,7 @@ module ActualPaymentTestsExtra =
                 let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
                 let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
                 let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray generationOptions
-                $"{title}<br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md"
+                $"{title}<br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md" false
                 return newSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 0)
@@ -631,7 +631,7 @@ module ActualPaymentTestsExtra =
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra004.md"
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra004.md" false
                 return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
@@ -710,7 +710,7 @@ module ActualPaymentTestsExtra =
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra005.md"
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra005.md" false
                 return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.map Array.last
@@ -789,7 +789,7 @@ module ActualPaymentTestsExtra =
                     (CustomerPayment.ActualConfirmed 0<OffsetDay> 166_60L<Cent>)
                 |]
                 let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra006.md"
+                amortisationSchedule.ScheduleItems |> outputListToHtml $"out/ActualPaymentTestsExtra006.md" false
                 return amortisationSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 2)
@@ -881,7 +881,7 @@ module ActualPaymentTestsExtra =
                 let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
                 let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray [||]
                 let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray [||]
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md"
+                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md" false
                 return newSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 0)
@@ -973,7 +973,7 @@ module ActualPaymentTestsExtra =
                 let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
                 let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromArray [||]
                 let newHtml = newSchedule.ScheduleItems |> generateHtmlFromArray [||]
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md"
+                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md" false
                 return newSchedule.ScheduleItems
             }
             |> ValueOption.bind (Array.vTryLastBut 0)

@@ -132,7 +132,7 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest001.md"
+                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest001.md" false
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 
@@ -200,7 +200,7 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest002.md"
+                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest002.md" false
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 
@@ -297,7 +297,7 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest003.md"
+                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest003.md" false
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 
@@ -356,7 +356,7 @@ module UnitPeriodConfigTests =
             let actual =
                 voption {
                     let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest004.md"
+                    quote.RevisedSchedule.ScheduleItems |> Formatting.outputListToHtml "out/UnitPeriodConfigTest004.md" false
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 
@@ -686,7 +686,7 @@ module UnitPeriodConfigTests =
                     let title = "5) Checking that the fees refund behaves correctly"
                     let original = originalScheduledPayments |> Formatting.generateHtmlFromArray [||]
                     let revised = quote.RevisedSchedule.ScheduleItems |> Formatting.generateHtmlFromArray [||]
-                    $"{title}<br /><br />{original}<br />{revised}" |> Formatting.outputToFile' "out/UnitPeriodConfigTest005.md"
+                    $"{title}<br /><br />{original}<br />{revised}" |> Formatting.outputToFile' "out/UnitPeriodConfigTest005.md" false
                     return quote.RevisedSchedule.FinalApr |> finalAprPercent
                 }
 

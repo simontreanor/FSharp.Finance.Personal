@@ -77,7 +77,7 @@ module PaymentMapTests =
 
                 let title = "<h3>1) Basic scenario</h3>"
                 let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest001.md"
+                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest001.md" false
 
                 return pm
             }
@@ -114,7 +114,7 @@ module PaymentMapTests =
 
                 let title = "<h3>2) Very early exact repayments</h3>"
                 let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest002.md"
+                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest002.md" false
 
                 return pm
             }
@@ -149,7 +149,7 @@ module PaymentMapTests =
 
                 let title = "<h3>3) Paid off but with erratic payment timings</h3>"
                 let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest003.md"
+                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest003.md" false
 
                 return pm
             }
@@ -183,7 +183,7 @@ module PaymentMapTests =
 
                 let title = "<h3>4) Erratic payment timings but not paid off</h3>"
                 let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest004.md"
+                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest004.md" false
 
                 return pm
             }
@@ -214,7 +214,7 @@ module PaymentMapTests =
 
                 let title = "<h3>5) No payments at all</h3>"
                 let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest005.md"
+                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest005.md" false
 
                 return pm
             }

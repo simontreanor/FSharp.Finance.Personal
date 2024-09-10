@@ -67,7 +67,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/PromotionalRatesTest001.md")
+        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/PromotionalRatesTest001.md" false))
 
         let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         interestBalance |> should equal 323_20m<Cent>
@@ -86,7 +86,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/PromotionalRatesTest002.md")
+        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/PromotionalRatesTest002.md" false))
 
         let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         interestBalance |> should equal 224_00m<Cent>
@@ -105,7 +105,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/PromotionalRatesTest003.md")
+        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/PromotionalRatesTest003.md" false))
 
         let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         interestBalance |> should equal 317_24.36164383m<Cent>

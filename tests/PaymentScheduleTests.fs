@@ -67,7 +67,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``$1200 with short first period`` () =
             let actual = biweeklyParameters 1200_00L<Cent> 8<DurationDay> |> calculate BelowZero
-            actual |> ValueOption.iter(_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Biweekly001.md")
+            actual |> ValueOption.iter(_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Biweekly001.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -86,7 +86,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``2) $1200 with first period equal to unit-period length`` () =
             let actual = biweeklyParameters 1200_00L<Cent> 14<DurationDay> |> calculate BelowZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Biweekly002.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Biweekly002.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -105,7 +105,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``3) $1200 with long first period`` () =
             let actual = biweeklyParameters 1200_00L<Cent> 15<DurationDay> |> calculate BelowZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Biweekly003.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Biweekly003.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -166,7 +166,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 04 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly001.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly001.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -186,7 +186,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 08 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly009.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly009.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -206,7 +206,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 12 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 12<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly017.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly017.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -226,7 +226,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 16 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 16<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly025.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly025.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -246,7 +246,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 20 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly033.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly033.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -266,7 +266,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 24 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 24<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly041.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly041.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -286,7 +286,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 28 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly049.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly049.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -306,7 +306,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0100 with 32 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 100_00L<Cent> 32<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly057.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly057.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -326,7 +326,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 04 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly002.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly002.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -346,7 +346,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 08 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly010.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly010.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -366,7 +366,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 12 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 12<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly018.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly018.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -386,7 +386,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 16 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 16<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly026.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly026.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -406,7 +406,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 20 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly034.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly034.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -426,7 +426,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 24 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 24<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly042.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly042.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -446,7 +446,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 28 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly050.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly050.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -466,7 +466,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0300 with 32 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 300_00L<Cent> 32<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly058.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly058.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -486,7 +486,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 04 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly003.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly003.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -506,7 +506,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 08 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly011.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly011.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -526,7 +526,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 12 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 12<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly019.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly019.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -546,7 +546,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 16 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 16<DurationDay> 4 |> calculate AboveZero //AroundZero finds negative principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly027.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly027.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -566,7 +566,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 20 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly035.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly035.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -586,7 +586,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 24 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 24<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly043.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly043.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -606,7 +606,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 28 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 28<DurationDay> 4 |> calculate BelowZero //AroundZero finds positive principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly051.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly051.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -626,7 +626,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0500 with 32 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 500_00L<Cent> 32<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly059.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly059.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -646,7 +646,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 04 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 4<DurationDay> 5 |> calculate BelowZero //AroundZero finds positive principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly004.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly004.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -666,7 +666,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 08 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 8<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly012.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly012.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -686,7 +686,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 12 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 12<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly020.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly020.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -706,7 +706,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 16 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 16<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly028.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly028.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -726,7 +726,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 20 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 20<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly036.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly036.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -746,7 +746,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 24 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 24<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly044.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly044.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -766,7 +766,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 28 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 28<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly052.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly052.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -786,7 +786,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0700 with 32 days to first payment and 4 repayments`` () =
             let actual = monthlyParameters 700_00L<Cent> 32<DurationDay> 4 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly060.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly060.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -806,7 +806,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 04 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly005.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly005.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -826,7 +826,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 08 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 8<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly013.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly013.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -846,7 +846,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 12 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly021.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly021.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -866,7 +866,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 16 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly029.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly029.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -886,7 +886,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 20 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 20<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly037.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly037.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -906,7 +906,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 24 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 24<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly045.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly045.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -926,7 +926,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 28 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 28<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly053.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly053.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -946,7 +946,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£0900 with 32 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 900_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly061.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly061.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -966,7 +966,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 04 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly006.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly006.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -986,7 +986,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 08 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly014.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly014.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1006,7 +1006,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 12 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly022.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly022.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1026,7 +1026,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 16 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly030.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly030.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1046,7 +1046,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 20 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly038.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly038.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1066,7 +1066,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 24 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly046.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly046.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1086,7 +1086,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 28 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly054.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly054.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1106,7 +1106,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1100 with 32 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly062.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly062.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1126,7 +1126,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 04 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly007.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly007.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1146,7 +1146,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 08 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 8<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly015.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly015.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1166,7 +1166,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 12 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly023.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly023.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1186,7 +1186,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 16 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly031.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly031.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1206,7 +1206,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 20 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly039.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly039.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1226,7 +1226,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 24 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly047.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly047.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1246,7 +1246,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 28 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 28<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly055.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly055.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1266,7 +1266,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1300 with 32 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly063.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly063.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1286,7 +1286,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 04 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly008.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly008.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1306,7 +1306,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 08 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly016.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly016.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1326,7 +1326,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 12 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly024.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly024.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1346,7 +1346,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 16 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 16<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly032.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly032.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1366,7 +1366,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 20 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 20<DurationDay> 6 |> calculate AboveZero //AroundZero finds negative principal balance first
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly040.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly040.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1386,7 +1386,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 24 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 24<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly048.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly048.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1406,7 +1406,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 28 days to first payment and 6 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly056.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly056.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1426,7 +1426,7 @@ module PaymentScheduleTests =
         [<Fact>]
         let ``£1500 with 32 days to first payment and 5 repayments`` () =
             let actual = monthlyParameters 1500_00L<Cent> 32<DurationDay> 5 |> calculate AroundZero
-            actual |> ValueOption.iter (_.Items >> Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly064.md")
+            actual |> ValueOption.iter (_.Items >> (Formatting.outputListToHtml "out/PaymentScheduleTest.Monthly064.md" false))
             let expected = ValueSome {
                 AsOfDay = 0<OffsetDay>
                 Items = actual |> ValueOption.map _.Items |> ValueOption.defaultValue [||]
@@ -1486,7 +1486,7 @@ module PaymentScheduleTests =
         let actual =
             voption {
                 let! schedule = sp |> calculate AroundZero
-                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule001.md"
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule001.md" false
                 return schedule.LevelPayment, schedule.FinalPayment
             }
 
@@ -1536,7 +1536,7 @@ module PaymentScheduleTests =
         let actual =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule002.md"
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule002.md" false
                 return schedule.LevelPayment, schedule.FinalPayment
             }
 
@@ -1586,7 +1586,7 @@ module PaymentScheduleTests =
         let actual =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule003.md"
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule003.md" false
                 return schedule.LevelPayment, schedule.FinalPayment
             }
 
@@ -1641,7 +1641,7 @@ module PaymentScheduleTests =
         let actual =
             voption {
                 let! schedule = sp |> calculate BelowZero
-                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule004.md"
+                schedule.Items |> Formatting.outputListToHtml "out/PaymentSchedule004.md" false
                 return schedule.LevelPayment, schedule.FinalPayment
             }
 
@@ -1716,7 +1716,7 @@ module PaymentScheduleTests =
                 let html1 = schedule1.Items |> Formatting.generateHtmlFromArray [||]
                 let html2 = schedule2.Items |> Formatting.generateHtmlFromArray [||]
                 let html3 = schedule3.Items |> Formatting.generateHtmlFromArray [||]
-                $"{title}<br /><br />{html1}<br />{html2}<br />{html3}" |> Formatting.outputToFile' "out/PaymentSchedule005.md"
+                $"{title}<br /><br />{html1}<br />{html2}<br />{html3}" |> Formatting.outputToFile' "out/PaymentSchedule005.md" false
 
                 return schedule1 = schedule2 && schedule2 = schedule3
             }
