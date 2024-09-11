@@ -24,6 +24,9 @@ module ArrayExtension =
         Step: int
         Max: int
     }
+    with
+        static member forPaymentAmount paymentCount =
+            { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 4 }
 
     /// what range of values the solver should aim for
     [<Struct>]

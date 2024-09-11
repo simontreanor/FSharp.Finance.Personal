@@ -399,7 +399,7 @@ module Amortisation =
                 | Fees.SettlementRefund.ProRata originalFinalPaymentDay ->
                     match originalFinalPaymentDay with
                     | ValueNone ->
-                        let originalFinalPaymentDay = sp.PaymentSchedule |> paymentDetails sp.StartDate |> Map.keys |> Seq.toArray |> Array.vTryLastBut 0 |> ValueOption.defaultValue 0<OffsetDay>
+                        let originalFinalPaymentDay = sp.PaymentSchedule |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.vTryLastBut 0 |> ValueOption.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
                     | ValueSome ofpd ->
                         calculateFees ofpd
@@ -643,7 +643,7 @@ module Amortisation =
                     ContractualInterest =
                         match scheduleType, sp.Interest.Method with
                         | ScheduleType.Original, Interest.Method.AddOn ->
-                            si.Interest |> Cent.toDecimalCent |> ValueSome
+                            si.InterestPortion |> Cent.toDecimalCent |> ValueSome
                         | _ ->
                             ValueNone
                 }), s.InitialInterestBalance

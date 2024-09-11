@@ -532,7 +532,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
         })
-        let originalFinalPaymentDay = paymentDetails sp.StartDate sp.PaymentSchedule |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.PaymentSchedule |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
         let actual =
             voption {
@@ -862,7 +862,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
         })
-        let originalFinalPaymentDay = paymentDetails sp.StartDate sp.PaymentSchedule |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.PaymentSchedule |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
         let actual =
             voption {
@@ -954,7 +954,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
         })
-        let originalFinalPaymentDay = paymentDetails sp.StartDate sp.PaymentSchedule |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.PaymentSchedule |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
         let actual =
             voption {
