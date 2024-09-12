@@ -14,7 +14,7 @@ module FormattingHelper =
     /// an array of properties representing extra information
     let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure"; "Window" |] else [||]
     /// an array of properties representing internal interest calculations
-    let interestProperties hide = if hide then [| "ContractualInterest"; "SimpleInterest" |] else [||]
+    let interestProperties hide = if hide then [| "ContractualInterest"; "SimpleInterest"; "OriginalSimpleInterest" |] else [||]
 
     /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {

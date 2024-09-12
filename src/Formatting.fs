@@ -45,7 +45,8 @@ module Formatting =
     let internal regexInt32 = Regex(@"(\d+)\b")
     let internal regexNone = Regex(@"(value&nbsp;)?none")
     let internal regexSome = Regex(@"value some \(?([^)]+)\)?")
-    let internal regexZero = Regex(@"\b0L\b")
+    let internal regexZeroL = Regex(@"\b0L\b")
+    let internal regexZeroM = Regex(@"\b0(\.0{1,4})?M\b")
     let internal regexLineReturn = Regex(@"\s*[\r\n]\s*")
     let internal regexWhitespace = Regex(@"\s+")
     let internal regexPascaleCase = Regex(@"(?<=\b|\p{Ll})(\p{Lu})")
@@ -78,7 +79,8 @@ module Formatting =
         |> fun s -> if s |> regexWhitespace.IsMatch then regexWhitespace.Replace(s, "&nbsp;") else s
         |> fun s ->
             if s |> regexDate.IsMatch then $"""<td class="ci{index} cDateValue" style="white-space: nowrap;">{s}</td>"""
-            elif s |> regexZero.IsMatch then $"""<td class="ci{index} cZeroValue" style="color: #808080; text-align: right;">0.00</td>"""
+            elif s |> regexZeroL.IsMatch then $"""<td class="ci{index} cZeroValue" style="color: #808080; text-align: right;">0.00</td>"""
+            elif s |> regexZeroM.IsMatch then $"""<td class="ci{index} cZeroValue" style="color: #808080; text-align: right;">0.0000</td>"""
             elif s |> regexDecimal.IsMatch then regexDecimal.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToDecimal |> fun m -> m / 100m |> (_.ToString("N4"))) |> fun s -> $"""<td class="ci{index} cNumberValue" style="text-align: right;">{s}</td>"""
             elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> Cent.toDecimal |> (_.ToString("N2"))) |> fun s -> $"""<td class="ci{index} cNumberValue" style="text-align: right;">{s}</td>"""
             elif s |> regexInt32.IsMatch then $"""<td class="ci{index} cNumberValue" style="text-align: right;">{s}</td>"""
