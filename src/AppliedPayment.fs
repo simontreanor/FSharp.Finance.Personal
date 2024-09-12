@@ -28,7 +28,9 @@ module AppliedPayment =
         NetEffect: int64<Cent>
         /// the payment status based on the payments made on the current day
         PaymentStatus: CustomerPaymentStatus
-        /// the original, contractually calculated interest
+        /// the simple interest initially calculated at the start date
+        OriginalSimpleInterest: decimal<Cent> voption
+        /// the interest initially calculated according to the interest method at the start date
         ContractualInterest: decimal<Cent> voption
     }
 
@@ -123,6 +125,16 @@ module AppliedPayment =
                             )
                         | AllChargesApplied -> cc
 
+                let originalSimpleInterest =
+                    let ii = payments |> Array.map (_.OriginalSimpleInterest >> toOption)
+                    if ii |> Array.isEmpty || ii |> Array.forall _.IsNone then
+                        ValueNone
+                    else
+                        ii
+                        |> Array.choose id
+                        |> Array.sum
+                        |> ValueSome
+
                 let contractualInterest =
                     let ii = payments |> Array.map (_.ContractualInterest >> toOption)
                     if ii |> Array.isEmpty || ii |> Array.forall _.IsNone then
@@ -133,7 +145,17 @@ module AppliedPayment =
                         |> Array.sum
                         |> ValueSome
 
-                { AppliedPaymentDay = offsetDay; ScheduledPayment = scheduledPayment'; ActualPayments = actualPayments'; GeneratedPayment = generatedPayment'; IncurredCharges = charges; NetEffect = netEffect; PaymentStatus = paymentStatus; ContractualInterest = contractualInterest }
+                {
+                    AppliedPaymentDay = offsetDay
+                    ScheduledPayment = scheduledPayment'
+                    ActualPayments = actualPayments'
+                    GeneratedPayment = generatedPayment'
+                    IncurredCharges = charges
+                    NetEffect = netEffect
+                    PaymentStatus = paymentStatus
+                    OriginalSimpleInterest = originalSimpleInterest
+                    ContractualInterest = contractualInterest
+                }
             )
 
         let appliedPayments day generatedPayment paymentStatus =
@@ -150,6 +172,7 @@ module AppliedPayment =
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
                     PaymentStatus = paymentStatus
+                    OriginalSimpleInterest = ValueNone
                     ContractualInterest = ValueNone
                 }
                 payments

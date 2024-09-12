@@ -19,7 +19,7 @@ module PaymentSchedule =
         /// the scheduled payment amount
         Payment: int64<Cent> voption
         /// the simple interest accrued since the previous payment
-        SimpleInterest: int64<Cent>
+        SimpleInterest: decimal<Cent>
         /// the interest portion paid off by the payment
         InterestPortion: int64<Cent>
         /// the principal portion paid off by the payment
@@ -29,7 +29,7 @@ module PaymentSchedule =
         /// the principal balance carried forward
         PrincipalBalance: int64<Cent>
         /// the total simple interest accrued from the start date to the current date
-        TotalSimpleInterest: int64<Cent>
+        TotalSimpleInterest: decimal<Cent>
         /// the total interest payable from the start date to the current date
         TotalInterest: int64<Cent>
         /// the total principal payable from the start date to the current date
@@ -201,7 +201,7 @@ module PaymentSchedule =
 
         let calculateLevelPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees + interest) / decimal paymentCount
 
-        let initialItem = { Day = 0<OffsetDay>; Payment = ValueNone; SimpleInterest = 0L<Cent>; InterestPortion = 0L<Cent>; PrincipalPortion = 0L<Cent>; InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees; TotalSimpleInterest = 0L<Cent>; TotalInterest = 0L<Cent>; TotalPrincipal = 0L<Cent> }
+        let initialItem = { Day = 0<OffsetDay>; Payment = ValueNone; SimpleInterest = 0m<Cent>; InterestPortion = 0L<Cent>; PrincipalPortion = 0L<Cent>; InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees; TotalSimpleInterest = 0m<Cent>; TotalInterest = 0L<Cent>; TotalPrincipal = 0L<Cent> }
 
         let mutable schedule = [||]
 
@@ -211,18 +211,20 @@ module PaymentSchedule =
             match interestMethod with
             | Interest.Method.Simple ->
                 let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates previousItem.Day day
-                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
-                if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
+                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates
+                let totalInterestCap' = totalInterestCap |> Cent.toDecimalCent
+                if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap' then totalInterestCap' - previousItem.TotalSimpleInterest else simpleInterest
             | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
             | Interest.Method.AddOn ->
                 if payment <= previousItem.InterestBalance then
                     payment
                 else
                     previousItem.InterestBalance
+                |> Cent.toDecimalCent
 
         let generateItem interestMethod payment previousItem day =
             let simpleInterest = calculateInterest Interest.Method.Simple payment previousItem day
-            let interestPortion = calculateInterest interestMethod payment previousItem day
+            let interestPortion = calculateInterest interestMethod payment previousItem day |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
             let principalPortion = payment - interestPortion
             {
                 Day = day
