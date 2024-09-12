@@ -45,14 +45,14 @@ module Rescheduling =
                     | ValueSome s ->
                         s.Items
                         |> Array.filter(fun si -> si.Payment.IsSome)
-                        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }; OriginalSimpleInterest = ValueNone; ContractualInterest = ValueNone })
+                        |> Array.map(fun si -> { PaymentDay = si.Day; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }; OriginalSimpleInterest = 0m<Cent>; ContractualInterest = 0m<Cent> })
                     | ValueNone ->
                         [||]
                 | RegularFixedSchedule regularFixedSchedules ->
                     regularFixedSchedules
                     |> Array.map(fun rfs ->
                         UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
-                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled rfs.PaymentAmount; Metadata = Map.empty }; OriginalSimpleInterest = ValueNone; ContractualInterest = ValueNone })
+                        |> Array.map(fun d -> { PaymentDay = OffsetDay.fromDate sp.StartDate d; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled rfs.PaymentAmount; Metadata = Map.empty }; OriginalSimpleInterest = 0m<Cent>; ContractualInterest = 0m<Cent> })
                     )
                     |> Array.concat
                 | IrregularSchedule payments ->
@@ -62,7 +62,7 @@ module Rescheduling =
                 quote.RevisedSchedule.ScheduleItems
                 |> Array.filter _.ScheduledPayment.IsSome
                 |> Array.filter(fun si -> si.OffsetDate < sp.AsOfDate)
-                |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment; OriginalSimpleInterest = si.OriginalSimpleInterest; ContractualInterest = ValueSome si.ContractualInterest })
+                |> Array.map(fun si -> { PaymentDay = si.OffsetDay; PaymentDetails = ScheduledPayment si.ScheduledPayment; OriginalSimpleInterest = si.OriginalSimpleInterest; ContractualInterest = si.ContractualInterest })
             // configure the parameters for the new schedule
             let spNew =
                 { sp with

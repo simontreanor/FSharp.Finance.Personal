@@ -53,7 +53,7 @@ module Amortisation =
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
         /// the simple interest initially calculated at the start date
-        OriginalSimpleInterest: decimal<Cent> voption
+        OriginalSimpleInterest: decimal<Cent>
         /// the interest initially calculated according to the interest method at the start date
         ContractualInterest: decimal<Cent>
         /// the simple interest accruable between the previous amortisation day and the current day
@@ -94,7 +94,7 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
-            OriginalSimpleInterest = ValueNone
+            OriginalSimpleInterest = 0m<Cent>
             ContractualInterest = 0m<Cent>
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
@@ -242,7 +242,7 @@ module Amortisation =
 
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0
 
-            let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent>
+            let contractualInterest = ap.ContractualInterest
 
             let simpleInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
@@ -262,13 +262,13 @@ module Amortisation =
             let a' =
                 { a with
                     CumulativeSimpleInterest = a.CumulativeSimpleInterest + cappedSimpleInterest
-                    CumulativeOriginalSimpleInterest = a.CumulativeOriginalSimpleInterest + (ap.OriginalSimpleInterest |> ValueOption.defaultValue 0m<Cent>)
+                    CumulativeOriginalSimpleInterest = a.CumulativeOriginalSimpleInterest + ap.OriginalSimpleInterest
                 }
 
             let newInterest =
                 match sp.Interest.Method with
                 | Interest.Method.AddOn ->
-                    (ap.OriginalSimpleInterest |> ValueOption.defaultValue 0m<Cent>) - cappedSimpleInterest
+                    ap.OriginalSimpleInterest - cappedSimpleInterest
                     // (* if ap.OriginalSimpleInterest.IsSome || ap.AppliedPaymentDay = finalAppliedPaymentDay then *) a'.CumulativeSimpleInterest - a'.CumulativeOriginalSimpleInterest (* else 0m<Cent> *)
                 | Interest.Method.Simple ->
                     simpleInterest
@@ -654,15 +654,15 @@ module Amortisation =
                     OriginalSimpleInterest =
                         match scheduleType, sp.Interest.Method with
                         | ScheduleType.Original, Interest.Method.AddOn ->
-                            ValueSome si.SimpleInterest
+                            si.SimpleInterest
                         | _ ->
-                            ValueNone
+                            0m<Cent>
                     ContractualInterest =
                         match scheduleType, sp.Interest.Method with
                         | ScheduleType.Original, Interest.Method.AddOn ->
-                            si.InterestPortion |> Cent.toDecimalCent |> ValueSome
+                            si.InterestPortion |> Cent.toDecimalCent
                         | _ ->
-                            ValueNone
+                            0m<Cent>
                 }), s.InitialInterestBalance
             | ValueNone ->
                 [||], 0L<Cent>

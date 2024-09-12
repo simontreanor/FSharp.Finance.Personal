@@ -29,9 +29,9 @@ module AppliedPayment =
         /// the payment status based on the payments made on the current day
         PaymentStatus: CustomerPaymentStatus
         /// the simple interest initially calculated at the start date
-        OriginalSimpleInterest: decimal<Cent> voption
+        OriginalSimpleInterest: decimal<Cent>
         /// the interest initially calculated according to the interest method at the start date
-        ContractualInterest: decimal<Cent> voption
+        ContractualInterest: decimal<Cent>
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
@@ -126,24 +126,18 @@ module AppliedPayment =
                         | AllChargesApplied -> cc
 
                 let originalSimpleInterest =
-                    let ii = payments |> Array.map (_.OriginalSimpleInterest >> toOption)
-                    if ii |> Array.isEmpty || ii |> Array.forall _.IsNone then
-                        ValueNone
+                    let ii = payments |> Array.map _.OriginalSimpleInterest
+                    if ii |> Array.isEmpty || ii |> Array.forall ((=) 0m<Cent>) then
+                        0m<Cent>
                     else
-                        ii
-                        |> Array.choose id
-                        |> Array.sum
-                        |> ValueSome
+                        Array.sum ii
 
                 let contractualInterest =
-                    let ii = payments |> Array.map (_.ContractualInterest >> toOption)
-                    if ii |> Array.isEmpty || ii |> Array.forall _.IsNone then
-                        ValueNone
+                    let ii = payments |> Array.map _.ContractualInterest
+                    if ii |> Array.isEmpty || ii |> Array.forall ((=) 0m<Cent>) then
+                        0m<Cent>
                     else
-                        ii
-                        |> Array.choose id
-                        |> Array.sum
-                        |> ValueSome
+                        Array.sum ii
 
                 {
                     AppliedPaymentDay = offsetDay
@@ -172,8 +166,8 @@ module AppliedPayment =
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
                     PaymentStatus = paymentStatus
-                    OriginalSimpleInterest = ValueNone
-                    ContractualInterest = ValueNone
+                    OriginalSimpleInterest = 0m<Cent>
+                    ContractualInterest = 0m<Cent>
                 }
                 payments
                 |> Array.append [| newAppliedPayment |]
