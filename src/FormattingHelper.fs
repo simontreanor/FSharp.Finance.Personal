@@ -4,17 +4,43 @@ namespace FSharp.Finance.Personal
 module FormattingHelper =
 
     open Calculation
+
+    let asi = Unchecked.defaultof<Amortisation.ScheduleItem>
  
     /// an array of properties relating to (product) fees
-    let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "FeesRefundIfSettled" |] else [||]
+    let feesProperties hide =
+        if hide then [|
+            nameof asi.FeesPortion
+            nameof asi.FeesRefund
+            nameof asi.FeesBalance
+            nameof asi.FeesRefundIfSettled
+        |] else [||]
     /// an array of properties relating to (penalty) charges
-    let chargesProperties hide = if hide then [| "NewCharges"; "ChargesPortion"; "ChargesBalance" |] else [||]
+    let chargesProperties hide =
+        if hide then [|
+            nameof asi.NewCharges
+            nameof asi.ChargesPortion
+            nameof asi.ChargesBalance
+        |] else [||]
     /// an array of properties relating to quotes
-    let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
+    let quoteProperties hide =
+        if hide then [|
+            nameof asi.GeneratedPayment
+        |] else [||]
     /// an array of properties representing extra information
-    let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure"; "Window" |] else [||]
+    let extraProperties hide =
+        if hide then [|
+            nameof asi.FeesRefundIfSettled
+            nameof asi.SettlementFigure
+            nameof asi.Window
+        |] else [||]
     /// an array of properties representing internal interest calculations
-    let interestProperties hide = if hide then [| "ContractualInterest"; "SimpleInterest" |] else [||]
+    let interestProperties hide =
+        if hide then [|
+            nameof asi.OriginalSimpleInterest
+            nameof asi.ContractualInterest
+            nameof asi.SimpleInterest
+        |] else [||]
 
     /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {
