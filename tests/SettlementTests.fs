@@ -104,6 +104,12 @@ module SettlementTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 98_52L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 0m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 0L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 0L<Cent>
             }
         )
 
@@ -189,6 +195,12 @@ module SettlementTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 105_04L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 0m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 0L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 0L<Cent>
             }
         )
 
@@ -275,6 +287,12 @@ module SettlementTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 53_30L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 0m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 0L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 0L<Cent>
             }
         )
 

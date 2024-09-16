@@ -110,6 +110,12 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 109_61L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 0m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 0L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 0L<Cent>
             }
             actual |> should equal expected
 
@@ -200,6 +206,12 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 79_86L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 0m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 0L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 0L<Cent>
             }
             actual |> should equal expected
 
@@ -290,5 +302,11 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 124_49L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 0m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 0L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 0L<Cent>
             }
             actual |> should equal expected

@@ -29,11 +29,11 @@ module PaymentSchedule =
         /// the principal balance carried forward
         PrincipalBalance: int64<Cent>
         /// the total simple interest accrued from the start date to the current date
-        TotalSimpleInterest: decimal<Cent>
+        SimpleInterestToDate: decimal<Cent>
         /// the total interest payable from the start date to the current date
-        TotalInterest: int64<Cent>
+        InterestToDate: int64<Cent>
         /// the total principal payable from the start date to the current date
-        TotalPrincipal: int64<Cent>
+        PrincipalToDate: int64<Cent>
     }
 
     ///  a schedule of payments, with final statistics based on the payments being made on time and in full
@@ -201,7 +201,7 @@ module PaymentSchedule =
 
         let calculateLevelPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees + interest) / decimal paymentCount
 
-        let initialItem = { Day = 0<OffsetDay>; Payment = ValueNone; SimpleInterest = 0m<Cent>; InterestPortion = 0L<Cent>; PrincipalPortion = 0L<Cent>; InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees; TotalSimpleInterest = 0m<Cent>; TotalInterest = 0L<Cent>; TotalPrincipal = 0L<Cent> }
+        let initialItem = { Day = 0<OffsetDay>; Payment = ValueNone; SimpleInterest = 0m<Cent>; InterestPortion = 0L<Cent>; PrincipalPortion = 0L<Cent>; InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees; SimpleInterestToDate = 0m<Cent>; InterestToDate = 0L<Cent>; PrincipalToDate = 0L<Cent> }
 
         let mutable schedule = [||]
 
@@ -213,7 +213,7 @@ module PaymentSchedule =
                 let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates previousItem.Day day
                 let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates
                 let totalInterestCap' = totalInterestCap |> Cent.toDecimalCent
-                if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap' then totalInterestCap' - previousItem.TotalSimpleInterest else simpleInterest
+                if previousItem.SimpleInterestToDate + simpleInterest >= totalInterestCap' then totalInterestCap' - previousItem.SimpleInterestToDate else simpleInterest
             | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
             | Interest.Method.AddOn ->
                 if payment <= previousItem.InterestBalance then
@@ -224,7 +224,13 @@ module PaymentSchedule =
 
         let generateItem interestMethod payment previousItem day =
             let simpleInterest = calculateInterest Interest.Method.Simple payment previousItem day
-            let interestPortion = calculateInterest interestMethod payment previousItem day |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+            let interestPortion =
+                match interestMethod with
+                | Interest.Method.Simple -> //no need to calc twice
+                    simpleInterest
+                | _ ->
+                    calculateInterest interestMethod payment previousItem day
+                |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
             let principalPortion = payment - interestPortion
             {
                 Day = day
@@ -234,9 +240,9 @@ module PaymentSchedule =
                 PrincipalPortion = principalPortion
                 InterestBalance = match interestMethod with Interest.Method.AddOn -> previousItem.InterestBalance - interestPortion | _ -> 0L<Cent>
                 PrincipalBalance = previousItem.PrincipalBalance - principalPortion
-                TotalSimpleInterest = previousItem.TotalSimpleInterest + simpleInterest
-                TotalInterest = previousItem.TotalInterest + interestPortion
-                TotalPrincipal = previousItem.TotalPrincipal + principalPortion
+                SimpleInterestToDate = previousItem.SimpleInterestToDate + simpleInterest
+                InterestToDate = previousItem.InterestToDate + interestPortion
+                PrincipalToDate = previousItem.PrincipalToDate + principalPortion
             }
 
         let generatePaymentAmount firstItem interestMethod roughPayment =
@@ -269,7 +275,7 @@ module PaymentSchedule =
                 |> Formatting.generateHtmlFromArray [||]
                 |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
 
-                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
+                let finalInterestTotal = schedule |> Array.last |> _.SimpleInterestToDate |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
                 if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
                     None
@@ -292,7 +298,7 @@ module PaymentSchedule =
         | Solution.Bypassed ->
 
             if sp.Interest.Method = Interest.Method.AddOn then
-                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
+                let finalInterestTotal = schedule |> Array.last |> _.SimpleInterestToDate |> decimal
                 Array.unfold (maximiseInterest initialItem) (0, finalInterestTotal) |> ignore
             else
                 ()
@@ -304,8 +310,8 @@ module PaymentSchedule =
                     if si.Day = finalPaymentDay && solution <> Solution.Bypassed then
                         let adjustedPayment = si.Payment |> ValueOption.map(fun p -> p + si.PrincipalBalance)
                         let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
-                        let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
-                        { si with Payment = adjustedPayment; PrincipalPortion = adjustedPrincipal; PrincipalBalance = 0L<Cent>; TotalPrincipal = adjustedTotalPrincipal }
+                        let adjustedTotalPrincipal = si.PrincipalToDate + si.PrincipalBalance
+                        { si with Payment = adjustedPayment; PrincipalPortion = adjustedPrincipal; PrincipalBalance = 0L<Cent>; PrincipalToDate = adjustedTotalPrincipal }
                     else
                         si
                 )

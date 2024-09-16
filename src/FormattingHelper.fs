@@ -4,17 +4,49 @@ namespace FSharp.Finance.Personal
 module FormattingHelper =
 
     open Calculation
- 
+
     /// an array of properties relating to (product) fees
-    let feesProperties hide = if hide then [| "FeesPortion"; "FeesRefund"; "FeesBalance"; "FeesRefundIfSettled" |] else [||]
+    let feesProperties hide =
+        if hide then [|
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesBalance
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesPortion
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesRefund
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesRefundIfSettled
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesToDate
+        |] else [||]
     /// an array of properties relating to (penalty) charges
-    let chargesProperties hide = if hide then [| "NewCharges"; "ChargesPortion"; "ChargesBalance" |] else [||]
+    let chargesProperties hide =
+        if hide then [|
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.ChargesBalance
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.ChargesPortion
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.ChargesToDate
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.NewCharges
+        |] else [||]
     /// an array of properties relating to quotes
-    let quoteProperties hide = if hide then [| "GeneratedPayment" |] else [||]
+    let quoteProperties hide =
+        if hide then [|
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.GeneratedPayment
+        |] else [||]
     /// an array of properties representing extra information
-    let extraProperties hide = if hide then [| "FeesRefundIfSettled"; "SettlementFigure"; "Window" |] else [||]
+    let extraProperties hide =
+        if hide then [|
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.ChargesToDate
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.InterestToDate
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesToDate
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.PrincipalToDate
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.FeesRefundIfSettled
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.SettlementFigure
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.Window
+        |] else [||]
     /// an array of properties representing internal interest calculations
-    let interestProperties hide = if hide then [| "ContractualInterest"; "SimpleInterest"; "OriginalSimpleInterest" |] else [||]
+    let interestProperties hide =
+        if hide then [|
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.ContractualInterest
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.OriginalSimpleInterest
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.OriginalSimpleInterestToDate
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.SimpleInterest
+            nameof Unchecked.defaultof<Amortisation.ScheduleItem>.SimpleInterestToDate
+        |] else [||]
 
     /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {

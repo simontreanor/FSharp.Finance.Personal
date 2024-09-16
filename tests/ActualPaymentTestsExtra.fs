@@ -410,6 +410,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -492,6 +498,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 170_04L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -586,6 +598,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 9_80L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -666,6 +684,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -746,6 +770,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -826,6 +856,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 142_40L<Cent>
             FeesRefundIfSettled = 195_35L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -919,6 +955,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -1012,6 +1054,12 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 

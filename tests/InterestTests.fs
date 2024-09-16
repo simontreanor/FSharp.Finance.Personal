@@ -13,6 +13,8 @@ module InterestTests =
     open CustomerPayments
     open DateDay
     open FeesAndCharges
+    open Formatting
+    open FormattingHelper
     open Interest
     open PaymentSchedule
     open Percentages
@@ -274,7 +276,9 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestTest001.md" false))
+            let hideProperties = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
+
+            schedule |> ValueOption.iter(_.ScheduleItems >> (generateHtmlFromArray hideProperties >> outputToFile' "out/InterestTest001.md" false))
 
             let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
             let expected = ValueSome {
@@ -305,6 +309,103 @@ module InterestTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1523_25L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 155_073_45.71912867m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 155_072_33L<Cent>
+                FeesToDate = 999_00L<Cent>
+                PrincipalToDate = 192_000_00L<Cent>
+            }
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``2) Mortgage quote with a two-year fixed interest deal with no mortgage fee added to the loan`` () =
+            let sp = {
+                AsOfDate = Date(2024, 9, 1)
+                StartDate = Date(2024, 9, 1)
+                Principal = 275_000_00L<Cent>
+                PaymentSchedule = RegularFixedSchedule [|
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 11, 1); PaymentCount = 1; PaymentAmount = 2663_76L<Cent> }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 12, 1); PaymentCount = 23; PaymentAmount = 1586_45L<Cent> }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2026, 11, 1); PaymentCount = 263; PaymentAmount = 2067_44L<Cent> }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2048, 10, 1); PaymentCount = 1; PaymentAmount = 1729_95L<Cent> }
+                |]
+                PaymentOptions = {
+                    ScheduledPaymentOption = AsScheduled
+                    CloseBalanceOption = LeaveOpenBalance
+                }
+                FeesAndCharges = {
+                    Fees = [||]
+                    FeesAmortisation = Fees.FeeAmortisation.AmortiseBeforePrincipal
+                    FeesSettlementRefund = Fees.SettlementRefund.None
+                    Charges = [||]
+                    ChargesHolidays = [||]
+                    ChargesGrouping = OneChargeTypePerDay
+                    LatePaymentGracePeriod = 1<DurationDay>
+                }
+                Interest = {
+                    Method = Method.Simple
+                    StandardRate = Rate.Annual <| Percent 7.7268m
+                    Cap = Cap.none
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [|
+                        { DateRange = { Start = Date(2024, 9, 1); End = Date(2026, 9, 30) }; Rate = Rate.Annual <| Percent 4.65m }
+                    |]
+                    RateOnNegativeBalance = ValueNone
+                }
+                Calculation = {
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RoundingOptions = RoundingOptions.recommended
+                    MinimumPayment = NoMinimumPayment
+                    PaymentTimeout = 3<DurationDay>
+                }
+            }
+
+            let actualPayments = [||]
+
+            let schedule =
+                actualPayments
+                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+            let hideProperties = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
+
+            schedule |> ValueOption.iter(_.ScheduleItems >> (generateHtmlFromArray hideProperties >> outputToFile' "out/InterestTest002.md" false))
+
+            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+            let expected = ValueSome {
+                OffsetDate = Date(2048, 10, 1)
+                OffsetDay = 8796<OffsetDay>
+                Advances = [||]
+                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 1_729_95L<Cent>; Metadata = Map.empty }
+                Window = 288
+                PaymentDue = 1_729_95L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = ValueNone
+                NetEffect = 1_729_95L<Cent>
+                PaymentStatus = NotYetDue
+                BalanceStatus = ClosedBalance
+                OriginalSimpleInterest = 0m<Cent>
+                ContractualInterest = 0m<Cent>
+                SimpleInterest = 10_91.72698126m<Cent>
+                NewInterest = 10_91.72698126m<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 1_719_04L<Cent>
+                FeesPortion = 0L<Cent>
+                InterestPortion = 10_91L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeesRefund = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeesBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
+                ChargesBalance = 0L<Cent>
+                SettlementFigure = 1_729_95L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
+                OriginalSimpleInterestToDate = 0m<Cent>
+                SimpleInterestToDate = 309_620_34.15334617m<Cent>
+                ChargesToDate = 0L<Cent>
+                InterestToDate = 309_618_78L<Cent>
+                FeesToDate = 0L<Cent>
+                PrincipalToDate = 275_000_00L<Cent>
             }
             actual |> should equal expected
 

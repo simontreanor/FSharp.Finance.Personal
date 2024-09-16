@@ -715,6 +715,12 @@ module EdgeCaseTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 83_74L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -806,6 +812,12 @@ module EdgeCaseTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 10_19L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         })
         actual |> should equal expected
 
@@ -885,5 +897,11 @@ module EdgeCaseTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = -13_16L<Cent>
             FeesRefundIfSettled = 0L<Cent>
+            OriginalSimpleInterestToDate = 0m<Cent>
+            SimpleInterestToDate = 0m<Cent>
+            ChargesToDate = 0L<Cent>
+            InterestToDate = 0L<Cent>
+            FeesToDate = 0L<Cent>
+            PrincipalToDate = 0L<Cent>
         }
         actual |> should equal expected
