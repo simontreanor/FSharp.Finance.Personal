@@ -193,7 +193,7 @@ module PaymentSchedule =
 
         let totalAddOnInterest =
             match sp.Interest.Method with
-            | Interest.Method.AddOn ->
+            | Interest.Method.AddOn _ ->
                 (sp.Principal |> Cent.toDecimalCent) * dailyInterestRate * decimal finalPaymentDay
                 |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                 |> Cent.min totalInterestCap
@@ -214,7 +214,7 @@ module PaymentSchedule =
                 let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                 if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
             | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
-            | Interest.Method.AddOn ->
+            | Interest.Method.AddOn _ ->
                 if payment <= previousItem.InterestBalance then
                     payment
                 else
@@ -230,7 +230,7 @@ module PaymentSchedule =
                 SimpleInterest = simpleInterest
                 InterestPortion = interestPortion
                 PrincipalPortion = principalPortion
-                InterestBalance = match interestMethod with Interest.Method.AddOn -> previousItem.InterestBalance - interestPortion | _ -> 0L<Cent>
+                InterestBalance = match interestMethod with Interest.Method.AddOn _ -> previousItem.InterestBalance - interestPortion | _ -> 0L<Cent>
                 PrincipalBalance = previousItem.PrincipalBalance - principalPortion
                 TotalSimpleInterest = previousItem.TotalSimpleInterest + simpleInterest
                 TotalInterest = previousItem.TotalInterest + interestPortion
@@ -247,7 +247,7 @@ module PaymentSchedule =
 
         // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
         // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-        let maximiseInterest firstItem (iteration, initialInterestBalance) =
+        let maximiseInterest firstItem addOnInterestCorrection (iteration, initialInterestBalance) =
             if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
                 None
             else
@@ -260,7 +260,7 @@ module PaymentSchedule =
                             | RegularSchedule _ -> regularSchedulePayment
                             | RegularFixedSchedule _
                             | IrregularSchedule _ -> paymentMap[pd]
-                        generateItem Interest.Method.AddOn payment state pd
+                        generateItem (Interest.Method.AddOn addOnInterestCorrection) payment state pd
                     ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
 
                 schedule
@@ -289,10 +289,11 @@ module PaymentSchedule =
         | Solution.Found _
         | Solution.Bypassed ->
 
-            if sp.Interest.Method = Interest.Method.AddOn then
+            match sp.Interest.Method with
+            | Interest.Method.AddOn addOnInterestCorrection ->
                 let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
-                Array.unfold (maximiseInterest initialItem) (0, finalInterestTotal) |> ignore
-            else
+                Array.unfold (maximiseInterest initialItem addOnInterestCorrection) (0, finalInterestTotal) |> ignore
+            | _ ->
                 ()
 
             // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
@@ -319,7 +320,7 @@ module PaymentSchedule =
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
-                InitialInterestBalance = match sp.Interest.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
+                InitialInterestBalance = match sp.Interest.Method with Interest.Method.AddOn _ -> interestTotal | _ -> 0L<Cent>
                 FinalPaymentDay = finalPaymentDay
                 LevelPayment = items |> Array.filter _.Payment.IsSome |> Array.countBy _.Payment.Value |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue finalPayment
                 FinalPayment = finalPayment

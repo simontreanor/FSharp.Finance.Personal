@@ -85,6 +85,11 @@ module Interest =
             )
             |> Map.ofArray
 
+    [<Struct>]
+    type AddOnInterestCorrection =
+        | CorrectOnFinalDay
+        | CorrectOnDeviation
+
     /// the method used to calculate the interest
     [<RequireQualifiedAccess; Struct>]
     type Method =
@@ -93,7 +98,7 @@ module Interest =
         /// compound interest method, where interest is based on the principal and interest balances and the number of days outstanding (note: not yet implemented)
         | Compound
         /// add-on interest method, where the interest accrued over the loan is added to the initial balance and the interest is paid off before the principal balance
-        | AddOn
+        | AddOn of AddOnInterestCorrection
 
     /// interest options
     [<Struct>]
