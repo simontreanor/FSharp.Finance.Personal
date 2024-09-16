@@ -1701,10 +1701,10 @@ module PaymentScheduleTests =
                 |]
 
                 let paymentSchedule3 = IrregularSchedule [|
-                    { PaymentDay =  10<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
-                    { PaymentDay =  41<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
-                    { PaymentDay =  72<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
-                    { PaymentDay = 102<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_44L<Cent>; Metadata = Map.empty }; ContractualInterest = ValueNone }
+                    { PaymentDay =  10<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> }
+                    { PaymentDay =  41<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> }
+                    { PaymentDay =  72<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_48L<Cent>; Metadata = Map.empty }; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> }
+                    { PaymentDay = 102<OffsetDay>; PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original 36_44L<Cent>; Metadata = Map.empty }; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> }
                 |]
 
                 let! schedule1 = sp paymentSchedule1 |> calculate BelowZero

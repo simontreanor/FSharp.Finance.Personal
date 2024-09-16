@@ -52,7 +52,9 @@ module Amortisation =
         NewCharges: Charge array
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
-        /// the interest initially calculated at the start date
+        /// the simple interest initially calculated at the start date
+        OriginalSimpleInterest: int64<Cent>
+        /// the interest initially calculated according to the interest method at the start date
         ContractualInterest: decimal<Cent>
         /// the simple interest accruable between the previous amortisation day and the current day
         SimpleInterest: decimal<Cent>
@@ -92,6 +94,7 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
+            OriginalSimpleInterest = 0L<Cent>
             ContractualInterest = 0m<Cent>
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
@@ -130,6 +133,8 @@ module Amortisation =
         CumulativeSimpleInterest: decimal<Cent>
         /// the total of contractual interest up to the current day
         CumulativeContractualInterest: decimal<Cent>
+        /// the total of original simple interest accrued up to the current day
+        CumulativeOriginalSimpleInterest: int64<Cent>
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -239,8 +244,6 @@ module Amortisation =
 
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0
 
-            let contractualInterest = ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent>
-
             let simpleInterest =
                 if si.PrincipalBalance <= 0L<Cent> then
                     match sp.Interest.RateOnNegativeBalance with
@@ -259,7 +262,7 @@ module Amortisation =
             let accumulator =
                 { a with
                     CumulativeSimpleInterest = a.CumulativeSimpleInterest + cappedSimpleInterest
-                    CumulativeContractualInterest = a.CumulativeContractualInterest + (ap.ContractualInterest |> ValueOption.defaultValue 0m<Cent>)
+                    CumulativeContractualInterest = a.CumulativeContractualInterest + ap.ContractualInterest
                 }
 
             let newInterest =
@@ -490,7 +493,8 @@ module Amortisation =
                     NetEffect = netEffect + generatedSettlementPayment''
                     PaymentStatus = paymentStatus
                     BalanceStatus = ClosedBalance
-                    ContractualInterest = contractualInterest
+                    OriginalSimpleInterest = ap.OriginalSimpleInterest
+                    ContractualInterest = ap.ContractualInterest
                     SimpleInterest = cappedSimpleInterest
                     NewInterest = cappedNewInterest'
                     NewCharges = incurredCharges
@@ -558,7 +562,8 @@ module Amortisation =
                         NetEffect = netEffect'
                         PaymentStatus = paymentStatus
                         BalanceStatus = balanceStatus
-                        ContractualInterest = contractualInterest
+                        OriginalSimpleInterest = ap.OriginalSimpleInterest
+                        ContractualInterest = ap.ContractualInterest
                         SimpleInterest = cappedSimpleInterest
                         NewInterest = cappedNewInterest'
                         NewCharges = incurredCharges
@@ -606,6 +611,7 @@ module Amortisation =
                 CumulativeInterestPortions = 0L<Cent>
                 CumulativeSimpleInterest = 0m<Cent>
                 CumulativeContractualInterest = 0m<Cent>
+                CumulativeOriginalSimpleInterest = 0L<Cent>
             }
         )
         |> fun a -> if (a |> Array.filter(fun (si, _) -> si.OffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
@@ -663,12 +669,18 @@ module Amortisation =
                         match scheduleType with
                         | ScheduleType.Original -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original si.Payment.Value; Metadata = Map.empty }
                         | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
+                    OriginalSimpleInterest =
+                        match scheduleType, sp.Interest.Method with
+                        | ScheduleType.Original, Interest.Method.AddOn _ ->
+                            si.SimpleInterest
+                        | _ ->
+                            0L<Cent>
                     ContractualInterest =
                         match scheduleType, sp.Interest.Method with
                         | ScheduleType.Original, Interest.Method.AddOn _ ->
-                            si.InterestPortion |> Cent.toDecimalCent |> ValueSome
+                            si.InterestPortion |> Cent.toDecimalCent
                         | _ ->
-                            ValueNone
+                            0m<Cent>
                 }), s.InitialInterestBalance
             | ValueNone ->
                 [||], 0L<Cent>
