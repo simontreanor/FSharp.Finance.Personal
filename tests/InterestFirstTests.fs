@@ -573,9 +573,9 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest018.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 740_00L<Cent>
+        totalInterestPortions |> should equal 740_00L<Cent>
 
     [<Fact>]
     let ``19) Realistic test 6045bd0ffc0f with continuous correction`` () =
@@ -628,9 +628,9 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest019.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 740_00L<Cent>
+        totalInterestPortions |> should equal 740_00L<Cent>
 
     [<Fact>]
     let ``20) Realistic test 6045bd123363 with correction on final day`` () =
@@ -652,9 +652,9 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest020.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 16_00L<Cent>
+        totalInterestPortions |> should equal 16_00L<Cent>
 
     [<Fact>]
     let ``21) Realistic test 6045bd123363 with continuous correction`` () =
@@ -677,9 +677,9 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest021.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 16_00L<Cent>
+        totalInterestPortions |> should equal 16_00L<Cent>
 
     [<Fact>]
     let ``22) Realistic test 0004ffd74fbb with continuous correction`` () =
@@ -715,9 +715,9 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest022.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 16_00L<Cent>
+        totalInterestPortions |> should equal 340_00L<Cent>
 
     [<Fact>]
     let ``23) Realistic test 0003ff008ae5 with continuous correction`` () =
@@ -758,6 +758,136 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest023.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 16_00L<Cent>
+        totalInterestPortions |> should equal 1_500_00L<Cent>
+
+    [<Fact>]
+    let ``24) Realistic test 0003ff00bffb with actuarial method`` () =
+        let sp =
+            { scheduleParameters with
+                AsOfDate = Date(2024, 9, 17)
+                StartDate = Date(2021, 2, 2)
+                Principal = 350_00L<Cent>
+                PaymentSchedule = RegularFixedSchedule [|
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentAmount = 168_00L<Cent> }
+                |]
+                Parameters.Interest.Method = Interest.Method.Simple
+            }
+
+        let actualPayments = [|
+            CustomerPayment.ActualConfirmed 26<OffsetDay> 16800L<Cent>
+            CustomerPayment.ActualConfirmed 85<OffsetDay> 8400L<Cent>
+            CustomerPayment.ActualConfirmed 189<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 220<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 251<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 281<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 317<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 402<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 422<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 430<OffsetDay> 706L<Cent>
+            CustomerPayment.ActualConfirmed 462<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 506<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 531<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 562<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 583<OffsetDay> 689L<Cent>
+            CustomerPayment.ActualConfirmed 615<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 646<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 689<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 715<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 741<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 750<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 771<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 799<OffsetDay> 921L<Cent>
+            CustomerPayment.ActualConfirmed 855<OffsetDay> 921L<Cent>
+            CustomerPayment.ActualConfirmed 856<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 895<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 924<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 954<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 988<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 1039<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1073<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1106<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1141<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1169<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1192<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1224<OffsetDay> 911L<Cent>
+            CustomerPayment.ActualConfirmed 1253<OffsetDay> 911L<Cent>
+            CustomerPayment.ActualConfirmed 1290<OffsetDay> 911L<Cent>
+            CustomerPayment.ActualConfirmed 1316<OffsetDay> 911L<Cent>
+        |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest024.md" false)
+
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+
+        totalInterestPortions |> should equal 350_00L<Cent>
+
+    [<Fact>]
+    let ``25) Realistic test 0003ff00bffb with continuous correction`` () =
+        let sp =
+            { scheduleParameters with
+                AsOfDate = Date(2024, 9, 17)
+                StartDate = Date(2021, 2, 2)
+                Principal = 350_00L<Cent>
+                PaymentSchedule = RegularFixedSchedule [|
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentAmount = 168_00L<Cent> }
+                |]
+                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
+            }
+
+        let actualPayments = [|
+            CustomerPayment.ActualConfirmed 26<OffsetDay> 16800L<Cent>
+            CustomerPayment.ActualConfirmed 85<OffsetDay> 8400L<Cent>
+            CustomerPayment.ActualConfirmed 189<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 220<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 251<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 281<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 317<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 402<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 422<OffsetDay> 546L<Cent>
+            CustomerPayment.ActualConfirmed 430<OffsetDay> 706L<Cent>
+            CustomerPayment.ActualConfirmed 462<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 506<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 531<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 562<OffsetDay> 598L<Cent>
+            CustomerPayment.ActualConfirmed 583<OffsetDay> 689L<Cent>
+            CustomerPayment.ActualConfirmed 615<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 646<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 689<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 715<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 741<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 750<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 771<OffsetDay> 869L<Cent>
+            CustomerPayment.ActualConfirmed 799<OffsetDay> 921L<Cent>
+            CustomerPayment.ActualConfirmed 855<OffsetDay> 921L<Cent>
+            CustomerPayment.ActualConfirmed 856<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 895<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 924<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 954<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 988<OffsetDay> 862L<Cent>
+            CustomerPayment.ActualConfirmed 1039<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1073<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1106<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1141<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1169<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1192<OffsetDay> 883L<Cent>
+            CustomerPayment.ActualConfirmed 1224<OffsetDay> 911L<Cent>
+            CustomerPayment.ActualConfirmed 1253<OffsetDay> 911L<Cent>
+            CustomerPayment.ActualConfirmed 1290<OffsetDay> 911L<Cent>
+            CustomerPayment.ActualConfirmed 1316<OffsetDay> 911L<Cent>
+        |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest025.md" false)
+
+        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+
+        totalInterestPortions |> should equal 350_00L<Cent>

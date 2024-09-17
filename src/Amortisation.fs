@@ -286,7 +286,7 @@ module Amortisation =
                         |> fun i -> if cumulativeInterestPortions + i >= totalInterestCap then totalInterestCap - cumulativeInterestPortions else i
                     else
                         0m<Cent>
-                | Interest.Method.Simple -> simpleInterest
+                | Interest.Method.Simple -> simpleInterest //|> Cent.fromDecimalCent interestRounding |> Cent.toDecimalCent
                 | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
 
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
