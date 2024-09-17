@@ -571,9 +571,9 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest018.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems.[0].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 362_34m<Cent>
+        initialInterestBalance |> should equal 740_00L<Cent>
 
     [<Fact>]
     let ``19) Realistic test 6045bd0ffc0f with continuous correction`` () =
@@ -626,6 +626,6 @@ module InterestFirstTests =
 
         schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest019.md" false)
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems.[0].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
-        initialInterestBalance |> should equal 362_34m<Cent>
+        initialInterestBalance |> should equal 740_00L<Cent>
