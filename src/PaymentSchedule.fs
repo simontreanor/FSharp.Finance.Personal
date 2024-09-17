@@ -267,7 +267,7 @@ module PaymentSchedule =
                 // |> Formatting.generateHtmlFromArray [||]
                 // |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
 
-                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
+                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> min totalInterestCap |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
                 if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
                     None
