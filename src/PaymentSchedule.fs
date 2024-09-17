@@ -263,9 +263,9 @@ module PaymentSchedule =
                         generateItem (Interest.Method.AddOn addOnInterestCorrection) payment state pd
                     ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
 
-                schedule
-                |> Formatting.generateHtmlFromArray [||]
-                |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
+                // schedule
+                // |> Formatting.generateHtmlFromArray [||]
+                // |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
 
                 let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
