@@ -381,6 +381,7 @@ module InterestFirstTests =
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
                 PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentAmount = 293_82L<Cent> } |]
+                Parameters.Interest.RateOnNegativeBalance = ValueNone
                 // PaymentSchedule = IrregularSchedule [|
                 //     // CustomerPayment.ScheduledOriginal 14<OffsetDay> 33004L<Cent>
                 //     // CustomerPayment.ScheduledOriginal 37<OffsetDay> 33004L<Cent>
@@ -563,6 +564,7 @@ module InterestFirstTests =
             CustomerPayment.ActualConfirmed 301<OffsetDay> 3500L<Cent>
             CustomerPayment.ActualConfirmed 308<OffsetDay> 3500L<Cent>
             CustomerPayment.ActualConfirmed 314<OffsetDay> 25000L<Cent>
+            CustomerPayment.ActualConfirmed 315<OffsetDay> 1L<Cent>
         |]
 
         let schedule =
@@ -629,3 +631,52 @@ module InterestFirstTests =
         let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
 
         initialInterestBalance |> should equal 740_00L<Cent>
+
+    [<Fact>]
+    let ``20) Realistic test 6045bd123363 with correction on final day`` () =
+        let sp =
+            { scheduleParameters with
+                AsOfDate = Date(2024, 9, 17)
+                StartDate = Date(2023, 1, 14)
+                Principal = 100_00L<Cent>
+                PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentAmount = 42_40L<Cent> } |]
+            }
+
+        let actualPayments = [|
+            CustomerPayment.ActualConfirmed 20<OffsetDay> 116_00L<Cent>
+        |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest020.md" false)
+
+        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+
+        initialInterestBalance |> should equal 16_00L<Cent>
+
+    [<Fact>]
+    let ``21) Realistic test 6045bd123363 with continuous correction`` () =
+        let sp =
+            { scheduleParameters with
+                AsOfDate = Date(2024, 9, 17)
+                StartDate = Date(2023, 1, 14)
+                Principal = 100_00L<Cent>
+                PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentAmount = 42_40L<Cent> } |]
+                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
+            }
+
+        let actualPayments = [|
+            CustomerPayment.ActualConfirmed 20<OffsetDay> 116_00L<Cent>
+        |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest021.md" false)
+
+        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+
+        initialInterestBalance |> should equal 16_00L<Cent>

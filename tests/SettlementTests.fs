@@ -279,4 +279,3 @@ module SettlementTests =
         )
 
         actual |> should equal expected
-

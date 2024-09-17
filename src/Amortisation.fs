@@ -358,15 +358,20 @@ module Amortisation =
 
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
 
+            let roundedCumulativeSimpleInterest = accumulator.CumulativeSimpleInterest |> Cent.fromDecimalCent interestRounding
+
+            let settlement = sp.Principal + roundedCumulativeSimpleInterest - accumulator.CumulativeActualPayments
+
             let generatedSettlementPayment, interestAdjustment =
                 match sp.Interest.Method with
-                | Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnFinalDay ->
-                    let roundedCumulativeSimpleInterest = accumulator.CumulativeSimpleInterest |> Cent.fromDecimalCent interestRounding
-                    let settlement = sp.Principal + roundedCumulativeSimpleInterest - accumulator.CumulativeActualPayments
+                // | Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation when si.BalanceStatus <> ClosedBalance ->
+                //     settlement, 0m<Cent>
+                | Interest.Method.AddOn _ when si.BalanceStatus <> ClosedBalance ->
                     let interestAdjustment =
                         if (ap.GeneratedPayment.IsSome || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterest = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterest - (initialInterestBalance |> Cent.toDecimalCent)
                             |> fun i -> if abs i < 1m<Cent> then 0m<Cent> else i
+                            |> fun i -> if Cent.toDecimalCent roundedCumulativeSimpleInterest + i >= totalInterestCap then totalInterestCap - Cent.toDecimalCent roundedCumulativeSimpleInterest else i
                         else
                             0m<Cent>
                     settlement, interestAdjustment
