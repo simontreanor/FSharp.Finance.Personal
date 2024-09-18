@@ -275,6 +275,7 @@ module Amortisation =
                                 i - initialInterestBalance' |> Cent.fromDecimalCent interestRounding |> Cent.toDecimalCent
                             else
                                 0m<Cent>
+                        |> min cappedSimpleInterest
                     else
                         0m<Cent>
                 | Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnFinalDay ->
