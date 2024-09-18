@@ -272,7 +272,7 @@ module Amortisation =
                         a.CumulativeSimpleInterest + cappedSimpleInterest
                         |> fun i ->
                             if i > initialInterestBalance' then
-                                i - initialInterestBalance' |> Cent.fromDecimalCent interestRounding |> Cent.toDecimalCent
+                                i - initialInterestBalance'
                             else
                                 0m<Cent>
                         |> min cappedSimpleInterest
@@ -282,12 +282,10 @@ module Amortisation =
                     if ap.AppliedPaymentDay = finalAppliedPaymentDay then
                         let cumulativeInterestPortions = a.CumulativeInterestPortions |> Cent.toDecimalCent
                         a.CumulativeSimpleInterest + cappedSimpleInterest - (a.CumulativeInterest + a.CumulativeInterestAdjustments)
-                        |> Cent.fromDecimalCent interestRounding
-                        |> Cent.toDecimalCent
                         |> fun i -> if cumulativeInterestPortions + i >= totalInterestCap then totalInterestCap - cumulativeInterestPortions else i
                     else
                         0m<Cent>
-                | Interest.Method.Simple -> simpleInterest //|> Cent.fromDecimalCent interestRounding |> Cent.toDecimalCent
+                | Interest.Method.Simple -> simpleInterest
                 | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
 
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
