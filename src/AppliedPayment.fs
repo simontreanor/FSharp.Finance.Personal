@@ -57,7 +57,7 @@ module AppliedPayment =
                 let scheduledPayment' =
                     payments
                     |> Array.tryPick(fun cp -> match cp.PaymentDetails with ScheduledPayment scheduledPaymentInfo -> Some scheduledPaymentInfo | _ -> None)
-                    |> Option.defaultValue { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                    |> Option.defaultValue { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
  
                 let actualPayments' = payments |> Array.choose(_.PaymentDetails >> function ActualPayment actualPaymentInfo -> Some actualPaymentInfo | _ -> None)
 
@@ -77,14 +77,14 @@ module AppliedPayment =
                     if pendingPayments > 0L<Cent> then
                         pendingPayments + confirmedPayments, PaymentPending
                     else
-                        match scheduledPayment'.ScheduledPaymentType, confirmedPayments with
-                        | ScheduledPaymentType.None, 0L<Cent> ->
+                        match scheduledPayment'.Value, confirmedPayments with
+                        | 0L<Cent>, 0L<Cent> ->
                             0L<Cent>, NoneScheduled
-                        | ScheduledPaymentType.None, cp when cp < 0L<Cent> ->
+                        | 0L<Cent>, cp when cp < 0L<Cent> ->
                             cp, Refunded
-                        | ScheduledPaymentType.None, cp ->
+                        | 0L<Cent>, cp ->
                             cp, ExtraPayment
-                        | ScheduledPaymentType.Original sp, cp when cp < sp && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
+                        | sp, cp when cp < sp && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
                             match intendedPurpose with
                             | IntendedPurpose.Settlement _ when offsetDay < asOfDay ->
                                 0L<Cent>, PaymentDue
@@ -93,12 +93,12 @@ module AppliedPayment =
                             | _ ->
                                 sp, PaymentDue
                         | sp, _ when offsetDay > asOfDay ->
-                            sp.Value, NotYetDue
-                        | sp, 0L<Cent> when sp.Value > 0L<Cent> ->
+                            sp, NotYetDue
+                        | sp, 0L<Cent> when sp > 0L<Cent> ->
                             0L<Cent>, MissedPayment
-                        | sp, cp when cp < sp.Value ->
+                        | sp, cp when cp < sp ->
                             cp, Underpayment
-                        | sp, cp when cp > sp.Value ->
+                        | sp, cp when cp > sp ->
                             cp, Overpayment
                         | _, cp -> cp, PaymentMade
 
@@ -160,7 +160,7 @@ module AppliedPayment =
             else
                 let newAppliedPayment = {
                     AppliedPaymentDay = day
-                    ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                    ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                     ActualPayments = [||]
                     GeneratedPayment = generatedPayment
                     IncurredCharges = [||]

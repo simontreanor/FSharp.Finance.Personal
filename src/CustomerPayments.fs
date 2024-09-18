@@ -8,35 +8,21 @@ module CustomerPayments =
     open DateDay
     open FeesAndCharges
 
-    /// the type of the scheduled payment, affecting how any payment due is calculated
-    [<RequireQualifiedAccess; Struct>]
-    type ScheduledPaymentType =
-        /// no scheduled payment
-        | None
-        /// the payment due may be reduced by prior extra/overpayments
-        | Original of OriginalAmount: int64<Cent>
-        /// the payment due remains the same regardless of any prior extra/overpayments (though it may be reduced if the amount is sufficient to close the balance)
-        | Rescheduled of RescheduledAmount: int64<Cent>
-        with
-            /// the amount of the scheduled payment
-            member x.Value =
-                match x with
-                | None -> 0L<Cent>
-                | Original sp -> sp
-                | Rescheduled sp -> sp
-            member x.IsSome =
-                match x with
-                | None -> false
-                | _ -> true
-
+    /// any original or rescheduled payment, affecting how any payment due is calculated
     type ScheduledPaymentInfo =
         {
-            ScheduledPaymentType: ScheduledPaymentType
+            OriginalAmount: int64<Cent> voption
+            RescheduledAmount: int64<Cent> voption
             Metadata: Map<string, obj>
         }
         with
-            member x.Value = match x with { ScheduledPaymentType = spt } -> spt.Value
-            member x.IsSome = match x with { ScheduledPaymentType = spt } -> spt.IsSome
+            member x.Value =
+                match x.OriginalAmount, x.RescheduledAmount with 
+                | _, ValueSome ra -> ra
+                | ValueSome oa, ValueNone -> oa
+                | ValueNone, ValueNone -> 0L<Cent>
+            member x.IsSome =
+                x.OriginalAmount.IsSome || x.RescheduledAmount.IsSome
 
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
@@ -94,17 +80,10 @@ module CustomerPayments =
         ContractualInterest: decimal<Cent>
      }
         with
-            static member ScheduledOriginal paymentDay amount =
+            static member Scheduled paymentDay originalAmount rescheduledAmount =
                 {
                     PaymentDay = paymentDay
-                    PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Original amount; Metadata = Map.empty }
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
-                }
-            static member ScheduledRescheduled paymentDay amount =
-                {
-                    PaymentDay = paymentDay
-                    PaymentDetails = ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled amount; Metadata = Map.empty }
+                    PaymentDetails = ScheduledPayment { OriginalAmount = originalAmount; RescheduledAmount = rescheduledAmount; Metadata = Map.empty }
                     OriginalSimpleInterest = 0L<Cent>
                     ContractualInterest = 0m<Cent>
                 }

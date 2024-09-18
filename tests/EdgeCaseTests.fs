@@ -691,7 +691,7 @@ module EdgeCaseTests =
             OffsetDate = Date(2024, 4, 30)
             OffsetDay = 88<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             Window = 2
             PaymentDue = 0L<Cent>
             ActualPayments = [||]

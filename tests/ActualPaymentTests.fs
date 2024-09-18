@@ -272,7 +272,7 @@ module ActualPaymentTests =
             OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>; Metadata = Map.empty } |]
@@ -352,7 +352,7 @@ module ActualPaymentTests =
             OffsetDate = Date(2023, 3, 21)
             OffsetDay = 140<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>; Metadata = Map.empty } |]
@@ -437,7 +437,7 @@ module ActualPaymentTests =
             OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>; Metadata = Map.empty } |]
@@ -519,7 +519,7 @@ module ActualPaymentTests =
             OffsetDate = Date(2022, 11, 1)
             OffsetDay = 0<OffsetDay>
             Advances = [| 1500_00L<Cent> |]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             Window = 0
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>; Metadata = Map.empty } |]
@@ -689,7 +689,7 @@ module ActualPaymentTests =
             OffsetDate = Date(2023, 3, 24)
             OffsetDay = 143<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>; Metadata = Map.empty } |]

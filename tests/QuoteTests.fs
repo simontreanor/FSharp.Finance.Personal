@@ -173,7 +173,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -262,7 +262,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 25_00L<Cent>; Metadata = Map.empty } |]
@@ -349,7 +349,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 3<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 0
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -436,7 +436,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 4<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 0
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -525,7 +525,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 10, 1)
                 OffsetDay = 60<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -786,7 +786,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 181
                 OffsetDay = 181<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 10
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -880,7 +880,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 388
                 OffsetDay = 388<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 11
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -972,7 +972,7 @@ module QuoteTests =
                 OffsetDate = startDate.AddDays 72
                 OffsetDay = 72<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1149,7 +1149,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1327,7 +1327,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1416,7 +1416,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 19)
                 OffsetDay = 138<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1506,7 +1506,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 14)
                 OffsetDay = 133<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1686,7 +1686,7 @@ module QuoteTests =
                 OffsetDate = Date(2023, 3, 16)
                 OffsetDay = 135<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -1776,7 +1776,7 @@ module QuoteTests =
                 OffsetDate = Date(2024, 2, 5)
                 OffsetDay = 461<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 5
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]

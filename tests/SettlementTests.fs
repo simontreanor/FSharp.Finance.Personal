@@ -80,7 +80,7 @@ module SettlementTests =
                 OffsetDate = Date(2024, 3, 19)
                 OffsetDay = 112<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 3
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -165,7 +165,7 @@ module SettlementTests =
                 OffsetDate = Date(2024, 3, 29)
                 OffsetDay = 122<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -251,7 +251,7 @@ module SettlementTests =
                 OffsetDate = Date(2024, 3, 29)
                 OffsetDay = 122<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+                ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]

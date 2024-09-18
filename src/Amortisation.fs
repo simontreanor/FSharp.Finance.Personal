@@ -87,7 +87,7 @@ module Amortisation =
             OffsetDate = Unchecked.defaultof<Date>
             OffsetDay = 0<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.None; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
@@ -237,10 +237,7 @@ module Amortisation =
         appliedPayments
         |> Array.scan(fun ((si: ScheduleItem), (a: Accumulator)) ap ->
 
-            let window =
-                match ap.ScheduledPayment.ScheduledPaymentType with
-                | ScheduledPaymentType.Original _ | ScheduledPaymentType.Rescheduled _ -> si.Window + 1
-                | ScheduledPaymentType.None -> si.Window
+            let window = if ap.ScheduledPayment.IsSome then si.Window + 1 else si.Window
 
             let advances = if ap.AppliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0
 
@@ -316,14 +313,10 @@ module Amortisation =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
                     0L<Cent>
                 else
-                    match ap.ScheduledPayment.ScheduledPaymentType with
-                    | ScheduledPaymentType.Original amount when extraPaymentsBalance > 0L<Cent>
-                        -> amount - extraPaymentsBalance
-                    | ScheduledPaymentType.Original amount
-                    | ScheduledPaymentType.Rescheduled amount
-                        -> Cent.min (si.PrincipalBalance + si.FeesBalance + roundedInterestPortion) amount
-                    | ScheduledPaymentType.None
-                        -> 0L<Cent>
+                    match ap.ScheduledPayment.Value with
+                    | 0L<Cent> -> 0L<Cent>
+                    | amount when extraPaymentsBalance > 0L<Cent> -> amount - extraPaymentsBalance
+                    | amount -> Cent.min (si.PrincipalBalance + si.FeesBalance + roundedInterestPortion) amount
                 |> Cent.max 0L<Cent>
                 |> fun p ->
                     match sp.Calculation.MinimumPayment with
@@ -394,11 +387,16 @@ module Amortisation =
 
             let scheduledPayment =
                 { ap.ScheduledPayment with
-                    ScheduledPaymentType =
-                        match ap.ScheduledPayment.ScheduledPaymentType with
-                        | ScheduledPaymentType.None as spt -> spt
-                        | ScheduledPaymentType.Original sp -> ScheduledPaymentType.Original (sp + scheduledPaymentAmendment)
-                        | ScheduledPaymentType.Rescheduled sp -> ScheduledPaymentType.Rescheduled (sp + scheduledPaymentAmendment)
+                    OriginalAmount = if ap.ScheduledPayment.RescheduledAmount.IsSome then ap.ScheduledPayment.OriginalAmount else ap.ScheduledPayment.OriginalAmount + scheduledPaymentAmendment
+                    RescheduledAmount = if ap.ScheduledPayment.RescheduledAmount.IsSome then ap.ScheduledPayment.RescheduledAmount + scheduledPaymentAmendment else ap.ScheduledPayment.RescheduledAmount
+                        // match ap.ScheduledPayment.OriginalAmount, ap.ScheduledPayment.RescheduledAmount with
+                        // | _, ValueSome ra -> ra
+                        // | ValueSome oa, ValueNone -> oa
+                        // | ValueNone, ValueNone -> 0L<Cent>
+
+                        // | ScheduledPaymentType.None as spt -> spt
+                        // | ScheduledPaymentType.Original sp -> ScheduledPaymentType.Original (sp + scheduledPaymentAmendment)
+                        // | ScheduledPaymentType.Rescheduled sp -> ScheduledPaymentType.Rescheduled (sp + scheduledPaymentAmendment)
                 }
 
             let feesPortion =
