@@ -267,7 +267,7 @@ module Amortisation =
 
             let newInterest =
                 match sp.Interest.Method with
-                | Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation ->
+                | Interest.Method.AddOn ->
                     if si.BalanceStatus <> ClosedBalance then
                         a.CumulativeSimpleInterest + cappedSimpleInterest
                         |> fun i ->
@@ -278,15 +278,7 @@ module Amortisation =
                         |> min cappedSimpleInterest
                     else
                         0m<Cent>
-                | Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnFinalDay ->
-                    if ap.AppliedPaymentDay = finalAppliedPaymentDay then
-                        let cumulativeInterestPortions = a.CumulativeInterestPortions |> Cent.toDecimalCent
-                        a.CumulativeSimpleInterest + cappedSimpleInterest - (a.CumulativeInterest + a.CumulativeInterestAdjustments)
-                        |> fun i -> if cumulativeInterestPortions + i >= totalInterestCap then totalInterestCap - cumulativeInterestPortions else i
-                    else
-                        0m<Cent>
                 | Interest.Method.Simple -> simpleInterest
-                | Interest.Method.Compound -> failwith "Compound interest method not yet implemented"
 
             let cappedNewInterest = if a.CumulativeInterest + newInterest >= totalInterestCap then totalInterestCap - a.CumulativeInterest else newInterest
 
@@ -363,9 +355,7 @@ module Amortisation =
 
             let generatedSettlementPayment, interestAdjustment =
                 match sp.Interest.Method with
-                // | Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation when si.BalanceStatus <> ClosedBalance ->
-                //     settlement, 0m<Cent>
-                | Interest.Method.AddOn _ when si.BalanceStatus <> ClosedBalance ->
+                | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance ->
                     let interestAdjustment =
                         if (ap.GeneratedPayment.IsSome || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterest = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterest - (initialInterestBalance |> Cent.toDecimalCent)
@@ -377,9 +367,9 @@ module Amortisation =
                 | _ ->
                     0L<Cent>, 0m<Cent> // this will be calculated later
 
-            let cappedNewInterest' = cappedNewInterest + interestAdjustment
+            let cappedNewInterest' = cappedNewInterest + interestAdjustment |> fun i -> if abs i < 1m<Cent> then 0m<Cent> else i
             let roundedInterestAdjustment = interestAdjustment |> Cent.fromDecimalCent interestRounding
-            let roundedInterestPortion' = roundedInterestPortion + roundedInterestAdjustment
+            let roundedInterestPortion' = (a.CumulativeInterestPortions, roundedInterestPortion + roundedInterestAdjustment, Cent.fromDecimalCent interestRounding totalInterestCap) |> fun (cip, i, tic) -> if cip + i >= tic then tic - cip else i
 
             let assignable, scheduledPaymentAmendment =
                 if netEffect = 0L<Cent> then
@@ -437,7 +427,7 @@ module Amortisation =
 
             let generatedSettlementPayment' =
                 match sp.Interest.Method with
-                | Interest.Method.AddOn _ -> generatedSettlementPayment
+                | Interest.Method.AddOn -> generatedSettlementPayment
                 | _ -> si.PrincipalBalance + si.FeesBalance - feesRefund + roundedInterestPortion' + chargesPortion
 
             let feesPortion', feesRefund' =
@@ -483,7 +473,7 @@ module Amortisation =
                     | _ ->
                         Generated
 
-                let generatedSettlementPayment'' = match sp.Interest.Method with Interest.Method.AddOn _ -> generatedSettlementPayment' | _ -> generatedSettlementPayment' - netEffect'
+                let generatedSettlementPayment'' = match sp.Interest.Method with Interest.Method.AddOn -> generatedSettlementPayment' | _ -> generatedSettlementPayment' - netEffect'
 
                 {
                     Window = window
@@ -547,7 +537,7 @@ module Amortisation =
                         | pp, _, _ when pp > 0L<Cent> ->
                             0L<Cent>
                         | _, NotYetDue, _
-                        | _, _, Interest.Method.AddOn _ ->
+                        | _, _, Interest.Method.AddOn ->
                             generatedSettlementPayment'
                         | _, _, _ ->
                             generatedSettlementPayment' - netEffect'
@@ -675,13 +665,13 @@ module Amortisation =
                         | ScheduleType.Rescheduled -> ScheduledPayment { ScheduledPaymentType = ScheduledPaymentType.Rescheduled si.Payment.Value; Metadata = Map.empty }
                     OriginalSimpleInterest =
                         match scheduleType, sp.Interest.Method with
-                        | ScheduleType.Original, Interest.Method.AddOn _ ->
+                        | ScheduleType.Original, Interest.Method.AddOn ->
                             si.SimpleInterest
                         | _ ->
                             0L<Cent>
                     ContractualInterest =
                         match scheduleType, sp.Interest.Method with
-                        | ScheduleType.Original, Interest.Method.AddOn _ ->
+                        | ScheduleType.Original, Interest.Method.AddOn ->
                             si.InterestPortion |> Cent.toDecimalCent
                         | _ ->
                             0m<Cent>
