@@ -36,7 +36,7 @@ module InterestFirstTests =
                 LatePaymentGracePeriod = 0<DurationDay>
             }
             Interest = {
-                Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnFinalDay
+                Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
@@ -148,7 +148,7 @@ module InterestFirstTests =
         schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestFirstTest006.md" false))
 
         let totalInterest = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-        totalInterest |> should equal 24_00L<Cent>
+        totalInterest |> should equal 23_88L<Cent>
 
     [<Fact>]
     let ``7) Add-on interest method with normal but with erratic payment timings`` () =
@@ -301,7 +301,7 @@ module InterestFirstTests =
         schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestFirstTest013.md" false))
 
         let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
-        finalSettlementFigure |> should equal -324_49L<Cent>
+        finalSettlementFigure |> should equal -324_57L<Cent>
 
     [<Fact>]
     let ``14) Realistic example 0004ffd74fbb`` () =
@@ -322,7 +322,28 @@ module InterestFirstTests =
         schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestFirstTest014.md" false))
 
         let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
-        finalSettlementFigure |> should equal -5_81L<Cent>
+        finalSettlementFigure |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``14a) Realistic example 0004ffd74fbb with overpayment`` () =
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
+
+        let actualPayments =
+            [|
+                CustomerPayment.ActualConfirmed (Date(2023,  7, 16) |> OffsetDay.fromDate sp.StartDate)   88_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2023, 10, 13) |> OffsetDay.fromDate sp.StartDate)  126_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2023, 10, 17) |> OffsetDay.fromDate sp.StartDate)   98_00L<Cent>
+                CustomerPayment.ActualConfirmed (Date(2023, 10, 18) |> OffsetDay.fromDate sp.StartDate)  100_00L<Cent>
+            |]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+
+        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/InterestFirstTest014a.md" false))
+
+        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)) |> ValueOption.defaultValue (0L<Cent>, 0L<Cent>, 0L<Cent>)
+        finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, -12_78L<Cent>)
 
     [<Fact>]
     let ``15) Add-on interest method with big early repayment followed by tiny overpayment`` () =
@@ -373,219 +394,218 @@ module InterestFirstTests =
         let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems.[0].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         initialInterestBalance |> should equal 362_34m<Cent>
 
+    // [<Fact>]
+    // let ``18) Realistic test 6045bd0ffc0f with correction on final day`` () =
+    //     let sp =
+    //         { scheduleParameters with
+    //             AsOfDate = Date(2024, 9, 17)
+    //             StartDate = Date(2023, 9, 22)
+    //             Principal = 740_00L<Cent>
+    //             PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentAmount = 293_82L<Cent> } |]
+    //             Parameters.Interest.RateOnNegativeBalance = ValueNone
+    //             // PaymentSchedule = IrregularSchedule [|
+    //             //     // CustomerPayment.ScheduledOriginal 14<OffsetDay> 33004L<Cent>
+    //             //     // CustomerPayment.ScheduledOriginal 37<OffsetDay> 33004L<Cent>
+    //             //     // CustomerPayment.ScheduledOriginal 68<OffsetDay> 33004L<Cent>
+    //             //     // CustomerPayment.ScheduledOriginal 98<OffsetDay> 33004L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 42<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 49<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 56<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 63<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 70<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 77<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 84<OffsetDay> 20000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 91<OffsetDay> 8000L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 56<OffsetDay> 5000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 86<OffsetDay> 5000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 117<OffsetDay> 5000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 148<OffsetDay> 5000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 177<OffsetDay> 15000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 208<OffsetDay> 15000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 238<OffsetDay> 15000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 269<OffsetDay> 15000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 299<OffsetDay> 15000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 330<OffsetDay> 15000L<Cent>
+    //             //     // CustomerPayment.ScheduledRescheduled 361<OffsetDay> 18000L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 119<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 126<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 133<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 140<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 147<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 154<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 161<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 168<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 175<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 182<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 189<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 196<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 203<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 210<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 217<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 224<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 231<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 238<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 245<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 252<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 259<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 266<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 273<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 280<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 287<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 294<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 301<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 308<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 315<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 322<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 329<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 336<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 343<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 350<OffsetDay> 3500L<Cent>
+    //             //     CustomerPayment.ScheduledRescheduled 357<OffsetDay> 4000L<Cent>
+    //             // |]
+    //         }
+
+    //     let actualPayments = [|
+    //         // CustomerPayment.ActualFailed 14<OffsetDay> 33004L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 14<OffsetDay> 33004L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 14<OffsetDay> 33004L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 42<OffsetDay> 20000L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 42<OffsetDay> 20000L<Cent>
+    //         // CustomerPayment.ActualFailed 56<OffsetDay> 5000L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 56<OffsetDay> 5000L<Cent>
+    //         // CustomerPayment.ActualFailed 86<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 86<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 86<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 89<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 89<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 89<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 92<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 92<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 92<OffsetDay> 5000L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 119<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 119<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 119<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 122<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 122<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 122<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 125<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 125<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 125<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 126<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 126<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 126<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 129<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 129<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 129<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 133<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 133<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 133<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 136<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 136<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 136<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 139<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 139<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 139<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 140<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 140<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 140<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 143<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 143<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 143<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 146<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 146<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 146<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 147<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 147<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 147<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 150<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 150<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 150<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 153<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 153<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 153<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 154<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 154<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 154<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 161<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 161<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 161<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 164<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 168<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 168<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 168<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 171<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 171<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 171<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 174<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 174<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 174<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 175<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 175<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 175<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 182<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 182<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 182<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 189<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 189<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 196<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 196<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 196<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 199<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 199<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 199<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 202<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 202<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 202<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 203<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 203<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 203<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 206<OffsetDay> 3500L<Cent> [||]
+    //         // CustomerPayment.ActualFailed 206<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 206<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 210<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 217<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 217<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 224<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 231<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 238<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 245<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 252<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 259<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 266<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 273<OffsetDay> 3500L<Cent>
+    //         // CustomerPayment.ActualFailed 280<OffsetDay> 3500L<Cent> [||]
+    //         CustomerPayment.ActualConfirmed 280<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 287<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 294<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 301<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 308<OffsetDay> 3500L<Cent>
+    //         CustomerPayment.ActualConfirmed 314<OffsetDay> 25000L<Cent>
+    //         CustomerPayment.ActualConfirmed 315<OffsetDay> 1L<Cent>
+    //     |]
+
+    //     let schedule =
+    //         actualPayments
+    //         |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+    //     schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest018.md" false)
+
+    //     let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+
+    //     totalInterestPortions |> should equal 740_00L<Cent>
+
     [<Fact>]
-    let ``18) Realistic test 6045bd0ffc0f with correction on final day`` () =
+    let ``19) Realistic test 6045bd0ffc0f`` () =
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
                 PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentAmount = 293_82L<Cent> } |]
-                Parameters.Interest.RateOnNegativeBalance = ValueNone
-                // PaymentSchedule = IrregularSchedule [|
-                //     // CustomerPayment.ScheduledOriginal 14<OffsetDay> 33004L<Cent>
-                //     // CustomerPayment.ScheduledOriginal 37<OffsetDay> 33004L<Cent>
-                //     // CustomerPayment.ScheduledOriginal 68<OffsetDay> 33004L<Cent>
-                //     // CustomerPayment.ScheduledOriginal 98<OffsetDay> 33004L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 42<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 49<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 56<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 63<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 70<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 77<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 84<OffsetDay> 20000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 91<OffsetDay> 8000L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 56<OffsetDay> 5000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 86<OffsetDay> 5000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 117<OffsetDay> 5000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 148<OffsetDay> 5000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 177<OffsetDay> 15000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 208<OffsetDay> 15000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 238<OffsetDay> 15000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 269<OffsetDay> 15000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 299<OffsetDay> 15000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 330<OffsetDay> 15000L<Cent>
-                //     // CustomerPayment.ScheduledRescheduled 361<OffsetDay> 18000L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 119<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 126<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 133<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 140<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 147<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 154<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 161<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 168<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 175<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 182<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 189<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 196<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 203<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 210<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 217<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 224<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 231<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 238<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 245<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 252<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 259<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 266<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 273<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 280<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 287<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 294<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 301<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 308<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 315<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 322<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 329<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 336<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 343<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 350<OffsetDay> 3500L<Cent>
-                //     CustomerPayment.ScheduledRescheduled 357<OffsetDay> 4000L<Cent>
-                // |]
-            }
-
-        let actualPayments = [|
-            // CustomerPayment.ActualFailed 14<OffsetDay> 33004L<Cent> [||]
-            // CustomerPayment.ActualFailed 14<OffsetDay> 33004L<Cent> [||]
-            // CustomerPayment.ActualFailed 14<OffsetDay> 33004L<Cent> [||]
-            // CustomerPayment.ActualFailed 42<OffsetDay> 20000L<Cent> [||]
-            CustomerPayment.ActualConfirmed 42<OffsetDay> 20000L<Cent>
-            // CustomerPayment.ActualFailed 56<OffsetDay> 5000L<Cent> [||]
-            CustomerPayment.ActualConfirmed 56<OffsetDay> 5000L<Cent>
-            // CustomerPayment.ActualFailed 86<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 86<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 86<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 89<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 89<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 89<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 92<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 92<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 92<OffsetDay> 5000L<Cent> [||]
-            // CustomerPayment.ActualFailed 119<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 119<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 119<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 122<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 122<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 122<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 125<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 125<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 125<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 126<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 126<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 126<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 129<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 129<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 129<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 132<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 133<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 133<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 133<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 136<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 136<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 136<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 139<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 139<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 139<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 140<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 140<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 140<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 143<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 143<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 143<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 146<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 146<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 146<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 147<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 147<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 147<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 150<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 150<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 150<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 153<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 153<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 153<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 154<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 154<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 154<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 161<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 161<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 161<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 164<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 168<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 168<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 168<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 171<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 171<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 171<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 174<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 174<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 174<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 175<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 175<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 175<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 182<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 182<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 182<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 189<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 189<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 196<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 196<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 196<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 199<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 199<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 199<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 202<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 202<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 202<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 203<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 203<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 203<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 206<OffsetDay> 3500L<Cent> [||]
-            // CustomerPayment.ActualFailed 206<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 206<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 210<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 217<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 217<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 224<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 231<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 238<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 245<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 252<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 259<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 266<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 273<OffsetDay> 3500L<Cent>
-            // CustomerPayment.ActualFailed 280<OffsetDay> 3500L<Cent> [||]
-            CustomerPayment.ActualConfirmed 280<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 287<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 294<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 301<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 308<OffsetDay> 3500L<Cent>
-            CustomerPayment.ActualConfirmed 314<OffsetDay> 25000L<Cent>
-            CustomerPayment.ActualConfirmed 315<OffsetDay> 1L<Cent>
-        |]
-
-        let schedule =
-            actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
-
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest018.md" false)
-
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-
-        totalInterestPortions |> should equal 740_00L<Cent>
-
-    [<Fact>]
-    let ``19) Realistic test 6045bd0ffc0f with continuous correction`` () =
-        let sp =
-            { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
-                StartDate = Date(2023, 9, 22)
-                Principal = 740_00L<Cent>
-                PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentAmount = 293_82L<Cent> } |]
-                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
             }
 
         let actualPayments = [|
@@ -632,39 +652,38 @@ module InterestFirstTests =
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
+    // [<Fact>]
+    // let ``20) Realistic test 6045bd123363 with correction on final day`` () =
+    //     let sp =
+    //         { scheduleParameters with
+    //             AsOfDate = Date(2024, 9, 17)
+    //             StartDate = Date(2023, 1, 14)
+    //             Principal = 100_00L<Cent>
+    //             PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentAmount = 42_40L<Cent> } |]
+    //         }
+
+    //     let actualPayments = [|
+    //         CustomerPayment.ActualConfirmed 20<OffsetDay> 116_00L<Cent>
+    //     |]
+
+    //     let schedule =
+    //         actualPayments
+    //         |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+
+    //     schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest020.md" false)
+
+    //     let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+
+    //     totalInterestPortions |> should equal 16_00L<Cent>
+
     [<Fact>]
-    let ``20) Realistic test 6045bd123363 with correction on final day`` () =
+    let ``21) Realistic test 6045bd123363`` () =
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 1, 14)
                 Principal = 100_00L<Cent>
                 PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentAmount = 42_40L<Cent> } |]
-            }
-
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 20<OffsetDay> 116_00L<Cent>
-        |]
-
-        let schedule =
-            actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
-
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest020.md" false)
-
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
-
-        totalInterestPortions |> should equal 16_00L<Cent>
-
-    [<Fact>]
-    let ``21) Realistic test 6045bd123363 with continuous correction`` () =
-        let sp =
-            { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
-                StartDate = Date(2023, 1, 14)
-                Principal = 100_00L<Cent>
-                PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentAmount = 42_40L<Cent> } |]
-                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
             }
 
         let actualPayments = [|
@@ -682,7 +701,7 @@ module InterestFirstTests =
         totalInterestPortions |> should equal 16_00L<Cent>
 
     [<Fact>]
-    let ``22) Realistic test 0004ffd74fbb with continuous correction`` () =
+    let ``22) Realistic test 0004ffd74fbbn`` () =
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -692,7 +711,6 @@ module InterestFirstTests =
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 3, 1); PaymentCount = 11; PaymentAmount = 55_60L<Cent> }
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2019, 2, 1); PaymentCount = 1; PaymentAmount = 55_58L<Cent> }
                 |]
-                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
             }
 
         let actualPayments = [|
@@ -720,7 +738,7 @@ module InterestFirstTests =
         totalInterestPortions |> should equal 340_00L<Cent>
 
     [<Fact>]
-    let ``23) Realistic test 0003ff008ae5 with continuous correction`` () =
+    let ``23) Realistic test 0003ff008ae5`` () =
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -729,7 +747,6 @@ module InterestFirstTests =
                 PaymentSchedule = RegularFixedSchedule [|
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 1, 2); PaymentCount = 6; PaymentAmount = 500_00L<Cent> }
                 |]
-                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
             }
 
         let actualPayments = [|
@@ -828,7 +845,7 @@ module InterestFirstTests =
         totalInterestPortions |> should equal 350_00L<Cent>
 
     [<Fact>]
-    let ``25) Realistic test 0003ff00bffb with continuous correction`` () =
+    let ``25) Realistic test 0003ff00bffb with add-on method`` () =
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -837,7 +854,6 @@ module InterestFirstTests =
                 PaymentSchedule = RegularFixedSchedule [|
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentAmount = 168_00L<Cent> }
                 |]
-                Parameters.Interest.Method = Interest.Method.AddOn Interest.AddOnInterestCorrection.CorrectOnDeviation
             }
 
         let actualPayments = [|
