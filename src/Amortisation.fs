@@ -87,7 +87,7 @@ module Amortisation =
             OffsetDate = Unchecked.defaultof<Date>
             OffsetDay = 0<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; PaymentAmendment = ValueNone; Metadata = Map.empty }
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
@@ -366,27 +366,15 @@ module Amortisation =
 
             let assignable, scheduledPaymentAmendment =
                 if netEffect = 0L<Cent> then
-                    0L<Cent>, 0L<Cent>
+                    0L<Cent>, ValueNone
                 else
                     match sp.PaymentOptions.ScheduledPaymentOption with
                     | AsScheduled ->
-                        sign netEffect - sign chargesPortion - sign roundedInterestPortion', 0L<Cent>
+                        sign netEffect - sign chargesPortion - sign roundedInterestPortion', ValueNone
                     | AddChargesAndInterest ->
-                        sign netEffect, sign chargesPortion - sign roundedInterestPortion'
+                        sign netEffect, ValueSome <| sign chargesPortion - sign roundedInterestPortion'
 
-            let scheduledPayment =
-                { ap.ScheduledPayment with
-                    OriginalAmount = if ap.ScheduledPayment.RescheduledAmount.IsSome then ap.ScheduledPayment.OriginalAmount else ap.ScheduledPayment.OriginalAmount + scheduledPaymentAmendment
-                    RescheduledAmount = if ap.ScheduledPayment.RescheduledAmount.IsSome then ap.ScheduledPayment.RescheduledAmount + scheduledPaymentAmendment else ap.ScheduledPayment.RescheduledAmount
-                        // match ap.ScheduledPayment.OriginalAmount, ap.ScheduledPayment.RescheduledAmount with
-                        // | _, ValueSome ra -> ra
-                        // | ValueSome oa, ValueNone -> oa
-                        // | ValueNone, ValueNone -> 0L<Cent>
-
-                        // | ScheduledPaymentType.None as spt -> spt
-                        // | ScheduledPaymentType.Original sp -> ScheduledPaymentType.Original (sp + scheduledPaymentAmendment)
-                        // | ScheduledPaymentType.Rescheduled sp -> ScheduledPaymentType.Rescheduled (sp + scheduledPaymentAmendment)
-                }
+            let scheduledPayment = { ap.ScheduledPayment with PaymentAmendment = scheduledPaymentAmendment }
 
             let feesPortion =
                 match sp.FeesAndCharges.FeesAmortisation with
@@ -574,7 +562,7 @@ module Amortisation =
 
             let accumulator' =
                 { accumulator with
-                    CumulativeScheduledPayments = accumulator.CumulativeScheduledPayments + scheduledPaymentAmendment
+                    CumulativeScheduledPayments = accumulator.CumulativeScheduledPayments + ValueOption.defaultValue 0L<Cent> scheduledPaymentAmendment
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
                     CumulativeFees = a.CumulativeFees + feesPortion'
                     CumulativeInterest = accumulator.CumulativeInterest - interestRoundingDifference

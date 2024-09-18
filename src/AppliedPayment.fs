@@ -57,7 +57,7 @@ module AppliedPayment =
                 let scheduledPayment' =
                     payments
                     |> Array.tryPick(fun cp -> match cp.PaymentDetails with ScheduledPayment scheduledPaymentInfo -> Some scheduledPaymentInfo | _ -> None)
-                    |> Option.defaultValue { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+                    |> Option.defaultValue { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; PaymentAmendment = ValueNone; Metadata = Map.empty }
  
                 let actualPayments' = payments |> Array.choose(_.PaymentDetails >> function ActualPayment actualPaymentInfo -> Some actualPaymentInfo | _ -> None)
 
@@ -160,7 +160,7 @@ module AppliedPayment =
             else
                 let newAppliedPayment = {
                     AppliedPaymentDay = day
-                    ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+                    ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; PaymentAmendment = ValueNone; Metadata = Map.empty }
                     ActualPayments = [||]
                     GeneratedPayment = generatedPayment
                     IncurredCharges = [||]

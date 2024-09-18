@@ -13,6 +13,7 @@ module CustomerPayments =
         {
             OriginalAmount: int64<Cent> voption
             RescheduledAmount: int64<Cent> voption
+            PaymentAmendment: int64<Cent> voption
             Metadata: Map<string, obj>
         }
         with
@@ -21,6 +22,8 @@ module CustomerPayments =
                 | _, ValueSome ra -> ra
                 | ValueSome oa, ValueNone -> oa
                 | ValueNone, ValueNone -> 0L<Cent>
+            member x.AmendedValue =
+                x.Value + ValueOption.defaultValue 0L<Cent> x.PaymentAmendment
             member x.IsSome =
                 x.OriginalAmount.IsSome || x.RescheduledAmount.IsSome
 
@@ -83,7 +86,7 @@ module CustomerPayments =
             static member Scheduled paymentDay originalAmount rescheduledAmount =
                 {
                     PaymentDay = paymentDay
-                    PaymentDetails = ScheduledPayment { OriginalAmount = originalAmount; RescheduledAmount = rescheduledAmount; Metadata = Map.empty }
+                    PaymentDetails = ScheduledPayment { OriginalAmount = originalAmount; RescheduledAmount = rescheduledAmount; PaymentAmendment = ValueNone; Metadata = Map.empty }
                     OriginalSimpleInterest = 0L<Cent>
                     ContractualInterest = 0m<Cent>
                 }
