@@ -3,8 +3,6 @@ namespace FSharp.Finance.Personal
 /// extension to the array module of a solve function, allowing an unknown value to be calculated through iteration
 module ArrayExtension =
 
-    open ValueOptionCE
-
     /// the result obtained from the array solver
     [<RequireQualifiedAccess; Struct>]
     type Solution =
@@ -40,20 +38,6 @@ module ArrayExtension =
 
     /// utility functions for arrays
     module Array =
-        /// gets the last but one member of an array
-        let vTryLastBut n a =
-            if Array.isEmpty a then
-                ValueNone
-            else
-                a |> Array.rev |> Array.skip n |> Array.tryHead |> toValueOption
-
-        /// equivalent of Array.maxBy but yields a default value instead of an error if the array is empty
-        let vTryMaxBy maxByProp getProp a =
-            if Array.isEmpty a then
-                ValueNone
-            else
-                a |> Array.maxBy maxByProp |> getProp |> ValueSome
-
         /// iteratively solves for a given input using a generator function until the output is 0L<Cent> or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
         [<TailCall>]

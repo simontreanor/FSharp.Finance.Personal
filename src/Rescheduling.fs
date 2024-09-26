@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open CustomerPayments
+open PaymentSchedule
 open Quotes
 
 /// functions for rescheduling payments after an original schedule failed to amortise

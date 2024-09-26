@@ -10,11 +10,9 @@ module InterestTests =
     open Amortisation
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
     open Formatting
-    open FormattingHelper
     open Interest
     open PaymentSchedule
     open Percentages
@@ -222,12 +220,6 @@ module InterestTests =
             actual |> should equal expected
 
     module PromotionalRatesTests =
-
-        open Amortisation
-        open Calculation
-        open CustomerPayments
-        open FeesAndCharges
-        open PaymentSchedule
 
         [<Fact>]
         let ``1) Mortgage quote with a five-year fixed interest deal and a mortgage fee added to the loan`` () =

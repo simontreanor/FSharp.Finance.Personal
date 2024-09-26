@@ -9,12 +9,10 @@ module FeesAndChargesTests =
 
     open Amortisation
     open Calculation
-    open CustomerPayments
     open Currency
     open DateDay
     open FeesAndCharges
     open Formatting
-    open FormattingHelper
     open Percentages
     open PaymentSchedule
 

@@ -7,19 +7,14 @@ open FSharp.Finance.Personal
 
 module PromotionalRatesTests =
 
-    open ArrayExtension
     open Amortisation
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
     open Formatting
-    open FormattingHelper
     open PaymentSchedule
     open Percentages
-    open Quotes
-    open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
         Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))

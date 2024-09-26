@@ -5,7 +5,6 @@ module Quotes =
 
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open PaymentSchedule
     open ValueOptionCE

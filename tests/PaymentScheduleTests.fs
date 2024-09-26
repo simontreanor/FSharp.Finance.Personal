@@ -11,7 +11,6 @@ module PaymentScheduleTests =
     open ArrayExtension
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
     open Formatting

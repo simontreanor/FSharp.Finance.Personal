@@ -7,7 +7,6 @@ module Amortisation =
     open AppliedPayment
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
     open PaymentSchedule
@@ -204,7 +203,7 @@ module Amortisation =
                 {|
                     OffsetDay = v |> Array.head |> fst
                     PaymentDueTotal = v |> Array.sumBy (snd >> _.PaymentDue)
-                    ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.total)
+                    ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.Total)
                     GeneratedPaymentTotal = v |> Array.sumBy (snd >> _.GeneratedPayment >> (ValueOption.defaultValue 0L<Cent>))
                     PaymentStatus = v |> Array.head |> snd |> _.PaymentStatus
                 |}

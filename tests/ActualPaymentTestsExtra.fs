@@ -12,7 +12,6 @@ module ActualPaymentTestsExtra =
     open Amortisation
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
     open Formatting
@@ -282,7 +281,7 @@ module ActualPaymentTestsExtra =
                 {
                     TestId = testId
                     FinalPayment = a |> _.NetEffect
-                    LevelPayment = aa |> Array.countBy _.NetEffect |> Array.vTryMaxBy snd fst |> ValueOption.defaultValue 0L<Cent>
+                    LevelPayment = aa |> Array.countBy _.NetEffect |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some) |> Option.defaultValue 0L<Cent>
                     PrincipalBalance = a.PrincipalBalance
                     FeesBalance = a.FeesBalance
                     InterestBalance = a.InterestBalance

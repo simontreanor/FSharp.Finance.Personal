@@ -10,7 +10,6 @@ module ActualPaymentTests =
     open Amortisation
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
     open Formatting
