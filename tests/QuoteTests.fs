@@ -856,16 +856,14 @@ module QuoteTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 70<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
-                84<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
-                84<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
+                84<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent>; ActualPayment.QuickConfirmed 272_84L<Cent> |]
                 85<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
                 98<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
                 112<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
                 126<OffsetDay>, [| ActualPayment.QuickConfirmed 272_84L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let actual =
             voption {

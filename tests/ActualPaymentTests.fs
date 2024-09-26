@@ -589,12 +589,11 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 14<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
                 28<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
                 42<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -603,7 +602,8 @@ module ActualPaymentTests =
         schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest008.md" false))
 
         let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
-        let expected = (154<OffsetDay>, ValueSome {
+
+        let expected = ValueSome (154<OffsetDay>, {
             OffsetDate = startDate.AddDays 154
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 243_66L<Cent>) ValueNone
@@ -631,6 +631,7 @@ module ActualPaymentTests =
             SettlementFigure = 243_66L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         })
+
         actual |> should equal expected
 
     [<Fact>]
