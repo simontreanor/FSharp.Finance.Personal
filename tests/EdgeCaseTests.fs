@@ -13,6 +13,7 @@ module EdgeCaseTests =
     open DateDay
     open FeesAndCharges
     open Formatting
+    open MapExtension
     open PaymentSchedule
     open Percentages
     open Quotes
@@ -30,12 +31,12 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2023, 2, 9)
             Principal = 30000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 15<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 43<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 74<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 104<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
-            |]
+            ]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -65,9 +66,9 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map [
             5<OffsetDay>, [| ActualPayment.QuickConfirmed 31200L<Cent> |]
-        |]
+        ]
 
         let actual =
             voption {
@@ -85,12 +86,12 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 2, 2)
             Principal = 25000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 16<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 44<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 75<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 105<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
-            |]
+            ]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -120,9 +121,9 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map [
             5<OffsetDay>, [| ActualPayment.QuickConfirmed 26000L<Cent> |]
-        |]
+        ]
 
         let actual =
             voption {
@@ -140,12 +141,12 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 12, 2)
             Principal = 75000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 14<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 45<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 76<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 104<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
-            |]
+            ]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -175,9 +176,9 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map [
             13<OffsetDay>, [| ActualPayment.QuickConfirmed 82800L<Cent> |]
-        |]
+        ]
 
         let actual =
             voption {
@@ -195,14 +196,14 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 8<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 39<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 69<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 100<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 214<OffsetDay>, ScheduledPayment.Quick (ValueSome 25000L<Cent>) ValueNone
                 245<OffsetDay>, ScheduledPayment.Quick (ValueSome 27600L<Cent>) ValueNone
-            |]
+            ]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -232,7 +233,7 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map.ofArrayWithArrayMerge [|
             8<OffsetDay>, [| ActualPayment.QuickFailed 22500L<Cent> [||] |]
             8<OffsetDay>, [| ActualPayment.QuickFailed 22500L<Cent> [||] |]
             8<OffsetDay>, [| ActualPayment.QuickFailed 22500L<Cent> [||] |]
@@ -322,14 +323,14 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 8<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 39<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 69<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 100<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 214<OffsetDay>, ScheduledPayment.Quick (ValueSome 25000L<Cent>) ValueNone
                 245<OffsetDay>, ScheduledPayment.Quick (ValueSome 27600L<Cent>) ValueNone
-            |]
+            ]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -359,7 +360,7 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map.ofArrayWithArrayMerge [|
             8<OffsetDay>, [| ActualPayment.QuickFailed 22500L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
             8<OffsetDay>, [| ActualPayment.QuickFailed 22500L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
             8<OffsetDay>, [| ActualPayment.QuickFailed 22500L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
@@ -480,7 +481,7 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map.ofArrayWithArrayMerge [|
             23<OffsetDay>, [| ActualPayment.QuickFailed 166_67L<Cent> [||] |]
             23<OffsetDay>, [| ActualPayment.QuickFailed 66_67L<Cent> [||] |]
             23<OffsetDay>, [| ActualPayment.QuickFailed 66_67L<Cent> [||] |]
@@ -605,16 +606,12 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
-            12<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||] |]
-            12<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||] |]
-            15<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||] |]
-            15<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||] |]
-            15<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-            43<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||] |]
-            43<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||] |]
+        let actualPayments = Map [
+            12<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||]; ActualPayment.QuickFailed 500_00L<Cent> [||] |]
+            15<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||]; ActualPayment.QuickFailed 500_00L<Cent> [||]; ActualPayment.QuickConfirmed 500_00L<Cent> |]
+            43<OffsetDay>, [| ActualPayment.QuickFailed 500_00L<Cent> [||]; ActualPayment.QuickFailed 500_00L<Cent> [||] |]
             45<OffsetDay>, [| ActualPayment.QuickConfirmed 1540_00L<Cent> |]
-        |]
+        ]
 
         let actual =
             voption {
@@ -663,19 +660,18 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map [
             6<OffsetDay>, [| ActualPayment.QuickFailed 2_00L<Cent> [||] |]
-            16<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
-            16<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
-        |]
+            16<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent>; ActualPayment.QuickConfirmed 97_01L<Cent> |]
+        ]
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
 
         let (rp: RescheduleParameters) = {
             FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
-            |]
+            ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargesHolidays = [||]
@@ -683,9 +679,9 @@ module EdgeCaseTests =
         }
 
         let result = reschedule sp rp actualPayments
-        result |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest007.md" false))
+        result |> ValueOption.iter(snd >> _.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest007.md" false))
 
-        let actual = result |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let actual = result |> ValueOption.map (snd >> _.ScheduleItems >> Map.maxKeyValue)
 
         let expected = ValueSome (88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -753,19 +749,18 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map [
             6<OffsetDay>, [| ActualPayment.QuickWriteOff 42_00L<Cent> |]
-            16<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
-            16<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
-        |]
+            16<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent>; ActualPayment.QuickConfirmed 97_01L<Cent> |]
+        ]
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
 
         let (rp: RescheduleParameters) = {
             FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
-            PaymentSchedule = IrregularSchedule <| Map.ofArray [|
+            PaymentSchedule = IrregularSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
-            |]
+            ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargesHolidays = [||]
@@ -773,9 +768,9 @@ module EdgeCaseTests =
         }
 
         let result = reschedule sp rp actualPayments
-        result |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest008.md" false))
+        result |> ValueOption.iter(snd >> _.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest008.md" false))
 
-        let actual = result |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let actual = result |> ValueOption.map (snd >> _.ScheduleItems >> Map.maxKeyValue)
 
         let expected = ValueSome (88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -843,10 +838,10 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArray [|
+        let actualPayments = Map [
             5<OffsetDay>, [| ActualPayment.QuickConfirmed 111_00L<Cent> |]
             21<OffsetDay>, [| ActualPayment.QuickConfirmed 181_01L<Cent> |]
-        |]
+        ]
 
         let schedule =
             actualPayments

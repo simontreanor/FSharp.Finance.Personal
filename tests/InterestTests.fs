@@ -452,7 +452,7 @@ module InterestTests =
             let sp = scheduleParameters2
 
             let actualPayments =
-                [|
+                Map [
                     31<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
                     61<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
                     92<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
@@ -465,8 +465,7 @@ module InterestTests =
                     306<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
                     337<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
                     365<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let schedule =
                 actualPayments

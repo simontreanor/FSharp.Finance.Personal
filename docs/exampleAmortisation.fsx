@@ -73,14 +73,13 @@ let scheduleParameters =
     }
 
 let actualPayments =
-    [|
+    Map [
         4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
         35<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
         66<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
         94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
         125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-    |]
-    |> Map.ofArray
+    ]
 
 let amortisationSchedule =
     actualPayments
@@ -96,7 +95,7 @@ It is possible to format the `Items` property as an HTML table:
 
 let html =
     amortisationSchedule
-    |> ValueOption.map (_.ScheduleItems >> generateHtmlFromArray None)
+    |> ValueOption.map (_.ScheduleItems >> generateHtmlFromMap None)
     |> ValueOption.defaultValue ""
 
 $"""<div style="overflow-x: auto;">{html}</div>"""

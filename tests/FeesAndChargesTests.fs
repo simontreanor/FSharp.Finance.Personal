@@ -64,18 +64,16 @@ module FeesAndChargesTests =
             }
 
             let actualPayments =
-                [|
+                Map [
                     4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
                     35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
                     94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
                     125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let schedule =
                 actualPayments
@@ -155,18 +153,16 @@ module FeesAndChargesTests =
             }
 
             let actualPayments =
-                [|
+                Map [
                     4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
                     35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
                     94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
                     125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let schedule =
                 actualPayments
@@ -246,18 +242,16 @@ module FeesAndChargesTests =
             }
 
             let actualPayments =
-                [|
+                Map [
                     4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
                     35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
                     70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
                     94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
                     125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let schedule =
                 actualPayments

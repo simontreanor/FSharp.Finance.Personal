@@ -418,13 +418,12 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 2<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 4<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 140<OffsetDay>, [| ActualPayment.QuickConfirmed (491_53L<Cent> * 3L) |]
                 143<OffsetDay>, [| ActualPayment.QuickConfirmed -280_64L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -504,10 +503,9 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 0<OffsetDay>, [| ActualPayment.QuickConfirmed 1500_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -675,13 +673,12 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 2<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 4<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 140<OffsetDay>, [| ActualPayment.QuickConfirmed (491_53L<Cent> * 3L) |]
                 143<OffsetDay>, [| ActualPayment.QuickConfirmed -280_83L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -762,12 +759,11 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 14<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 44<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 75<OffsetDay>, [| ActualPayment.QuickConfirmed 400_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -849,12 +845,11 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 14<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 44<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
                 75<OffsetDay>, [| ActualPayment.QuickConfirmed 400_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -936,14 +931,13 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 14<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
                 44<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
                 75<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
                 106<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
                 134<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1025,10 +1019,9 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 0<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1083,7 +1076,7 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
                 23<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
                 31<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
@@ -1108,8 +1101,7 @@ module ActualPaymentTests =
                 171<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
                 177<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
                 185<OffsetDay>, [| ActualPayment.QuickConfirmed 278_33L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1162,10 +1154,9 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1218,11 +1209,10 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
                 20<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1275,12 +1265,11 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
                 20<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
                 27<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1333,12 +1322,11 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_89L<Cent> |]
                 20<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
                 27<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1391,12 +1379,11 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_89L<Cent> |]
                 20<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
                 27<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1445,13 +1432,12 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 16<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
                 46<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
                 77<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
                 107<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -1500,10 +1486,9 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 28<OffsetDay>, [| ActualPayment.QuickConfirmed 35_48L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments

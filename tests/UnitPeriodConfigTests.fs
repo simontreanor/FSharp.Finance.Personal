@@ -14,6 +14,7 @@ module UnitPeriodConfigTests =
     open DateDay
     open FeesAndCharges
     open Formatting
+    open MapExtension
     open PaymentSchedule
     open Percentages
     open Quotes
@@ -95,41 +96,23 @@ module UnitPeriodConfigTests =
                 }
             
             let actualPayments =
-                [|
+                Map [
                     8<OffsetDay>, [| ActualPayment.QuickConfirmed 21700L<Cent> |]
-                    22<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    22<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    22<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    22<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
                     25<OffsetDay>, [| ActualPayment.QuickConfirmed 21700L<Cent> |]
-                    39<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    39<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    39<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    45<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    45<OffsetDay>, [| ActualPayment.QuickConfirmed 21700L<Cent> |]
-                    50<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    50<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    50<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    53<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    53<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    53<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    39<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    45<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickConfirmed 21700L<Cent> |]
+                    50<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    53<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
                     56<OffsetDay>, [| ActualPayment.QuickConfirmed 21700L<Cent> |]
-                    67<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    67<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    67<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    73<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    73<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    73<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    78<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    78<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    78<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    79<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    79<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
-                    79<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    67<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    73<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    78<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
+                    79<OffsetDay>, [| ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||]; ActualPayment.QuickFailed 21700L<Cent> [||] |]
                     274<OffsetDay>, [| ActualPayment.QuickFailed 26036L<Cent> [||] |]
                     302<OffsetDay>, [| ActualPayment.QuickFailed 26036L<Cent> [||] |]
                     330<OffsetDay>, [| ActualPayment.QuickConfirmed 21700L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let actual =
                 voption {
@@ -178,28 +161,22 @@ module UnitPeriodConfigTests =
             }
 
             let actualPayments =
-                [|
+                Map [
                     6<OffsetDay>, [| ActualPayment.QuickConfirmed 17275L<Cent> |]
                     21<OffsetDay>, [| ActualPayment.QuickConfirmed 17275L<Cent> |]
                     35<OffsetDay>, [| ActualPayment.QuickConfirmed 17275L<Cent> |]
-                    49<OffsetDay>, [| ActualPayment.QuickFailed 17275L<Cent> [||] |]
-                    49<OffsetDay>, [| ActualPayment.QuickFailed 17275L<Cent> [||] |]
+                    49<OffsetDay>, [| ActualPayment.QuickFailed 17275L<Cent> [||]; ActualPayment.QuickFailed 17275L<Cent> [||] |]
                     50<OffsetDay>, [| ActualPayment.QuickConfirmed 17275L<Cent> |]
                     64<OffsetDay>, [| ActualPayment.QuickConfirmed 17275L<Cent> |]
                     80<OffsetDay>, [| ActualPayment.QuickConfirmed 17275L<Cent> |]
                     94<OffsetDay>, [| ActualPayment.QuickConfirmed 17488L<Cent> |]
-                    108<OffsetDay>, [| ActualPayment.QuickFailed 17488L<Cent> [||] |]
-                    108<OffsetDay>, [| ActualPayment.QuickFailed 17488L<Cent> [||] |]
+                    108<OffsetDay>, [| ActualPayment.QuickFailed 17488L<Cent> [||]; ActualPayment.QuickFailed 17488L<Cent> [||] |]
                     109<OffsetDay>, [| ActualPayment.QuickFailed 17488L<Cent> [||] |]
-                    111<OffsetDay>, [| ActualPayment.QuickFailed 17701L<Cent> [||] |]
-                    111<OffsetDay>, [| ActualPayment.QuickFailed 17701L<Cent> [||] |]
-                    112<OffsetDay>, [| ActualPayment.QuickFailed 17772L<Cent> [||] |]
-                    112<OffsetDay>, [| ActualPayment.QuickFailed 17772L<Cent> [||] |]
-                    112<OffsetDay>, [| ActualPayment.QuickConfirmed 17772L<Cent> |]
+                    111<OffsetDay>, [| ActualPayment.QuickFailed 17701L<Cent> [||]; ActualPayment.QuickFailed 17701L<Cent> [||] |]
+                    112<OffsetDay>, [| ActualPayment.QuickFailed 17772L<Cent> [||]; ActualPayment.QuickFailed 17772L<Cent> [||]; ActualPayment.QuickConfirmed 17772L<Cent> |]
                     122<OffsetDay>, [| ActualPayment.QuickConfirmed 17488L<Cent> |]
                     128<OffsetDay>, [| ActualPayment.QuickConfirmed 23521L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let actual =
                 voption {
@@ -248,45 +225,33 @@ module UnitPeriodConfigTests =
             }
 
             let actualPayments =
-                [|
-                    13<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    13<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                Map [
+                    13<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     14<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    16<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    16<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    16<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     17<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     19<OffsetDay>, [| ActualPayment.QuickConfirmed 17494L<Cent> |]
-                    27<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    27<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    27<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     28<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    30<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    30<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    30<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     31<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    33<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    33<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    33<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     34<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     36<OffsetDay>, [| ActualPayment.QuickConfirmed 17494L<Cent> |]
-                    41<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    41<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    41<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     42<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    44<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    44<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    44<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     45<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    47<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    47<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    47<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     48<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    55<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    55<OffsetDay>, [| ActualPayment.QuickConfirmed 17494L<Cent> |]
+                    55<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickConfirmed 17494L<Cent> |]
                     56<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    58<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    58<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    58<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     59<OffsetDay>, [| ActualPayment.QuickConfirmed 17494L<Cent> |]
-                    69<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    69<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    69<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     70<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     72<OffsetDay>, [| ActualPayment.QuickConfirmed 17494L<Cent> |]
-                    83<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
-                    83<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
+                    83<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||]; ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     84<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     86<OffsetDay>, [| ActualPayment.QuickConfirmed 17620L<Cent> |]
                     97<OffsetDay>, [| ActualPayment.QuickConfirmed 17494L<Cent> |]
@@ -297,8 +262,7 @@ module UnitPeriodConfigTests =
                     126<OffsetDay>, [| ActualPayment.QuickFailed 17494L<Cent> [||] |]
                     128<OffsetDay>, [| ActualPayment.QuickConfirmed 17721L<Cent> |]
                     132<OffsetDay>, [| ActualPayment.QuickConfirmed 19995L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let actual =
                 voption {
@@ -347,7 +311,7 @@ module UnitPeriodConfigTests =
             }
 
             let actualPayments =
-                [|
+                Map [
                     12<OffsetDay>, [| ActualPayment.QuickConfirmed 13465L<Cent> |]
                     26<OffsetDay>, [| ActualPayment.QuickConfirmed 13465L<Cent> |]
                     41<OffsetDay>, [| ActualPayment.QuickConfirmed 13465L<Cent> |]
@@ -358,8 +322,7 @@ module UnitPeriodConfigTests =
                     117<OffsetDay>, [| ActualPayment.QuickConfirmed 13695L<Cent> |]
                     127<OffsetDay>, [| ActualPayment.QuickConfirmed 13465L<Cent> |]
                     134<OffsetDay>, [| ActualPayment.QuickConfirmed 15560L<Cent> |]
-                |]
-                |> Map.ofArray
+                ]
 
             let actual =
                 voption {
@@ -375,7 +338,7 @@ module UnitPeriodConfigTests =
         let ``5) Checking that the fees refund behaves correctly`` () =
             let startDate = Date(2023, 1, 16)
             let originalScheduledPayments =
-                [|
+                Map [
                     4<OffsetDay>, ScheduledPayment.Quick (ValueSome 11859L<Cent>) ValueNone
                     11<OffsetDay>, ScheduledPayment.Quick (ValueSome 11859L<Cent>) ValueNone
                     18<OffsetDay>, ScheduledPayment.Quick (ValueSome 11859L<Cent>) ValueNone
@@ -401,8 +364,7 @@ module UnitPeriodConfigTests =
                     158<OffsetDay>, ScheduledPayment.Quick (ValueSome 11859L<Cent>) ValueNone
                     165<OffsetDay>, ScheduledPayment.Quick (ValueSome 11859L<Cent>) ValueNone
                     172<OffsetDay>, ScheduledPayment.Quick (ValueSome 11846L<Cent>) ValueNone
-                |]
-                |> Map.ofArray
+                ]
 
             let sp = {
                 AsOfDate = startDate
@@ -456,7 +418,7 @@ module UnitPeriodConfigTests =
                     201<OffsetDay>, [| ActualPayment.QuickConfirmed 12489L<Cent> |]
                     234<OffsetDay>, [| ActualPayment.QuickConfirmed 12489L<Cent> |]
                 |]
-                |> Map.ofArray
+                |> Map.ofArrayWithArrayMerge
 
             let actual =
                 voption {

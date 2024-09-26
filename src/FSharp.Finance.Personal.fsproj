@@ -16,6 +16,7 @@
     <Compile Include="Calculation.fs" />
     <Compile Include="Percentages.fs" />
     <Compile Include="Array.fs" />
+    <Compile Include="Map.fs" />
     <Compile Include="Currency.fs" />
     <Compile Include="Formatting.fs" />
     <Compile Include="Amount.fs" />

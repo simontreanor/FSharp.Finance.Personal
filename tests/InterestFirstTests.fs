@@ -114,11 +114,10 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9) }
 
         let actualPayments =
-            [|
+            Map [
                 10<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |] //normal
                 17<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |] //all
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -134,14 +133,13 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actualPayments =
-            [|
+            Map [
                 1<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 2<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 3<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 4<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 5<OffsetDay>, [| ActualPayment.QuickConfirmed 367_72L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -165,12 +163,11 @@ module InterestFirstTests =
         // 700 over 108 days with 4 payments, paid on 1ot 2fewdayslate last2 in one go 2months late
 
         let actualPayments =
-            [|
+            Map [
                 18<OffsetDay>, [| ActualPayment.QuickConfirmed 294_91L<Cent> |]
                 35<OffsetDay>, [| ActualPayment.QuickConfirmed 294_91L<Cent> |]
                 168<OffsetDay>, [| ActualPayment.QuickConfirmed 810_18L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -194,11 +191,10 @@ module InterestFirstTests =
         // 700 over 108 days with 4 payments, paid on 1ot 2fewdayslate last2 in one go 2months late
 
         let actualPayments =
-            [|
+            Map [
                 18<OffsetDay>, [| ActualPayment.QuickConfirmed 294_91L<Cent> |]
                 35<OffsetDay>, [| ActualPayment.QuickConfirmed 294_91L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -214,14 +210,13 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actualPayments =
-            [|
+            Map [
                 10<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 41<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 71<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 102<OffsetDay>, [| ActualPayment.QuickConfirmed 367_73L<Cent> |]
                 132<OffsetDay>, [| ActualPayment.QuickConfirmed 367_72L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -237,10 +232,9 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
 
         let actualPayments =
-            [|
+            Map [
                 1<OffsetDay>, [| ActualPayment.QuickConfirmed 1007_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -256,10 +250,9 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
 
         let actualPayments =
-            [|
+            Map [
                 1<OffsetDay>, [| ActualPayment.QuickConfirmed 1007_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -275,10 +268,9 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
 
         let actualPayments =
-            [|
+            Map [
                 10<OffsetDay>, [| ActualPayment.QuickConfirmed 1000_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -294,14 +286,13 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
-            [|
+            Map [
                 (Date(2022,  4, 10) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 198_40L<Cent> |]
                 (Date(2022,  5, 14) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 198_40L<Cent> |]
                 (Date(2022,  6, 10) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 198_40L<Cent> |]
                 (Date(2022,  6, 17) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 198_40L<Cent> |]
                 (Date(2022,  7, 15) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 204_80L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -317,13 +308,12 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
-            [|
+            Map [
                 (Date(2023,  7, 16) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed  88_00L<Cent> |]
                 (Date(2023, 10, 13) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 126_00L<Cent> |]
                 (Date(2023, 10, 17) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed  98_00L<Cent> |]
                 (Date(2023, 10, 18) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed  88_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -339,13 +329,12 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; PaymentSchedule = RegularSchedule(UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }) }
 
         let actualPayments =
-            [|
+            Map [
                 (Date(2023,  7, 16) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed  88_00L<Cent> |]
                 (Date(2023, 10, 13) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 126_00L<Cent> |]
                 (Date(2023, 10, 17) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed  98_00L<Cent> |]
                 (Date(2023, 10, 18) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.QuickConfirmed 100_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -361,11 +350,9 @@ module InterestFirstTests =
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 1000 }
 
         let actualPayments =
-            [|
-                1<OffsetDay>, [| ActualPayment.QuickConfirmed 1007_00L<Cent> |]
-                1<OffsetDay>, [| ActualPayment.QuickConfirmed 2_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            Map [
+                1<OffsetDay>, [| ActualPayment.QuickConfirmed 1007_00L<Cent>; ActualPayment.QuickConfirmed 2_00L<Cent> |]
+            ]
 
         let schedule =
             actualPayments
@@ -415,7 +402,7 @@ module InterestFirstTests =
     //             Principal = 740_00L<Cent>
     //             PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentAmount = 293_82L<Cent> } |]
     //             Parameters.Interest.RateOnNegativeBalance = ValueNone
-    //             // PaymentSchedule = IrregularSchedule [|
+    //             // PaymentSchedule = IrregularSchedule <| Map [
     //             //     // 14<OffsetDay>, CustomerPayment.ScheduledOriginal 33004L<Cent>
     //             //     // 37<OffsetDay>, CustomerPayment.ScheduledOriginal 33004L<Cent>
     //             //     // 68<OffsetDay>, CustomerPayment.ScheduledOriginal 33004L<Cent>
@@ -474,11 +461,11 @@ module InterestFirstTests =
     //             //     343<OffsetDay>, CustomerPayment.ScheduledRescheduled 3500L<Cent>
     //             //     350<OffsetDay>, CustomerPayment.ScheduledRescheduled 3500L<Cent>
     //             //     357<OffsetDay>, CustomerPayment.ScheduledRescheduled 4000L<Cent>
-    //             // |]
+    //             // ]
     //         }
 
     //     let actualPayments =
-    //         [|
+    //         Map [
     //             // 14<OffsetDay>, [| ActualPayment.QuickFailed 33004L<Cent> [||] |]
     //             // 14<OffsetDay>, [| ActualPayment.QuickFailed 33004L<Cent> [||] |]
     //             // 14<OffsetDay>, [| ActualPayment.QuickFailed 33004L<Cent> [||] |]
@@ -599,8 +586,7 @@ module InterestFirstTests =
     //             308<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
     //             314<OffsetDay>, [| ActualPayment.QuickConfirmed 25000L<Cent> |]
     //             315<OffsetDay>, [| ActualPayment.QuickConfirmed 1L<Cent> |]
-    //         |]
-    //         |> Map.ofArray
+    //         ]
 
     //     let schedule =
     //         actualPayments
@@ -623,18 +609,15 @@ module InterestFirstTests =
             }
 
         let actualPayments =
-            [|
+            Map [
                 42<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
                 56<OffsetDay>, [| ActualPayment.QuickConfirmed 5000L<Cent> |]
                 133<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
-                143<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
-                143<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
+                143<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent>; ActualPayment.QuickConfirmed 3500L<Cent> |]
                 147<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
-                154<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
-                154<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
+                154<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent>; ActualPayment.QuickConfirmed 3500L<Cent> |]
                 164<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
-                175<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
-                175<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
+                175<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent>; ActualPayment.QuickConfirmed 3500L<Cent> |]
                 182<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
                 189<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
                 203<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
@@ -655,8 +638,7 @@ module InterestFirstTests =
                 301<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
                 308<OffsetDay>, [| ActualPayment.QuickConfirmed 3500L<Cent> |]
                 314<OffsetDay>, [| ActualPayment.QuickConfirmed 25000L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -703,10 +685,9 @@ module InterestFirstTests =
             }
 
         let actualPayments =
-            [|
+            Map [
                 20<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -732,20 +713,17 @@ module InterestFirstTests =
             }
 
         let actualPayments =
-            [|
+            Map [
                 34<OffsetDay>, [| ActualPayment.QuickFailed 5560L<Cent> [||] |]
                 35<OffsetDay>, [| ActualPayment.QuickConfirmed 5571L<Cent> |]
                 60<OffsetDay>, [| ActualPayment.QuickConfirmed 5560L<Cent> |]
                 90<OffsetDay>, [| ActualPayment.QuickConfirmed 5560L<Cent> |]
                 119<OffsetDay>, [| ActualPayment.QuickConfirmed 5560L<Cent> |]
                 152<OffsetDay>, [| ActualPayment.QuickConfirmed 5560L<Cent> |]
-                214<OffsetDay>, [| ActualPayment.QuickConfirmed 5857L<Cent> |]
-                214<OffsetDay>, [| ActualPayment.QuickConfirmed 5560L<Cent> |]
-                273<OffsetDay>, [| ActualPayment.QuickConfirmed 5835L<Cent> |]
-                273<OffsetDay>, [| ActualPayment.QuickConfirmed 5560L<Cent> |]
+                214<OffsetDay>, [| ActualPayment.QuickConfirmed 5857L<Cent>; ActualPayment.QuickConfirmed 5560L<Cent> |]
+                273<OffsetDay>, [| ActualPayment.QuickConfirmed 5835L<Cent>; ActualPayment.QuickConfirmed 5560L<Cent> |]
                 305<OffsetDay>, [| ActualPayment.QuickConfirmed 16678L<Cent>  |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -770,26 +748,21 @@ module InterestFirstTests =
             }
 
         let actualPayments =
-            [|
+            Map [
                 32<OffsetDay>, [| ActualPayment.QuickConfirmed 50000L<Cent> |]
                 63<OffsetDay>, [| ActualPayment.QuickConfirmed 50000L<Cent> |]
-                148<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||] |]
-                148<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
+                148<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||]; ActualPayment.QuickConfirmed 20000L<Cent> |]
                 181<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
                 209<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||] |]
                 212<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
-                242<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||] |]
-                242<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
+                242<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||]; ActualPayment.QuickConfirmed 20000L<Cent> |]
                 273<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
                 304<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
-                334<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||] |]
-                334<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
+                334<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||]; ActualPayment.QuickConfirmed 20000L<Cent> |]
                 365<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
                 395<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
-                426<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||] |]
-                426<OffsetDay>, [| ActualPayment.QuickConfirmed 20000L<Cent> |]
-            |]
-            |> Map.ofArray
+                426<OffsetDay>, [| ActualPayment.QuickFailed 20000L<Cent> [||]; ActualPayment.QuickConfirmed 20000L<Cent> |]
+            ]
 
         let schedule =
             actualPayments
@@ -815,7 +788,7 @@ module InterestFirstTests =
             }
 
         let actualPayments =
-            [|
+            Map [
                 26<OffsetDay>, [| ActualPayment.QuickConfirmed 16800L<Cent> |]
                 85<OffsetDay>, [| ActualPayment.QuickConfirmed 8400L<Cent> |]
                 189<OffsetDay>, [| ActualPayment.QuickConfirmed 546L<Cent> |]
@@ -855,8 +828,7 @@ module InterestFirstTests =
                 1253<OffsetDay>, [| ActualPayment.QuickConfirmed 911L<Cent> |]
                 1290<OffsetDay>, [| ActualPayment.QuickConfirmed 911L<Cent> |]
                 1316<OffsetDay>, [| ActualPayment.QuickConfirmed 911L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments
@@ -881,7 +853,7 @@ module InterestFirstTests =
             }
 
         let actualPayments =
-            [|
+            Map [
                 26<OffsetDay>, [| ActualPayment.QuickConfirmed 16800L<Cent> |]
                 85<OffsetDay>, [| ActualPayment.QuickConfirmed 8400L<Cent> |]
                 189<OffsetDay>, [| ActualPayment.QuickConfirmed 546L<Cent> |]
@@ -921,8 +893,7 @@ module InterestFirstTests =
                 1253<OffsetDay>, [| ActualPayment.QuickConfirmed 911L<Cent> |]
                 1290<OffsetDay>, [| ActualPayment.QuickConfirmed 911L<Cent> |]
                 1316<OffsetDay>, [| ActualPayment.QuickConfirmed 911L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let schedule =
             actualPayments

@@ -160,12 +160,12 @@ module Interest =
             ValueNone
         else
             voption {
-                let advanceMap = [| (1, decimal principal * 1m<Cent>) |] |> Map.ofArray
+                let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
                 let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
                 let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
                 let advanceCount = 1
                 let paymentCount = payments |> Array.length |> min settlementPeriod
-                let advanceIntervalMap = [| (1, settlementPeriod) |] |> Map.ofArray
+                let advanceIntervalMap = Map [ (1, settlementPeriod) ]
                 let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
                 let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> ValueOption.map(fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)) |> ValueOption.defaultValue sf
                 let! wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap

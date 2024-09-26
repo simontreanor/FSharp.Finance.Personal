@@ -60,12 +60,11 @@ module SettlementTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 24<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 55<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 86<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let actual =
             voption {
@@ -146,12 +145,11 @@ module SettlementTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 24<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 55<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 86<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let actual =
             voption {
@@ -232,13 +230,12 @@ module SettlementTests =
         }
 
         let actualPayments =
-            [|
+            Map [
                 24<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 55<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 86<OffsetDay>, [| ActualPayment.QuickConfirmed 100_53L<Cent> |]
                 115<OffsetDay>, [| ActualPayment.QuickConfirmed 50_00L<Cent> |]
-            |]
-            |> Map.ofArray
+            ]
 
         let actual =
             voption {
