@@ -775,7 +775,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest009.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 181<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 181<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -870,7 +871,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest010.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 388<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 388<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -1230,7 +1232,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013b.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 134<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 134<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -1320,7 +1323,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013c.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 135<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 135<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -1410,7 +1414,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013d.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 138<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 138<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -1592,7 +1597,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014b.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 134<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 134<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -1683,7 +1689,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014c.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 135<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 135<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
@@ -1774,7 +1781,8 @@ module QuoteTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest015.md" false
-                return quote.QuoteResult, quote.RevisedSchedule.ScheduleItems |> Map.tryFind 461<OffsetDay> |> toValueOption
+                let! item = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 461<OffsetDay> |> toValueOption
+                return quote.QuoteResult, item
             }
 
         let expected = ValueSome (
