@@ -33,24 +33,58 @@ module Rescheduling =
 
     /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
     let reschedule sp (rp: RescheduleParameters) actualPayments =
-        // configure the parameters for the new schedule
-        let spNew =
-            { sp with
-                PaymentSchedule = rp.PaymentSchedule
-                FeesAndCharges =
-                    { sp.FeesAndCharges with
-                        FeesSettlementRefund = rp.FeesSettlementRefund
-                        ChargesHolidays = rp.ChargesHolidays
-                    }
-                Interest =
-                    { sp.Interest with
-                        InitialGracePeriod = 0<DurationDay>
-                        PromotionalRates = rp.PromotionalInterestRates
-                        RateOnNegativeBalance = rp.RateOnNegativeBalance
-                    }
-            }
-        // create the new amortiation schedule
-        Amortisation.generate spNew rp.IntendedPurpose ScheduleType.Rescheduled true actualPayments
+        voption {
+            // get the settlement quote
+            let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
+            // create a new payment schedule either by auto-generating it or using manual payments
+            let newPaymentSchedule =
+                match rp.PaymentSchedule with
+                | RegularSchedule _ ->
+                    let schedule = PaymentSchedule.calculate BelowZero { sp with PaymentSchedule = rp.PaymentSchedule }
+                    match schedule with
+                    | ValueSome s ->
+                        s.Items
+                        |> Array.filter(fun si -> si.Payment.IsSome)
+                        |> Array.map(fun si -> si.Day, ScheduledPayment.Quick ValueNone (ValueSome si.Payment.Value))
+                        |> Map.ofArray
+                    | ValueNone ->
+                        Map.empty
+                | RegularFixedSchedule regularFixedSchedules ->
+                    regularFixedSchedules
+                    |> Array.map(fun rfs ->
+                        UnitPeriod.generatePaymentSchedule rfs.PaymentCount ValueNone UnitPeriod.Direction.Forward rfs.UnitPeriodConfig
+                        |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, ScheduledPayment.Quick ValueNone (ValueSome rfs.PaymentAmount))
+                    )
+                    |> Array.concat
+                    |> Map.ofArray
+                | IrregularSchedule payments ->
+                    payments
+            // append the new schedule to the old schedule up to the point of settlement
+            let oldPaymentSchedule =
+                quote.RevisedSchedule.ScheduleItems
+                |> Map.filter(fun _ si -> si.ScheduledPayment.IsSome)
+                |> Map.filter(fun _ si -> si.OffsetDate < sp.AsOfDate)
+                |> Map.map(fun _ si -> si.ScheduledPayment)
+            // configure the parameters for the new schedule
+            let spNew =
+                { sp with
+                    PaymentSchedule = [| Map.toArray oldPaymentSchedule; Map.toArray newPaymentSchedule |] |> Array.concat |> Map.ofArray |> IrregularSchedule
+                    FeesAndCharges =
+                        { sp.FeesAndCharges with
+                            FeesSettlementRefund = rp.FeesSettlementRefund
+                            ChargesHolidays = rp.ChargesHolidays
+                        }
+                    Interest =
+                        { sp.Interest with
+                            InitialGracePeriod = 0<DurationDay>
+                            PromotionalRates = rp.PromotionalInterestRates
+                            RateOnNegativeBalance = rp.RateOnNegativeBalance
+                        }
+                }
+            // create the new amortiation schedule
+            let! rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose ScheduleType.Rescheduled true actualPayments
+            return quote.RevisedSchedule, rescheduledSchedule
+        }
 
     /// parameters for creating a rolled-over schedule
     [<RequireQualifiedAccess>]
@@ -111,5 +145,5 @@ module Rescheduling =
                 }
             // create the new amortisation schedule
             let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduleType.Original true Map.empty // sic: `ScheduledPaymentType.Original` is correct here as this is a new schedule
-            return rescheduledSchedule
+            return quote.RevisedSchedule, rescheduledSchedule
         }
