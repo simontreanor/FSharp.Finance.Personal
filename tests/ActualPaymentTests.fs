@@ -8,36 +8,37 @@ open FSharp.Finance.Personal
 module ActualPaymentTests =
 
     open Amortisation
-    open ArrayExtension
     open Calculation
     open Currency
     open CustomerPayments
     open DateDay
     open FeesAndCharges
+    open Formatting
     open PaymentSchedule
     open Percentages
+    open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
         Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
         Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
     }
 
-    let quickActualPayments days levelPayment finalPayment =
+    let quickActualPayments (days: int array) levelPayment finalPayment =
         days
         |> Array.rev
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
-            last |> Array.map(fun d -> CustomerPayment.ActualConfirmed (d * 1<OffsetDay>) finalPayment)
-            rest |> Array.map(fun d -> CustomerPayment.ActualConfirmed (d * 1<OffsetDay>) levelPayment)
+            last |> Array.map(fun d -> (d * 1<OffsetDay>), [| ActualPayment.QuickConfirmed finalPayment |])
+            rest |> Array.map(fun d -> (d * 1<OffsetDay>), [| ActualPayment.QuickConfirmed levelPayment |])
         |]
         |> Array.concat
         |> Array.rev
+        |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentAmount contractualInterest interestAdjustment interestPortion principalPortion = ValueSome {
+    let quickExpectedFinalItem date offsetDay paymentAmount contractualInterest interestAdjustment interestPortion principalPortion = ValueSome (offsetDay, {
         OffsetDate = date
-        OffsetDay = offsetDay
         Advances = [||]
-        ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original paymentAmount; Metadata = Map.empty }
+        ScheduledPayment = ScheduledPayment.Quick (ValueSome paymentAmount) ValueNone
         Window = 5
         PaymentDue = paymentAmount
         ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentAmount; Metadata = Map.empty } |]
@@ -61,7 +62,7 @@ module ActualPaymentTests =
         ChargesBalance = 0L<Cent>
         SettlementFigure = 0L<Cent>
         FeesRefundIfSettled = 0L<Cent>
-    }
+    })
 
     [<Fact>]
     let ``1) Standard schedule with month-end payments from 4 days and paid off on time`` () =
@@ -109,9 +110,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest001.md" false))
+        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest001.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
         actual |> should equal expected
 
@@ -161,9 +162,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest002.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest002.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
         actual |> should equal expected
 
@@ -213,9 +214,9 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest003.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest003.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
         let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
         actual |> should equal expected
 
@@ -265,14 +266,13 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest004.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest004.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let expected = ValueSome (140<OffsetDay>, {
             OffsetDate = Date(2023, 3, 21)
-            OffsetDay = 140<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>; Metadata = Map.empty } |]
@@ -296,7 +296,7 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -345,14 +345,13 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest005.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest005.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let expected = ValueSome (140<OffsetDay>, {
             OffsetDate = Date(2023, 3, 21)
-            OffsetDay = 140<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>; Metadata = Map.empty } |]
@@ -376,7 +375,7 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = -280_64L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -419,25 +418,26 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 2<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 4<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 140<OffsetDay> (491_53L<Cent> * 3L)
-            CustomerPayment.ActualConfirmed 143<OffsetDay> -280_64L<Cent>
-        |]
+        let actualPayments =
+            [|
+                2<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                4<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                140<OffsetDay>, [| ActualPayment.QuickConfirmed (491_53L<Cent> * 3L) |]
+                143<OffsetDay>, [| ActualPayment.QuickConfirmed -280_64L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest006.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest006.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let expected = ValueSome (143<OffsetDay>, {
             OffsetDate = Date(2023, 3, 24)
-            OffsetDay = 143<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>; Metadata = Map.empty } |]
@@ -461,7 +461,7 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -504,22 +504,24 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 0<OffsetDay> 1500_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                0<OffsetDay>, [| ActualPayment.QuickConfirmed 1500_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest007.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest007.md" false))
 
-        let actual = schedule |> ValueOption.bind (_.ScheduleItems >> (Array.vTryLastBut 5))
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.bind (_.ScheduleItems >> Map.tryFind 0<OffsetDay> >> toValueOption)
+
+        let expected = ValueSome ({
             OffsetDate = Date(2022, 11, 1)
-            OffsetDay = 0<OffsetDay>
             Advances = [| 1500_00L<Cent> |]
-            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 0
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>; Metadata = Map.empty } |]
@@ -543,7 +545,7 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -587,24 +589,25 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 14<OffsetDay> 243_86L<Cent>
-            CustomerPayment.ActualConfirmed 28<OffsetDay> 243_86L<Cent>
-            CustomerPayment.ActualConfirmed 42<OffsetDay> 243_86L<Cent>
-        |]
+        let actualPayments =
+            [|
+                14<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
+                28<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
+                42<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest008.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest008.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let expected = (154<OffsetDay>, ValueSome {
             OffsetDate = startDate.AddDays 154
-            OffsetDay = 154<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 243_66L<Cent>; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.Quick (ValueSome 243_66L<Cent>) ValueNone
             Window = 11
             PaymentDue = 243_66L<Cent>
             ActualPayments = [||]
@@ -628,7 +631,7 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 243_66L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -671,25 +674,27 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 2<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 4<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 140<OffsetDay> (491_53L<Cent> * 3L)
-            CustomerPayment.ActualConfirmed 143<OffsetDay> -280_83L<Cent>
-        |]
+        let actualPayments =
+            [|
+                2<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                4<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                140<OffsetDay>, [| ActualPayment.QuickConfirmed (491_53L<Cent> * 3L) |]
+                143<OffsetDay>, [| ActualPayment.QuickConfirmed -280_83L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest009.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest009.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+
+        let expected = ValueSome (143<OffsetDay>, {
             OffsetDate = Date(2023, 3, 24)
-            OffsetDay = 143<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { OriginalAmount = ValueNone; RescheduledAmount = ValueNone; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>; Metadata = Map.empty } |]
@@ -713,7 +718,7 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
         actual |> should equal expected
 
     [<Fact>]
@@ -756,24 +761,26 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 14<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 44<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 75<OffsetDay> 400_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                14<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                44<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                75<OffsetDay>, [| ActualPayment.QuickConfirmed 400_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest010.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest010.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+
+        let expected = ValueSome (134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
-            OffsetDay = 134<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 491_53L<Cent>; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 491_53L<Cent>
             ActualPayments = [||]
@@ -797,7 +804,8 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 491_53L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
+
         actual |> should equal expected
 
     [<Fact>]
@@ -840,24 +848,26 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 14<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 44<OffsetDay> 491_53L<Cent>
-            CustomerPayment.ActualConfirmed 75<OffsetDay> 400_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                14<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                44<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
+                75<OffsetDay>, [| ActualPayment.QuickConfirmed 400_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest011.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest011.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+
+        let expected = ValueSome (134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
-            OffsetDay = 134<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 491_53L<Cent>; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 491_53L<Cent>
             ActualPayments = [||]
@@ -881,7 +891,8 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 646_62L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
+
         actual |> should equal expected
 
     [<Fact>]
@@ -924,26 +935,28 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 14<OffsetDay> 500_00L<Cent>
-            CustomerPayment.ActualConfirmed 44<OffsetDay> 500_00L<Cent>
-            CustomerPayment.ActualConfirmed 75<OffsetDay> 500_00L<Cent>
-            CustomerPayment.ActualConfirmed 106<OffsetDay> 500_00L<Cent>
-            CustomerPayment.ActualConfirmed 134<OffsetDay> 500_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                14<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                44<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                75<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                106<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                134<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest012.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest012.md" false))
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-        let expected = ValueSome {
+        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+
+        let expected = ValueSome (134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
-            OffsetDay = 134<OffsetDay>
             Advances = [||]
-            ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 491_53L<Cent>; Metadata = Map.empty }
+            ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 457_65L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
@@ -967,7 +980,8 @@ module ActualPaymentTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = -67_93L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        }
+        })
+        
         actual |> should equal expected
 
     [<Fact>]
@@ -1010,18 +1024,22 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 0<OffsetDay> 97_01L<Cent>
-        |]
+        let actualPayments =
+            [|
+                0<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest013.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest013.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> (s.ScheduleItems |> Array.sumBy _.NetEffect) >= sp.Principal)
+        let actual = schedule |> ValueOption.map (fun s -> (s.ScheduleItems |> Map.values |> Seq.sumBy _.NetEffect) >= sp.Principal)
+
         let expected = ValueSome true
+        
         actual |> should equal expected
 
     [<Fact>]
@@ -1064,40 +1082,42 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 13<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 23<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 31<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 38<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 42<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 58<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 67<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 73<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 79<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 86<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 93<OffsetDay> 271_37L<Cent>
-            CustomerPayment.ActualConfirmed 100<OffsetDay> 276_37L<Cent>
-            CustomerPayment.ActualConfirmed 107<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 115<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 122<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 129<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 137<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 143<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 149<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 156<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 166<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 171<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 177<OffsetDay> 278_38L<Cent>
-            CustomerPayment.ActualConfirmed 185<OffsetDay> 278_33L<Cent>
-        |]
+        let actualPayments =
+            [|
+                13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                23<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                31<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                38<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                42<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                58<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                67<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                73<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                79<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                86<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                93<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
+                100<OffsetDay>, [| ActualPayment.QuickConfirmed 276_37L<Cent> |]
+                107<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                115<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                122<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                129<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                137<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                143<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                149<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                156<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                166<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                171<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                177<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
+                185<OffsetDay>, [| ActualPayment.QuickConfirmed 278_33L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest014.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest014.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_27L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_27L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1141,17 +1161,19 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 13<OffsetDay> 5000_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest015.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest015.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_85L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_85L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1195,18 +1217,20 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 13<OffsetDay> 5000_00L<Cent>
-            CustomerPayment.ActualConfirmed 20<OffsetDay> 500_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest016.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest016.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_85L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_85L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1250,19 +1274,21 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 13<OffsetDay> 5000_00L<Cent>
-            CustomerPayment.ActualConfirmed 20<OffsetDay> 500_00L<Cent>
-            CustomerPayment.ActualConfirmed 27<OffsetDay> 500_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                27<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest017.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest017.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_85L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_85L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1306,19 +1332,21 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 13<OffsetDay> 271_89L<Cent>
-            CustomerPayment.ActualPending 20<OffsetDay> 271_89L<Cent>
-            CustomerPayment.ActualPending 27<OffsetDay> 271_89L<Cent>
-        |]
+        let actualPayments =
+            [|
+                13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_89L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
+                27<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest018.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest018.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 111_50L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 111_50L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1362,19 +1390,21 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 13<OffsetDay> 271_89L<Cent>
-            CustomerPayment.ActualPending 20<OffsetDay> 271_89L<Cent>
-            CustomerPayment.ActualPending 27<OffsetDay> 271_89L<Cent>
-        |]
+        let actualPayments =
+            [|
+                13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_89L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
+                27<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest019.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest019.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 222_71L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 222_71L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1414,20 +1444,22 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 16<OffsetDay> 116_00L<Cent>
-            CustomerPayment.ActualConfirmed 46<OffsetDay> 116_00L<Cent>
-            CustomerPayment.ActualConfirmed 77<OffsetDay> 116_00L<Cent>
-            CustomerPayment.ActualConfirmed 107<OffsetDay> 116_00L<Cent>
-        |]
+        let actualPayments =
+            [|
+                16<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
+                46<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
+                77<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
+                107<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest020.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest020.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = ClosedBalance && si.GeneratedPayment = ValueSome -119_88L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = ClosedBalance && si.GeneratedPayment = ValueSome -119_88L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
 
@@ -1437,7 +1469,7 @@ module ActualPaymentTests =
             AsOfDate = Date(2024, 7, 3)
             StartDate = Date(2024, 4, 12)
             Principal = 100_00L<Cent>
-            PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 4, 19); PaymentCount = 4; PaymentAmount= 35_48L<Cent> } |]
+            PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 4, 19); PaymentCount = 4; PaymentAmount= 35_48L<Cent>; ScheduleType = ScheduleType.Original } |]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1467,66 +1499,18 @@ module ActualPaymentTests =
             }
         }
 
-        let actualPayments = [|
-            CustomerPayment.ActualConfirmed 28<OffsetDay> 35_48L<Cent>
-        |]
+        let actualPayments =
+            [|
+                28<OffsetDay>, [| ActualPayment.QuickConfirmed 35_48L<Cent> |]
+            |]
+            |> Map.ofArray
 
         let schedule =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest021.md" false))
+        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/ActualPaymentTest021.md" false))
 
-        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.SettlementFigure = 135_59L<Cent>)
+        let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = 135_59L<Cent>)
         let expected = ValueSome true
         actual |> should equal expected
-
-    // [<Fact>]
-    // let ``22) Partial late payment`` () =
-    //     let sp = {
-    //         AsOfDate = Date(2024, 7, 3)
-    //         StartDate = Date(2024, 4, 12)
-    //         Principal = 100_00L<Cent>
-    //         PaymentSchedule = RegularFixedSchedule [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 4, 19); PaymentCount = 4; PaymentAmount= 35_48L<Cent> } |]
-    //         PaymentOptions = {
-    //             ScheduledPaymentOption = AsScheduled
-    //             CloseBalanceOption = LeaveOpenBalance
-    //         }
-    //         FeesAndCharges = {
-    //             Fees = [||]
-    //             FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-    //             FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-    //             Charges = [||]
-    //             ChargesHolidays = [||]
-    //             ChargesGrouping = OneChargeTypePerDay
-    //             LatePaymentGracePeriod = 0<DurationDay>
-    //         }
-    //         Interest = {
-    //             Method = InterestMethod.Simple
-    //             StandardRate = Interest.Rate.Daily (Percent 0.8m)
-    //             Cap = interestCapExample
-    //             InitialGracePeriod = 0<DurationDay>
-    //             PromotionalRates = [||]
-    //             RateOnNegativeBalance = ValueNone
-    //         }
-    //         Calculation = {
-    //             AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-    //             RoundingOptions = RoundingOptions.recommended
-    //             PaymentTimeout = 0<DurationDay>
-    //             MinimumPayment = NoMinimumPayment
-    //         }
-    //     }
-
-    //     let actualPayments = [|
-    //         CustomerPayment.ActualConfirmed 28<OffsetDay> 20_00L<Cent>
-    //     |]
-
-    //     let schedule =
-    //         actualPayments
-    //         |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
-
-    //     schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/ActualPaymentTest022.md" false))
-
-    //     let actual = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> fun si -> si.BalanceStatus = OpenBalance && si.SettlementFigure = 158_40L<Cent>)
-    //     let expected = ValueSome true
-    //     actual |> should equal expected

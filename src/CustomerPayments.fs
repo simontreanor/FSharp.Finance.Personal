@@ -3,121 +3,81 @@ namespace FSharp.Finance.Personal
 /// categorising the types of incoming payments based on whether they are scheduled, actual or generated
 module CustomerPayments =
 
-    open Calculation
     open Currency
     open DateDay
     open FeesAndCharges
 
     /// any original or rescheduled payment, affecting how any payment due is calculated
-    type ScheduledPaymentInfo =
+    type ScheduledPayment =
         {
-            OriginalAmount: int64<Cent> voption
-            RescheduledAmount: int64<Cent> voption
-            PaymentAmendment: int64<Cent> voption
+            Original: int64<Cent> voption
+            Rescheduled: int64<Cent> voption
+            Adjustment: int64<Cent> voption
+            /// the original simple interest
+            OriginalSimpleInterest: int64<Cent>
+            /// the original, contractually calculated interest
+            ContractualInterest: decimal<Cent>
             Metadata: Map<string, obj>
         }
         with
-            member x.Value =
-                match x.OriginalAmount, x.RescheduledAmount with 
+            /// the total amount of the payment
+            member x.Total =
+                match x.Original, x.Rescheduled with 
                 | _, ValueSome ra -> ra
                 | ValueSome oa, ValueNone -> oa
                 | ValueNone, ValueNone -> 0L<Cent>
-            member x.AmendedValue =
-                x.Value + ValueOption.defaultValue 0L<Cent> x.PaymentAmendment
             member x.IsSome =
-                x.OriginalAmount.IsSome || x.RescheduledAmount.IsSome
+                x.Original.IsSome || x.Rescheduled.IsSome
+            member x.AmendedTotal =
+                x.Total + ValueOption.defaultValue 0L<Cent> x.Adjustment
+            static member DefaultValue =
+                { Original = ValueNone; Rescheduled = ValueNone; Adjustment = ValueNone; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent>; Metadata = Map.empty }
+            static member Quick originalAmount rescheduledAmount =
+                { Original = originalAmount; Rescheduled = rescheduledAmount; Adjustment = ValueNone; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent>; Metadata = Map.empty }
 
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
     type ActualPaymentStatus =
         /// a write-off payment has been applied
-        | WriteOff of WriteOffAmount: int64<Cent>
+        | WriteOff of WriteOff: int64<Cent>
         /// the payment has been initiated but is not yet confirmed
-        | Pending of PendingAmount: int64<Cent>
+        | Pending of Pending: int64<Cent>
         /// the payment had been initiated but was not confirmed within the timeout
-        | TimedOut of TimedOutAmount: int64<Cent>
+        | TimedOut of TimedOut: int64<Cent>
         /// the payment has been confirmed
-        | Confirmed of ConfirmedAmount: int64<Cent>
+        | Confirmed of Confirmed: int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
-        | Failed of FailedAmount: int64<Cent> * Charges: Charge array
+        | Failed of Failed: int64<Cent> * Charges: Charge array
         with
             /// the total amount of the payment
-            static member total = function
+            static member Total = function
                 | WriteOff ap -> ap
                 | Pending ap -> ap
                 | TimedOut _ -> 0L<Cent>
                 | Confirmed ap -> ap
                 | Failed _ -> 0L<Cent>
 
-    type ActualPaymentInfo =
+    type ActualPayment =
         {
             ActualPaymentStatus: ActualPaymentStatus
             Metadata: Map<string, obj>
         }
         with
-            static member total = function { ActualPaymentStatus = aps } -> ActualPaymentStatus.total aps
-
-    /// either an extra scheduled payment (e.g. for a restructured payment plan) or an actual payment made, optionally with charges
-    type CustomerPaymentDetails =
-        /// the amount of any extra scheduled payment due on the current day
-        | ScheduledPayment of ScheduledPayment: ScheduledPaymentInfo
-        /// the amounts of any actual payments made on the current day, with any charges incurred
-        | ActualPayment of ActualPayment: ActualPaymentInfo
-        /// the amounts of any generated payments made on the current day and their type
-        | GeneratedPayment of GeneratedPayment: int64<Cent>
-        with
-            static member total = function
-                | ScheduledPayment spi -> spi.Value
-                | ActualPayment api -> ActualPaymentStatus.total api.ActualPaymentStatus
-                | GeneratedPayment gp -> gp
+            static member total = function { ActualPaymentStatus = aps } -> ActualPaymentStatus.Total aps
+            static member QuickConfirmed amount = { ActualPaymentStatus = ActualPaymentStatus.Confirmed amount; Metadata = Map.empty }
+            static member QuickPending amount = { ActualPaymentStatus = ActualPaymentStatus.Pending amount; Metadata = Map.empty }
+            static member QuickFailed amount charges = { ActualPaymentStatus = ActualPaymentStatus.Failed (amount, charges); Metadata = Map.empty }
+            static member QuickWriteOff amount = { ActualPaymentStatus = ActualPaymentStatus.WriteOff amount; Metadata = Map.empty }
 
     /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
     type CustomerPayment = {
-        /// the day the payment is made, as an offset of days from the start date
-        PaymentDay: int<OffsetDay>
-        /// the details of the payment
-        PaymentDetails: CustomerPaymentDetails
-        /// the original simple interest
-        OriginalSimpleInterest: int64<Cent>
-        /// the original, contractually calculated interest
-        ContractualInterest: decimal<Cent>
+        /// the amount of any extra scheduled payment due on the current day
+        ScheduledPayment: ScheduledPayment voption
+        /// the amounts of any actual payments made on the current day, with any charges incurred
+        ActualPayment: ActualPayment voption
+        /// the amounts of any generated payments made on the current day and their type
+        GeneratedPayment: int64<Cent> voption
      }
-        with
-            static member Scheduled paymentDay originalAmount rescheduledAmount =
-                {
-                    PaymentDay = paymentDay
-                    PaymentDetails = ScheduledPayment { OriginalAmount = originalAmount; RescheduledAmount = rescheduledAmount; PaymentAmendment = ValueNone; Metadata = Map.empty }
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
-                }
-            static member ActualConfirmed paymentDay amount =
-                {
-                    PaymentDay = paymentDay
-                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Confirmed amount; Metadata = Map.empty }
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
-                }
-            static member ActualPending paymentDay amount =
-                {
-                    PaymentDay = paymentDay
-                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Pending amount; Metadata = Map.empty }
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
-                }
-            static member ActualFailed paymentDay amount charges =
-                {
-                    PaymentDay = paymentDay
-                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.Failed (amount, charges); Metadata = Map.empty }
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
-                }
-            static member ActualWriteOff paymentDay amount =
-                {
-                    PaymentDay = paymentDay
-                    PaymentDetails = ActualPayment { ActualPaymentStatus = ActualPaymentStatus.WriteOff amount; Metadata = Map.empty }
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
-                }
  
     /// the status of a payment made by the customer
     [<Struct>]
@@ -155,12 +115,21 @@ module CustomerPayments =
         /// a schedule item generated to show the balances on the as-of date
         | InformationOnly
 
+    /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
+    [<RequireQualifiedAccess; Struct>]
+    type ScheduleType =
+        /// an original schedule
+        | Original
+        /// a schedule based on a previous one
+        | Rescheduled
+
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
     type RegularFixedSchedule = {
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
         PaymentAmount: int64<Cent>
+        ScheduleType: ScheduleType
     }
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
@@ -170,4 +139,4 @@ module CustomerPayments =
         /// a regular schedule based on one or more unit-period configs each with a specific number of payments of a specified amount
         | RegularFixedSchedule of RegularFixedSchedule array
         /// just a bunch of payments
-        | IrregularSchedule of IrregularSchedule: CustomerPayment array
+        | IrregularSchedule of IrregularSchedule: Map<int<OffsetDay>, ScheduledPayment>

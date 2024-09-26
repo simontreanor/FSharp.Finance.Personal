@@ -53,18 +53,18 @@ module Formatting =
     let internal splitPascale s = regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[0].Value}")
 
     /// creates a table header row from a record's fields
-    let formatHtmlTableHeader hideProperties propertyInfos =
+    let formatHtmlTableHeader (indexName: string voption) names =
+        let addIndexHeader, indexOffset = if indexName.IsSome then Array.append [| $"""<th class="ci0">{indexName.Value}</th>""" |], 1 else id, 0
         let thh =
-            propertyInfos
-            |> filterColumns hideProperties
-            |> Array.mapi(fun i pi -> $"""<th class="ci{i}">{splitPascale pi.Name |> (_.Trim().Replace(" ", "&nbsp;"))}</th>""")
+            names
+            |> Array.mapi(fun i name -> $"""<th class="ci{i + indexOffset}">{splitPascale name |> (_.Trim().Replace(" ", "&nbsp;"))}</th>""")
+            |> addIndexHeader
             |> String.concat ""
         $"<thead>{thh}</thead>"
 
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
-    let formatHtmlTableCell item index (propertyInfo: PropertyInfo) =
-        item
-        |> propertyInfo.GetValue
+    let formatHtmlTableCell index value =
+        value
         |> sprintf "%A"
         |> fun s -> regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[1].Value |> (_.ToLower())}")
         |> fun s -> if s |> regexObject.IsMatch then regexObject.Replace(s, "") else s
@@ -91,7 +91,7 @@ module Formatting =
         |> Array.map(fun li ->
             propertyInfos
             |> filterColumns hideProperties
-            |> Array.mapi (formatHtmlTableCell li)
+            |> Array.mapi(fun i pi -> formatHtmlTableCell i (pi.GetValue li))
             |> String.concat ""
             |> fun tdd -> $"<tr>{tdd}</tr>"
         )
@@ -100,12 +100,42 @@ module Formatting =
     /// generates a formatted HTML table from an array
     let generateHtmlFromArray hideProperties (items: 'a array) =
         let propertyInfos = typeof<'a> |> FSharpType.GetRecordFields
-        let header = propertyInfos |> formatHtmlTableHeader hideProperties
+        let header = propertyInfos |> filterColumns hideProperties |> fun pii -> formatHtmlTableHeader ValueNone (pii |> Array.map _.Name)
         let rows = items |> formatHtmlTableRows hideProperties propertyInfos
         $"<table>{header}{rows}</table>"
 
-    /// legacy function for creating HTML files from enumerables
-    let outputListToHtml fileName append list =
-        list
-        |> generateHtmlFromArray [||]
-        |> outputToFile' fileName append
+    /// creates HTML files from an array
+    let outputArrayToHtml fileName append data =
+        data |> generateHtmlFromArray [||] |> outputToFile' fileName append
+            /// writes table rows from an array
+    let formatHtmlTableRowsFromMap hideProperties propertyInfos data =
+        data
+        |> Map.map(fun itemIndex li ->
+            propertyInfos
+            |> filterColumns hideProperties
+            |> Array.mapi (fun propertyIndex pi -> formatHtmlTableCell (propertyIndex + 1) (pi.GetValue li))
+            |> Array.append [| formatHtmlTableCell 0 itemIndex |]
+            |> String.concat ""
+            |> fun tdd -> $"<tr>{tdd}</tr>"
+        )
+        |> Map.values
+        |> String.concat ""
+
+    /// generates a formatted HTML table from a map
+    let generateHtmlFromMap' hideProperties indexName (data: Map<'a, 'b>) =
+        let propertyInfos = typeof<'b> |> FSharpType.GetRecordFields
+        let header = propertyInfos |> filterColumns hideProperties |> fun pii -> formatHtmlTableHeader (ValueSome indexName) (pii |> Array.map _.Name)
+        let rows = data |> formatHtmlTableRowsFromMap hideProperties propertyInfos
+        $"<table>{header}{rows}</table>"
+
+    /// generates a formatted HTML table from a map with the index name "Day"
+    let generateHtmlFromMap hideProperties (data: Map<'a, 'b>) =
+        generateHtmlFromMap' hideProperties "Day" data
+
+    /// creates HTML files from a map
+    let outputMapToHtml' fileName append indexName data =
+        data |> generateHtmlFromMap' [||] indexName |> outputToFile' fileName append
+
+    /// creates HTML files from a map with the index name "Day"
+    let outputMapToHtml fileName append data =
+        outputMapToHtml' fileName append "Day" data

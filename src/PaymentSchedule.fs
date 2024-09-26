@@ -11,6 +11,7 @@ module PaymentSchedule =
     open FeesAndCharges
     open Percentages
     open UnitPeriod
+    open ValueOptionCE
 
     /// a scheduled payment item, with running calculations of interest and principal balance
     type Item = {
@@ -85,14 +86,6 @@ module PaymentSchedule =
         PaymentTimeout: int<DurationDay>
     }
 
-    /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
-    [<RequireQualifiedAccess; Struct>]
-    type ScheduleType =
-        /// an original schedule
-        | Original
-        /// a schedule based on a previous one
-        | Rescheduled
-
     /// whether to stick to scheduled payment amounts or add charges and interest to them
     [<Struct>]
     type ScheduledPaymentOption =
@@ -145,10 +138,11 @@ module PaymentSchedule =
     let generatePaymentMap startDate paymentSchedule =
         match paymentSchedule with
         | IrregularSchedule payments ->
-            if Array.isEmpty payments then
-                [||]
+            if Map.isEmpty payments then
+                Map.empty
             else
-                payments |> Array.map(fun p -> p.PaymentDay, CustomerPaymentDetails.total p.PaymentDetails)
+                payments
+                |> Map.map(fun _ sp -> sp.Total)
         | RegularFixedSchedule regularFixedSchedules ->
             regularFixedSchedules
             |> Array.map(fun rfs ->
@@ -160,20 +154,35 @@ module PaymentSchedule =
                         [||]
                     else
                         generatePaymentSchedule rfs.PaymentCount ValueNone Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
-                        |> Array.map(fun d -> d, rfs.PaymentAmount)
+                        |> Array.map(fun d ->
+                            let originalAmount, rescheduledAmount =
+                                match rfs.ScheduleType with
+                                | ScheduleType.Original -> ValueSome rfs.PaymentAmount, ValueNone
+                                | ScheduleType.Rescheduled -> ValueNone, ValueSome rfs.PaymentAmount
+                            d, ScheduledPayment.Quick originalAmount rescheduledAmount
+                        )
             )
             |> Array.concat
+            |> Array.sortBy fst
+            |> Array.groupBy fst
+            |> Array.map(fun (d, spp) ->
+                let original = spp |> Array.map (snd >> _.Original) |> Array.tryFind _.IsSome |> toValueOption |> ValueOption.flatten
+                let rescheduled = spp |> Array.map (snd >> _.Rescheduled) |> Array.filter _.IsSome |> Array.tryLast |> toValueOption |> ValueOption.flatten
+                let scheduledPayment = { ScheduledPayment.DefaultValue with Original = original; Rescheduled = rescheduled }
+                d, scheduledPayment.Total
+            )
+            |> Map.ofArray
         | RegularSchedule (unitPeriodConfig, paymentCount, maxDuration) ->
             if paymentCount = 0 then
-                [||]
+                Map.empty
             else
                 let unitPeriodConfigStartDate = Config.startDate unitPeriodConfig
                 if startDate > unitPeriodConfigStartDate then
-                    [||]
+                    Map.empty
                 else
                     generatePaymentSchedule paymentCount maxDuration Direction.Forward unitPeriodConfig
                     |> Array.map(fun d -> OffsetDay.fromDate startDate d, 0L<Cent>)
-        |> Map.ofArray
+                    |> Map.ofArray
 
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
@@ -263,8 +272,8 @@ module PaymentSchedule =
                     ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
 
                 // schedule
-                // |> Formatting.generateHtmlFromArray [||]
-                // |> Formatting.outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
+                // |> generateHtmlFromArray [||]
+                // |> outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
 
                 let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> min totalInterestCap |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
