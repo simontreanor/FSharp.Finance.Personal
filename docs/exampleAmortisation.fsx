@@ -35,11 +35,11 @@ let scheduleParameters =
         AsOfDate = Date(2023, 4, 1)
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
-        PaymentSchedule = RegularSchedule (
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
-            PaymentCount = 5,
+        PaymentSchedule = RegularSchedule {
+            UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+            PaymentCount = 5
             MaxDuration = ValueNone
-        )
+        }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance

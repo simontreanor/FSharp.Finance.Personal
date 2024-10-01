@@ -31,11 +31,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 9, 28)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
+                PaymentCount = 11
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -120,11 +120,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
+                PaymentCount = 11
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -209,11 +209,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
+                PaymentCount = 11
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -258,8 +258,7 @@ module QuoteTests =
 
         let expected = ValueSome (
             PaymentQuote (2001_50L<Cent>, 1175_80L<Cent>, 825_70L<Cent>, 0L<Cent>, 0L<Cent>, 1393_53L<Cent>),
-            (60<OffsetDay>,
-            {
+            ({
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -299,11 +298,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1))
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -385,11 +384,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1)),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1))
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -471,11 +470,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-                PaymentCount = 11,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
+                PaymentCount = 11
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -560,9 +559,9 @@ module QuoteTests =
     //         StartDate = startDate
     //         AsOfDate = Date(2024, 10, 1)
     //         Principal = 1200_00L<Cent>
-    //         PaymentSchedule = RegularSchedule (
-    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-    //             PaymentCount = 11,
+    //         PaymentSchedule = RegularSchedule {
+    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
+    //             PaymentCount = 11
     //             MaxDuration = ValueNone
     //         )
     //         PaymentOptions = {
@@ -647,9 +646,9 @@ module QuoteTests =
     //         AsOfDate = Date(2024, 10, 1)
     //         StartDate = startDate
     //         Principal = 1200_00L<Cent>
-    //         PaymentSchedule = RegularSchedule (
-    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15),
-    //             PaymentCount = 11,
+    //         PaymentSchedule = RegularSchedule {
+    //             UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
+    //             PaymentCount = 11
     //             MaxDuration = ValueNone
     //         )
     //         PaymentOptions = {
@@ -735,11 +734,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2023, 6, 30)),
-                PaymentCount = 10,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2023, 6, 30))
+                PaymentCount = 10
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -821,11 +820,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 12, 21)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12)),
-                PaymentCount = 11,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
+                PaymentCount = 11
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -915,11 +914,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 2, 8)
             StartDate = startDate
             Principal = 1200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12)),
-                PaymentCount = 11,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
+                PaymentCount = 11
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1007,11 +1006,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 2, 28)
             StartDate = startDate
             Principal = 400_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 28),
-                PaymentCount = 4,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 28)
+                PaymentCount = 4
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1091,11 +1090,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 14)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1181,11 +1180,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 15)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1271,11 +1270,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 16)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1361,11 +1360,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 19)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1451,11 +1450,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 14)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1541,11 +1540,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 15)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1632,11 +1631,11 @@ module QuoteTests =
             AsOfDate = Date(2023, 3, 16)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1723,11 +1722,11 @@ module QuoteTests =
             AsOfDate = Date(2024, 2, 5)
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1814,11 +1813,11 @@ module QuoteTests =
             AsOfDate = Date(2022, 12, 20)
             StartDate = Date(2022, 12, 19)
             Principal = 250_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20),
-                PaymentCount = 4,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20)
+                PaymentCount = 4
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1869,7 +1868,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 4)
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1921,7 +1920,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 4)
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2018, 2, 28), 3, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1973,7 +1972,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 7)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2024, 2, 22), 4, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -2026,7 +2025,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 7)
             StartDate = Date(2023, 9, 2)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 9, 22), 4, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -2078,7 +2077,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 5, 10), 4, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance

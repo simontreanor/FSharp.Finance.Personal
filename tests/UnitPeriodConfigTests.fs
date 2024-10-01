@@ -65,7 +65,7 @@ module UnitPeriodConfigTests =
                     AsOfDate = Date(2024, 3, 5)
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
-                    PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 5, 13)), 12, ValueNone)
+                    PaymentSchedule = RegularSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); PaymentCount = 12; MaxDuration = ValueNone }
                     PaymentOptions = {
                         ScheduledPaymentOption = AsScheduled
                         CloseBalanceOption = LeaveOpenBalance
@@ -130,7 +130,7 @@ module UnitPeriodConfigTests =
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
-                PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 4, 20)), 12, ValueNone)
+                PaymentSchedule = RegularSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); PaymentCount = 12; MaxDuration = ValueNone }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -194,7 +194,11 @@ module UnitPeriodConfigTests =
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 1, 20)
                 Principal = 65000L<Cent>
-                PaymentSchedule = RegularSchedule(Weekly(2, Date(2023, 2, 2)), 11, ValueNone)
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2023, 2, 2))
+                    PaymentCount = 11
+                    MaxDuration = ValueNone
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -280,7 +284,11 @@ module UnitPeriodConfigTests =
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2022, 10, 13)
                 Principal = 50000L<Cent>
-                PaymentSchedule = RegularSchedule(Weekly(2, Date(2022, 10, 28)), 11, ValueNone)
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2022, 10, 28))
+                    PaymentCount = 11;
+                    MaxDuration = ValueNone
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance

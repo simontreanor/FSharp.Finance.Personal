@@ -671,6 +671,6 @@ module Amortisation =
         scheduledPayments
         |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose initialInterestBalance
-        |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus = NoLongerRequired) else id
+        |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
         |> calculateStats sp intendedPurpose
         |> ValueSome

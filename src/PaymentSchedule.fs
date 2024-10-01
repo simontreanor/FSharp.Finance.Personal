@@ -34,17 +34,30 @@ module PaymentSchedule =
             /// the total amount of the payment
             member x.Total =
                 match x.Original, x.Rescheduled with 
-                | _, ValueSome ra -> ra
-                | ValueSome oa, ValueNone -> oa
+                | _, ValueSome r -> r
+                | ValueSome o, ValueNone -> o
                 | ValueNone, ValueNone -> 0L<Cent>
+                |> fun t ->
+                    match x.Adjustment with
+                    | ValueSome a -> t + a
+                    | ValueNone -> t
             member x.IsSome =
                 x.Original.IsSome || x.Rescheduled.IsSome
-            member x.AmendedTotal =
-                x.Total + ValueOption.defaultValue 0L<Cent> x.Adjustment
             static member DefaultValue =
                 { Original = ValueNone; Rescheduled = ValueNone; Adjustment = ValueNone; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent>; Metadata = Map.empty }
             static member Quick originalAmount rescheduledAmount =
                 { Original = originalAmount; Rescheduled = rescheduledAmount; Adjustment = ValueNone; OriginalSimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent>; Metadata = Map.empty }
+            override x.ToString() =
+                match x.Original, x.Rescheduled with
+                | ValueSome o, ValueSome r -> $"""<span class="strikethrough">{o}</span> {r}"""
+                | ValueSome o, ValueNone -> $"{o}"
+                | ValueNone, ValueSome r -> $"{r}"
+                | ValueNone, ValueNone -> ""
+                |> fun s ->
+                    match x.Adjustment with
+                    | ValueSome a when a < 0L<Cent> -> $"{s} - {abs a}"
+                    | ValueSome a when a > 0L<Cent> -> $"{s} + {a}"
+                    | _ -> s
 
     /// the status of the payment, allowing for delays due to payment-provider processing times
     [<RequireQualifiedAccess; Struct>]
@@ -134,6 +147,14 @@ module PaymentSchedule =
         /// a schedule based on a previous one
         | Rescheduled
 
+    /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
+    [<RequireQualifiedAccess; Struct>]
+    type RegularSchedule = {
+        UnitPeriodConfig: UnitPeriod.Config
+        PaymentCount: int
+        MaxDuration: Duration voption
+    }
+
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
     type RegularFixedSchedule = {
@@ -146,7 +167,7 @@ module PaymentSchedule =
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     type CustomerPaymentSchedule =
         /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
-        | RegularSchedule of UnitPeriodConfig: UnitPeriod.Config * PaymentCount: int * MaxDuration: Duration voption
+        | RegularSchedule of RegularSchedule
         /// a regular schedule based on one or more unit-period configs each with a specific number of payments of a specified amount
         | RegularFixedSchedule of RegularFixedSchedule array
         /// just a bunch of payments
@@ -311,15 +332,15 @@ module PaymentSchedule =
                 d, scheduledPayment.Total
             )
             |> Map.ofArray
-        | RegularSchedule (unitPeriodConfig, paymentCount, maxDuration) ->
-            if paymentCount = 0 then
+        | RegularSchedule rs ->
+            if rs.PaymentCount = 0 then
                 Map.empty
             else
-                let unitPeriodConfigStartDate = Config.startDate unitPeriodConfig
+                let unitPeriodConfigStartDate = Config.startDate rs.UnitPeriodConfig
                 if startDate > unitPeriodConfigStartDate then
                     Map.empty
                 else
-                    generatePaymentSchedule paymentCount maxDuration Direction.Forward unitPeriodConfig
+                    generatePaymentSchedule rs.PaymentCount rs.MaxDuration Direction.Forward rs.UnitPeriodConfig
                     |> Array.map(fun d -> OffsetDay.fromDate startDate d, 0L<Cent>)
                     |> Map.ofArray
 

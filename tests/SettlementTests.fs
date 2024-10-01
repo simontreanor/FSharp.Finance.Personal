@@ -29,7 +29,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 19)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -114,7 +114,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -199,7 +199,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule(UnitPeriod.Config.Monthly(1, 2023, 12, 22), 4, ValueNone)
+            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance

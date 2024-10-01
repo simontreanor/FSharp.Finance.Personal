@@ -118,8 +118,8 @@ module ActualPaymentTestsExtra =
         let pir = match sp.Interest.PromotionalRates with [||] -> "()" | pirr -> pirr |> Array.map(fun pr -> $"""({pr.DateRange.Start.ToString()}-{pr.DateRange.End.ToString()}__{Interest.Rate.serialise pr.Rate})""") |> String.concat ";" |> fun s -> $"({s})"
         let upc, pc =
             match sp.PaymentSchedule with
-            | RegularSchedule(unitPeriodConfig, paymentCount, maxDuration) ->
-                (UnitPeriod.Config.serialise unitPeriodConfig), paymentCount
+            | RegularSchedule rs ->
+                (UnitPeriod.Config.serialise rs.UnitPeriodConfig), rs.PaymentCount
             | _ -> failwith "Not implemented"
         let acm = sp.Calculation.AprMethod
         let pcc = sp.FeesAndCharges.Charges
@@ -179,11 +179,11 @@ module ActualPaymentTestsExtra =
                 AsOfDate = asOfDate
                 StartDate = sd
                 Principal = aa
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = upc,
-                    PaymentCount = pc,
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = upc
+                    PaymentCount = pc
                     MaxDuration = ValueNone
-                )
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -236,11 +236,11 @@ module ActualPaymentTestsExtra =
                 AsOfDate = asOfDate
                 StartDate = sd
                 Principal = aa
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = upc,
-                    PaymentCount = pc,
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = upc
+                    PaymentCount = pc
                     MaxDuration = ValueNone
-                )
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -339,11 +339,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2023, 12, 1)
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1),
-                PaymentCount = 5,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1)
+                PaymentCount = 5
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -418,11 +418,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 3, 25)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
+                PaymentCount = 12
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -500,11 +500,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
+                PaymentCount = 12
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -594,11 +594,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2026, 8, 27)
             StartDate = Date(2023, 11, 6)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23)),
-                PaymentCount = 19,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23))
+                PaymentCount = 19
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -673,11 +673,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2023, 12, 11)
             StartDate = Date(2022, 9, 11)
             Principal = 200_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15),
-                PaymentCount = 7,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15)
+                PaymentCount = 7
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -752,11 +752,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 4, 1)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
+                PaymentCount = 12
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -832,11 +832,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
+                PaymentCount = 12
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -925,11 +925,11 @@ module ActualPaymentTestsExtra =
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
-            PaymentSchedule = RegularSchedule (
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26)),
-                PaymentCount = 12,
+            PaymentSchedule = RegularSchedule {
+                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
+                PaymentCount = 12
                 MaxDuration = ValueNone
-            )
+            }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
