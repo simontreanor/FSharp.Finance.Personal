@@ -30,7 +30,7 @@ module PaymentScheduleTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = principal
-                PaymentSchedule = RegularSchedule {
+                ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(int offset))
                     PaymentCount = 11
                     MaxDuration = ValueNone
@@ -129,7 +129,7 @@ module PaymentScheduleTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = principal
-                PaymentSchedule = RegularSchedule {
+                ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = (startDate.AddDays(int offset) |> fun d -> UnitPeriod.Monthly(1, d.Year, d.Month, d.Day * 1))
                     PaymentCount = paymentCount
                     MaxDuration = ValueNone
@@ -1449,7 +1449,7 @@ module PaymentScheduleTests =
             AsOfDate = Date(2022, 12, 19)
             StartDate = Date(2022, 12, 19)
             Principal = 300_00L<Cent>
-            PaymentSchedule = RegularSchedule {
+            ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Daily(Date(2023, 1, 3))
                 PaymentCount = 1
                 MaxDuration = ValueNone
@@ -1499,7 +1499,7 @@ module PaymentScheduleTests =
             AsOfDate = Date(2024, 5, 8)
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
-            PaymentSchedule = RegularSchedule {
+            ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 8)
                 PaymentCount = 7
                 MaxDuration = ValueSome { Length = 183<DurationDay>; FromDate = Date(2024, 5, 8) }
@@ -1549,7 +1549,7 @@ module PaymentScheduleTests =
             AsOfDate = Date(2024, 5, 8)
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
-            PaymentSchedule = RegularSchedule {
+            ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 18)
                 PaymentCount = 7
                 MaxDuration = ValueSome { Length = 184<DurationDay>; FromDate = Date(2024, 5, 8) }
@@ -1599,7 +1599,7 @@ module PaymentScheduleTests =
             AsOfDate = Date(2024, 6, 24)
             StartDate = Date(2024, 6, 24)
             Principal = 100_00L<Cent>
-            PaymentSchedule = RegularSchedule {
+            ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4)
                 PaymentCount = 4
                 MaxDuration = ValueSome { Length = 190<DurationDay>; FromDate = Date(2024, 6, 24) }
@@ -1655,7 +1655,7 @@ module PaymentScheduleTests =
             AsOfDate = Date(2024, 6, 24)
             StartDate = Date(2024, 6, 24)
             Principal = 100_00L<Cent>
-            PaymentSchedule = paymentSchedule
+            ScheduleConfig = paymentSchedule
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -1693,10 +1693,10 @@ module PaymentScheduleTests =
         let actual =
             voption {
 
-                let paymentSchedule1 = RegularSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4); PaymentCount = 4; MaxDuration = ValueSome { Length = 190<DurationDay>; FromDate = Date(2024, 6, 24) }}
+                let paymentSchedule1 = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4); PaymentCount = 4; MaxDuration = ValueSome { Length = 190<DurationDay>; FromDate = Date(2024, 6, 24) }}
 
                 let paymentSchedule2 =
-                    RegularFixedSchedule [|
+                    FixedSchedules [|
                         { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024,  7, 4); PaymentCount = 3; PaymentAmount = 36_48L<Cent>; ScheduleType = ScheduleType.Original }
                         { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentAmount = 36_44L<Cent>; ScheduleType = ScheduleType.Original }
                     |]

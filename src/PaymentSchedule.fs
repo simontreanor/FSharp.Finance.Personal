@@ -180,7 +180,7 @@ module PaymentSchedule =
 
     /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
     [<RequireQualifiedAccess; Struct>]
-    type RegularSchedule = {
+    type AutoGenerateSchedule = {
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
         MaxDuration: Duration voption
@@ -188,7 +188,7 @@ module PaymentSchedule =
 
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
-    type RegularFixedSchedule = {
+    type FixedSchedule = {
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
         PaymentAmount: int64<Cent>
@@ -196,11 +196,11 @@ module PaymentSchedule =
     }
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
-    type CustomerPaymentSchedule =
-        /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
-        | RegularSchedule of RegularSchedule
-        /// a regular schedule based on one or more unit-period configs each with a specific number of payments of a specified amount
-        | RegularFixedSchedule of RegularFixedSchedule array
+    type ScheduleConfig =
+        /// a schedule based on a unit-period config with a specific number of payments with an auto-calculated amount, optionally limited to a maximum duration
+        | AutoGenerateSchedule of AutoGenerateSchedule
+        /// a  schedule based on one or more unit-period configs each with a specific number of payments of a specified amount and type
+        | FixedSchedules of FixedSchedule array
         /// just a bunch of payments
         | IrregularSchedule of IrregularSchedule: Map<int<OffsetDay>, ScheduledPayment>
 
@@ -328,7 +328,7 @@ module PaymentSchedule =
         /// the principal
         Principal: int64<Cent>
         /// the scheduled payments or the parameters for generating them
-        PaymentSchedule: CustomerPaymentSchedule
+        ScheduleConfig: ScheduleConfig
         /// options relating to scheduled payments
         PaymentOptions: PaymentOptions
         /// options relating to fees
@@ -347,7 +347,7 @@ module PaymentSchedule =
                 Map.empty
             else
                 payments
-        | RegularFixedSchedule regularFixedSchedules ->
+        | FixedSchedules regularFixedSchedules ->
             regularFixedSchedules
             |> Array.map(fun rfs ->
                 if rfs.PaymentCount = 0 then
@@ -375,7 +375,7 @@ module PaymentSchedule =
                 d, { ScheduledPayment.DefaultValue with Original = original; Rescheduled = rescheduled }
             )
             |> Map.ofArray
-        | RegularSchedule rs ->
+        | AutoGenerateSchedule rs ->
             if rs.PaymentCount = 0 then
                 Map.empty
             else
@@ -389,7 +389,7 @@ module PaymentSchedule =
 
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
-        let paymentMap = generatePaymentMap sp.StartDate sp.PaymentSchedule
+        let paymentMap = generatePaymentMap sp.StartDate sp.ScheduleConfig
 
         let paymentDays = paymentMap |> Map.keys |> Seq.toArray
 
@@ -471,9 +471,9 @@ module PaymentSchedule =
                     paymentDays
                     |> Array.scan (fun state pd ->
                         let scheduledPayment =
-                            match sp.PaymentSchedule with
-                            | RegularSchedule _ -> ScheduledPayment.Quick (ValueSome regularScheduledPayment) ValueNone
-                            | RegularFixedSchedule _
+                            match sp.ScheduleConfig with
+                            | AutoGenerateSchedule _ -> ScheduledPayment.Quick (ValueSome regularScheduledPayment) ValueNone
+                            | FixedSchedules _
                             | IrregularSchedule _ -> paymentMap[pd]
                         generateItem Interest.Method.AddOn scheduledPayment state pd
                     ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
@@ -490,10 +490,10 @@ module PaymentSchedule =
                     Some (initialInterestBalance, (iteration + 1, finalInterestTotal))
 
         let solution =
-            match sp.PaymentSchedule with
-            | RegularSchedule _ ->
+            match sp.ScheduleConfig with
+            | AutoGenerateSchedule _ ->
                 Array.solve (generatePaymentAmount initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
-            | RegularFixedSchedule _
+            | FixedSchedules _
             | IrregularSchedule _ ->
                 schedule <-
                     paymentDays

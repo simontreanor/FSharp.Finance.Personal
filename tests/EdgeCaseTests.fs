@@ -31,7 +31,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2023, 2, 9)
             Principal = 30000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map [
+            ScheduleConfig = IrregularSchedule <| Map [
                 15<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 43<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 74<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
@@ -86,7 +86,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 2, 2)
             Principal = 25000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map [
+            ScheduleConfig = IrregularSchedule <| Map [
                 16<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 44<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 75<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
@@ -141,7 +141,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 12, 2)
             Principal = 75000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map [
+            ScheduleConfig = IrregularSchedule <| Map [
                 14<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 45<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 76<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
@@ -196,7 +196,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map [
+            ScheduleConfig = IrregularSchedule <| Map [
                 8<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 39<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 69<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
@@ -323,7 +323,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
-            PaymentSchedule = IrregularSchedule <| Map [
+            ScheduleConfig = IrregularSchedule <| Map [
                 8<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 39<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 69<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
@@ -451,7 +451,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 6, 22)
             Principal = 500_00L<Cent>
-            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 7, 15); PaymentCount = 6; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 7, 15); PaymentCount = 6; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -576,7 +576,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2021, 12, 26)
             Principal = 150000L<Cent>
-            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 1, 7); PaymentCount = 6; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 1, 7); PaymentCount = 6; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -630,7 +630,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -720,7 +720,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -810,7 +810,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
-            PaymentSchedule = RegularSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = ValueNone }
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance

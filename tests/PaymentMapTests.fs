@@ -22,7 +22,7 @@ module PaymentMapTests =
         AsOfDate = asOfDate
         StartDate = startDate
         Principal = principal
-        PaymentSchedule = RegularSchedule {
+        PaymentSchedule = AutoGenerateSchedule {
             UnitPeriodConfig = unitPeriodConfig
             PaymentCount = paymentCount,
             MaxDuration = ValueSome { Length = 180<DurationDay>; FromDate = startDate }

@@ -400,7 +400,7 @@ module Amortisation =
                 | Fees.SettlementRefund.ProRata originalFinalPaymentDay ->
                     match originalFinalPaymentDay with
                     | ValueNone ->
-                        let originalFinalPaymentDay = sp.PaymentSchedule |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> toValueOption |> ValueOption.defaultValue 0<OffsetDay>
+                        let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> toValueOption |> ValueOption.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
                     | ValueSome ofpd ->
                         calculateFees ofpd
