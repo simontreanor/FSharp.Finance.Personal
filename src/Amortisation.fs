@@ -642,7 +642,18 @@ module Amortisation =
             | ValueSome s ->
                 s.Items
                 |> Array.filter _.ScheduledPayment.IsSome
-                |> Array.map(fun si -> si.Day, si.ScheduledPayment.Value)
+                |> Array.map(fun si ->
+                    let originalSimpleInterest, contractualInterest =
+                        match sp.Interest.Method with
+                        | Interest.Method.AddOn ->
+                            si.SimpleInterest, Cent.toDecimalCent si.InterestPortion
+                        | _ ->
+                            0L<Cent>, 0m<Cent>
+                    si.Day,
+                    { si.ScheduledPayment.Value with
+                        Original = si.ScheduledPayment.Value.Original |> ValueOption.map(fun op -> { op with SimpleInterest = originalSimpleInterest; ContractualInterest = contractualInterest })
+                    }
+                )
                 |> Map.ofArray
                 , s.InitialInterestBalance
             | ValueNone ->
