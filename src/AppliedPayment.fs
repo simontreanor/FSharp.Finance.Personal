@@ -25,10 +25,6 @@ module AppliedPayment =
         NetEffect: int64<Cent>
         /// the payment status based on the payments made on the current day
         PaymentStatus: CustomerPaymentStatus
-        /// the simple interest initially calculated at the start date
-        OriginalSimpleInterest: int64<Cent>
-        /// the interest initially calculated according to the interest method at the start date
-        ContractualInterest: decimal<Cent>
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
@@ -130,10 +126,6 @@ module AppliedPayment =
                             )
                         | AllChargesApplied -> cc
 
-                let originalSimpleInterest = scheduledPayment'.OriginalSimpleInterest
-
-                let contractualInterest = scheduledPayment'.ContractualInterest
-
                 let appliedPayment = {
                     ScheduledPayment = scheduledPayment'
                     ActualPayments = actualPayments'
@@ -141,8 +133,6 @@ module AppliedPayment =
                     IncurredCharges = charges
                     NetEffect = netEffect
                     PaymentStatus = paymentStatus
-                    OriginalSimpleInterest = originalSimpleInterest
-                    ContractualInterest = contractualInterest
                 }
 
                 offsetDay, appliedPayment
@@ -164,8 +154,6 @@ module AppliedPayment =
                     IncurredCharges = [||]
                     NetEffect = 0L<Cent>
                     PaymentStatus = paymentStatus
-                    OriginalSimpleInterest = 0L<Cent>
-                    ContractualInterest = 0m<Cent>
                 }
                 appliedPaymentMap
                 |> Map.add day newAppliedPayment

@@ -62,6 +62,11 @@ module Formatting =
             |> String.concat ""
         $"<thead>{thh}</thead>"
 
+    let internal formatCent = Cent.toDecimal >> (_.ToString("N2"))
+    let internal formatDecimal c = c / 100m |> (_.ToString("N4"))
+
+    let internal formatCell index className style value = $"""<td class="ci{index} {className}" style="{style}">{value}</td>"""
+
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
     let formatHtmlTableCell index value =
         value
@@ -77,13 +82,13 @@ module Formatting =
         |> fun s -> if s |> regexSome.IsMatch then regexSome.Replace(s, "$1") else s
         |> fun s -> if s |> regexWhitespace.IsMatch then regexWhitespace.Replace(s, "&nbsp;") else s
         |> fun s ->
-            if s |> regexDate.IsMatch then $"""<td class="ci{index} cDateValue" style="white-space: nowrap;">{s}</td>"""
-            elif s |> regexZero.IsMatch then $"""<td class="ci{index} cZeroValue" style="color: #808080; text-align: right;">0.00</td>"""
-            elif s |> regexDecimal.IsMatch then regexDecimal.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToDecimal |> fun m -> m / 100m |> (_.ToString("N4"))) |> fun s -> $"""<td class="ci{index} cNumberValue" style="text-align: right;">{s}</td>"""
-            elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> Cent.toDecimal |> (_.ToString("N2"))) |> fun s -> $"""<td class="ci{index} cNumberValue" style="text-align: right;">{s}</td>"""
-            elif s |> regexInt32.IsMatch then $"""<td class="ci{index} cNumberValue" style="text-align: right;">{s}</td>"""
-            elif s |> regexNone.IsMatch then $"""<td class="ci{index} cValueNone">&nbsp;</td>"""
-            else $"""<td class="ci{index}">{s}</td>"""
+            if s |> regexDate.IsMatch then s |> formatCell index "cDateValue" "white-space: nowrap;"
+            elif s |> regexZero.IsMatch then formatCell index "cZeroValue" "color: #808080; text-align: right;" "0.00"
+            elif s |> regexDecimal.IsMatch then regexDecimal.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToDecimal |> formatDecimal) |> formatCell index "cNumberValue" "text-align: right;"
+            elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> formatCent) |> formatCell index "cNumberValue" "text-align: right;"
+            elif s |> regexInt32.IsMatch then s |> formatCell index "cNumberValue" "text-align: right;"
+            elif s |> regexNone.IsMatch then formatCell index "cValueNone" "" "&nbsp;"
+            else s |> formatCell index "" ""
 
     /// writes table rows from an array
     let formatHtmlTableRows hideProperties propertyInfos items =

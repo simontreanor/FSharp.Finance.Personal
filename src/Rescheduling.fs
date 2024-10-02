@@ -11,8 +11,37 @@ module Rescheduling =
     open Currency
     open DateDay
     open FeesAndCharges
-    open PaymentSchedule
     open ValueOptionCE
+
+    let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
+        let firstRescheduledDay = scheduledPayments |> Array.tryFind (snd >> _.Rescheduled.IsSome) |> Option.map fst |> toValueOption
+        scheduledPayments
+        |> Array.groupBy fst
+        |> Array.map(fun (offsetDay, scheduledPayments) -> // for each day, there will only ever be a maximum of one original and one rescheduled payment
+            let original = scheduledPayments |> Array.tryFind (snd >> _.Original.IsSome) |> toValueOption |> ValueOption.map snd
+            let rescheduled = scheduledPayments |> Array.tryFind (snd >> _.Rescheduled.IsSome) |> toValueOption |> ValueOption.map snd
+            let scheduledPayment =
+                match original, rescheduled with
+                | _, ValueSome r ->
+                    {
+                        Original = original |> ValueOption.bind _.Original
+                        Rescheduled = r.Rescheduled
+                        Adjustment = r.Adjustment
+                        Metadata = r.Metadata
+                    }
+                | ValueSome o, ValueNone ->
+                    {
+                        Original = o.Original
+                        Rescheduled = if firstRescheduledDay.IsSome && offsetDay >= firstRescheduledDay.Value then ValueSome 0L<Cent> else ValueNone //overwrite original scheduled payments from start of rescheduled payments
+                        Adjustment = o.Adjustment
+                        Metadata = o.Metadata
+                    }
+                | ValueNone, ValueNone ->
+                    ScheduledPayment.DefaultValue
+            offsetDay, scheduledPayment
+        )
+        |> Array.filter (snd >> _.IsSome)
+        |> Map.ofArray
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
     [<RequireQualifiedAccess>]
@@ -44,11 +73,10 @@ module Rescheduling =
                     match schedule with
                     | ValueSome s ->
                         s.Items
-                        |> Array.filter(fun si -> si.Payment.IsSome)
-                        |> Array.map(fun si -> si.Day, ScheduledPayment.Quick ValueNone (ValueSome si.Payment.Value))
-                        |> Map.ofArray
+                        |> Array.filter _.ScheduledPayment.IsSome
+                        |> Array.map(fun si -> si.Day, si.ScheduledPayment.Value)
                     | ValueNone ->
-                        Map.empty
+                        [||]
                 | RegularFixedSchedule regularFixedSchedules ->
                     regularFixedSchedules
                     |> Array.map(fun rfs ->
@@ -56,19 +84,19 @@ module Rescheduling =
                         |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, ScheduledPayment.Quick ValueNone (ValueSome rfs.PaymentAmount))
                     )
                     |> Array.concat
-                    |> Map.ofArray
                 | IrregularSchedule payments ->
                     payments
+                    |> Map.toArray
             // append the new schedule to the old schedule up to the point of settlement
             let oldPaymentSchedule =
                 quote.RevisedSchedule.ScheduleItems
                 |> Map.filter(fun _ si -> si.ScheduledPayment.IsSome)
-                |> Map.filter(fun _ si -> si.OffsetDate < sp.AsOfDate)
                 |> Map.map(fun _ si -> si.ScheduledPayment)
+                |> Map.toArray
             // configure the parameters for the new schedule
             let spNew =
                 { sp with
-                    PaymentSchedule = [| Map.toArray oldPaymentSchedule; Map.toArray newPaymentSchedule |] |> Array.concat |> Map.ofArray |> IrregularSchedule
+                    PaymentSchedule = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> IrregularSchedule
                     FeesAndCharges =
                         { sp.FeesAndCharges with
                             FeesSettlementRefund = rp.FeesSettlementRefund
@@ -82,7 +110,7 @@ module Rescheduling =
                         }
                 }
             // create the new amortiation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose ScheduleType.Rescheduled true actualPayments
+            let! rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose true actualPayments
             return quote.RevisedSchedule, rescheduledSchedule
         }
 
@@ -144,6 +172,6 @@ module Rescheduling =
                     Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
                 }
             // create the new amortisation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement ScheduleType.Original true Map.empty // sic: `ScheduleType.Original` is correct here as this is a new schedule
+            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement true Map.empty
             return quote.RevisedSchedule, rescheduledSchedule
         }

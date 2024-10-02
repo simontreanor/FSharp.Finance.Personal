@@ -73,7 +73,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest002.md" false))
 
@@ -102,7 +102,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest004.md" false))
 
@@ -121,7 +121,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest005.md" false))
 
@@ -143,7 +143,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest006.md" false))
 
@@ -171,7 +171,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest007.md" false))
 
@@ -198,7 +198,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest008.md" false))
 
@@ -220,7 +220,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest009.md" false))
 
@@ -238,7 +238,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest010.md" false))
 
@@ -256,7 +256,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest011.md" false))
 
@@ -274,7 +274,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest012.md" false))
 
@@ -296,7 +296,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest013.md" false))
 
@@ -317,7 +317,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest014.md" false))
 
@@ -338,7 +338,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest014a.md" false))
 
@@ -356,7 +356,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest015.md" false))
 
@@ -371,7 +371,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest016.md" false)
 
@@ -386,7 +386,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest017.md" false)
 
@@ -590,7 +590,7 @@ module InterestFirstTests =
 
     //     let schedule =
     //         actualPayments
-    //         |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+    //         |> Amortisation.generate sp IntendedPurpose.Statement false
 
     //     schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest018.md" false)
 
@@ -642,7 +642,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest019.md" false)
 
@@ -666,7 +666,7 @@ module InterestFirstTests =
 
     //     let schedule =
     //         actualPayments
-    //         |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+    //         |> Amortisation.generate sp IntendedPurpose.Statement false
 
     //     schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputListToHtml "out/InterestFirstTest020.md" false)
 
@@ -691,7 +691,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest021.md" false)
 
@@ -727,7 +727,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest022.md" false)
 
@@ -766,7 +766,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest023.md" false)
 
@@ -832,7 +832,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest024.md" false)
 
@@ -897,7 +897,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest025.md" false)
 

@@ -845,7 +845,7 @@ module EdgeCaseTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
         schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest009.md" false))
 

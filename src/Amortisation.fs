@@ -227,8 +227,6 @@ module Amortisation =
                         | None -> si
                     )
 
-        let finalAppliedPaymentDay = appliedPayments |> Map.maxKeyValue |> fst
-
         let interestRounding = ValueSome sp.Calculation.RoundingOptions.InterestRounding
 
         appliedPayments
@@ -254,10 +252,12 @@ module Amortisation =
 
             let cappedSimpleInterest = if a.CumulativeSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - a.CumulativeSimpleInterest else simpleInterest
 
+            let originalSimpleInterest, contractualInterest = ap.ScheduledPayment.Original |> ValueOption.map(fun o -> (o.SimpleInterest, o.ContractualInterest)) |> ValueOption.defaultValue (0L<Cent>, 0m<Cent>)
+
             let accumulator =
                 { a with
                     CumulativeSimpleInterest = a.CumulativeSimpleInterest + cappedSimpleInterest
-                    CumulativeContractualInterest = a.CumulativeContractualInterest + ap.ContractualInterest
+                    CumulativeContractualInterest = a.CumulativeContractualInterest + contractualInterest
                 }
 
             let newInterest =
@@ -470,8 +470,8 @@ module Amortisation =
                     NetEffect = netEffect + generatedSettlementPayment''
                     PaymentStatus = paymentStatus
                     BalanceStatus = ClosedBalance
-                    OriginalSimpleInterest = ap.OriginalSimpleInterest
-                    ContractualInterest = ap.ContractualInterest
+                    OriginalSimpleInterest = originalSimpleInterest
+                    ContractualInterest = contractualInterest
                     SimpleInterest = cappedSimpleInterest
                     NewInterest = cappedNewInterest'
                     NewCharges = incurredCharges
@@ -538,8 +538,8 @@ module Amortisation =
                         NetEffect = netEffect'
                         PaymentStatus = paymentStatus
                         BalanceStatus = balanceStatus
-                        OriginalSimpleInterest = ap.OriginalSimpleInterest
-                        ContractualInterest = ap.ContractualInterest
+                        OriginalSimpleInterest = originalSimpleInterest
+                        ContractualInterest = contractualInterest
                         SimpleInterest = cappedSimpleInterest
                         NewInterest = cappedNewInterest'
                         NewCharges = incurredCharges
@@ -591,9 +591,9 @@ module Amortisation =
                 CumulativeOriginalSimpleInterest = 0L<Cent>
             }
         )
-        |> fun a -> if (a |> Array.filter(fun ((siOffsetDay, si), _) -> siOffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
         |> Array.unzip
         |> fst
+        |> fun a -> if (a |> Array.filter(fun (siOffsetDay, _) -> siOffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
         |> Map.ofArray
         |> markMissedPaymentsAsLate
 
@@ -635,31 +635,16 @@ module Amortisation =
         }
 
     /// generates an amortisation schedule and final statistics
-    let generate sp intendedPurpose scheduleType trimEnd actualPayments =
+    let generate sp intendedPurpose trimEnd actualPayments =
         let scheduledPayments, initialInterestBalance =
             let schedule = PaymentSchedule.calculate BelowZero sp
             match schedule with
             | ValueSome s ->
                 s.Items
-                |> Array.filter _.Payment.IsSome
-                |> Array.map(fun si -> si.Day, {
-                    Original = match scheduleType with ScheduleType.Original -> ValueSome si.Payment.Value | _ -> ValueNone
-                    Rescheduled = match scheduleType with ScheduleType.Rescheduled -> ValueSome si.Payment.Value | _ -> ValueNone
-                    Adjustment = ValueNone
-                    OriginalSimpleInterest =
-                        match scheduleType, sp.Interest.Method with
-                        | ScheduleType.Original, Interest.Method.AddOn ->
-                            si.SimpleInterest
-                        | _ ->
-                            0L<Cent>
-                    ContractualInterest =
-                        match scheduleType, sp.Interest.Method with
-                        | ScheduleType.Original, Interest.Method.AddOn ->
-                            si.InterestPortion |> Cent.toDecimalCent
-                        | _ ->
-                            0m<Cent>
-                    Metadata = Map.empty
-                }) |> Map.ofArray, s.InitialInterestBalance
+                |> Array.filter _.ScheduledPayment.IsSome
+                |> Array.map(fun si -> si.Day, si.ScheduledPayment.Value)
+                |> Map.ofArray
+                , s.InitialInterestBalance
             | ValueNone ->
                 Map.empty, 0L<Cent>
 

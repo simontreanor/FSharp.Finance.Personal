@@ -119,7 +119,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
             schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestCapTest001.md" false))
 
@@ -170,7 +170,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original false
+                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
 
             schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestCapTest002.md" false))
 
@@ -266,7 +266,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp IntendedPurpose.Statement false
 
             schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/InterestTest001.md" false))
 
@@ -421,7 +421,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original true
+                |> Amortisation.generate sp IntendedPurpose.Statement true
 
             schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/Cca2004Test003.md" false))
 
@@ -438,7 +438,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original true
+                |> Amortisation.generate sp IntendedPurpose.Statement true
 
             schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/Cca2004Test003a.md" false))
 
@@ -469,7 +469,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) ScheduleType.Original true
+                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) true
 
             schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/Cca2004Test003b.md" false))
 

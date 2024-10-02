@@ -129,8 +129,8 @@ module ActualPaymentTestsExtra =
             voption {
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> Array.filter _.Payment.IsSome |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.Payment.Value |]) |> Map.ofArray
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let actualPayments = scheduleItems |> Array.filter _.ScheduledPayment.IsSome |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.ScheduledPayment.Value.Total |]) |> Map.ofArray
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
                 return amortisationSchedule.ScheduleItems
             }
         amortisationSchedule |> ValueOption.iter(fun aa -> 
@@ -329,8 +329,8 @@ module ActualPaymentTestsExtra =
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
     let allPaidOnTime (scheduleItems: Item array) =
         scheduleItems
-        |> Array.filter _.Payment.IsSome
-        |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.Payment.Value |])
+        |> Array.filter _.ScheduledPayment.IsSome
+        |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.ScheduledPayment.Value.Total |])
         |> Map.ofArray
 
     [<Fact>]
@@ -377,7 +377,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
                 amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra001.md" false
                 return amortisationSchedule.ScheduleItems
             }
@@ -459,7 +459,7 @@ module ActualPaymentTestsExtra =
                     Map [
                         0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
                     ]
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
                 amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra002.md" false
                 return amortisationSchedule.ScheduleItems
             }
@@ -632,7 +632,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
                 amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra004.md" false
                 return amortisationSchedule.ScheduleItems
             }
@@ -711,7 +711,7 @@ module ActualPaymentTestsExtra =
                 let! schedule = PaymentSchedule.calculate BelowZero sp
                 let scheduleItems = schedule.Items
                 let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
                 amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra005.md" false
                 return amortisationSchedule.ScheduleItems
             }
@@ -791,7 +791,7 @@ module ActualPaymentTestsExtra =
                     Map [
                         0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
                     ]
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
+                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
                 amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra006.md" false
                 return amortisationSchedule.ScheduleItems
             }

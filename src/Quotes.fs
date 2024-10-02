@@ -32,8 +32,8 @@ module Quotes =
     /// <returns>the requested quote, if possible</returns>
     let getQuote intendedPurpose sp (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
         voption {
-            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false actualPayments
-            let! revisedAmortisationSchedule = Amortisation.generate sp intendedPurpose ScheduleType.Original false actualPayments
+            let! currentAmortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            let! revisedAmortisationSchedule = Amortisation.generate sp intendedPurpose false actualPayments
             let! si = revisedAmortisationSchedule.ScheduleItems |> Map.values |> Seq.tryFind _.GeneratedPayment.IsSome |> toValueOption
             let confirmedPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Confirmed ap } -> ap | { ActualPaymentStatus = ActualPaymentStatus.WriteOff ap } -> ap | _ -> 0L<Cent>)
             let pendingPayments = si.ActualPayments |> Array.sumBy(function { ActualPaymentStatus = ActualPaymentStatus.Pending ap } -> ap | _ -> 0L<Cent>)

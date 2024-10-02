@@ -17,5 +17,3 @@ module MapExtension =
             |> Array.groupBy fst
             |> Array.map(fun (k, v) -> k, Array.collect snd v)
             |> Map.ofArray
-
-        // to do: function to merge schedule payments (original and rescheduled) with possible clashes and duplicates
