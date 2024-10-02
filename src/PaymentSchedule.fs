@@ -76,9 +76,9 @@ module PaymentSchedule =
             | ValueSome o, ValueSome r ->
                 $"""<s>{formatCent o.Amount}</s>&nbsp;{formatCent r}"""
             | ValueSome o, ValueNone ->
-                formatCent o.Amount
+                $"original {formatCent o.Amount}"
             | ValueNone, ValueSome r ->
-                formatCent r
+                $"rescheduled {formatCent r}"
             | ValueNone, ValueNone ->
                 ""
             |> fun s ->

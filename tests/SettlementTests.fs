@@ -155,7 +155,7 @@ module SettlementTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest002.md" false
-                let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 122<OffsetDay> |> toValueOption
+                let! scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 122<OffsetDay> |> toValueOption
                 return quote.QuoteResult, scheduledItem
             }
 
@@ -241,7 +241,7 @@ module SettlementTests =
             voption {
                 let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest003.md" false
-                let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 122<OffsetDay> |> toValueOption
+                let! scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 122<OffsetDay> |> toValueOption
                 return quote.QuoteResult, scheduledItem
             }
 
