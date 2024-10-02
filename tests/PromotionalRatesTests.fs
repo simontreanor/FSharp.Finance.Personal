@@ -7,17 +7,14 @@ open FSharp.Finance.Personal
 
 module PromotionalRatesTests =
 
-    open ArrayExtension
     open Amortisation
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open FeesAndCharges
+    open Formatting
     open PaymentSchedule
     open Percentages
-    open Quotes
-    open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
         Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
@@ -30,7 +27,7 @@ module PromotionalRatesTests =
             AsOfDate = startDate.AddDays 180
             StartDate = startDate
             Principal = 400_00L<Cent>
-            PaymentSchedule = RegularSchedule (UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2), PaymentCount = 4, MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> })
+            PaymentSchedule = RegularSchedule {UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
             PaymentOptions = { ScheduledPaymentOption = AsScheduled; CloseBalanceOption = LeaveOpenBalance }
             FeesAndCharges = {
                 Fees = [||]
@@ -61,15 +58,15 @@ module PromotionalRatesTests =
     let ``1) Baseline with no promotional rates`` () =
         let sp = scheduleParameters ValueNone
 
-        let actualPayments = [||]
+        let actualPayments = Map.empty
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/PromotionalRatesTest001.md" false))
+        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/PromotionalRatesTest001.md" false))
 
-        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         interestBalance |> should equal 323_20m<Cent>
 
     [<Fact>]
@@ -80,15 +77,15 @@ module PromotionalRatesTests =
 
         let sp = scheduleParameters (ValueSome promotionalRates)
 
-        let actualPayments = [||]
+        let actualPayments = Map.empty
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/PromotionalRatesTest002.md" false))
+        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/PromotionalRatesTest002.md" false))
 
-        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         interestBalance |> should equal 224_00m<Cent>
 
     [<Fact>]
@@ -99,14 +96,14 @@ module PromotionalRatesTests =
 
         let sp = scheduleParameters (ValueSome promotionalRates)
 
-        let actualPayments = [||]
+        let actualPayments = Map.empty
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+            |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (Formatting.outputListToHtml "out/PromotionalRatesTest003.md" false))
+        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/PromotionalRatesTest003.md" false))
 
-        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Array.last |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
         interestBalance |> should equal 317_24.36164383m<Cent>
 

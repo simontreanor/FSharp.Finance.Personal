@@ -35,11 +35,11 @@ let scheduleParameters =
         AsOfDate = Date(2023, 4, 1)
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
-        PaymentSchedule = RegularSchedule (
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
-            PaymentCount = 5,
+        PaymentSchedule = RegularSchedule {
+            UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+            PaymentCount = 5
             MaxDuration = ValueNone
-        )
+        }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
@@ -72,13 +72,14 @@ let scheduleParameters =
         }
     }
 
-let actualPayments = [|
-    (CustomerPayment.ActualConfirmed   4<OffsetDay> 456_88L<Cent>)
-    (CustomerPayment.ActualConfirmed  35<OffsetDay> 456_88L<Cent>)
-    (CustomerPayment.ActualConfirmed  66<OffsetDay> 456_88L<Cent>)
-    (CustomerPayment.ActualConfirmed  94<OffsetDay> 456_88L<Cent>)
-    (CustomerPayment.ActualConfirmed 125<OffsetDay> 456_84L<Cent>)
-|]
+let actualPayments =
+    Map [
+        4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+        35<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+        66<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+        94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+        125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+    ]
 
 let amortisationSchedule =
     actualPayments
@@ -94,7 +95,7 @@ It is possible to format the `Items` property as an HTML table:
 
 let html =
     amortisationSchedule
-    |> ValueOption.map (_.ScheduleItems >> Formatting.generateHtmlFromArray None)
+    |> ValueOption.map (_.ScheduleItems >> generateHtmlFromMap None)
     |> ValueOption.defaultValue ""
 
 $"""<div style="overflow-x: auto;">{html}</div>"""

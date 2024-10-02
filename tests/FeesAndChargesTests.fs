@@ -9,10 +9,10 @@ module FeesAndChargesTests =
 
     open Amortisation
     open Calculation
-    open CustomerPayments
     open Currency
     open DateDay
     open FeesAndCharges
+    open Formatting
     open Percentages
     open PaymentSchedule
 
@@ -29,11 +29,11 @@ module FeesAndChargesTests =
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
-                    PaymentCount = 5,
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+                    PaymentCount = 5
                     MaxDuration = ValueNone
-                )
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -63,30 +63,29 @@ module FeesAndChargesTests =
                 }
             }
 
-            let actualPayments = [|
-                CustomerPayment.ActualConfirmed 4<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualFailed 35<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualFailed 36<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualConfirmed 40<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualFailed 66<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualFailed 66<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualConfirmed 70<OffsetDay> 456_84L<Cent>
-                CustomerPayment.ActualConfirmed 94<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualConfirmed 125<OffsetDay> 456_84L<Cent>
-            |]
+            let actualPayments =
+                Map [
+                    4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                    94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                ]
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/FeesAndChargesTest001.md" false))
+            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/FeesAndChargesTest001.md" false))
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-            let expected = ValueSome {
+            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+            let expected = ValueSome (125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
-                OffsetDay = 125<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 456_84L<Cent>; Metadata = Map.empty }
+                ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
@@ -110,7 +109,7 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 109_61L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            }
+            })
             actual |> should equal expected
 
         [<Fact>]
@@ -119,11 +118,11 @@ module FeesAndChargesTests =
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
-                    PaymentCount = 5,
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+                    PaymentCount = 5
                     MaxDuration = ValueNone
-                )
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -153,30 +152,29 @@ module FeesAndChargesTests =
                 }
             }
 
-            let actualPayments = [|
-                CustomerPayment.ActualConfirmed 4<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualFailed 35<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualFailed 36<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualConfirmed 40<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualFailed 66<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualFailed 66<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualConfirmed 70<OffsetDay> 456_84L<Cent>
-                CustomerPayment.ActualConfirmed 94<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualConfirmed 125<OffsetDay> 456_84L<Cent>
-            |]
+            let actualPayments =
+                Map [
+                    4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                    94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                ]
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/FeesAndChargesTest002.md" false))
+            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/FeesAndChargesTest002.md" false))
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-            let expected = ValueSome {
+            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+            let expected = ValueSome (125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
-                OffsetDay = 125<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 456_84L<Cent>; Metadata = Map.empty }
+                ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
@@ -200,7 +198,7 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 79_86L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            }
+            })
             actual |> should equal expected
 
         [<Fact>]
@@ -209,11 +207,11 @@ module FeesAndChargesTests =
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
-                PaymentSchedule = RegularSchedule (
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31),
-                    PaymentCount = 5,
+                PaymentSchedule = RegularSchedule {
+                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+                    PaymentCount = 5
                     MaxDuration = ValueNone
-                )
+                }
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -243,30 +241,29 @@ module FeesAndChargesTests =
                 }
             }
 
-            let actualPayments = [|
-                CustomerPayment.ActualConfirmed 4<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualFailed 35<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualFailed 36<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualConfirmed 40<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualFailed 66<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualFailed 66<OffsetDay> 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]
-                CustomerPayment.ActualConfirmed 70<OffsetDay> 456_84L<Cent>
-                CustomerPayment.ActualConfirmed 94<OffsetDay> 456_88L<Cent>
-                CustomerPayment.ActualConfirmed 125<OffsetDay> 456_84L<Cent>
-            |]
+            let actualPayments =
+                Map [
+                    4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                    94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
+                    125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                ]
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement ScheduleType.Original false
+                |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (Formatting.outputListToHtml "out/FeesAndChargesTest003.md" false))
+            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/FeesAndChargesTest003.md" false))
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Array.last)
-            let expected = ValueSome {
+            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+            let expected = ValueSome (125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
-                OffsetDay = 125<OffsetDay>
                 Advances = [||]
-                ScheduledPayment = { ScheduledPaymentType = ScheduledPaymentType.Original 456_84L<Cent>; Metadata = Map.empty }
+                ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
@@ -290,5 +287,5 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 124_49L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            }
+            })
             actual |> should equal expected

@@ -35,11 +35,11 @@ let scheduleParameters =
         AsOfDate = Date(2024, 02, 07)
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
-        PaymentSchedule = RegularSchedule (
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7),
-            PaymentCount = 36,
+        PaymentSchedule = RegularSchedule {
+            UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
+            PaymentCount = 36
             MaxDuration = ValueNone
-        )
+        }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
@@ -81,7 +81,7 @@ It is possible to format the `Items` property as an HTML table:
 
 let html =
     schedule
-    |> ValueOption.map (_.Items >> Formatting.generateHtmlFromArray None)
+    |> ValueOption.map (_.Items >> generateHtmlFromArray None)
     |> ValueOption.defaultValue ""
 
 $"""<div style="overflow-x: auto;">{html}</div>"""
