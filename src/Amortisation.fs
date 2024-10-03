@@ -79,11 +79,11 @@ module Amortisation =
         FeesRefundIfSettled: int64<Cent>
     }
     with
-        static member Default = {
+        static member DefaultValue = {
             Window = 0
             OffsetDate = Unchecked.defaultof<Date>
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.DefaultValue // to do: should OSI and CI be part of this?
+            ScheduledPayment = ScheduledPayment.DefaultValue
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = ValueNone
@@ -570,7 +570,7 @@ module Amortisation =
 
         ) (
             (0<OffsetDay>,
-            { ScheduleItem.Default with
+            { ScheduleItem.DefaultValue with
                 OffsetDate = sp.StartDate
                 Advances = [| sp.Principal |]
                 PrincipalBalance = sp.Principal

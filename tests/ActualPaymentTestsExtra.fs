@@ -327,7 +327,7 @@ module ActualPaymentTestsExtra =
     //     testItem.PrincipalPortionTotal |> should equal testItem.AdvanceTotal
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
-    let allPaidOnTime (scheduleItems: Item array) =
+    let allPaidOnTime (scheduleItems: SimpleItem array) =
         scheduleItems
         |> Array.filter _.ScheduledPayment.IsSome
         |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.ScheduledPayment.Value.Total |])

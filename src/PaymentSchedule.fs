@@ -223,7 +223,7 @@ module PaymentSchedule =
         | CustomSchedule of CustomSchedule: Map<int<OffsetDay>, ScheduledPayment>
 
     /// a scheduled payment item, with running calculations of interest and principal balance
-    type Item = {
+    type SimpleItem = {
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
         /// the scheduled payment
@@ -262,11 +262,11 @@ module PaymentSchedule =
                 }
 
     ///  a schedule of payments, with final statistics based on the payments being made on time and in full
-    type Schedule = {
+    type SimpleSchedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is inspected
         AsOfDay: int<OffsetDay>
         /// the items of the schedule
-        Items: Item array
+        Items: SimpleItem array
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
@@ -432,7 +432,7 @@ module PaymentSchedule =
 
         let calculateLevelPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees + interest) / decimal paymentCount
 
-        let initialItem = { Item.DefaultValue with InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees }
+        let initialItem = { SimpleItem.DefaultValue with InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees }
 
         let mutable schedule = [||]
 
