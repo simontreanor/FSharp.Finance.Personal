@@ -13,17 +13,18 @@ module PaymentSchedule =
     open ValueOptionCE
 
     /// an originally scheduled payment, including the original simple interest and contractual interest calculations
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type OriginalPayment =
         {
             /// the original payment amount
-            Amount: int64<Cent>
+            Value: int64<Cent>
             /// the original simple interest
             SimpleInterest: int64<Cent>
             /// the contractually calculated interest
             ContractualInterest: decimal<Cent>
         }
-                
+        member x.Html =
+            formatCent x.Value
 
     /// any original or rescheduled payment, affecting how any payment due is calculated
     [<StructuredFormatDisplay("{Html}")>]
@@ -45,7 +46,7 @@ module PaymentSchedule =
             | _, ValueSome r ->
                 r
             | ValueSome o, ValueNone ->
-                o.Amount
+                o.Value
             | ValueNone, ValueNone ->
                 0L<Cent>
             |> fun t ->
@@ -68,16 +69,16 @@ module PaymentSchedule =
         /// a quick convenient method to create a basic scheduled payment
         static member Quick originalAmount rescheduledAmount =
             { ScheduledPayment.DefaultValue with
-                Original =  originalAmount |> ValueOption.map(fun oa -> { Amount = oa; SimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> })
+                Original =  originalAmount |> ValueOption.map(fun oa -> { Value = oa; SimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> })
                 Rescheduled = rescheduledAmount
             }
         /// HTML formatting to display the scheduled payment in a concise way
         member x.Html =
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r ->
-                $"""<s>{formatCent o.Amount}</s>&nbsp;{formatCent r}"""
+                $"""<s>{formatCent o.Value}</s>&nbsp;{formatCent r}"""
             | ValueSome o, ValueNone ->
-                $"original {formatCent o.Amount}"
+                $"original {formatCent o.Value}"
             | ValueNone, ValueSome r ->
                 $"rescheduled {formatCent r}"
             | ValueNone, ValueNone ->
@@ -540,7 +541,7 @@ module PaymentSchedule =
                             si.ScheduledPayment
                             |> ValueOption.map(fun p ->
                                 { p with
-                                    Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> { o with Amount = o.Amount + si.PrincipalBalance }) else p.Original
+                                    Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> { o with Value = o.Value + si.PrincipalBalance }) else p.Original
                                     Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> r + si.PrincipalBalance) else p.Rescheduled
                                 }
                             )

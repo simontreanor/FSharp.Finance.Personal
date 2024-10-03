@@ -152,7 +152,7 @@ module Rescheduling =
                         match rp.FeeHandling with
                         | Fee.FeeHandling.CarryOverAsIs ->
                             { sp.FeeConfig with
-                                FeeTypes = [| Fee.CustomFee ("Rolled-Over Fee", Amount.Simple feesPortion) |]
+                                FeeTypes = [| Fee.CustomFee ("Rollover Fee", Amount.Simple feesPortion) |]
                                 SettlementRefund =
                                     if feesRefundIfSettled = 0L<Cent> then
                                         Fee.SettlementRefund.None

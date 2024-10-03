@@ -33,7 +33,7 @@ module Formatting =
     let outputToFile' fileName append content =
         outputToFile $"{__SOURCE_DIRECTORY__}/../io/{fileName}" append content
 
-    let internal regexMetadata = Regex(@"metadata = map \[.*?\]")
+    let internal regexMetadata = Regex(@"(metadata = )?map \[.*?\]")
     let internal regexObject = Regex(@"[{}]")
     let internal regexType = Regex(@"(scheduled payment type|actual payment status) = ")
     let internal regexSimple = Regex(@"\( simple (.+?)\)")
