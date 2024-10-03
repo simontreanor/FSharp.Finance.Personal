@@ -11,7 +11,6 @@ module EdgeCaseTests =
     open Calculation
     open Currency
     open DateDay
-    open FeesAndCharges
     open Formatting
     open MapExtension
     open PaymentSchedule

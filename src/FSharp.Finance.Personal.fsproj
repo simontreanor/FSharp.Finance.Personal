@@ -20,7 +20,8 @@
     <Compile Include="Currency.fs" />
     <Compile Include="Formatting.fs" />
     <Compile Include="Amount.fs" />
-    <Compile Include="FeesAndCharges.fs" />
+    <Compile Include="Fee.fs" />
+    <Compile Include="Charge.fs" />
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="Interest.fs" />

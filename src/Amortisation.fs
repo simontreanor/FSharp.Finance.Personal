@@ -8,7 +8,6 @@ module Amortisation =
     open Calculation
     open Currency
     open DateDay
-    open FeesAndCharges
     open PaymentSchedule
     open Percentages
     open ValueOptionCE

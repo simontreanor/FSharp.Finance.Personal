@@ -7,7 +7,6 @@ module PaymentSchedule =
     open Calculation
     open Currency
     open DateDay
-    open FeesAndCharges
     open Formatting
     open Percentages
     open UnitPeriod

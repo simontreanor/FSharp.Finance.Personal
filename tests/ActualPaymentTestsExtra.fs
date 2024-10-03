@@ -13,7 +13,6 @@ module ActualPaymentTestsExtra =
     open Calculation
     open Currency
     open DateDay
-    open FeesAndCharges
     open Formatting
     open FormattingHelper
     open PaymentSchedule

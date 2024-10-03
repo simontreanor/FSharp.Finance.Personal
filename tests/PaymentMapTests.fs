@@ -12,7 +12,6 @@ module PaymentMapTests =
     open Currency
     open CustomerPayments
     open DateDay
-    open FeesAndCharges
     open Formatting
     open PaymentSchedule
     open Percentages

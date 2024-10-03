@@ -11,7 +11,6 @@ module PromotionalRatesTests =
     open Calculation
     open Currency
     open DateDay
-    open FeesAndCharges
     open Formatting
     open PaymentSchedule
     open Percentages

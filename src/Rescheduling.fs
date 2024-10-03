@@ -10,7 +10,6 @@ module Rescheduling =
     open Calculation
     open Currency
     open DateDay
-    open FeesAndCharges
     open ValueOptionCE
 
     let mergeScheduledPayments rescheduleDay (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
