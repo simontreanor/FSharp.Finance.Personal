@@ -31,7 +31,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2023, 2, 9)
             Principal = 30000L<Cent>
-            ScheduleConfig = IrregularSchedule <| Map [
+            ScheduleConfig = CustomSchedule <| Map [
                 15<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 43<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
                 74<OffsetDay>, ScheduledPayment.Quick (ValueSome 137_40L<Cent>) ValueNone
@@ -86,7 +86,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 2, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = IrregularSchedule <| Map [
+            ScheduleConfig = CustomSchedule <| Map [
                 16<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 44<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
                 75<OffsetDay>, ScheduledPayment.Quick (ValueSome 11500L<Cent>) ValueNone
@@ -141,7 +141,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 12, 2)
             Principal = 75000L<Cent>
-            ScheduleConfig = IrregularSchedule <| Map [
+            ScheduleConfig = CustomSchedule <| Map [
                 14<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 45<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
                 76<OffsetDay>, ScheduledPayment.Quick (ValueSome 34350L<Cent>) ValueNone
@@ -196,7 +196,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
-            ScheduleConfig = IrregularSchedule <| Map [
+            ScheduleConfig = CustomSchedule <| Map [
                 8<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 39<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 69<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
@@ -323,7 +323,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
-            ScheduleConfig = IrregularSchedule <| Map [
+            ScheduleConfig = CustomSchedule <| Map [
                 8<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 39<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
                 69<OffsetDay>, ScheduledPayment.Quick (ValueSome 22500L<Cent>) ValueNone
@@ -670,7 +670,7 @@ module EdgeCaseTests =
         let (rp: RescheduleParameters) = {
             RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
-            PaymentSchedule = IrregularSchedule <| Map [
+            PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
             ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
@@ -760,7 +760,7 @@ module EdgeCaseTests =
         let (rp: RescheduleParameters) = {
             RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
-            PaymentSchedule = IrregularSchedule <| Map [
+            PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
             ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))

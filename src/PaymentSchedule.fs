@@ -55,8 +55,10 @@ module PaymentSchedule =
                     t + a
                 | ValueNone ->
                     t
+        /// whether the payment has either an original or a rescheduled value
         member x.IsSome =
             x.Original.IsSome || x.Rescheduled.IsSome
+        /// a default value with no data
         static member DefaultValue =
             {
                 Original = ValueNone
@@ -64,13 +66,13 @@ module PaymentSchedule =
                 Adjustment = ValueNone
                 Metadata = Map.empty
             }
+        /// a quick convenient method to create a basic scheduled payment
         static member Quick originalAmount rescheduledAmount =
-            {
+            { ScheduledPayment.DefaultValue with
                 Original =  originalAmount |> ValueOption.map(fun oa -> { Amount = oa; SimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> })
                 Rescheduled = rescheduledAmount
-                Adjustment = ValueNone
-                Metadata = Map.empty
             }
+        /// HTML formatting to display the scheduled payment in a concise way
         member x.Html =
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r ->
@@ -112,28 +114,43 @@ module PaymentSchedule =
                 | Confirmed ap -> ap
                 | Failed _ -> 0L<Cent>
 
+    /// an actual payment made by the customer, optionally including metadata such as bank references etc.
     type ActualPayment =
         {
+            /// the status of the payment
             ActualPaymentStatus: ActualPaymentStatus
+            /// any extra info such as references
             Metadata: Map<string, obj>
         }
         with
-            static member Total = function { ActualPaymentStatus = aps } -> ActualPaymentStatus.Total aps
-            static member QuickConfirmed amount = { ActualPaymentStatus = ActualPaymentStatus.Confirmed amount; Metadata = Map.empty }
-            static member QuickPending amount = { ActualPaymentStatus = ActualPaymentStatus.Pending amount; Metadata = Map.empty }
-            static member QuickFailed amount charges = { ActualPaymentStatus = ActualPaymentStatus.Failed (amount, charges); Metadata = Map.empty }
-            static member QuickWriteOff amount = { ActualPaymentStatus = ActualPaymentStatus.WriteOff amount; Metadata = Map.empty }
+            /// the total amount of the payment
+            static member Total =
+                function { ActualPaymentStatus = aps } -> ActualPaymentStatus.Total aps
+            /// a quick convenient method to create a confirmed actual payment
+            static member QuickConfirmed amount =
+                {
+                    ActualPaymentStatus = ActualPaymentStatus.Confirmed amount
+                    Metadata = Map.empty
+                }
+            /// a quick convenient method to create a pending actual payment
+            static member QuickPending amount =
+                {
+                    ActualPaymentStatus = ActualPaymentStatus.Pending amount
+                    Metadata = Map.empty
+                }
+            /// a quick convenient method to create a failed actual payment along with any applicable penalty charges
+            static member QuickFailed amount charges =
+                {
+                    ActualPaymentStatus = ActualPaymentStatus.Failed (amount, charges)
+                    Metadata = Map.empty
+                }
+            /// a quick convenient method to create a written off actual payment
+            static member QuickWriteOff amount =
+                {
+                    ActualPaymentStatus = ActualPaymentStatus.WriteOff amount
+                    Metadata = Map.empty
+                }
 
-    /// a payment (either extra scheduled or actually paid) to be applied to a payment schedule
-    type CustomerPayment = {
-        /// the amount of any extra scheduled payment due on the current day
-        ScheduledPayment: ScheduledPayment voption
-        /// the amounts of any actual payments made on the current day, with any charges incurred
-        ActualPayment: ActualPayment voption
-        /// the amounts of any generated payments made on the current day and their type
-        GeneratedPayment: int64<Cent> voption
-     }
- 
     /// the status of a payment made by the customer
     [<Struct>]
     type CustomerPaymentStatus =
@@ -170,14 +187,6 @@ module PaymentSchedule =
         /// a schedule item generated to show the balances on the as-of date
         | InformationOnly
 
-    /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
-    [<RequireQualifiedAccess; Struct>]
-    type ScheduleType =
-        /// an original schedule
-        | Original
-        /// a schedule based on a previous one
-        | Rescheduled
-
     /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
     [<RequireQualifiedAccess; Struct>]
     type AutoGenerateSchedule = {
@@ -185,6 +194,14 @@ module PaymentSchedule =
         PaymentCount: int
         MaxDuration: Duration voption
     }
+
+    /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
+    [<RequireQualifiedAccess; Struct>]
+    type ScheduleType =
+        /// an original schedule
+        | Original
+        /// a schedule based on a previous one
+        | Rescheduled
 
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
@@ -196,13 +213,14 @@ module PaymentSchedule =
     }
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
+    [<Struct>]
     type ScheduleConfig =
         /// a schedule based on a unit-period config with a specific number of payments with an auto-calculated amount, optionally limited to a maximum duration
-        | AutoGenerateSchedule of AutoGenerateSchedule
+        | AutoGenerateSchedule of AutoGenerateSchedule: AutoGenerateSchedule
         /// a  schedule based on one or more unit-period configs each with a specific number of payments of a specified amount and type
-        | FixedSchedules of FixedSchedule array
+        | FixedSchedules of FixedSchedules: FixedSchedule array
         /// just a bunch of payments
-        | IrregularSchedule of IrregularSchedule: Map<int<OffsetDay>, ScheduledPayment>
+        | CustomSchedule of CustomSchedule: Map<int<OffsetDay>, ScheduledPayment>
 
     /// a scheduled payment item, with running calculations of interest and principal balance
     type Item = {
@@ -228,6 +246,7 @@ module PaymentSchedule =
         TotalPrincipal: int64<Cent>
     }
         with
+            /// a default value with no data
             static member DefaultValue =
                 { 
                     Day = 0<OffsetDay>
@@ -342,7 +361,7 @@ module PaymentSchedule =
     /// generates a map of offset days and payments based on a start date and payment schedule
     let generatePaymentMap startDate paymentSchedule =
         match paymentSchedule with
-        | IrregularSchedule payments ->
+        | CustomSchedule payments ->
             if Map.isEmpty payments then
                 Map.empty
             else
@@ -474,7 +493,7 @@ module PaymentSchedule =
                             match sp.ScheduleConfig with
                             | AutoGenerateSchedule _ -> ScheduledPayment.Quick (ValueSome regularScheduledPayment) ValueNone
                             | FixedSchedules _
-                            | IrregularSchedule _ -> paymentMap[pd]
+                            | CustomSchedule _ -> paymentMap[pd]
                         generateItem Interest.Method.AddOn scheduledPayment state pd
                     ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
 
@@ -494,7 +513,7 @@ module PaymentSchedule =
             | AutoGenerateSchedule _ ->
                 Array.solve (generatePaymentAmount initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
             | FixedSchedules _
-            | IrregularSchedule _ ->
+            | CustomSchedule _ ->
                 schedule <-
                     paymentDays
                     |> Array.scan (fun state pd -> generateItem sp.Interest.Method paymentMap[pd] state pd) initialItem

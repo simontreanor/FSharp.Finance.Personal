@@ -1701,7 +1701,7 @@ module PaymentScheduleTests =
                         { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentAmount = 36_44L<Cent>; ScheduleType = ScheduleType.Original }
                     |]
 
-                let paymentSchedule3 = IrregularSchedule <| Map [
+                let paymentSchedule3 = CustomSchedule <| Map [
                     10<OffsetDay>, ScheduledPayment.Quick (ValueSome 36_48L<Cent>) ValueNone
                     41<OffsetDay>, ScheduledPayment.Quick (ValueSome 36_48L<Cent>) ValueNone
                     72<OffsetDay>, ScheduledPayment.Quick (ValueSome 36_48L<Cent>) ValueNone

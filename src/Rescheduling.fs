@@ -85,7 +85,7 @@ module Rescheduling =
                         |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, ScheduledPayment.Quick ValueNone (ValueSome rfs.PaymentAmount))
                     )
                     |> Array.concat
-                | IrregularSchedule payments ->
+                | CustomSchedule payments ->
                     payments
                     |> Map.toArray
             // append the new schedule to the old schedule up to the point of settlement
@@ -97,7 +97,7 @@ module Rescheduling =
             // configure the parameters for the new schedule
             let spNew =
                 { sp with
-                    ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments rp.RescheduleDay |> IrregularSchedule
+                    ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments rp.RescheduleDay |> CustomSchedule
                     FeesAndCharges =
                         { sp.FeesAndCharges with
                             FeesSettlementRefund = rp.FeesSettlementRefund

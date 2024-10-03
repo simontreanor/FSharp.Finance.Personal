@@ -378,7 +378,7 @@ module UnitPeriodConfigTests =
                 AsOfDate = startDate
                 StartDate = startDate
                 Principal = 100000L<Cent>
-                ScheduleConfig = IrregularSchedule originalScheduledPayments
+                ScheduleConfig = CustomSchedule originalScheduledPayments
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
@@ -448,7 +448,7 @@ module UnitPeriodConfigTests =
                                 |]
                                 |> Array.concat
                                 |> Map.ofArray
-                                |> IrregularSchedule
+                                |> CustomSchedule
                             FeesAndCharges =
                                 { sp.FeesAndCharges with
                                     FeesSettlementRefund =
