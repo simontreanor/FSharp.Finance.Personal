@@ -69,10 +69,6 @@ module Calculation =
     /// how to round calculated interest and payments
     [<Struct>]
     type RoundingOptions = {
-        /// how to round charges
-        ChargesRounding: Rounding
-        /// how to round fees
-        FeesRounding: Rounding
         /// how to round interest
         InterestRounding: Rounding
         /// how to round payments
@@ -81,8 +77,6 @@ module Calculation =
     with
         /// suggestion for default rounding options
         static member recommended = {
-            ChargesRounding = RoundDown
-            FeesRounding = RoundDown
             InterestRounding = RoundDown
             PaymentRounding = RoundUp
         }

@@ -44,13 +44,12 @@ let scheduleParameters =
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
         }
-        FeesAndCharges = {
-            Fees = [||]
-            FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-            FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-            Charges = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-            ChargesHolidays = [||]
-            ChargesGrouping = OneChargeTypePerDay
+        FeeConfig = Fee.Config.DefaultValue
+        ChargeConfig = {
+            ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
+            Rounding = ValueSome RoundDown
+            ChargeHolidays = [||]
+            ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
         Interest = {

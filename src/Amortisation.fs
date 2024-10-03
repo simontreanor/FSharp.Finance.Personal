@@ -46,7 +46,7 @@ module Amortisation =
         /// the overall balance status
         BalanceStatus: BalanceStatus
         /// any new charges incurred between the previous amortisation day and the current day
-        NewCharges: Charge array
+        NewCharges: Charge.ChargeType array
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
         /// the simple interest initially calculated at the start date
@@ -160,7 +160,7 @@ module Amortisation =
 
         let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
 
-        let feesTotal = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.FeesRounding)
+        let feesTotal = Fee.GrandTotal sp.FeeConfig sp.Principal ValueNone
 
         let feesPercentage =
             if sp.Principal = 0L<Cent> then Percent 0m
@@ -228,6 +228,8 @@ module Amortisation =
                     )
 
         let interestRounding = ValueSome sp.Calculation.RoundingOptions.InterestRounding
+
+        let chargesHolidays = Charge.HolidayDates sp.ChargeConfig sp.StartDate
 
         appliedPayments
         |> Map.toArray
@@ -327,10 +329,10 @@ module Amortisation =
                 if paymentDue = 0L<Cent> then
                     0L<Cent>, [||]
                 else
-                    if Charges.areApplicable sp.StartDate sp.FeesAndCharges.ChargesHolidays siOffsetDay then
-                        Charges.total underpayment ap.IncurredCharges |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.ChargesRounding), ap.IncurredCharges
-                    else
+                    if chargesHolidays |> Array.exists ((=) (int siOffsetDay)) then
                         0L<Cent>, [||]
+                    else
+                        Charge.GrandTotal sp.ChargeConfig underpayment (ValueSome ap.ChargeTypes), ap.ChargeTypes
 
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
 
@@ -375,10 +377,10 @@ module Amortisation =
             let scheduledPayment = { ap.ScheduledPayment with Adjustment = scheduledPaymentAmendment }
 
             let feesPortion =
-                match sp.FeesAndCharges.FeesAmortisation with
-                | Fees.FeeAmortisation.AmortiseBeforePrincipal ->
+                match sp.FeeConfig.FeeAmortisation with
+                | Fee.FeeAmortisation.AmortiseBeforePrincipal ->
                     Cent.min si.FeesBalance assignable
-                | Fees.FeeAmortisation.AmortiseProportionately ->
+                | Fee.FeeAmortisation.AmortiseProportionately ->
                     feesPercentage
                     |> Percent.toDecimal
                     |> fun m ->
@@ -394,18 +396,18 @@ module Amortisation =
                     decimal feesTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round (ValueSome RoundUp)
 
             let feesRefundIfSettled =
-                match sp.FeesAndCharges.FeesSettlementRefund with
-                | Fees.SettlementRefund.None ->
-                    0L<Cent>
-                | Fees.SettlementRefund.ProRata originalFinalPaymentDay ->
+                match sp.FeeConfig.SettlementRefund with
+                | Fee.SettlementRefund.ProRata originalFinalPaymentDay ->
                     match originalFinalPaymentDay with
                     | ValueNone ->
                         let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> toValueOption |> ValueOption.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
                     | ValueSome ofpd ->
                         calculateFees ofpd
-                | Fees.SettlementRefund.Balance ->
+                | Fee.SettlementRefund.Balance ->
                     a.CumulativeFees
+                | Fee.SettlementRefund.None ->
+                    0L<Cent>
 
             let feesRefund = Cent.max 0L<Cent> feesRefundIfSettled
 
@@ -577,7 +579,7 @@ module Amortisation =
                 FeesBalance = feesTotal
                 InterestBalance = initialInterestBalance |> Cent.toDecimalCent
                 SettlementFigure = sp.Principal + feesTotal
-                FeesRefundIfSettled = match sp.FeesAndCharges.FeesSettlementRefund with Fees.SettlementRefund.None -> 0L<Cent> | _ -> feesTotal
+                FeesRefundIfSettled = match sp.FeeConfig.SettlementRefund with Fee.SettlementRefund.None -> 0L<Cent> | _ -> feesTotal
             }), {
                 CumulativeScheduledPayments = 0L<Cent>
                 CumulativeActualPayments = 0L<Cent>
@@ -662,10 +664,9 @@ module Amortisation =
         if Map.isEmpty scheduledPayments then ValueNone else
 
         let asOfDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
-        let latePaymentCharge = sp.FeesAndCharges.Charges |> Array.tryPick(function Charge.LatePayment _ as c -> Some c | _ -> None) |> toValueOption
 
         scheduledPayments
-        |> applyPayments asOfDay intendedPurpose sp.FeesAndCharges.LatePaymentGracePeriod latePaymentCharge sp.FeesAndCharges.ChargesGrouping sp.Calculation.PaymentTimeout actualPayments
+        |> applyPayments asOfDay intendedPurpose sp.ChargeConfig sp.Calculation.PaymentTimeout actualPayments
         |> calculate sp intendedPurpose initialInterestBalance
         |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
         |> calculateStats sp intendedPurpose

@@ -54,8 +54,8 @@ module FormattingHelper =
         match generationOptions with
         | Some go ->
             [|
-                go.GoParameters.FeesAndCharges.Fees |> Array.isEmpty |> feesProperties
-                go.GoParameters.FeesAndCharges.Charges |> Array.isEmpty |> chargesProperties
+                go.GoParameters.FeeConfig.FeeTypes |> Array.isEmpty |> feesProperties
+                go.GoParameters.ChargeConfig.ChargeTypes |> Array.isEmpty |> chargesProperties
                 (match go.GoPurpose with IntendedPurpose.Settlement _ -> false | _ -> true) |> quoteProperties
                 (match go.GoParameters.Interest.Method with Interest.Method.AddOn -> false | _ -> true) |> interestProperties
                 go.GoExtra |> not |> extraProperties

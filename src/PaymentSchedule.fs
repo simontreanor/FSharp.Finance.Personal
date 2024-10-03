@@ -104,7 +104,7 @@ module PaymentSchedule =
         /// the payment has been confirmed
         | Confirmed of Confirmed: int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
-        | Failed of Failed: int64<Cent> * Charges: Charge array
+        | Failed of Failed: int64<Cent> * ChargeTypes: Charge.ChargeType array
         with
             /// the total amount of the payment
             static member Total = function
@@ -351,7 +351,9 @@ module PaymentSchedule =
         /// options relating to scheduled payments
         PaymentOptions: PaymentOptions
         /// options relating to fees
-        FeesAndCharges: FeesAndCharges
+        FeeConfig: Fee.Config
+        /// options relating to charges
+        ChargeConfig: Charge.Config
         /// options relating to interest
         Interest: Interest.Options
         /// technical calculation options
@@ -416,7 +418,7 @@ module PaymentSchedule =
 
         let paymentCount = paymentDays |> Array.length
 
-        let fees = Fees.total sp.Principal sp.FeesAndCharges.Fees |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.FeesRounding)
+        let fees = Fee.GrandTotal sp.FeeConfig sp.Principal ValueNone
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 

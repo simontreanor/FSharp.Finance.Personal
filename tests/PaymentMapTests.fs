@@ -31,15 +31,8 @@ module PaymentMapTests =
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
         }
-        FeesAndCharges = {
-            Fees = [||]
-            FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-            FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-            Charges = [||]
-            ChargesHolidays = [||]
-            ChargesGrouping = OneChargeTypePerDay
-            LatePaymentGracePeriod = 3<DurationDay>
-        }
+        FeeConfig = Fee.Config.DefaultValue
+        ChargeConfig = Charge.Config.DefaultValue
         Interest = {
             Method = interestMethod
             StandardRate = Interest.Rate.Daily (Percent 0.8m)

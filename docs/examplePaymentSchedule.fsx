@@ -44,15 +44,8 @@ let scheduleParameters =
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
         }
-        FeesAndCharges = {
-            Fees = [||]
-            FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-            FeesSettlementRefund = Fees.SettlementRefund.None
-            Charges = [||]
-            ChargesHolidays = [||]
-            ChargesGrouping = OneChargeTypePerDay
-            LatePaymentGracePeriod = 0<DurationDay>
-        }
+        FeeConfig = Fee.Config.DefaultValue
+        ChargeConfig = Charge.Config.DefaultValue
         Interest = {
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Annual (Percent 6.9m)

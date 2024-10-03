@@ -41,15 +41,13 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+            FeeConfig = {
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
+                Rounding = ValueSome RoundDown
+                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
             }
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -96,15 +94,13 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+            FeeConfig = {
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
+                Rounding = ValueSome RoundDown
+                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
             }
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -151,15 +147,13 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+            FeeConfig = {
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
+                Rounding = ValueSome RoundDown
+                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
             }
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -208,15 +202,13 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+            FeeConfig = {
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
+                Rounding = ValueSome RoundDown
+                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
             }
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -335,15 +327,13 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+            FeeConfig = {
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
+                Rounding = ValueSome RoundDown
+                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
             }
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -456,15 +446,8 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [||]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = Fee.Config.DefaultValue
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -581,15 +564,8 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [||]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = Fee.Config.DefaultValue
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -635,15 +611,8 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [||]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = Fee.Config.DefaultValue
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -669,13 +638,13 @@ module EdgeCaseTests =
 
         let (rp: RescheduleParameters) = {
             RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
-            FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
+            FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
             ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
-            ChargesHolidays = [||]
+            ChargeHolidays = [||]
             IntendedPurpose = IntendedPurpose.Settlement <| ValueSome 88<OffsetDay>
         }
 
@@ -725,15 +694,8 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [||]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = Fee.Config.DefaultValue
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -759,13 +721,13 @@ module EdgeCaseTests =
 
         let (rp: RescheduleParameters) = {
             RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
-            FeesSettlementRefund = Fees.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
+            FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
             ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
-            ChargesHolidays = [||]
+            ChargeHolidays = [||]
             IntendedPurpose = IntendedPurpose.Settlement <| ValueSome 88<OffsetDay>
         }
 
@@ -815,15 +777,8 @@ module EdgeCaseTests =
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
             }
-            FeesAndCharges = {
-                Fees = [||]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.ProRata ValueNone
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = Fee.Config.DefaultValue
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)

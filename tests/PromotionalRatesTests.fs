@@ -29,15 +29,8 @@ module PromotionalRatesTests =
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
             PaymentOptions = { ScheduledPaymentOption = AsScheduled; CloseBalanceOption = LeaveOpenBalance }
-            FeesAndCharges = {
-                Fees = [||]
-                FeesAmortisation = Fees.FeeAmortisation.AmortiseProportionately
-                FeesSettlementRefund = Fees.SettlementRefund.None
-                Charges = [||]
-                ChargesHolidays = [||]
-                ChargesGrouping = OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = Fee.Config.DefaultValue
+            ChargeConfig = Charge.Config.DefaultValue
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
