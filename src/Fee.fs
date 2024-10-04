@@ -77,16 +77,16 @@ module Fee =
         Cent.fromDecimalCent config.Rounding
 
     /// calculates the total amount of fees based on the fee configuration
-    let Total feeConfig baseAmount feeType =
+    let Total feeConfig baseValue feeType =
         match feeType with
         | FacilitationFee amount
         | CabOrCsoFee amount
         | MortageFee amount
-        | CustomFee (_, amount) -> amount |> Amount.total baseAmount
+        | CustomFee (_, amount) -> amount |> Amount.total baseValue
         |> Round feeConfig
 
     /// calculates the total sum of all fees based on either default or custom fee types
-    let GrandTotal feeConfig baseAmount customFeeTypes =
+    let GrandTotal feeConfig baseValue customFeeTypes =
         customFeeTypes
         |> ValueOption.defaultValue feeConfig.FeeTypes
-        |> Array.sumBy (Total feeConfig baseAmount)
+        |> Array.sumBy (Total feeConfig baseValue)

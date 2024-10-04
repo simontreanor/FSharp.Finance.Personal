@@ -23,7 +23,7 @@ module ArrayExtension =
         Max: int
     }
     with
-        static member forPaymentAmount paymentCount =
+        static member forPaymentValue paymentCount =
             { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 4 }
 
     /// what range of values the solver should aim for

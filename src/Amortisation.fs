@@ -614,7 +614,7 @@ module Amortisation =
             | IntendedPurpose.Settlement _ when finalBalanceStatus = ClosedBalance ->
                 items'
                 |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = asi.OffsetDate; Apr.Amount = asi.NetEffect })
+                |> Array.map(fun asi -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = asi.OffsetDate; Apr.Value = asi.NetEffect })
                 |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
                 |> ValueSome
             | _ ->

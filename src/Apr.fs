@@ -41,7 +41,7 @@ module Apr =
         /// the date of the transfer
         TransferDate: Date
         /// the amount of the transfer
-        Amount: int64<Cent>
+        Value: int64<Cent>
     }
 
     /// APR as in https://www.handbook.fca.org.uk/handbook/MCOB/10/?view=chapter
@@ -51,14 +51,14 @@ module Apr =
         let calculateApr (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
             if principal = 0L<Cent> || Array.isEmpty transfers then Solution.Impossible else
             let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)
-            let paymentTotal = payments |> Array.sumBy _.Amount
+            let paymentTotal = payments |> Array.sumBy _.Value
             if principal = paymentTotal then Solution.Found(0m, 0, 0) else
             let roughApr = 4.2m
             let ak = [| principal, 0m |]
             let a'k' =
                 payments
                 |> Array.map(fun t ->
-                    t.Amount, decimal (t.TransferDate - startDate).Days / 365m
+                    t.Value, decimal (t.TransferDate - startDate).Days / 365m
                 )
             let calc transfers unitPeriodRate =
                 transfers
@@ -188,9 +188,9 @@ module Apr =
         /// (b)(8) General equation.
         let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
             if Array.isEmpty advances || Array.isEmpty payments then Solution.Impossible else
-            let advanceTotal = advances |> Array.sumBy (_.Amount >> Cent.toDecimal)
+            let advanceTotal = advances |> Array.sumBy (_.Value >> Cent.toDecimal)
             if advanceTotal = 0m then Solution.Impossible else
-            let paymentTotal = payments |> Array.sumBy (_.Amount >> Cent.toDecimal)
+            let paymentTotal = payments |> Array.sumBy (_.Value >> Cent.toDecimal)
             if advanceTotal = paymentTotal then Solution.Found(0m, 0, 0) else
             let advanceDates = advances |> Array.map _.TransferDate
             let paymentDates = payments |> Array.map _.TransferDate
@@ -198,20 +198,20 @@ module Apr =
             let unitPeriod = UnitPeriod.nearest term advanceDates paymentDates
             let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
             let roughUnitPeriodRate =
-                let paymentAverage = payments |> Array.averageBy (_.Amount >> Cent.toDecimal)
+                let paymentAverage = payments |> Array.averageBy (_.Value >> Cent.toDecimal)
                 let paymentCount = payments |> Array.length |> decimal
                 if advanceTotal = 0m || unitPeriodsPerYear = 0m then
                     0m
                 else
                     ((paymentAverage / advanceTotal) * (paymentCount / 12m)) / unitPeriodsPerYear
             let unitPeriodRate =
-                let eq = [| advances[0].Amount, 0m, 0 |]
+                let eq = [| advances[0].Value, 0m, 0 |]
                 let ft =
                     mapUnitPeriods unitPeriod term.Start payments
                     |> Array.map(fun (tr, dr) ->
                         let f = dr.Remainder //The fraction of a unit-period in the time interval from the beginning of the term of the transaction to the jth payment.
                         let t = dr.Quotient //The number of full unit-periods from the beginning of the term of the transaction to the jth payment.
-                        tr.Amount, f, t
+                        tr.Value, f, t
                     )
                 let calc transfers unitPeriodRate =
                     transfers
@@ -234,13 +234,13 @@ module Apr =
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and
     /// advance date are all the same
-    let calculate method advanceAmount advanceDate transfers =
+    let calculate method advanceValue advanceDate transfers =
         match method with
         | CalculationMethod.UnitedKingdom _ ->
-            UnitedKingdom.calculateApr advanceDate advanceAmount transfers
+            UnitedKingdom.calculateApr advanceDate advanceValue transfers
         | CalculationMethod.UsActuarial _ ->
-            let advances = [| { TransferType = Advance; TransferDate = advanceDate; Amount = advanceAmount } |]
-            if Array.isEmpty transfers then [| { TransferType = Payment; TransferDate = advanceDate.AddYears 1; Amount = 0L<Cent> } |]
+            let advances = [| { TransferType = Advance; TransferDate = advanceDate; Value = advanceValue } |]
+            if Array.isEmpty transfers then [| { TransferType = Payment; TransferDate = advanceDate.AddYears 1; Value = 0L<Cent> } |]
             else transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
         | CalculationMethod.UnitedStatesRule ->

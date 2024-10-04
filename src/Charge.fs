@@ -60,18 +60,18 @@ module Charge =
         Cent.fromDecimalCent config.Rounding
 
     /// calculates the total of a charge
-    let Total chargeConfig baseAmount chargeType =
+    let Total chargeConfig baseValue chargeType =
         match chargeType with
         | LatePayment amount
         | InsufficientFunds amount
-        | CustomCharge (_, amount) -> amount |> Amount.total baseAmount
+        | CustomCharge (_, amount) -> amount |> Amount.total baseValue
         |> Round chargeConfig
 
     /// calculates the total sum of any charges incurred
-    let GrandTotal chargeConfig baseAmount customChargeTypes =
+    let GrandTotal chargeConfig baseValue customChargeTypes =
         customChargeTypes
         |> ValueOption.defaultValue chargeConfig.ChargeTypes
-        |> Array.sumBy (Total chargeConfig baseAmount)
+        |> Array.sumBy (Total chargeConfig baseValue)
 
     let HolidayDates chargeConfig startDate =
         chargeConfig.ChargeHolidays

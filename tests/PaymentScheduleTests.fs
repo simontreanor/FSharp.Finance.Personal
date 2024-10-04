@@ -1684,8 +1684,8 @@ module PaymentScheduleTests =
 
                 let paymentSchedule2 =
                     FixedSchedules [|
-                        { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024,  7, 4); PaymentCount = 3; PaymentAmount = 36_48L<Cent>; ScheduleType = ScheduleType.Original }
-                        { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentAmount = 36_44L<Cent>; ScheduleType = ScheduleType.Original }
+                        { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024,  7, 4); PaymentCount = 3; PaymentValue = 36_48L<Cent>; ScheduleType = ScheduleType.Original }
+                        { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentValue = 36_44L<Cent>; ScheduleType = ScheduleType.Original }
                     |]
 
                 let paymentSchedule3 = CustomSchedule <| Map [

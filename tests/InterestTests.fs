@@ -213,8 +213,8 @@ module InterestTests =
                 StartDate = Date(2024, 4, 11)
                 Principal = 192_000_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentAmount = 1225_86L<Cent>; ScheduleType = ScheduleType.Original }
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentAmount = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentValue = 1225_86L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentValue = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
                 PaymentOptions = {
                     ScheduledPaymentOption = AsScheduled
@@ -369,7 +369,7 @@ module InterestTests =
                 StartDate = Date(2010, 3, 1)
                 AsOfDate = Date(2011, 3, 1)
                 Principal = 5000_00L<Cent>
-                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentAmount = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
+                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentValue = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
                 PaymentOptions = { ScheduledPaymentOption = AsScheduled; CloseBalanceOption = LeaveOpenBalance }
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = Charge.Config.DefaultValue

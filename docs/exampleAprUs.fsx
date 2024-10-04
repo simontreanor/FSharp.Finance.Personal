@@ -33,7 +33,7 @@ let principal = 5000_00L<Cent>
 let transfers =
     Monthly (1, 1978, 2, 10)
     |> generatePaymentSchedule 24 ValueNone Direction.Forward
-    |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = 230_00L<Cent> })
+    |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = 230_00L<Cent> })
 
 let aprMethod = CalculationMethod.UsActuarial 4
 

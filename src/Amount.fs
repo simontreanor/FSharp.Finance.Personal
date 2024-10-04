@@ -34,10 +34,10 @@ module Amount =
         | Percentage of Percentage:Percent * Restriction:Restriction voption * Rounding:Rounding voption
         with
             /// calculates the total amount based on any restrictions
-            static member total (baseAmount: int64<Cent>) amount =
+            static member total (baseValue: int64<Cent>) amount =
                 match amount with
                 | Percentage (Percent percentage, restriction, rounding) ->
-                    decimal baseAmount * decimal percentage / 100m
+                    decimal baseValue * decimal percentage / 100m
                     |> Restriction.calculate restriction
                     |> Rounding.round rounding
                 | Simple simple -> decimal simple

@@ -33,15 +33,15 @@ module ActualPaymentTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentAmount contractualInterest interestAdjustment interestPortion principalPortion = ValueSome (offsetDay, {
+    let quickExpectedFinalItem date offsetDay paymentValue contractualInterest interestAdjustment interestPortion principalPortion = ValueSome (offsetDay, {
         OffsetDate = date
         Advances = [||]
-        ScheduledPayment = ScheduledPayment.Quick (ValueSome paymentAmount) ValueNone
+        ScheduledPayment = ScheduledPayment.Quick (ValueSome paymentValue) ValueNone
         Window = 5
-        PaymentDue = paymentAmount
-        ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentAmount; Metadata = Map.empty } |]
+        PaymentDue = paymentValue
+        ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue; Metadata = Map.empty } |]
         GeneratedPayment = ValueNone
-        NetEffect = paymentAmount
+        NetEffect = paymentValue
         PaymentStatus = PaymentMade
         BalanceStatus = ClosedBalance
         OriginalSimpleInterest = 0L<Cent>
@@ -1416,7 +1416,7 @@ module ActualPaymentTests =
             AsOfDate = Date(2024, 7, 3)
             StartDate = Date(2024, 4, 12)
             Principal = 100_00L<Cent>
-            ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 4, 19); PaymentCount = 4; PaymentAmount= 35_48L<Cent>; ScheduleType = ScheduleType.Original } |]
+            ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 4, 19); PaymentCount = 4; PaymentValue= 35_48L<Cent>; ScheduleType = ScheduleType.Original } |]
             PaymentOptions = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance

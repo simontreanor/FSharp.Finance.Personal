@@ -65,12 +65,12 @@ module AppliedPayment =
 
                 let confirmedPayments =
                     actualPayments'
-                    |> Array.choose(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed confirmedAmount -> Some confirmedAmount | ActualPaymentStatus.WriteOff writeOffAmount -> Some writeOffAmount | _ -> None)
+                    |> Array.choose(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed confirmedValue -> Some confirmedValue | ActualPaymentStatus.WriteOff writeOffValue -> Some writeOffValue | _ -> None)
                     |> Array.sum
 
                 let pendingPayments =
                     actualPayments'
-                    |> Array.choose(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Pending pendingAmount -> Some pendingAmount | _ -> None)
+                    |> Array.choose(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Pending pendingValue -> Some pendingValue | _ -> None)
                     |> Array.sum
 
                 let latePaymentGracePeriod, latePaymentCharge, chargeGrouping =

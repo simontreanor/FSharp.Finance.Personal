@@ -19,7 +19,7 @@ module AprActuarialTestsExtra =
     type AprUsActuarialTestItemDto = {
         StartDate: DateOnly
         Principal: decimal
-        PaymentAmount: decimal
+        PaymentValue: decimal
         PaymentDates: DateOnly array
         ExpectedApr: decimal
         ActualApr: decimal
@@ -28,7 +28,7 @@ module AprActuarialTestsExtra =
     type AprUsActuarialTestItem = {
         StartDate: Date
         Principal: int64<Cent>
-        PaymentAmount: int64<Cent>
+        PaymentValue: int64<Cent>
         PaymentDates: Date array
         ExpectedApr: Percent
         ActualApr: Percent
@@ -40,16 +40,16 @@ module AprActuarialTestsExtra =
         |> Array.choose(fun ssi ->
             let startDate = ssi.StartDate |> fun d -> Date(d.Year, d.Month, d.Day)
             let principal = Cent.fromDecimal ssi.Principal
-            let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
+            let paymentValue = Cent.fromDecimal ssi.PaymentValue
             let paymentDates = ssi.PaymentDates |> Array.map(fun d -> Date(d.Year, d.Month, d.Day))
-            let payments = paymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = paymentAmount })
+            let payments = paymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = paymentValue })
             let actualApr = calculate (CalculationMethod.UsActuarial 8) principal startDate payments
             match actualApr with
             | Solution.Found (apr, _, _) ->
                 Some {
                     StartDate = startDate
                     Principal = principal
-                    PaymentAmount = paymentAmount
+                    PaymentValue = paymentValue
                     PaymentDates = paymentDates
                     ExpectedApr = Percent ssi.ExpectedApr
                     ActualApr = apr |> Percent.fromDecimal |> Percent.round 4
