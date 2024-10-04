@@ -153,7 +153,7 @@ module PaymentSchedule =
 
     /// the status of a payment made by the customer
     [<Struct>]
-    type CustomerPaymentStatus =
+    type PaymentStatus =
         /// no payment is required on the specified day
         | NoneScheduled
         /// a payment has been initiated but not yet confirmed
@@ -587,3 +587,32 @@ module PaymentSchedule =
             }
         | _ ->
             ValueNone
+
+    let mergeScheduledPayments rescheduleDay (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
+        scheduledPayments
+        |> Array.groupBy fst
+        |> Array.map(fun (offsetDay, scheduledPayments) -> // for each day, there will only ever be a maximum of one original and one rescheduled payment
+            let original = scheduledPayments |> Array.tryFind (snd >> _.Original.IsSome) |> toValueOption |> ValueOption.map snd
+            let rescheduled = scheduledPayments |> Array.tryFind (snd >> _.Rescheduled.IsSome) |> toValueOption |> ValueOption.map snd
+            let scheduledPayment =
+                match original, rescheduled with
+                | _, ValueSome r ->
+                    {
+                        Original = original |> ValueOption.bind _.Original
+                        Rescheduled = r.Rescheduled
+                        Adjustment = r.Adjustment
+                        Metadata = r.Metadata
+                    }
+                | ValueSome o, ValueNone ->
+                    {
+                        Original = o.Original
+                        Rescheduled = if offsetDay >= rescheduleDay then ValueSome 0L<Cent> else ValueNone //overwrite original scheduled payments from start of rescheduled payments
+                        Adjustment = o.Adjustment
+                        Metadata = o.Metadata
+                    }
+                | ValueNone, ValueNone ->
+                    ScheduledPayment.DefaultValue
+            offsetDay, scheduledPayment
+        )
+        |> Array.filter (snd >> _.IsSome)
+        |> Map.ofArray

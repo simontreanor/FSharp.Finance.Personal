@@ -10,7 +10,6 @@ module PaymentMapTests =
     open ArrayExtension
     open Calculation
     open Currency
-    open CustomerPayments
     open DateDay
     open Formatting
     open PaymentSchedule

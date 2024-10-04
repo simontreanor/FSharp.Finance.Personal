@@ -24,9 +24,9 @@ with a level payment of £456.88 and a final payment of £456.84:
 open FSharp.Finance.Personal
 open Calculation
 open Currency
-open CustomerPayments
 open DateDay
-open FeesAndCharges
+open Fee
+open Charge
 open PaymentSchedule
 open Percentages
 

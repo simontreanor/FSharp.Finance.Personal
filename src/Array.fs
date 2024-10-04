@@ -69,4 +69,4 @@ module ArrayExtension =
                         loop (i + 1) newBound upperBound tolerance
                     else //difference < lowerTolerance
                         loop (i + 1) lowerBound newBound tolerance
-            loop 0 0m (approximation * 100m) toleranceSteps'.Min // to-do: improve approximation
+            loop 0 0m (approximation * 100m) toleranceSteps'.Min // to do: improve approximation

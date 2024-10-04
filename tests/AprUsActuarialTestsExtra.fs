@@ -17,10 +17,10 @@ module AprActuarialTestsExtra =
     open Util
 
     type AprUsActuarialTestItemDto = {
-        StartDate: Date
+        StartDate: DateOnly
         Principal: decimal
         PaymentAmount: decimal
-        PaymentDates: Date array
+        PaymentDates: DateOnly array
         ExpectedApr: decimal
         ActualApr: decimal
     }
@@ -34,29 +34,31 @@ module AprActuarialTestsExtra =
         ActualApr: Percent
     }
 
-    // let aprUsActuarialTestData =
-    //     IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/in/AprUsActuarialTestData.json"
-    //     |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
-    //     |> Array.choose(fun ssi ->
-    //         let principal = Cent.fromDecimal ssi.Principal
-    //         let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
-    //         let payments = ssi.PaymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = paymentAmount })
-    //         let actualApr = calculate (CalculationMethod.UsActuarial 8) principal ssi.StartDate payments
-    //         match actualApr with
-    //         | Solution.Found (apr, _, _) ->
-    //             Some {
-    //                 StartDate = ssi.StartDate
-    //                 Principal = principal
-    //                 PaymentAmount = paymentAmount
-    //                 PaymentDates = ssi.PaymentDates
-    //                 ExpectedApr = Percent ssi.ExpectedApr
-    //                 ActualApr = apr |> Percent.fromDecimal |> Percent.round 4
-    //             }
-    //         | _ -> None
-    //     )
-    //     |> toMemberData
+    let aprUsActuarialTestData =
+        IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/in/AprUsActuarialTestData.json"
+        |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
+        |> Array.choose(fun ssi ->
+            let startDate = ssi.StartDate |> fun d -> Date(d.Year, d.Month, d.Day)
+            let principal = Cent.fromDecimal ssi.Principal
+            let paymentAmount = Cent.fromDecimal ssi.PaymentAmount
+            let paymentDates = ssi.PaymentDates |> Array.map(fun d -> Date(d.Year, d.Month, d.Day))
+            let payments = paymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Amount = paymentAmount })
+            let actualApr = calculate (CalculationMethod.UsActuarial 8) principal startDate payments
+            match actualApr with
+            | Solution.Found (apr, _, _) ->
+                Some {
+                    StartDate = startDate
+                    Principal = principal
+                    PaymentAmount = paymentAmount
+                    PaymentDates = paymentDates
+                    ExpectedApr = Percent ssi.ExpectedApr
+                    ActualApr = apr |> Percent.fromDecimal |> Percent.round 4
+                }
+            | _ -> None
+        )
+        |> toMemberData
 
-    // [<Theory>]
-    // [<MemberData(nameof(aprUsActuarialTestData))>]
-    // let ``Actual APRs match expected APRs under the US actuarial method`` testItem =
-    //     testItem.ActualApr |> should equal testItem.ExpectedApr
+    [<Theory>]
+    [<MemberData(nameof(aprUsActuarialTestData))>]
+    let ``Actual APRs match expected APRs under the US actuarial method`` testItem =
+        testItem.ActualApr |> should equal testItem.ExpectedApr

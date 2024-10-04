@@ -41,7 +41,7 @@ module Amortisation =
         /// the net effect of the scheduled and actual payments, or, for future days, what the net effect would be if the scheduled payment was actually made
         NetEffect: int64<Cent>
         /// the status based on the payments and net effect
-        PaymentStatus: CustomerPaymentStatus
+        PaymentStatus: PaymentStatus
         /// the overall balance status
         BalanceStatus: BalanceStatus
         /// any new charges incurred between the previous amortisation day and the current day

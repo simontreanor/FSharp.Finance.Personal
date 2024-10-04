@@ -24,7 +24,7 @@ module AppliedPayment =
         /// the net effect of any payments made on the current day
         NetEffect: int64<Cent>
         /// the payment status based on the payments made on the current day
-        PaymentStatus: CustomerPaymentStatus
+        PaymentStatus: PaymentStatus
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
