@@ -635,11 +635,12 @@ module EdgeCaseTests =
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
 
+        let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+
         let (rp: RescheduleParameters) = {
-            RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = CustomSchedule <| Map [
-                58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
+                58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
@@ -718,11 +719,12 @@ module EdgeCaseTests =
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
 
+        let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+
         let (rp: RescheduleParameters) = {
-            RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
             PaymentSchedule = CustomSchedule <| Map [
-                58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 5000L<Cent>)
+                58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]

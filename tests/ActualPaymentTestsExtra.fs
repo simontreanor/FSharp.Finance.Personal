@@ -252,10 +252,10 @@ module ActualPaymentTestsExtra =
                     Map [
                         0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
                     ]
+                let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
                 let rp : RescheduleParameters = {
-                    RescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
                     FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay')
-                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled } |]
+                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
                     RateOnNegativeBalance = ValueNone
                     PromotionalInterestRates = [||]
                     ChargeHolidays = [||]
@@ -273,7 +273,7 @@ module ActualPaymentTestsExtra =
         let expected = ValueSome (1969<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick ValueNone (ValueSome 20_00L<Cent>)
+            ScheduledPayment = ScheduledPayment.Quick ValueNone (ValueSome { Value = 20_00L<Cent>; RescheduleDay = 176<OffsetDay> })
             Window = 141
             PaymentDue = 9_80L<Cent>
             ActualPayments = [||]

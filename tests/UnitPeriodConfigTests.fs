@@ -427,12 +427,12 @@ module UnitPeriodConfigTests =
                                 [|
                                     Map.toArray originalScheduledPayments
                                     [|
-                                        201<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 12489L<Cent>)
-                                        232<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 12489L<Cent>)
-                                        262<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 12489L<Cent>)
-                                        293<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 12489L<Cent>)
-                                        323<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 12489L<Cent>)
-                                        354<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome 79109L<Cent>)
+                                        201<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                        232<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                        262<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                        293<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                        323<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                        354<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 79109L<Cent>; RescheduleDay = 198<OffsetDay> })
                                     |]
                                 |]
                                 |> Array.concat
