@@ -598,7 +598,7 @@ module ActualPaymentTestsExtra =
                     ]
                 let rp : RolloverParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
                     Interest = ValueNone
                     Calculation = ValueNone
                     FeeHandling = Fee.FeeHandling.CarryOverAsIs
@@ -694,7 +694,7 @@ module ActualPaymentTestsExtra =
                     ]
                 let rp : RolloverParameters = {
                     OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentAmount = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
                     Interest = ValueNone
                     Calculation = ValueNone
                     FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal

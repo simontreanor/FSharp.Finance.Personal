@@ -597,7 +597,7 @@ module InterestFirstTests =
                 AsOfDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
-                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentAmount = 293_82L<Cent>; ScheduleType = ScheduleType.Original } |]
+                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentValue = 293_82L<Cent>; ScheduleType = ScheduleType.Original } |]
             }
 
         let actualPayments =
@@ -673,7 +673,7 @@ module InterestFirstTests =
                 AsOfDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 1, 14)
                 Principal = 100_00L<Cent>
-                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentAmount = 42_40L<Cent>; ScheduleType = ScheduleType.Original } |]
+                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentValue = 42_40L<Cent>; ScheduleType = ScheduleType.Original } |]
             }
 
         let actualPayments =
@@ -699,8 +699,8 @@ module InterestFirstTests =
                 StartDate = Date(2018, 1, 26)
                 Principal = 340_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 3, 1); PaymentCount = 11; PaymentAmount = 55_60L<Cent>; ScheduleType = ScheduleType.Original }
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2019, 2, 1); PaymentCount = 1; PaymentAmount = 55_58L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 3, 1); PaymentCount = 11; PaymentValue = 55_60L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2019, 2, 1); PaymentCount = 1; PaymentValue = 55_58L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
             }
 
@@ -735,7 +735,7 @@ module InterestFirstTests =
                 StartDate = Date(2022, 12, 1)
                 Principal = 1_500_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 1, 2); PaymentCount = 6; PaymentAmount = 500_00L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 1, 2); PaymentCount = 6; PaymentValue = 500_00L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
             }
 
@@ -774,7 +774,7 @@ module InterestFirstTests =
                 StartDate = Date(2021, 2, 2)
                 Principal = 350_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentAmount = 168_00L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentValue = 168_00L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
                 Parameters.Interest.Method = Interest.Method.Simple
             }
@@ -840,7 +840,7 @@ module InterestFirstTests =
                 StartDate = Date(2021, 2, 2)
                 Principal = 350_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentAmount = 168_00L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentValue = 168_00L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
             }
 
