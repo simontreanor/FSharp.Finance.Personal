@@ -440,7 +440,7 @@ module PaymentSchedule =
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 
-        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+        let totalInterestCap = sp.Interest.Cap.TotalAmount |> Interest.Cap.Total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
 
         let totalAddOnInterest =
             match sp.Interest.Method with
@@ -462,7 +462,7 @@ module PaymentSchedule =
             match interestMethod with
             | Interest.Method.Simple ->
                 let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates previousItem.Day day
-                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.Daily (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.DailyAmount (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
                 if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
             | Interest.Method.AddOn ->
                 if payment <= previousItem.InterestBalance then
@@ -521,7 +521,13 @@ module PaymentSchedule =
                 // |> generateHtmlFromArray [||]
                 // |> outputToFile' $"""out/GenerateMaximumInterest_{System.DateTime.UtcNow.ToString("yyyyMMdd_HHmm")}.md""" true
 
-                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> min totalInterestCap |> decimal
+                let finalInterestTotal =
+                    schedule
+                    |> Array.last
+                    |> _.TotalSimpleInterest
+                    |> max 0L<Cent> // interest must not go negative
+                    |> min totalInterestCap
+                    |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
                 if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
                     None

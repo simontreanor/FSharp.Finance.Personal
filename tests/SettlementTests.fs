@@ -18,8 +18,8 @@ module SettlementTests =
     open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
-        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
     }
 
     [<Fact>]

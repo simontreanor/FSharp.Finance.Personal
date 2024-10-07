@@ -21,8 +21,8 @@ module ActualPaymentTestsExtra =
     open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
-        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
     }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
@@ -63,7 +63,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
+                Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -146,7 +146,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
+                Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -232,7 +232,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
+                Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -331,7 +331,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.12m)
-                Cap = { Total = ValueSome <| Amount.Simple 500_00L<Cent>; Daily = ValueNone }
+                Cap = { TotalAmount = ValueSome <| Amount.Simple 500_00L<Cent>; DailyAmount = ValueNone }
                 InitialGracePeriod = 7<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -492,7 +492,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
+                Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -576,7 +576,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
+                Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
@@ -672,7 +672,7 @@ module ActualPaymentTestsExtra =
             Interest = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.none
+                Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone

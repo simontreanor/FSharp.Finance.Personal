@@ -18,8 +18,8 @@ module InterestTests =
     open System
 
     let interestCapExample : Interest.Cap = {
-        Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
     }
 
     module RateTests =
@@ -64,13 +64,13 @@ module InterestTests =
 
         [<Fact>]
         let ``No cap total on a €100 principal yields a very large number`` () =
-            let actual = Cap.none.Total |> Cap.total 100_00L<Cent>
+            let actual = Cap.None.TotalAmount |> Cap.Total 100_00L<Cent>
             let expected = 92_233_720_368_547_758_07m<Cent>
             actual |> should equal expected
 
         [<Fact>]
         let ``100% cap total on a €100 principal yields €100`` () =
-            let actual = interestCapExample.Total |> Cap.total 100_00L<Cent>
+            let actual = interestCapExample.TotalAmount |> Cap.Total 100_00L<Cent>
             let expected = 100_00m<Cent>
             actual |> should equal expected
 
@@ -138,7 +138,7 @@ module InterestTests =
                 Interest = {
                     Method = Interest.Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
-                    Cap = { interestCapExample with Total = ValueSome (Amount.Percentage (Percent 123.45m, ValueNone, ValueSome RoundDown)) }
+                    Cap = { interestCapExample with TotalAmount = ValueSome (Amount.Percentage (Percent 123.45m, ValueNone, ValueSome RoundDown)) }
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
@@ -230,7 +230,7 @@ module InterestTests =
                 Interest = {
                     Method = Interest.Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
-                    Cap = Cap.none
+                    Cap = Cap.None
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [|
                         { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
@@ -376,7 +376,7 @@ module InterestTests =
                 Interest = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual <| Percent 13.1475m
-                    Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                    Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                     InitialGracePeriod = 0<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)

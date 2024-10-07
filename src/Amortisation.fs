@@ -157,7 +157,7 @@ module Amortisation =
 
         let initialInterestBalance' = initialInterestBalance |> Cent.toDecimalCent
 
-        let totalInterestCap = sp.Interest.Cap.Total |> Interest.Cap.total sp.Principal
+        let totalInterestCap = sp.Interest.Cap.TotalAmount |> Interest.Cap.Total sp.Principal
 
         let feesTotal = Fee.GrandTotal sp.FeeConfig sp.Principal ValueNone
 
@@ -249,11 +249,11 @@ module Amortisation =
                         0m<Cent>
                 else
                     dailyInterestRates siOffsetDay appliedPaymentDay
-                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.Daily interestRounding
+                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.Interest.Cap.DailyAmount interestRounding
 
             let cappedSimpleInterest = if a.CumulativeSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - a.CumulativeSimpleInterest else simpleInterest
 
-            let originalSimpleInterest, contractualInterest = ap.ScheduledPayment.Original |> ValueOption.map(fun o -> (o.SimpleInterest, o.ContractualInterest)) |> ValueOption.defaultValue (0L<Cent>, 0m<Cent>)
+            let originalSimpleInterest, contractualInterest = ap.ScheduledPayment.Original |> ValueOption.map(fun op -> (op.SimpleInterest, op.ContractualInterest)) |> ValueOption.defaultValue (0L<Cent>, 0m<Cent>)
 
             let accumulator =
                 { a with

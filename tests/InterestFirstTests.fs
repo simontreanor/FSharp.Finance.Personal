@@ -31,7 +31,7 @@ module InterestFirstTests =
             Interest = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
-                Cap = { Total = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); Daily = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
@@ -358,7 +358,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``16) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)`` () =
-        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.Interest.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.Interest.Cap = Interest.Cap.none }
+        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.Interest.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.Interest.Cap = Interest.Cap.None }
 
         let actualPayments = Map.empty
 

@@ -53,19 +53,19 @@ module Interest =
     [<RequireQualifiedAccess; Struct>]
     type Cap = {
         /// a cap on the total amount of interest chargeable over the lifetime of a product
-        Total: Amount voption
+        TotalAmount: Amount voption
         /// a cap on the daily amount of interest chargeable
-        Daily: Amount voption
+        DailyAmount: Amount voption
     }
     with
         /// no cap
-        static member none = {
-            Total = ValueNone
-            Daily = ValueNone
+        static member None = {
+            TotalAmount = ValueNone
+            DailyAmount = ValueNone
         }
 
         /// calculates the total interest cap
-        static member total (initialPrincipal: int64<Cent>) = function
+        static member Total (initialPrincipal: int64<Cent>) = function
             | ValueSome amount -> Amount.total initialPrincipal amount |> max 0m<Cent>
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
@@ -127,7 +127,7 @@ module Interest =
 
     /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
     let calculate (balance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
-        let dailyCap = Cap.total balance dailyInterestCap
+        let dailyCap = Cap.Total balance dailyInterestCap
 
         dailyRates
         |> Array.sumBy (fun dr ->
