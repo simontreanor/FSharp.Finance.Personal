@@ -72,8 +72,8 @@ module Rescheduling =
                     ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> CustomSchedule
                     FeeConfig.SettlementRefund = rp.FeeSettlementRefund
                     ChargeConfig.ChargeHolidays = rp.ChargeHolidays
-                    Interest =
-                        { sp.Interest with
+                    InterestConfig =
+                        { sp.InterestConfig with
                             InitialGracePeriod = 0<DurationDay>
                             PromotionalRates = rp.PromotionalInterestRates
                             RateOnNegativeBalance = rp.RateOnNegativeBalance
@@ -92,9 +92,9 @@ module Rescheduling =
         /// the scheduled payments or the parameters for generating them
         PaymentSchedule: ScheduleConfig
         /// options relating to interest
-        Interest: Interest.Options voption
-        /// technical calculation options
-        Calculation: PaymentSchedule.Calculation voption
+        InterestConfig: Interest.Config voption
+        /// options relating to payment
+        PaymentConfig: PaymentConfig voption
         /// how to handle any outstanding fee balance
         FeeHandling: Fee.FeeHandling
     }
@@ -139,8 +139,8 @@ module Rescheduling =
                                 FeeTypes = [||]
                                 SettlementRefund = Fee.SettlementRefund.None
                             }
-                    Interest = rp.Interest |> ValueOption.defaultValue sp.Interest
-                    Calculation = rp.Calculation |> ValueOption.defaultValue sp.Calculation
+                    InterestConfig = rp.InterestConfig |> ValueOption.defaultValue sp.InterestConfig
+                    PaymentConfig = rp.PaymentConfig |> ValueOption.defaultValue sp.PaymentConfig
                 }
             // create the new amortisation schedule
             let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement true Map.empty

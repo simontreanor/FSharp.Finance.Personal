@@ -26,23 +26,32 @@ module PromotionalRatesTests =
             AsOfDate = startDate.AddDays 180
             StartDate = startDate
             Principal = 400_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
-            PaymentOptions = { ScheduledPaymentOption = AsScheduled; CloseBalanceOption = LeaveOpenBalance }
+            ScheduleConfig = AutoGenerateSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2)
+                PaymentCount = 4
+                MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }
+            }
+            PaymentConfig = { 
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
             FeeConfig = Fee.Config.DefaultValue
             ChargeConfig = Charge.Config.DefaultValue
-            Interest = {
+            InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
-                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                Cap = {
+                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)
+                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)
+                }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = promotionalRates |> ValueOption.defaultValue [||]
                 RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
+                InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                RoundingOptions = RoundingOptions.recommended
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
             }
         }
 

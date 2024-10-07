@@ -66,21 +66,6 @@ module Calculation =
         | ValueSome (Round mpr) -> Math.Round(m, places, mpr)
         | ValueNone -> m
 
-    /// how to round calculated interest and payments
-    [<Struct>]
-    type RoundingOptions = {
-        /// how to round interest
-        InterestRounding: Rounding
-        /// how to round payments
-        PaymentRounding: Rounding
-    }
-    with
-        /// suggestion for default rounding options
-        static member recommended = {
-            InterestRounding = RoundDown
-            PaymentRounding = RoundUp
-        }
-
     /// a holiday, i.e. a period when no interest and/or charges are accrued
     [<RequireQualifiedAccess; Struct>]
     type DateRange = {

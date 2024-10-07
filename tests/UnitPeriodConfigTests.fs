@@ -65,9 +65,12 @@ module UnitPeriodConfigTests =
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
                     ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); PaymentCount = 12; MaxDuration = ValueNone }
-                    PaymentOptions = {
+                    PaymentConfig = {
                         ScheduledPaymentOption = AsScheduled
                         CloseBalanceOption = LeaveOpenBalance
+                        PaymentRounding = RoundUp
+                        MinimumPayment = DeferOrWriteOff 50L<Cent>
+                        PaymentTimeout = 3<DurationDay>
                     }
                     FeeConfig = {
                         FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -76,19 +79,15 @@ module UnitPeriodConfigTests =
                         SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
                     }
                     ChargeConfig = Charge.Config.DefaultValue
-                    Interest = {
+                    InterestConfig = {
                         Method = Interest.Method.Simple
                         StandardRate = Interest.Rate.Annual (Percent 9.95m)
                         Cap = Interest.Cap.None
                         InitialGracePeriod = 3<DurationDay>
                         PromotionalRates = [||]
                         RateOnNegativeBalance = ValueNone
-                    }
-                    Calculation = {
                         AprMethod = Apr.CalculationMethod.UsActuarial 5
-                        RoundingOptions = RoundingOptions.recommended
-                        MinimumPayment = DeferOrWriteOff 50L<Cent>
-                        PaymentTimeout = 3<DurationDay>
+                        InterestRounding = RoundDown
                     }
                 }
             
@@ -128,9 +127,12 @@ module UnitPeriodConfigTests =
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); PaymentCount = 12; MaxDuration = ValueNone }
-                PaymentOptions = {
+                PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
+                    PaymentRounding = RoundUp
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -139,19 +141,15 @@ module UnitPeriodConfigTests =
                     SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
                 }
                 ChargeConfig = Charge.Config.DefaultValue
-                Interest = {
+                InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.None
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
-                }
-                Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = RoundingOptions.recommended
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    InterestRounding = RoundDown
                 }
             }
 
@@ -194,9 +192,12 @@ module UnitPeriodConfigTests =
                     PaymentCount = 11
                     MaxDuration = ValueNone
                 }
-                PaymentOptions = {
+                PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
+                    PaymentRounding = RoundUp
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -205,19 +206,15 @@ module UnitPeriodConfigTests =
                     SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
                 }
                 ChargeConfig = Charge.Config.DefaultValue
-                Interest = {
+                InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.None
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
-                }
-                Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = RoundingOptions.recommended
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    InterestRounding = RoundDown
                 }
             }
 
@@ -282,9 +279,12 @@ module UnitPeriodConfigTests =
                     PaymentCount = 11;
                     MaxDuration = ValueNone
                 }
-                PaymentOptions = {
+                PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
+                    PaymentRounding = RoundUp
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
@@ -293,19 +293,15 @@ module UnitPeriodConfigTests =
                     SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
                 }
                 ChargeConfig = Charge.Config.DefaultValue
-                Interest = {
+                InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.None
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
-                }
-                Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = RoundingOptions.recommended
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    InterestRounding = RoundDown
                 }
             }
 
@@ -370,9 +366,12 @@ module UnitPeriodConfigTests =
                 StartDate = startDate
                 Principal = 100000L<Cent>
                 ScheduleConfig = CustomSchedule originalScheduledPayments
-                PaymentOptions = {
+                PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
+                    PaymentRounding = RoundUp
+                    MinimumPayment = DeferOrWriteOff 50L<Cent>
+                    PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, ValueNone, ValueSome RoundDown)) |]
@@ -381,19 +380,15 @@ module UnitPeriodConfigTests =
                     SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
                 }
                 ChargeConfig = Charge.Config.DefaultValue
-                Interest = {
+                InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
                     Cap = Interest.Cap.None
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = ValueNone
-                }
-                Calculation = {
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    RoundingOptions = RoundingOptions.recommended
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    InterestRounding = RoundDown
                 }
             }
 

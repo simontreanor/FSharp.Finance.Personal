@@ -95,7 +95,7 @@ module Interest =
 
     /// interest options
     [<Struct>]
-    type Options = {
+    type Config = {
         /// the method for calculating interest
         Method: Method
         /// the standard rate of interest
@@ -108,6 +108,10 @@ module Interest =
         PromotionalRates: PromotionalRate array
         /// the interest rate applicable for any period in which a refund is owing
         RateOnNegativeBalance: Rate voption
+        /// how to round interest
+        InterestRounding: Rounding
+        /// which APR calculation method to use
+        AprMethod: Apr.CalculationMethod
     }
 
     /// calculates the interest chargeable on a range of days

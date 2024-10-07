@@ -25,28 +25,30 @@ module InterestFirstTests =
             StartDate = startDate
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2); PaymentCount = 5; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
-            PaymentOptions = { ScheduledPaymentOption = AsScheduled; CloseBalanceOption = LeaveOpenBalance }
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
             FeeConfig = Fee.Config.DefaultValue
             ChargeConfig = Charge.Config.DefaultValue
-            Interest = {
+            InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
-            }
-            Calculation = {
+                InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                RoundingOptions = RoundingOptions.recommended
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
             }
         }
 
     [<Fact>]
     let ``1) Simple interest method initial schedule`` () =
-        let sp = { scheduleParameters with Parameters.Interest.Method = Interest.Method.Simple }
+        let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
             voption {
@@ -60,7 +62,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``2) Simple interest method`` () =
-        let sp = { scheduleParameters with Parameters.Interest.Method = Interest.Method.Simple }
+        let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actualPayments = Map.empty
 
@@ -358,7 +360,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``16) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)`` () =
-        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.Interest.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.Interest.Cap = Interest.Cap.None }
+        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.InterestConfig.Cap = Interest.Cap.None }
 
         let actualPayments = Map.empty
 
@@ -373,7 +375,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``17) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)`` () =
-        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.Interest.StandardRate = Interest.Rate.Daily <| Percent 0.4m }
+        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m }
 
         let actualPayments = Map.empty
 
@@ -393,7 +395,7 @@ module InterestFirstTests =
                 AsOfDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
-                Parameters.Interest.RateOnNegativeBalance = ValueNone
+                Parameters.InterestConfig.RateOnNegativeBalance = ValueNone
                 ScheduleConfig = [|
                     14<OffsetDay>, ScheduledPayment.Quick (ValueSome 33004L<Cent>) ValueNone
                     37<OffsetDay>, ScheduledPayment.Quick (ValueSome 33004L<Cent>) ValueNone
@@ -781,7 +783,7 @@ module InterestFirstTests =
                 ScheduleConfig = FixedSchedules [|
                     { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentValue = 168_00L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
-                Parameters.Interest.Method = Interest.Method.Simple
+                Parameters.InterestConfig.Method = Interest.Method.Simple
             }
 
         let actualPayments =

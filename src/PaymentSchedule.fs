@@ -315,19 +315,6 @@ module PaymentSchedule =
         /// take the minimum payment regardless
         | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
 
-   /// technical calculation options
-    [<Struct>]
-    type Calculation = {
-        /// which APR calculation method to use
-        AprMethod: Apr.CalculationMethod
-        /// which rounding method to use
-        RoundingOptions: RoundingOptions
-        /// the minimum payment that can be taken and how to handle it
-        MinimumPayment: MinimumPayment
-        /// the duration after which a pending payment is considered a missed payment
-        PaymentTimeout: int<DurationDay>
-    }
-
     /// whether to stick to scheduled payment amounts or add charges and interest to them
     [<Struct>]
     type ScheduledPaymentOption =
@@ -349,11 +336,17 @@ module PaymentSchedule =
         | AddMultipleExtraPayments
 
     /// how to treat scheduled payments
-    type PaymentOptions = {
+    type PaymentConfig = {
         /// whether to modify scheduled payment amounts to keep the schedule on-track
         ScheduledPaymentOption: ScheduledPaymentOption
         /// whether to leave a final balance open or close it using various methods
         CloseBalanceOption: CloseBalanceOption
+        /// how to round payments
+        PaymentRounding: Rounding
+        /// the minimum payment that can be taken and how to handle it
+        MinimumPayment: MinimumPayment
+        /// the duration after which a pending payment is considered a missed payment
+        PaymentTimeout: int<DurationDay>
     }
 
     /// parameters for creating a payment schedule
@@ -367,15 +360,13 @@ module PaymentSchedule =
         /// the scheduled payments or the parameters for generating them
         ScheduleConfig: ScheduleConfig
         /// options relating to scheduled payments
-        PaymentOptions: PaymentOptions
+        PaymentConfig: PaymentConfig
         /// options relating to fees
         FeeConfig: Fee.Config
         /// options relating to charges
         ChargeConfig: Charge.Config
         /// options relating to interest
-        Interest: Interest.Options
-        /// technical calculation options
-        Calculation: Calculation
+        InterestConfig: Interest.Config
     }
 
     /// generates a map of offset days and payments based on a start date and payment schedule
@@ -438,15 +429,15 @@ module PaymentSchedule =
 
         let fees = Fee.GrandTotal sp.FeeConfig sp.Principal ValueNone
 
-        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 
-        let totalInterestCap = sp.Interest.Cap.TotalAmount |> Interest.Cap.Total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+        let totalInterestCap = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.Total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
 
         let totalAddOnInterest =
-            match sp.Interest.Method with
+            match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 (sp.Principal |> Cent.toDecimalCent) * dailyInterestRate * decimal finalPaymentDay
-                |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                |> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
                 |> Cent.min totalInterestCap
             | _ -> 0L<Cent>
 
@@ -461,8 +452,8 @@ module PaymentSchedule =
         let calculateInterest interestMethod payment previousItem day =
             match interestMethod with
             | Interest.Method.Simple ->
-                let dailyRates = Interest.dailyRates sp.StartDate false sp.Interest.StandardRate sp.Interest.PromotionalRates previousItem.Day day
-                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.Interest.Cap.DailyAmount (ValueSome sp.Calculation.RoundingOptions.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                let dailyRates = Interest.dailyRates sp.StartDate false sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates previousItem.Day day
+                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount (ValueSome sp.InterestConfig.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.InterestConfig.InterestRounding)
                 if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
             | Interest.Method.AddOn ->
                 if payment <= previousItem.InterestBalance then
@@ -491,7 +482,7 @@ module PaymentSchedule =
         let generatePaymentValue firstItem interestMethod roughPayment =
             let scheduledPayment =
                 roughPayment
-                |> Cent.round (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
+                |> Cent.round (ValueSome sp.PaymentConfig.PaymentRounding)
                 |> fun rp -> ScheduledPayment.Quick (ValueSome rp) ValueNone
             schedule <-
                 paymentDays
@@ -505,7 +496,7 @@ module PaymentSchedule =
             if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
                 None
             else
-                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.PaymentRounding)
+                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.PaymentConfig.PaymentRounding)
                 schedule <-
                     paymentDays
                     |> Array.scan (fun state pd ->
@@ -528,7 +519,7 @@ module PaymentSchedule =
                     |> max 0L<Cent> // interest must not go negative
                     |> min totalInterestCap
                     |> decimal
-                let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.Calculation.RoundingOptions.InterestRounding) 0
+                let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.InterestConfig.InterestRounding) 0
                 if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
                     None
                 else
@@ -537,19 +528,19 @@ module PaymentSchedule =
         let solution =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
-                Array.solve (generatePaymentValue initialItem sp.Interest.Method) 100 (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
+                Array.solve (generatePaymentValue initialItem sp.InterestConfig.Method) 100 (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
             | FixedSchedules _
             | CustomSchedule _ ->
                 schedule <-
                     paymentDays
-                    |> Array.scan (fun state pd -> generateItem sp.Interest.Method paymentMap[pd] state pd) initialItem
+                    |> Array.scan (fun state pd -> generateItem sp.InterestConfig.Method paymentMap[pd] state pd) initialItem
                 Solution.Bypassed
 
         match solution with
         | Solution.Found _
         | Solution.Bypassed ->
 
-            match sp.Interest.Method with
+            match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
                 Array.unfold (maximiseInterest initialItem) (0, finalInterestTotal) |> ignore
@@ -587,7 +578,7 @@ module PaymentSchedule =
                 items
                 |> Array.filter _.ScheduledPayment.IsSome
                 |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Value = si.ScheduledPayment.Value.Total })
-                |> Apr.calculate sp.Calculation.AprMethod sp.Principal sp.StartDate
+                |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
             let finalPayment =
                 items
                 |> Array.filter _.ScheduledPayment.IsSome
@@ -597,14 +588,14 @@ module PaymentSchedule =
             ValueSome {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
-                InitialInterestBalance = match sp.Interest.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
+                InitialInterestBalance = match sp.InterestConfig.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
                 FinalPaymentDay = finalPaymentDay
                 LevelPayment = items |> Array.filter _.ScheduledPayment.IsSome |> Array.countBy _.ScheduledPayment.Value.Total |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some) |> Option.defaultValue finalPayment
                 FinalPayment = finalPayment
                 PaymentTotal = items |> Array.filter _.ScheduledPayment.IsSome |> Array.sumBy _.ScheduledPayment.Value.Total
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
-                Apr = aprSolution, Apr.toPercent sp.Calculation.AprMethod aprSolution
+                Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
                 CostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m else
                     decimal (fees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2

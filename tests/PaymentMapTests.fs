@@ -44,7 +44,7 @@ module PaymentMapTests =
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-            RoundingOptions = RoundingOptions.recommended
+            InterestRounding = RoundDown
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
         }
@@ -78,7 +78,7 @@ module PaymentMapTests =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
         let expected = ValueSome 934_35L<Cent>
@@ -115,7 +115,7 @@ module PaymentMapTests =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
         let expected = ValueSome -1003_16L<Cent>
@@ -150,7 +150,7 @@ module PaymentMapTests =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
         let expected = ValueSome 591_30L<Cent>
@@ -184,7 +184,7 @@ module PaymentMapTests =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
         let expected = ValueSome 697_21L<Cent>
@@ -215,7 +215,7 @@ module PaymentMapTests =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent (ValueSome sp.Calculation.RoundingOptions.InterestRounding)
+                >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
         let expected = ValueSome 1600_35L<Cent>

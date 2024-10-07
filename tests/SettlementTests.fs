@@ -29,25 +29,24 @@ module SettlementTests =
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
-            PaymentOptions = {
+            PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
             }
             FeeConfig = Fee.Config.DefaultValue
             ChargeConfig = Charge.Config.DefaultValue
-            Interest = {
+            InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
+                InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                RoundingOptions = RoundingOptions.recommended
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
             }
         }
 
@@ -107,25 +106,24 @@ module SettlementTests =
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
-            PaymentOptions = {
+            PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
             }
             FeeConfig = Fee.Config.DefaultValue
             ChargeConfig = Charge.Config.DefaultValue
-            Interest = {
+            InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
+                InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                RoundingOptions = RoundingOptions.recommended
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
             }
         }
 
@@ -185,25 +183,24 @@ module SettlementTests =
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
-            PaymentOptions = {
+            PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
             }
             FeeConfig = Fee.Config.DefaultValue
             ChargeConfig = Charge.Config.DefaultValue
-            Interest = {
+            InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = ValueNone
-            }
-            Calculation = {
+                InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                RoundingOptions = RoundingOptions.recommended
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
             }
         }
 
