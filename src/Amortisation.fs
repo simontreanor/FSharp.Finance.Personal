@@ -303,11 +303,14 @@ module Amortisation =
                 if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
                     0L<Cent>
                 else
-                    match ap.ScheduledPayment.Total with
-                    | 0L<Cent> -> 0L<Cent>
-                    | amount when extraPaymentsBalance > 0L<Cent> -> amount - extraPaymentsBalance
-                    | amount -> Cent.min (si.PrincipalBalance + si.FeesBalance + roundedInterestPortion) amount
-                |> Cent.max 0L<Cent>
+                    match ap.ScheduledPayment.Original, ap.ScheduledPayment.Rescheduled with
+                    | _, ValueSome rp -> rp.Value // always make rescheduled payment value due in full
+                    | ValueSome op, _ when op.Value = 0L<Cent> -> 0L<Cent> // nothing due to pay
+                    | ValueSome op, _ when extraPaymentsBalance > 0L<Cent> -> op.Value - extraPaymentsBalance // reduce the payment due if early/extra payments have been made
+                    | ValueSome op, _ -> op.Value // payment due in full
+                    | ValueNone, ValueNone -> 0L<Cent> // nothing due to pay
+                    |> Cent.min (si.PrincipalBalance + si.FeesBalance + roundedInterestPortion) // payment due should never exceed settlement figure
+                    |> Cent.max 0L<Cent> // payment due should never be negative
                 |> fun p ->
                     match sp.Calculation.MinimumPayment with
                     | NoMinimumPayment -> p

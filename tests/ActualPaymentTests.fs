@@ -939,7 +939,7 @@ module ActualPaymentTests =
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
-            PaymentDue = 457_65L<Cent>
+            PaymentDue = 432_07L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = ValueNone
             NetEffect = 500_00L<Cent>

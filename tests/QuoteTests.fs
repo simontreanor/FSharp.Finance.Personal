@@ -1235,7 +1235,7 @@ module QuoteTests =
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
                 Window = 5
-                PaymentDue = 457_65L<Cent>
+                PaymentDue = 432_07L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = ValueSome 432_07L<Cent>
                 NetEffect = 432_07L<Cent>
@@ -1592,7 +1592,7 @@ module QuoteTests =
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
                 Window = 5
-                PaymentDue = 457_65L<Cent>
+                PaymentDue = 432_07L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = ValueSome -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
