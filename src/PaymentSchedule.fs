@@ -91,6 +91,8 @@ module PaymentSchedule =
         member x.Html =
             let previous = if x.PreviousRescheduled.IsSome then x.PreviousRescheduled.Value |> Array.map(fun pr -> $"<s>r {formatCent pr.Value}</s>&nbsp;") |> Array.reduce (+) else ""
             match x.Original, x.Rescheduled with
+            | ValueSome o, ValueSome r when r.Value = 0L<Cent> ->
+                $"""<s>original {formatCent o.Value}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
             | ValueSome o, ValueSome r ->
                 $"<s>o {formatCent o.Value}</s>&nbsp;{previous}r {formatCent r.Value}"
             | ValueSome o, ValueNone ->
@@ -605,18 +607,21 @@ module PaymentSchedule =
             ValueNone
 
     let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
-        let mutable previousRescheduleDay = ValueOption<int<OffsetDay>>.None
+        let rescheduleDays = scheduledPayments |> Array.map snd |> Array.choose(fun sp -> if sp.Rescheduled.IsSome then Some sp.Rescheduled.Value.RescheduleDay else None) |> Array.distinct |> Array.sort
+        let mutable previousRescheduleDay = ValueNone
         scheduledPayments
         |> Array.groupBy fst
-        |> Array.map(fun (offsetDay, scheduledPayments) ->
-            let original = scheduledPayments |> Array.tryFind (snd >> _.Original.IsSome) |> toValueOption |> ValueOption.map snd
-            let rescheduled = scheduledPayments |> Array.filter (snd >> _.Rescheduled.IsSome) |> Array.map snd |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay |> Array.toList
+        |> Array.sortBy fst
+        |> Array.map(fun (offsetDay, map) ->
+            let sp = map |> Array.map snd
+            let original = sp |> Array.tryFind _.Original.IsSome |> toValueOption
+            let rescheduled = sp |> Array.filter _.Rescheduled.IsSome |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay |> Array.toList
             let latestRescheduling, previousReschedulings =
                 match rescheduled with
                 | r :: [] -> ValueSome r, ValueNone
                 | r :: pr -> ValueSome r, ValueSome pr
                 | _ -> ValueNone, ValueNone
-            let rescheduleDay = latestRescheduling |> ValueOption.map _.Rescheduled.Value.RescheduleDay |> ValueOption.orElse previousRescheduleDay
+            let rescheduleDay = rescheduleDays |> Array.tryFind(fun d -> offsetDay >= d) |> toValueOption |> ValueOption.orElse previousRescheduleDay
             previousRescheduleDay <- rescheduleDay
             let scheduledPayment =
                 match original, latestRescheduling with
@@ -631,7 +636,14 @@ module PaymentSchedule =
                 | ValueSome o, ValueNone ->
                     {
                         Original = o.Original
-                        Rescheduled = previousRescheduleDay |> ValueOption.bind(fun prd -> if offsetDay >= prd then ValueSome { Value = 0L<Cent>; RescheduleDay = prd } else ValueNone) //overwrite original scheduled payments from start of rescheduled payments
+                        Rescheduled =
+                            previousRescheduleDay
+                            |> ValueOption.bind(fun prd ->
+                                if offsetDay >= prd then
+                                    ValueSome { Value = 0L<Cent>; RescheduleDay = prd }
+                                else
+                                    ValueNone
+                            ) //overwrite original scheduled payments from start of rescheduled payments
                         PreviousRescheduled = ValueNone
                         Adjustment = o.Adjustment
                         Metadata = o.Metadata
