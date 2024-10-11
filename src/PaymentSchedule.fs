@@ -451,7 +451,7 @@ module PaymentSchedule =
 
         let mutable schedule = [||]
 
-        let toleranceSteps = ValueSome <| ToleranceSteps.forPaymentValue paymentCount
+        let toleranceSteps = ToleranceSteps.ForPaymentValue paymentCount
 
         let calculateInterest interestMethod payment previousItem day =
             match interestMethod with

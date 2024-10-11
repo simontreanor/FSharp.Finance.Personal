@@ -23,7 +23,9 @@ module ArrayExtension =
         Max: int
     }
     with
-        static member forPaymentValue paymentCount =
+        static member None =
+            { ToleranceSteps.Min = 0; ToleranceSteps.Step = 0; ToleranceSteps.Max = 0 }
+        static member ForPaymentValue paymentCount =
             { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 4 }
 
     /// what range of values the solver should aim for
@@ -41,8 +43,7 @@ module ArrayExtension =
         /// iteratively solves for a given input using a generator function until the output is 0L<Cent> or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
         [<TailCall>]
-        let solve (generator: decimal -> decimal) iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps voption) =
-            let toleranceSteps' = toleranceSteps |> ValueOption.defaultValue { Min = 0; Step = 0; Max = 0 }
+        let solve (generator: decimal -> decimal) iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps) =
             let rec loop i lowerBound upperBound tolerance =
                 let midRange =
                     let x = (upperBound - lowerBound) / 2m
@@ -51,10 +52,10 @@ module ArrayExtension =
                     else x
                 let newBound = lowerBound + midRange
                 if i = iterationLimit then
-                    if tolerance = toleranceSteps'.Max then
+                    if tolerance = toleranceSteps.Max then
                         Solution.IterationLimitReached (newBound, i, tolerance)
                     else
-                        let newTolerance = min toleranceSteps'.Max (tolerance + toleranceSteps'.Step)
+                        let newTolerance = min toleranceSteps.Max (tolerance + toleranceSteps.Step)
                         loop 0 0m (approximation * 100m) newTolerance
                 else
                     let difference = generator newBound
@@ -69,4 +70,4 @@ module ArrayExtension =
                         loop (i + 1) newBound upperBound tolerance
                     else //difference < lowerTolerance
                         loop (i + 1) lowerBound newBound tolerance
-            loop 0 0m (approximation * 100m) toleranceSteps'.Min // to do: improve approximation
+            loop 0 0m (approximation * 100m) toleranceSteps.Min // to do: improve approximation
