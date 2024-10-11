@@ -51,13 +51,12 @@ module InterestFirstTests =
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
-            voption {
-                let! schedule = sp |> PaymentSchedule.calculate BelowZero
-                schedule.Items |> outputArrayToHtml "out/InterestFirstTest001.md" false
-                return schedule.LevelPayment, schedule.FinalPayment
-            }
+            let schedule = sp |> PaymentSchedule.calculate BelowZero
+            schedule.Items |> outputArrayToHtml "out/InterestFirstTest001.md" false
+            schedule.LevelPayment, schedule.FinalPayment
 
-        let expected = ValueSome (319_26L<Cent>, 319_23L<Cent>)
+        let expected = 319_26L<Cent>, 319_23L<Cent>
+
         actual |> should equal expected
 
     [<Fact>]
@@ -70,9 +69,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest002.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest002.md" false
 
-        let finalInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let finalInterestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+
         finalInterestBalance |> should equal 1000_00m<Cent>
 
     [<Fact>]
@@ -80,13 +80,11 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actual =
-            voption {
-                let! schedule = sp |> PaymentSchedule.calculate BelowZero
-                schedule.Items |> outputArrayToHtml "out/InterestFirstTest003.md" false
-                return schedule.LevelPayment, schedule.FinalPayment
-            }
+            let schedule = sp |> PaymentSchedule.calculate BelowZero
+            schedule.Items |> outputArrayToHtml "out/InterestFirstTest003.md" false
+            schedule.LevelPayment, schedule.FinalPayment
 
-        let expected = ValueSome (367_73L<Cent>, 367_72L<Cent>)
+        let expected = 367_73L<Cent>, 367_72L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -99,9 +97,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest004.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest004.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+
         finalSettlementFigure |> should equal 2000_00L<Cent>
 
     [<Fact>]
@@ -118,9 +117,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest005.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest005.md" false
 
-        let totalInterest = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+
         totalInterest |> should equal 838_64L<Cent>
 
     [<Fact>]
@@ -140,9 +140,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest006.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest006.md" false
 
-        let totalInterest = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+
         totalInterest |> should equal 23_88L<Cent>
 
     [<Fact>]
@@ -168,9 +169,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest007.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest007.md" false
 
-        let finalPrincipalBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance) |> ValueOption.defaultValue 0L<Cent>
+        let finalPrincipalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+
         finalPrincipalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -195,9 +197,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest008.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest008.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+
         finalSettlementFigure |> should equal 650_63L<Cent>
 
     [<Fact>]
@@ -217,9 +220,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest009.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest009.md" false
 
-        let totalInterest = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+
         totalInterest |> should equal 838_64L<Cent>
 
     [<Fact>]
@@ -235,9 +239,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest010.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest010.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+
         finalSettlementFigure |> should equal 737_36L<Cent>
 
     [<Fact>]
@@ -251,11 +256,12 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest011.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest011.md" false
 
-        let totalInterest = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+
         totalInterest |> should equal 14_65L<Cent>
 
     [<Fact>]
@@ -269,11 +275,11 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest012.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest012.md" false
 
-        let totalInterest = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
         totalInterest |> should equal -25_24L<Cent>
 
     [<Fact>]
@@ -291,11 +297,12 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest013.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest013.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+
         finalSettlementFigure |> should equal -324_57L<Cent>
 
     [<Fact>]
@@ -312,11 +319,12 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest014.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest014.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+
         finalSettlementFigure |> should equal 0L<Cent>
 
     [<Fact>]
@@ -333,11 +341,12 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest014a.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest014a.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)) |> ValueOption.defaultValue (0L<Cent>, 0L<Cent>, 0L<Cent>)
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
+
         finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, -12_78L<Cent>)
 
     [<Fact>]
@@ -351,11 +360,12 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestFirstTest015.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest015.md" false
 
-        let finalSettlementFigure = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure) |> ValueOption.defaultValue 0L<Cent>
+        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+
         finalSettlementFigure |> should equal -1_22L<Cent>
 
     [<Fact>]
@@ -368,9 +378,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest016.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest016.md" false
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems[0<OffsetDay>].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
+
         initialInterestBalance |> should equal 362_34m<Cent>
 
     [<Fact>]
@@ -383,9 +394,10 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest017.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest017.md" false
 
-        let initialInterestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems[0<OffsetDay>].InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
+        
         initialInterestBalance |> should equal 362_34m<Cent>
 
     [<Fact>]
@@ -589,9 +601,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputMapToHtml "out/InterestFirstTest018.md" false)
+        schedule.ScheduleItems |> Formatting.outputMapToHtml "out/InterestFirstTest018.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
@@ -641,9 +653,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest019.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest019.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
@@ -667,9 +679,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> Formatting.outputMapToHtml "out/InterestFirstTest020.md" false)
+        schedule.ScheduleItems |> Formatting.outputMapToHtml "out/InterestFirstTest020.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
@@ -692,9 +704,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest021.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest021.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
@@ -728,9 +740,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest022.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest022.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 340_00L<Cent>
 
@@ -767,9 +779,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest023.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest023.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 1_500_00L<Cent>
 
@@ -833,9 +845,9 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest024.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest024.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>
 
@@ -898,8 +910,8 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> outputMapToHtml "out/InterestFirstTest025.md" false)
+        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest025.md" false
 
-        let totalInterestPortions = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>

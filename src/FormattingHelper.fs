@@ -56,7 +56,7 @@ module FormattingHelper =
             [|
                 go.GoParameters.FeeConfig.FeeTypes |> Array.isEmpty |> feesProperties
                 go.GoParameters.ChargeConfig.ChargeTypes |> Array.isEmpty |> chargesProperties
-                (match go.GoPurpose with IntendedPurpose.Settlement _ -> false | _ -> true) |> quoteProperties
+                (match go.GoPurpose with IntendedPurpose.SettlementOn _ | IntendedPurpose.SettlementOnAsOfDay -> false | _ -> true) |> quoteProperties
                 (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) |> interestProperties
                 go.GoExtra |> not |> extraProperties
             |]

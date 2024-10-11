@@ -111,13 +111,11 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                voption {
-                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest001.md" false
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
-                }
+                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest001.md" false
+                quote.RevisedSchedule.FinalApr |> finalAprPercent
 
-            let expected = ValueSome (Percent 56.51300m)
+            let expected = Percent 56.51300m
             actual |> should equal expected
 
         [<Fact>]
@@ -172,13 +170,12 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                voption {
-                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest002.md" false
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
-                }
+                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest002.md" false
+                quote.RevisedSchedule.FinalApr |> finalAprPercent
 
-            let expected = ValueSome (Percent 986.81300m)
+            let expected = Percent 986.81300m
+
             actual |> should equal expected
 
         [<Fact>]
@@ -259,13 +256,12 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                voption {
-                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest003.md" false
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
-                }
+                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest003.md" false
+                quote.RevisedSchedule.FinalApr |> finalAprPercent
 
-            let expected = ValueSome (Percent 516.75800m)
+            let expected = Percent 516.75800m
+
             actual |> should equal expected
 
         [<Fact>]
@@ -320,13 +316,12 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                voption {
-                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                    quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest004.md" false
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
-                }
+                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest004.md" false
+                quote.RevisedSchedule.FinalApr |> finalAprPercent
 
-            let expected = ValueSome (Percent 930.55900m)
+            let expected = Percent 930.55900m
+
             actual |> should equal expected
 
         [<Fact>]
@@ -413,39 +408,37 @@ module UnitPeriodConfigTests =
                 |> Map.ofArrayWithArrayMerge
 
             let actual =
-                voption {
-                    let originalFinalPaymentDay = originalScheduledPayments |> Map.maxKeyValue |> fst
-                    let quoteSp =
-                        { sp with
-                            AsOfDate = Date(2024, 3, 6)
-                            ScheduleConfig =
+                let originalFinalPaymentDay = originalScheduledPayments |> Map.maxKeyValue |> fst
+                let quoteSp =
+                    { sp with
+                        AsOfDate = Date(2024, 3, 6)
+                        ScheduleConfig =
+                            [|
+                                Map.toArray originalScheduledPayments
                                 [|
-                                    Map.toArray originalScheduledPayments
-                                    [|
-                                        201<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                        232<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                        262<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                        293<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                        323<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                        354<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 79109L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                    |]
+                                    201<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                    232<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                    262<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                    293<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                    323<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                    354<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 79109L<Cent>; RescheduleDay = 198<OffsetDay> })
                                 |]
-                                |> Array.concat
-                                |> Map.ofArray
-                                |> CustomSchedule
-                            FeeConfig.SettlementRefund =
-                                match sp.FeeConfig.SettlementRefund with
-                                | Fee.SettlementRefund.ProRata _ -> Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
-                                | _ as fsr -> fsr
-                        }
-                    let! quote = getQuote (IntendedPurpose.Settlement ValueNone) quoteSp actualPayments
-                    let title = "5) Checking that the fees refund behaves correctly"
-                    let original = originalScheduledPayments |> generateHtmlFromMap [||]
-                    let revised = quote.RevisedSchedule.ScheduleItems |> generateHtmlFromMap [||]
-                    $"{title}<br /><br />{original}<br />{revised}" |> outputToFile' "out/UnitPeriodConfigTest005.md" false
-                    return quote.RevisedSchedule.FinalApr |> finalAprPercent
-                }
+                            |]
+                            |> Array.concat
+                            |> Map.ofArray
+                            |> CustomSchedule
+                        FeeConfig.SettlementRefund =
+                            match sp.FeeConfig.SettlementRefund with
+                            | Fee.SettlementRefund.ProRata _ -> Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
+                            | _ as fsr -> fsr
+                    }
+                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay quoteSp actualPayments
+                let title = "5) Checking that the fees refund behaves correctly"
+                let original = originalScheduledPayments |> generateHtmlFromMap [||]
+                let revised = quote.RevisedSchedule.ScheduleItems |> generateHtmlFromMap [||]
+                $"{title}<br /><br />{original}<br />{revised}" |> outputToFile' "out/UnitPeriodConfigTest005.md" false
+                quote.RevisedSchedule.FinalApr |> finalAprPercent
 
-            let expected = ValueSome (Percent 699.52500m)
+            let expected = Percent 699.52500m
+
             actual |> should equal expected
-

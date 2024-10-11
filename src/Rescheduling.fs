@@ -31,58 +31,59 @@ module Rescheduling =
 
     /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
     let reschedule sp (rp: RescheduleParameters) actualPayments =
-        voption {
-            // get the settlement quote
-            let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-            // create a new payment schedule either by auto-generating it or using manual payments
-            let newPaymentSchedule =
-                match rp.PaymentSchedule with
-                | AutoGenerateSchedule _ ->
-                    let schedule = PaymentSchedule.calculate BelowZero { sp with ScheduleConfig = rp.PaymentSchedule }
-                    match schedule with
-                    | ValueSome s ->
-                        s.Items
-                        |> Array.filter _.ScheduledPayment.IsSome
-                        |> Array.map(fun si -> si.Day, si.ScheduledPayment.Value)
-                    | ValueNone ->
-                        [||]
-                | FixedSchedules fixedSchedules ->
-                    fixedSchedules
-                    |> Array.map(fun fs ->
-                        let scheduledPayment =
-                            match fs.ScheduleType with
-                            | ScheduleType.Original -> ScheduledPayment.Quick (ValueSome fs.PaymentValue) ValueNone
-                            | ScheduleType.Rescheduled rescheduleDay -> ScheduledPayment.Quick ValueNone (ValueSome { Value = fs.PaymentValue; RescheduleDay = rescheduleDay })
-                        UnitPeriod.generatePaymentSchedule fs.PaymentCount ValueNone UnitPeriod.Direction.Forward fs.UnitPeriodConfig
-                        |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, scheduledPayment)
-                    )
-                    |> Array.concat
-                | CustomSchedule payments ->
-                    payments
-                    |> Map.toArray
-            // append the new schedule to the old schedule up to the point of settlement
-            let oldPaymentSchedule =
-                quote.RevisedSchedule.ScheduleItems
-                |> Map.filter(fun _ si -> si.ScheduledPayment.IsSome)
-                |> Map.map(fun _ si -> si.ScheduledPayment)
+
+        // get the settlement quote
+        let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+
+        // create a new payment schedule either by auto-generating it or using manual payments
+        let newPaymentSchedule =
+            match rp.PaymentSchedule with
+            | AutoGenerateSchedule _ ->
+                PaymentSchedule.calculate BelowZero { sp with ScheduleConfig = rp.PaymentSchedule }
+                |> _.Items
+                |> Array.filter _.ScheduledPayment.IsSome
+                |> Array.map(fun si -> si.Day, si.ScheduledPayment.Value)
+            | FixedSchedules fixedSchedules ->
+                fixedSchedules
+                |> Array.map(fun fs ->
+                    let scheduledPayment =
+                        match fs.ScheduleType with
+                        | ScheduleType.Original -> ScheduledPayment.Quick (ValueSome fs.PaymentValue) ValueNone
+                        | ScheduleType.Rescheduled rescheduleDay -> ScheduledPayment.Quick ValueNone (ValueSome { Value = fs.PaymentValue; RescheduleDay = rescheduleDay })
+                    UnitPeriod.generatePaymentSchedule fs.PaymentCount ValueNone UnitPeriod.Direction.Forward fs.UnitPeriodConfig
+                    |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, scheduledPayment)
+                )
+                |> Array.concat
+            | CustomSchedule payments ->
+                payments
                 |> Map.toArray
-            // configure the parameters for the new schedule
-            let spNew =
-                { sp with
-                    ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> CustomSchedule
-                    FeeConfig.SettlementRefund = rp.FeeSettlementRefund
-                    ChargeConfig.ChargeHolidays = rp.ChargeHolidays
-                    InterestConfig =
-                        { sp.InterestConfig with
-                            InitialGracePeriod = 0<DurationDay>
-                            PromotionalRates = rp.PromotionalInterestRates
-                            RateOnNegativeBalance = rp.RateOnNegativeBalance
-                        }
-                }
-            // create the new amortiation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose true actualPayments
-            return quote.RevisedSchedule, rescheduledSchedule
-        }
+
+        // append the new schedule to the old schedule up to the point of settlement
+        let oldPaymentSchedule =
+            quote.RevisedSchedule.ScheduleItems
+            |> Map.filter(fun _ si -> si.ScheduledPayment.IsSome)
+            |> Map.map(fun _ si -> si.ScheduledPayment)
+            |> Map.toArray
+
+        // configure the parameters for the new schedule
+        let spNew =
+            { sp with
+                ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> CustomSchedule
+                FeeConfig.SettlementRefund = rp.FeeSettlementRefund
+                ChargeConfig.ChargeHolidays = rp.ChargeHolidays
+                InterestConfig =
+                    { sp.InterestConfig with
+                        InitialGracePeriod = 0<DurationDay>
+                        PromotionalRates = rp.PromotionalInterestRates
+                        RateOnNegativeBalance = rp.RateOnNegativeBalance
+                    }
+            }
+
+        // create the new amortisation schedule
+        let rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose true actualPayments
+
+        // return the results
+        quote.RevisedSchedule, rescheduledSchedule
 
     /// parameters for creating a rolled-over schedule
     [<RequireQualifiedAccess>]
@@ -101,48 +102,50 @@ module Rescheduling =
 
     /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
     let rollOver sp (rp: RolloverParameters) actualPayments =
-        voption {
-            // get the settlement quote
-            let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-            // process the quote and extract the portions if applicable
-            let! principalPortion, feesPortion, feesRefundIfSettled =
-                match quote.QuoteResult with
-                | PaymentQuote (_, ofWhichPrincipal, ofWhichFees, ofWhichInterest, ofWhichCharges, feesRefundIfSettled) ->
+
+        // get the settlement quote
+        let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+
+        // process the quote and extract the portions if applicable
+        let principalPortion, feesPortion, feesRefundIfSettled =
+            match quote.QuoteResult with
+            | PaymentQuote pq ->
+                match rp.FeeHandling with
+                | Fee.FeeHandling.CapitaliseAsPrincipal -> pq.OfWhichPrincipal + pq.OfWhichFees + pq.OfWhichInterest + pq.OfWhichCharges, 0L<Cent>, pq.FeesRefundIfSettled
+                | Fee.FeeHandling.CarryOverAsIs -> pq.OfWhichPrincipal + pq.OfWhichInterest + pq.OfWhichCharges, pq.OfWhichFees, pq.FeesRefundIfSettled
+                | Fee.FeeHandling.WriteOffFeeBalance -> pq.OfWhichPrincipal + pq.OfWhichInterest + pq.OfWhichCharges, pq.OfWhichFees, pq.FeesRefundIfSettled
+            | _ -> failwith "Unable to obtain quote for rollover"
+
+        // configure the parameters for the new schedule
+        let spNew =
+            { sp with
+                StartDate = sp.AsOfDate
+                Principal = principalPortion
+                ScheduleConfig = rp.PaymentSchedule
+                FeeConfig =
                     match rp.FeeHandling with
-                    | Fee.FeeHandling.CapitaliseAsPrincipal -> ofWhichPrincipal + ofWhichFees + ofWhichInterest + ofWhichCharges, 0L<Cent>, feesRefundIfSettled
-                    | Fee.FeeHandling.CarryOverAsIs -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesRefundIfSettled
-                    | Fee.FeeHandling.WriteOffFeeBalance -> ofWhichPrincipal + ofWhichInterest + ofWhichCharges, ofWhichFees, feesRefundIfSettled
-                    |> ValueSome
-                | AwaitPaymentConfirmation -> ValueNone
-                | UnableToGenerateQuote -> ValueNone
-            // configure the parameters for the new schedule
-            let spNew =
-                { sp with
-                    StartDate = sp.AsOfDate
-                    Principal = principalPortion
-                    ScheduleConfig = rp.PaymentSchedule
-                    FeeConfig =
-                        match rp.FeeHandling with
-                        | Fee.FeeHandling.CarryOverAsIs ->
-                            { sp.FeeConfig with
-                                FeeTypes = [| Fee.CustomFee ("Rollover Fee", Amount.Simple feesPortion) |]
-                                SettlementRefund =
-                                    if feesRefundIfSettled = 0L<Cent> then
-                                        Fee.SettlementRefund.None
-                                    else
-                                        match sp.FeeConfig.SettlementRefund with
-                                        | Fee.SettlementRefund.ProRata _ -> Fee.SettlementRefund.ProRata (ValueSome rp.OriginalFinalPaymentDay)
-                                        | _ as fsr -> fsr
-                            }
-                        | _ ->
-                            { sp.FeeConfig with
-                                FeeTypes = [||]
-                                SettlementRefund = Fee.SettlementRefund.None
-                            }
-                    InterestConfig = rp.InterestConfig |> ValueOption.defaultValue sp.InterestConfig
-                    PaymentConfig = rp.PaymentConfig |> ValueOption.defaultValue sp.PaymentConfig
-                }
-            // create the new amortisation schedule
-            let! rescheduledSchedule = Amortisation.generate spNew IntendedPurpose.Statement true Map.empty
-            return quote.RevisedSchedule, rescheduledSchedule
-        }
+                    | Fee.FeeHandling.CarryOverAsIs ->
+                        { sp.FeeConfig with
+                            FeeTypes = [| Fee.CustomFee ("Rollover Fee", Amount.Simple feesPortion) |]
+                            SettlementRefund =
+                                if feesRefundIfSettled = 0L<Cent> then
+                                    Fee.SettlementRefund.None
+                                else
+                                    match sp.FeeConfig.SettlementRefund with
+                                    | Fee.SettlementRefund.ProRata _ -> Fee.SettlementRefund.ProRata (ValueSome rp.OriginalFinalPaymentDay)
+                                    | _ as fsr -> fsr
+                        }
+                    | _ ->
+                        { sp.FeeConfig with
+                            FeeTypes = [||]
+                            SettlementRefund = Fee.SettlementRefund.None
+                        }
+                InterestConfig = rp.InterestConfig |> ValueOption.defaultValue sp.InterestConfig
+                PaymentConfig = rp.PaymentConfig |> ValueOption.defaultValue sp.PaymentConfig
+            }
+
+        // create the new amortisation schedule
+        let rolledOverSchedule = Amortisation.generate spNew IntendedPurpose.Statement true Map.empty
+
+        // return the results
+        quote.RevisedSchedule, rolledOverSchedule

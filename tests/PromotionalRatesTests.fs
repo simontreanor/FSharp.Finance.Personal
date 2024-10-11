@@ -65,9 +65,9 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/PromotionalRatesTest001.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/PromotionalRatesTest001.md" false
 
-        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 323_20m<Cent>
 
     [<Fact>]
@@ -84,9 +84,9 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/PromotionalRatesTest002.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/PromotionalRatesTest002.md" false
 
-        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 224_00m<Cent>
 
     [<Fact>]
@@ -103,8 +103,8 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/PromotionalRatesTest003.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/PromotionalRatesTest003.md" false
 
-        let interestBalance = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance) |> ValueOption.defaultValue 0m<Cent>
+        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 317_24.36164383m<Cent>
 

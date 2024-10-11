@@ -110,11 +110,12 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+                |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestCapTest001.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/InterestCapTest001.md" false
 
-            let interestPortion = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue >> snd >> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            let interestPortion = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
+
             interestPortion |> should be (lessThanOrEqualTo 499_00L<Cent>)
 
         [<Fact>]
@@ -153,11 +154,12 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) false
+                |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/InterestCapTest002.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/InterestCapTest002.md" false
 
-            let interestPortion = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue >> snd >> _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            let interestPortion = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
+
             interestPortion |> should be (lessThanOrEqualTo 616_01L<Cent>)
 
     module DailyRatesTests =
@@ -248,17 +250,18 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/InterestTest001.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/InterestTest001.md" false
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
-            let expected = ValueSome (7305<OffsetDay>, {
+            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+
+            let expected = 7305<OffsetDay>, {
                 OffsetDate = Date(2044, 4, 11)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 1525_12L<Cent>) ValueNone
                 Window = 240
                 PaymentDue = 1523_25L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueNone
+                GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1523_25L<Cent>
                 PaymentStatus = NotYetDue
                 BalanceStatus = ClosedBalance
@@ -278,7 +281,8 @@ module InterestTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 1523_25L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
+            }
+
             actual |> should equal expected
 
     module Cca2004Tests =
@@ -293,7 +297,7 @@ module InterestTests =
             let unitPeriod = UnitPeriod.Month 1
             let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
             let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-            let expected = ValueSome 860_52L<Cent>
+            let expected = 860_52L<Cent>
             actual |> should equal expected
 
         [<Fact>]
@@ -306,7 +310,7 @@ module InterestTests =
             let unitPeriod = UnitPeriod.Month 1
             let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
             let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-            let expected = ValueSome 819_71L<Cent>
+            let expected = 819_71L<Cent>
             actual |> should equal expected
 
         [<Fact>]
@@ -319,7 +323,7 @@ module InterestTests =
             let unitPeriod = UnitPeriod.Month 1
             let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
             let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-            let expected = ValueSome 821_03L<Cent>
+            let expected = 821_03L<Cent>
             actual |> should equal expected
 
         [<Fact>]
@@ -332,7 +336,7 @@ module InterestTests =
             let unitPeriod = UnitPeriod.Month 1
             let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
             let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-            let expected = ValueSome 776_90L<Cent>
+            let expected = 776_90L<Cent>
             actual |> should equal expected
 
         [<Fact>]
@@ -345,7 +349,7 @@ module InterestTests =
             let unitPeriod = UnitPeriod.Month 1
             let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
             let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-            let expected = ValueSome 6702_45L<Cent>
+            let expected = 6702_45L<Cent>
             actual |> should equal expected
 
         [<Fact>]
@@ -358,7 +362,7 @@ module InterestTests =
             let unitPeriod = UnitPeriod.Month 1
             let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
             let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
-            let expected = ValueSome 6606_95L<Cent>
+            let expected = 6606_95L<Cent>
             actual |> should equal expected
 
         let scheduleParameters2 =
@@ -398,11 +402,11 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement true
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/Cca2004Test003.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003.md" false
 
-            let levelPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[1433<OffsetDay>].ScheduledPayment.Total) |> ValueOption.defaultValue 0L<Cent>
-            let finalPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[1461<OffsetDay>].ScheduledPayment.Total) |> ValueOption.defaultValue 0L<Cent>
-            let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment.Total
+            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment.Total
+            let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
@@ -415,11 +419,11 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement true
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/Cca2004Test003a.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003a.md" false
 
-            let levelPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[1433<OffsetDay>].ScheduledPayment.Total) |> ValueOption.defaultValue 0L<Cent>
-            let finalPayment = schedule |> ValueOption.map (fun s -> s.ScheduleItems[1461<OffsetDay>].ScheduledPayment.Total) |> ValueOption.defaultValue 0L<Cent>
-            let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment.Total
+            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment.Total
+            let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
@@ -444,9 +448,10 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp (IntendedPurpose.Settlement ValueNone) true
+                |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay true
 
-            schedule |> ValueOption.iter (_.ScheduleItems >> (outputMapToHtml "out/Cca2004Test003b.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003b.md" false
 
-            let interestPortion = schedule |> ValueOption.map (fun s -> s.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion) |> ValueOption.defaultValue 0L<Cent>
+            let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+
             interestPortion |> should equal 598_08L<Cent>

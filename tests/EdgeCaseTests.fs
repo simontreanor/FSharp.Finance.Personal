@@ -67,13 +67,20 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest001.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest001.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 500_79L<Cent>
+                OfWhichPrincipal = 177_81L<Cent>
+                OfWhichFees = 274_64L<Cent>
+                OfWhichInterest = 48_34L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (500_79L<Cent>, 177_81L<Cent>, 274_64L<Cent>, 48_34L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -119,13 +126,20 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest002.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest002.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 455_55L<Cent>
+                OfWhichPrincipal = 148_17L<Cent>
+                OfWhichFees = 228_86L<Cent>
+                OfWhichInterest = 78_52L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (455_55L<Cent>, 148_17L<Cent>, 228_86L<Cent>, 78_52L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -171,13 +185,20 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest003.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest003.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 1221_54L<Cent>
+                OfWhichPrincipal = 427_28L<Cent>
+                OfWhichFees = 660_00L<Cent>
+                OfWhichInterest = 134_26L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (1221_54L<Cent>, 427_28L<Cent>, 660_00L<Cent>, 134_26L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -295,13 +316,20 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 466_41L<Cent>
+                OfWhichPrincipal = 151_32L<Cent>
+                OfWhichFees = 233_66L<Cent>
+                OfWhichInterest = 81_43L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (466_41L<Cent>, 151_32L<Cent>, 233_66L<Cent>, 81_43L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -419,13 +447,20 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004a.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004a.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 479_92L<Cent>
+                OfWhichPrincipal = 155_70L<Cent>
+                OfWhichFees = 240_43L<Cent>
+                OfWhichInterest = 83_79L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (479_92L<Cent>, 155_70L<Cent>, 240_43L<Cent>, 83_79L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -537,13 +572,20 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest005.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest005.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 64916L<Cent>
+                OfWhichPrincipal = 500_00L<Cent>
+                OfWhichFees = 0L<Cent>
+                OfWhichInterest = 149_16L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (64916L<Cent>, 500_00L<Cent>, 0L<Cent>, 149_16L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
     [<Fact>]
@@ -582,13 +624,20 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest006.md" false
-                return quote.QuoteResult
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest006.md" false
+            quote.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = -76_80L<Cent>
+                OfWhichPrincipal = -76_80L<Cent>
+                OfWhichFees = 0L<Cent>
+                OfWhichInterest = 0L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
             }
 
-        let expected = ValueSome (PaymentQuote (-76_80L<Cent>, -76_80L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>, 0L<Cent>))
         actual |> should equal expected
 
 
@@ -637,22 +686,23 @@ module EdgeCaseTests =
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargeHolidays = [||]
-            IntendedPurpose = IntendedPurpose.Settlement <| ValueSome 88<OffsetDay>
+            IntendedPurpose = IntendedPurpose.SettlementOn 88<OffsetDay>
         }
 
         let result = reschedule sp rp actualPayments
-        result |> ValueOption.iter(snd >> _.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest007.md" false))
 
-        let actual = result |> ValueOption.map (snd >> _.ScheduleItems >> Map.maxKeyValue)
+        result |> snd |> _.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest007.md" false
 
-        let expected = ValueSome (88<OffsetDay>, {
+        let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
+
+        let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 4
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueSome 83_74L<Cent>
+            GeneratedPayment = GeneratedValue 83_74L<Cent>
             NetEffect = 83_74L<Cent>
             PaymentStatus = Generated
             BalanceStatus = ClosedBalance
@@ -672,7 +722,8 @@ module EdgeCaseTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 83_74L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
@@ -720,22 +771,23 @@ module EdgeCaseTests =
             RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
             PromotionalInterestRates = [||]
             ChargeHolidays = [||]
-            IntendedPurpose = IntendedPurpose.Settlement <| ValueSome 88<OffsetDay>
+            IntendedPurpose = IntendedPurpose.SettlementOn 88<OffsetDay>
         }
 
         let result = reschedule sp rp actualPayments
-        result |> ValueOption.iter(snd >> _.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest008.md" false))
 
-        let actual = result |> ValueOption.map (snd >> _.ScheduleItems >> Map.maxKeyValue)
+        result |> snd |> _.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest008.md" false
 
-        let expected = ValueSome (88<OffsetDay>, {
+        let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
+
+        let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.DefaultValue
             Window = 4
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueSome 10_19L<Cent>
+            GeneratedPayment = GeneratedValue 10_19L<Cent>
             NetEffect = 10_19L<Cent>
             PaymentStatus = Generated
             BalanceStatus = ClosedBalance
@@ -755,7 +807,8 @@ module EdgeCaseTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 10_19L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
@@ -795,18 +848,18 @@ module EdgeCaseTests =
             actualPayments
             |> Amortisation.generate sp IntendedPurpose.Statement false
 
-        schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/EdgeCaseTest009.md" false))
+        schedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest009.md" false
 
-        let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
+        let actual = schedule.ScheduleItems |> Map.maxKeyValue
 
-        let expected = ValueSome (97<OffsetDay>, {
+        let expected = 97<OffsetDay>, {
             OffsetDate = Date(2023, 8, 10)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 87_67L<Cent>) ValueNone
             Window = 4
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 0L<Cent>
             PaymentStatus = NoLongerRequired
             BalanceStatus = RefundDue
@@ -826,6 +879,6 @@ module EdgeCaseTests =
             ChargesBalance = 0L<Cent>
             SettlementFigure = -13_16L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
 
         actual |> should equal expected

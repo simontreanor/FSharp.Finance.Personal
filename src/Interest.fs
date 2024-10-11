@@ -146,7 +146,7 @@ module Interest =
     /// calculate the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1)
     let internal ``CCA 2004 regulation 4(1) formula`` (A: Map<int, decimal<Cent>>) (B: Map<int, decimal<Cent>>) (r: decimal) (m: int) (n: int) (a: Map<int, int>) (b: Map<int, int>) =
         if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
-            ValueNone
+            0m<Cent>
         else
             let round = Cent.roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 2
             let sum1 =
@@ -156,24 +156,25 @@ module Interest =
                 [1 .. n]
                 |> List.sumBy(fun j -> B[j] * ((1m + r) |> powi b[j] |> decimal) |> round)
             sum1 - sum2
-            |> ValueSome
 
     /// calculate the amount of rebate due following an early settlement
     let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction voption) unitPeriod paymentRounding =
         if payments |> Array.isEmpty then
-            ValueNone
+            0L<Cent>
         else
-            voption {
-                let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
-                let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
-                let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
-                let advanceCount = 1
-                let paymentCount = payments |> Array.length |> min settlementPeriod
-                let advanceIntervalMap = Map [ (1, settlementPeriod) ]
-                let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
-                let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> ValueOption.map(fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)) |> ValueOption.defaultValue sf
-                let! wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
-                let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
-                let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd
-                return remainingPaymentTotal - settlementFigure
-            }
+            let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
+            let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
+            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
+            let advanceCount = 1
+            let paymentCount = payments |> Array.length |> min settlementPeriod
+            let advanceIntervalMap = Map [ (1, settlementPeriod) ]
+            let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
+            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> ValueOption.map(fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)) |> ValueOption.defaultValue sf
+            let wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
+            let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
+            let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd
+            remainingPaymentTotal - settlementFigure
+
+    /// if there is less than one cent remaining, discard any fraction
+    let ignoreFractionalCent i =
+        if abs i < 1m<Cent> then 0m<Cent> else i

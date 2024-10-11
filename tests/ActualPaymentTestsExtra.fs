@@ -34,7 +34,7 @@ module ActualPaymentTestsExtra =
 
     [<Fact>]
     let ``1) Simple schedule fully settled on time`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2023, 12, 1)
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
@@ -73,25 +73,24 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let actual =
-            voption {
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
-                amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra001.md" false
-                return amortisationSchedule.ScheduleItems
-            }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (131<OffsetDay>, {
+            let schedule = PaymentSchedule.calculate BelowZero sp
+            let scheduleItems = schedule.Items
+            let actualPayments = scheduleItems |> allPaidOnTime
+            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra001.md" false
+            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected = 131<OffsetDay>, {
             OffsetDate = Date(2023, 12, 1)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 407_64L<Cent>) ValueNone
             Window = 5
             PaymentDue = 407_64L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 407_64L<Cent>; Metadata = Map.empty } |]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 407_64L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
@@ -111,12 +110,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``2) Schedule with a payment on day 0L<Cent>, seen from a date before scheduled payments are due to start`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2022, 3, 25)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
@@ -155,28 +155,25 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let actual =
-            voption {
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduleItems = schedule.Items
-                let actualPayments =
-                    Map [
-                        0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
-                    ]
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
-                amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra002.md" false
-                return amortisationSchedule.ScheduleItems
-            }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (172<OffsetDay>, {
+            let actualPayments =
+                Map [
+                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                ]
+            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra002.md" false
+            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected = 172<OffsetDay>, {
             OffsetDate = Date(2022, 8, 27)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 170_90L<Cent>) ValueNone
             Window = 12
             PaymentDue = 170_04L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 170_04L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
@@ -196,12 +193,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 170_04L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
@@ -240,41 +238,42 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
+
         let actual =
-            voption {
-                let actualPayments =
-                    Map [
-                        0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
-                    ]
-                let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
-                let rp : RescheduleParameters = {
-                    FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay')
-                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
-                    RateOnNegativeBalance = ValueNone
-                    PromotionalInterestRates = [||]
-                    ChargeHolidays = [||]
-                    IntendedPurpose = IntendedPurpose.Statement
-                }
-                let! oldSchedule, newSchedule = reschedule sp rp actualPayments
-                let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-                let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
-                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
-                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md" false
-                return newSchedule.ScheduleItems
+            let actualPayments =
+                Map [
+                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                ]
+            let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+            let rp : RescheduleParameters = {
+                FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay')
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
+                RateOnNegativeBalance = ValueNone
+                PromotionalInterestRates = [||]
+                ChargeHolidays = [||]
+                IntendedPurpose = IntendedPurpose.Statement
             }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (1969<OffsetDay>, {
+            let oldSchedule, newSchedule = reschedule sp rp actualPayments
+            let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
+            let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
+            let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
+            let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
+            $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md" false
+            newSchedule.ScheduleItems
+            |> Map.maxKeyValue
+
+        let expected = 1969<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick ValueNone (ValueSome { Value = 20_00L<Cent>; RescheduleDay = 176<OffsetDay> })
             Window = 141
             PaymentDue = 9_80L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 9_80L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
@@ -294,12 +293,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 9_80L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``4) never settles down`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2026, 8, 27)
             StartDate = Date(2023, 11, 6)
             Principal = 800_00L<Cent>
@@ -338,25 +338,24 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let actual =
-            voption {
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
-                amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra004.md" false
-                return amortisationSchedule.ScheduleItems
-            }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (1025<OffsetDay>, {
+            let schedule = PaymentSchedule.calculate BelowZero sp
+            let scheduleItems = schedule.Items
+            let actualPayments = scheduleItems |> allPaidOnTime
+            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra004.md" false
+            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected = 1025<OffsetDay>, {
             OffsetDate = Date(2026, 8, 27)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 137_36L<Cent>) ValueNone
             Window = 19
             PaymentDue = 137_36L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 137_36L<Cent>; Metadata = Map.empty } |]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 137_36L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
@@ -376,12 +375,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``5) large negative payment`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2023, 12, 11)
             StartDate = Date(2022, 9, 11)
             Principal = 200_00L<Cent>
@@ -415,25 +415,24 @@ module ActualPaymentTestsExtra =
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
-        })
+        }
+
         let actual =
-            voption {
-                let! schedule = PaymentSchedule.calculate BelowZero sp
-                let scheduleItems = schedule.Items
-                let actualPayments = scheduleItems |> allPaidOnTime
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
-                amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra005.md" false
-                return amortisationSchedule.ScheduleItems
-            }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (185<OffsetDay>, {
+            let schedule = PaymentSchedule.calculate BelowZero sp
+            let scheduleItems = schedule.Items
+            let actualPayments = scheduleItems |> allPaidOnTime
+            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra005.md" false
+            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected = 185<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 51_53L<Cent>) ValueNone
             Window = 7
             PaymentDue = 51_53L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 51_53L<Cent>; Metadata = Map.empty } |]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 51_53L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
@@ -453,12 +452,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``6) Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2022, 4, 1)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
@@ -497,26 +497,22 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let actual =
-            voption {
-                let actualPayments =
-                    Map [
-                        0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
-                    ]
-                let! amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
-                amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra006.md" false
-                return amortisationSchedule.ScheduleItems
-            }
-            |> ValueOption.bind (Map.tryFind 144<OffsetDay> >> toValueOption)
-        let expected = ValueSome ({
+            let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |] ]
+            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra006.md" false
+            amortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
+
+        let expected = {
             OffsetDate = Date(2022, 7, 30)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 171_02L<Cent>) ValueNone
             Window = 10
             PaymentDue = 142_40L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
@@ -536,12 +532,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 142_40L<Cent>
             FeesRefundIfSettled = 195_35L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
@@ -580,38 +577,39 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
+
         let actual =
-            voption {
-                let actualPayments =
-                    Map [
-                        0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
-                    ]
-                let rp : RolloverParameters = {
-                    OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
-                    InterestConfig = ValueNone
-                    PaymentConfig = ValueNone
-                    FeeHandling = Fee.FeeHandling.CarryOverAsIs
-                }
-                let! oldSchedule, newSchedule = rollOver sp rp actualPayments
-                let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
-                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap [||]
-                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap [||]
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md" false
-                return newSchedule.ScheduleItems
+            let actualPayments =
+                Map [
+                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                ]
+            let rp : RolloverParameters = {
+                OriginalFinalPaymentDay = originalFinalPaymentDay'
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                InterestConfig = ValueNone
+                PaymentConfig = ValueNone
+                FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (1793<OffsetDay>, {
+            let oldSchedule, newSchedule = rollOver sp rp actualPayments
+            let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
+            let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap [||]
+            let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap [||]
+            $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md" false
+            newSchedule.ScheduleItems
+            |> Map.maxKeyValue
+
+        let expected = 1793<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 20_00L<Cent>) ValueNone
             Window = 129
             PaymentDue = 18_71L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
@@ -631,12 +629,13 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
+        }
+
         actual |> should equal expected
 
     [<Fact>]
     let ``8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)`` () =
-        let sp = ({
+        let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
@@ -675,38 +674,39 @@ module ActualPaymentTestsExtra =
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
-        })
+        }
+
         let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
+
         let actual =
-            voption {
-                let actualPayments =
-                    Map [
-                        0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
-                    ]
-                let rp : RolloverParameters = {
-                    OriginalFinalPaymentDay = originalFinalPaymentDay'
-                    PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
-                    InterestConfig = ValueNone
-                    PaymentConfig = ValueNone
-                    FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
-                }
-                let! oldSchedule, newSchedule = rollOver sp rp actualPayments
-                let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
-                let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap [||]
-                let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap [||]
-                $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md" false
-                return newSchedule.ScheduleItems
+            let actualPayments =
+                Map [
+                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                ]
+            let rp : RolloverParameters = {
+                OriginalFinalPaymentDay = originalFinalPaymentDay'
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                InterestConfig = ValueNone
+                PaymentConfig = ValueNone
+                FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
-            |> ValueOption.map Map.maxKeyValue
-        let expected = ValueSome (1793<OffsetDay>, {
+            let oldSchedule, newSchedule = rollOver sp rp actualPayments
+            let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
+            let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap [||]
+            let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap [||]
+            $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md" false
+            newSchedule.ScheduleItems
+            |> Map.maxKeyValue
+
+        let expected = 1793<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.Quick (ValueSome 20_00L<Cent>) ValueNone
             Window = 129
             PaymentDue = 18_71L<Cent>
             ActualPayments = [||]
-            GeneratedPayment = ValueNone
+            GeneratedPayment = NoGeneratedPayment
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
@@ -726,6 +726,6 @@ module ActualPaymentTestsExtra =
             ChargesBalance = 0L<Cent>
             SettlementFigure = 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
-        })
-        actual |> should equal expected
+        }
 
+        actual |> should equal expected

@@ -58,23 +58,28 @@ module SettlementTests =
             ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest001.md" false
-                let! scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 112<OffsetDay> |> toValueOption
-                return quote.QuoteResult, scheduledItem
-            }
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest001.md" false
+            let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 112<OffsetDay>
+            quote.QuoteResult, scheduledItem
 
-        let expected = ValueSome (
-            PaymentQuote (98_52L<Cent>, 81_56L<Cent>, 0L<Cent>, 16_96L<Cent>, 0L<Cent>, 0L<Cent>),
-            ({
+        let expected =
+            PaymentQuote {
+                PaymentValue = 98_52L<Cent>
+                OfWhichPrincipal = 81_56L<Cent>
+                OfWhichFees = 0L<Cent>
+                OfWhichInterest = 16_96L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
+            },
+            {
                 OffsetDate = Date(2024, 3, 19)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
                 Window = 3
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 98_52L<Cent>
+                GeneratedPayment = GeneratedValue 98_52L<Cent>
                 NetEffect = 98_52L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
@@ -94,8 +99,7 @@ module SettlementTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 98_52L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
-        )
+            }
 
         actual |> should equal expected
 
@@ -135,23 +139,28 @@ module SettlementTests =
             ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest002.md" false
-                let! scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 122<OffsetDay> |> toValueOption
-                return quote.QuoteResult, scheduledItem
-            }
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest002.md" false
+            let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 122<OffsetDay>
+            quote.QuoteResult, scheduledItem
 
-        let expected = ValueSome (
-            PaymentQuote (105_04L<Cent>, 81_56L<Cent>, 0L<Cent>, 23_48L<Cent>, 0L<Cent>, 0L<Cent>),
-            ({
+        let expected =
+            PaymentQuote {
+                PaymentValue = 105_04L<Cent>
+                OfWhichPrincipal = 81_56L<Cent>
+                OfWhichFees = 0L<Cent>
+                OfWhichInterest = 23_48L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
+            },
+            {
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 105_04L<Cent>
+                GeneratedPayment = GeneratedValue 105_04L<Cent>
                 NetEffect = 105_04L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
@@ -171,8 +180,7 @@ module SettlementTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 105_04L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
-        )
+            }
 
         actual |> should equal expected
 
@@ -213,23 +221,28 @@ module SettlementTests =
             ]
 
         let actual =
-            voption {
-                let! quote = getQuote (IntendedPurpose.Settlement ValueNone) sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest003.md" false
-                let! scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.tryFind 122<OffsetDay> |> toValueOption
-                return quote.QuoteResult, scheduledItem
-            }
+            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/SettlementTest003.md" false
+            let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 122<OffsetDay>
+            quote.QuoteResult, scheduledItem
 
-        let expected = ValueSome (
-            PaymentQuote (53_30L<Cent>, 50_48L<Cent>, 0L<Cent>, 2_82L<Cent>, 0L<Cent>, 0L<Cent>),
-            ({
+        let expected =
+            PaymentQuote {
+                PaymentValue = 53_30L<Cent>
+                OfWhichPrincipal = 50_48L<Cent>
+                OfWhichFees = 0L<Cent>
+                OfWhichInterest = 2_82L<Cent>
+                OfWhichCharges = 0L<Cent>
+                FeesRefundIfSettled = 0L<Cent>
+            },
+            {
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = ValueSome 53_30L<Cent>
+                GeneratedPayment = GeneratedValue 53_30L<Cent>
                 NetEffect = 53_30L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
@@ -249,7 +262,6 @@ module SettlementTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 53_30L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
-        )
+            }
 
         actual |> should equal expected

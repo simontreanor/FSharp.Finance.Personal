@@ -76,17 +76,18 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/FeesAndChargesTest001.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest001.md" false
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
-            let expected = ValueSome (125<OffsetDay>, {
+            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+
+            let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
-                GeneratedPayment = ValueNone
+                GeneratedPayment = NoGeneratedPayment
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
@@ -106,7 +107,8 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 109_61L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
+            }
+
             actual |> should equal expected
 
         [<Fact>]
@@ -163,17 +165,18 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/FeesAndChargesTest002.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest002.md" false
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
-            let expected = ValueSome (125<OffsetDay>, {
+            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+
+            let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
-                GeneratedPayment = ValueNone
+                GeneratedPayment = NoGeneratedPayment
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
@@ -193,7 +196,8 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 79_86L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
+            }
+
             actual |> should equal expected
 
         [<Fact>]
@@ -250,17 +254,18 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp IntendedPurpose.Statement false
 
-            schedule |> ValueOption.iter(_.ScheduleItems >> (outputMapToHtml "out/FeesAndChargesTest003.md" false))
+            schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest003.md" false
 
-            let actual = schedule |> ValueOption.map (_.ScheduleItems >> Map.maxKeyValue)
-            let expected = ValueSome (125<OffsetDay>, {
+            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            
+            let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
-                GeneratedPayment = ValueNone
+                GeneratedPayment = NoGeneratedPayment
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
@@ -280,5 +285,6 @@ module FeesAndChargesTests =
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = 124_49L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
-            })
+            }
+
             actual |> should equal expected

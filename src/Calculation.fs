@@ -10,8 +10,10 @@ module Calculation =
     /// the intended purpose of the calculation
     [<RequireQualifiedAccess; Struct>]
     type IntendedPurpose =
-        /// intended to quote a calculated amount, e.g. for settlement purposes
-        | Settlement of SettlementDay: int<OffsetDay> voption
+        /// intended to quote a settlement figure on the specified day
+        | SettlementOn of SettlementDay: int<OffsetDay>
+        /// intended to quote a settlement figure on the as-of day
+        | SettlementOnAsOfDay
         /// intended just for information, e.g. to view the current status of a loan
         | Statement
 

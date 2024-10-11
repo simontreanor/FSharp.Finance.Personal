@@ -143,7 +143,11 @@ module PaymentSchedule =
         with
             /// the total amount of the payment
             static member Total =
-                function { ActualPaymentStatus = aps } -> ActualPaymentStatus.Total aps
+                _.ActualPaymentStatus >> ActualPaymentStatus.Total
+            static member TotalConfirmedOrWrittenOff =
+                _.ActualPaymentStatus >> (function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap  -> ap | _ -> 0L<Cent>)
+            static member TotalPending =
+                _.ActualPaymentStatus >> (function ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
             /// a quick convenient method to create a confirmed actual payment
             static member QuickConfirmed amount =
                 {
@@ -585,7 +589,7 @@ module PaymentSchedule =
                 |> Array.tryLast
                 |> Option.map _.ScheduledPayment.Value.Total
                 |> Option.defaultValue 0L<Cent>
-            ValueSome {
+            {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
                 InitialInterestBalance = match sp.InterestConfig.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
@@ -601,7 +605,7 @@ module PaymentSchedule =
                     decimal (fees + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
             }
         | _ ->
-            ValueNone
+            failwith "Unable to calculate simple schedule"
 
     let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
         let rescheduleDays = scheduledPayments |> Array.map snd |> Array.choose(fun sp -> if sp.Rescheduled.IsSome then Some sp.Rescheduled.Value.RescheduleDay else None) |> Array.distinct |> Array.sort
@@ -651,3 +655,25 @@ module PaymentSchedule =
         )
         |> Array.filter (snd >> _.IsSome)
         |> Map.ofArray
+
+    /// a generated payment, where applicable
+    [<Struct; StructuredFormatDisplay("{Html}")>]
+        type GeneratedPayment =
+        /// no generated payment is required
+        | NoGeneratedPayment
+        /// the payment value will be generated later
+        | ToBeGenerated
+        /// the generated payment value
+        | GeneratedValue of int64<Cent>
+        with
+            static member Total = function
+                | GeneratedValue gv -> gv
+                | _ -> 0L<Cent>
+            /// HTML formatting to display the generated payment in a concise way
+            member x.Html =
+                match x with
+                | NoGeneratedPayment
+                | ToBeGenerated ->
+                    ""
+                | GeneratedValue gv ->
+                    formatCent gv

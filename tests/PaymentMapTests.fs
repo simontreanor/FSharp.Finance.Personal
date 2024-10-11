@@ -81,7 +81,7 @@ module PaymentMapTests =
                 >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
-        let expected = ValueSome 934_35L<Cent>
+        let expected = 934_35L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -118,7 +118,7 @@ module PaymentMapTests =
                 >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
-        let expected = ValueSome -1003_16L<Cent>
+        let expected = -1003_16L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -153,7 +153,7 @@ module PaymentMapTests =
                 >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
-        let expected = ValueSome 591_30L<Cent>
+        let expected = 591_30L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -187,7 +187,7 @@ module PaymentMapTests =
                 >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
-        let expected = ValueSome 697_21L<Cent>
+        let expected = 697_21L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -218,5 +218,5 @@ module PaymentMapTests =
                 >> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
             )
 
-        let expected = ValueSome 1600_35L<Cent>
+        let expected = 1600_35L<Cent>
         actual |> should equal expected
