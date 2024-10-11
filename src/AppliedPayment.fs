@@ -8,7 +8,6 @@ module AppliedPayment =
     open Calculation
     open Currency
     open DateDay
-    open ValueOptionCE
 
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     [<Struct>]
@@ -76,7 +75,7 @@ module AppliedPayment =
                 let latePaymentGracePeriod, latePaymentCharge, chargeGrouping =
                     chargeConfig
                     |> fun cc ->
-                        let lpc = cc.ChargeTypes |> Array.tryPick(function Charge.LatePayment _ as c -> Some c | _ -> None) |> toValueOption
+                        let lpc = cc.ChargeTypes |> Array.tryPick(function Charge.LatePayment _ as c -> Some c | _ -> None)
                         cc.LatePaymentGracePeriod, lpc, cc.ChargeGrouping
 
                 let netEffect, paymentStatus =

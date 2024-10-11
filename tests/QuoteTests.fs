@@ -15,7 +15,6 @@ module QuoteTests =
     open PaymentSchedule
     open Percentages
     open Quotes
-    open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))

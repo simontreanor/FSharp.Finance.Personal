@@ -10,7 +10,6 @@ module Interest =
     open Currency
     open DateDay
     open Percentages
-    open ValueOptionCE
 
     /// the interest rate expressed as either an annual or a daily rate
     [<RequireQualifiedAccess; Struct>]

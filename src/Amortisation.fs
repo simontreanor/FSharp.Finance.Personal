@@ -10,7 +10,6 @@ module Amortisation =
     open DateDay
     open PaymentSchedule
     open Percentages
-    open ValueOptionCE
 
     /// the status of the balance on a given offset day
     [<Struct>]
@@ -402,7 +401,7 @@ module Amortisation =
                 | Fee.SettlementRefund.ProRata originalFinalPaymentDay ->
                     match originalFinalPaymentDay with
                     | ValueNone ->
-                        let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> toValueOption |> ValueOption.defaultValue 0<OffsetDay>
+                        let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
                         calculateFees originalFinalPaymentDay
                     | ValueSome ofpd ->
                         calculateFees ofpd

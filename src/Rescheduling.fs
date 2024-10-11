@@ -10,7 +10,6 @@ module Rescheduling =
     open Calculation
     open Currency
     open DateDay
-    open ValueOptionCE
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
     [<RequireQualifiedAccess>]

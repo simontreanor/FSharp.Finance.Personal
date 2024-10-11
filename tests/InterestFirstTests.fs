@@ -16,7 +16,6 @@ module InterestFirstTests =
     open MapExtension
     open PaymentSchedule
     open Percentages
-    open ValueOptionCE
 
     let startDate = Date(2024, 7, 23)
     let scheduleParameters =

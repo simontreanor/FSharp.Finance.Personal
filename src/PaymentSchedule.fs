@@ -10,7 +10,6 @@ module PaymentSchedule =
     open Formatting
     open Percentages
     open UnitPeriod
-    open ValueOptionCE
 
     /// an originally scheduled payment, including the original simple interest and contractual interest calculations
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -372,6 +371,9 @@ module PaymentSchedule =
         /// options relating to interest
         InterestConfig: Interest.Config
     }
+
+    /// convert an option to a value option
+    let toValueOption = function Some x -> ValueSome x | None -> ValueNone
 
     /// generates a map of offset days and payments based on a start date and payment schedule
     let generatePaymentMap startDate paymentSchedule =

@@ -7,7 +7,6 @@ module Quotes =
     open Currency
     open DateDay
     open PaymentSchedule
-    open ValueOptionCE
 
     type PaymentQuote = {
         PaymentValue: int64<Cent>

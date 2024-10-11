@@ -57,21 +57,17 @@ module PaymentMapTests =
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            voption {
-                let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
-                let actualPayments : PaymentMap.Payment array = [|
-                    { Day = 10<OffsetDay>; Amount = 250_00L<Cent> }
-                    { Day = 17<OffsetDay>; Amount = 250_00L<Cent> }
-                |]
-                let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
-
-                let title = "<h3>1) Basic scenario</h3>"
-                let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest001.md" false
-
-                return pm
-            }
+            let schedule = sp |> calculate BelowZero
+            let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+            let actualPayments : PaymentMap.Payment array = [|
+                { Day = 10<OffsetDay>; Amount = 250_00L<Cent> }
+                { Day = 17<OffsetDay>; Amount = 250_00L<Cent> }
+            |]
+            let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
+            let title = "<h3>1) Basic scenario</h3>"
+            let newHtml = pm |> generateHtmlFromArray None
+            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest001.md" false
+            pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
@@ -91,24 +87,20 @@ module PaymentMapTests =
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            voption {
-                let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
-                let actualPayments : PaymentMap.Payment array = [|
-                    { Day = 1<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day = 2<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day = 3<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day = 4<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day = 5<OffsetDay>; Amount = 367_72L<Cent> }
-                |]
-                let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
-
-                let title = "<h3>2) Very early exact repayments</h3>"
-                let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest002.md" false
-
-                return pm
-            }
+            let schedule = sp |> calculate BelowZero
+            let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+            let actualPayments : PaymentMap.Payment array = [|
+                { Day = 1<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day = 2<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day = 3<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day = 4<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day = 5<OffsetDay>; Amount = 367_72L<Cent> }
+            |]
+            let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
+            let title = "<h3>2) Very early exact repayments</h3>"
+            let newHtml = pm |> generateHtmlFromArray None
+            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest002.md" false
+            pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
@@ -128,22 +120,18 @@ module PaymentMapTests =
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            voption {
-                let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
-                let actualPayments : PaymentMap.Payment array = [|
-                    { Day = 18<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day = 35<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day = 168<OffsetDay>; Amount = 1103_18L<Cent> }
-                |]
-                let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
-
-                let title = "<h3>3) Paid off but with erratic payment timings</h3>"
-                let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest003.md" false
-
-                return pm
-            }
+            let schedule = sp |> calculate BelowZero
+            let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+            let actualPayments : PaymentMap.Payment array = [|
+                { Day = 18<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day = 35<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day = 168<OffsetDay>; Amount = 1103_18L<Cent> }
+            |]
+            let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
+            let title = "<h3>3) Paid off but with erratic payment timings</h3>"
+            let newHtml = pm |> generateHtmlFromArray None
+            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest003.md" false
+            pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
@@ -163,21 +151,17 @@ module PaymentMapTests =
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            voption {
-                let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
-                let actualPayments : PaymentMap.Payment array = [|
-                    { Day =  18<OffsetDay>; Amount = 367_73L<Cent> }
-                    { Day =  35<OffsetDay>; Amount = 367_73L<Cent> }
-                |]
-                let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
-
-                let title = "<h3>4) Erratic payment timings but not paid off</h3>"
-                let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest004.md" false
-
-                return pm
-            }
+            let schedule = sp |> calculate BelowZero
+            let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+            let actualPayments : PaymentMap.Payment array = [|
+                { Day =  18<OffsetDay>; Amount = 367_73L<Cent> }
+                { Day =  35<OffsetDay>; Amount = 367_73L<Cent> }
+            |]
+            let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
+            let title = "<h3>4) Erratic payment timings but not paid off</h3>"
+            let newHtml = pm |> generateHtmlFromArray None
+            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest004.md" false
+            pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
@@ -197,18 +181,14 @@ module PaymentMapTests =
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            voption {
-                let! schedule = sp |> calculate BelowZero
-                let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
-                let actualPayments = Array.empty<PaymentMap.Payment>
-                let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
-
-                let title = "<h3>5) No payments at all</h3>"
-                let newHtml = pm |> generateHtmlFromArray None
-                $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest005.md" false
-
-                return pm
-            }
+            let schedule = sp |> calculate BelowZero
+            let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
+            let actualPayments = Array.empty<PaymentMap.Payment>
+            let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
+            let title = "<h3>5) No payments at all</h3>"
+            let newHtml = pm |> generateHtmlFromArray None
+            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest005.md" false
+            pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =

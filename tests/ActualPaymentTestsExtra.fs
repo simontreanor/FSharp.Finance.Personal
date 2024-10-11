@@ -18,7 +18,6 @@ module ActualPaymentTestsExtra =
     open PaymentSchedule
     open Percentages
     open Rescheduling
-    open ValueOptionCE
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))

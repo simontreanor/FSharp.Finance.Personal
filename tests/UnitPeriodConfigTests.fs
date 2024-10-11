@@ -17,7 +17,6 @@ module UnitPeriodConfigTests =
     open PaymentSchedule
     open Percentages
     open Quotes
-    open ValueOptionCE
 
     open UnitPeriod
     module DefaultConfig =
