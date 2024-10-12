@@ -77,6 +77,7 @@ module Quotes =
                                 FeesRefundIfSettled = si.FeesRefundIfSettled
                             }
                         else
+                            // to do: this is in the event of a refund being due: perhaps interest should be non-zero
                             PaymentQuote {
                                 PaymentValue = GeneratedPayment.Total si.GeneratedPayment
                                 OfWhichPrincipal = GeneratedPayment.Total si.GeneratedPayment

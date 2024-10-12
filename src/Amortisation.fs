@@ -119,16 +119,10 @@ module Amortisation =
         CumulativeFees: int64<Cent>
         /// the total of interest accrued up to the current day
         CumulativeInterest: decimal<Cent>
-        /// the total of interest adjustments up to the current day
-        CumulativeInterestAdjustments: decimal<Cent>
         /// the total of interest portions up to the current day
         CumulativeInterestPortions: int64<Cent>
         /// the total of simple interest accrued up to the current day
         CumulativeSimpleInterest: decimal<Cent>
-        /// the total of contractual interest up to the current day
-        CumulativeContractualInterest: decimal<Cent>
-        /// the total of original simple interest accrued up to the current day
-        CumulativeOriginalSimpleInterest: int64<Cent>
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -257,7 +251,6 @@ module Amortisation =
             let accumulator =
                 { a with
                     CumulativeSimpleInterest = a.CumulativeSimpleInterest + cappedSimpleInterest
-                    CumulativeContractualInterest = a.CumulativeContractualInterest + contractualInterest
                 }
 
             let newInterest =
@@ -580,7 +573,6 @@ module Amortisation =
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
                     CumulativeFees = a.CumulativeFees + feesPortion'
                     CumulativeInterest = accumulator.CumulativeInterest - interestRoundingDifference
-                    CumulativeInterestAdjustments = accumulator.CumulativeInterestAdjustments + interestAdjustment
                     CumulativeInterestPortions = a.CumulativeInterestPortions + scheduleItem.InterestPortion
                 }
 
@@ -602,11 +594,8 @@ module Amortisation =
                 CumulativeGeneratedPayments = 0L<Cent>
                 CumulativeFees = 0L<Cent>
                 CumulativeInterest = initialInterestBalance'
-                CumulativeInterestAdjustments = 0m<Cent>
                 CumulativeInterestPortions = 0L<Cent>
                 CumulativeSimpleInterest = 0m<Cent>
-                CumulativeContractualInterest = 0m<Cent>
-                CumulativeOriginalSimpleInterest = 0L<Cent>
             }
         )
         |> Array.unzip
