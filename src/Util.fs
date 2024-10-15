@@ -46,8 +46,6 @@ module Util =
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     [<RequireQualifiedAccess; Struct>]
     type Amount =
-        /// no amount
-        | Any
         /// a percentage of the principal, optionally restricted
         | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
         /// a fixed fee
@@ -56,8 +54,6 @@ module Util =
             /// calculates the total amount based on any restrictions
             static member total (baseValue: int64<Cent>) amount =
                 match amount with
-                | Any ->
-                    Decimal.MaxValue
                 | Percentage (Percent percentage, restriction, rounding) ->
                     decimal baseValue * decimal percentage / 100m
                     |> Restriction.calculate restriction
