@@ -108,11 +108,11 @@ module Rescheduling =
         // process the quote and extract the portions if applicable
         let principalPortion, feesPortion, feesRefundIfSettled =
             match quote.QuoteResult with
-            | PaymentQuote pq ->
+            | PaymentQuote ({ Apportionment = a } as pq) ->
                 match rp.FeeHandling with
-                | Fee.FeeHandling.CapitaliseAsPrincipal -> pq.OfWhichPrincipal + pq.OfWhichFees + pq.OfWhichInterest + pq.OfWhichCharges, 0L<Cent>, pq.FeesRefundIfSettled
-                | Fee.FeeHandling.CarryOverAsIs -> pq.OfWhichPrincipal + pq.OfWhichInterest + pq.OfWhichCharges, pq.OfWhichFees, pq.FeesRefundIfSettled
-                | Fee.FeeHandling.WriteOffFeeBalance -> pq.OfWhichPrincipal + pq.OfWhichInterest + pq.OfWhichCharges, pq.OfWhichFees, pq.FeesRefundIfSettled
+                | Fee.FeeHandling.CapitaliseAsPrincipal -> a.PrincipalPortion + a.FeesPortion + a.InterestPortion + a.ChargesPortion, 0L<Cent>, pq.FeesRefundIfSettled
+                | Fee.FeeHandling.CarryOverAsIs -> a.PrincipalPortion + a.InterestPortion + a.ChargesPortion, a.FeesPortion, pq.FeesRefundIfSettled
+                | Fee.FeeHandling.WriteOffFeeBalance -> a.PrincipalPortion + a.InterestPortion + a.ChargesPortion, a.FeesPortion, pq.FeesRefundIfSettled
             | _ -> failwith "Unable to obtain quote for rollover"
 
         // configure the parameters for the new schedule

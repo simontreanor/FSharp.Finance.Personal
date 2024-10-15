@@ -8,12 +8,10 @@ module Quotes =
     open DateDay
     open PaymentSchedule
 
+    /// a quote containing information on the payment required to settle
     type PaymentQuote = {
         PaymentValue: int64<Cent>
-        OfWhichPrincipal: int64<Cent>
-        OfWhichFees: int64<Cent>
-        OfWhichInterest: int64<Cent>
-        OfWhichCharges: int64<Cent>
+        Apportionment: Apportionment
         FeesRefundIfSettled: int64<Cent>
     }
 
@@ -70,29 +68,35 @@ module Quotes =
                             let principalPortion = Cent.max 0L<Cent> (confirmedPayments - feesPortion - chargesPortion - interestPortion)
                             PaymentQuote {
                                 PaymentValue = GeneratedPayment.Total si.GeneratedPayment
-                                OfWhichPrincipal = si.PrincipalPortion - principalPortion
-                                OfWhichFees = si.FeesPortion - feesPortion
-                                OfWhichInterest = si.InterestPortion - interestPortion
-                                OfWhichCharges = si.ChargesPortion - chargesPortion
+                                Apportionment = {
+                                    PrincipalPortion = si.PrincipalPortion - principalPortion
+                                    FeesPortion = si.FeesPortion - feesPortion
+                                    InterestPortion = si.InterestPortion - interestPortion
+                                    ChargesPortion = si.ChargesPortion - chargesPortion
+                                }
                                 FeesRefundIfSettled = si.FeesRefundIfSettled
                             }
                         else
                             // to do: this is in the event of a refund being due: perhaps interest should be non-zero
                             PaymentQuote {
                                 PaymentValue = GeneratedPayment.Total si.GeneratedPayment
-                                OfWhichPrincipal = GeneratedPayment.Total si.GeneratedPayment
-                                OfWhichFees = 0L<Cent>
-                                OfWhichInterest = 0L<Cent>
-                                OfWhichCharges = 0L<Cent>
+                                Apportionment = {
+                                    PrincipalPortion = GeneratedPayment.Total si.GeneratedPayment
+                                    FeesPortion = 0L<Cent>
+                                    InterestPortion = 0L<Cent>
+                                    ChargesPortion = 0L<Cent>
+                                }
                                 FeesRefundIfSettled = si.FeesRefundIfSettled
                             }
                     else
                         PaymentQuote {
                             PaymentValue = GeneratedPayment.Total si.GeneratedPayment
-                            OfWhichPrincipal = si.PrincipalPortion
-                            OfWhichFees = si.FeesPortion
-                            OfWhichInterest = si.InterestPortion
-                            OfWhichCharges = si.ChargesPortion
+                            Apportionment = {
+                                PrincipalPortion = si.PrincipalPortion
+                                FeesPortion = si.FeesPortion
+                                InterestPortion = si.InterestPortion
+                                ChargesPortion = si.ChargesPortion
+                            }
                             FeesRefundIfSettled = si.FeesRefundIfSettled
                         }
                 | _ ->

@@ -73,10 +73,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 500_79L<Cent>
-                OfWhichPrincipal = 177_81L<Cent>
-                OfWhichFees = 274_64L<Cent>
-                OfWhichInterest = 48_34L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 177_81L<Cent>
+                    FeesPortion = 274_64L<Cent>
+                    InterestPortion = 48_34L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -132,10 +134,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 455_55L<Cent>
-                OfWhichPrincipal = 148_17L<Cent>
-                OfWhichFees = 228_86L<Cent>
-                OfWhichInterest = 78_52L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 148_17L<Cent>
+                    FeesPortion = 228_86L<Cent>
+                    InterestPortion = 78_52L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -191,10 +195,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 1221_54L<Cent>
-                OfWhichPrincipal = 427_28L<Cent>
-                OfWhichFees = 660_00L<Cent>
-                OfWhichInterest = 134_26L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 427_28L<Cent>
+                    FeesPortion = 660_00L<Cent>
+                    InterestPortion = 134_26L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -322,10 +328,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 466_41L<Cent>
-                OfWhichPrincipal = 151_32L<Cent>
-                OfWhichFees = 233_66L<Cent>
-                OfWhichInterest = 81_43L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 151_32L<Cent>
+                    FeesPortion = 233_66L<Cent>
+                    InterestPortion = 81_43L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -453,10 +461,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 479_92L<Cent>
-                OfWhichPrincipal = 155_70L<Cent>
-                OfWhichFees = 240_43L<Cent>
-                OfWhichInterest = 83_79L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 155_70L<Cent>
+                    FeesPortion = 240_43L<Cent>
+                    InterestPortion = 83_79L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -578,10 +588,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 64916L<Cent>
-                OfWhichPrincipal = 500_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 149_16L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 500_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 149_16L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -630,10 +642,12 @@ module EdgeCaseTests =
         let expected =
             PaymentQuote {
                 PaymentValue = -76_80L<Cent>
-                OfWhichPrincipal = -76_80L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 0L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -76_80L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 0L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 

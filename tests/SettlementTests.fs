@@ -62,15 +62,20 @@ module SettlementTests =
             let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 112<OffsetDay>
             quote.QuoteResult, scheduledItem
 
-        let expected =
+        let paymentQuote =
             PaymentQuote {
                 PaymentValue = 98_52L<Cent>
-                OfWhichPrincipal = 81_56L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 16_96L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 81_56L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 16_96L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
-            },
+            }
+
+        let expected =
+            paymentQuote,
             {
                 OffsetDate = Date(2024, 3, 19)
                 Advances = [||]
@@ -143,15 +148,20 @@ module SettlementTests =
             let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
 
-        let expected =
+        let paymentQuote =
             PaymentQuote {
                 PaymentValue = 105_04L<Cent>
-                OfWhichPrincipal = 81_56L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 23_48L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 81_56L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 23_48L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
-            },
+            }
+
+        let expected =
+            paymentQuote,
             {
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
@@ -225,15 +235,20 @@ module SettlementTests =
             let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
 
-        let expected =
+        let paymentQuote =
             PaymentQuote {
                 PaymentValue = 53_30L<Cent>
-                OfWhichPrincipal = 50_48L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 2_82L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 50_48L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 2_82L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
-            },
+            }
+
+        let expected =
+            paymentQuote,
             {
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]

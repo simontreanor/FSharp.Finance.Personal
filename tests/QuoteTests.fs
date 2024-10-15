@@ -77,15 +77,20 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 57<OffsetDay>
             quote.QuoteResult, item
 
-        let expected = 
+        let paymentQuote = 
             PaymentQuote {
                 PaymentValue = 1969_72L<Cent>
-                OfWhichPrincipal = 1175_80L<Cent>
-                OfWhichFees = 790_21L<Cent>
-                OfWhichInterest = 3_71L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1175_80L<Cent>
+                    FeesPortion = 790_21L<Cent>
+                    InterestPortion = 3_71L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 1437_53L<Cent>
-            },
+            }
+
+        let expected =
+            paymentQuote,
             {
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 Advances = [||]
@@ -173,16 +178,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 2026_50L<Cent>
-                OfWhichPrincipal = 1175_80L<Cent>
-                OfWhichFees = 834_21L<Cent>
-                OfWhichInterest = 6_49L<Cent>
-                OfWhichCharges = 10_00L<Cent>
-                FeesRefundIfSettled = 1393_53L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 2026_50L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1175_80L<Cent>
+                    FeesPortion = 834_21L<Cent>
+                    InterestPortion = 6_49L<Cent>
+                    ChargesPortion = 10_00L<Cent>
+                }
+                FeesRefundIfSettled = 1393_53L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -269,16 +277,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 2001_50L<Cent>
-                OfWhichPrincipal = 1175_80L<Cent>
-                OfWhichFees = 825_70L<Cent>
-                OfWhichInterest = 0L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 1393_53L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 2001_50L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1175_80L<Cent>
+                    FeesPortion = 825_70L<Cent>
+                    InterestPortion = 0L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 1393_53L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -357,16 +368,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 3<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 1200_00L<Cent>
-                OfWhichPrincipal = 1200_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 0L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 1200_00L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1200_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 0L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -445,16 +459,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 4<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 1238_40L<Cent>
-                OfWhichPrincipal = 1200_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 38_40L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 1238_40L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1200_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 38_40L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -541,16 +558,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 3420_03L<Cent>
-                OfWhichPrincipal = 1175_80L<Cent>
-                OfWhichFees = 2227_74L<Cent>
-                OfWhichInterest = 6_49L<Cent>
-                OfWhichCharges = 10_00L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 3420_03L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1175_80L<Cent>
+                    FeesPortion = 2227_74L<Cent>
+                    InterestPortion = 6_49L<Cent>
+                    ChargesPortion = 10_00L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -789,16 +809,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 181<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 1311_67L<Cent>
-                OfWhichPrincipal = 500_00L<Cent>
-                OfWhichFees = 750_00L<Cent>
-                OfWhichInterest = 61_67L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 1311_67L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 500_00L<Cent>
+                    FeesPortion = 750_00L<Cent>
+                    InterestPortion = 61_67L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = startDate.AddDays 181
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -884,16 +907,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 388<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 1261_73L<Cent>
-                OfWhichPrincipal = 471_07L<Cent>
-                OfWhichFees = 706_56L<Cent>
-                OfWhichInterest = 84_10L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 1261_73L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 471_07L<Cent>
+                    FeesPortion = 706_56L<Cent>
+                    InterestPortion = 84_10L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = startDate.AddDays 388
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -977,16 +1003,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 72<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 973_53L<Cent>
-                OfWhichPrincipal = 769_46L<Cent>
-                OfWhichFees = 195_68L<Cent>
-                OfWhichInterest = 8_39L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 958_45L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 973_53L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 769_46L<Cent>
+                    FeesPortion = 195_68L<Cent>
+                    InterestPortion = 8_39L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 958_45L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = startDate.AddDays 72
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1059,16 +1088,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 30<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 495_76L<Cent>
-                OfWhichPrincipal = 400_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 95_76L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 495_76L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 400_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 95_76L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = startDate.AddDays 30
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 165_90L<Cent>) ValueNone
@@ -1151,16 +1183,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 429_24L<Cent>
-                OfWhichPrincipal = 353_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 76_24L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 429_24L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 353_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 76_24L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 14)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1243,16 +1278,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 432_07L<Cent>
-                OfWhichPrincipal = 353_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 79_07L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 432_07L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 353_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 79_07L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
@@ -1335,16 +1373,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 434_89L<Cent>
-                OfWhichPrincipal = 353_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 81_89L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 434_89L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 353_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 81_89L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 16)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1427,16 +1468,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 138<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 453_36L<Cent>
-                OfWhichPrincipal = 353_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 90_36L<Cent>
-                OfWhichCharges = 10_00L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 453_36L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 353_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 90_36L<Cent>
+                    ChargesPortion = 10_00L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 19)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1519,16 +1563,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = 429_24L<Cent>
-                OfWhichPrincipal = 353_00L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 76_24L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = 429_24L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 353_00L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 76_24L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 14)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1612,16 +1659,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = -67_93L<Cent>
-                OfWhichPrincipal = -67_93L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 0L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = -67_93L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -67_93L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 0L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
@@ -1705,16 +1755,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = -67_95L<Cent>
-                OfWhichPrincipal = -67_93L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = -2L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = -67_95L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -67_93L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = -2L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2023, 3, 16)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1798,16 +1851,19 @@ module QuoteTests =
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 461<OffsetDay>
             quote.QuoteResult, item
 
-        let expected =
-            PaymentQuote {
-                PaymentValue = -72_80L<Cent>
-                OfWhichPrincipal = -67_93L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = -4_87L<Cent>
-                OfWhichCharges = 0L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            },
+        let paymentQuote =
             {
+                PaymentValue = -72_80L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -67_93L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = -4_87L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeesRefundIfSettled = 0L<Cent>
+            }
+
+        let expected = PaymentQuote paymentQuote, {
                 OffsetDate = Date(2024, 2, 5)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.DefaultValue
@@ -1889,10 +1945,12 @@ module QuoteTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 0L<Cent>
-                OfWhichPrincipal = 0L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 0L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 0L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 0L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1940,10 +1998,12 @@ module QuoteTests =
         let expected =
             PaymentQuote {
                 PaymentValue = -5_83L<Cent>
-                OfWhichPrincipal = -5_83L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 0L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -5_83L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 0L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1991,10 +2051,12 @@ module QuoteTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 57_51L<Cent>
-                OfWhichPrincipal = 3_17L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 54_34L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 3_17L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 54_34L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -2043,10 +2105,12 @@ module QuoteTests =
         let expected =
             PaymentQuote {
                 PaymentValue = 104_69L<Cent>
-                OfWhichPrincipal = 91_52L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = 13_17L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 91_52L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = 13_17L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -2094,10 +2158,12 @@ module QuoteTests =
         let expected =
             PaymentQuote {
                 PaymentValue = -91_06L<Cent>
-                OfWhichPrincipal = -88_40L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = -2_66L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -88_40L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = -2_66L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -2145,10 +2211,12 @@ module QuoteTests =
         let expected =
             PaymentQuote {
                 PaymentValue = -13_84L<Cent>
-                OfWhichPrincipal = -12_94L<Cent>
-                OfWhichFees = 0L<Cent>
-                OfWhichInterest = -90L<Cent>
-                OfWhichCharges = 0L<Cent>
+                Apportionment = {
+                    PrincipalPortion = -12_94L<Cent>
+                    FeesPortion = 0L<Cent>
+                    InterestPortion = -90L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
                 FeesRefundIfSettled = 0L<Cent>
             }
 

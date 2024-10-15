@@ -658,24 +658,59 @@ module PaymentSchedule =
         |> Array.filter (snd >> _.IsSome)
         |> Map.ofArray
 
+    /// a breakdown of how an actual payment is apportioned to principal, fees, interest and charges
+    type Apportionment = {
+        PrincipalPortion: int64<Cent>
+        FeesPortion: int64<Cent>
+        InterestPortion: int64<Cent>
+        ChargesPortion: int64<Cent>
+    }
+
+    /// functions relating to apportionments
+    module Apportionment =
+
+        /// add principal, fees, interest and charges to an existing apportionment
+        let Add principal fees interest charges apportionment =
+            { apportionment with 
+                PrincipalPortion = apportionment.PrincipalPortion + principal
+                FeesPortion = apportionment.FeesPortion + fees
+                InterestPortion = apportionment.InterestPortion + interest
+                ChargesPortion = apportionment.ChargesPortion + charges
+            }
+
+        /// a default value for an apportionment, with all portions set to zero
+        let Zero = {
+            PrincipalPortion = 0L<Cent>
+            FeesPortion = 0L<Cent>
+            InterestPortion = 0L<Cent>
+            ChargesPortion = 0L<Cent>
+        }
+
+        /// the total value of all the portions of an apportionment
+        let Total apportionment =
+            apportionment.PrincipalPortion + apportionment.FeesPortion + apportionment.InterestPortion + apportionment.ChargesPortion 
+
     /// a generated payment, where applicable
     [<Struct; StructuredFormatDisplay("{Html}")>]
-        type GeneratedPayment =
+    type GeneratedPayment =
         /// no generated payment is required
         | NoGeneratedPayment
         /// the payment value will be generated later
         | ToBeGenerated
         /// the generated payment value
         | GeneratedValue of int64<Cent>
-        with
-            static member Total = function
-                | GeneratedValue gv -> gv
-                | _ -> 0L<Cent>
-            /// HTML formatting to display the generated payment in a concise way
-            member x.Html =
-                match x with
-                | NoGeneratedPayment
-                | ToBeGenerated ->
-                    ""
-                | GeneratedValue gv ->
-                    formatCent gv
+        /// HTML formatting to display the generated payment in a concise way
+        member x.Html =
+            match x with
+            | NoGeneratedPayment
+            | ToBeGenerated ->
+                ""
+            | GeneratedValue gv ->
+                formatCent gv
+
+    module GeneratedPayment =
+
+        /// the total value of the generated payment
+        let Total = function
+            | GeneratedValue gv -> gv
+            | _ -> 0L<Cent>
