@@ -129,7 +129,7 @@ module Rescheduling =
                             FeeTypes = [| Fee.CustomFee ("Rollover Fee", Amount.Simple feesPortion) |]
                             SettlementRefund =
                                 if feesRefundIfSettled = 0L<Cent> then
-                                    Fee.SettlementRefund.None
+                                    Fee.SettlementRefund.Zero
                                 else
                                     match sp.FeeConfig.SettlementRefund with
                                     | Fee.SettlementRefund.ProRata
@@ -141,7 +141,7 @@ module Rescheduling =
                     | _ ->
                         { sp.FeeConfig with
                             FeeTypes = [||]
-                            SettlementRefund = Fee.SettlementRefund.None
+                            SettlementRefund = Fee.SettlementRefund.Zero
                         }
                 InterestConfig = rp.InterestConfig
                 PaymentConfig = rp.PaymentConfig

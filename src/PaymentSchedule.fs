@@ -263,7 +263,7 @@ module PaymentSchedule =
     }
         with
             /// a default value with no data
-            static member DefaultValue =
+            static member Initial =
                 { 
                     Day = 0<OffsetDay>
                     ScheduledPayment = ScheduledPayment.Zero
@@ -444,7 +444,7 @@ module PaymentSchedule =
 
         let calculateLevelPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal fees + interest) / decimal paymentCount
 
-        let initialItem = { SimpleItem.DefaultValue with InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees }
+        let initialItem = { SimpleItem.Initial with InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + fees }
 
         let mutable schedule = [||]
 

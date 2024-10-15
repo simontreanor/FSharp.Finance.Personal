@@ -40,7 +40,7 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.DefaultValue
+                FeeConfig = Fee.Config.InitialRecommended
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
@@ -129,7 +129,7 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.DefaultValue
+                FeeConfig = Fee.Config.InitialRecommended
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
@@ -218,7 +218,7 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.DefaultValue
+                FeeConfig = Fee.Config.InitialRecommended
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown

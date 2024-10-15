@@ -31,8 +31,8 @@ module InterestFirstTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.DefaultValue
-            ChargeConfig = Charge.Config.DefaultValue
+            FeeConfig = Fee.Config.InitialRecommended
+            ChargeConfig = Charge.Config.InitialRecommended
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
@@ -369,7 +369,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``16) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)`` () =
-        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.InterestConfig.Cap = Interest.Cap.None }
+        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.InterestConfig.Cap = Interest.Cap.Zero }
 
         let actualPayments = Map.empty
 

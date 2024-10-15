@@ -35,8 +35,8 @@ module SettlementTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.DefaultValue
-            ChargeConfig = Charge.Config.DefaultValue
+            FeeConfig = Fee.Config.InitialRecommended
+            ChargeConfig = Charge.Config.InitialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -121,8 +121,8 @@ module SettlementTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.DefaultValue
-            ChargeConfig = Charge.Config.DefaultValue
+            FeeConfig = Fee.Config.InitialRecommended
+            ChargeConfig = Charge.Config.InitialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -207,8 +207,8 @@ module SettlementTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.DefaultValue
-            ChargeConfig = Charge.Config.DefaultValue
+            FeeConfig = Fee.Config.InitialRecommended
+            ChargeConfig = Charge.Config.InitialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)

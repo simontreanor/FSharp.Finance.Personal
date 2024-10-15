@@ -35,7 +35,7 @@ module Fee =
     [<RequireQualifiedAccess; Struct>]
     type SettlementRefund =
         /// fees are due in full with no discount or refund
-        | None
+        | Zero
         /// for original (non-rescheduled) amortisations: fees are refunded proportionately based on the current final payment day
         | ProRata
         /// for rescheduled amortisations: fees are refunded proportionately based on the original final payment day
@@ -67,7 +67,7 @@ module Fee =
 
     module Config =
         /// a default config value, with no fees but recommended settings
-        let DefaultValue = {
+        let InitialRecommended = {
             FeeTypes = [||]
             Rounding = NoRounding
             FeeAmortisation = AmortiseProportionately

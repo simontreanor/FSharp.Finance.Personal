@@ -64,7 +64,7 @@ module InterestTests =
 
         [<Fact>]
         let ``No cap total on a €100 principal yields a very large number`` () =
-            let actual = Cap.None.TotalAmount |> Cap.Total 100_00L<Cent>
+            let actual = Cap.Zero.TotalAmount |> Cap.Total 100_00L<Cent>
             let expected = 92_233_720_368_547_758_07m<Cent>
             actual |> should equal expected
 
@@ -92,8 +92,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.DefaultValue
-                ChargeConfig = Charge.Config.DefaultValue
+                FeeConfig = Fee.Config.InitialRecommended
+                ChargeConfig = Charge.Config.InitialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
@@ -136,8 +136,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.DefaultValue
-                ChargeConfig = Charge.Config.DefaultValue
+                FeeConfig = Fee.Config.InitialRecommended
+                ChargeConfig = Charge.Config.InitialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
@@ -227,13 +227,13 @@ module InterestTests =
                     FeeTypes = [| Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent> |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
-                    SettlementRefund = Fee.SettlementRefund.None
+                    SettlementRefund = Fee.SettlementRefund.Zero
                 }
-                ChargeConfig = Charge.Config.DefaultValue
+                ChargeConfig = Charge.Config.InitialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
-                    Cap = Cap.None
+                    Cap = Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [|
                         { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
@@ -378,8 +378,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.DefaultValue
-                ChargeConfig = Charge.Config.DefaultValue
+                FeeConfig = Fee.Config.InitialRecommended
+                ChargeConfig = Charge.Config.InitialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 13.1475m

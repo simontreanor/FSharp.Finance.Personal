@@ -29,8 +29,8 @@ module PaymentMapTests =
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
         }
-        FeeConfig = Fee.Config.DefaultValue
-        ChargeConfig = Charge.Config.DefaultValue
+        FeeConfig = Fee.Config.InitialRecommended
+        ChargeConfig = Charge.Config.InitialRecommended
         Interest = {
             Method = interestMethod
             StandardRate = Interest.Rate.Daily (Percent 0.8m)

@@ -47,7 +47,7 @@ module Charge =
 
     module Config =
         /// a default config value, with no charges but recommended settings
-        let DefaultValue = {
+        let InitialRecommended = {
             ChargeTypes = [||]
             Rounding = NoRounding
             ChargeHolidays = [||]

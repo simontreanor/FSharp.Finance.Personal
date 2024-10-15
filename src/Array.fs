@@ -23,7 +23,7 @@ module ArrayExtension =
         Max: int
     }
     with
-        static member None =
+        static member Zero =
             { ToleranceSteps.Min = 0; ToleranceSteps.Step = 0; ToleranceSteps.Max = 0 }
         static member ForPaymentValue paymentCount =
             { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 4 }

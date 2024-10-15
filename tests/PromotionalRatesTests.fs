@@ -38,8 +38,8 @@ module PromotionalRatesTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.DefaultValue
-            ChargeConfig = Charge.Config.DefaultValue
+            FeeConfig = Fee.Config.InitialRecommended
+            ChargeConfig = Charge.Config.InitialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m

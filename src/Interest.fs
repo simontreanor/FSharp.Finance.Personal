@@ -58,7 +58,7 @@ module Interest =
     }
     with
         /// no cap
-        static member None = {
+        static member Zero = {
             TotalAmount = ValueNone
             DailyAmount = ValueNone
         }

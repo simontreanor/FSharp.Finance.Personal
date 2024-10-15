@@ -77,7 +77,7 @@ module Amortisation =
         FeesRefundIfSettled: int64<Cent>
     }
     with
-        static member DefaultValue = {
+        static member Initial = {
             Window = 0
             OffsetDate = Unchecked.defaultof<Date>
             Advances = [||]
@@ -405,7 +405,7 @@ module Amortisation =
                     calculateFees appliedPaymentDay originalFinalPaymentDay
                 | Fee.SettlementRefund.Balance ->
                     a.CumulativeFees
-                | Fee.SettlementRefund.None ->
+                | Fee.SettlementRefund.Zero ->
                     0L<Cent>
 
             let feesRefund = Cent.max 0L<Cent> feesRefundIfSettled
@@ -593,14 +593,14 @@ module Amortisation =
 
         ) (
             (0<OffsetDay>,
-            { ScheduleItem.DefaultValue with
+            { ScheduleItem.Initial with
                 OffsetDate = sp.StartDate
                 Advances = [| sp.Principal |]
                 PrincipalBalance = sp.Principal
                 FeesBalance = feesTotal
                 InterestBalance = initialInterestBalanceM
                 SettlementFigure = sp.Principal + feesTotal
-                FeesRefundIfSettled = match sp.FeeConfig.SettlementRefund with Fee.SettlementRefund.None -> 0L<Cent> | _ -> feesTotal
+                FeesRefundIfSettled = match sp.FeeConfig.SettlementRefund with Fee.SettlementRefund.Zero -> 0L<Cent> | _ -> feesTotal
             }), {
                 CumulativeScheduledPayments = 0L<Cent>
                 CumulativeActualPayments = 0L<Cent>
