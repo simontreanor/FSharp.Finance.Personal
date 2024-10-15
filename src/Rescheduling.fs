@@ -41,15 +41,15 @@ module Rescheduling =
             | AutoGenerateSchedule _ ->
                 PaymentSchedule.calculate BelowZero { sp with ScheduleConfig = rp.PaymentSchedule }
                 |> _.Items
-                |> Array.filter _.ScheduledPayment.IsSome
+                |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
                 |> Array.map(fun si -> si.Day, si.ScheduledPayment)
             | FixedSchedules fixedSchedules ->
                 fixedSchedules
                 |> Array.map(fun fs ->
                     let scheduledPayment =
                         match fs.ScheduleType with
-                        | ScheduleType.Original -> ScheduledPayment.Quick (ValueSome fs.PaymentValue) ValueNone
-                        | ScheduleType.Rescheduled rescheduleDay -> ScheduledPayment.Quick ValueNone (ValueSome { Value = fs.PaymentValue; RescheduleDay = rescheduleDay })
+                        | ScheduleType.Original -> ScheduledPayment.quick (ValueSome fs.PaymentValue) ValueNone
+                        | ScheduleType.Rescheduled rescheduleDay -> ScheduledPayment.quick ValueNone (ValueSome { Value = fs.PaymentValue; RescheduleDay = rescheduleDay })
                     UnitPeriod.generatePaymentSchedule fs.PaymentCount Duration.Unlimited UnitPeriod.Direction.Forward fs.UnitPeriodConfig
                     |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, scheduledPayment)
                 )
@@ -61,7 +61,7 @@ module Rescheduling =
         // append the new schedule to the old schedule up to the point of settlement
         let oldPaymentSchedule =
             quote.RevisedSchedule.ScheduleItems
-            |> Map.filter(fun _ si -> si.ScheduledPayment.IsSome)
+            |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
             |> Map.map(fun _ si -> si.ScheduledPayment)
             |> Map.toArray
 

@@ -64,13 +64,13 @@ module InterestTests =
 
         [<Fact>]
         let ``No cap total on a €100 principal yields a very large number`` () =
-            let actual = Cap.Zero.TotalAmount |> Cap.Total 100_00L<Cent>
+            let actual = Cap.zero.TotalAmount |> Cap.total 100_00L<Cent>
             let expected = 92_233_720_368_547_758_07m<Cent>
             actual |> should equal expected
 
         [<Fact>]
         let ``100% cap total on a €100 principal yields €100`` () =
-            let actual = interestCapExample.TotalAmount |> Cap.Total 100_00L<Cent>
+            let actual = interestCapExample.TotalAmount |> Cap.total 100_00L<Cent>
             let expected = 100_00m<Cent>
             actual |> should equal expected
 
@@ -92,8 +92,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.InitialRecommended
-                ChargeConfig = Charge.Config.InitialRecommended
+                FeeConfig = Fee.Config.initialRecommended
+                ChargeConfig = Charge.Config.initialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
@@ -136,8 +136,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.InitialRecommended
-                ChargeConfig = Charge.Config.InitialRecommended
+                FeeConfig = Fee.Config.initialRecommended
+                ChargeConfig = Charge.Config.initialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
@@ -229,11 +229,11 @@ module InterestTests =
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
                     SettlementRefund = Fee.SettlementRefund.Zero
                 }
-                ChargeConfig = Charge.Config.InitialRecommended
+                ChargeConfig = Charge.Config.initialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
-                    Cap = Cap.Zero
+                    Cap = Cap.zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [|
                         { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
@@ -257,7 +257,7 @@ module InterestTests =
             let expected = 7305<OffsetDay>, {
                 OffsetDate = Date(2044, 4, 11)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.Quick (ValueSome 1525_12L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 1525_12L<Cent>) ValueNone
                 Window = 240
                 PaymentDue = 1523_25L<Cent>
                 ActualPayments = [||]
@@ -295,7 +295,7 @@ module InterestTests =
             let settlementPeriod = 12
             let settlementPartPeriod = Fraction.Zero
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 860_52L<Cent>
             actual |> should equal expected
@@ -308,7 +308,7 @@ module InterestTests =
             let settlementPeriod = 12
             let settlementPartPeriod = Fraction.Simple (28, 30)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 819_71L<Cent>
             actual |> should equal expected
@@ -321,7 +321,7 @@ module InterestTests =
             let settlementPeriod = 12
             let settlementPartPeriod = Fraction.Simple (28, 31)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 821_03L<Cent>
             actual |> should equal expected
@@ -334,7 +334,7 @@ module InterestTests =
             let settlementPeriod = 13
             let settlementPartPeriod = Fraction.Simple (28, 30)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 776_90L<Cent>
             actual |> should equal expected
@@ -347,7 +347,7 @@ module InterestTests =
             let settlementPeriod = 73
             let settlementPartPeriod = Fraction.Zero
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 6702_45L<Cent>
             actual |> should equal expected
@@ -360,7 +360,7 @@ module InterestTests =
             let settlementPeriod = 73
             let settlementPartPeriod = Fraction.Simple (28, 30)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 6606_95L<Cent>
             actual |> should equal expected
@@ -378,8 +378,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.InitialRecommended
-                ChargeConfig = Charge.Config.InitialRecommended
+                FeeConfig = Fee.Config.initialRecommended
+                ChargeConfig = Charge.Config.initialRecommended
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 13.1475m
@@ -404,8 +404,8 @@ module InterestTests =
 
             schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003.md" false
 
-            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment.Total
-            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment.Total
+            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
@@ -421,8 +421,8 @@ module InterestTests =
 
             schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003a.md" false
 
-            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment.Total
-            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment.Total
+            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
@@ -432,18 +432,18 @@ module InterestTests =
 
             let actualPayments =
                 Map [
-                    31<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    61<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    92<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    122<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    153<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    184<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    214<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    245<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    275<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    306<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    337<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
-                    365<OffsetDay>, [| ActualPayment.QuickConfirmed 134_57L<Cent> |]
+                    31<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    61<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    92<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    122<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    153<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    184<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    214<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    245<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    275<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    306<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    337<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    365<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
                 ]
 
             let schedule =

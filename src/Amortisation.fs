@@ -76,12 +76,13 @@ module Amortisation =
         /// the pro-rated fees as of the current day
         FeesRefundIfSettled: int64<Cent>
     }
-    with
-        static member Initial = {
+    
+    module ScheduleItem =
+        let initial = {
             Window = 0
             OffsetDate = Unchecked.defaultof<Date>
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Zero
+            ScheduledPayment = ScheduledPayment.zero
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = NoGeneratedPayment
@@ -150,9 +151,9 @@ module Amortisation =
 
         let initialInterestBalanceM = Cent.toDecimalCent initialInterestBalanceL
 
-        let totalInterestCapM = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.Total sp.Principal
+        let totalInterestCapM = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.total sp.Principal
 
-        let feesTotal = Fee.GrandTotal sp.FeeConfig sp.Principal ValueNone
+        let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
 
         let feesPercentage =
             if sp.Principal = 0L<Cent> then
@@ -198,7 +199,7 @@ module Amortisation =
                 {|
                     OffsetDay = v |> Array.head |> fst
                     PaymentDueTotal = v |> Array.sumBy (snd >> _.PaymentDue)
-                    ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.Total)
+                    ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.total)
                     GeneratedPaymentTotal = v |> Array.sumBy (snd >> _.GeneratedPayment >> GeneratedPayment.Total)
                     PaymentStatus = v |> Array.head |> snd |> _.PaymentStatus
                 |}
@@ -227,7 +228,7 @@ module Amortisation =
 
         let interestRounding = sp.InterestConfig.InterestRounding
 
-        let chargesHolidays = Charge.HolidayDates sp.ChargeConfig sp.StartDate
+        let chargesHolidays = Charge.holidayDates sp.ChargeConfig sp.StartDate
 
         let calculateFees appliedPaymentDay originalFinalPaymentDay =
             if originalFinalPaymentDay <= 0<OffsetDay> then
@@ -241,7 +242,7 @@ module Amortisation =
         |> Map.toArray
         |> Array.scan(fun ((siOffsetDay, si), a) (appliedPaymentDay, ap) ->
 
-            let window = if ap.ScheduledPayment.IsSome then si.Window + 1 else si.Window
+            let window = if ScheduledPayment.isSome ap.ScheduledPayment then si.Window + 1 else si.Window
 
             let advances = if appliedPaymentDay = 0<OffsetDay> then [| sp.Principal |] else [||] // note: assumes single advance on day 0
 
@@ -297,7 +298,7 @@ module Amortisation =
 
             let accumulator =
                 { accumulator with
-                    CumulativeScheduledPayments = a.CumulativeScheduledPayments + ap.ScheduledPayment.Total
+                    CumulativeScheduledPayments = a.CumulativeScheduledPayments + ScheduledPayment.total ap.ScheduledPayment
                     CumulativeActualPayments = a.CumulativeActualPayments + confirmedPayments + pendingPayments
                     CumulativeInterest = a.CumulativeInterest + cappedNewInterestM
                 }
@@ -339,7 +340,7 @@ module Amortisation =
                     if chargesHolidays |> Array.exists ((=) (int siOffsetDay)) then
                         0L<Cent>, [||]
                     else
-                        Charge.GrandTotal sp.ChargeConfig underpayment (ValueSome ap.ChargeTypes), ap.ChargeTypes
+                        Charge.grandTotal sp.ChargeConfig underpayment (ValueSome ap.ChargeTypes), ap.ChargeTypes
 
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
 
@@ -593,7 +594,7 @@ module Amortisation =
 
         ) (
             (0<OffsetDay>,
-            { ScheduleItem.Initial with
+            { ScheduleItem.initial with
                 OffsetDate = sp.StartDate
                 Advances = [| sp.Principal |]
                 PrincipalBalance = sp.Principal
@@ -638,7 +639,7 @@ module Amortisation =
                 |> ValueSome
             | _ ->
                  ValueNone
-        let scheduledPaymentItems = items |> Map.filter(fun _ si -> si.ScheduledPayment.IsSome)
+        let scheduledPaymentItems = items |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
         {
             ScheduleItems = items
             FinalScheduledPaymentDay = scheduledPaymentItems |> Map.maxKeyValue |> fst
@@ -659,7 +660,7 @@ module Amortisation =
         let schedule = PaymentSchedule.calculate BelowZero sp
         let scheduledPayments =
             schedule.Items
-            |> Array.filter _.ScheduledPayment.IsSome
+            |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
             |> Array.map(fun si ->
                 let originalSimpleInterest, contractualInterest =
                     match sp.InterestConfig.Method with

@@ -5,7 +5,7 @@ module FormattingHelper =
 
     open Calculation
 
-    let asi = Unchecked.defaultof<Amortisation.ScheduleItem>
+    let private asi = Unchecked.defaultof<Amortisation.ScheduleItem>
  
     /// an array of properties relating to (product) fees
     let feesProperties hide =

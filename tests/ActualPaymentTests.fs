@@ -25,8 +25,8 @@ module ActualPaymentTests =
         |> Array.rev
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
-            last |> Array.map(fun d -> (d * 1<OffsetDay>), [| ActualPayment.QuickConfirmed finalPayment |])
-            rest |> Array.map(fun d -> (d * 1<OffsetDay>), [| ActualPayment.QuickConfirmed levelPayment |])
+            last |> Array.map(fun d -> (d * 1<OffsetDay>), [| ActualPayment.quickConfirmed finalPayment |])
+            rest |> Array.map(fun d -> (d * 1<OffsetDay>), [| ActualPayment.quickConfirmed levelPayment |])
         |]
         |> Array.concat
         |> Array.rev
@@ -37,7 +37,7 @@ module ActualPaymentTests =
         {
             OffsetDate = date
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome paymentValue) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome paymentValue) ValueNone
             Window = 5
             PaymentDue = paymentValue
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue; Metadata = Map.empty } |]
@@ -81,7 +81,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -131,7 +131,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -181,7 +181,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -231,7 +231,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -264,7 +264,7 @@ module ActualPaymentTests =
         let expected = 140<OffsetDay>, {
             OffsetDate = Date(2023, 3, 21)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Zero
+            ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>; Metadata = Map.empty } |]
@@ -310,7 +310,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -343,7 +343,7 @@ module ActualPaymentTests =
         let expected = 140<OffsetDay>, {
             OffsetDate = Date(2023, 3, 21)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Zero
+            ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>; Metadata = Map.empty } |]
@@ -389,7 +389,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -411,10 +411,10 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                2<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                4<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                140<OffsetDay>, [| ActualPayment.QuickConfirmed (491_53L<Cent> * 3L) |]
-                143<OffsetDay>, [| ActualPayment.QuickConfirmed -280_64L<Cent> |]
+                2<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                4<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                140<OffsetDay>, [| ActualPayment.quickConfirmed (491_53L<Cent> * 3L) |]
+                143<OffsetDay>, [| ActualPayment.quickConfirmed -280_64L<Cent> |]
             ]
 
         let schedule =
@@ -427,7 +427,7 @@ module ActualPaymentTests =
         let expected = 143<OffsetDay>, {
             OffsetDate = Date(2023, 3, 24)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Zero
+            ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>; Metadata = Map.empty } |]
@@ -473,7 +473,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -495,7 +495,7 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                0<OffsetDay>, [| ActualPayment.QuickConfirmed 1500_00L<Cent> |]
+                0<OffsetDay>, [| ActualPayment.quickConfirmed 1500_00L<Cent> |]
             ]
 
         let schedule =
@@ -509,7 +509,7 @@ module ActualPaymentTests =
         let expected = {
             OffsetDate = Date(2022, 11, 1)
             Advances = [| 1500_00L<Cent> |]
-            ScheduledPayment = ScheduledPayment.Zero
+            ScheduledPayment = ScheduledPayment.zero
             Window = 0
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>; Metadata = Map.empty } |]
@@ -556,7 +556,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -578,9 +578,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
-                28<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
-                42<OffsetDay>, [| ActualPayment.QuickConfirmed 243_86L<Cent> |]
+                14<OffsetDay>, [| ActualPayment.quickConfirmed 243_86L<Cent> |]
+                28<OffsetDay>, [| ActualPayment.quickConfirmed 243_86L<Cent> |]
+                42<OffsetDay>, [| ActualPayment.quickConfirmed 243_86L<Cent> |]
             ]
 
         let schedule =
@@ -594,7 +594,7 @@ module ActualPaymentTests =
         let expected = 154<OffsetDay>, {
             OffsetDate = startDate.AddDays 154
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 243_66L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 243_66L<Cent>) ValueNone
             Window = 11
             PaymentDue = 243_66L<Cent>
             ActualPayments = [||]
@@ -640,7 +640,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -662,10 +662,10 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                2<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                4<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                140<OffsetDay>, [| ActualPayment.QuickConfirmed (491_53L<Cent> * 3L) |]
-                143<OffsetDay>, [| ActualPayment.QuickConfirmed -280_83L<Cent> |]
+                2<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                4<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                140<OffsetDay>, [| ActualPayment.quickConfirmed (491_53L<Cent> * 3L) |]
+                143<OffsetDay>, [| ActualPayment.quickConfirmed -280_83L<Cent> |]
             ]
 
         let schedule =
@@ -679,7 +679,7 @@ module ActualPaymentTests =
         let expected = 143<OffsetDay>, {
             OffsetDate = Date(2023, 3, 24)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Zero
+            ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>; Metadata = Map.empty } |]
@@ -725,7 +725,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -747,9 +747,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                44<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                75<OffsetDay>, [| ActualPayment.QuickConfirmed 400_00L<Cent> |]
+                14<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                44<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                75<OffsetDay>, [| ActualPayment.quickConfirmed 400_00L<Cent> |]
             ]
 
         let schedule =
@@ -763,7 +763,7 @@ module ActualPaymentTests =
         let expected = 134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 491_53L<Cent>
             ActualPayments = [||]
@@ -809,7 +809,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -831,9 +831,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                44<OffsetDay>, [| ActualPayment.QuickConfirmed 491_53L<Cent> |]
-                75<OffsetDay>, [| ActualPayment.QuickConfirmed 400_00L<Cent> |]
+                14<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                44<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
+                75<OffsetDay>, [| ActualPayment.quickConfirmed 400_00L<Cent> |]
             ]
 
         let schedule =
@@ -847,7 +847,7 @@ module ActualPaymentTests =
         let expected = 134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 491_53L<Cent>
             ActualPayments = [||]
@@ -893,7 +893,7 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -915,11 +915,11 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-                44<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-                75<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-                106<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-                134<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                14<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                44<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                75<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                106<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                134<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
             ]
 
         let schedule =
@@ -933,7 +933,7 @@ module ActualPaymentTests =
         let expected = 134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 491_53L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 432_07L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
@@ -979,8 +979,8 @@ module ActualPaymentTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
-            ChargeConfig = Charge.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -995,7 +995,7 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                0<OffsetDay>, [| ActualPayment.QuickConfirmed 97_01L<Cent> |]
+                0<OffsetDay>, [| ActualPayment.quickConfirmed 97_01L<Cent> |]
             ]
 
         let schedule =
@@ -1034,11 +1034,11 @@ module ActualPaymentTests =
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.InitialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -1049,30 +1049,30 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                23<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                31<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                38<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                42<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                58<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                67<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                73<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                79<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                86<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                93<OffsetDay>, [| ActualPayment.QuickConfirmed 271_37L<Cent> |]
-                100<OffsetDay>, [| ActualPayment.QuickConfirmed 276_37L<Cent> |]
-                107<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                115<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                122<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                129<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                137<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                143<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                149<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                156<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                166<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                171<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                177<OffsetDay>, [| ActualPayment.QuickConfirmed 278_38L<Cent> |]
-                185<OffsetDay>, [| ActualPayment.QuickConfirmed 278_33L<Cent> |]
+                13<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                23<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                31<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                38<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                42<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                58<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                67<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                73<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                79<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                86<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                93<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
+                100<OffsetDay>, [| ActualPayment.quickConfirmed 276_37L<Cent> |]
+                107<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                115<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                122<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                129<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                137<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                143<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                149<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                156<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                166<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                171<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                177<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
+                185<OffsetDay>, [| ActualPayment.quickConfirmed 278_33L<Cent> |]
             ]
 
         let schedule =
@@ -1109,11 +1109,11 @@ module ActualPaymentTests =
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.InitialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -1124,7 +1124,7 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
+                13<OffsetDay>, [| ActualPayment.quickConfirmed 5000_00L<Cent> |]
             ]
 
         let schedule =
@@ -1161,11 +1161,11 @@ module ActualPaymentTests =
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.InitialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -1176,8 +1176,8 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                13<OffsetDay>, [| ActualPayment.quickConfirmed 5000_00L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
             ]
 
         let schedule =
@@ -1214,11 +1214,11 @@ module ActualPaymentTests =
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.InitialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -1229,9 +1229,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.QuickConfirmed 5000_00L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
-                27<OffsetDay>, [| ActualPayment.QuickConfirmed 500_00L<Cent> |]
+                13<OffsetDay>, [| ActualPayment.quickConfirmed 5000_00L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                27<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
             ]
 
         let schedule =
@@ -1268,11 +1268,11 @@ module ActualPaymentTests =
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.InitialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -1283,9 +1283,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_89L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
-                27<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
+                13<OffsetDay>, [| ActualPayment.quickConfirmed 271_89L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
+                27<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
             ]
 
         let schedule =
@@ -1322,11 +1322,11 @@ module ActualPaymentTests =
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.InitialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -1337,9 +1337,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.QuickConfirmed 271_89L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
-                27<OffsetDay>, [| ActualPayment.QuickPending 271_89L<Cent> |]
+                13<OffsetDay>, [| ActualPayment.quickConfirmed 271_89L<Cent> |]
+                20<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
+                27<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
             ]
 
         let schedule =
@@ -1366,8 +1366,8 @@ module ActualPaymentTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.InitialRecommended
-            ChargeConfig = Charge.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -1382,10 +1382,10 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                16<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
-                46<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
-                77<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
-                107<OffsetDay>, [| ActualPayment.QuickConfirmed 116_00L<Cent> |]
+                16<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
+                46<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
+                77<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
+                107<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
             ]
 
         let schedule =
@@ -1412,8 +1412,8 @@ module ActualPaymentTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.InitialRecommended
-            ChargeConfig = Charge.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -1428,7 +1428,7 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                28<OffsetDay>, [| ActualPayment.QuickConfirmed 35_48L<Cent> |]
+                28<OffsetDay>, [| ActualPayment.quickConfirmed 35_48L<Cent> |]
             ]
 
         let schedule =

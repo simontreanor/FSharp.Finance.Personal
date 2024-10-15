@@ -5,7 +5,6 @@
 /// note: unit-period definitions are based on US federal legislation but the definitions are universally applicable
 module UnitPeriod =
 
-    open ArrayExtension
     open Calculation
     open DateDay
 

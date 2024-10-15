@@ -67,7 +67,7 @@ module Fee =
 
     module Config =
         /// a default config value, with no fees but recommended settings
-        let InitialRecommended = {
+        let initialRecommended = {
             FeeTypes = [||]
             Rounding = NoRounding
             FeeAmortisation = AmortiseProportionately
@@ -75,20 +75,20 @@ module Fee =
         }
 
     /// rounds a charge to the nearest integer cent using the specified rounding option
-    let Round config =
+    let round config =
         Cent.fromDecimalCent config.Rounding
 
     /// calculates the total amount of fees based on the fee configuration
-    let Total feeConfig baseValue feeType =
+    let total feeConfig baseValue feeType =
         match feeType with
         | FacilitationFee amount
         | CabOrCsoFee amount
         | MortageFee amount
         | CustomFee (_, amount) -> amount |> Amount.total baseValue
-        |> Round feeConfig
+        |> round feeConfig
 
     /// calculates the total sum of all fees based on either default or custom fee types
-    let GrandTotal feeConfig baseValue customFeeTypes =
+    let grandTotal feeConfig baseValue customFeeTypes =
         customFeeTypes
         |> ValueOption.defaultValue feeConfig.FeeTypes
-        |> Array.sumBy (Total feeConfig baseValue)
+        |> Array.sumBy (total feeConfig baseValue)

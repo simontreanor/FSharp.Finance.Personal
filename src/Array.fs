@@ -18,14 +18,20 @@ module ArrayExtension =
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     [<RequireQualifiedAccess; Struct>]
     type ToleranceSteps = {
+        /// the initial tolerance value
         Min: int
+        /// the step by which to change the tolerance value
         Step: int
+        /// the final tolerance value
         Max: int
     }
-    with
-        static member Zero =
+    
+    module ToleranceSteps =
+        /// no tolerance steps
+        let zero =
             { ToleranceSteps.Min = 0; ToleranceSteps.Step = 0; ToleranceSteps.Max = 0 }
-        static member ForPaymentValue paymentCount =
+        /// tolerance steps for solving for payment value
+        let  forPaymentValue paymentCount =
             { ToleranceSteps.Min = 0; ToleranceSteps.Step = paymentCount; ToleranceSteps.Max = paymentCount * 4 }
 
     /// what range of values the solver should aim for

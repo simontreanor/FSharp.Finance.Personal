@@ -17,7 +17,7 @@ module Util =
         /// create a percent value from a decimal
         let fromDecimal (m: decimal) = m * 100m |> Percent
         /// round a percent value to two decimal places
-        let round (places: int) (Percent p) = roundTo (MidpointRounding.AwayFromZero |> Round) places p |> Percent
+        let round (places: int) (Percent p) = Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places p |> Percent
         /// convert a percent value to a decimal
         let toDecimal (Percent p) = p / 100m
         /// multiply two percentages together
@@ -34,14 +34,15 @@ module Util =
         | UpperLimit of UpperLimit:int64<Cent>
         /// constrain values to within a range
         | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
-        with
-            /// calculate a permitted value based on a restriction
-            static member calculate restriction value =
-                match restriction with
-                | NoLimit -> value
-                | LowerLimit a -> value |> max (decimal a)
-                | UpperLimit a -> value |> min (decimal a)
-                | WithinRange (lower, upper) -> value |> min (decimal upper) |> max (decimal lower)
+
+    module Restriction =
+        /// calculate a permitted value based on a restriction
+        let calculate restriction value =
+            match restriction with
+            | Restriction.NoLimit -> value
+            | Restriction.LowerLimit a -> value |> max (decimal a)
+            | Restriction.UpperLimit a -> value |> min (decimal a)
+            | Restriction.WithinRange (lower, upper) -> value |> min (decimal upper) |> max (decimal lower)
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     [<RequireQualifiedAccess; Struct>]
@@ -50,14 +51,15 @@ module Util =
         | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
         /// a fixed fee
         | Simple of Simple:int64<Cent>
-        with
-            /// calculates the total amount based on any restrictions
-            static member total (baseValue: int64<Cent>) amount =
-                match amount with
-                | Percentage (Percent percentage, restriction, rounding) ->
-                    decimal baseValue * decimal percentage / 100m
-                    |> Restriction.calculate restriction
-                    |> Rounding.round rounding
-                | Simple simple ->
-                    decimal simple
-                |> ( * ) 1m<Cent>
+
+    module Amount =
+        /// calculates the total amount based on any restrictions
+        let total (baseValue: int64<Cent>) amount =
+            match amount with
+            | Amount.Percentage (Percent percentage, restriction, rounding) ->
+                decimal baseValue * decimal percentage / 100m
+                |> Restriction.calculate restriction
+                |> Rounding.round rounding
+            | Amount.Simple simple ->
+                decimal simple
+            |> ( * ) 1m<Cent>

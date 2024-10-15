@@ -50,9 +50,9 @@ module Quotes =
             )
             |> Option.defaultWith (fun () -> failwith "Unable to find relevant schedule item")
 
-        let confirmedPayments = si.ActualPayments |> Array.sumBy ActualPayment.TotalConfirmedOrWrittenOff
+        let confirmedPayments = si.ActualPayments |> Array.sumBy ActualPayment.totalConfirmedOrWrittenOff
 
-        let pendingPayments = si.ActualPayments |> Array.sumBy ActualPayment.TotalPending
+        let pendingPayments = si.ActualPayments |> Array.sumBy ActualPayment.totalPending
 
         let quoteResult =
             if pendingPayments <> 0L<Cent> then 

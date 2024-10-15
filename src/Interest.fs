@@ -20,24 +20,25 @@ module Interest =
         | Annual of Annual:Percent
         /// the daily interest rate, or the annual interest rate divided by 365
         | Daily of Daily:Percent
-        with
-            /// used to pretty-print the interest rate for debugging
-            static member serialise = function
-                | Zero -> $"ZeroPc"
-                | Annual (Percent air) -> $"AnnualInterestRate{air}pc"
-                | Daily (Percent dir) -> $"DailyInterestRate{dir}pc"
 
-            /// calculates the annual interest rate from the daily one
-            static member annual = function
-                | Zero -> Percent 0m
-                | Annual (Percent air) -> air |> Percent
-                | Daily (Percent dir) -> dir * 365m |> Percent
+    module Rate =
+        /// used to pretty-print the interest rate for debugging
+        let serialise = function
+            | Rate.Zero -> $"ZeroPc"
+            | Rate.Annual (Percent air) -> $"AnnualInterestRate{air}pc"
+            | Rate.Daily (Percent dir) -> $"DailyInterestRate{dir}pc"
 
-            /// calculates the daily interest rate from the annual one
-            static member daily = function
-                | Zero -> Percent 0m
-                | Annual (Percent air) -> air / 365m |> Percent
-                | Daily (Percent dir) -> dir |> Percent
+        /// calculates the annual interest rate from the daily one
+        let annual = function
+            | Rate.Zero -> Percent 0m
+            | Rate.Annual (Percent air) -> air |> Percent
+            | Rate.Daily (Percent dir) -> dir * 365m |> Percent
+
+        /// calculates the daily interest rate from the annual one
+        let daily = function
+            | Rate.Zero -> Percent 0m
+            | Rate.Annual (Percent air) -> air / 365m |> Percent
+            | Rate.Daily (Percent dir) -> dir |> Percent
 
     /// the daily interest rate
     [<Struct>]
@@ -56,15 +57,15 @@ module Interest =
         /// a cap on the daily amount of interest chargeable
         DailyAmount: Amount voption
     }
-    with
+    
+    module Cap =
         /// no cap
-        static member Zero = {
-            TotalAmount = ValueNone
-            DailyAmount = ValueNone
+        let zero = {
+            Cap.TotalAmount = ValueNone
+            Cap.DailyAmount = ValueNone
         }
-
         /// calculates the total interest cap
-        static member Total (initialPrincipal: int64<Cent>) = function
+        let total (initialPrincipal: int64<Cent>) = function
             | ValueSome amount -> Amount.total initialPrincipal amount |> max 0m<Cent>
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
@@ -74,9 +75,10 @@ module Interest =
         DateRange: DateRange
         Rate: Rate
     }
-    with
+    
+    module PromotionalRate =
         /// creates a map of offset days and promotional interest rates
-        static member toMap (startDate: Date) promotionalRates =
+        let toMap (startDate: Date) (promotionalRates: PromotionalRate array) =
             promotionalRates
             |> Array.collect(fun pr ->
                 [| (pr.DateRange.Start - startDate).Days .. (pr.DateRange.End - startDate).Days |]
@@ -130,7 +132,7 @@ module Interest =
 
     /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
     let calculate (balance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
-        let dailyCap = Cap.Total balance dailyInterestCap
+        let dailyCap = Cap.total balance dailyInterestCap
 
         dailyRates
         |> Array.sumBy (fun dr ->
@@ -147,7 +149,7 @@ module Interest =
         if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
             0m<Cent>
         else
-            let round = Cent.roundTo (Round MidpointRounding.AwayFromZero) 2
+            let round = Cent.roundTo (RoundWith MidpointRounding.AwayFromZero) 2
             let sum1 =
                 [1 .. m]
                 |> List.sumBy(fun i -> A[i] * ((1m + r) |> powi a[i] |> decimal) |> round)
@@ -163,12 +165,12 @@ module Interest =
         else
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
             let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
-            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (Round MidpointRounding.AwayFromZero) 6
+            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
             let advanceCount = 1
             let paymentCount = payments |> Array.length |> min settlementPeriod
             let advanceIntervalMap = Map [ (1, settlementPeriod) ]
             let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
-            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)
+            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> fun spp -> sf * ((1m + aprDailyRate) |> powm (Fraction.toDecimal spp) |> decimal)
             let wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
             let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
             let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd

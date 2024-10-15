@@ -27,8 +27,8 @@ module ActualPaymentTestsExtra =
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
     let allPaidOnTime (scheduleItems: SimpleItem array) =
         scheduleItems
-        |> Array.filter _.ScheduledPayment.IsSome
-        |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.ScheduledPayment.Total |])
+        |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
+        |> Array.map(fun si -> si.Day, [| ActualPayment.quickConfirmed <| ScheduledPayment.total si.ScheduledPayment |])
         |> Map.ofArray
 
     [<Fact>]
@@ -65,7 +65,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -85,7 +85,7 @@ module ActualPaymentTestsExtra =
         let expected = 131<OffsetDay>, {
             OffsetDate = Date(2023, 12, 1)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 407_64L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 407_64L<Cent>) ValueNone
             Window = 5
             PaymentDue = 407_64L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 407_64L<Cent>; Metadata = Map.empty } |]
@@ -147,7 +147,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -159,7 +159,7 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                    0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
             let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra002.md" false
@@ -168,7 +168,7 @@ module ActualPaymentTestsExtra =
         let expected = 172<OffsetDay>, {
             OffsetDate = Date(2022, 8, 27)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 170_90L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 170_90L<Cent>) ValueNone
             Window = 12
             PaymentDue = 170_04L<Cent>
             ActualPayments = [||]
@@ -230,7 +230,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -245,7 +245,7 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                    0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
             let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
@@ -268,7 +268,7 @@ module ActualPaymentTestsExtra =
         let expected = 1969<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick ValueNone (ValueSome { Value = 20_00L<Cent>; RescheduleDay = 176<OffsetDay> })
+            ScheduledPayment = ScheduledPayment.quick ValueNone (ValueSome { Value = 20_00L<Cent>; RescheduleDay = 176<OffsetDay> })
             Window = 141
             PaymentDue = 9_80L<Cent>
             ActualPayments = [||]
@@ -350,7 +350,7 @@ module ActualPaymentTestsExtra =
         let expected = 1025<OffsetDay>, {
             OffsetDate = Date(2026, 8, 27)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 137_36L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 137_36L<Cent>) ValueNone
             Window = 19
             PaymentDue = 137_36L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 137_36L<Cent>; Metadata = Map.empty } |]
@@ -396,7 +396,7 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.InitialRecommended
+            FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
@@ -427,7 +427,7 @@ module ActualPaymentTestsExtra =
         let expected = 185<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 51_53L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 51_53L<Cent>) ValueNone
             Window = 7
             PaymentDue = 51_53L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 51_53L<Cent>; Metadata = Map.empty } |]
@@ -489,7 +489,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -499,7 +499,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |] ]
+            let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
             let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra006.md" false
             amortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
@@ -507,7 +507,7 @@ module ActualPaymentTestsExtra =
         let expected = {
             OffsetDate = Date(2022, 7, 30)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 171_02L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 171_02L<Cent>) ValueNone
             Window = 10
             PaymentDue = 142_40L<Cent>
             ActualPayments = [||]
@@ -569,7 +569,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -584,7 +584,7 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                    0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -604,7 +604,7 @@ module ActualPaymentTestsExtra =
         let expected = 1793<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 20_00L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
             Window = 129
             PaymentDue = 18_71L<Cent>
             ActualPayments = [||]
@@ -666,7 +666,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
+                Cap = Interest.Cap.zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -681,7 +681,7 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    0<OffsetDay>, [| ActualPayment.QuickConfirmed 166_60L<Cent> |]
+                    0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -701,7 +701,7 @@ module ActualPaymentTestsExtra =
         let expected = 1793<OffsetDay>, {
             OffsetDate = Date(2027, 7, 29)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.Quick (ValueSome 20_00L<Cent>) ValueNone
+            ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
             Window = 129
             PaymentDue = 18_71L<Cent>
             ActualPayments = [||]

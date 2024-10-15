@@ -40,7 +40,7 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.InitialRecommended
+                FeeConfig = Fee.Config.initialRecommended
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
@@ -62,14 +62,14 @@ module FeesAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-                    94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                    4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    35<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    36<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    40<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    66<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    70<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+                    94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
                 ]
 
             let schedule =
@@ -83,7 +83,7 @@ module FeesAndChargesTests =
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
@@ -129,7 +129,7 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.InitialRecommended
+                FeeConfig = Fee.Config.initialRecommended
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
@@ -151,14 +151,14 @@ module FeesAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-                    94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                    4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    35<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    36<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    40<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    66<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    70<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+                    94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
                 ]
 
             let schedule =
@@ -172,7 +172,7 @@ module FeesAndChargesTests =
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
@@ -218,7 +218,7 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.InitialRecommended
+                FeeConfig = Fee.Config.initialRecommended
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
@@ -240,14 +240,14 @@ module FeesAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    35<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    36<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    40<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    66<OffsetDay>, [| ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.QuickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
-                    70<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
-                    94<OffsetDay>, [| ActualPayment.QuickConfirmed 456_88L<Cent> |]
-                    125<OffsetDay>, [| ActualPayment.QuickConfirmed 456_84L<Cent> |]
+                    4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    35<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    36<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    40<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    66<OffsetDay>, [| ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |]; ActualPayment.quickFailed 456_88L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
+                    70<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+                    94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
                 ]
 
             let schedule =
@@ -261,7 +261,7 @@ module FeesAndChargesTests =
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.Quick (ValueSome 456_84L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]

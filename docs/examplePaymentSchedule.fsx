@@ -43,12 +43,12 @@ let scheduleParameters =
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
         }
-        FeeConfig = Fee.Config.InitialRecommended
-        ChargeConfig = Charge.Config.InitialRecommended
+        FeeConfig = Fee.Config.initialRecommended
+        ChargeConfig = Charge.Config.initialRecommended
         Interest = {
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Annual (Percent 6.9m)
-            Cap = Interest.Cap.Zero
+            Cap = Interest.Cap.zero
             InitialGracePeriod = 0<DurationDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero

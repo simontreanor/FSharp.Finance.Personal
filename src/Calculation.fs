@@ -36,6 +36,12 @@ module Calculation =
         divRem m 1m
         |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1
 
+    /// raises a decimal to an int power
+    let internal powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))
+
+    /// raises a decimal to a decimal power
+    let internal powm (power: decimal) (base': decimal) = Math.Pow(double base', double power)
+
     /// the type of rounding, specifying midpoint-rounding where necessary
     [<Struct>]
     type Rounding =
@@ -46,29 +52,24 @@ module Calculation =
         /// round down to the specified precision (= floor)
         | RoundDown
         /// round up or down to the specified precision based on the given midpoint rounding rules
-        | Round of MidpointRounding
-        with
-            /// derive a rounded value from a decimal according to the specified rounding method
-            static member round rounding (m: decimal) =
-                match rounding with
-                | NoRounding -> m
-                | RoundDown -> floor m
-                | RoundUp -> ceil m
-                | Round mpr -> Math.Round(m, 0, mpr)
+        | RoundWith of MidpointRounding
 
-    /// raises a decimal to an int power
-    let powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))
+    module Rounding =
+        /// derive a rounded value from a decimal according to the specified rounding method
+        let round rounding (m: decimal) =
+            match rounding with
+            | NoRounding -> m
+            | RoundDown -> floor m
+            | RoundUp -> ceil m
+            | RoundWith mpr -> Math.Round(m, 0, mpr)
 
-    /// raises a decimal to a decimal power
-    let powm (power: decimal) (base': decimal) = Math.Pow(double base', double power)
-
-    /// round a value to n decimal places
-    let roundTo rounding (places: int) (m: decimal) =
-        match rounding with
-        | NoRounding -> m
-        | RoundDown -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> floor |> fun m -> m / f
-        | RoundUp -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> ceil |> fun m -> m / f
-        | Round mpr -> Math.Round(m, places, mpr)
+        /// round a value to n decimal places
+        let roundTo rounding (places: int) (m: decimal) =
+            match rounding with
+            | NoRounding -> m
+            | RoundDown -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> floor |> fun m -> m / f
+            | RoundUp -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> ceil |> fun m -> m / f
+            | RoundWith mpr -> Math.Round(m, places, mpr)
 
     /// a holiday, i.e. a period when no interest and/or charges are accrued
     [<RequireQualifiedAccess; Struct>]
@@ -88,8 +89,10 @@ module Calculation =
     type Fraction =
         | Zero
         | Simple of Numerator: int * Denominator: int
-        with
-            member x.toDecimal =
-                match x with
-                | Zero -> 0m
-                | Simple (numerator, denominator) -> if denominator = 0 then 0m else decimal numerator / decimal denominator
+
+    module Fraction =
+        let toDecimal = function
+            | Fraction.Zero ->
+                0m
+            | Fraction.Simple (numerator, denominator) ->
+                if denominator = 0 then 0m else decimal numerator / decimal denominator

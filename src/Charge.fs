@@ -47,7 +47,7 @@ module Charge =
 
     module Config =
         /// a default config value, with no charges but recommended settings
-        let InitialRecommended = {
+        let initialRecommended = {
             ChargeTypes = [||]
             Rounding = NoRounding
             ChargeHolidays = [||]
@@ -56,24 +56,24 @@ module Charge =
         }
 
     /// rounds a charge to the nearest integer cent using the specified rounding option
-    let Round config =
+    let round config =
         Cent.fromDecimalCent config.Rounding
 
     /// calculates the total of a charge
-    let Total chargeConfig baseValue chargeType =
+    let total chargeConfig baseValue chargeType =
         match chargeType with
         | LatePayment amount
         | InsufficientFunds amount
         | CustomCharge (_, amount) -> amount |> Amount.total baseValue
-        |> Round chargeConfig
+        |> round chargeConfig
 
     /// calculates the total sum of any charges incurred
-    let GrandTotal chargeConfig baseValue customChargeTypes =
+    let grandTotal chargeConfig baseValue customChargeTypes =
         customChargeTypes
         |> ValueOption.defaultValue chargeConfig.ChargeTypes
-        |> Array.sumBy (Total chargeConfig baseValue)
+        |> Array.sumBy (total chargeConfig baseValue)
 
-    let HolidayDates chargeConfig startDate =
+    let holidayDates chargeConfig startDate =
         chargeConfig.ChargeHolidays
         |> Array.collect(fun (ih: DateRange) ->
             [| (ih.Start - startDate).Days .. (ih.End - startDate).Days |]

@@ -55,7 +55,7 @@ module AppliedPayment =
                 let scheduledPayment' =
                     scheduledPayments
                     |> Map.tryFind offsetDay
-                    |> Option.defaultValue ScheduledPayment.Zero
+                    |> Option.defaultValue ScheduledPayment.zero
  
                 let actualPayments' =
                     actualPayments
@@ -82,7 +82,7 @@ module AppliedPayment =
                     if pendingPayments > 0L<Cent> then
                         pendingPayments + confirmedPayments, PaymentPending
                     else
-                        match scheduledPayment'.Total, confirmedPayments with
+                        match ScheduledPayment.total scheduledPayment', confirmedPayments with
                         | 0L<Cent>, 0L<Cent> ->
                             0L<Cent>, NoneScheduled
                         | 0L<Cent>, cp when cp < 0L<Cent> ->
@@ -157,7 +157,7 @@ module AppliedPayment =
                 |> Map.map(fun d ap -> if d = day then { ap with GeneratedPayment = generatedPayment } else ap)
             else
                 let newAppliedPayment = {
-                    ScheduledPayment = ScheduledPayment.Zero
+                    ScheduledPayment = ScheduledPayment.zero
                     ActualPayments = [||]
                     GeneratedPayment = generatedPayment
                     ChargeTypes = [||]
