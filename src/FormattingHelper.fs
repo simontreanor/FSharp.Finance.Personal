@@ -8,39 +8,39 @@ module FormattingHelper =
     let private asi = Unchecked.defaultof<Amortisation.ScheduleItem>
  
     /// an array of properties relating to (product) fees
-    let feesProperties hide =
-        if hide then [|
+    let hideFeesProperties =
+        [|
             nameof asi.FeesPortion
             nameof asi.FeesRefund
             nameof asi.FeesBalance
             nameof asi.FeesRefundIfSettled
-        |] else [||]
+        |]
     /// an array of properties relating to (penalty) charges
-    let chargesProperties hide =
-        if hide then [|
+    let hideChargesProperties =
+        [|
             nameof asi.NewCharges
             nameof asi.ChargesPortion
             nameof asi.ChargesBalance
-        |] else [||]
+        |]
     /// an array of properties relating to quotes
-    let quoteProperties hide =
-        if hide then [|
+    let hideQuoteProperties =
+        [|
             nameof asi.GeneratedPayment
-        |] else [||]
+        |]
     /// an array of properties representing extra information
-    let extraProperties hide =
-        if hide then [|
+    let hideExtraProperties =
+        [|
             nameof asi.FeesRefundIfSettled
             nameof asi.SettlementFigure
             nameof asi.Window
-        |] else [||]
+        |]
     /// an array of properties representing internal interest calculations
-    let interestProperties hide =
-        if hide then [|
+    let hideInterestProperties =
+        [|
             nameof asi.OriginalSimpleInterest
             nameof asi.ContractualInterest
             nameof asi.SimpleInterest
-        |] else [||]
+        |]
 
     /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {
@@ -54,11 +54,11 @@ module FormattingHelper =
         match generationOptions with
         | Some go ->
             [|
-                go.GoParameters.FeeConfig.FeeTypes |> Array.isEmpty |> feesProperties
-                go.GoParameters.ChargeConfig.ChargeTypes |> Array.isEmpty |> chargesProperties
-                (match go.GoPurpose with IntendedPurpose.SettlementOn _ | IntendedPurpose.SettlementOnAsOfDay -> false | _ -> true) |> quoteProperties
-                (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) |> interestProperties
-                go.GoExtra |> not |> extraProperties
+                if Array.isEmpty go.GoParameters.FeeConfig.FeeTypes then hideFeesProperties else [||]
+                if Array.isEmpty go.GoParameters.ChargeConfig.ChargeTypes then hideChargesProperties else [||]
+                if (match go.GoPurpose with IntendedPurpose.SettlementOn _ | IntendedPurpose.SettlementOnAsOfDay -> false | _ -> true) then hideQuoteProperties else [||]
+                if (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) then hideInterestProperties else [||]
+                if not go.GoExtra then hideExtraProperties else [||]
             |]
             |> Array.concat
         | None ->
