@@ -40,10 +40,12 @@ module DateDay =
     [<Measure>] type DurationDay
 
     /// a length of time in whole days measured from a start date
-    type Duration = {
-        Length: int<DurationDay>
-        FromDate: Date
-    }
+    [<RequireQualifiedAccess; Struct>]
+    type Duration =
+        /// unrestricted length of time
+        | Unlimited
+        /// restricted to a length of time in whole days measured from a start date
+        | Maximum of Length: int<DurationDay> * FromDate: Date
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is

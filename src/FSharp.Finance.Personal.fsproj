@@ -13,12 +13,11 @@
   <ItemGroup>
     <Compile Include="DateDay.fs" />
     <Compile Include="Calculation.fs" />
-    <Compile Include="Percentages.fs" />
     <Compile Include="Array.fs" />
     <Compile Include="Map.fs" />
     <Compile Include="Currency.fs" />
+    <Compile Include="Util.fs" />
     <Compile Include="Formatting.fs" />
-    <Compile Include="Amount.fs" />
     <Compile Include="Fee.fs" />
     <Compile Include="Charge.fs" />
     <Compile Include="UnitPeriod.fs" />

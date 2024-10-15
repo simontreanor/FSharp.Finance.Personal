@@ -221,8 +221,8 @@ module UnitPeriod =
         if count = 0 then [||] else
         let limitedCount =
             match maxDuration with
-            | ValueSome { Duration.Length = d; Duration.FromDate = fd } -> min count (maxPaymentCount d unitPeriodConfig)
-            | ValueNone -> count
+            | Duration.Maximum (d, _) -> min count (maxPaymentCount d unitPeriodConfig)
+            | Duration.Unlimited -> count
         let adjustMonthEnd (monthEndTrackingDay: int) (d: Date) =
             if d.Day > 15 && monthEndTrackingDay > 28 then
                 TrackingDay.toDate d.Year d.Month monthEndTrackingDay

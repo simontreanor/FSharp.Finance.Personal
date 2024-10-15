@@ -37,7 +37,7 @@ let scheduleParameters =
         PaymentSchedule = AutoGenerateSchedule {
             UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
             PaymentCount = 36
-            MaxDuration = ValueNone
+            MaxDuration = Duration.Unlimited
         }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
@@ -51,7 +51,7 @@ let scheduleParameters =
             Cap = Interest.Cap.none
             InitialGracePeriod = 0<DurationDay>
             PromotionalRates = [||]
-            RateOnNegativeBalance = ValueNone
+            RateOnNegativeBalance = Interest.Rate.Zero
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3

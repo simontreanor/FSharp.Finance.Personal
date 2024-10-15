@@ -13,11 +13,11 @@ module PromotionalRatesTests =
     open DateDay
     open Formatting
     open PaymentSchedule
-    open Percentages
+    open Util
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     let startDate = Date(2024, 8, 23)
@@ -29,7 +29,7 @@ module PromotionalRatesTests =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2)
                 PaymentCount = 4
-                MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }
+                MaxDuration = Duration.Maximum (180<DurationDay>, startDate)
             }
             PaymentConfig = { 
                 ScheduledPaymentOption = AsScheduled
@@ -44,12 +44,12 @@ module PromotionalRatesTests =
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
-                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone)
+                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
+                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = promotionalRates |> ValueOption.defaultValue [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }

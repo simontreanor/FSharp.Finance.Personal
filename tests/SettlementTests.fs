@@ -13,12 +13,12 @@ module SettlementTests =
     open DateDay
     open Formatting
     open PaymentSchedule
-    open Percentages
+    open Util
     open Quotes
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     [<Fact>]
@@ -27,7 +27,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 19)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -43,7 +43,7 @@ module SettlementTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
             }
@@ -79,7 +79,7 @@ module SettlementTests =
             {
                 OffsetDate = Date(2024, 3, 19)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.DefaultValue
+                ScheduledPayment = ScheduledPayment.Zero
                 Window = 3
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -113,7 +113,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -129,7 +129,7 @@ module SettlementTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
             }
@@ -165,7 +165,7 @@ module SettlementTests =
             {
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.DefaultValue
+                ScheduledPayment = ScheduledPayment.Zero
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
@@ -199,7 +199,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -215,7 +215,7 @@ module SettlementTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
             }
@@ -252,7 +252,7 @@ module SettlementTests =
             {
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.DefaultValue
+                ScheduledPayment = ScheduledPayment.Zero
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]

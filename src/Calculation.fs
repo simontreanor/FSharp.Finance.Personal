@@ -39,6 +39,8 @@ module Calculation =
     /// the type of rounding, specifying midpoint-rounding where necessary
     [<Struct>]
     type Rounding =
+        /// do not round at all
+        | NoRounding
         /// round up to the specified precision (= ceiling)
         | RoundUp
         /// round down to the specified precision (= floor)
@@ -49,10 +51,10 @@ module Calculation =
             /// derive a rounded value from a decimal according to the specified rounding method
             static member round rounding (m: decimal) =
                 match rounding with
-                | ValueSome (RoundDown) -> floor m
-                | ValueSome (RoundUp) -> ceil m
-                | ValueSome (Round mpr) -> Math.Round(m, 0, mpr)
-                | ValueNone -> m
+                | NoRounding -> m
+                | RoundDown -> floor m
+                | RoundUp -> ceil m
+                | Round mpr -> Math.Round(m, 0, mpr)
 
     /// raises a decimal to an int power
     let powi (power: int) (base': decimal) = decimal (Math.Pow(double base', double power))
@@ -63,10 +65,10 @@ module Calculation =
     /// round a value to n decimal places
     let roundTo rounding (places: int) (m: decimal) =
         match rounding with
-        | ValueSome (RoundDown) -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> floor |> fun m -> m / f
-        | ValueSome (RoundUp) -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> ceil |> fun m -> m / f
-        | ValueSome (Round mpr) -> Math.Round(m, places, mpr)
-        | ValueNone -> m
+        | NoRounding -> m
+        | RoundDown -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> floor |> fun m -> m / f
+        | RoundUp -> 10m |> powi places |> fun f -> if f = 0m then 0m else m * f |> ceil |> fun m -> m / f
+        | Round mpr -> Math.Round(m, places, mpr)
 
     /// a holiday, i.e. a period when no interest and/or charges are accrued
     [<RequireQualifiedAccess; Struct>]
@@ -82,10 +84,12 @@ module Calculation =
         (int asOfDay - int paymentDay) * 1<DurationDay> > paymentTimeout
 
     /// a fraction expressed as a numerator and denominator
-    [<Struct>]
-    type Fraction = {
-        Numerator: int
-        Denominator: int
-    }
-    with
-        member x.toDecimal = if x.Denominator = 0 then 0m else decimal x.Numerator / decimal x.Denominator
+    [<RequireQualifiedAccess; Struct>]
+    type Fraction =
+        | Zero
+        | Simple of Numerator: int * Denominator: int
+        with
+            member x.toDecimal =
+                match x with
+                | Zero -> 0m
+                | Simple (numerator, denominator) -> if denominator = 0 then 0m else decimal numerator / decimal denominator

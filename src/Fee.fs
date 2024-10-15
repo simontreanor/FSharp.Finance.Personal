@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open Amount
+open Util
 open Calculation
 open Currency
 open DateDay
@@ -36,8 +36,10 @@ module Fee =
     type SettlementRefund =
         /// fees are due in full with no discount or refund
         | None
-        /// fees are refunded proportionately to the number of days elapsed in the current schedule, based on the original final payment day
-        | ProRata of OriginalFinalPaymentDay: int<OffsetDay> voption
+        /// for original (non-rescheduled) amortisations: fees are refunded proportionately based on the current final payment day
+        | ProRata
+        /// for rescheduled amortisations: fees are refunded proportionately based on the original final payment day
+        | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
         /// the current fee balance is refunded
         | Balance
 
@@ -56,7 +58,7 @@ module Fee =
         /// a list of product fees applicable to a product
         FeeTypes: FeeType array
         /// how to round fees
-        Rounding: Rounding voption
+        Rounding: Rounding
         /// how to amortise fees in relation to principal
         FeeAmortisation: FeeAmortisation
         /// how fees are treated when a product is repaid early
@@ -67,9 +69,9 @@ module Fee =
         /// a default config value, with no fees but recommended settings
         let DefaultValue = {
             FeeTypes = [||]
-            Rounding = ValueNone
+            Rounding = NoRounding
             FeeAmortisation = AmortiseProportionately
-            SettlementRefund = SettlementRefund.ProRata ValueNone
+            SettlementRefund = SettlementRefund.ProRata
         }
 
     /// rounds a charge to the nearest integer cent using the specified rounding option

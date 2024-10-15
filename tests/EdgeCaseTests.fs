@@ -14,13 +14,13 @@ module EdgeCaseTests =
     open Formatting
     open MapExtension
     open PaymentSchedule
-    open Percentages
+    open Util
     open Quotes
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     [<Fact>]
@@ -43,10 +43,10 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = Charge.Config.DefaultValue
             InterestConfig = {
@@ -55,7 +55,7 @@ module EdgeCaseTests =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 InterestRounding = RoundDown
             }
@@ -104,10 +104,10 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = Charge.Config.DefaultValue
             InterestConfig = {
@@ -116,7 +116,7 @@ module EdgeCaseTests =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 InterestRounding = RoundDown
             }
@@ -165,10 +165,10 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = Charge.Config.DefaultValue
             InterestConfig = {
@@ -177,7 +177,7 @@ module EdgeCaseTests =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 InterestRounding = RoundDown
             }
@@ -228,10 +228,10 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = Charge.Config.DefaultValue
             InterestConfig = {
@@ -240,7 +240,7 @@ module EdgeCaseTests =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 InterestRounding = RoundDown
             }
@@ -361,10 +361,10 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = Charge.Config.DefaultValue
             InterestConfig = {
@@ -373,7 +373,7 @@ module EdgeCaseTests =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
                 InterestRounding = RoundDown
             }
@@ -479,7 +479,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 6, 22)
             Principal = 500_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 7, 15); PaymentCount = 6; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 7, 15); PaymentCount = 6; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -495,7 +495,7 @@ module EdgeCaseTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
                 InterestRounding = RoundDown
             }
@@ -605,7 +605,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2021, 12, 26)
             Principal = 150000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 1, 7); PaymentCount = 6; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 1, 7); PaymentCount = 6; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -621,7 +621,7 @@ module EdgeCaseTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
                 InterestRounding = RoundDown
             }
@@ -660,7 +660,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -676,7 +676,7 @@ module EdgeCaseTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
                 InterestRounding = RoundDown
             }
@@ -692,11 +692,11 @@ module EdgeCaseTests =
         let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
+            FeeSettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
-            RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
+            RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             PromotionalInterestRates = [||]
             ChargeHolidays = [||]
             IntendedPurpose = IntendedPurpose.SettlementOn 88<OffsetDay>
@@ -711,7 +711,7 @@ module EdgeCaseTests =
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.DefaultValue
+            ScheduledPayment = ScheduledPayment.Zero
             Window = 4
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
@@ -745,7 +745,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -761,7 +761,7 @@ module EdgeCaseTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
                 InterestRounding = RoundDown
             }
@@ -777,11 +777,11 @@ module EdgeCaseTests =
         let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay)
+            FeeSettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.Quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
-            RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
+            RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             PromotionalInterestRates = [||]
             ChargeHolidays = [||]
             IntendedPurpose = IntendedPurpose.SettlementOn 88<OffsetDay>
@@ -796,7 +796,7 @@ module EdgeCaseTests =
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
             Advances = [||]
-            ScheduledPayment = ScheduledPayment.DefaultValue
+            ScheduledPayment = ScheduledPayment.Zero
             Window = 4
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
@@ -830,7 +830,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = ValueNone }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -846,7 +846,7 @@ module EdgeCaseTests =
                 Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueSome (Interest.Rate.Annual (Percent 8m))
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
                 InterestRounding = RoundDown
             }

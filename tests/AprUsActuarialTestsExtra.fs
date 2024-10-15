@@ -13,7 +13,7 @@ module AprActuarialTestsExtra =
     open Apr
     open Currency
     open DateDay
-    open Percentages
+    open Util
     open Util
 
     type AprUsActuarialTestItemDto = {

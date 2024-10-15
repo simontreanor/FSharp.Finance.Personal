@@ -16,19 +16,19 @@ module ActualPaymentTestsExtra =
     open Formatting
     open FormattingHelper
     open PaymentSchedule
-    open Percentages
+    open Util
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
     let allPaidOnTime (scheduleItems: SimpleItem array) =
         scheduleItems
         |> Array.filter _.ScheduledPayment.IsSome
-        |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.ScheduledPayment.Value.Total |])
+        |> Array.map(fun si -> si.Day, [| ActualPayment.QuickConfirmed si.ScheduledPayment.Total |])
         |> Map.ofArray
 
     [<Fact>]
@@ -40,7 +40,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1)
                 PaymentCount = 5
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -50,14 +50,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -68,7 +68,7 @@ module ActualPaymentTestsExtra =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -122,7 +122,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
                 PaymentCount = 12
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -132,14 +132,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -150,7 +150,7 @@ module ActualPaymentTestsExtra =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -205,7 +205,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
                 PaymentCount = 12
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -215,14 +215,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -233,7 +233,7 @@ module ActualPaymentTestsExtra =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -249,9 +249,9 @@ module ActualPaymentTestsExtra =
                 ]
             let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
-                FeeSettlementRefund = Fee.SettlementRefund.ProRata (ValueSome originalFinalPaymentDay')
+                FeeSettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]
                 ChargeHolidays = [||]
                 IntendedPurpose = IntendedPurpose.Statement
@@ -305,7 +305,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23))
                 PaymentCount = 19
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -315,14 +315,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.None
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -333,7 +333,7 @@ module ActualPaymentTestsExtra =
                 Cap = { TotalAmount = ValueSome <| Amount.Simple 500_00L<Cent>; DailyAmount = ValueNone }
                 InitialGracePeriod = 7<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -387,7 +387,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15)
                 PaymentCount = 7
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -399,7 +399,7 @@ module ActualPaymentTestsExtra =
             FeeConfig = Fee.Config.DefaultValue
             ChargeConfig = {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -410,7 +410,7 @@ module ActualPaymentTestsExtra =
                 Cap = interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
@@ -464,7 +464,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
                 PaymentCount = 12
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -474,14 +474,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 7<DurationDay>
@@ -492,7 +492,7 @@ module ActualPaymentTestsExtra =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -544,7 +544,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
                 PaymentCount = 12
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -554,14 +554,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -572,7 +572,7 @@ module ActualPaymentTestsExtra =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -589,8 +589,8 @@ module ActualPaymentTestsExtra =
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
-                InterestConfig = ValueNone
-                PaymentConfig = ValueNone
+                InterestConfig = sp.InterestConfig
+                PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
             let oldSchedule, newSchedule = rollOver sp rp actualPayments
@@ -641,7 +641,7 @@ module ActualPaymentTestsExtra =
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
                 PaymentCount = 12
-                MaxDuration = ValueNone
+                MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
@@ -651,14 +651,14 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, ValueNone, ValueSome RoundDown)) |]
-                Rounding = ValueSome RoundDown
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata ValueNone
+                SettlementRefund = Fee.SettlementRefund.ProRata
             }
             ChargeConfig = {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = ValueSome RoundDown
+                Rounding = RoundDown
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                 LatePaymentGracePeriod = 0<DurationDay>
@@ -669,7 +669,7 @@ module ActualPaymentTestsExtra =
                 Cap = Interest.Cap.None
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueNone
+                RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
                 InterestRounding = RoundDown
             }
@@ -686,8 +686,8 @@ module ActualPaymentTestsExtra =
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
-                InterestConfig = ValueNone
-                PaymentConfig = ValueNone
+                InterestConfig = sp.InterestConfig
+                PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
             let oldSchedule, newSchedule = rollOver sp rp actualPayments

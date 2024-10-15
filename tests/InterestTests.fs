@@ -14,12 +14,12 @@ module InterestTests =
     open Formatting
     open Interest
     open PaymentSchedule
-    open Percentages
+    open Util
     open System
 
-    let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+    let interestCapExample : Cap = {
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     module RateTests =
@@ -83,7 +83,7 @@ module InterestTests =
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14)
                     PaymentCount = 4
-                    MaxDuration = ValueNone
+                    MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
@@ -95,12 +95,12 @@ module InterestTests =
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = Charge.Config.DefaultValue
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueNone
+                    RateOnNegativeBalance = Rate.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     InterestRounding = RoundDown
                 }
@@ -127,7 +127,7 @@ module InterestTests =
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14)
                     PaymentCount = 4
-                    MaxDuration = ValueNone
+                    MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
@@ -139,12 +139,12 @@ module InterestTests =
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = Charge.Config.DefaultValue
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
-                    Cap = { interestCapExample with TotalAmount = ValueSome (Amount.Percentage (Percent 123.45m, ValueNone, ValueSome RoundDown)) }
+                    Cap = { interestCapExample with TotalAmount = ValueSome (Amount.Percentage (Percent 123.45m, Restriction.NoLimit, RoundDown)) }
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueNone
+                    RateOnNegativeBalance = Rate.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     InterestRounding = RoundDown
                 }
@@ -191,7 +191,7 @@ module InterestTests =
             let startDate = Date(2024, 4, 10)
             let standardRate = Rate.Annual <| Percent 10m
             let promotionalRates = [|
-                ({ DateRange = { Start = Date(2024, 4, 10); End = Date(2024, 4, 15) }; Rate = Rate.Annual (Percent 2m) } : Interest.PromotionalRate)
+                ({ DateRange = { Start = Date(2024, 4, 10); End = Date(2024, 4, 15) }; Rate = Rate.Annual (Percent 2m) } : PromotionalRate)
             |]
             let fromDay = 0<OffsetDay>
             let toDay = 10<OffsetDay>
@@ -225,20 +225,20 @@ module InterestTests =
                 }
                 FeeConfig = {
                     FeeTypes = [| Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent> |]
-                    Rounding = ValueSome RoundDown
+                    Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
                     SettlementRefund = Fee.SettlementRefund.None
                 }
                 ChargeConfig = Charge.Config.DefaultValue
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
                     Cap = Cap.None
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [|
                         { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
                     |]
-                    RateOnNegativeBalance = ValueNone
+                    RateOnNegativeBalance = Rate.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     InterestRounding = RoundDown
                 }
@@ -293,10 +293,10 @@ module InterestTests =
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
             let settlementPeriod = 12
-            let settlementPartPeriod = ValueNone
+            let settlementPartPeriod = Fraction.Zero
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
-            let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 860_52L<Cent>
             actual |> should equal expected
 
@@ -306,10 +306,10 @@ module InterestTests =
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
             let settlementPeriod = 12
-            let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 30 }
+            let settlementPartPeriod = Fraction.Simple (28, 30)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
-            let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 819_71L<Cent>
             actual |> should equal expected
 
@@ -319,10 +319,10 @@ module InterestTests =
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
             let settlementPeriod = 12
-            let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 31 }
+            let settlementPartPeriod = Fraction.Simple (28, 31)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
-            let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 821_03L<Cent>
             actual |> should equal expected
 
@@ -332,10 +332,10 @@ module InterestTests =
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
             let settlementPeriod = 13
-            let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 30 }
+            let settlementPartPeriod = Fraction.Simple (28, 30)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
-            let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 776_90L<Cent>
             actual |> should equal expected
 
@@ -345,10 +345,10 @@ module InterestTests =
             let payments = [| 1 .. 180 |] |> Array.map(fun i -> i, 139_51L<Cent>)
             let apr = Percent 16m
             let settlementPeriod = 73
-            let settlementPartPeriod = ValueNone
+            let settlementPartPeriod = Fraction.Zero
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
-            let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 6702_45L<Cent>
             actual |> should equal expected
 
@@ -358,10 +358,10 @@ module InterestTests =
             let payments = [| 1 .. 180 |] |> Array.map(fun i -> i, 139_51L<Cent>)
             let apr = Percent 16m
             let settlementPeriod = 73
-            let settlementPartPeriod = ValueSome { Numerator = 28; Denominator = 30 }
+            let settlementPartPeriod = Fraction.Simple (28, 30)
             let unitPeriod = UnitPeriod.Month 1
-            let paymentRounding = ValueSome <| Round (MidpointRounding.AwayFromZero)
-            let actual = Interest.calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
+            let paymentRounding = Round MidpointRounding.AwayFromZero
+            let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 6606_95L<Cent>
             actual |> should equal expected
 
@@ -381,12 +381,12 @@ module InterestTests =
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = Charge.Config.DefaultValue
                 InterestConfig = {
-                    Method = Interest.Method.Simple
-                    StandardRate = Interest.Rate.Annual <| Percent 13.1475m
-                    Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                    Method = Method.Simple
+                    StandardRate = Rate.Annual <| Percent 13.1475m
+                    Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding) }
                     InitialGracePeriod = 0<DurationDay>
                     PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                    RateOnNegativeBalance = Rate.Annual (Percent 8m)
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     InterestRounding = RoundDown
                 }
@@ -411,7 +411,7 @@ module InterestTests =
 
         [<Fact>]
         let ``3a) Initial statement (simple interest, autogenerated payment amounts) matching level payment of £134.57`` () =
-            let sp = { scheduleParameters2 with AsOfDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; MaxDuration = ValueNone } }
+            let sp = { scheduleParameters2 with AsOfDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; MaxDuration = Duration.Unlimited } }
 
             let actualPayments = Map.empty
 

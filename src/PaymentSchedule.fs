@@ -8,7 +8,7 @@ module PaymentSchedule =
     open Currency
     open DateDay
     open Formatting
-    open Percentages
+    open Util
     open UnitPeriod
 
     /// an originally scheduled payment, including the original simple interest and contractual interest calculations
@@ -47,9 +47,9 @@ module PaymentSchedule =
             /// > NB: if set to `ValueSome 0L<Cent>` this indicates that the original payment is no longer due
             Rescheduled: RescheduledPayment voption
             /// any payments relating to previous reschedulings *sorted in creation order*, if any
-            PreviousRescheduled: RescheduledPayment array voption
+            PreviousRescheduled: RescheduledPayment array
             /// any adjustment due to interest or charges being applied to the relevant payment rather than being amortised later
-            Adjustment: int64<Cent> voption
+            Adjustment: int64<Cent>
             /// any reference numbers or other information pertaining to this payment
             Metadata: Map<string, obj>
         }
@@ -62,33 +62,28 @@ module PaymentSchedule =
                 o.Value
             | ValueNone, ValueNone ->
                 0L<Cent>
-            |> fun t ->
-                match x.Adjustment with
-                | ValueSome a ->
-                    t + a
-                | ValueNone ->
-                    t
+            |> (+) x.Adjustment
         /// whether the payment has either an original or a rescheduled value
         member x.IsSome =
             x.Original.IsSome || x.Rescheduled.IsSome
         /// a default value with no data
-        static member DefaultValue =
+        static member Zero =
             {
                 Original = ValueNone
                 Rescheduled = ValueNone
-                PreviousRescheduled = ValueNone
-                Adjustment = ValueNone
+                PreviousRescheduled = [||]
+                Adjustment = 0L<Cent>
                 Metadata = Map.empty
             }
         /// a quick convenient method to create a basic scheduled payment
         static member Quick originalAmount rescheduledAmount =
-            { ScheduledPayment.DefaultValue with
+            { ScheduledPayment.Zero with
                 Original =  originalAmount |> ValueOption.map(fun oa -> { Value = oa; SimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> })
                 Rescheduled = rescheduledAmount
             }
         /// HTML formatting to display the scheduled payment in a concise way
         member x.Html =
-            let previous = if x.PreviousRescheduled.IsSome then x.PreviousRescheduled.Value |> Array.map(fun pr -> $"<s>r {formatCent pr.Value}</s>&nbsp;") |> Array.reduce (+) else ""
+            let previous = if Array.isEmpty x.PreviousRescheduled then "" else x.PreviousRescheduled |> Array.map(fun pr -> $"<s>r {formatCent pr.Value}</s>&nbsp;") |> Array.reduce (+)
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r when r.Value = 0L<Cent> ->
                 $"""<s>original {formatCent o.Value}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
@@ -102,9 +97,9 @@ module PaymentSchedule =
                 ""
             |> fun s ->
                 match x.Adjustment with
-                | ValueSome a when a < 0L<Cent> ->
+                | a when a < 0L<Cent> ->
                     $"{s}&nbsp;-&nbsp;{formatCent <| abs a}"
-                | ValueSome a when a > 0L<Cent> ->
+                | a when a > 0L<Cent> ->
                     $"{s}&nbsp;+&nbsp;{formatCent a}"
                 | _ ->
                     s
@@ -213,7 +208,7 @@ module PaymentSchedule =
     type AutoGenerateSchedule = {
         UnitPeriodConfig: UnitPeriod.Config
         PaymentCount: int
-        MaxDuration: Duration voption
+        MaxDuration: Duration
     }
 
     /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
@@ -248,7 +243,7 @@ module PaymentSchedule =
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
         /// the scheduled payment
-        ScheduledPayment: ScheduledPayment voption
+        ScheduledPayment: ScheduledPayment
         /// the simple interest accrued since the previous payment
         SimpleInterest: int64<Cent>
         /// the interest portion paid off by the payment
@@ -271,7 +266,7 @@ module PaymentSchedule =
             static member DefaultValue =
                 { 
                     Day = 0<OffsetDay>
-                    ScheduledPayment = ValueNone
+                    ScheduledPayment = ScheduledPayment.Zero
                     SimpleInterest = 0L<Cent>
                     InterestPortion = 0L<Cent>
                     PrincipalPortion = 0L<Cent>
@@ -393,7 +388,7 @@ module PaymentSchedule =
                     if startDate > unitPeriodConfigStartDate then
                         [||]
                     else
-                        generatePaymentSchedule rfs.PaymentCount ValueNone Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
+                        generatePaymentSchedule rfs.PaymentCount Duration.Unlimited Direction.Forward rfs.UnitPeriodConfig |> Array.map (OffsetDay.fromDate startDate)
                         |> Array.map(fun d ->
                             let originalValue, rescheduledValue =
                                 match rfs.ScheduleType with
@@ -408,7 +403,7 @@ module PaymentSchedule =
             |> Array.map(fun (d, spp) ->
                 let original = spp |> Array.map (snd >> _.Original) |> Array.tryFind _.IsSome |> toValueOption |> ValueOption.flatten
                 let rescheduled = spp |> Array.map (snd >> _.Rescheduled) |> Array.filter _.IsSome |> Array.tryLast |> toValueOption |> ValueOption.flatten
-                d, { ScheduledPayment.DefaultValue with Original = original; Rescheduled = rescheduled }
+                d, { ScheduledPayment.Zero with Original = original; Rescheduled = rescheduled }
             )
             |> Map.ofArray
         | AutoGenerateSchedule rs ->
@@ -437,13 +432,13 @@ module PaymentSchedule =
 
         let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 
-        let totalInterestCap = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.Total sp.Principal |> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
+        let totalInterestCap = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.Total sp.Principal |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
 
         let totalAddOnInterest =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 (sp.Principal |> Cent.toDecimalCent) * dailyInterestRate * decimal finalPaymentDay
-                |> Cent.fromDecimalCent (ValueSome sp.InterestConfig.InterestRounding)
+                |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
                 |> Cent.min totalInterestCap
             | _ -> 0L<Cent>
 
@@ -459,7 +454,7 @@ module PaymentSchedule =
             match interestMethod with
             | Interest.Method.Simple ->
                 let dailyRates = Interest.dailyRates sp.StartDate false sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates previousItem.Day day
-                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount (ValueSome sp.InterestConfig.InterestRounding) dailyRates |> decimal |> Cent.round (ValueSome sp.InterestConfig.InterestRounding)
+                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount sp.InterestConfig.InterestRounding dailyRates |> decimal |> Cent.round sp.InterestConfig.InterestRounding
                 if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
             | Interest.Method.AddOn ->
                 if payment <= previousItem.InterestBalance then
@@ -474,7 +469,7 @@ module PaymentSchedule =
             let principalPortion = scheduledPaymentTotal - interestPortion
             {
                 Day = day
-                ScheduledPayment = ValueSome scheduledPayment
+                ScheduledPayment = scheduledPayment
                 SimpleInterest = simpleInterest
                 InterestPortion = interestPortion
                 PrincipalPortion = principalPortion
@@ -488,7 +483,7 @@ module PaymentSchedule =
         let generatePaymentValue firstItem interestMethod roughPayment =
             let scheduledPayment =
                 roughPayment
-                |> Cent.round (ValueSome sp.PaymentConfig.PaymentRounding)
+                |> Cent.round sp.PaymentConfig.PaymentRounding
                 |> fun rp -> ScheduledPayment.Quick (ValueSome rp) ValueNone
             schedule <-
                 paymentDays
@@ -502,7 +497,7 @@ module PaymentSchedule =
             if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
                 None
             else
-                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent (ValueSome sp.PaymentConfig.PaymentRounding)
+                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
                 schedule <-
                     paymentDays
                     |> Array.scan (fun state pd ->
@@ -525,7 +520,7 @@ module PaymentSchedule =
                     |> max 0L<Cent> // interest must not go negative
                     |> min totalInterestCap
                     |> decimal
-                let diff = initialInterestBalance - finalInterestTotal |> roundTo (ValueSome sp.InterestConfig.InterestRounding) 0
+                let diff = initialInterestBalance - finalInterestTotal |> roundTo sp.InterestConfig.InterestRounding 0
                 if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
                     None
                 else
@@ -560,12 +555,11 @@ module PaymentSchedule =
                     if si.Day = finalPaymentDay && solution <> Solution.Bypassed then
                         let adjustedPayment =
                             si.ScheduledPayment
-                            |> ValueOption.map(fun p ->
-                                { p with
+                            |> fun p ->
+                                { si.ScheduledPayment with
                                     Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> { o with Value = o.Value + si.PrincipalBalance }) else p.Original
                                     Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
                                 }
-                            )
                         let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
                         let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
                         { si with
@@ -583,22 +577,22 @@ module PaymentSchedule =
             let aprSolution =
                 items
                 |> Array.filter _.ScheduledPayment.IsSome
-                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Value = si.ScheduledPayment.Value.Total })
+                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Value = si.ScheduledPayment.Total })
                 |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
             let finalPayment =
                 items
                 |> Array.filter _.ScheduledPayment.IsSome
                 |> Array.tryLast
-                |> Option.map _.ScheduledPayment.Value.Total
+                |> Option.map _.ScheduledPayment.Total
                 |> Option.defaultValue 0L<Cent>
             {
                 AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
                 Items = items
                 InitialInterestBalance = match sp.InterestConfig.Method with Interest.Method.AddOn -> interestTotal | _ -> 0L<Cent>
                 FinalPaymentDay = finalPaymentDay
-                LevelPayment = items |> Array.filter _.ScheduledPayment.IsSome |> Array.countBy _.ScheduledPayment.Value.Total |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some) |> Option.defaultValue finalPayment
+                LevelPayment = items |> Array.filter _.ScheduledPayment.IsSome |> Array.countBy _.ScheduledPayment.Total |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some) |> Option.defaultValue finalPayment
                 FinalPayment = finalPayment
-                PaymentTotal = items |> Array.filter _.ScheduledPayment.IsSome |> Array.sumBy _.ScheduledPayment.Value.Total
+                PaymentTotal = items |> Array.filter _.ScheduledPayment.IsSome |> Array.sumBy _.ScheduledPayment.Total
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
                 Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
@@ -621,9 +615,9 @@ module PaymentSchedule =
             let rescheduled = sp |> Array.filter _.Rescheduled.IsSome |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay |> Array.toList
             let latestRescheduling, previousReschedulings =
                 match rescheduled with
-                | r :: [] -> ValueSome r, ValueNone
-                | r :: pr -> ValueSome r, ValueSome pr
-                | _ -> ValueNone, ValueNone
+                | r :: [] -> ValueSome r, []
+                | r :: pr -> ValueSome r, pr
+                | _ -> ValueNone, []
             let rescheduleDay = rescheduleDays |> Array.tryFind(fun d -> offsetDay >= d) |> toValueOption |> ValueOption.orElse previousRescheduleDay
             previousRescheduleDay <- rescheduleDay
             let scheduledPayment =
@@ -632,7 +626,7 @@ module PaymentSchedule =
                     {
                         Original = original |> ValueOption.bind _.Original
                         Rescheduled = r.Rescheduled
-                        PreviousRescheduled = previousReschedulings |> ValueOption.map (List.rev >> List.map _.Rescheduled.Value >> List.toArray)
+                        PreviousRescheduled = previousReschedulings |> List.rev |> List.map _.Rescheduled.Value |> List.toArray
                         Adjustment = r.Adjustment
                         Metadata = r.Metadata
                     }
@@ -647,12 +641,12 @@ module PaymentSchedule =
                                 else
                                     ValueNone
                             ) //overwrite original scheduled payments from start of rescheduled payments
-                        PreviousRescheduled = ValueNone
+                        PreviousRescheduled = [||]
                         Adjustment = o.Adjustment
                         Metadata = o.Metadata
                     }
                 | ValueNone, ValueNone ->
-                    ScheduledPayment.DefaultValue
+                    ScheduledPayment.Zero
             offsetDay, scheduledPayment
         )
         |> Array.filter (snd >> _.IsSome)

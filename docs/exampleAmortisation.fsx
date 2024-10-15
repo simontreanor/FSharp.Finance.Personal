@@ -38,16 +38,19 @@ let scheduleParameters =
         PaymentSchedule = AutoGenerateSchedule {
             UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
             PaymentCount = 5
-            MaxDuration = ValueNone
+            MaxDuration = Duration.Unlimited
         }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
+            PaymentRounding = RoundUp
+            MinimumPayment = DeferOrWriteOff 50L<Cent>
+            PaymentTimeout = 3<DurationDay>
         }
         FeeConfig = Fee.Config.DefaultValue
         ChargeConfig = {
             ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-            Rounding = ValueSome RoundDown
+            Rounding = RoundDown
             ChargeHolidays = [||]
             ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
@@ -56,18 +59,14 @@ let scheduleParameters =
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = {
-                Total = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-                Daily = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+                Total = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+                Daily = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
             }
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]
-            RateOnNegativeBalance = ValueNone
-        }
-        Calculation = {
+            RateOnNegativeBalance = Interest.Rate.Zero
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             InterestRounding = RoundDown
-            MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>
         }
     }
 

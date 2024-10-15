@@ -12,12 +12,12 @@ module FeesAndChargesTests =
     open Currency
     open DateDay
     open Formatting
-    open Percentages
+    open Util
     open PaymentSchedule
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, ValueNone, ValueNone))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     module ChargesTests =
@@ -31,7 +31,7 @@ module FeesAndChargesTests =
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
                     PaymentCount = 5
-                    MaxDuration = ValueNone
+                    MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
@@ -43,7 +43,7 @@ module FeesAndChargesTests =
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    Rounding = ValueSome RoundDown
+                    Rounding = RoundDown
                     ChargeHolidays = [||]
                     ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                     LatePaymentGracePeriod = 0<DurationDay>
@@ -54,7 +54,7 @@ module FeesAndChargesTests =
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueNone
+                    RateOnNegativeBalance = Interest.Rate.Zero
                     InterestRounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 }
@@ -120,7 +120,7 @@ module FeesAndChargesTests =
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
                     PaymentCount = 5
-                    MaxDuration = ValueNone
+                    MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
@@ -132,7 +132,7 @@ module FeesAndChargesTests =
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    Rounding = ValueSome RoundDown
+                    Rounding = RoundDown
                     ChargeHolidays = [||]
                     ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerProduct
                     LatePaymentGracePeriod = 0<DurationDay>
@@ -143,7 +143,7 @@ module FeesAndChargesTests =
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueNone
+                    RateOnNegativeBalance = Interest.Rate.Zero
                     InterestRounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 }
@@ -209,7 +209,7 @@ module FeesAndChargesTests =
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
                     PaymentCount = 5
-                    MaxDuration = ValueNone
+                    MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
@@ -221,7 +221,7 @@ module FeesAndChargesTests =
                 FeeConfig = Fee.Config.DefaultValue
                 ChargeConfig = {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    Rounding = ValueSome RoundDown
+                    Rounding = RoundDown
                     ChargeHolidays = [||]
                     ChargeGrouping = Charge.ChargeGrouping.AllChargesApplied
                     LatePaymentGracePeriod = 0<DurationDay>
@@ -232,7 +232,7 @@ module FeesAndChargesTests =
                     Cap = interestCapExample
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
-                    RateOnNegativeBalance = ValueNone
+                    RateOnNegativeBalance = Interest.Rate.Zero
                     InterestRounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 }

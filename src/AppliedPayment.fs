@@ -55,7 +55,7 @@ module AppliedPayment =
                 let scheduledPayment' =
                     scheduledPayments
                     |> Map.tryFind offsetDay
-                    |> Option.defaultValue ScheduledPayment.DefaultValue
+                    |> Option.defaultValue ScheduledPayment.Zero
  
                 let actualPayments' =
                     actualPayments
@@ -157,7 +157,7 @@ module AppliedPayment =
                 |> Map.map(fun d ap -> if d = day then { ap with GeneratedPayment = generatedPayment } else ap)
             else
                 let newAppliedPayment = {
-                    ScheduledPayment = ScheduledPayment.DefaultValue
+                    ScheduledPayment = ScheduledPayment.Zero
                     ActualPayments = [||]
                     GeneratedPayment = generatedPayment
                     ChargeTypes = [||]

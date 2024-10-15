@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open Amount
+open Util
 open Calculation
 open Currency
 open DateDay
@@ -36,7 +36,7 @@ module Charge =
         /// a list of penalty charges applicable to a product
         ChargeTypes: ChargeType array
         /// how to round charges
-        Rounding: Rounding voption
+        Rounding: Rounding
         /// any period during which charges are not payable
         ChargeHolidays: DateRange array
         /// whether to group charges by type per day
@@ -49,7 +49,7 @@ module Charge =
         /// a default config value, with no charges but recommended settings
         let DefaultValue = {
             ChargeTypes = [||]
-            Rounding = ValueNone
+            Rounding = NoRounding
             ChargeHolidays = [||]
             ChargeGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>

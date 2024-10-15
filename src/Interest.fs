@@ -5,11 +5,11 @@ open System
 /// methods for calculating interest and unambiguously expressing interest rates, as well as enforcing regulatory caps on interest chargeable
 module Interest =
 
-    open Amount
+    open Util
     open Calculation
     open Currency
     open DateDay
-    open Percentages
+    open Util
 
     /// the interest rate expressed as either an annual or a daily rate
     [<RequireQualifiedAccess; Struct>]
@@ -106,7 +106,7 @@ module Interest =
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalRates: PromotionalRate array
         /// the interest rate applicable for any period in which a refund is owing
-        RateOnNegativeBalance: Rate voption
+        RateOnNegativeBalance: Rate
         /// how to round interest
         InterestRounding: Rounding
         /// which APR calculation method to use
@@ -147,7 +147,7 @@ module Interest =
         if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
             0m<Cent>
         else
-            let round = Cent.roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 2
+            let round = Cent.roundTo (Round MidpointRounding.AwayFromZero) 2
             let sum1 =
                 [1 .. m]
                 |> List.sumBy(fun i -> A[i] * ((1m + r) |> powi a[i] |> decimal) |> round)
@@ -157,18 +157,18 @@ module Interest =
             sum1 - sum2
 
     /// calculate the amount of rebate due following an early settlement
-    let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction voption) unitPeriod paymentRounding =
+    let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction) unitPeriod paymentRounding =
         if payments |> Array.isEmpty then
             0L<Cent>
         else
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
             let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
-            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (ValueSome <| Round MidpointRounding.AwayFromZero) 6
+            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> roundTo (Round MidpointRounding.AwayFromZero) 6
             let advanceCount = 1
             let paymentCount = payments |> Array.length |> min settlementPeriod
             let advanceIntervalMap = Map [ (1, settlementPeriod) ]
             let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
-            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> ValueOption.map(fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)) |> ValueOption.defaultValue sf
+            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> fun spp -> sf * ((1m + aprDailyRate) |> powm (spp.toDecimal) |> decimal)
             let wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
             let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
             let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd

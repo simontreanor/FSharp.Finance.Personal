@@ -15,7 +15,7 @@ module InterestFirstTests =
     open Formatting
     open MapExtension
     open PaymentSchedule
-    open Percentages
+    open Util
 
     let startDate = Date(2024, 7, 23)
     let scheduleParameters =
@@ -23,7 +23,7 @@ module InterestFirstTests =
             AsOfDate = startDate.AddDays 180
             StartDate = startDate
             Principal = 1000_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2); PaymentCount = 5; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2); PaymentCount = 5; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) }
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
@@ -36,10 +36,10 @@ module InterestFirstTests =
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
-                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, ValueNone, ValueSome RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, ValueNone, ValueNone) }
+                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding) }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
-                RateOnNegativeBalance = ValueSome <| Interest.Rate.Annual (Percent 8m)
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 InterestRounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
@@ -152,7 +152,7 @@ module InterestFirstTests =
             { scheduleParameters with
                 StartDate = startDate
                 Principal = 700_00L<Cent>
-                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
+                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) }
             }
 
         // 700 over 108 days with 4 payments, paid on 1ot 2fewdayslate last2 in one go 2months late
@@ -181,7 +181,7 @@ module InterestFirstTests =
             { scheduleParameters with
                 StartDate = startDate
                 Principal = 700_00L<Cent>
-                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }}
+                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 1, 28); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) }
             }
 
         // 700 over 108 days with 4 payments, paid on 1ot 2fewdayslate last2 in one go 2months late
@@ -283,7 +283,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``13) Realistic example 501ac58e62a5`` () =
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }} }
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
 
         let actualPayments =
             Map [
@@ -306,7 +306,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``14) Realistic example 0004ffd74fbb`` () =
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }} }
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
 
         let actualPayments =
             Map [
@@ -328,7 +328,7 @@ module InterestFirstTests =
 
     [<Fact>]
     let ``14a) Realistic example 0004ffd74fbb with overpayment`` () =
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = ValueSome { FromDate = startDate; Length = 180<DurationDay> }} }
+        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
 
         let actualPayments =
             Map [
@@ -406,7 +406,7 @@ module InterestFirstTests =
                 AsOfDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
-                Parameters.InterestConfig.RateOnNegativeBalance = ValueNone
+                Parameters.InterestConfig.RateOnNegativeBalance = Interest.Rate.Zero
                 ScheduleConfig = [|
                     14<OffsetDay>, ScheduledPayment.Quick (ValueSome 33004L<Cent>) ValueNone
                     37<OffsetDay>, ScheduledPayment.Quick (ValueSome 33004L<Cent>) ValueNone
