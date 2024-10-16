@@ -257,6 +257,7 @@ module Apr =
             |> ValueSome
         | _ -> ValueNone
 
+    /// calculates the APR rate for the specified unit-period as per UK regulation
     let ukUnitPeriodRate unitPeriod apr =
         apr
         |> Percent.toDecimal

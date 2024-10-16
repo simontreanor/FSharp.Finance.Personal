@@ -246,7 +246,7 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArrayWithArrayMerge [|
+        let actualPayments = Map.ofArrayWithMerge [|
             8<OffsetDay>, [| ActualPayment.quickFailed 22500L<Cent> [||] |]
             8<OffsetDay>, [| ActualPayment.quickFailed 22500L<Cent> [||] |]
             8<OffsetDay>, [| ActualPayment.quickFailed 22500L<Cent> [||] |]
@@ -379,7 +379,7 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArrayWithArrayMerge [|
+        let actualPayments = Map.ofArrayWithMerge [|
             8<OffsetDay>, [| ActualPayment.quickFailed 22500L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
             8<OffsetDay>, [| ActualPayment.quickFailed 22500L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
             8<OffsetDay>, [| ActualPayment.quickFailed 22500L<Cent> [| Charge.InsufficientFunds (Amount.Simple 10_00L<Cent>) |] |]
@@ -501,7 +501,7 @@ module EdgeCaseTests =
             }
         }
 
-        let actualPayments = Map.ofArrayWithArrayMerge [|
+        let actualPayments = Map.ofArrayWithMerge [|
             23<OffsetDay>, [| ActualPayment.quickFailed 166_67L<Cent> [||] |]
             23<OffsetDay>, [| ActualPayment.quickFailed 66_67L<Cent> [||] |]
             23<OffsetDay>, [| ActualPayment.quickFailed 66_67L<Cent> [||] |]

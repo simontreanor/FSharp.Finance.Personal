@@ -5,7 +5,6 @@ open System
 /// methods for calculating interest and unambiguously expressing interest rates, as well as enforcing regulatory caps on interest chargeable
 module Interest =
 
-    open Util
     open Calculation
     open Currency
     open DateDay
@@ -49,7 +48,7 @@ module Interest =
         InterestRate: Rate
     }
 
-    /// the interest cap options
+    /// caps on the total interest accruable
     [<RequireQualifiedAccess; Struct>]
     type Cap = {
         /// a cap on the total amount of interest chargeable over the lifetime of a product
@@ -58,6 +57,7 @@ module Interest =
         DailyAmount: Amount voption
     }
     
+    /// caps on the total interest accruable
     module Cap =
         /// no cap
         let zero = {
@@ -76,6 +76,7 @@ module Interest =
         Rate: Rate
     }
     
+    /// a promotional interest rate valid during the specified date range
     module PromotionalRate =
         /// creates a map of offset days and promotional interest rates
         let toMap (startDate: Date) (promotionalRates: PromotionalRate array) =
@@ -130,7 +131,7 @@ module Interest =
                 | None -> { RateDay = offsetDay; InterestRate = standardRate }
         )
 
-    /// calculate the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
+    /// calculates the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
     let calculate (balance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
         let dailyCap = Cap.total balance dailyInterestCap
 
@@ -144,7 +145,7 @@ module Interest =
         )
         |> Cent.roundTo interestRounding 8
 
-    /// calculate the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1)
+    /// calculates the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1)
     let internal ``CCA 2004 regulation 4(1) formula`` (A: Map<int, decimal<Cent>>) (B: Map<int, decimal<Cent>>) (r: decimal) (m: int) (n: int) (a: Map<int, int>) (b: Map<int, int>) =
         if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
             0m<Cent>
@@ -158,24 +159,24 @@ module Interest =
                 |> List.sumBy(fun j -> B[j] * ((1m + r) |> powi b[j] |> decimal) |> round)
             sum1 - sum2
 
-    /// calculate the amount of rebate due following an early settlement
+    /// calculates the amount of rebate due following an early settlement
     let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction) unitPeriod paymentRounding =
         if payments |> Array.isEmpty then
             0L<Cent>
         else
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
             let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
-            let aprDailyRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
+            let aprUnitPeriodRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
             let advanceCount = 1
             let paymentCount = payments |> Array.length |> min settlementPeriod
             let advanceIntervalMap = Map [ (1, settlementPeriod) ]
             let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> (fst state + 1), (int settlementPeriod - int (fst p))) (0, settlementPeriod) |> Array.tail |> Map.ofArray
-            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> fun spp -> sf * ((1m + aprDailyRate) |> powm (Fraction.toDecimal spp) |> decimal)
-            let wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprDailyRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
+            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> fun spp -> sf * ((1m + aprUnitPeriodRate) |> powm (Fraction.toDecimal spp) |> decimal)
+            let wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprUnitPeriodRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
             let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
             let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd
             remainingPaymentTotal - settlementFigure
 
-    /// if there is less than one cent remaining, discard any fraction
+    /// if there is less than one cent remaining, discards any fraction
     let ignoreFractionalCent i =
         if abs i < 1m<Cent> then 0m<Cent> else i

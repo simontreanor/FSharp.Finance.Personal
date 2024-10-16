@@ -404,7 +404,7 @@ module UnitPeriodConfigTests =
                     201<OffsetDay>, [| ActualPayment.quickConfirmed 12489L<Cent> |]
                     234<OffsetDay>, [| ActualPayment.quickConfirmed 12489L<Cent> |]
                 |]
-                |> Map.ofArrayWithArrayMerge
+                |> Map.ofArrayWithMerge
 
             let actual =
                 let originalFinalPaymentDay = originalScheduledPayments |> Map.maxKeyValue |> fst

@@ -65,6 +65,7 @@ module Fee =
         SettlementRefund: SettlementRefund
     }
 
+    /// options specifying the types of fees, their amounts, and any restrictions on these
     module Config =
         /// a default config value, with no fees but recommended settings
         let initialRecommended = {

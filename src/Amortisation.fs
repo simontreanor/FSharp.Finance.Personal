@@ -77,6 +77,7 @@ module Amortisation =
         FeesRefundIfSettled: int64<Cent>
     }
     
+    /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
     module ScheduleItem =
         let initial = {
             Window = 0

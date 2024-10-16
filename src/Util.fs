@@ -35,6 +35,7 @@ module Util =
         /// constrain values to within a range
         | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
 
+    /// the type of restriction placed on a possible value
     module Restriction =
         /// calculate a permitted value based on a restriction
         let calculate restriction value =
@@ -52,6 +53,7 @@ module Util =
         /// a fixed fee
         | Simple of Simple:int64<Cent>
 
+    /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     module Amount =
         /// calculates the total amount based on any restrictions
         let total (baseValue: int64<Cent>) amount =

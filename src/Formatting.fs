@@ -12,7 +12,7 @@ module Formatting =
     open Currency
 
     /// filter out hidden fields 
-    let filterColumns hideProperties =
+    let internal filterColumns hideProperties =
         match hideProperties with
         | [||] -> id
         | columns -> Array.filter(fun (pi: PropertyInfo) -> columns |> Array.exists(( = ) pi.Name) |> not)
@@ -68,7 +68,7 @@ module Formatting =
     let internal formatCell index className style value = $"""<td class="ci{index} {className}" style="{style}">{value}</td>"""
 
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
-    let formatHtmlTableCell index value =
+    let internal formatHtmlTableCell index value =
         value
         |> sprintf "%A"
         |> fun s -> regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[1].Value |> (_.ToLower())}")
@@ -91,7 +91,7 @@ module Formatting =
             else s |> formatCell index "" ""
 
     /// writes table rows from an array
-    let formatHtmlTableRows hideProperties propertyInfos items =
+    let internal formatHtmlTableRows hideProperties propertyInfos items =
         items
         |> Array.map(fun li ->
             propertyInfos
@@ -112,8 +112,9 @@ module Formatting =
     /// creates HTML files from an array
     let outputArrayToHtml fileName append data =
         data |> generateHtmlFromArray [||] |> outputToFile' fileName append
-            /// writes table rows from an array
-    let formatHtmlTableRowsFromMap hideProperties propertyInfos data =
+    
+    /// writes table rows from a map
+    let internal formatHtmlTableRowsFromMap hideProperties propertyInfos data =
         data
         |> Map.map(fun itemIndex li ->
             propertyInfos

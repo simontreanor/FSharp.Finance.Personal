@@ -45,6 +45,7 @@ module Charge =
         LatePaymentGracePeriod: int<DurationDay>
     }
 
+    /// options specifying the types of charges, their amounts, and any restrictions on these
     module Config =
         /// a default config value, with no charges but recommended settings
         let initialRecommended = {
@@ -73,6 +74,7 @@ module Charge =
         |> ValueOption.defaultValue chargeConfig.ChargeTypes
         |> Array.sumBy (total chargeConfig baseValue)
 
+    /// generates a date range during which charges are not incurred
     let holidayDates chargeConfig startDate =
         chargeConfig.ChargeHolidays
         |> Array.collect(fun (ih: DateRange) ->

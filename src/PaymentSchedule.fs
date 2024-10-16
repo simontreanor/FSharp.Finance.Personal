@@ -120,6 +120,7 @@ module PaymentSchedule =
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
         | Failed of Failed: int64<Cent> * ChargeTypes: Charge.ChargeType array
     
+    /// the status of the payment, allowing for delays due to payment-provider processing times
     module ActualPaymentStatus =
         /// the total amount of the payment
         let total = function
@@ -138,6 +139,7 @@ module PaymentSchedule =
             Metadata: Map<string, obj>
         }
 
+    /// an actual payment made by the customer, optionally including metadata such as bank references etc.
     module ActualPayment =
         /// the total amount of the payment
         let total =
@@ -266,6 +268,7 @@ module PaymentSchedule =
         TotalPrincipal: int64<Cent>
     }
         
+    /// a scheduled payment item, with running calculations of interest and principal balance
     module SimpleItem =
         /// a default value with no data
         let initial =
@@ -604,6 +607,7 @@ module PaymentSchedule =
         | _ ->
             failwith "Unable to calculate simple schedule"
 
+    /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
     let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
         let rescheduleDays = scheduledPayments |> Array.map snd |> Array.choose(fun sp -> if sp.Rescheduled.IsSome then Some sp.Rescheduled.Value.RescheduleDay else None) |> Array.distinct |> Array.sort
         let mutable previousRescheduleDay = ValueNone
@@ -661,9 +665,8 @@ module PaymentSchedule =
         ChargesPortion: int64<Cent>
     }
 
-    /// functions relating to apportionments
+    /// a breakdown of how an actual payment is apportioned to principal, fees, interest and charges
     module Apportionment =
-
         /// add principal, fees, interest and charges to an existing apportionment
         let Add principal fees interest charges apportionment =
             { apportionment with 
@@ -703,8 +706,8 @@ module PaymentSchedule =
             | GeneratedValue gv ->
                 formatCent gv
 
+    /// a generated payment, where applicable
     module GeneratedPayment =
-
         /// the total value of the generated payment
         let Total = function
             | GeneratedValue gv -> gv

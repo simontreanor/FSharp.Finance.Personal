@@ -55,13 +55,14 @@ module DateDay =
         /// create a date from a year, month, and tracking day
         let toDate y m td = Date(y, m, min (Date.DaysInMonth(y, m)) td)
 
-    #if DATEONLY
-    module DateOnly =
-        let FromDate (d:Date) =
-            DateOnly(d.Year, d.Month, d.Day)
-
+#if DATEONLY
+    /// wrapper for DateOnly support
     type DateOnly with
         member this.ToDate () =
             Date(this.Year, this.Month, this.Day)
 
-    #endif
+    /// wrapper for DateOnly support
+    module DateOnly =
+        let FromDate (d:Date) =
+            DateOnly(d.Year, d.Month, d.Day)
+#endif

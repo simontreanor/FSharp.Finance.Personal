@@ -594,7 +594,7 @@ module InterestFirstTests =
                 314<OffsetDay>, [| ActualPayment.quickConfirmed 25000L<Cent> |]
                 315<OffsetDay>, [| ActualPayment.quickConfirmed 1L<Cent> |]
             |]
-            |> Map.ofArrayWithArrayMerge
+            |> Map.ofArrayWithMerge
 
         let schedule =
             actualPayments

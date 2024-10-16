@@ -54,6 +54,7 @@ module Calculation =
         /// round up or down to the specified precision based on the given midpoint rounding rules
         | RoundWith of MidpointRounding
 
+    /// the type of rounding, specifying midpoint-rounding where necessary
     module Rounding =
         /// derive a rounded value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
@@ -90,6 +91,7 @@ module Calculation =
         | Zero
         | Simple of Numerator: int * Denominator: int
 
+    /// a fraction expressed as a numerator and denominator
     module Fraction =
         let toDecimal = function
             | Fraction.Zero ->

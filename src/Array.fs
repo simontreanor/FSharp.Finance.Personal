@@ -26,6 +26,7 @@ module ArrayExtension =
         Max: int
     }
     
+    /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     module ToleranceSteps =
         /// no tolerance steps
         let zero =
