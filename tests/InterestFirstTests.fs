@@ -11,7 +11,7 @@ module InterestFirstTests =
     open Calculation
     open DateDay
     open Formatting
-    open PaymentSchedule
+    open Scheduling
 
     let startDate = Date(2024, 7, 23)
     let scheduleParameters =
@@ -46,7 +46,7 @@ module InterestFirstTests =
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
-            let schedule = sp |> PaymentSchedule.calculate BelowZero
+            let schedule = sp |> Scheduling.calculate BelowZero
             schedule.Items |> outputArrayToHtml "out/InterestFirstTest001.md" false
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -75,7 +75,7 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actual =
-            let schedule = sp |> PaymentSchedule.calculate BelowZero
+            let schedule = sp |> Scheduling.calculate BelowZero
             schedule.Items |> outputArrayToHtml "out/InterestFirstTest003.md" false
             schedule.LevelPayment, schedule.FinalPayment
 

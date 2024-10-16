@@ -13,7 +13,7 @@ module ActualPaymentTestsExtra =
     open DateDay
     open Formatting
     open FormattingHelper
-    open PaymentSchedule
+    open Scheduling
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {
@@ -72,7 +72,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = PaymentSchedule.calculate BelowZero sp
+            let schedule = Scheduling.calculate BelowZero sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
@@ -337,7 +337,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = PaymentSchedule.calculate BelowZero sp
+            let schedule = Scheduling.calculate BelowZero sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
@@ -414,7 +414,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = PaymentSchedule.calculate BelowZero sp
+            let schedule = Scheduling.calculate BelowZero sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments

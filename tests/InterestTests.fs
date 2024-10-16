@@ -12,7 +12,7 @@ module InterestTests =
     open DateDay
     open Formatting
     open Interest
-    open PaymentSchedule
+    open Scheduling
     open System
 
     let interestCapExample : Cap = {

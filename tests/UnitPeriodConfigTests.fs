@@ -11,7 +11,7 @@ module UnitPeriodConfigTests =
     open Calculation
     open DateDay
     open Formatting
-    open PaymentSchedule
+    open Scheduling
     open Quotes
 
     open UnitPeriod

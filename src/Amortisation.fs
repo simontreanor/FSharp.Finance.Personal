@@ -6,7 +6,7 @@ module Amortisation =
     open AppliedPayment
     open Calculation
     open DateDay
-    open PaymentSchedule
+    open Scheduling
 
     /// the status of the balance on a given offset day
     [<Struct>]
@@ -655,7 +655,7 @@ module Amortisation =
 
     /// generates an amortisation schedule and final statistics
     let generate sp intendedPurpose trimEnd actualPayments =
-        let schedule = PaymentSchedule.calculate BelowZero sp
+        let schedule = Scheduling.calculate BelowZero sp
         let scheduledPayments =
             schedule.Items
             |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)

@@ -11,7 +11,7 @@ module SettlementTests =
     open Calculation
     open DateDay
     open Formatting
-    open PaymentSchedule
+    open Scheduling
     open Quotes
 
     let interestCapExample : Interest.Cap = {

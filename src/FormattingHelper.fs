@@ -44,7 +44,7 @@ module FormattingHelper =
 
     /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {
-        GoParameters: PaymentSchedule.Parameters
+        GoParameters: Scheduling.Parameters
         GoPurpose: IntendedPurpose
         GoExtra: bool
     }

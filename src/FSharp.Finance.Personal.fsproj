@@ -19,7 +19,7 @@
     <Compile Include="UnitPeriod.fs" />
     <Compile Include="Apr.fs" />
     <Compile Include="Interest.fs" />
-    <Compile Include="PaymentSchedule.fs" />
+    <Compile Include="Scheduling.fs" />
     <Compile Include="AppliedPayment.fs" />
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />

@@ -11,7 +11,7 @@ module ActualPaymentTests =
     open Calculation
     open DateDay
     open Formatting
-    open PaymentSchedule
+    open Scheduling
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))

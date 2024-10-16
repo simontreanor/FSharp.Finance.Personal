@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open PaymentSchedule
+open Scheduling
 
 /// functions for handling received payments and calculating interest and/or charges where necessary
 module AppliedPayment =

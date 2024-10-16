@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open PaymentSchedule
+open Scheduling
 open Quotes
 
 /// functions for rescheduling payments after an original schedule failed to amortise
@@ -36,7 +36,7 @@ module Rescheduling =
         let newPaymentSchedule =
             match rp.PaymentSchedule with
             | AutoGenerateSchedule _ ->
-                PaymentSchedule.calculate BelowZero { sp with ScheduleConfig = rp.PaymentSchedule }
+                Scheduling.calculate BelowZero { sp with ScheduleConfig = rp.PaymentSchedule }
                 |> _.Items
                 |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
                 |> Array.map(fun si -> si.Day, si.ScheduledPayment)
