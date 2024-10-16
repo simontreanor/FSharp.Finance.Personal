@@ -144,14 +144,12 @@ module Calculation =
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
     module Percent =
-        /// create a percent value from a decimal
+        /// create a percent value from a decimal, e.g. 0.5 -> 50%
         let fromDecimal (m: decimal) = m * 100m |> Percent
         /// round a percent value to two decimal places
         let round (places: int) (Percent p) = Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places p |> Percent
-        /// convert a percent value to a decimal
+        /// convert a percent value to a decimal, e.g. 50% -> 0.5
         let toDecimal (Percent p) = p / 100m
-        /// multiply two percentages together
-        let multiply (Percent p1) (Percent p2) = p1 * p2 |> fromDecimal
 
     /// the type of restriction placed on a possible value
     [<RequireQualifiedAccess; Struct>]
@@ -188,8 +186,8 @@ module Calculation =
         /// calculates the total amount based on any restrictions
         let total (baseValue: int64<Cent>) amount =
             match amount with
-            | Amount.Percentage (Percent percentage, restriction, rounding) ->
-                decimal baseValue * decimal percentage / 100m
+            | Amount.Percentage (percent, restriction, rounding) ->
+                decimal baseValue * Percent.toDecimal percent
                 |> Restriction.calculate restriction
                 |> Rounding.round rounding
             | Amount.Simple simple ->
@@ -243,7 +241,7 @@ module Calculation =
         /// iteratively solves for a given input using a generator function until the output is 0L<Cent> or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
         [<TailCall>]
-        let solve (generator: decimal -> decimal) iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps) =
+        let solve (generator: decimal -> decimal) target iterationLimit approximation toleranceOption (toleranceSteps: ToleranceSteps) =
             let rec loop i lowerBound upperBound tolerance =
                 let midRange =
                     let x = (upperBound - lowerBound) / 2m
@@ -259,11 +257,12 @@ module Calculation =
                         loop 0 0m (approximation * 100m) newTolerance
                 else
                     let difference = generator newBound
+                    let toleranceM = decimal tolerance
                     let lowerTolerance, upperTolerance =
                         match toleranceOption with
-                        | BelowZero -> decimal -tolerance, 0m
-                        | AroundZero -> decimal -tolerance, decimal tolerance
-                        | AboveZero -> 0m, decimal tolerance
+                        | BelowZero -> target - toleranceM, target
+                        | AroundZero -> target - toleranceM, target + toleranceM
+                        | AboveZero -> target, toleranceM
                     if difference >= lowerTolerance && difference <= upperTolerance then
                         Solution.Found(newBound, i, tolerance)
                     elif difference > upperTolerance then
