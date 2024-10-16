@@ -8,14 +8,10 @@ open FSharp.Finance.Personal
 module InterestFirstTests =
 
     open Amortisation
-    open ArrayExtension
     open Calculation
-    open Currency
     open DateDay
     open Formatting
-    open MapExtension
     open PaymentSchedule
-    open Util
 
     let startDate = Date(2024, 7, 23)
     let scheduleParameters =

@@ -9,11 +9,9 @@ module ActualPaymentTests =
 
     open Amortisation
     open Calculation
-    open Currency
     open DateDay
     open Formatting
     open PaymentSchedule
-    open Util
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))

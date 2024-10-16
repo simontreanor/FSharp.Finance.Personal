@@ -9,10 +9,8 @@ module FeesAndChargesTests =
 
     open Amortisation
     open Calculation
-    open Currency
     open DateDay
     open Formatting
-    open Util
     open PaymentSchedule
 
     let interestCapExample : Interest.Cap = {

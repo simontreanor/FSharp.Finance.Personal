@@ -9,7 +9,7 @@ module Formatting =
     open Microsoft.FSharp.Reflection
     open System.Text.RegularExpressions
 
-    open Currency
+    open Calculation
 
     /// filter out hidden fields 
     let internal filterColumns hideProperties =

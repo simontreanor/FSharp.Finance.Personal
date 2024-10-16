@@ -9,11 +9,9 @@ module SettlementTests =
 
     open Amortisation
     open Calculation
-    open Currency
     open DateDay
     open Formatting
     open PaymentSchedule
-    open Util
     open Quotes
 
     let interestCapExample : Interest.Cap = {

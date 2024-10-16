@@ -4,7 +4,6 @@ namespace FSharp.Finance.Personal
 module Quotes =
 
     open Calculation
-    open Currency
     open DateDay
     open PaymentSchedule
 

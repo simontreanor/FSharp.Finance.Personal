@@ -9,12 +9,10 @@ module InterestTests =
 
     open Amortisation
     open Calculation
-    open Currency
     open DateDay
     open Formatting
     open Interest
     open PaymentSchedule
-    open Util
     open System
 
     let interestCapExample : Cap = {

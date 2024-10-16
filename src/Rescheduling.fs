@@ -6,11 +6,8 @@ open Quotes
 /// functions for rescheduling payments after an original schedule failed to amortise
 module Rescheduling =
 
-    open ArrayExtension
     open Calculation
-    open Currency
     open DateDay
-    open Util
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
     [<RequireQualifiedAccess>]

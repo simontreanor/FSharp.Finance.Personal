@@ -9,12 +9,9 @@ open FSharp.Finance.Personal
 
 module AprActuarialTestsExtra =
 
-    open ArrayExtension
     open Apr
-    open Currency
+    open Calculation
     open DateDay
-    open Util
-    open Util
 
     type AprUsActuarialTestItemDto = {
         StartDate: DateOnly
@@ -56,7 +53,7 @@ module AprActuarialTestsExtra =
                 }
             | _ -> None
         )
-        |> toMemberData
+        |> Util.toMemberData
 
     [<Theory>]
     [<MemberData(nameof(aprUsActuarialTestData))>]

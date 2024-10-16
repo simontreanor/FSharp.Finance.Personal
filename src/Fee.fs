@@ -1,8 +1,6 @@
 namespace FSharp.Finance.Personal
 
-open Util
 open Calculation
-open Currency
 open DateDay
 
 /// a product fee

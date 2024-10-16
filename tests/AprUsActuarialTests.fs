@@ -14,10 +14,8 @@ open FSharp.Finance.Personal
 module AprUsActuarialTests =
 
     open Apr
-    open Currency
+    open Calculation
     open DateDay
-    open Util
-    open Util
     open UnitPeriod
 
     /// (c)(1) Single advance transaction, with or without an odd first period, and otherwise regular
@@ -27,7 +25,7 @@ module AprUsActuarialTests =
         let advances = [| { TransferType = Advance; TransferDate = consummationDate; Value = advanceValue } |]
         let payments = intervalSchedule |> UnitPeriod.generatePaymentSchedule paymentCount Duration.Unlimited Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = paymentValue })
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments
-        |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
+        |> Util.getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(1)(i): Monthly payments (regular first period)`` () =
@@ -67,7 +65,7 @@ module AprUsActuarialTests =
         let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount Duration.Unlimited Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = regularPaymentValue })
         let payments' = Array.concat [| [| firstPayment |]; payments |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
-        |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
+        |> Util.getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(2)(i): Monthly payments (regular first period and irregular first payment)`` () =
@@ -91,7 +89,7 @@ module AprUsActuarialTests =
         let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount Duration.Unlimited Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = regularPaymentValue })
         let payments' = Array.concat [| payments; [| lastPayment |] |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
-        |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
+        |> Util.getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(3)(i): Monthly payments (regular first period and irregular final payment)`` () =
@@ -115,7 +113,7 @@ module AprUsActuarialTests =
         let payments = intervalSchedule |> generatePaymentSchedule regularPaymentCount Duration.Unlimited Direction.Forward |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = regularPaymentValue })
         let payments' = Array.concat [| [| firstPayment |]; payments; [| lastPayment |] |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments'
-        |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
+        |> Util.getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(4)(i): Monthly payments (regular first period, irregular first payment, and irregular final payment)`` () =
@@ -140,7 +138,7 @@ module AprUsActuarialTests =
         let advances = [| advance |]
         let payments = [| payment |]
         UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments
-        |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
+        |> Util.getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
 
     [<Fact>]
     let ``Example (c)(5)(i): Single advance, single payment (term of less than 1 year, measured in days)`` () =

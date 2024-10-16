@@ -9,12 +9,9 @@ module EdgeCaseTests =
 
     open Amortisation
     open Calculation
-    open Currency
     open DateDay
     open Formatting
-    open MapExtension
     open PaymentSchedule
-    open Util
     open Quotes
     open Rescheduling
 

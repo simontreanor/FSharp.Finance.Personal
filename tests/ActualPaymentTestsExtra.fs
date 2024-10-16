@@ -8,15 +8,12 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTestsExtra =
 
-    open ArrayExtension
     open Amortisation
     open Calculation
-    open Currency
     open DateDay
     open Formatting
     open FormattingHelper
     open PaymentSchedule
-    open Util
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {

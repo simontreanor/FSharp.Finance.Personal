@@ -6,9 +6,7 @@ open System
 module Interest =
 
     open Calculation
-    open Currency
     open DateDay
-    open Util
 
     /// the interest rate expressed as either an annual or a daily rate
     [<RequireQualifiedAccess; Struct>]
