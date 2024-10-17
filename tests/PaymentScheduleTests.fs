@@ -315,7 +315,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 4<DurationDay> 5 |> calculate AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 4<DurationDay> 5 |> calculate AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly002.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -795,7 +795,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 4<DurationDay> 6 |> calculate AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 4<DurationDay> 6 |> calculate BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly005.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>

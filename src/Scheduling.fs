@@ -534,7 +534,7 @@ module Scheduling =
         let solution =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
-                Array.solve (generatePaymentValue initialItem sp.InterestConfig.Method) 0m 100 (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
+                Array.solveBisection (generatePaymentValue initialItem sp.InterestConfig.Method) 100u (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
             | FixedSchedules _
             | CustomSchedule _ ->
                 schedule <-
