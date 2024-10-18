@@ -7,16 +7,6 @@ module Calculation =
 
     open DateDay
 
-    /// the intended purpose of the calculation
-    [<RequireQualifiedAccess; Struct>]
-    type IntendedPurpose =
-        /// intended to quote a settlement figure on the specified day
-        | SettlementOn of SettlementDay: int<OffsetDay>
-        /// intended to quote a settlement figure on the as-of day
-        | SettlementOnAsOfDay
-        /// intended just for information, e.g. to view the current status of a loan
-        | Statement
-
     /// holds the result of a division, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {
@@ -102,7 +92,7 @@ module Calculation =
     }
 
     /// determines whether a pending payment has timed out
-    let timedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
+    let isTimedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
         (int asOfDay - int paymentDay) * 1<DurationDay> > paymentTimeout
 
     /// a fraction
@@ -314,19 +304,28 @@ module Calculation =
 
         /// use the Newton-Raphson method to find the solution (particularly suitable for calculating the APR)
         let solveNewtonRaphson (f: decimal -> decimal) (iterationLimit: uint) (initialGuess: decimal) (tolerance: decimal) =
-            let derivative f candidate step =
-                (f (candidate + step) - f (candidate - step)) / (2m * step)
-            let rec loop x n =
-                if n <= int iterationLimit then
+            // calculate the approximate derivative of the function `f`
+            let derivative f x step =
+                // evaluate the function at two nearby points and compute the slope of the line connecting them
+                (f (x + step) - f (x - step)) / (2m * step)
+            // iterate as necessary
+            let rec loop x iteration =
+                // until the iteration limit is reached
+                if iteration <= int iterationLimit then
+                    // get the function value of `x`
                     let fx = f x
-                    let fpx = derivative f x 1e-5m
+                    // if the function value is within the tolerance, return the solution
                     if abs fx < tolerance then
-                        Solution.Found(x, n, tolerance)
+                        Solution.Found(x, iteration, tolerance)
+                    // otherwise, iterate again using an improved guess
                     else
-                        let xNext = if fpx = 0m then 0m else x - fx / fpx
-                        loop xNext (n + 1)
+                        // get the derivative of the function value of `x`
+                        let f'x = derivative f x 1e-5m
+                        // loop by using the derivative to generate a better guess value
+                        loop (if f'x = 0m then 0m else x - fx / f'x) (iteration + 1)
+                // if the iteration limit is reached without a solution, return the latest value with a warning
                 else
-                    Solution.IterationLimitReached(x, n, tolerance)
+                    Solution.IterationLimitReached(x, iteration, tolerance)
             loop initialGuess 0
 
     /// functions for working with maps

@@ -22,15 +22,15 @@ module Rescheduling =
         PromotionalInterestRates: Interest.PromotionalRate array
         /// any period during which charges are not payable
         ChargeHolidays: DateRange array
-        /// whether and when to generate a settlement figure
-        IntendedPurpose: IntendedPurpose
+        /// whether and when to generate a settlement figure, otherwise just a statement will be generated
+        SettlementDay: SettlementDay voption
     }
 
     /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
     let reschedule sp (rp: RescheduleParameters) actualPayments =
 
         // get the settlement quote
-        let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+        let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
 
         // create a new payment schedule either by auto-generating it or using manual payments
         let newPaymentSchedule =
@@ -77,7 +77,7 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rescheduledSchedule = Amortisation.generate spNew rp.IntendedPurpose true actualPayments
+        let rescheduledSchedule = Amortisation.generate spNew rp.SettlementDay true actualPayments
 
         // return the results
         quote.RevisedSchedule, rescheduledSchedule
@@ -101,7 +101,7 @@ module Rescheduling =
     let rollOver sp (rp: RolloverParameters) actualPayments =
 
         // get the settlement quote
-        let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+        let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
 
         // process the quote and extract the portions if applicable
         let principalPortion, feesPortion, feesRefundIfSettled =
@@ -145,7 +145,7 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rolledOverSchedule = Amortisation.generate spNew IntendedPurpose.Statement true Map.empty
+        let rolledOverSchedule = Amortisation.generate spNew ValueNone true Map.empty
 
         // return the results
         quote.RevisedSchedule, rolledOverSchedule

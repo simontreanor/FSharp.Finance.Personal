@@ -9,33 +9,42 @@ module Quotes =
 
     /// a quote containing information on the payment required to settle
     type PaymentQuote = {
+        // the value of the payment
         PaymentValue: int64<Cent>
+        // how the payment is apportioned to charges, interest, fees, and principal
         Apportionment: Apportionment
+        // the value of any fees refund that would be due if settled
         FeesRefundIfSettled: int64<Cent>
     }
 
     /// the result of a quote with a breakdown of constituent amounts where relevant
     [<Struct>]
     type QuoteResult =
+        // a payment quote was generated
         | PaymentQuote of PaymentQuote
+        // a payment quote could not be generated because one or more payments is pending
         | AwaitPaymentConfirmation
+        // a payment quote was not possible to generate (typically the case for statements)
         | UnableToGenerateQuote
 
     /// a settlement quote
     [<Struct>]
     type Quote = {
-        IntendedPurpose: IntendedPurpose
+        // the quote result
         QuoteResult: QuoteResult
+        // a statement showing the schedule at the time the quote was generated
         CurrentSchedule: Amortisation.Schedule
+        // the revised schedule showing the settlement, if applicable
         RevisedSchedule: Amortisation.Schedule
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
-    let getQuote intendedPurpose schedulingParameters (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
+    let getQuote settlementDay schedulingParameters (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
         // generate a statement showing the current state of the amortisation schedule - this will only be used in the return value in case the caller requires a comparison
-        let currentAmortisationSchedule = Amortisation.generate schedulingParameters IntendedPurpose.Statement false actualPayments
+        let currentAmortisationSchedule = Amortisation.generate schedulingParameters ValueNone false actualPayments
         // generate a revised statement showing a generated settlement figure on the relevant date
-        let revisedAmortisationSchedule = Amortisation.generate schedulingParameters intendedPurpose false actualPayments
+        let revisedAmortisationSchedule =
+            Amortisation.generate schedulingParameters (ValueSome settlementDay) false actualPayments
         // try to get the schedule item containing the generated value
         let si =
             revisedAmortisationSchedule.ScheduleItems
@@ -96,12 +105,11 @@ module Quotes =
                             Apportionment = { Apportionment.Zero with PrincipalPortion = GeneratedPayment.Total si.GeneratedPayment }
                             FeesRefundIfSettled = si.FeesRefundIfSettled
                         }
-                // where there is no generated payment (e.g. if intended purpose was statement), inform the caller that a quote could not be generated
+                // where there is no generated payment, inform the caller that a quote could not be generated
                 | _ ->
                     UnableToGenerateQuote
         // return the quote result
         {
-            IntendedPurpose = intendedPurpose
             QuoteResult = quoteResult
             CurrentSchedule = currentAmortisationSchedule
             RevisedSchedule = revisedAmortisationSchedule

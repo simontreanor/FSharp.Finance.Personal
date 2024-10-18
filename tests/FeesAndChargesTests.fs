@@ -72,7 +72,7 @@ module FeesAndChargesTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement false
+                |> Amortisation.generate sp ValueNone false
 
             schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest001.md" false
 
@@ -103,7 +103,7 @@ module FeesAndChargesTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 109_61L<Cent>
+                SettlementFigure = ValueSome 109_61L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -161,7 +161,7 @@ module FeesAndChargesTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement false
+                |> Amortisation.generate sp ValueNone false
 
             schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest002.md" false
 
@@ -192,7 +192,7 @@ module FeesAndChargesTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 79_86L<Cent>
+                SettlementFigure = ValueSome 79_86L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -250,7 +250,7 @@ module FeesAndChargesTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement false
+                |> Amortisation.generate sp ValueNone false
 
             schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest003.md" false
 
@@ -281,7 +281,7 @@ module FeesAndChargesTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 124_49L<Cent>
+                SettlementFigure = ValueSome 124_49L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 

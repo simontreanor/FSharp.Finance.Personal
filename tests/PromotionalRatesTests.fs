@@ -61,7 +61,7 @@ module PromotionalRatesTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/PromotionalRatesTest001.md" false
 
@@ -80,7 +80,7 @@ module PromotionalRatesTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/PromotionalRatesTest002.md" false
 
@@ -99,7 +99,7 @@ module PromotionalRatesTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/PromotionalRatesTest003.md" false
 

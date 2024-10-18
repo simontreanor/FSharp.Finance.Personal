@@ -57,7 +57,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -103,7 +103,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest001.md" false
 
@@ -153,7 +153,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest002.md" false
 
@@ -203,7 +203,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest003.md" false
 
@@ -253,7 +253,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest004.md" false
 
@@ -284,7 +284,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -332,7 +332,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest005.md" false
 
@@ -363,7 +363,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = -280_64L<Cent>
+            SettlementFigure = ValueSome -280_64L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -417,7 +417,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest006.md" false
 
@@ -447,7 +447,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -498,7 +498,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest007.md" false
 
@@ -529,7 +529,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -583,7 +583,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest008.md" false
 
@@ -614,7 +614,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 243_66L<Cent>
+            SettlementFigure = ValueSome 243_66L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -668,7 +668,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest009.md" false
 
@@ -699,7 +699,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -752,7 +752,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest010.md" false
 
@@ -783,7 +783,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 491_53L<Cent>
+            SettlementFigure = ValueSome 491_53L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -836,7 +836,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest011.md" false
 
@@ -867,7 +867,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 646_62L<Cent>
+            SettlementFigure = ValueSome 646_62L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -922,7 +922,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest012.md" false
 
@@ -953,7 +953,7 @@ module ActualPaymentTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = -67_93L<Cent>
+            SettlementFigure = ValueSome -67_93L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
         
@@ -998,7 +998,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest013.md" false
 
@@ -1075,7 +1075,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest014.md" false
 
@@ -1127,7 +1127,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest015.md" false
 
@@ -1180,7 +1180,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest016.md" false
 
@@ -1234,7 +1234,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest017.md" false
 
@@ -1288,7 +1288,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest018.md" false
 
@@ -1342,7 +1342,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest019.md" false
 
@@ -1388,7 +1388,7 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest020.md" false
 
@@ -1431,10 +1431,10 @@ module ActualPaymentTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest021.md" false
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = 135_59L<Cent>
+        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
         let expected = true
         actual |> should equal expected

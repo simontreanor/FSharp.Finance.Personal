@@ -63,7 +63,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest001.md" false
             quote.QuoteResult
 
@@ -124,7 +124,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest002.md" false
             quote.QuoteResult
 
@@ -185,7 +185,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest003.md" false
             quote.QuoteResult
 
@@ -318,7 +318,7 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004.md" false
             quote.QuoteResult
 
@@ -451,7 +451,7 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004a.md" false
             quote.QuoteResult
 
@@ -578,7 +578,7 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest005.md" false
             quote.QuoteResult
 
@@ -632,7 +632,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest006.md" false
             quote.QuoteResult
 
@@ -696,7 +696,7 @@ module EdgeCaseTests =
             RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             PromotionalInterestRates = [||]
             ChargeHolidays = [||]
-            IntendedPurpose = IntendedPurpose.SettlementOn 88<OffsetDay>
+            SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
         let result = reschedule sp rp actualPayments
@@ -730,7 +730,7 @@ module EdgeCaseTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 83_74L<Cent>
+            SettlementFigure = ValueSome 83_74L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -781,7 +781,7 @@ module EdgeCaseTests =
             RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             PromotionalInterestRates = [||]
             ChargeHolidays = [||]
-            IntendedPurpose = IntendedPurpose.SettlementOn 88<OffsetDay>
+            SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
         let result = reschedule sp rp actualPayments
@@ -815,7 +815,7 @@ module EdgeCaseTests =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 10_19L<Cent>
+            SettlementFigure = ValueSome 10_19L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -856,7 +856,7 @@ module EdgeCaseTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest009.md" false
 
@@ -887,7 +887,7 @@ module EdgeCaseTests =
             FeesBalance = 0L<Cent>
             InterestBalance = -21.55484933m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = -13_16L<Cent>
+            SettlementFigure = ValueSome -13_16L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 

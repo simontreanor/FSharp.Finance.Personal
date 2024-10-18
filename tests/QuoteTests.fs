@@ -70,7 +70,7 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest001.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 57<OffsetDay>
             quote.QuoteResult, item
@@ -114,7 +114,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1969_72L<Cent>
+                SettlementFigure = ValueSome 1969_72L<Cent>
                 FeesRefundIfSettled = 1437_53L<Cent>
             }
 
@@ -171,7 +171,7 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest002.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
@@ -213,7 +213,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 2026_50L<Cent>
+                SettlementFigure = ValueSome 2026_50L<Cent>
                 FeesRefundIfSettled = 1393_53L<Cent>
             }
 
@@ -270,7 +270,7 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest003.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
@@ -312,7 +312,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 2001_50L<Cent>
+                SettlementFigure = ValueSome 2001_50L<Cent>
                 FeesRefundIfSettled = 1393_53L<Cent>
             }
 
@@ -361,7 +361,7 @@ module QuoteTests =
         let actualPayments = Map.empty
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest004.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 3<OffsetDay>
             quote.QuoteResult, item
@@ -403,7 +403,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1200_00L<Cent>
+                SettlementFigure = ValueSome 1200_00L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -452,7 +452,7 @@ module QuoteTests =
         let actualPayments = Map.empty
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest005.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 4<OffsetDay>
             quote.QuoteResult, item
@@ -494,7 +494,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1238_40L<Cent>
+                SettlementFigure = ValueSome 1238_40L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -551,7 +551,7 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest006.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
@@ -593,7 +593,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 3420_03L<Cent>
+                SettlementFigure = ValueSome 3420_03L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -652,13 +652,11 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let quote = getQuote IntendedPurpose.Statement sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> Formatting.outputMapToHtml "out/QuoteTest007.md" false
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
-            quote.QuoteResult, item
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
+            amortisationSchedule.ScheduleItems |> Formatting.outputMapToHtml "out/QuoteTest007.md" false
+            amortisationSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
 
         let expected =
-            UnableToGenerateQuote,
             {
                 OffsetDate = startDate.AddDays 71
                 Advances = [||]
@@ -684,7 +682,7 @@ module QuoteTests =
                 FeesBalance = 1690_74L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 2906_28L<Cent>
+                SettlementFigure = ValueSome 2906_28L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -743,20 +741,18 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let quote = getQuote IntendedPurpose.Statement sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest008.md" false
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
+            amortisationSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest008.md" false
             // let quoteResult =
             //     quote
             //     |> ValueOption.map(fun q ->
             //         let paymentQuote = q.RevisedSchedule.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
             //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled)
             //     )
-            let item = ValueNone // not a single item to be returned, as the result is a sum of items
-            quote.QuoteResult, item
+            ValueNone // not a single item to be returned, as the result is a sum of items
 
         let expected =
-            UnableToGenerateQuote, //ValueSome <| PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled),
-            ValueNone
+            ValueNone //ValueSome <| PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled),
 
         actual |> should equal expected
 
@@ -802,7 +798,7 @@ module QuoteTests =
         let actualPayments = Map.empty
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest009.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 181<OffsetDay>
             quote.QuoteResult, item
@@ -844,7 +840,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1311_67L<Cent>
+                SettlementFigure = ValueSome 1311_67L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -900,7 +896,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest010.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 388<OffsetDay>
             quote.QuoteResult, item
@@ -942,7 +938,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1261_73L<Cent>
+                SettlementFigure = ValueSome 1261_73L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -996,7 +992,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest011.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 72<OffsetDay>
             quote.QuoteResult, item
@@ -1038,7 +1034,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 973_53L<Cent>
+                SettlementFigure = ValueSome 973_53L<Cent>
                 FeesRefundIfSettled = 958_45L<Cent>
             }
 
@@ -1081,7 +1077,7 @@ module QuoteTests =
         let actualPayments = Map.empty
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest012.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 30<OffsetDay>
             quote.QuoteResult, item
@@ -1123,7 +1119,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 495_76L<Cent>
+                SettlementFigure = ValueSome 495_76L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1176,7 +1172,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013a.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
@@ -1218,7 +1214,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 429_24L<Cent>
+                SettlementFigure = ValueSome 429_24L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1271,7 +1267,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013b.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
@@ -1313,7 +1309,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 432_07L<Cent>
+                SettlementFigure = ValueSome 432_07L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1366,7 +1362,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013c.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
@@ -1408,7 +1404,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 434_89L<Cent>
+                SettlementFigure = ValueSome 434_89L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1461,7 +1457,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013d.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 138<OffsetDay>
             quote.QuoteResult, item
@@ -1503,7 +1499,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 453_36L<Cent>
+                SettlementFigure = ValueSome 453_36L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1556,7 +1552,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014a.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
@@ -1598,7 +1594,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 429_24L<Cent>
+                SettlementFigure = ValueSome 429_24L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1652,7 +1648,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014b.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
@@ -1694,7 +1690,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = -67_93L<Cent>
+                SettlementFigure = ValueSome -67_93L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1748,7 +1744,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014c.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
@@ -1790,7 +1786,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = -67_95L<Cent>
+                SettlementFigure = ValueSome -67_95L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1844,7 +1840,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest015.md" false
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 461<OffsetDay>
             quote.QuoteResult, item
@@ -1886,7 +1882,7 @@ module QuoteTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = -72_80L<Cent>
+                SettlementFigure = ValueSome -72_80L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -1936,7 +1932,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest016.md" false
             quote.QuoteResult
 
@@ -1989,7 +1985,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest017.md" false
             quote.QuoteResult
 
@@ -2042,7 +2038,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest018.md" false
             quote.QuoteResult
 
@@ -2096,7 +2092,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest019.md" false
             quote.QuoteResult
 
@@ -2149,7 +2145,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest020.md" false
             quote.QuoteResult
 
@@ -2202,7 +2198,7 @@ module QuoteTests =
             ]
 
         let actual =
-            let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest021.md" false
             quote.QuoteResult
 

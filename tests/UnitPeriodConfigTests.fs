@@ -106,7 +106,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest001.md" false
                 quote.RevisedSchedule.FinalApr |> finalAprPercent
 
@@ -165,7 +165,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest002.md" false
                 quote.RevisedSchedule.FinalApr |> finalAprPercent
 
@@ -251,7 +251,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest003.md" false
                 quote.RevisedSchedule.FinalApr |> finalAprPercent
 
@@ -311,7 +311,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest004.md" false
                 quote.RevisedSchedule.FinalApr |> finalAprPercent
 
@@ -430,7 +430,7 @@ module UnitPeriodConfigTests =
                             | _ as fsr ->
                                 fsr
                     }
-                let quote = getQuote IntendedPurpose.SettlementOnAsOfDay quoteSp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
                 let title = "5) Checking that the fees refund behaves correctly"
                 let original = originalScheduledPayments |> generateHtmlFromMap [||]
                 let revised = quote.RevisedSchedule.ScheduleItems |> generateHtmlFromMap [||]

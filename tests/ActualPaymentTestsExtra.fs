@@ -75,7 +75,7 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate BelowZero sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra001.md" false
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -104,7 +104,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -158,7 +158,7 @@ module ActualPaymentTestsExtra =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra002.md" false
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -187,7 +187,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 170_04L<Cent>
+            SettlementFigure = ValueSome 170_04L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -251,11 +251,11 @@ module ActualPaymentTestsExtra =
                 RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]
                 ChargeHolidays = [||]
-                IntendedPurpose = IntendedPurpose.Statement
+                SettlementDay = ValueNone
             }
             let oldSchedule, newSchedule = reschedule sp rp actualPayments
             let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-            let generationOptions = Some { GoParameters = sp; GoPurpose = IntendedPurpose.Statement; GoExtra = true } |> getHideProperties
+            let generationOptions = Some { GoParameters = sp; GoQuote = false; GoExtra = true } |> getHideProperties
             let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
             let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
             $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md" false
@@ -287,7 +287,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 9_80L<Cent>
+            SettlementFigure = ValueSome 9_80L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -340,7 +340,7 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate BelowZero sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra004.md" false
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -369,7 +369,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -417,7 +417,7 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate BelowZero sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra005.md" false
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -446,7 +446,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 0L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -497,7 +497,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
-            let amortisationSchedule = Amortisation.generate sp IntendedPurpose.Statement false actualPayments
+            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
             amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra006.md" false
             amortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
@@ -526,7 +526,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 142_40L<Cent>
+            SettlementFigure = ValueSome 142_40L<Cent>
             FeesRefundIfSettled = 195_35L<Cent>
         }
 
@@ -623,7 +623,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 18_71L<Cent>
+            SettlementFigure = ValueSome 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 
@@ -720,7 +720,7 @@ module ActualPaymentTestsExtra =
             FeesBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = 18_71L<Cent>
+            SettlementFigure = ValueSome 18_71L<Cent>
             FeesRefundIfSettled = 0L<Cent>
         }
 

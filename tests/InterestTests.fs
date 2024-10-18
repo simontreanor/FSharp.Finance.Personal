@@ -108,7 +108,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+                |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
             schedule.ScheduleItems |> outputMapToHtml "out/InterestCapTest001.md" false
 
@@ -152,7 +152,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+                |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
             schedule.ScheduleItems |> outputMapToHtml "out/InterestCapTest002.md" false
 
@@ -246,7 +246,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement false
+                |> Amortisation.generate sp ValueNone false
 
             schedule.ScheduleItems |> outputMapToHtml "out/InterestTest001.md" false
 
@@ -277,7 +277,7 @@ module InterestTests =
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = 1523_25L<Cent>
+                SettlementFigure = ValueSome 1523_25L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
 
@@ -398,7 +398,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement true
+                |> Amortisation.generate sp ValueNone true
 
             schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003.md" false
 
@@ -415,7 +415,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.Statement true
+                |> Amortisation.generate sp ValueNone true
 
             schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003a.md" false
 
@@ -446,7 +446,7 @@ module InterestTests =
 
             let schedule =
                 actualPayments
-                |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay true
+                |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) true
 
             schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003b.md" false
 

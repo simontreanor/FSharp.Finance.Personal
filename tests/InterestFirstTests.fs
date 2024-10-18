@@ -62,7 +62,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest002.md" false
 
@@ -90,13 +90,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest004.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal 2000_00L<Cent>
+        finalSettlementFigure |> should equal <| ValueSome 2000_00L<Cent>
 
     [<Fact>]
     let ``5) Add-on interest method with early repayment`` () =
@@ -110,7 +110,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest005.md" false
 
@@ -133,7 +133,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest006.md" false
 
@@ -162,7 +162,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest007.md" false
 
@@ -190,13 +190,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest008.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal 650_63L<Cent>
+        finalSettlementFigure |> should equal <| ValueSome 650_63L<Cent>
 
     [<Fact>]
     let ``9) Add-on interest method with normal repayments`` () =
@@ -213,7 +213,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest009.md" false
 
@@ -232,13 +232,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest010.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal 737_36L<Cent>
+        finalSettlementFigure |> should equal <| ValueSome 737_36L<Cent>
 
     [<Fact>]
     let ``11) Add-on interest method with single early repayment then a quote one day later`` () =
@@ -251,7 +251,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest011.md" false
 
@@ -270,7 +270,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest012.md" false
 
@@ -292,13 +292,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest013.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal -324_57L<Cent>
+        finalSettlementFigure |> should equal <| ValueSome -324_57L<Cent>
 
     [<Fact>]
     let ``14) Realistic example 0004ffd74fbb`` () =
@@ -314,13 +314,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest014.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal 0L<Cent>
+        finalSettlementFigure |> should equal <| ValueSome 0L<Cent>
 
     [<Fact>]
     let ``14a) Realistic example 0004ffd74fbb with overpayment`` () =
@@ -336,13 +336,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest014a.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
 
-        finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, -12_78L<Cent>)
+        finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, ValueSome -12_78L<Cent>)
 
     [<Fact>]
     let ``15) Add-on interest method with big early repayment followed by tiny overpayment`` () =
@@ -355,13 +355,13 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.SettlementOnAsOfDay false
+            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest015.md" false
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal -1_22L<Cent>
+        finalSettlementFigure |> should equal <| ValueSome -1_22L<Cent>
 
     [<Fact>]
     let ``16) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)`` () =
@@ -371,7 +371,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest016.md" false
 
@@ -387,7 +387,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest017.md" false
 
@@ -594,7 +594,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> Formatting.outputMapToHtml "out/InterestFirstTest018.md" false
 
@@ -646,7 +646,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest019.md" false
 
@@ -672,7 +672,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> Formatting.outputMapToHtml "out/InterestFirstTest020.md" false
 
@@ -697,7 +697,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest021.md" false
 
@@ -733,7 +733,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest022.md" false
 
@@ -772,7 +772,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest023.md" false
 
@@ -838,7 +838,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest024.md" false
 
@@ -903,7 +903,7 @@ module InterestFirstTests =
 
         let schedule =
             actualPayments
-            |> Amortisation.generate sp IntendedPurpose.Statement false
+            |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest025.md" false
 

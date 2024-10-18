@@ -253,8 +253,10 @@ module Apr =
             UnitedKingdom.calculateApr advanceDate advanceValue transfers
         | CalculationMethod.UsActuarial _ ->
             let advances = [| { TransferType = Advance; TransferDate = advanceDate; Value = advanceValue } |]
-            if Array.isEmpty transfers then [| { TransferType = Payment; TransferDate = advanceDate.AddYears 1; Value = 0L<Cent> } |]
-            else transfers
+            if Array.isEmpty transfers then
+                [| { TransferType = Payment; TransferDate = advanceDate.AddYears 1; Value = 0L<Cent> } |]
+            else
+                transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
         | CalculationMethod.UnitedStatesRule ->
             failwith "Not yet implemented"
@@ -268,7 +270,8 @@ module Apr =
             Decimal.Round(apr, precision)
             |> Percent.fromDecimal
             |> ValueSome
-        | _ -> ValueNone
+        | _ ->
+            ValueNone
 
     /// calculates the APR rate for the specified unit-period as per UK regulation
     let ukUnitPeriodRate unitPeriod apr =

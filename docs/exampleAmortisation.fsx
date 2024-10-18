@@ -81,7 +81,7 @@ let actualPayments =
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters IntendedPurpose.Statement ScheduleType.Original false
+    |> Amortisation.generate scheduleParameters ValueNone ScheduleType.Original false
 
 amortisationSchedule
 
