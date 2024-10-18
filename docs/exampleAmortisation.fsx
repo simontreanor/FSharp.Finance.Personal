@@ -23,24 +23,20 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 open FSharp.Finance.Personal
 open Calculation
-open Currency
 open DateDay
-open Fee
-open Charge
-open PaymentSchedule
-open Percentages
+open Scheduling
 
 let scheduleParameters =
     {
         AsOfDate = Date(2023, 4, 1)
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
-        PaymentSchedule = AutoGenerateSchedule {
+        ScheduleConfig = AutoGenerateSchedule {
             UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
             PaymentCount = 5
             MaxDuration = Duration.Unlimited
         }
-        PaymentOptions = {
+        PaymentConfig = {
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
             PaymentRounding = RoundUp
@@ -55,12 +51,12 @@ let scheduleParameters =
             ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
-        Interest = {
+        InterestConfig = {
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = {
-                Total = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-                Daily = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+                TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
+                DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
             }
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]
@@ -81,7 +77,7 @@ let actualPayments =
 
 let amortisationSchedule =
     actualPayments
-    |> Amortisation.generate scheduleParameters ValueNone ScheduleType.Original false
+    |> Amortisation.generate scheduleParameters ValueNone false
 
 amortisationSchedule
 
@@ -91,10 +87,7 @@ amortisationSchedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-let html =
-    amortisationSchedule
-    |> ValueOption.map (_.ScheduleItems >> generateHtmlFromMap None)
-    |> ValueOption.defaultValue ""
+let html = amortisationSchedule.ScheduleItems |> Formatting.generateHtmlFromMap [||]
 
 $"""<div style="overflow-x: auto;">{html}</div>"""
 

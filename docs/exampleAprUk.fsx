@@ -22,7 +22,7 @@ The following example shows a loan of £500.00 taken out on 10th October 2012 an
 
 open FSharp.Finance.Personal
 open Apr
-open Currency
+open Calculation
 open DateDay
 
 let startDate = Date(2012, 10, 10)

@@ -22,7 +22,7 @@ The following example shows a loan of $5,000.00 taken out on 10th January 1978 a
 
 open FSharp.Finance.Personal
 open Apr
-open Currency
+open Calculation
 open DateDay
 open UnitPeriod
 
@@ -32,7 +32,7 @@ let principal = 5000_00L<Cent>
 
 let transfers =
     Monthly (1, 1978, 2, 10)
-    |> generatePaymentSchedule 24 ValueNone Direction.Forward
+    |> generatePaymentSchedule 24 Duration.Unlimited Direction.Forward
     |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = 230_00L<Cent> })
 
 let aprMethod = CalculationMethod.UsActuarial 4

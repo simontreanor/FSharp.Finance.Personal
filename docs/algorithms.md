@@ -15,7 +15,7 @@ keywords: algorithm methodology amortisation amortization
 
 Generating the amortisation starts by calling:
 
-```PaymentSchedule.calculate```
+```Scheduling.calculate```
 
 As we're looking at an initial schedule, we don't need all the complexity of the amortisation schedule, because we don't need to look into
 things like actual payments, late fees, refunds, etc. We just need to create a simple schedule that's going to let us calculate the payments

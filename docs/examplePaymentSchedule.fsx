@@ -21,43 +21,38 @@ The following example shows the scheduled for a car loan of £10,000 taken out o
 #r "nuget:FSharp.Finance.Personal"
 
 open FSharp.Finance.Personal
-open ArrayExtension
 open Calculation
-open Currency
 open DateDay
-open FeesAndCharges
-open PaymentSchedule
-open Percentages
+open Scheduling
 
 let scheduleParameters =
     {
         AsOfDate = Date(2024, 02, 07)
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
-        PaymentSchedule = AutoGenerateSchedule {
+        ScheduleConfig = AutoGenerateSchedule {
             UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
             PaymentCount = 36
             MaxDuration = Duration.Unlimited
         }
-        PaymentOptions = {
+        PaymentConfig = {
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
+            PaymentRounding = RoundUp
+            MinimumPayment = DeferOrWriteOff 50L<Cent>
+            PaymentTimeout = 3<DurationDay>
         }
         FeeConfig = Fee.Config.initialRecommended
         ChargeConfig = Charge.Config.initialRecommended
-        Interest = {
+        InterestConfig = {
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Annual (Percent 6.9m)
             Cap = Interest.Cap.zero
             InitialGracePeriod = 0<DurationDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero
-        }
-        Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             InterestRounding = RoundDown
-            MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>
         }
     }
     
@@ -71,10 +66,7 @@ schedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-let html =
-    schedule
-    |> ValueOption.map (_.Items >> generateHtmlFromArray None)
-    |> ValueOption.defaultValue ""
+let html = schedule.Items |> Formatting.generateHtmlFromArray [||]
 
 $"""<div style="overflow-x: auto;">{html}</div>"""
 
