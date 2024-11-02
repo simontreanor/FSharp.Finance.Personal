@@ -1,6 +1,6 @@
 # F# Finance - Personal
 
-FSharp.Finance.Personal is a set of functions for calculating Annual Percentage Rates (APRs) and amortisation schedules on products such as personal loans, mortgages, etc.
+FSharp.Finance.Personal is a set of functions for calculating Annual Percentage Rates (APRs) and amortisation schedules for products such as personal loans, mortgages, etc.
 
 ## APRs
 

@@ -11,8 +11,8 @@ Initial features:
 
 > amortisation
 
-This library operates partially in area where business is regulated by various regulators.
-Though every care has been taken to ensure the accuracy of the results, please independently validate figures produced by it.
+This library operates partially in areas where business is regulated by various regulators.
+Though every care has been taken to ensure the accuracy of the results, please independently validate the figures produced by it.
 It is not audited or validated by any of the regulators.
 
 If you have any suggestions or corrections, please feel free to comment or create a pull request.

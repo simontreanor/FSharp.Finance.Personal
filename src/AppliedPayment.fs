@@ -25,7 +25,7 @@ module AppliedPayment =
         PaymentStatus: PaymentStatus
     }
 
-    /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
+    /// groups payments by day, applying for actual payments, adding a payment status and optionally a late payment charge if underpaid
     let applyPayments asOfDay settlementDay (chargeConfig: Charge.Config) paymentTimeout (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
         // guard against empty maps
         if Map.isEmpty scheduledPayments then
