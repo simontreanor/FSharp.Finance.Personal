@@ -8,7 +8,7 @@ module Interest =
     open Calculation
     open DateDay
 
-    /// the interest rate is expressed as either an annual or a daily rate
+    /// the interest rate expressed as either an annual or a daily rate
     [<RequireQualifiedAccess; Struct>]
     type Rate =
         /// a zero rate
