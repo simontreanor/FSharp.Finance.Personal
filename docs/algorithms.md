@@ -23,7 +23,7 @@ necessary to bring the final principal balance to zero.
 
 There is no formula to calculate this as it requires recursion - the interest due depends on the principal balance, the amount you pay affects
 how much interest is paid off (this is paid off first) and the remainder goes towards the principal, and the remaining principal determines
-how must interest is due on the next payment.
+how much interest is due on the next payment.
 
 So we start with a rough payment: ```(principal + interest) / paymentCount```
 
@@ -58,7 +58,7 @@ We now have our initial payment schedule detailing the days and amounts to be pa
 ### Interest caps
 
 The only other consideration in generating this initial schedule is to respect any interest caps imposed, both daily and total. For this reason
-we maintain aggregate interst limits and aggregate interest amounts and compare them throughout the generation process, capping the interest where
+we maintain aggregate interest limits and aggregate interest amounts and compare them throughout the generation process, capping the interest where
 necessary.
 
 ## Applying actual payments to the initial schedule
@@ -80,7 +80,7 @@ When creating the amortisation schedule, we tie all of this information together
 
 > There are a lot of variables and the order of calculation is critical, which is what makes F# such a good choice for implementing this. Some
 variables are maintained in their original and modified form (typically suffixed by an apostrophe or two to make it easy to track the modifications),
-and either form may be necessary throughout the algorithm. It is therefore recommended to examine the code itself if you need to see the detail.
+and either form may be necessary throughout the algorithm. It is therefore recommended to examine the code itself if you need to see the details.
 
 By way of overview though, the following are performed:
 

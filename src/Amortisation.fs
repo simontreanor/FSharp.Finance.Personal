@@ -129,7 +129,7 @@ module Amortisation =
     type Schedule = {
         /// a list of amortisation items, showing the events and calculations for a particular offset day
         ScheduleItems: Map<int<OffsetDay>, ScheduleItem>
-        /// the offset day of the final cheduled payment
+        /// the offset day of the final scheduled payment
         FinalScheduledPaymentDay: int<OffsetDay>
         /// the final number of scheduled payments in the schedule
         FinalScheduledPaymentCount: int
@@ -651,7 +651,7 @@ module Amortisation =
         // post-process missed payments or underpayments
         |> markMissedPaymentsAsLate
 
-    /// wraps the amortisation schedule in some statistics, and optionally calculate the final APR (optional because it can be processor-intensive)
+    /// wraps the amortisation schedule in some statistics, and optionally calculates the final APR (optional because it can be processor-intensive)
     let calculateStats sp settlementDay (items: Map<int<OffsetDay>, ScheduleItem>) =
         let finalItemDay, finalItem = items |> Map.maxKeyValue
         let items' = items |> Map.toArray |> Array.map snd

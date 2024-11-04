@@ -219,7 +219,7 @@ module Scheduling =
         MaxDuration: Duration
     }
 
-    /// the type of the scheduled; for scheduled payments, this affects how any payment due is calculated
+    /// the type of the schedule; for scheduled payments, this affects how any payment due is calculated
     [<RequireQualifiedAccess; Struct>]
     type ScheduleType =
         /// an original schedule
@@ -363,7 +363,7 @@ module Scheduling =
 
     /// parameters for creating a payment schedule
     type Parameters = {
-        /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether schedule payments are deemed as not yet due)
+        /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
         AsOfDate: Date
         /// the start date of the schedule, typically the day on which the principal is advanced
         StartDate: Date
@@ -470,7 +470,7 @@ module Scheduling =
                 |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
                 |> Cent.min totalInterestCap
             | _ -> 0L<Cent>
-        // calculate the approximate level payment value
+        // calculate the approximate level-payment value
         let calculateLevelPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal feesTotal + interest) / decimal paymentCount
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fees
@@ -570,7 +570,7 @@ module Scheduling =
         | Solution.Bypassed ->
             // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
             // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
-            // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher intitial interest
+            // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher initial interest
             // balance, so the process must be repeated until the total interest and the initial interest are equalised
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
@@ -680,7 +680,7 @@ module Scheduling =
             previousRescheduleDay <- rescheduleDays |> Array.tryFind(fun d -> offsetDay >= d) |> toValueOption |> ValueOption.orElse previousRescheduleDay
             // create the modified scheduled payment
             match original, latestRescheduling with
-            // if there are any rescheduled payments, add the latest as well as the list of previously rescheduled payments on the day (also include original if any on the day)
+            // if there are any rescheduled payments, add the latest as well as the list of previously rescheduled payments on the day (also include the original if any on the day)
             | _, ValueSome r ->
                 Some (offsetDay, {
                     Original = original |> ValueOption.bind _.Original

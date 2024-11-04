@@ -121,7 +121,7 @@ module UnitPeriod =
         | _ ->
             0m
 
-    /// unit period combined with start date and multiple where appropriate
+    /// unit period combined with a start date and multiple where appropriate
     [<Struct>]
     type Config =
         /// single on the given date
