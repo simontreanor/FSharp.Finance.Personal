@@ -33,7 +33,7 @@ module ComplianceTests =
                 ]
             PaymentConfig = { 
                 ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = IncreaseFinalPayment
+                CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = NoRounding
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
@@ -141,7 +141,7 @@ module ComplianceTests =
                 ]
             PaymentConfig = { 
                 ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = IncreaseFinalPayment
+                CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = NoRounding
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
@@ -216,3 +216,188 @@ module ComplianceTests =
 
         let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
+
+    let scheduleParameters3 =
+        { scheduleParameters2 with
+            ScheduleConfig = AutoGenerateSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2021, 12, 31)
+                PaymentCount = 4
+                MaxDuration = Duration.Unlimited
+            }
+            Parameters.PaymentConfig.PaymentRounding = RoundUp
+            InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 2m
+            InterestConfig.Cap = Interest.Cap.zero
+        }
+
+    [<Fact>]
+    let ``Example 3.1) Repayments made on time - no interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            107<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters3 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest3.1.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Example 3.2) Early repayment - no interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            63<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            91<OffsetDay>, [| ActualPayment.quickConfirmed 220_41L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters3 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest3.2.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Example 3.3) Late repayment - no interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 372_78L<Cent> |]
+            122<OffsetDay>, [| ActualPayment.quickConfirmed 484_61L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters3 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest3.3.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    let scheduleParameters4 =
+        { scheduleParameters3 with
+            InterestConfig.Cap.DailyAmount = ValueSome <| Amount.Percentage(Percent 0.8m, Restriction.NoLimit, RoundDown)
+        }
+
+    [<Fact>]
+    let ``Example 4.1) Repayments made on time - 0.8% daily interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            107<OffsetDay>, [| ActualPayment.quickConfirmed 209_37L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters4 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest4.1.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Example 4.2) Early repayment - 0.8% daily interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            63<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            91<OffsetDay>, [| ActualPayment.quickConfirmed 160_81L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters4 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest4.2.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Example 4.3) Late repayment - 0.8% daily interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
+            122<OffsetDay>, [| ActualPayment.quickConfirmed 234_42L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters4 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest4.3.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    let scheduleParameters5=
+        { scheduleParameters3 with
+            InterestConfig.Cap.TotalAmount = ValueSome <| Amount.Percentage(Percent 100m, Restriction.NoLimit, RoundDown)
+        }
+
+    [<Fact>]
+    let ``Example 5.1) Repayments made on time - 100% total interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            107<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters5 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest5.1.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Example 5.2) Early repayment - 100% total interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            63<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            91<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters5 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest5.2.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Example 5.3) Late repayment - 100% total interest cap`` () =
+        let actualPayments = Map [
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+            122<OffsetDay>, [| ActualPayment.quickConfirmed 245_00L<Cent> |]
+        ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate scheduleParameters5 ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ComplianceTest5.3.md" false
+
+        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
