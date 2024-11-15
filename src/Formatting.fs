@@ -40,6 +40,7 @@ module Formatting =
     let internal regexDate = Regex(@"\d{4}-\d{2}-\d{2}")
     let internal regexFailed = Regex(@"(failed )\((.+?), \[\|.*?\|\]\)")
     let internal regexArray = Regex(@"\[\|(.*?)\|\]")
+    let internal regexZeroM = Regex(@"\b0M\b")
     let internal regexDecimal = Regex(@"([\d\.]+)M")
     let internal regexInt64 = Regex(@"(\d+)L")
     let internal regexInt32 = Regex(@"(\d+)\b")
@@ -84,6 +85,7 @@ module Formatting =
         |> fun s ->
             if s |> regexDate.IsMatch then s |> formatCell index "cDateValue" "white-space: nowrap;"
             elif s |> regexZero.IsMatch then formatCell index "cZeroValue" "color: #808080; text-align: right;" "0.00"
+            elif s |> regexZeroM.IsMatch then formatCell index "cZeroValue" "color: #808080; text-align: right;" "0.0000"
             elif s |> regexDecimal.IsMatch then regexDecimal.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToDecimal |> formatDecimal) |> formatCell index "cNumberValue" "text-align: right;"
             elif s |> regexInt64.IsMatch then regexInt64.Replace(s, fun m -> m.Groups[1].Value |> Convert.ToInt64 |> ( * ) 1L<Cent> |> formatCent) |> formatCell index "cNumberValue" "text-align: right;"
             elif s |> regexInt32.IsMatch then s |> formatCell index "cNumberValue" "text-align: right;"
