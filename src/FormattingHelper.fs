@@ -56,7 +56,7 @@ module FormattingHelper =
             [|
                 if Array.isEmpty go.GoParameters.FeeConfig.FeeTypes then hideFeesProperties else [||]
                 if Array.isEmpty go.GoParameters.ChargeConfig.ChargeTypes then hideChargesProperties else [||]
-                if (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) then hideInterestProperties else [||]
+                if go.GoParameters.InterestConfig.Method.IsAddOn then hideInterestProperties else [||]
                 if not go.GoQuote then hideQuoteProperties else [||]
                 if not go.GoExtra then hideExtraProperties else [||]
             |]
