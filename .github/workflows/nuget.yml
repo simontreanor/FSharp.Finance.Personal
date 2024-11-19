@@ -7,6 +7,13 @@ on:
         description: 'Version number'
         required: true
 
+permissions:
+  contents: write
+  packages: write
+
+env:
+  VERSION: ${{ github.event.inputs.version }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +29,6 @@ jobs:
 
       - name: Update version number
         run: |
-          VERSION=${{ github.event.inputs.version }}
           echo "Updating version to $VERSION"
           sed -i "s/<Version>[0-9]\+\.[0-9]\+\.[0-9]\+<\/Version>/<Version>$VERSION<\/Version>/" ${{ env.PROJECT_FILE }}
 
@@ -31,14 +37,14 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add ${{ env.PROJECT_FILE }}
-          git commit -m "Update version to ${{ github.event.inputs.version }}"
+          git commit -m "Update version to $VERSION"
           git push origin HEAD:${{ github.ref }}
 
       - name: Build
         run: dotnet build -c Release
 
       - name: Publish NuGet package
-        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push src/bin/Release/FSharp.Finance.Personal.$VERSION.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
 
       - name: Create Git tag
         run: |
