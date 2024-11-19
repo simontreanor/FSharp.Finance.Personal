@@ -8,16 +8,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
+
       - name: Restore tools
         run: dotnet tool restore
+
       - name: Build code
         run: dotnet build -c Release
+
       - name: Generate the documentation
         run: dotnet fsdocs build --properties Configuration=Release --eval
+      
       - name: Upload documentation
         uses: actions/upload-pages-artifact@v3
         with:
