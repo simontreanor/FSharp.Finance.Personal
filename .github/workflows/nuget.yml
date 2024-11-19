@@ -31,7 +31,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add ${{ env.PROJECT_FILE }}
-          git commit -m "Update version to $VERSION"
+          git commit -m "Update version to ${{ github.event.inputs.version }}"
           git push origin HEAD:${{ github.ref }}
 
       - name: Build
@@ -40,8 +40,8 @@ jobs:
       - name: Pack
         run: dotnet pack -c Release --no-build --output .
 
-    #   - name: Publish NuGet package
-    #     run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: Publish NuGet package
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
 
       - name: Create Git tag
         run: |
