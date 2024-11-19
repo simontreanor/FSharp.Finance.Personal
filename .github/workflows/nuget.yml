@@ -28,6 +28,8 @@ jobs:
 
       - name: Commit changes
         run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add ${{ env.PROJECT_FILE }}
           git commit -m "Update version to $VERSION"
           git push origin HEAD:${{ github.ref }}
