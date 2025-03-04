@@ -258,6 +258,7 @@ module InterestTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 1525_12L<Cent>) ValueNone
                 Window = 240
                 PaymentDue = 1523_25L<Cent>
+                EventuallyPaid = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1523_25L<Cent>

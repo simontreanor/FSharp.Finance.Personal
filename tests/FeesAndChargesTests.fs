@@ -84,6 +84,7 @@ module FeesAndChargesTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
+                EventuallyPaid = 0L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 456_84L<Cent>
@@ -173,6 +174,7 @@ module FeesAndChargesTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
+                EventuallyPaid = 0L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 456_84L<Cent>
@@ -262,6 +264,7 @@ module FeesAndChargesTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 456_84L<Cent>
+                EventuallyPaid = 0L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 456_84L<Cent>

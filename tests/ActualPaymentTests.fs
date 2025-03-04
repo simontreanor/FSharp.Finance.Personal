@@ -30,7 +30,7 @@ module ActualPaymentTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentValue contractualInterest interestAdjustment interestPortion principalPortion =
+    let quickExpectedFinalItem date offsetDay paymentValue eventuallyPaid contractualInterest interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
             OffsetDate = date
@@ -38,6 +38,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome paymentValue) ValueNone
             Window = 5
             PaymentDue = paymentValue
+            EventuallyPaid = eventuallyPaid
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = paymentValue
@@ -108,7 +109,7 @@ module ActualPaymentTests =
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest001.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0L<Cent> 0m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -158,7 +159,7 @@ module ActualPaymentTests =
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest002.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0L<Cent> 0m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -208,7 +209,7 @@ module ActualPaymentTests =
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest003.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0L<Cent> 0m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -265,6 +266,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 1193_95L<Cent>
@@ -344,6 +346,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 1474_59L<Cent>
@@ -428,6 +431,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = -280_64L<Cent>
@@ -510,6 +514,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.zero
             Window = 0
             PaymentDue = 0L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 1500_00L<Cent>
@@ -595,6 +600,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome 243_66L<Cent>) ValueNone
             Window = 11
             PaymentDue = 243_66L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 243_66L<Cent>
@@ -680,6 +686,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.zero
             Window = 5
             PaymentDue = 0L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = -280_83L<Cent>
@@ -764,6 +771,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 491_53L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 491_53L<Cent>
@@ -848,6 +856,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 491_53L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 491_53L<Cent>
@@ -934,6 +943,7 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
             Window = 5
             PaymentDue = 432_07L<Cent>
+            EventuallyPaid = 0L<Cent>
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 500_00L<Cent>
@@ -1434,6 +1444,124 @@ module ActualPaymentTests =
             |> Amortisation.generate sp ValueNone false
 
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest021.md" false
+
+        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
+        let expected = true
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``22) Some refund`` () =
+        let sp = {
+            AsOfDate = Date(2025, 2, 19)
+            StartDate = Date(2021, 12, 29)
+            Principal = 650_00L<Cent>
+            ScheduleConfig = CustomSchedule <| Map [
+                30<OffsetDay>, ScheduledPayment.quick (ValueSome 318_50L<Cent>) ValueNone
+                61<OffsetDay>, ScheduledPayment.quick (ValueSome 318_50L<Cent>) ValueNone
+                89<OffsetDay>, ScheduledPayment.quick (ValueSome 318_50L<Cent>) ValueNone
+                120<OffsetDay>, ScheduledPayment.quick (ValueSome 318_50L<Cent>) ValueNone
+            ]
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+            }
+            FeeConfig = Fee.Config.initialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
+            InterestConfig = {
+                Method = Interest.Method.AddOn
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = interestCapExample
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
+                AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                InterestRounding = RoundDown
+            }
+        }
+
+        let actualPayments = //Map.empty
+            Map [
+                29<OffsetDay>, [| ActualPayment.quickConfirmed 318_50L<Cent> |]
+                61<OffsetDay>, [| ActualPayment.quickConfirmed 318_50L<Cent> |]
+                72<OffsetDay>, [| ActualPayment.quickConfirmed 387_40L<Cent> |]
+                1062<OffsetDay>, [| ActualPayment.quickConfirmed -12_88L<Cent> |]
+            ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest022.md" false
+
+        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
+        let expected = true
+        actual |> should equal expected
+
+    [<Fact>]
+    let ``23) Interesting payment timings`` () =
+        let rescheduledPayment1 = { Value = 30_00L<Cent>; RescheduleDay = 60<OffsetDay> }
+        let rescheduledPayment2 = { Value = 40_18L<Cent>; RescheduleDay = 60<OffsetDay> }
+        let sp = {
+            AsOfDate = Date(2024, 7, 14)
+            StartDate = Date(2023, 8, 6)
+            Principal = 280_00L<Cent>
+            ScheduleConfig = [|
+                32<OffsetDay>, ScheduledPayment.quick (ValueSome 138_88L<Cent>) ValueNone
+                62<OffsetDay>, ScheduledPayment.quick (ValueSome 138_88L<Cent>) ValueNone
+                93<OffsetDay>, ScheduledPayment.quick (ValueSome 138_88L<Cent>) ValueNone
+                123<OffsetDay>, ScheduledPayment.quick (ValueSome 138_88L<Cent>) ValueNone
+                208<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment1)
+                239<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment1)
+                269<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment1)
+                300<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment1)
+                330<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment1)
+                361<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment1)
+                392<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment2)
+                422<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment2)
+                453<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment2)
+                483<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment2)
+                514<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment2)
+                545<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome rescheduledPayment2)
+            |]
+            |> mergeScheduledPayments
+            |> CustomSchedule
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                PaymentTimeout = 0<DurationDay>
+                MinimumPayment = NoMinimumPayment
+            }
+            FeeConfig = Fee.Config.initialRecommended
+            ChargeConfig = Charge.Config.initialRecommended
+            InterestConfig = {
+                Method = Interest.Method.Simple
+                StandardRate = Interest.Rate.Daily <| Percent 0.8m
+                Cap = interestCapExample
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                InterestRounding = RoundDown
+            }
+        }
+
+        let actualPayments =
+            Map [
+                32<OffsetDay>, [| ActualPayment.quickConfirmed 138_88L<Cent> |]
+                207<OffsetDay>, [| ActualPayment.quickConfirmed 30_00L<Cent> |]
+                242<OffsetDay>, [| ActualPayment.quickConfirmed 30_04L<Cent> |]
+                300<OffsetDay>, [| ActualPayment.quickConfirmed 30_04L<Cent> |]
+            ]
+
+        let schedule =
+            actualPayments
+            |> Amortisation.generate sp ValueNone false
+
+        schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest023.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
         let expected = true

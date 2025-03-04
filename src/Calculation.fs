@@ -262,10 +262,10 @@ module Calculation =
     module Array =
         /// iteratively solves for a given input using a generator function until the output hits zero or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
-        [<TailCall>]
         let solveBisection (generator: decimal -> decimal) (iterationLimit: uint) initialGuess targetTolerance (toleranceSteps: ToleranceSteps) =
             let initialLowerBound, initialUpperBound = initialGuess * 0.95m, initialGuess * 1.05m
             // recursively iteration through possible solutions
+            // [<TailCall>] // let's wait for the F# compiler to support this
             let rec loop iteration lowerBound upperBound tolerance =
                 // find the midpoint of the bounds
                 let midpoint = (lowerBound + upperBound) / 2m
