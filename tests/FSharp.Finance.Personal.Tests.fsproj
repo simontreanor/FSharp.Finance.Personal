@@ -19,7 +19,7 @@
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
     <Compile Include="PaymentScheduleTests.fs" />
-    <Compile Include="ActualPaymentTests.fs" />
+    <Compile Include="ActualPaymentTests.fs" /><Compile Include="IllustrativeTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
