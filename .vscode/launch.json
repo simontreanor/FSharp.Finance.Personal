@@ -5,15 +5,34 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Debug Source",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build: solution",
-            "program": "${workspaceFolder}/src/bin/Debug/net8.0/FSharp.Finance.Personal.dll",
-            "args": [],
+            "program": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/src/FSharp.Finance.Personal.fsproj"
+            ],
             "cwd": "${workspaceFolder}",
-            "stopAtEntry": false,
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }, 
+        {
+            "name": "Debug Unit Tests",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build: solution",
+            "program": "dotnet",
+            "args": [
+                "test",
+                "--no-build",
+                "${workspaceFolder}/tests/FSharp.Finance.Personal.Tests/FSharp.Finance.Personal.Tests.fsproj"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
 
     ]
