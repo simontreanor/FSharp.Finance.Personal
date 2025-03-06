@@ -33,23 +33,23 @@ module Formatting =
     let outputToFile' fileName append content =
         outputToFile $"{__SOURCE_DIRECTORY__}/../io/{fileName}" append content
 
-    let internal regexMetadata = Regex(@"(metadata = )?map \[.*?\]")
-    let internal regexObject = Regex(@"[{}]")
-    let internal regexType = Regex(@"(scheduled payment type|actual payment status) = ")
-    let internal regexSimple = Regex(@"\( simple (.+?)\)")
-    let internal regexDate = Regex(@"\d{4}-\d{2}-\d{2}")
-    let internal regexFailed = Regex(@"(failed )\((.+?), \[\|.*?\|\]\)")
-    let internal regexArray = Regex(@"\[\|(.*?)\|\]")
-    let internal regexZeroM = Regex(@"\b0M\b")
-    let internal regexDecimal = Regex(@"([\d\.]+)M")
-    let internal regexInt64 = Regex(@"(\d+)L")
-    let internal regexInt32 = Regex(@"(\d+)\b")
-    let internal regexNone = Regex(@"(value&nbsp;)?none")
-    let internal regexSome = Regex(@"value some \(?([^)]+)\)?")
-    let internal regexZero = Regex(@"\b0L\b")
-    let internal regexLineReturn = Regex(@"\s*[\r\n]\s*")
-    let internal regexWhitespace = Regex(@"\s+")
-    let internal regexPascaleCase = Regex(@"(?<=\b|\p{Ll})(\p{Lu})")
+    let internal regexMetadata = Regex(@"(metadata = )?map \[.*?\]", RegexOptions.IgnoreCase)
+    let internal regexObject = Regex @"[{}]"
+    let internal regexType = Regex(@"(scheduled payment type|actual payment status) = ", RegexOptions.IgnoreCase)
+    let internal regexSimple = Regex(@"\( simple (.+?)\)", RegexOptions.IgnoreCase)
+    let internal regexDate = Regex @"\d{4}-\d{2}-\d{2}"
+    let internal regexFailed = Regex(@"(failed )\((.+?), \[\|.*?\|\]\)", RegexOptions.IgnoreCase)
+    let internal regexArray = Regex @"\[\|(.*?)\|\]"
+    let internal regexZeroM = Regex(@"\b0M\b", RegexOptions.IgnoreCase)
+    let internal regexDecimal = Regex(@"([\d\.]+)M", RegexOptions.IgnoreCase)
+    let internal regexInt64 = Regex(@"(\d+)L", RegexOptions.IgnoreCase)
+    let internal regexInt32 = Regex @"(\d+)\b"
+    let internal regexNone = Regex(@"(value&nbsp;)?none", RegexOptions.IgnoreCase)
+    let internal regexSome = Regex(@"value some \(?([^)]+)\)?", RegexOptions.IgnoreCase)
+    let internal regexZero = Regex(@"\b0L\b", RegexOptions.IgnoreCase)
+    let internal regexLineReturn = Regex @"\s*[\r\n]\s*"
+    let internal regexWhitespace = Regex @"\s+"
+    let internal regexPascaleCase = Regex @"(?<=\b|\p{Ll})(\p{Lu})"
 
     let internal splitPascale s = regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[0].Value}")
 
@@ -72,7 +72,7 @@ module Formatting =
     let internal formatHtmlTableCell index value =
         value
         |> sprintf "%A"
-        |> fun s -> regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[1].Value |> (_.ToLower())}")
+        |> fun s -> regexPascaleCase.Replace(s, fun (m: Match) -> $" {m.Groups[1].Value |> (_.ToLower())}").TrimStart()
         |> fun s -> if s |> regexObject.IsMatch then regexObject.Replace(s, "") else s
         |> fun s -> if s |> regexType.IsMatch then regexType.Replace(s, "") else s
         |> fun s -> if s |> regexMetadata.IsMatch then regexMetadata.Replace(s, "") else s

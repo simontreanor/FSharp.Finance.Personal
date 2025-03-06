@@ -73,6 +73,17 @@ module Fee =
             SettlementRefund = SettlementRefund.ProRata
         }
 
+        /// formats the fee config as an HTML table
+        let toHtmlTable config =
+            "<table>" +
+                $"<tr><td>{nameof config.FeeTypes}</td><td><table>" +
+                    (config.FeeTypes |> Array.map (fun ft -> $"<tr><td>{ft}</td></tr>") |> String.concat "")
+                + "</table></td></tr>" +
+                $"<tr><td>{nameof config.Rounding}</td><td>{config.Rounding}</td></tr>" +
+                $"<tr><td>{nameof config.FeeAmortisation}</td><td>{config.FeeAmortisation}</td></tr>" +
+                $"<tr><td>{nameof config.SettlementRefund}</td><td>{config.SettlementRefund}</td></tr>"
+            + "</table>"
+
     /// rounds a charge to the nearest integer cent using the specified rounding option
     let round config =
         Cent.fromDecimalCent config.Rounding

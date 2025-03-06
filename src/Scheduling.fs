@@ -227,6 +227,11 @@ module Scheduling =
         /// a new schedule created after the original schedule, indicating the day it was created
         | Rescheduled of RescheduleDay: int<OffsetDay>
 
+        override st.ToString() =
+            match st with
+            | Original -> nameof Original
+            | Rescheduled rd -> $"{nameof Rescheduled} on day {rd}"
+
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
     type FixedSchedule = {
@@ -249,6 +254,33 @@ module Scheduling =
         | FixedSchedules of FixedSchedules: FixedSchedule array
         /// just a bunch of payments
         | CustomSchedule of CustomSchedule: Map<int<OffsetDay>, ScheduledPayment>
+
+    /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
+    module ScheduleConfig =
+        /// formats the schedule config as an HTML table
+        let toHtmlTable scheduleConfig =
+            "<table>" +
+                match scheduleConfig with
+                    | AutoGenerateSchedule ags ->
+                        $"<tr><td>Type</td><td>{nameof AutoGenerateSchedule}</td></tr>" +
+                        $"<tr><td>{nameof ags.UnitPeriodConfig}</td><td>{ags.UnitPeriodConfig}</td></tr>" +
+                        $"<tr><td>{nameof ags.PaymentCount}</td><td>{ags.PaymentCount}</td></tr>" +
+                        $"<tr><td>{nameof ags.MaxDuration}</td><td>{ags.MaxDuration}</td></tr>"
+                    | FixedSchedules fsArray -> 
+                        fsArray |> Array.map (fun fs ->
+                            $"<tr><td>Type</td><td>{nameof FixedSchedules}</td></tr>" +
+                            $"<tr><td>{nameof fs.UnitPeriodConfig}</td><td>{fs.UnitPeriodConfig}</td></tr>" +
+                            $"<tr><td>{nameof fs.PaymentCount}</td><td>{fs.PaymentCount}</td></tr>" +
+                            $"<tr><td>{nameof fs.PaymentValue}</td><td>{formatCent fs.PaymentValue}</td></tr>" +
+                            $"<tr><td>{nameof fs.ScheduleType}</td><td>{fs.ScheduleType}</td></tr>"
+                        ) |> String.concat ""
+                    | CustomSchedule cs ->
+                        $"<tr><td>Type</td><td>{nameof CustomSchedule}</td></tr>" +
+                            (cs |> Map.toList |> List.map (fun (day, sp) -> 
+                                $"<tr><td>{nameof day}</td><td>{day}</td></tr>" +
+                                $"<tr><td>{nameof sp}</td><td>{sp}</td></tr>"
+                            ) |> String.concat "")
+            + "</table>"
 
     /// a scheduled payment item, with running calculations of interest and principal balance
     type SimpleItem = {
@@ -327,6 +359,12 @@ module Scheduling =
         /// take the minimum payment regardless
         | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
 
+        override mp.ToString() =
+            match mp with
+            | NoMinimumPayment -> nameof NoMinimumPayment
+            | DeferOrWriteOff upToValue -> $"Defer or write off up to {formatCent upToValue}"
+            | ApplyMinimumPayment minimumPayment -> $"Apply minimum payment of {formatCent minimumPayment}"
+
     /// whether to stick to scheduled payment amounts or add charges and interest to them
     [<Struct>]
     type ScheduledPaymentOption =
@@ -361,6 +399,18 @@ module Scheduling =
         PaymentTimeout: int<DurationDay>
     }
 
+    /// how to treat scheduled payments
+    module PaymentConfig =
+        ///formats the payment config as an HTML table
+        let toHtmlTable paymentConfig =
+            "<table>" +
+                $"<tr><td>{nameof paymentConfig.ScheduledPaymentOption}</td><td>{paymentConfig.ScheduledPaymentOption}</td></tr>" +
+                $"<tr><td>{nameof paymentConfig.CloseBalanceOption}</td><td>{paymentConfig.CloseBalanceOption}</td></tr>" +
+                $"<tr><td>{nameof paymentConfig.PaymentRounding}</td><td>{paymentConfig.PaymentRounding}</td></tr>" +
+                $"<tr><td>{nameof paymentConfig.MinimumPayment}</td><td>{paymentConfig.MinimumPayment}</td></tr>" +
+                $"<tr><td>{nameof paymentConfig.PaymentTimeout}</td><td>{paymentConfig.PaymentTimeout}</td></tr>"
+            + "</table>"
+
     /// parameters for creating a payment schedule
     type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
@@ -380,6 +430,23 @@ module Scheduling =
         /// options relating to interest
         InterestConfig: Interest.Config
     }
+
+    /// parameters for creating a payment schedule
+    module Parameters =
+        /// formats the parameters as an HTML table
+        let toHtmlTable (parameters: Parameters) =
+            let rows = [
+                $"<tr><td>{nameof parameters.AsOfDate}</td><td>{parameters.AsOfDate}</td></tr>"
+                $"<tr><td>{nameof parameters.StartDate}</td><td>{parameters.StartDate}</td></tr>"
+                $"<tr><td>{nameof parameters.Principal}</td><td>{formatCent parameters.Principal}</td></tr>"
+                $"<tr><td>{nameof parameters.ScheduleConfig}</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
+                $"<tr><td>{nameof parameters.PaymentConfig}</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
+                $"<tr><td>{nameof parameters.FeeConfig}</td><td>{Fee.Config.toHtmlTable parameters.FeeConfig}</td></tr>"
+                $"<tr><td>{nameof parameters.ChargeConfig}</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
+                $"<tr><td>{nameof parameters.InterestConfig}</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
+            ]
+            $"""<table>{String.concat "" rows}</table>"""
+
 
     /// convert an option to a value option
     let toValueOption = function Some x -> ValueSome x | None -> ValueNone

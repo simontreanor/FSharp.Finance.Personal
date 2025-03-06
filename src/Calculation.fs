@@ -46,6 +46,13 @@ module Calculation =
         /// round up or down to the specified precision based on the given midpoint rounding rules
         | RoundWith of MidpointRounding
 
+        override r.ToString() =
+            match r with
+            | NoRounding -> "not rounded"
+            | RoundUp -> "rounded up"
+            | RoundDown -> "rounded down"
+            | RoundWith mpr -> $"round using {mpr}"
+
     /// the type of rounding, specifying midpoint-rounding where necessary
     module Rounding =
         /// derive a rounded value from a decimal according to the specified rounding method
@@ -150,7 +157,12 @@ module Calculation =
             decimal c * 1m<Cent>
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
-    type Percent = Percent of decimal
+    type Percent =
+        | Percent of decimal
+
+        override p.ToString() =
+            let (Percent value) = p
+            $"{value} %%"
 
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
@@ -178,6 +190,13 @@ module Calculation =
         /// constrain values to within a range
         | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
 
+        override r.ToString() =
+            match r with
+            | Restriction.NoLimit -> "with no limit"
+            | Restriction.LowerLimit lower -> $"no lower than {Cent.toDecimal lower:N2}"
+            | Restriction.UpperLimit upper -> $"no higher than {Cent.toDecimal upper:N2}"
+            | Restriction.WithinRange (lower, upper) -> $"between {Cent.toDecimal lower:N2} and {Cent.toDecimal upper:N2}"
+
     /// the type of restriction placed on a possible value
     module Restriction =
         /// calculate a permitted value based on a restriction
@@ -199,6 +218,13 @@ module Calculation =
         | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
         /// a fixed fee
         | Simple of Simple:int64<Cent>
+
+        override a.ToString() =
+            match a with
+            | Amount.Percentage (Percent percent, restriction, rounding) ->
+                $"{percent} %% {restriction}, {rounding}"
+            | Amount.Simple simple ->
+                $"{Cent.toDecimal simple:N2}"
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     module Amount =

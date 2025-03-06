@@ -135,6 +135,25 @@ module UnitPeriod =
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
         | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int
 
+        override upc.ToString() =
+            match upc with
+            | Single d ->
+                $"Single on {d}"
+            | Daily sd ->
+                $"Daily from {sd}"
+            | Weekly (multiple, wsd) ->
+                if multiple = 1 then
+                    $"Weekly from {wsd}"
+                else
+                    $"{multiple}-weekly from {wsd}"
+            | SemiMonthly (y, m, td1, td2) ->
+                $"""Semi-monthly from {Date(y, m, td1)} and on {td2.ToString "00"}"""
+            | Monthly (multiple, y, m, d) ->
+                if multiple = 1 then
+                    $"Monthly from {Date(y, m, d)}"
+                else
+                    $"{multiple}-monthly from {Date(y, m, d)}"
+
     /// functions for creating and handling unit-period configs
     module Config =
 
@@ -199,20 +218,6 @@ module UnitPeriod =
                 15m
             | Monthly (multiple, _, _, _) ->
                 30m * decimal multiple
-
-        /// pretty-print the unit-period config, useful for debugging 
-        let serialise unitPeriodConfig =
-            match unitPeriodConfig with
-            | Single d ->
-                $"""(Single {d.ToString()})"""
-            | Daily sd ->
-                $"""(Daily {sd.ToString()})"""
-            | Weekly (multiple, wsd) ->
-                $"""({multiple.ToString "00"}-Weekly ({wsd.ToString()}))"""
-            | SemiMonthly (y, m, td1, td2) ->
-                $"""(SemiMonthly ({y.ToString "0000"}-{m.ToString "00"}-({(int td1).ToString "00"}_{(int td2).ToString "00"}))"""
-            | Monthly (multiple, y, m, d) ->
-                $"""({multiple.ToString "00"}-Monthly ({y.ToString "0000"}-{m.ToString "00"}-{(int d).ToString "00"}))"""
 
         /// gets the start date based on a unit-period config
         let startDate unitPeriodConfig =

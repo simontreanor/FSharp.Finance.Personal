@@ -53,6 +53,19 @@ module Charge =
             ChargeGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>
         }
+        /// formats the charge config as an HTML table
+        let toHtmlTable config =
+            "<table>" +
+                $"<tr><td>{nameof config.ChargeTypes}</td><td><table>" +
+                    (config.ChargeTypes |> Array.map (fun ct -> $"<tr><td>{ct}</td></tr>") |> String.concat "")
+                + "</table></td></tr>" +
+                $"<tr><td>{nameof config.Rounding}</td><td>{config.Rounding}</td></tr>" +
+                $"<tr><td>{nameof config.ChargeHolidays}</td><td><table>" +
+                    (config.ChargeHolidays |> Array.map (fun ch -> $"<tr><td>{ch}</td></tr>") |> String.concat "")
+                + "</table></td></tr>" +
+                $"<tr><td>{nameof config.ChargeGrouping}</td><td>{config.ChargeGrouping}</td></tr>" +
+                $"<tr><td>{nameof config.LatePaymentGracePeriod}</td><td>{config.LatePaymentGracePeriod}</td></tr>"
+            + "</table>"
 
     /// rounds a charge to the nearest integer cent using the specified rounding option
     let round config =
