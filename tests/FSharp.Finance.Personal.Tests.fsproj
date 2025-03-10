@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
     <IsTestProject>true</IsTestProject>
@@ -28,6 +28,7 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="9.0.201" />
     <PackageReference Include="FsUnit" Version="5.5.0" />
     <PackageReference Include="FsUnit.Xunit" Version="5.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
