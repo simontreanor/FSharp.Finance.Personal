@@ -143,13 +143,12 @@ module Amortisation =
         EffectiveInterestRate: Interest.Rate
     }
 
-    /// renders the final APR as a string, or "n/a" if not available
-    let finalAprString = function
-    | ValueSome (Solution.Found _, ValueSome percent) -> $"{percent}"
-    | _ -> "n/a"
-
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
     module Schedule =
+        /// renders the final APR as a string, or "n/a" if not available
+        let finalAprString = function
+        | ValueSome (Solution.Found _, ValueSome percent) -> $"{percent}"
+        | _ -> "n/a"
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
         let toHtmlTable schedule =
             $"<h4>Stats</h4>"

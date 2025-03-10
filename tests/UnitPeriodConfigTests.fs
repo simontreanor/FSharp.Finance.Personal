@@ -104,7 +104,7 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest001.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprString
+                quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "56.51300 %"
             actual |> should equal expected
@@ -163,7 +163,7 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest002.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprString
+                quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "986.81300 %"
 
@@ -249,7 +249,7 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest003.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprString
+                quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "516.75800 %"
 
@@ -309,7 +309,7 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest004.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprString
+                quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "930.55900 %"
 
@@ -431,7 +431,7 @@ module UnitPeriodConfigTests =
                 let original = originalScheduledPayments |> generateHtmlFromMap [||]
                 let revised = quote.RevisedSchedule.ScheduleItems |> generateHtmlFromMap [||]
                 $"{title}<br /><br />{original}<br />{revised}" |> outputToFile' "out/UnitPeriodConfigTest005.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprString
+                quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "699.52500 %"
 
