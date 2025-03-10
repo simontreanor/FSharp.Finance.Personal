@@ -290,27 +290,32 @@ module Amortisation =
                 { a with
                     CumulativeSimpleInterestM = a.CumulativeSimpleInterestM + cappedSimpleInterestM
                 }
+            // of the actual payments made on the day, sum any that are confirmed or written off
+            let confirmedPaymentTotal =
+                ap.ActualPayments
+                |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // calculate any new interest accrued since the previous item, according to the interest method supplied in the schedule parameters
             let newInterestM =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn ->
                     if si.BalanceStatus <> ClosedBalance then
-                        a.CumulativeSimpleInterestM + cappedSimpleInterestM
-                        |> fun i ->
-                            if i > initialInterestBalanceM then
-                                i - initialInterestBalanceM
-                            else
-                                0m<Cent>
-                        |> min cappedSimpleInterestM
+                        // if an actual payment has been confirmed and the difference between the precise and rounded simple interest is less than a cent, ignore it
+                        let significantRoundingDifferenceM = simpleInterestM - Cent.toDecimalCent originalSimpleInterestL
+                        if confirmedPaymentTotal = 0L<Cent> || significantRoundingDifferenceM |> Interest.ignoreFractionalCent > 0m<Cent> then
+                            a.CumulativeSimpleInterestM + cappedSimpleInterestM
+                            |> fun i ->
+                                if i > initialInterestBalanceM then
+                                    i - initialInterestBalanceM
+                                else
+                                    0m<Cent>
+                            |> min cappedSimpleInterestM
+                        else
+                            0m<Cent>
                     else
                         0m<Cent>
                 | Interest.Method.Simple -> simpleInterestM
             // cap the new interest against the total interest cap
             let cappedNewInterestM = if a.CumulativeInterest + newInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeInterest else newInterestM
-            // of the actual payments made on the day, sum any that are confirmed or written off
-            let confirmedPaymentTotal =
-                ap.ActualPayments
-                |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // of the actual payments made on the day, sum any that are still pending
             let pendingPaymentTotal =
                 ap.ActualPayments
@@ -405,7 +410,7 @@ module Amortisation =
                     let interestAdjustment =
                         if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterestM - initialInterestBalanceM
-                            |> fun i -> if abs i < 1m<Cent> then 0m<Cent> else i
+                            |> Interest.ignoreFractionalCent
                             |> fun i -> if accumulator.CumulativeSimpleInterestM + i >= totalInterestCapM then totalInterestCapM - accumulator.CumulativeSimpleInterestM else i
                         else
                             0m<Cent>
@@ -461,8 +466,10 @@ module Amortisation =
             // refine the settlement figure depending on the interest method
             let generatedSettlementPayment' =
                 match sp.InterestConfig.Method with
-                | Interest.Method.AddOn -> generatedSettlementPayment
-                | _ -> si.PrincipalBalance + si.FeesBalance - feesRefund + interestPortionL' + chargesPortion
+                | Interest.Method.AddOn ->
+                    generatedSettlementPayment
+                | _ ->
+                    si.PrincipalBalance + si.FeesBalance - feesRefund + interestPortionL' + chargesPortion
             // refine the fee portion and refund if a refund is actually applied on the day, i.e. if the net effect covers the settlement figure
             let feesPortion', feesRefund' =
                 if feesPortion > 0L<Cent> && generatedSettlementPayment' <= netEffect then
