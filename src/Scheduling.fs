@@ -229,8 +229,8 @@ module Scheduling =
 
         override st.ToString() =
             match st with
-            | Original -> nameof Original
-            | Rescheduled rd -> $"{nameof Rescheduled} on day {rd}"
+            | Original -> "original"
+            | Rescheduled rd -> $"rescheduled on day {rd}"
 
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
@@ -259,26 +259,26 @@ module Scheduling =
     module ScheduleConfig =
         /// formats the schedule config as an HTML table
         let toHtmlTable scheduleConfig =
-            "<table>" +
-                match scheduleConfig with
+            "<table>"
+                + match scheduleConfig with
                     | AutoGenerateSchedule ags ->
-                        $"<tr><td>Type</td><td>{nameof AutoGenerateSchedule}</td></tr>" +
-                        $"<tr><td>{nameof ags.UnitPeriodConfig}</td><td>{ags.UnitPeriodConfig}</td></tr>" +
-                        $"<tr><td>{nameof ags.PaymentCount}</td><td>{ags.PaymentCount}</td></tr>" +
-                        $"<tr><td>{nameof ags.MaxDuration}</td><td>{ags.MaxDuration}</td></tr>"
+                        $"<tr><td>Type</td><td>{nameof AutoGenerateSchedule}</td></tr>"
+                        + $"<tr><td>{nameof ags.UnitPeriodConfig}</td><td>{ags.UnitPeriodConfig}</td></tr>"
+                        + $"<tr><td>{nameof ags.PaymentCount}</td><td>{ags.PaymentCount}</td></tr>"
+                        + $"<tr><td>{nameof ags.MaxDuration}</td><td>{ags.MaxDuration}</td></tr>"
                     | FixedSchedules fsArray -> 
                         fsArray |> Array.map (fun fs ->
-                            $"<tr><td>Type</td><td>{nameof FixedSchedules}</td></tr>" +
-                            $"<tr><td>{nameof fs.UnitPeriodConfig}</td><td>{fs.UnitPeriodConfig}</td></tr>" +
-                            $"<tr><td>{nameof fs.PaymentCount}</td><td>{fs.PaymentCount}</td></tr>" +
-                            $"<tr><td>{nameof fs.PaymentValue}</td><td>{formatCent fs.PaymentValue}</td></tr>" +
-                            $"<tr><td>{nameof fs.ScheduleType}</td><td>{fs.ScheduleType}</td></tr>"
+                            $"<tr><td>Type</td><td>{nameof FixedSchedules}</td></tr>"
+                            + $"<tr><td>{nameof fs.UnitPeriodConfig}</td><td>{fs.UnitPeriodConfig}</td></tr>"
+                            + $"<tr><td>{nameof fs.PaymentCount}</td><td>{fs.PaymentCount}</td></tr>"
+                            + $"<tr><td>{nameof fs.PaymentValue}</td><td>{formatCent fs.PaymentValue}</td></tr>"
+                            + $"<tr><td>{nameof fs.ScheduleType}</td><td>{fs.ScheduleType}</td></tr>"
                         ) |> String.concat ""
                     | CustomSchedule cs ->
-                        $"<tr><td>Type</td><td>{nameof CustomSchedule}</td></tr>" +
-                            (cs |> Map.toList |> List.map (fun (day, sp) -> 
-                                $"<tr><td>{nameof day}</td><td>{day}</td></tr>" +
-                                $"<tr><td>{nameof sp}</td><td>{sp}</td></tr>"
+                        $"<tr><td>Type</td><td>{nameof CustomSchedule}</td></tr>"
+                            + (cs |> Map.toList |> List.map (fun (day, sp) -> 
+                                $"<tr><td>{nameof day}</td><td>{day}</td></tr>"
+                                + $"<tr><td>{nameof sp}</td><td>{sp}</td></tr>"
                             ) |> String.concat "")
             + "</table>"
 
@@ -361,9 +361,9 @@ module Scheduling =
 
         override mp.ToString() =
             match mp with
-            | NoMinimumPayment -> nameof NoMinimumPayment
-            | DeferOrWriteOff upToValue -> $"Defer or write off up to {formatCent upToValue}"
-            | ApplyMinimumPayment minimumPayment -> $"Apply minimum payment of {formatCent minimumPayment}"
+            | NoMinimumPayment -> "no minimum payment"
+            | DeferOrWriteOff upToValue -> $"defer or write off up to {formatCent upToValue}"
+            | ApplyMinimumPayment minimumPayment -> $"apply minimum payment of {formatCent minimumPayment}"
 
     /// whether to stick to scheduled payment amounts or add charges and interest to them
     [<Struct>]
@@ -403,12 +403,12 @@ module Scheduling =
     module PaymentConfig =
         ///formats the payment config as an HTML table
         let toHtmlTable paymentConfig =
-            "<table>" +
-                $"<tr><td>{nameof paymentConfig.ScheduledPaymentOption}</td><td>{paymentConfig.ScheduledPaymentOption}</td></tr>" +
-                $"<tr><td>{nameof paymentConfig.CloseBalanceOption}</td><td>{paymentConfig.CloseBalanceOption}</td></tr>" +
-                $"<tr><td>{nameof paymentConfig.PaymentRounding}</td><td>{paymentConfig.PaymentRounding}</td></tr>" +
-                $"<tr><td>{nameof paymentConfig.MinimumPayment}</td><td>{paymentConfig.MinimumPayment}</td></tr>" +
-                $"<tr><td>{nameof paymentConfig.PaymentTimeout}</td><td>{paymentConfig.PaymentTimeout}</td></tr>"
+            "<table>"
+                + $"<tr><td>{nameof paymentConfig.ScheduledPaymentOption}</td><td>{paymentConfig.ScheduledPaymentOption}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.CloseBalanceOption}</td><td>{paymentConfig.CloseBalanceOption}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.PaymentRounding}</td><td>{paymentConfig.PaymentRounding}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.MinimumPayment}</td><td>{paymentConfig.MinimumPayment}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.PaymentTimeout}</td><td>{paymentConfig.PaymentTimeout}</td></tr>"
             + "</table>"
 
     /// parameters for creating a payment schedule
@@ -435,18 +435,16 @@ module Scheduling =
     module Parameters =
         /// formats the parameters as an HTML table
         let toHtmlTable (parameters: Parameters) =
-            let rows = [
-                $"<tr><td>{nameof parameters.AsOfDate}</td><td>{parameters.AsOfDate}</td></tr>"
-                $"<tr><td>{nameof parameters.StartDate}</td><td>{parameters.StartDate}</td></tr>"
-                $"<tr><td>{nameof parameters.Principal}</td><td>{formatCent parameters.Principal}</td></tr>"
-                $"<tr><td>{nameof parameters.ScheduleConfig}</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
-                $"<tr><td>{nameof parameters.PaymentConfig}</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
-                $"<tr><td>{nameof parameters.FeeConfig}</td><td>{Fee.Config.toHtmlTable parameters.FeeConfig}</td></tr>"
-                $"<tr><td>{nameof parameters.ChargeConfig}</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
-                $"<tr><td>{nameof parameters.InterestConfig}</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
-            ]
-            $"""<table>{String.concat "" rows}</table>"""
-
+            "<table>"
+                + $"<tr><td>{nameof parameters.AsOfDate}</td><td>{parameters.AsOfDate}</td></tr>"
+                + $"<tr><td>{nameof parameters.StartDate}</td><td>{parameters.StartDate}</td></tr>"
+                + $"<tr><td>{nameof parameters.Principal}</td><td>{formatCent parameters.Principal}</td></tr>"
+                + $"<tr><td>{nameof parameters.ScheduleConfig}</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.PaymentConfig}</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.FeeConfig}</td><td>{Fee.Config.toHtmlTable parameters.FeeConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.ChargeConfig}</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.InterestConfig}</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
+            + "</table>"
 
     /// convert an option to a value option
     let toValueOption = function Some x -> ValueSome x | None -> ValueNone

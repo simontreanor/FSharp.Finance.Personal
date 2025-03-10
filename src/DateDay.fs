@@ -49,8 +49,8 @@ module DateDay =
 
         override d.ToString() =
             match d with
-            | Duration.Unlimited -> "Unlimited"
-            | Duration.Maximum (length, fromDate) -> $"Maximum {length} days from %O{fromDate}"
+            | Duration.Unlimited -> "unlimited"
+            | Duration.Maximum (length, fromDate) -> $"maximum {length} days from %O{fromDate}"
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is

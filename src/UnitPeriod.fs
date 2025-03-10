@@ -138,19 +138,19 @@ module UnitPeriod =
         override upc.ToString() =
             match upc with
             | Single d ->
-                $"Single on {d}"
+                $"single on {d}"
             | Daily sd ->
-                $"Daily from {sd}"
+                $"daily from {sd}"
             | Weekly (multiple, wsd) ->
                 if multiple = 1 then
-                    $"Weekly from {wsd}"
+                    $"weekly from {wsd}"
                 else
                     $"{multiple}-weekly from {wsd}"
             | SemiMonthly (y, m, td1, td2) ->
-                $"""Semi-monthly from {Date(y, m, td1)} and on {td2.ToString "00"}"""
+                $"""semi-monthly from {Date(y, m, td1)} and on {td2.ToString "00"}"""
             | Monthly (multiple, y, m, d) ->
                 if multiple = 1 then
-                    $"Monthly from {Date(y, m, d)}"
+                    $"monthly from {Date(y, m, d)}"
                 else
                     $"{multiple}-monthly from {Date(y, m, d)}"
 

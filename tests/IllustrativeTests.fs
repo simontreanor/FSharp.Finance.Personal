@@ -7,6 +7,7 @@ open FSharp.Finance.Personal
 
 module IllustrativeTests =
 
+    open System
     open Amortisation
     open Calculation
     open DateDay
@@ -61,6 +62,14 @@ module IllustrativeTests =
             FeesRefundIfSettled = 0L<Cent>
         }
 
+    let outputToIllustrativeHtml title sp schedule filename =
+        let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
+        let htmlDatestamp = String.Format("<p>Generated {0:yyyy-MM-dd HH:mm:ss}</p>", DateTime.Now)
+        let htmlSchedule = schedule.ScheduleItems |> generateHtmlFromMap [||]
+        let htmlStats = schedule |> Schedule.toHtmlTable
+        $"<h3>{title}</h3><br />{htmlDatestamp}{htmlParams}<br />{htmlSchedule}<br />{htmlStats}"
+        |> outputToFile' filename false
+
     [<Fact>]
     let ``000) Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time`` () =
         let sp = {
@@ -105,17 +114,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        let title = "Illustrative test 000) Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time"
-        let htmlParams = $"<p>%O{sp}</p>"
-        let htmlSchedule = schedule.ScheduleItems |> generateHtmlFromMap [||]
-        let htmlStats =
-            $"<p>Effective Interest Rate: {schedule.EffectiveInterestRate}"
-            + $"<p>Final Actual Payment Count: {schedule.FinalActualPaymentCount}"
-            + $"<p>Final APR: {schedule.FinalApr}"
-            + $"<p>Final Cost To Borrowing Ratio: {schedule.FinalCostToBorrowingRatio}"
-            + $"<p>Final Scheduled Payment Count: {schedule.FinalScheduledPaymentCount}"
-            + $"<p>Final Scheduled Payment Day: {schedule.FinalScheduledPaymentDay}"
-        $"{title}<br /><br />{htmlParams}<br />{htmlSchedule}<br />{htmlStats}" |> outputToFile' "out/IllustrativeTest000.md" false
+        outputToIllustrativeHtml "Illustrative test 000) Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time" sp schedule "out/IllustrativeTest000.md"
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
         let expected =
@@ -194,7 +193,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/IllustrativeTest001.md" false
+        outputToIllustrativeHtml "Illustrative test 001) Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid before second repayment due date (30/04/2025)" sp schedule "out/IllustrativeTest001.md"
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
         let expected =
@@ -273,7 +272,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/IllustrativeTest002.md" false
+        outputToIllustrativeHtml "Illustrative test 002) Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and did not pay before second repayment due date (30/04/2025)" sp schedule "out/IllustrativeTest002.md"
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
         let expected =

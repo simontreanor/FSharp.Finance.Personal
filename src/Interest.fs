@@ -20,9 +20,9 @@ module Interest =
 
         override r.ToString() =
             match r with
-            | Rate.Zero -> "Zero"
-            | Rate.Annual p -> $"Annual interest rate {p}"
-            | Rate.Daily p -> $"Daily interest rate {p}"
+            | Rate.Zero -> "zero"
+            | Rate.Annual p -> $"annual interest rate {p}"
+            | Rate.Daily p -> $"daily interest rate {p}"
 
     module Rate =
         /// calculates the annual interest rate from the daily one
@@ -69,9 +69,9 @@ module Interest =
 
         /// formats the interest cap as an HTML table
         let toHtmlTable (cap: Cap) =
-            "<table>" +
-                $"<tr><td>{nameof cap.TotalAmount}</td><td>{cap.TotalAmount}</td></tr>" +
-                $"<tr><td>{nameof cap.DailyAmount}</td><td>{cap.DailyAmount}</td></tr>"
+            "<table>"
+                + $"<tr><td>{nameof cap.TotalAmount}</td><td>{cap.TotalAmount}</td></tr>"
+                + $"<tr><td>{nameof cap.DailyAmount}</td><td>{cap.DailyAmount}</td></tr>"
             + "</table>"
 
     /// a promotional interest rate valid during the specified date range
@@ -125,15 +125,15 @@ module Interest =
     module Config =
         /// formats the interest config as an HTML table
         let toHtmlTable config =
-            "<table>" +
-                $"<tr><td>{nameof config.StandardRate}</td><td>{config.StandardRate}</td></tr>" +
-                $"<tr><td>{nameof config.PromotionalRates}</td><td><table>" +
-                    (config.PromotionalRates |> Array.map (fun pr -> $"<tr><td>{pr}</td></tr>") |> String.concat "")
-                + "</table></td></tr>" +
-                $"<tr><td>{nameof config.Cap}</td><td>{Cap.toHtmlTable config.Cap}</td></tr>" +
-                $"<tr><td>{nameof config.Method}</td><td>{config.Method}</td></tr>" +
-                $"<tr><td>{nameof config.InterestRounding}</td><td>{config.InterestRounding}</td></tr>" +
-                $"<tr><td>{nameof config.AprMethod}</td><td>{config.AprMethod}</td></tr>"
+            "<table>"
+                + $"<tr><td>{nameof config.StandardRate}</td><td>{config.StandardRate}</td></tr>"
+                + $"<tr><td>{nameof config.PromotionalRates}</td><td><table>"
+                    + (config.PromotionalRates |> Array.map (fun pr -> $"<tr><td>{pr}</td></tr>") |> String.concat "")
+                + "</table></td></tr>"
+                + $"<tr><td>{nameof config.Cap}</td><td>{Cap.toHtmlTable config.Cap}</td></tr>"
+                + $"<tr><td>{nameof config.Method}</td><td>{config.Method}</td></tr>"
+                + $"<tr><td>{nameof config.InterestRounding}</td><td>{config.InterestRounding}</td></tr>"
+                + $"<tr><td>{nameof config.AprMethod}</td><td>{config.AprMethod}</td></tr>"
             + "</table>"
 
     /// calculates the interest chargeable on a range of days

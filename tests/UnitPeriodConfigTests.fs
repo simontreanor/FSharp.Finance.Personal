@@ -49,10 +49,6 @@ module UnitPeriodConfigTests =
 
     module ConfigEdges =
 
-        let finalAprPercent = function
-        | ValueSome (Solution.Found _, ValueSome percent) -> percent
-        | _ -> Percent 0m
-
         [<Fact>]
         let ``1) Irregular payment schedule does not break detect function`` () =
             let sp = {

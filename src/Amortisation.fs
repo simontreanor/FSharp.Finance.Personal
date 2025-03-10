@@ -143,6 +143,25 @@ module Amortisation =
         EffectiveInterestRate: Interest.Rate
     }
 
+    /// renders the final APR as a string, or "n/a" if not available
+    let finalAprString = function
+    | ValueSome (Solution.Found _, ValueSome percent) -> $"{percent}"
+    | _ -> "n/a"
+
+    /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
+    module Schedule =
+        /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
+        let toHtmlTable schedule =
+            $"<h4>Stats</h4>"
+            + "<table>"
+                + $"<tr><td>Effective Interest Rate:</td><td>{schedule.EffectiveInterestRate}</td></tr>"
+                + $"<tr><td>Final Actual Payment Count:</td><td>{schedule.FinalActualPaymentCount}</td></tr>"
+                + $"""<tr><td>Final APR:</td><td>{finalAprString schedule.FinalApr}</td></tr>"""
+                + $"<tr><td>Final Cost To Borrowing Ratio:</td><td>{schedule.FinalCostToBorrowingRatio}</td></tr>"
+                + $"<tr><td>Final Scheduled Payment Count:</td><td>{schedule.FinalScheduledPaymentCount}</td></tr>"
+                + $"<tr><td>Final Scheduled Payment Day:</td><td>{schedule.FinalScheduledPaymentDay}</td></tr>"
+            + "</table>"
+
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let internal calculate sp settlementDay (initialInterestBalanceL: int64<Cent>) (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
