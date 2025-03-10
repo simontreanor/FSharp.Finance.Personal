@@ -104,9 +104,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest001.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprPercent
+                quote.RevisedSchedule.FinalApr |> finalAprString
 
-            let expected = Percent 56.51300m
+            let expected = "56.51300 %"
             actual |> should equal expected
 
         [<Fact>]
@@ -163,9 +163,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest002.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprPercent
+                quote.RevisedSchedule.FinalApr |> finalAprString
 
-            let expected = Percent 986.81300m
+            let expected = "986.81300 %"
 
             actual |> should equal expected
 
@@ -249,9 +249,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest003.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprPercent
+                quote.RevisedSchedule.FinalApr |> finalAprString
 
-            let expected = Percent 516.75800m
+            let expected = "516.75800 %"
 
             actual |> should equal expected
 
@@ -309,9 +309,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest004.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprPercent
+                quote.RevisedSchedule.FinalApr |> finalAprString
 
-            let expected = Percent 930.55900m
+            let expected = "930.55900 %"
 
             actual |> should equal expected
 
@@ -431,8 +431,8 @@ module UnitPeriodConfigTests =
                 let original = originalScheduledPayments |> generateHtmlFromMap [||]
                 let revised = quote.RevisedSchedule.ScheduleItems |> generateHtmlFromMap [||]
                 $"{title}<br /><br />{original}<br />{revised}" |> outputToFile' "out/UnitPeriodConfigTest005.md" false
-                quote.RevisedSchedule.FinalApr |> finalAprPercent
+                quote.RevisedSchedule.FinalApr |> finalAprString
 
-            let expected = Percent 699.52500m
+            let expected = "699.52500 %"
 
             actual |> should equal expected
