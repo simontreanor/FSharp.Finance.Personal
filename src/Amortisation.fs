@@ -277,8 +277,14 @@ module Amortisation =
                 else
                     dailyInterestRates siOffsetDay appliedPaymentDay
                     |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.InterestConfig.Cap.DailyAmount interestRounding
+            // of the actual payments made on the day, sum any that are confirmed or written off
+            let confirmedPaymentTotal =
+                ap.ActualPayments
+                |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // cap the simple interest against the total interest cap
-            let cappedSimpleInterestM = if a.CumulativeSimpleInterestM + simpleInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeSimpleInterestM else simpleInterestM
+            let cappedSimpleInterestM =
+                if a.CumulativeSimpleInterestM + simpleInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeSimpleInterestM else simpleInterestM
+                |> if confirmedPaymentTotal = 0L<Cent> then id else Cent.roundTo RoundDown 0
             // get any values for original simple interest and contractual interest from any original schedule payment on the day
             let originalSimpleInterestL, contractualInterestM =
                 ap.ScheduledPayment.Original
@@ -289,27 +295,18 @@ module Amortisation =
                 { a with
                     CumulativeSimpleInterestM = a.CumulativeSimpleInterestM + cappedSimpleInterestM
                 }
-            // of the actual payments made on the day, sum any that are confirmed or written off
-            let confirmedPaymentTotal =
-                ap.ActualPayments
-                |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // calculate any new interest accrued since the previous item, according to the interest method supplied in the schedule parameters
             let newInterestM =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn ->
                     if si.BalanceStatus <> ClosedBalance then
-                        // if an actual payment has been confirmed and the difference between the precise and rounded simple interest is less than a cent, ignore it
-                        let significantRoundingDifferenceM = simpleInterestM - Cent.toDecimalCent originalSimpleInterestL
-                        if confirmedPaymentTotal = 0L<Cent> || significantRoundingDifferenceM |> Interest.ignoreFractionalCent > 0m<Cent> then
-                            a.CumulativeSimpleInterestM + cappedSimpleInterestM
-                            |> fun i ->
-                                if i > initialInterestBalanceM then
-                                    i - initialInterestBalanceM
-                                else
-                                    0m<Cent>
-                            |> min cappedSimpleInterestM
-                        else
-                            0m<Cent>
+                        a.CumulativeSimpleInterestM + cappedSimpleInterestM
+                        |> fun i ->
+                            if i > initialInterestBalanceM then
+                                i - initialInterestBalanceM
+                            else
+                                0m<Cent>
+                        |> min cappedSimpleInterestM
                     else
                         0m<Cent>
                 | Interest.Method.Simple -> simpleInterestM
