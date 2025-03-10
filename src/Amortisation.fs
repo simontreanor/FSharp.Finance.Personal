@@ -497,29 +497,59 @@ module Amortisation =
             let interestBalanceM = si.InterestBalance + cappedNewInterestM' - Cent.toDecimalCent (interestPortionL' - carriedInterestL)
             // get the rounded interest balance
             let interestBalanceL = interestBalanceM |> decimal |> Cent.round interestRounding
-            // creates an item that will create a settlement
-            let settlementItem () =
-                // if the balance is already closed, settlement is no longer required
+            // creates an item that optionally creates a settlement
+            let createScheduleItem isSettlement =
+                // refine the payment status based on the balance status and whether this is a settlement
                 let paymentStatus =
-                    match si.BalanceStatus with
-                    | ClosedBalance ->
+                    match si.BalanceStatus, isSettlement with
+                    | ClosedBalance, _ ->
                         NoLongerRequired
-                    | _ ->
+                    | _, true ->
                         Generated
-                // refine the settlement figure if necessary by subtracting any payment made on the same day
-                let settlementFigure =
-                    match sp.InterestConfig.Method with
-                    | Interest.Method.AddOn ->
-                        generatedSettlementPayment'
+                    | RefundDue, _ when netEffect' < 0L<Cent> ->
+                        Refunded
+                    | RefundDue, _ when netEffect' > 0L<Cent> ->
+                        Overpayment
+                    | RefundDue, _ ->
+                        NoLongerRequired
+                    | _ when
+                        ap.PaymentStatus <> InformationOnly
+                        && paymentDue' = 0L<Cent>
+                        && confirmedPaymentTotal = 0L<Cent>
+                        && pendingPaymentTotal = 0L<Cent>
+                        && GeneratedPayment.Total ap.GeneratedPayment = 0L<Cent> ->
+                            NothingDue
                     | _ ->
-                        generatedSettlementPayment' - netEffect'
-                // convert the generated payment placeholder with an actual settlement figure 
-                let generatedPayment =
-                    match ap.GeneratedPayment with
-                    | ToBeGenerated ->
-                        GeneratedValue settlementFigure
-                    | gp ->
-                        gp
+                        ap.PaymentStatus
+                // refine the settlement figure if necessary by subtracting any payment made on the same day, or nullifying it if there are payments pending (settlement cannot be made in this case)
+                let settlementFigure =
+                    match pendingPaymentTotal, ap.PaymentStatus, sp.InterestConfig.Method with
+                    | pp, _, _ when pp > 0L<Cent> ->
+                        ValueNone
+                    | _, NotYetDue, _ 
+                    | _, _, Interest.Method.AddOn ->
+                        ValueSome generatedSettlementPayment'
+                    | _ ->
+                        ValueSome (generatedSettlementPayment' - netEffect')
+
+                let (balances, interestPortionL', generatedPayment) =
+                    if isSettlement then
+                        // convert the generated payment placeholder with an actual settlement figure 
+                        ((0L<Cent>, 0L<Cent>, 0m<Cent>, 0L<Cent>),
+                        interestPortionL',
+                        match ap.GeneratedPayment with
+                        | ToBeGenerated -> GeneratedValue settlementFigure.Value
+                        | gp -> gp)
+                    else
+                        // refine the interest portion by adding carried interest, and calculate the balances
+                        let feesBalance = si.FeesBalance - feesPortion' - feesRefund'
+                        let interestBalance = interestBalanceM |> Interest.ignoreFractionalCent
+                        let chargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
+                        ((principalBalance', feesBalance, interestBalance, chargesBalance),
+                        interestPortionL' - carriedInterestL,
+                        ap.GeneratedPayment)
+
+                let (principalBal, feesBal, interestBal, chargesBal) = balances
                 // create the schedule item
                 let scheduleItem = {
                     Window = window
@@ -529,105 +559,50 @@ module Amortisation =
                     PaymentDue = paymentDue'
                     ActualPayments = ap.ActualPayments
                     GeneratedPayment = generatedPayment
-                    NetEffect = netEffect + GeneratedPayment.Total generatedPayment
+                    NetEffect = if isSettlement then netEffect + GeneratedPayment.Total generatedPayment else netEffect'
                     PaymentStatus = paymentStatus
-                    BalanceStatus = ClosedBalance
+                    BalanceStatus = if isSettlement then ClosedBalance else balanceStatus
                     OriginalSimpleInterest = originalSimpleInterestL
                     ContractualInterest = contractualInterestM
                     SimpleInterest = cappedSimpleInterestM
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
-                    PrincipalPortion = si.PrincipalBalance
+                    PrincipalPortion = if isSettlement then si.PrincipalBalance else principalPortion'
                     FeesPortion = si.FeesBalance - feesRefund
                     InterestPortion = interestPortionL'
-                    ChargesPortion = chargesPortion
+                    ChargesPortion = if isSettlement then chargesPortion else chargesPortion - carriedCharges
                     FeesRefund = feesRefund
-                    PrincipalBalance = 0L<Cent>
-                    FeesBalance = 0L<Cent>
-                    InterestBalance = 0m<Cent>
-                    ChargesBalance = 0L<Cent>
-                    SettlementFigure = ValueSome settlementFigure
-                    FeesRefundIfSettled = feesRefundIfSettled
-                }
-                // returns the offset day, schedule item, generated payment, and interest rounding difference (zero in this case as it is already factored into the settlement figure)
-                appliedPaymentDay, scheduleItem, settlementFigure, 0m<Cent>
-            // creates a normal item, i.e. one that will not create a settlement
-            let nonSettlementItem () =
-                // refine the payment status based on the balance status
-                let paymentStatus =
-                    match si.BalanceStatus with
-                    | ClosedBalance ->
-                        NoLongerRequired
-                    | RefundDue when netEffect' < 0L<Cent> ->
-                        Refunded
-                    | RefundDue when netEffect' > 0L<Cent> ->
-                        Overpayment
-                    | RefundDue ->
-                        NoLongerRequired
-                    | _ ->
-                        if ap.PaymentStatus <> InformationOnly && paymentDue' = 0L<Cent> && confirmedPaymentTotal = 0L<Cent> && pendingPaymentTotal = 0L<Cent> && GeneratedPayment.Total ap.GeneratedPayment = 0L<Cent> then
-                            NothingDue
-                        else
-                            ap.PaymentStatus
-                // refine the settlement figure if necessary by subtracting any payment made on the same day, or nullifying it if there are payments pending (settlement cannot be made in this case)
-                let settlementFigure =
-                    match pendingPaymentTotal, ap.PaymentStatus, sp.InterestConfig.Method with
-                    | pp, _, _ when pp > 0L<Cent> ->
-                        ValueNone
-                    | _, NotYetDue, _
-                    | _, _, Interest.Method.AddOn ->
-                        ValueSome generatedSettlementPayment'
-                    | _, _, _ ->
-                        ValueSome <| generatedSettlementPayment' - netEffect'
-                // refine the interest portion by adding carried interest
-                let interestPortionL' = interestPortionL' - carriedInterestL
-                // create the schedule item
-                let scheduleItem = {
-                    Window = window
-                    OffsetDate = offsetDate
-                    Advances = advances
-                    ScheduledPayment = scheduledPayment
-                    PaymentDue = paymentDue'
-                    ActualPayments = ap.ActualPayments
-                    GeneratedPayment = ap.GeneratedPayment
-                    NetEffect = netEffect'
-                    PaymentStatus = paymentStatus
-                    BalanceStatus = balanceStatus
-                    OriginalSimpleInterest = originalSimpleInterestL
-                    ContractualInterest = contractualInterestM
-                    SimpleInterest = cappedSimpleInterestM
-                    NewInterest = cappedNewInterestM'
-                    NewCharges = incurredCharges
-                    PrincipalPortion = principalPortion'
-                    FeesPortion = feesPortion'
-                    InterestPortion = interestPortionL'
-                    ChargesPortion = chargesPortion - carriedCharges
-                    FeesRefund = feesRefund'
-                    PrincipalBalance = principalBalance'
-                    FeesBalance = si.FeesBalance - feesPortion' - feesRefund'
-                    InterestBalance = interestBalanceM |> Interest.ignoreFractionalCent
-                    ChargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
+                    PrincipalBalance = principalBal
+                    FeesBalance = feesBal
+                    InterestBalance = interestBal
+                    ChargesBalance = chargesBal
                     SettlementFigure = settlementFigure
-                    FeesRefundIfSettled = if paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
+                    FeesRefundIfSettled = if not isSettlement && paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
                 }
                 // calculate the rounding difference between the decimal and integer interest balances
-                let interestRoundingDifferenceM = if interestPortionL' = 0L<Cent> then 0m<Cent> else interestBalanceM - Cent.toDecimalCent interestBalanceL
+                let interestRoundingDifferenceM = 
+                    if not isSettlement && interestPortionL' = 0L<Cent> then
+                        0m<Cent>
+                    else
+                        interestBalanceM - Cent.toDecimalCent interestBalanceL
                 // returns the offset day, schedule item, generated payment, and interest rounding difference (zero in this case as it is already factored into the settlement figure)
-                appliedPaymentDay, scheduleItem, 0L<Cent>, interestRoundingDifferenceM
+                appliedPaymentDay, scheduleItem, (if isSettlement then settlementFigure.Value else 0L<Cent>), interestRoundingDifferenceM
+
             // get the relevant type of item based on the intended purpose
             let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =
                 match ap.GeneratedPayment, settlementDay with
                 | ToBeGenerated, ValueSome SettlementDay.SettlementOnAsOfDay when asOfDay = appliedPaymentDay ->
-                    settlementItem ()
+                    createScheduleItem true
                 | ToBeGenerated, ValueSome (SettlementDay.SettlementOn day) when day = appliedPaymentDay ->
-                    settlementItem ()
+                    createScheduleItem true
                 | GeneratedValue gv, _ ->
                     failwith $"Unexpected value: {gv}"
                 | NoGeneratedPayment, _
                 | ToBeGenerated, ValueNone
                 | ToBeGenerated, ValueSome (SettlementDay.SettlementOn _)
                 | ToBeGenerated, ValueSome SettlementDay.SettlementOnAsOfDay ->
-                    nonSettlementItem ()
+                    createScheduleItem false
+
             // refine the accumulator values
             let accumulator' =
                 { accumulator with
