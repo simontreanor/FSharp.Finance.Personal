@@ -58,7 +58,7 @@ module Interest =
     /// caps on the total interest accruable
     module Cap =
         /// no cap
-        let zero = {
+        let Zero = {
             Cap.TotalAmount = ValueNone
             Cap.DailyAmount = ValueNone
         }

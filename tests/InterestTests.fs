@@ -62,7 +62,7 @@ module InterestTests =
 
         [<Fact>]
         let ``No cap total on a €100 principal yields a very large number`` () =
-            let actual = Cap.zero.TotalAmount |> Cap.total 100_00L<Cent>
+            let actual = Cap.Zero.TotalAmount |> Cap.total 100_00L<Cent>
             let expected = 92_233_720_368_547_758_07m<Cent>
             actual |> should equal expected
 
@@ -231,7 +231,7 @@ module InterestTests =
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 7.985m
-                    Cap = Cap.zero
+                    Cap = Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [|
                         { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
