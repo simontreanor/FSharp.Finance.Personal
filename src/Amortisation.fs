@@ -288,7 +288,7 @@ module Amortisation =
             // get any values for original simple interest and contractual interest from any original schedule payment on the day
             let originalSimpleInterestL, contractualInterestM =
                 ap.ScheduledPayment.Original
-                |> ValueOption.map(fun op -> (op.SimpleInterest, op.ContractualInterest))
+                |> ValueOption.map(fun op -> op.SimpleInterest, op.ContractualInterest)
                 |> ValueOption.defaultValue (0L<Cent>, 0m<Cent>)
             // apply the cumulative simple interest to the accumulator
             let accumulator =
