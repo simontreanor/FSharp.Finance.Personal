@@ -122,22 +122,22 @@ module IllustrativeTests =
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 166_79L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 181_36L<Cent>) ValueNone
                 Window = 4
-                PaymentDue = 166_79L<Cent>
-                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_79L<Cent>; Metadata = Map.empty } |]
+                PaymentDue = 181_36L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 166_79L<Cent>
+                NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
+                OriginalSimpleInterest = 43_52L<Cent>
                 ContractualInterest = 0m<Cent>
-                SimpleInterest = 32_28.24m<Cent>
-                NewInterest = 32_28.24m<Cent>
+                SimpleInterest = 43_52m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 134_51L<Cent>
+                PrincipalPortion = 181_36L<Cent>
                 FeesPortion = 0L<Cent>
-                InterestPortion = 32_28L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
@@ -178,7 +178,7 @@ module IllustrativeTests =
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = interestCapExample
+                Cap = Interest.Cap.Zero //interestCapExample
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -201,29 +201,29 @@ module IllustrativeTests =
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 166_79L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 181_36L<Cent>) ValueNone
                 Window = 4
-                PaymentDue = 166_79L<Cent>
-                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_79L<Cent>; Metadata = Map.empty } |]
+                PaymentDue = 181_36L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 166_79L<Cent>
+                NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
-                BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 0L<Cent>
+                BalanceStatus = ClosedBalance
+                OriginalSimpleInterest = 43_52L<Cent>
                 ContractualInterest = 0m<Cent>
-                SimpleInterest = 37_37.04m<Cent>
-                NewInterest = 37_37.04m<Cent>
+                SimpleInterest = 43_52m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 129_42L<Cent>
+                PrincipalPortion = 181_36L<Cent>
                 FeesPortion = 0L<Cent>
-                InterestPortion = 37_37L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
-                PrincipalBalance = 26_29L<Cent>
+                PrincipalBalance = 0L<Cent>
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 26_29L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         actual |> should equal expected
@@ -280,29 +280,29 @@ module IllustrativeTests =
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 166_79L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 181_36L<Cent>) ValueNone
                 Window = 4
-                PaymentDue = 166_79L<Cent>
-                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 166_79L<Cent>; Metadata = Map.empty } |]
+                PaymentDue = 181_36L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 166_79L<Cent>
+                NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
                 OriginalSimpleInterest = 0L<Cent>
                 ContractualInterest = 0m<Cent>
-                SimpleInterest = 37_82.64m<Cent>
-                NewInterest = 37_82.64m<Cent>
+                SimpleInterest = 43_52m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 128_97L<Cent>
+                PrincipalPortion = 181_06L<Cent>
                 FeesPortion = 0L<Cent>
-                InterestPortion = 37_82L<Cent>
+                InterestPortion = 30L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
                 PrincipalBalance = 28_64L<Cent>
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 28_64L<Cent>
+                SettlementFigure = ValueSome 30L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         actual |> should equal expected

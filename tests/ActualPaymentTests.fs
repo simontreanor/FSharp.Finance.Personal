@@ -30,7 +30,7 @@ module ActualPaymentTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentValue contractualInterest interestAdjustment interestPortion principalPortion =
+    let quickExpectedFinalItem date offsetDay paymentValue contractualInterest simpleInterest newInterest interestPortion principalPortion =
         offsetDay,
         {
             OffsetDate = date
@@ -45,8 +45,8 @@ module ActualPaymentTests =
             BalanceStatus = ClosedBalance
             OriginalSimpleInterest = 0L<Cent>
             ContractualInterest = contractualInterest
-            SimpleInterest = interestAdjustment
-            NewInterest = interestAdjustment
+            SimpleInterest = simpleInterest
+            NewInterest = newInterest
             NewCharges = [||]
             PrincipalPortion = principalPortion
             FeesPortion = 0L<Cent>
@@ -108,7 +108,7 @@ module ActualPaymentTests =
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest001.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0m<Cent> 90_78m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -158,7 +158,7 @@ module ActualPaymentTests =
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest002.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0m<Cent> 110_48m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -208,7 +208,7 @@ module ActualPaymentTests =
         schedule.ScheduleItems |> outputMapToHtml "out/ActualPaymentTest003.md" false
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0m<Cent> 89_95m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -272,7 +272,7 @@ module ActualPaymentTests =
             BalanceStatus = ClosedBalance
             OriginalSimpleInterest = 0L<Cent>
             ContractualInterest = 0m<Cent>
-            SimpleInterest = 26_75.760m<Cent>
+            SimpleInterest = 26_75m<Cent>
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
             PrincipalPortion = 557_45L<Cent>
@@ -351,7 +351,7 @@ module ActualPaymentTests =
             BalanceStatus = RefundDue
             OriginalSimpleInterest = 0L<Cent>
             ContractualInterest = 0m<Cent>
-            SimpleInterest = 26_75.760m<Cent>
+            SimpleInterest = 26_75m<Cent>
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
             PrincipalPortion = 838_09L<Cent>
@@ -687,7 +687,7 @@ module ActualPaymentTests =
             BalanceStatus = ClosedBalance
             OriginalSimpleInterest = 0L<Cent>
             ContractualInterest = 0m<Cent>
-            SimpleInterest = -18.45304110M<Cent>
+            SimpleInterest = -19M<Cent>
             NewInterest = -18.45304110M<Cent>
             NewCharges = [||]
             PrincipalPortion = -280_64L<Cent>
@@ -941,7 +941,7 @@ module ActualPaymentTests =
             BalanceStatus = RefundDue
             OriginalSimpleInterest = 0L<Cent>
             ContractualInterest = 0m<Cent>
-            SimpleInterest = 79_07.200m<Cent>
+            SimpleInterest = 79_07m<Cent>
             NewInterest = 79_07.200m<Cent>
             NewCharges = [||]
             PrincipalPortion = 420_93L<Cent>
