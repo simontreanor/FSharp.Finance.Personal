@@ -62,16 +62,10 @@ module IllustrativeTests =
             FeesRefundIfSettled = 0L<Cent>
         }
 
-    let outputToIllustrativeHtml title sp schedule filename =
-        let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
-        let htmlDatestamp = String.Format("<p>Generated {0:yyyy-MM-dd HH:mm:ss}</p>", DateTime.Now)
-        let htmlSchedule = schedule.ScheduleItems |> generateHtmlFromMap [||]
-        let htmlStats = schedule |> Schedule.toHtmlTable
-        $"<h3>{title}</h3><br />{htmlDatestamp}{htmlParams}<br />{htmlSchedule}<br />{htmlStats}"
-        |> outputToFile' filename false
-
     [<Fact>]
-    let ``000) Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time`` () =
+    let IllustrativeTest000 () =
+        let title = "IllustrativeTest000"
+        let description = "Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time"
         let sp = {
             AsOfDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
@@ -114,7 +108,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        outputToIllustrativeHtml "Illustrative test 000) Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time" sp schedule "out/IllustrativeTest000.md"
+        Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
         let expected =
@@ -150,7 +144,9 @@ module IllustrativeTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``001) Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid before second repayment due date (30/04/2025)`` () =
+    let IllustrativeTest001 () =
+        let title = "IllustrativeTest001"
+        let description = "Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid before second repayment due date (30/04/2025)"
         let sp = {
             AsOfDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
@@ -193,7 +189,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        outputToIllustrativeHtml "Illustrative test 001) Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid before second repayment due date (30/04/2025)" sp schedule "out/IllustrativeTest001.md"
+        Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
         let expected =
@@ -229,7 +225,9 @@ module IllustrativeTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``002) Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and did not pay before second repayment due date (30/04/2025)`` () =
+    let IllustrativeTest002 () =
+        let title = "IllustrativeTest002"
+        let description = "Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and did not pay before second repayment due date (30/04/2025)"
         let sp = {
             AsOfDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
@@ -272,7 +270,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        outputToIllustrativeHtml "Illustrative test 002) Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and did not pay before second repayment due date (30/04/2025)" sp schedule "out/IllustrativeTest002.md"
+        Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
         let expected =

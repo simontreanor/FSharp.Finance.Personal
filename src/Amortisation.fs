@@ -3,9 +3,11 @@ namespace FSharp.Finance.Personal
 /// calculating the principal balance over time, taking into account the effects of charges, interest and fees
 module Amortisation =
 
+    open System
     open AppliedPayment
     open Calculation
     open DateDay
+    open Formatting
     open Scheduling
 
     /// the status of the balance on a given offset day
@@ -160,6 +162,15 @@ module Amortisation =
                 + $"<tr><td>Final Scheduled Payment Count:</td><td>{schedule.FinalScheduledPaymentCount}</td></tr>"
                 + $"<tr><td>Final Scheduled Payment Day:</td><td>{schedule.FinalScheduledPaymentDay}</td></tr>"
             + "</table>"
+        /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
+        let outputHtmlToFile title description sp schedule =
+            let htmlSchedule = schedule.ScheduleItems |> generateHtmlFromMap [||]
+            let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
+            let htmlDatestamp = String.Format("<p>Generated {0:yyyy-MM-dd 'at' HH:mm:ss}</p>", DateTime.Now)
+            let htmlStats = schedule |> toHtmlTable
+            let filename = $"out/{title}.md"
+            $"{htmlSchedule}<br /><h3>{title}</h3><p>{description}</p><p>{htmlDatestamp}</p>{htmlParams}{htmlStats}"
+            |> outputToFile' filename false
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let internal calculate sp settlementDay (initialInterestBalanceL: int64<Cent>) (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
