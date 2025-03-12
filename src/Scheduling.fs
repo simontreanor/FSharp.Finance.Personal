@@ -3,6 +3,7 @@ namespace FSharp.Finance.Personal
 /// functions for generating a regular payment schedule, with payment amounts, interest and APR
 module Scheduling =
 
+    open System
     open Calculation
     open DateDay
     open Formatting
@@ -282,7 +283,104 @@ module Scheduling =
                             ) |> String.concat "")
             + "</table>"
 
-    /// a scheduled payment item, with running calculations of interest and principal balance
+    /// whether to stick to scheduled payment amounts or add charges and interest to them
+    [<Struct>]
+    type ScheduledPaymentOption =
+        /// keep to the scheduled payment amounts even if this results in an open balance
+        | AsScheduled
+        /// add any charges and interest to the payment in order to close the balance at the end of the schedule
+        | AddChargesAndInterest
+
+    /// how to handle a final balance if not closed: leave it open or modify/add payments at the end of the schedule
+    [<Struct>]
+    type CloseBalanceOption =
+        /// do not modify the final payment and leave any open balance as is
+        | LeaveOpenBalance
+        /// increase the final payment to close any open balance
+        | IncreaseFinalPayment
+        /// add a single payment to the schedule to close any open balance immediately (interval based on unit-period config)
+        | AddSingleExtraPayment
+        /// add multiple payments to the schedule to close any open balance gradually (interval based on unit-period config)
+        | AddMultipleExtraPayments
+
+    /// how to handle cases where the payment due is less than the minimum that payment providers can process
+     [<Struct>]
+    type MinimumPayment =
+        /// no minimum payment
+        | NoMinimumPayment
+        /// add the payment due to the next payment or close the balance if the final payment
+        | DeferOrWriteOff of DeferOrWriteOff: int64<Cent>
+        /// take the minimum payment regardless
+        | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
+
+        override mp.ToString() =
+            match mp with
+            | NoMinimumPayment -> "no minimum payment"
+            | DeferOrWriteOff upToValue -> $"defer or write off up to {formatCent upToValue}"
+            | ApplyMinimumPayment minimumPayment -> $"apply minimum payment of {formatCent minimumPayment}"
+
+    /// how to treat scheduled payments
+    type PaymentConfig = {
+        /// whether to modify scheduled payment amounts to keep the schedule on-track
+        ScheduledPaymentOption: ScheduledPaymentOption
+        /// whether to leave a final balance open or close it using various methods
+        CloseBalanceOption: CloseBalanceOption
+        /// how to round payments
+        PaymentRounding: Rounding
+        /// the minimum payment that can be taken and how to handle it
+        MinimumPayment: MinimumPayment
+        /// the duration after which a pending payment is considered a missed payment
+        PaymentTimeout: int<DurationDay>
+    }
+
+    /// how to treat scheduled payments
+    module PaymentConfig =
+        ///formats the payment config as an HTML table
+        let toHtmlTable paymentConfig =
+            "<table>"
+                + $"<tr><td>{nameof paymentConfig.ScheduledPaymentOption}</td><td>{paymentConfig.ScheduledPaymentOption}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.CloseBalanceOption}</td><td>{paymentConfig.CloseBalanceOption}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.PaymentRounding}</td><td>{paymentConfig.PaymentRounding}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.MinimumPayment}</td><td>{paymentConfig.MinimumPayment}</td></tr>"
+                + $"<tr><td>{nameof paymentConfig.PaymentTimeout}</td><td>{paymentConfig.PaymentTimeout}</td></tr>"
+            + "</table>"
+
+   /// parameters for creating a payment schedule
+    type Parameters = {
+        /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
+        AsOfDate: Date
+        /// the start date of the schedule, typically the day on which the principal is advanced
+        StartDate: Date
+        /// the principal
+        Principal: int64<Cent>
+        /// the scheduled payments or the parameters for generating them
+        ScheduleConfig: ScheduleConfig
+        /// options relating to scheduled payments
+        PaymentConfig: PaymentConfig
+        /// options relating to fees
+        FeeConfig: Fee.Config
+        /// options relating to charges
+        ChargeConfig: Charge.Config
+        /// options relating to interest
+        InterestConfig: Interest.Config
+    }
+
+    /// parameters for creating a payment schedule
+    module Parameters =
+        /// formats the parameters as an HTML table
+        let toHtmlTable (parameters: Parameters) =
+            "<table>"
+                + $"<tr><td>{nameof parameters.AsOfDate}</td><td>{parameters.AsOfDate}</td></tr>"
+                + $"<tr><td>{nameof parameters.StartDate}</td><td>{parameters.StartDate}</td></tr>"
+                + $"<tr><td>{nameof parameters.Principal}</td><td>{formatCent parameters.Principal}</td></tr>"
+                + $"<tr><td>{nameof parameters.ScheduleConfig}</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.PaymentConfig}</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.FeeConfig}</td><td>{Fee.Config.toHtmlTable parameters.FeeConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.ChargeConfig}</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
+                + $"<tr><td>{nameof parameters.InterestConfig}</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
+            + "</table>"
+
+     /// a scheduled payment item, with running calculations of interest and principal balance
     type SimpleItem = {
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
@@ -349,102 +447,16 @@ module Scheduling =
         CostToBorrowingRatio: Percent
     }
 
-    /// how to handle cases where the payment due is less than the minimum that payment providers can process
-     [<Struct>]
-    type MinimumPayment =
-        /// no minimum payment
-        | NoMinimumPayment
-        /// add the payment due to the next payment or close the balance if the final payment
-        | DeferOrWriteOff of DeferOrWriteOff: int64<Cent>
-        /// take the minimum payment regardless
-        | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
-
-        override mp.ToString() =
-            match mp with
-            | NoMinimumPayment -> "no minimum payment"
-            | DeferOrWriteOff upToValue -> $"defer or write off up to {formatCent upToValue}"
-            | ApplyMinimumPayment minimumPayment -> $"apply minimum payment of {formatCent minimumPayment}"
-
-    /// whether to stick to scheduled payment amounts or add charges and interest to them
-    [<Struct>]
-    type ScheduledPaymentOption =
-        /// keep to the scheduled payment amounts even if this results in an open balance
-        | AsScheduled
-        /// add any charges and interest to the payment in order to close the balance at the end of the schedule
-        | AddChargesAndInterest
-
-    /// how to handle a final balance if not closed: leave it open or modify/add payments at the end of the schedule
-    [<Struct>]
-    type CloseBalanceOption =
-        /// do not modify the final payment and leave any open balance as is
-        | LeaveOpenBalance
-        /// increase the final payment to close any open balance
-        | IncreaseFinalPayment
-        /// add a single payment to the schedule to close any open balance immediately (interval based on unit-period config)
-        | AddSingleExtraPayment
-        /// add multiple payments to the schedule to close any open balance gradually (interval based on unit-period config)
-        | AddMultipleExtraPayments
-
-    /// how to treat scheduled payments
-    type PaymentConfig = {
-        /// whether to modify scheduled payment amounts to keep the schedule on-track
-        ScheduledPaymentOption: ScheduledPaymentOption
-        /// whether to leave a final balance open or close it using various methods
-        CloseBalanceOption: CloseBalanceOption
-        /// how to round payments
-        PaymentRounding: Rounding
-        /// the minimum payment that can be taken and how to handle it
-        MinimumPayment: MinimumPayment
-        /// the duration after which a pending payment is considered a missed payment
-        PaymentTimeout: int<DurationDay>
-    }
-
-    /// how to treat scheduled payments
-    module PaymentConfig =
-        ///formats the payment config as an HTML table
-        let toHtmlTable paymentConfig =
-            "<table>"
-                + $"<tr><td>{nameof paymentConfig.ScheduledPaymentOption}</td><td>{paymentConfig.ScheduledPaymentOption}</td></tr>"
-                + $"<tr><td>{nameof paymentConfig.CloseBalanceOption}</td><td>{paymentConfig.CloseBalanceOption}</td></tr>"
-                + $"<tr><td>{nameof paymentConfig.PaymentRounding}</td><td>{paymentConfig.PaymentRounding}</td></tr>"
-                + $"<tr><td>{nameof paymentConfig.MinimumPayment}</td><td>{paymentConfig.MinimumPayment}</td></tr>"
-                + $"<tr><td>{nameof paymentConfig.PaymentTimeout}</td><td>{paymentConfig.PaymentTimeout}</td></tr>"
-            + "</table>"
-
-    /// parameters for creating a payment schedule
-    type Parameters = {
-        /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
-        AsOfDate: Date
-        /// the start date of the schedule, typically the day on which the principal is advanced
-        StartDate: Date
-        /// the principal
-        Principal: int64<Cent>
-        /// the scheduled payments or the parameters for generating them
-        ScheduleConfig: ScheduleConfig
-        /// options relating to scheduled payments
-        PaymentConfig: PaymentConfig
-        /// options relating to fees
-        FeeConfig: Fee.Config
-        /// options relating to charges
-        ChargeConfig: Charge.Config
-        /// options relating to interest
-        InterestConfig: Interest.Config
-    }
-
-    /// parameters for creating a payment schedule
-    module Parameters =
-        /// formats the parameters as an HTML table
-        let toHtmlTable (parameters: Parameters) =
-            "<table>"
-                + $"<tr><td>{nameof parameters.AsOfDate}</td><td>{parameters.AsOfDate}</td></tr>"
-                + $"<tr><td>{nameof parameters.StartDate}</td><td>{parameters.StartDate}</td></tr>"
-                + $"<tr><td>{nameof parameters.Principal}</td><td>{formatCent parameters.Principal}</td></tr>"
-                + $"<tr><td>{nameof parameters.ScheduleConfig}</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
-                + $"<tr><td>{nameof parameters.PaymentConfig}</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
-                + $"<tr><td>{nameof parameters.FeeConfig}</td><td>{Fee.Config.toHtmlTable parameters.FeeConfig}</td></tr>"
-                + $"<tr><td>{nameof parameters.ChargeConfig}</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
-                + $"<tr><td>{nameof parameters.InterestConfig}</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
-            + "</table>"
+    ///  a schedule of payments, with final statistics based on the payments being made on time and in full
+    module SimpleSchedule =
+        /// renders the simple schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
+        let outputHtmlToFile title description sp schedule =
+            let htmlSchedule = schedule.Items |> generateHtmlFromArray [||]
+            let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
+            let htmlDatestamp = sprintf "<p>Generated {0:yyyy-MM-dd 'at' HH:mm:ss}</p>", DateTime.Now
+            let filename = $"out/{title}.md"
+            $"{htmlSchedule}<br /><h3>{title}</h3><p>{description}</p><p>{htmlDatestamp}</p>{htmlParams}"
+            |> outputToFile' filename false
 
     /// convert an option to a value option
     let toValueOption = function Some x -> ValueSome x | None -> ValueNone

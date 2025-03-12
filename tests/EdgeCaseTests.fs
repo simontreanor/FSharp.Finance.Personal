@@ -21,7 +21,9 @@ module EdgeCaseTests =
     }
 
     [<Fact>]
-    let ``1) Quote returning nothing`` () =
+    let EdgeCaseTest000 () =
+        let title = "EdgeCaseTest000"
+        let description = "Quote returning nothing"
         let sp = {
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2023, 2, 9)
@@ -64,7 +66,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest001.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -82,7 +84,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2) Quote returning nothing`` () =
+    let EdgeCaseTest001 () =
+        let title = "EdgeCaseTest001"
+        let description = "Quote returning nothing"
         let sp = {
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 2, 2)
@@ -125,7 +129,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest002.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -143,7 +147,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``3) Quote returning nothing`` () =
+    let EdgeCaseTest002 () =
+        let title = "EdgeCaseTest002"
+        let description = "Quote returning nothing"
         let sp = {
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 12, 2)
@@ -186,7 +192,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest003.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -204,7 +210,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``4) Quote returning nothing`` () =
+    let EdgeCaseTest003 () =
+        let title = "EdgeCaseTest003"
+        let description = "Quote returning nothing"
         let sp = {
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
@@ -319,7 +327,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -337,7 +345,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``4a) Only one insufficient funds charge per day`` () =
+    let ``EdgeCaseTests004`` () =
+        let title = "EdgeCaseTests004"
+        let description = "Only one insufficient funds charge per day"
         let sp = {
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
@@ -452,7 +462,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest004a.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -470,7 +480,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``5) Quote returning nothing`` () =
+    let EdgeCaseTest005 () =
+        let title = "EdgeCaseTest005"
+        let description = "Quote returning nothing"
         let sp = {
 
             AsOfDate = Date(2024, 3, 12)
@@ -579,7 +591,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest005.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -597,7 +609,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``6) Quote returning nothing`` () =
+    let EdgeCaseTest006 () =
+        let title = "EdgeCaseTest006"
+        let description = "Quote returning nothing"
         let sp = {
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2021, 12, 26)
@@ -633,7 +647,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest006.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -652,7 +666,9 @@ module EdgeCaseTests =
 
 
     [<Fact>]
-    let ``7) Quote returning nothing`` () =
+    let EdgeCaseTest007 () =
+        let title = "EdgeCaseTest007"
+        let description = "Quote returning nothing"
         let sp = {
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
@@ -701,7 +717,7 @@ module EdgeCaseTests =
 
         let result = reschedule sp rp actualPayments
 
-        result |> snd |> _.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest007.md" false
+        result |> snd |> Schedule.outputHtmlToFile title description sp
 
         let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
 
@@ -737,7 +753,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``8) Partial write-off`` () =
+    let EdgeCaseTest008 () =
+        let title = "EdgeCaseTest008"
+        let description = "Partial write-off"
         let sp = {
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
@@ -786,7 +804,7 @@ module EdgeCaseTests =
 
         let result = reschedule sp rp actualPayments
 
-        result |> snd |> _.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest008.md" false
+        result |> snd |> Schedule.outputHtmlToFile title description sp
 
         let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
 
@@ -822,7 +840,9 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``9) Negative principal balance accruing interest`` () =
+    let EdgeCaseTest009 () =
+        let title = "EdgeCaseTest009"
+        let description = "Negative principal balance accruing interest"
         let sp = {
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
@@ -858,7 +878,7 @@ module EdgeCaseTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/EdgeCaseTest009.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule.ScheduleItems |> Map.maxKeyValue
 

@@ -21,7 +21,9 @@ module FeesAndChargesTests =
     module ChargesTests =
 
         [<Fact>]
-        let ``One charge type per day`` () =
+        let FeesAndChargesTest000 () =
+            let title = "FeesAndChargesTest000"
+            let description = "One charge type per day"
             let sp = {
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
@@ -74,7 +76,7 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest001.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let actual = schedule.ScheduleItems |> Map.maxKeyValue
 
@@ -110,7 +112,9 @@ module FeesAndChargesTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``One charge type per product`` () =
+        let FeesAndChargesTest001 () =
+            let title = "FeesAndChargesTest001"
+            let description = "One charge type per product"
             let sp = {
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
@@ -163,7 +167,7 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest002.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let actual = schedule.ScheduleItems |> Map.maxKeyValue
 
@@ -199,7 +203,9 @@ module FeesAndChargesTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``All charges applied`` () =
+        let FeesAndChargesTest002 () =
+            let title = "FeesAndChargesTest002"
+            let description = "All charges applied"
             let sp = {
                 AsOfDate = Date(2023, 4, 1)
                 StartDate = Date(2022, 11, 26)
@@ -252,7 +258,7 @@ module FeesAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            schedule.ScheduleItems |> outputMapToHtml "out/FeesAndChargesTest003.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let actual = schedule.ScheduleItems |> Map.maxKeyValue
             

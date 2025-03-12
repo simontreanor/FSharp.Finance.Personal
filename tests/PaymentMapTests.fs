@@ -51,7 +51,9 @@ module PaymentMapTests =
     }
 
     [<Fact>]
-    let ``1) Basic scenario`` () =
+    let PaymentMapTest001 () =
+        let title = "PaymentMapTest001"
+        let description = "Basic scenario"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
@@ -66,7 +68,7 @@ module PaymentMapTests =
             let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
             let title = "<h3>1) Basic scenario</h3>"
             let newHtml = pm |> generateHtmlFromArray None
-            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest001.md" false
+            $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
@@ -81,7 +83,9 @@ module PaymentMapTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2) Very early exact repayments`` () =
+    let PaymentMapTest002 () =
+        let title = "PaymentMapTest002"
+        let description = "Very early exact repayments"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
@@ -99,7 +103,7 @@ module PaymentMapTests =
             let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
             let title = "<h3>2) Very early exact repayments</h3>"
             let newHtml = pm |> generateHtmlFromArray None
-            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest002.md" false
+            $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
@@ -114,7 +118,9 @@ module PaymentMapTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``3) Paid off but with erratic payment timings`` () =
+    let PaymentMapTest003 () =
+        let title = "PaymentMapTest003"
+        let description = "Paid off but with erratic payment timings"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
@@ -130,7 +136,7 @@ module PaymentMapTests =
             let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
             let title = "<h3>3) Paid off but with erratic payment timings</h3>"
             let newHtml = pm |> generateHtmlFromArray None
-            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest003.md" false
+            $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
@@ -145,7 +151,9 @@ module PaymentMapTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``4) Erratic payment timings but not paid off`` () =
+    let PaymentMapTest004 () =
+        let title = "PaymentMapTest004"
+        let description = "Erratic payment timings but not paid off"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
@@ -160,7 +168,7 @@ module PaymentMapTests =
             let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
             let title = "<h3>4) Erratic payment timings but not paid off</h3>"
             let newHtml = pm |> generateHtmlFromArray None
-            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest004.md" false
+            $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
@@ -175,7 +183,9 @@ module PaymentMapTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``5) No payments at all`` () =
+    let PaymentMapTest005 () =
+        let title = "PaymentMapTest005"
+        let description = "No payments at all"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
         let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
@@ -187,7 +197,7 @@ module PaymentMapTests =
             let pm = PaymentMap.create asOfDate startDate scheduledPayments actualPayments
             let title = "<h3>5) No payments at all</h3>"
             let newHtml = pm |> generateHtmlFromArray None
-            $"{title}<br />{newHtml}" |> outputToFile' @"out/PaymentMapTest005.md" false
+            $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
         let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal

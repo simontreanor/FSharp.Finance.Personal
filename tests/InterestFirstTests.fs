@@ -42,12 +42,14 @@ module InterestFirstTests =
         }
 
     [<Fact>]
-    let ``1) Simple interest method initial schedule`` () =
+    let InterestFirstTest000 () =
+        let title = "InterestFirstTest000"
+        let description = "Simple interest method initial schedule"
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
             let schedule = sp |> Scheduling.calculate BelowZero
-            schedule.Items |> outputArrayToHtml "out/InterestFirstTest001.md" false
+            SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.LevelPayment, schedule.FinalPayment
 
         let expected = 319_26L<Cent>, 319_23L<Cent>
@@ -55,7 +57,9 @@ module InterestFirstTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2) Simple interest method`` () =
+    let InterestFirstTest001 () =
+        let title = "InterestFirstTest001"
+        let description = "Simple interest method"
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actualPayments = Map.empty
@@ -64,26 +68,30 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest002.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalInterestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
 
         finalInterestBalance |> should equal 1000_00m<Cent>
 
     [<Fact>]
-    let ``3) Add-on interest method initial schedule`` () =
+    let InterestFirstTest002 () =
+        let title = "InterestFirstTest002"
+        let description = "Add-on interest method initial schedule"
         let sp = scheduleParameters
 
         let actual =
             let schedule = sp |> Scheduling.calculate BelowZero
-            schedule.Items |> outputArrayToHtml "out/InterestFirstTest003.md" false
+            SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.LevelPayment, schedule.FinalPayment
 
         let expected = 367_73L<Cent>, 367_72L<Cent>
         actual |> should equal expected
 
     [<Fact>]
-    let ``4) Add-on interest method`` () =
+    let InterestFirstTest003 () =
+        let title = "InterestFirstTest003"
+        let description = "Add-on interest method"
         let sp = scheduleParameters
 
         let actualPayments = Map.empty
@@ -92,14 +100,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest004.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal <| ValueSome 2000_00L<Cent>
 
     [<Fact>]
-    let ``5) Add-on interest method with early repayment`` () =
+    let InterestFirstTest004 () =
+        let title = "InterestFirstTest004"
+        let description = "Add-on interest method with early repayment"
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9) }
 
         let actualPayments =
@@ -112,14 +122,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest005.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 838_64L<Cent>
 
     [<Fact>]
-    let ``6) Add-on interest method with normal but very early repayments`` () =
+    let InterestFirstTest005 () =
+        let title = "InterestFirstTest005"
+        let description = "Add-on interest method with normal but very early repayments"
         let sp = scheduleParameters
 
         let actualPayments =
@@ -135,14 +147,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest006.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 23_88L<Cent>
 
     [<Fact>]
-    let ``7) Add-on interest method with normal but with erratic payment timings`` () =
+    let InterestFirstTest006 () =
+        let title = "InterestFirstTest006"
+        let description = "Add-on interest method with normal but with erratic payment timings"
         let startDate = Date(2022, 1, 10)
         let sp =
             { scheduleParameters with
@@ -164,14 +178,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest007.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalPrincipalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
 
         finalPrincipalBalance |> should equal 0L<Cent>
 
     [<Fact>]
-    let ``8) Add-on interest method with normal but with erratic payment timings expecting settlement figure on final day`` () =
+    let InterestFirstTest007 () =
+        let title = "InterestFirstTest007"
+        let description = "Add-on interest method with normal but with erratic payment timings expecting settlement figure on final day"
         let startDate = Date(2022, 1, 10)
         let sp =
             { scheduleParameters with
@@ -192,14 +208,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest008.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal <| ValueSome 650_63L<Cent>
 
     [<Fact>]
-    let ``9) Add-on interest method with normal repayments`` () =
+    let InterestFirstTest008 () =
+        let title = "InterestFirstTest008"
+        let description = "Add-on interest method with normal repayments"
         let sp = scheduleParameters
 
         let actualPayments =
@@ -215,14 +233,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest009.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 838_64L<Cent>
 
     [<Fact>]
-    let ``10) Add-on interest method with single early repayment`` () =
+    let InterestFirstTest009 () =
+        let title = "InterestFirstTest009"
+        let description = "Add-on interest method with single early repayment"
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
 
         let actualPayments =
@@ -234,14 +254,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest010.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal <| ValueSome 737_36L<Cent>
 
     [<Fact>]
-    let ``11) Add-on interest method with single early repayment then a quote one day later`` () =
+    let InterestFirstTest010 () =
+        let title = "InterestFirstTest010"
+        let description = "Add-on interest method with single early repayment then a quote one day later"
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
 
         let actualPayments =
@@ -253,14 +275,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest011.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 14_65L<Cent>
 
     [<Fact>]
-    let ``12) Add-on interest method with small loan and massive payment leading to a refund needed`` () =
+    let InterestFirstTest011 () =
+        let title = "InterestFirstTest011"
+        let description = "Add-on interest method with small loan and massive payment leading to a refund needed"
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
 
         let actualPayments =
@@ -272,13 +296,15 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest012.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
         totalInterest |> should equal -25_24L<Cent>
 
     [<Fact>]
-    let ``13) Realistic example 501ac58e62a5`` () =
+    let InterestFirstTest012 () =
+        let title = "InterestFirstTest012"
+        let description = "Realistic example 501ac58e62a5"
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 4, 1); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
 
         let actualPayments =
@@ -294,14 +320,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest013.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal <| ValueSome -324_57L<Cent>
 
     [<Fact>]
-    let ``14) Realistic example 0004ffd74fbb`` () =
+    let InterestFirstTest013 () =
+        let title = "InterestFirstTest013"
+        let description = "Realistic example 0004ffd74fbb"
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
 
         let actualPayments =
@@ -316,14 +344,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest014.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal <| ValueSome 0L<Cent>
 
     [<Fact>]
-    let ``14a) Realistic example 0004ffd74fbb with overpayment`` () =
+    let ``InterestFirstTests014`` () =
+        let title = "InterestFirstTests014"
+        let description = "Realistic example 0004ffd74fbb with overpayment"
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
 
         let actualPayments =
@@ -338,14 +368,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest014a.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
 
         finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, ValueSome -12_78L<Cent>)
 
     [<Fact>]
-    let ``15) Add-on interest method with big early repayment followed by tiny overpayment`` () =
+    let InterestFirstTest015 () =
+        let title = "InterestFirstTest015"
+        let description = "Add-on interest method with big early repayment followed by tiny overpayment"
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 1000 }
 
         let actualPayments =
@@ -357,14 +389,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest015.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal <| ValueSome -1_22L<Cent>
 
     [<Fact>]
-    let ``16) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)`` () =
+    let InterestFirstTest016 () =
+        let title = "InterestFirstTest016"
+        let description = "Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)"
         let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.InterestConfig.Cap = Interest.Cap.Zero }
 
         let actualPayments = Map.empty
@@ -373,14 +407,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest016.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
 
         initialInterestBalance |> should equal 362_34m<Cent>
 
     [<Fact>]
-    let ``17) Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)`` () =
+    let InterestFirstTest017 () =
+        let title = "InterestFirstTest017"
+        let description = "Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)"
         let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m }
 
         let actualPayments = Map.empty
@@ -389,14 +425,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest017.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
         
         initialInterestBalance |> should equal 362_34m<Cent>
 
     [<Fact>]
-    let ``18) Realistic test 6045bd0ffc0f with correction on final day`` () =
+    let InterestFirstTest018 () =
+        let title = "InterestFirstTest018"
+        let description = "Realistic test 6045bd0ffc0f with correction on final day"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -596,14 +634,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> Formatting.outputMapToHtml "out/InterestFirstTest018.md" false
+        schedule |> Schedule.outputHtmlToFile title description sp
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
     [<Fact>]
-    let ``19) Realistic test 6045bd0ffc0f`` () =
+    let InterestFirstTest019 () =
+        let title = "InterestFirstTest019"
+        let description = "Realistic test 6045bd0ffc0f"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -648,14 +688,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest019.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
     [<Fact>]
-    let ``20) Realistic test 6045bd123363 with correction on final day`` () =
+    let InterestFirstTest020 () =
+        let title = "InterestFirstTest020"
+        let description = "Realistic test 6045bd123363 with correction on final day"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -674,14 +716,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> Formatting.outputMapToHtml "out/InterestFirstTest020.md" false
+        schedule |> Schedule.outputHtmlToFile title description sp
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
     [<Fact>]
-    let ``21) Realistic test 6045bd123363`` () =
+    let InterestFirstTest021 () =
+        let title = "InterestFirstTest021"
+        let description = "Realistic test 6045bd123363"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -699,14 +743,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest021.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
     [<Fact>]
-    let ``22) Realistic test 0004ffd74fbbn`` () =
+    let InterestFirstTest022 () =
+        let title = "InterestFirstTest022"
+        let description = "Realistic test 0004ffd74fbbn"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -735,14 +781,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest022.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 340_00L<Cent>
 
     [<Fact>]
-    let ``23) Realistic test 0003ff008ae5`` () =
+    let InterestFirstTest023 () =
+        let title = "InterestFirstTest023"
+        let description = "Realistic test 0003ff008ae5"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -774,14 +822,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest023.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 1_500_00L<Cent>
 
     [<Fact>]
-    let ``24) Realistic test 0003ff00bffb with actuarial method`` () =
+    let InterestFirstTest024 () =
+        let title = "InterestFirstTest024"
+        let description = "Realistic test 0003ff00bffb with actuarial method"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -840,14 +890,16 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest024.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>
 
     [<Fact>]
-    let ``25) Realistic test 0003ff00bffb with add-on method`` () =
+    let InterestFirstTest025 () =
+        let title = "InterestFirstTest025"
+        let description = "Realistic test 0003ff00bffb with add-on method"
         let sp =
             { scheduleParameters with
                 AsOfDate = Date(2024, 9, 17)
@@ -905,7 +957,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule.ScheduleItems |> outputMapToHtml "out/InterestFirstTest025.md" false
+        Schedule.outputHtmlToFile title description sp schedule
 
         let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 

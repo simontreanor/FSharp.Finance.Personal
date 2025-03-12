@@ -73,7 +73,9 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``1) Total interest in amortised schedule does not exceed interest cap`` () =
+        let InterestCapTest000 () =
+            let title = "InterestCapTest000"
+            let description = "Total interest in amortised schedule does not exceed interest cap"
             let sp = {
                 AsOfDate = Date(2024, 4, 25)
                 StartDate = Date(2023, 2, 9)
@@ -110,14 +112,16 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-            schedule.ScheduleItems |> outputMapToHtml "out/InterestCapTest001.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let interestPortion = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
             interestPortion |> should be (lessThanOrEqualTo 499_00L<Cent>)
 
         [<Fact>]
-        let ``2) Total interest in amortised schedule does not exceed interest cap, using unrounded percentages`` () =
+        let InterestCapTest001 () =
+            let title = "InterestCapTest001"
+            let description = "Total interest in amortised schedule does not exceed interest cap, using unrounded percentages"
             let sp = {
                 AsOfDate = Date(2024, 4, 25)
                 StartDate = Date(2023, 2, 9)
@@ -154,7 +158,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-            schedule.ScheduleItems |> outputMapToHtml "out/InterestCapTest002.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let interestPortion = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
@@ -202,91 +206,12 @@ module InterestTests =
                 |> Array.concat
             actual |> should equal expected
 
-    module PromotionalRatesTests =
-
-        [<Fact>]
-        let ``1) Mortgage quote with a five-year fixed interest deal and a mortgage fee added to the loan`` () =
-            let sp = {
-                AsOfDate = Date(2024, 4, 11)
-                StartDate = Date(2024, 4, 11)
-                Principal = 192_000_00L<Cent>
-                ScheduleConfig = FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentValue = 1225_86L<Cent>; ScheduleType = ScheduleType.Original }
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentValue = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
-                |]
-                PaymentConfig = {
-                    ScheduledPaymentOption = AsScheduled
-                    CloseBalanceOption = LeaveOpenBalance
-                    PaymentRounding = RoundUp
-                    MinimumPayment = NoMinimumPayment
-                    PaymentTimeout = 3<DurationDay>
-                }
-                FeeConfig = {
-                    FeeTypes = [| Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent> |]
-                    Rounding = RoundDown
-                    FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
-                    SettlementRefund = Fee.SettlementRefund.Zero
-                }
-                ChargeConfig = Charge.Config.initialRecommended
-                InterestConfig = {
-                    Method = Method.Simple
-                    StandardRate = Rate.Annual <| Percent 7.985m
-                    Cap = Cap.Zero
-                    InitialGracePeriod = 3<DurationDay>
-                    PromotionalRates = [|
-                        { DateRange = { Start = Date(2024, 4, 11); End = Date(2029, 4, 10) }; Rate = Rate.Annual <| Percent 4.535m }
-                    |]
-                    RateOnNegativeBalance = Rate.Zero
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    InterestRounding = RoundDown
-                }
-            }
-
-            let actualPayments = Map.empty
-
-            let schedule =
-                actualPayments
-                |> Amortisation.generate sp ValueNone false
-
-            schedule.ScheduleItems |> outputMapToHtml "out/InterestTest001.md" false
-
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
-
-            let expected = 7305<OffsetDay>, {
-                OffsetDate = Date(2044, 4, 11)
-                Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 1525_12L<Cent>) ValueNone
-                Window = 240
-                PaymentDue = 1523_25L<Cent>
-                ActualPayments = [||]
-                GeneratedPayment = NoGeneratedPayment
-                NetEffect = 1523_25L<Cent>
-                PaymentStatus = NotYetDue
-                BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
-                SimpleInterest = 10_26.07665657m<Cent>
-                NewInterest = 10_26.07665657m<Cent>
-                NewCharges = [||]
-                PrincipalPortion = 1512_99L<Cent>
-                FeesPortion = 0L<Cent>
-                InterestPortion = 10_26L<Cent>
-                ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
-                PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
-                InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1523_25L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
-            }
-
-            actual |> should equal expected
-
     module Cca2004Tests =
 
         [<Fact>]
-        let ``1) UK rebate example 1`` () =
+        let Cca2004Test000 () =
+            let title = "Cca2004Test000"
+            let description = "UK rebate example 1"
             let principal = 5000_00L<Cent>
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
@@ -299,7 +224,9 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``1a) UK rebate example 1a`` () =
+        let ``Cca2004Test001`` () =
+            let title = "Cca2004Test001"
+            let description = "UK rebate example 1a"
             let principal = 5000_00L<Cent>
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
@@ -312,7 +239,9 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``1b) UK rebate example 1b`` () =
+        let ``Cca2004Tests002`` () =
+            let title = "Cca2004Test002"
+            let description = "UK rebate example 1b"
             let principal = 5000_00L<Cent>
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
@@ -325,7 +254,9 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``1c) UK rebate example 1c`` () =
+        let ``Cca2004Tests003`` () =
+            let title = "Cca2004Test003"
+            let description = "UK rebate example 1c"
             let principal = 5000_00L<Cent>
             let payments = [| 1 .. 48 |] |> Array.map(fun i -> i, 134_57L<Cent>)
             let apr = Percent 14m
@@ -338,7 +269,9 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``2) UK rebate example 2`` () =
+        let Cca2004Test004 () =
+            let title = "Cca2004Test004"
+            let description = "UK rebate example 2"
             let principal = 10000_00L<Cent>
             let payments = [| 1 .. 180 |] |> Array.map(fun i -> i, 139_51L<Cent>)
             let apr = Percent 16m
@@ -351,7 +284,9 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``2a) UK rebate example 2a`` () =
+        let Cca2004Tests005 () =
+            let title = "Cca2004Test005"
+            let description = "UK rebate example 2a"
             let principal = 10000_00L<Cent>
             let payments = [| 1 .. 180 |] |> Array.map(fun i -> i, 139_51L<Cent>)
             let apr = Percent 16m
@@ -363,7 +298,7 @@ module InterestTests =
             let expected = 6606_95L<Cent>
             actual |> should equal expected
 
-        let scheduleParameters2 =
+        let scheduleParameters =
             {
                 StartDate = Date(2010, 3, 1)
                 AsOfDate = Date(2011, 3, 1)
@@ -391,8 +326,10 @@ module InterestTests =
             }
 
         [<Fact>]
-        let ``3) Initial statement (simple interest) matching total interest amount of £1459.36`` () =
-            let sp = { scheduleParameters2 with AsOfDate = Date(2010, 3, 1) }
+        let Cca2004Test006 () =
+            let title = "Cca2004Test006"
+            let description = "Initial statement (simple interest) matching total interest amount of £1459.36"
+            let sp = { scheduleParameters with AsOfDate = Date(2010, 3, 1) }
 
             let actualPayments = Map.empty
 
@@ -400,7 +337,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone true
 
-            schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
@@ -408,8 +345,10 @@ module InterestTests =
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
-        let ``3a) Initial statement (simple interest, autogenerated payment amounts) matching level payment of £134.57`` () =
-            let sp = { scheduleParameters2 with AsOfDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; MaxDuration = Duration.Unlimited } }
+        let Cca2004Test007 () =
+            let title = "Cca2004Test007"
+            let description = "Initial statement (simple interest, autogenerated payment amounts) matching level payment of £134.57"
+            let sp = { scheduleParameters with AsOfDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; MaxDuration = Duration.Unlimited } }
 
             let actualPayments = Map.empty
 
@@ -417,7 +356,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone true
 
-            schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003a.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
@@ -425,8 +364,10 @@ module InterestTests =
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
-        let ``3b) CCA 2004 rebate example using library method (simple interest)`` () =
-            let sp = scheduleParameters2
+        let Cca2004Test008 () =
+            let title = "Cca2004Test008"
+            let description = "CCA 2004 rebate example using library method (simple interest)"
+            let sp = scheduleParameters
 
             let actualPayments =
                 Map [
@@ -448,7 +389,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) true
 
-            schedule.ScheduleItems |> outputMapToHtml "out/Cca2004Test003b.md" false
+            Schedule.outputHtmlToFile title description sp schedule
 
             let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 

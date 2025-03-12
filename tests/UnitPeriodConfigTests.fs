@@ -10,7 +10,6 @@ module UnitPeriodConfigTests =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
     open Quotes
 
@@ -50,7 +49,9 @@ module UnitPeriodConfigTests =
     module ConfigEdges =
 
         [<Fact>]
-        let ``1) Irregular payment schedule does not break detect function`` () =
+        let UnitPeriodConfigTest000 () =
+            let title = "UnitPeriodConfigTest000"
+            let description = "Irregular payment schedule does not break detect function"
             let sp = {
                     AsOfDate = Date(2024, 3, 5)
                     StartDate = Date(2022, 5, 5)
@@ -103,14 +104,16 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest001.md" false
+                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
                 quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "56.51300 %"
             actual |> should equal expected
 
         [<Fact>]
-        let ``2) Irregular payment schedule does not break APR calculation`` () =
+        let UnitPeriodConfigTest001 () =
+            let title = "UnitPeriodConfigTest001"
+            let description = "Irregular payment schedule does not break APR calculation"
             let sp = {
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 4, 13)
@@ -162,7 +165,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest002.md" false
+                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
                 quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "986.81300 %"
@@ -170,7 +173,9 @@ module UnitPeriodConfigTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``3) Irregular payment schedule does not break APR calculation`` () =
+        let UnitPeriodConfigTest002 () =
+            let title = "UnitPeriodConfigTest002"
+            let description = "Irregular payment schedule does not break APR calculation"
             let sp = {
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 1, 20)
@@ -248,7 +253,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest003.md" false
+                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
                 quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "516.75800 %"
@@ -256,7 +261,9 @@ module UnitPeriodConfigTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``4) Irregular payment schedule does not break APR calculation`` () =
+        let UnitPeriodConfigTest003 () =
+            let title = "UnitPeriodConfigTest003"
+            let description = "Irregular payment schedule does not break APR calculation"
             let sp = {
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2022, 10, 13)
@@ -308,7 +315,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/UnitPeriodConfigTest004.md" false
+                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
                 quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "930.55900 %"
@@ -316,7 +323,9 @@ module UnitPeriodConfigTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``5) Checking that the fees refund behaves correctly`` () =
+        let UnitPeriodConfigTest004 () =
+            let title = "UnitPeriodConfigTest004"
+            let description = "Checking that the fees refund behaves correctly"
             let startDate = Date(2023, 1, 16)
             let originalScheduledPayments =
                 Map [
@@ -427,10 +436,7 @@ module UnitPeriodConfigTests =
                                 fsr
                     }
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
-                let title = "5) Checking that the fees refund behaves correctly"
-                let original = originalScheduledPayments |> generateHtmlFromMap [||]
-                let revised = quote.RevisedSchedule.ScheduleItems |> generateHtmlFromMap [||]
-                $"{title}<br /><br />{original}<br />{revised}" |> outputToFile' "out/UnitPeriodConfigTest005.md" false
+                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
                 quote.RevisedSchedule.FinalApr |> Schedule.finalAprString
 
             let expected = "699.52500 %"

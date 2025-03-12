@@ -10,7 +10,6 @@ module QuoteTests =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
     open Quotes
 
@@ -20,7 +19,9 @@ module QuoteTests =
     }
 
     [<Fact>]
-    let ``1) Settlement falling on a scheduled payment date`` () =
+    let QuoteTest001 () =
+        let title = "QuoteTest001"
+        let description = "Settlement falling on a scheduled payment date"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -71,7 +72,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest001.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 57<OffsetDay>
             quote.QuoteResult, item
 
@@ -121,7 +122,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2) Settlement not falling on a scheduled payment date`` () =
+    let QuoteTest002 () =
+        let title = "QuoteTest002"
+        let description = "Settlement not falling on a scheduled payment date"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -172,7 +175,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest002.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
@@ -220,7 +223,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``3) Settlement not falling on a scheduled payment date but having an actual payment already made on the same day`` () =
+    let QuoteTest003 () =
+        let title = "QuoteTest003"
+        let description = "Settlement not falling on a scheduled payment date but having an actual payment already made on the same day"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -271,7 +276,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest003.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
@@ -319,7 +324,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``4) Settlement within interest grace period should not accrue interest`` () =
+    let QuoteTest004 () =
+        let title = "QuoteTest004"
+        let description = "Settlement within interest grace period should not accrue interest"
         let startDate = Date(2024, 10, 1).AddDays -3
 
         let sp = {
@@ -362,7 +369,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest004.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 3<OffsetDay>
             quote.QuoteResult, item
 
@@ -410,7 +417,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``5) Settlement just outside interest grace period should accrue interest`` () =
+    let QuoteTest005 () =
+        let title = "QuoteTest005"
+        let description = "Settlement just outside interest grace period should accrue interest"
         let startDate = Date(2024, 10, 1).AddDays -4
 
         let sp = {
@@ -453,7 +462,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest005.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 4<OffsetDay>
             quote.QuoteResult, item
 
@@ -501,7 +510,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``6) Settlement when fee is due in full`` () =
+    let QuoteTest006 () =
+        let title = "QuoteTest006"
+        let description = "Settlement when fee is due in full"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -552,7 +563,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest006.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
@@ -600,7 +611,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``7) Get next scheduled payment`` () =
+    let QuoteTest007 () =
+        let title = "QuoteTest007"
+        let description = "Get next scheduled payment"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -653,7 +666,7 @@ module QuoteTests =
 
         let actual =
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> Formatting.outputMapToHtml "out/QuoteTest007.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             amortisationSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
 
         let expected =
@@ -689,7 +702,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``8) Get payment to cover all overdue amounts`` () =
+    let QuoteTest008 () =
+        let title = "QuoteTest008"
+        let description = "Get payment to cover all overdue amounts"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
         let sp = {
@@ -742,7 +757,7 @@ module QuoteTests =
 
         let actual =
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest008.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             // let quoteResult =
             //     quote
             //     |> ValueOption.map(fun q ->
@@ -757,7 +772,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``9) Verified example`` () =
+    let QuoteTest009 () =
+        let title = "QuoteTest009"
+        let description = "Verified example"
         let startDate = Date(2023, 6, 23)
 
         let sp = {
@@ -799,7 +816,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest009.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 181<OffsetDay>
             quote.QuoteResult, item
 
@@ -847,7 +864,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``10) Verified example`` () =
+    let QuoteTest010 () =
+        let title = "QuoteTest010"
+        let description = "Verified example"
         let startDate = Date(2022, 11, 28)
 
         let sp = {
@@ -897,7 +916,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest010.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 388<OffsetDay>
             quote.QuoteResult, item
 
@@ -945,7 +964,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``11) When settling a loan with 3-day late-payment grace period, scheduled payments within the grace period should be treated as missed payments, otherwise the quote balance is too low`` () =
+    let QuoteTest011 () =
+        let title = "QuoteTest011"
+        let description = "When settling a loan with 3-day late-payment grace period, scheduled payments within the grace period should be treated as missed payments, otherwise the quote balance is too low"
         let startDate = Date(2022, 11, 28)
 
         let sp = {
@@ -993,7 +1014,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest011.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 72<OffsetDay>
             quote.QuoteResult, item
 
@@ -1041,7 +1062,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``12) Settlement figure should not be lower than principal`` () =
+    let QuoteTest012 () =
+        let title = "QuoteTest012"
+        let description = "Settlement figure should not be lower than principal"
         let startDate = Date(2024, 1, 29)
 
         let sp = {
@@ -1078,7 +1101,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest012.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 30<OffsetDay>
             quote.QuoteResult, item
 
@@ -1126,7 +1149,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13a) Loan is settled the day before the last scheduled payment is due`` () =
+    let ``QuoteTests0013a`` () =
+        let title = "QuoteTests0013a"
+        let description = "Loan is settled the day before the last scheduled payment is due"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
             StartDate = Date(2022, 11, 1)
@@ -1173,7 +1198,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013a.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
@@ -1221,7 +1246,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13b) Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)`` () =
+    let ``QuoteTests0013b`` () =
+        let title = "QuoteTests0013b"
+        let description = "Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)"
         let sp = {
             AsOfDate = Date(2023, 3, 15)
             StartDate = Date(2022, 11, 1)
@@ -1268,7 +1295,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013b.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
@@ -1316,7 +1343,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13c) Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee`` () =
+    let ``QuoteTests0013c`` () =
+        let title = "QuoteTests0013c"
+        let description = "Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee"
         let sp = {
             AsOfDate = Date(2023, 3, 16)
             StartDate = Date(2022, 11, 1)
@@ -1363,7 +1392,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013c.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
@@ -1411,7 +1440,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``13d) Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee`` () =
+    let ``QuoteTests0013d`` () =
+        let title = "QuoteTests0013d"
+        let description = "Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee"
         let sp = {
             AsOfDate = Date(2023, 3, 19)
             StartDate = Date(2022, 11, 1)
@@ -1458,7 +1489,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest013d.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 138<OffsetDay>
             quote.QuoteResult, item
 
@@ -1506,7 +1537,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``14a) Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)`` () =
+    let ``QuoteTests0014a`` () =
+        let title = "QuoteTests0014a"
+        let description = "Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
             StartDate = Date(2022, 11, 1)
@@ -1553,7 +1586,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014a.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
@@ -1601,7 +1634,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``14b) Loan is settled the same day as an overpayment`` () =
+    let ``QuoteTests0014b`` () =
+        let title = "QuoteTests0014b"
+        let description = "Loan is settled the same day as an overpayment"
         let sp = {
             AsOfDate = Date(2023, 3, 15)
             StartDate = Date(2022, 11, 1)
@@ -1649,7 +1684,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014b.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
@@ -1697,7 +1732,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``14c) Loan is settled the day after an overpayment`` () =
+    let ``QuoteTests0014c`` () =
+        let title = "QuoteTests0014c"
+        let description = "Loan is settled the day after an overpayment"
         let sp = {
             AsOfDate = Date(2023, 3, 16)
             StartDate = Date(2022, 11, 1)
@@ -1745,7 +1782,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest014c.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
@@ -1793,7 +1830,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``15) Loan refund due for a long time, showing interest owed back`` () =
+    let QuoteTest015 () =
+        let title = "QuoteTest015"
+        let description = "Loan refund due for a long time, showing interest owed back"
         let sp = {
             AsOfDate = Date(2024, 2, 5)
             StartDate = Date(2022, 11, 1)
@@ -1841,7 +1880,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest015.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             let item = quote.RevisedSchedule.ScheduleItems |> Map.find 461<OffsetDay>
             quote.QuoteResult, item
 
@@ -1889,7 +1928,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``16) Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components`` () =
+    let QuoteTest016 () =
+        let title = "QuoteTest016"
+        let description = "Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components"
         let sp = {
             AsOfDate = Date(2022, 12, 20)
             StartDate = Date(2022, 12, 19)
@@ -1933,7 +1974,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest016.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -1951,7 +1992,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``17) Generated settlement figure is correct`` () =
+    let QuoteTest017 () =
+        let title = "QuoteTest017"
+        let description = "Generated settlement figure is correct"
         let sp = {
             AsOfDate = Date(2024, 3, 4)
             StartDate = Date(2018, 2, 3)
@@ -1986,7 +2029,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest017.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2004,7 +2047,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``18) Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment`` () =
+    let QuoteTest018 () =
+        let title = "QuoteTest018"
+        let description = "Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment"
         let sp = {
             AsOfDate = Date(2024, 3, 4)
             StartDate = Date(2018, 2, 3)
@@ -2039,7 +2084,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest018.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2057,7 +2102,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``19) Curveball`` () =
+    let QuoteTest019 () =
+        let title = "QuoteTest019"
+        let description = "Curveball"
         let sp = {
             AsOfDate = Date(2024, 3, 7)
             StartDate = Date(2024, 2, 2)
@@ -2093,7 +2140,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest019.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2111,7 +2158,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``20) Negative interest should accrue to interest balance not principal balance`` () =
+    let QuoteTest020 () =
+        let title = "QuoteTest020"
+        let description = "Negative interest should accrue to interest balance not principal balance"
         let sp = {
             AsOfDate = Date(2024, 3, 7)
             StartDate = Date(2023, 9, 2)
@@ -2146,7 +2195,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest020.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2164,7 +2213,9 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``21) Quote with long period of negative interest accruing`` () =
+    let QuoteTest021 () =
+        let title = "QuoteTest021"
+        let description = "Quote with long period of negative interest accruing"
         let sp = {
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
@@ -2199,7 +2250,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule.ScheduleItems |> outputMapToHtml "out/QuoteTest021.md" false
+            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =

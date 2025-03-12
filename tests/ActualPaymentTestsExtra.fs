@@ -11,8 +11,6 @@ module ActualPaymentTestsExtra =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
-    open FormattingHelper
     open Scheduling
     open Rescheduling
 
@@ -29,7 +27,9 @@ module ActualPaymentTestsExtra =
         |> Map.ofArray
 
     [<Fact>]
-    let ``1) Simple schedule fully settled on time`` () =
+    let ActualPaymentTestExtra000 () =
+        let title = "ActualPaymentTestExtra000"
+        let description = "Simple schedule fully settled on time"
         let sp = {
             AsOfDate = Date(2023, 12, 1)
             StartDate = Date(2023, 7, 23)
@@ -76,7 +76,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra001.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 131<OffsetDay>, {
@@ -111,7 +111,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``2) Schedule with a payment on day 0L<Cent>, seen from a date before scheduled payments are due to start`` () =
+    let ActualPaymentTestExtra001 () =
+        let title = "ActualPaymentTestExtra001"
+        let description = "Schedule with a payment on day 0L<Cent>, seen from a date before scheduled payments are due to start"
         let sp = {
             AsOfDate = Date(2022, 3, 25)
             StartDate = Date(2022, 3, 8)
@@ -159,7 +161,7 @@ module ActualPaymentTestsExtra =
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra002.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 172<OffsetDay>, {
@@ -194,7 +196,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off`` () =
+    let ActualPaymentTestExtra002 () =
+        let title = "ActualPaymentTestExtra002"
+        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off"
         let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
@@ -254,11 +258,7 @@ module ActualPaymentTestsExtra =
                 SettlementDay = ValueNone
             }
             let oldSchedule, newSchedule = reschedule sp rp actualPayments
-            let title = "<h3>3) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off</h3>"
-            let generationOptions = Some { GoParameters = sp; GoQuote = false; GoExtra = true } |> getHideProperties
-            let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
-            let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap generationOptions
-            $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra003.md" false
+            newSchedule |> Schedule.outputHtmlToFile title description sp
             newSchedule.ScheduleItems
             |> Map.maxKeyValue
 
@@ -294,7 +294,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``4) never settles down`` () =
+    let ActualPaymentTestExtra003 () =
+        let title = "ActualPaymentTestExtra003"
+        let description = "never settles down"
         let sp = {
             AsOfDate = Date(2026, 8, 27)
             StartDate = Date(2023, 11, 6)
@@ -341,7 +343,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra004.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 1025<OffsetDay>, {
@@ -376,7 +378,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``5) large negative payment`` () =
+    let ActualPaymentTestExtra004 () =
+        let title = "ActualPaymentTestExtra004"
+        let description = "large negative payment"
         let sp = {
             AsOfDate = Date(2023, 12, 11)
             StartDate = Date(2022, 9, 11)
@@ -418,7 +422,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra005.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             amortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 185<OffsetDay>, {
@@ -453,7 +457,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``6) Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period`` () =
+    let ActualPaymentTestExtra005 () =
+        let title = "ActualPaymentTestExtra005"
+        let description = "Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period"
         let sp = {
             AsOfDate = Date(2022, 4, 1)
             StartDate = Date(2022, 3, 8)
@@ -498,7 +504,7 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule.ScheduleItems |> outputMapToHtml $"out/ActualPaymentTestsExtra006.md" false
+            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
             amortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
@@ -533,7 +539,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)`` () =
+    let ActualPaymentTestExtra006 () =
+        let title = "ActualPaymentTestExtra006"
+        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)"
         let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
@@ -591,10 +599,7 @@ module ActualPaymentTestsExtra =
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
             let oldSchedule, newSchedule = rollOver sp rp actualPayments
-            let title = "<h3>7) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)</h3>"
-            let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap [||]
-            let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap [||]
-            $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra007.md" false
+            newSchedule |> Schedule.outputHtmlToFile title description sp
             newSchedule.ScheduleItems
             |> Map.maxKeyValue
 
@@ -630,7 +635,9 @@ module ActualPaymentTestsExtra =
         actual |> should equal expected
 
     [<Fact>]
-    let ``8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)`` () =
+    let ActualPaymentTestExtra007 () =
+        let title = "ActualPaymentTestExtra007"
+        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)"
         let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
@@ -688,10 +695,7 @@ module ActualPaymentTestsExtra =
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
             let oldSchedule, newSchedule = rollOver sp rp actualPayments
-            let title = "<h3>8) Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)</h3>"
-            let oldHtml = oldSchedule.ScheduleItems |> generateHtmlFromMap [||]
-            let newHtml = newSchedule.ScheduleItems |> generateHtmlFromMap [||]
-            $"{title}<br />{oldHtml}<br /><br />{newHtml}" |> outputToFile' $"out/ActualPaymentTestsExtra008.md" false
+            newSchedule |> Schedule.outputHtmlToFile title description sp
             newSchedule.ScheduleItems
             |> Map.maxKeyValue
 
