@@ -136,6 +136,7 @@ module UnitPeriod =
         | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int
 
         override upc.ToString() =
+            let formatMonthEnd d = if d = 31 then "month-end" else d.ToString "00"
             match upc with
             | Single d ->
                 $"single on {d}"
@@ -147,12 +148,12 @@ module UnitPeriod =
                 else
                     $"{multiple}-weekly from {wsd}"
             | SemiMonthly (y, m, td1, td2) ->
-                $"""semi-monthly from {Date(y, m, td1)} and on {td2.ToString "00"}"""
+                $"""semi-monthly from {y}-{m.ToString "00"} on {formatMonthEnd td1} and {formatMonthEnd td2}"""
             | Monthly (multiple, y, m, d) ->
                 if multiple = 1 then
-                    $"monthly from {Date(y, m, d)}"
+                    $"""monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
                 else
-                    $"{multiple}-monthly from {Date(y, m, d)}"
+                    $"""{multiple}-monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
 
     /// functions for creating and handling unit-period configs
     module Config =
