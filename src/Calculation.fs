@@ -97,6 +97,9 @@ module Calculation =
         /// the last date of the holiday period
         End: Date
     }
+    with
+        override dr.ToString() =
+            $"{dr.Start} to {dr.End}"
 
     /// determines whether a pending payment has timed out
     let isTimedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
@@ -162,7 +165,7 @@ module Calculation =
 
         override p.ToString() =
             let (Percent value) = p
-            $"{value} %%"
+            $"{value:G10} %%"
 
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
@@ -192,10 +195,10 @@ module Calculation =
 
         override r.ToString() =
             match r with
-            | Restriction.NoLimit -> "with no limit"
-            | Restriction.LowerLimit lower -> $"no lower than {Cent.toDecimal lower:N2}"
-            | Restriction.UpperLimit upper -> $"no higher than {Cent.toDecimal upper:N2}"
-            | Restriction.WithinRange (lower, upper) -> $"between {Cent.toDecimal lower:N2} and {Cent.toDecimal upper:N2}"
+            | NoLimit -> "no fixed limit"
+            | LowerLimit lower -> $"no lower than {Cent.toDecimal lower:N2}"
+            | UpperLimit upper -> $"no higher than {Cent.toDecimal upper:N2}"
+            | WithinRange (lower, upper) -> $"between {Cent.toDecimal lower:N2} and {Cent.toDecimal upper:N2}"
 
     /// the type of restriction placed on a possible value
     module Restriction =
@@ -218,12 +221,12 @@ module Calculation =
         | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
         /// a fixed fee
         | Simple of Simple:int64<Cent>
-
+        
         override a.ToString() =
             match a with
-            | Amount.Percentage (Percent percent, restriction, rounding) ->
-                $"{percent} %% {restriction}, {rounding}"
-            | Amount.Simple simple ->
+            | Percentage (Percent percent, restriction, rounding) ->
+                $"{percent} %%, {restriction}, {rounding}"
+            | Simple simple ->
                 $"{Cent.toDecimal simple:N2}"
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
@@ -352,6 +355,12 @@ module Calculation =
                 else
                     Solution.IterationLimitReached(x, iteration, tolerance)
             loop initialGuess 0
+
+        /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
+        let toStringOrNa a =
+            match a with
+            | null | [||] -> "n/a"
+            | _ -> a |> Array.map _.ToString() |> String.concat ", "
 
     /// functions for working with maps
     module Map =

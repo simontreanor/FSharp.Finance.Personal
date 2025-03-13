@@ -20,9 +20,9 @@ module Interest =
 
         override r.ToString() =
             match r with
-            | Rate.Zero -> "zero"
-            | Rate.Annual p -> $"annual interest rate {p}"
-            | Rate.Daily p -> $"daily interest rate {p}"
+            | Zero -> "zero"
+            | Annual p -> $"{p} per year"
+            | Daily p -> $"{p} per day"
 
     module Rate =
         /// calculates the annual interest rate from the daily one
@@ -67,13 +67,6 @@ module Interest =
             | ValueSome amount -> Amount.total initialPrincipal amount |> max 0m<Cent>
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
-        /// formats the interest cap as an HTML table
-        let toHtmlTable (cap: Cap) =
-            "<table>"
-                + $"<tr><td>{nameof cap.TotalAmount}</td><td>{cap.TotalAmount}</td></tr>"
-                + $"<tr><td>{nameof cap.DailyAmount}</td><td>{cap.DailyAmount}</td></tr>"
-            + "</table>"
-
     /// a promotional interest rate valid during the specified date range
     [<RequireQualifiedAccess; Struct>]
     type PromotionalRate = {
@@ -99,6 +92,11 @@ module Interest =
         | Simple
         /// add-on interest method, where the interest accrued over the loan is added to the initial balance and the interest is paid off before the principal balance
         | AddOn
+
+        override m.ToString() =
+            match m with
+            | Simple -> "simple"
+            | AddOn -> "add-on"
 
     /// interest options
     [<Struct>]
@@ -126,14 +124,23 @@ module Interest =
         /// formats the interest config as an HTML table
         let toHtmlTable config =
             "<table>"
-                + $"<tr><td>{nameof config.StandardRate}</td><td>{config.StandardRate}</td></tr>"
-                + $"<tr><td>{nameof config.PromotionalRates}</td><td><table>"
-                    + (config.PromotionalRates |> Array.map (fun pr -> $"<tr><td>{pr}</td></tr>") |> String.concat "")
-                + "</table></td></tr>"
-                + $"<tr><td>{nameof config.Cap}</td><td>{Cap.toHtmlTable config.Cap}</td></tr>"
-                + $"<tr><td>{nameof config.Method}</td><td>{config.Method}</td></tr>"
-                + $"<tr><td>{nameof config.InterestRounding}</td><td>{config.InterestRounding}</td></tr>"
-                + $"<tr><td>{nameof config.AprMethod}</td><td>{config.AprMethod}</td></tr>"
+                + "<tr>"
+                    + $"<td>standard rate: <b>{config.StandardRate}</b></td>"
+                    + $"<td>method: <b>{config.Method}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>interest rounding: <b>{config.InterestRounding}</b></td>"
+                    + $"<td>APR method: <b>{config.AprMethod}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td colspan='2'>promotional rates: <b>{Array.toStringOrNa config.PromotionalRates}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td colspan='2'>daily cap: <b>{config.Cap.DailyAmount}</td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td colspan='2'>total cap: <b>{config.Cap.TotalAmount}</td>"
+                + "</tr>"
             + "</table>"
 
     /// calculates the interest chargeable on a range of days

@@ -20,6 +20,12 @@ module Amortisation =
         /// due to an overpayment or a refund of charges, a refund is due
         | RefundDue
 
+        override bs.ToString() =
+            match bs with
+            | ClosedBalance -> "closed"
+            | OpenBalance -> "open"
+            | RefundDue -> "refund due"
+
     /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
     type ScheduleItem = {
         /// the date of amortisation
@@ -78,11 +84,12 @@ module Amortisation =
     
     /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
     module ScheduleItem =
+        /// a default value with no data
         let initial = {
-            Window = 0
             OffsetDate = Unchecked.defaultof<Date>
             Advances = [||]
             ScheduledPayment = ScheduledPayment.zero
+            Window = 0
             PaymentDue = 0L<Cent>
             ActualPayments = [||]
             GeneratedPayment = NoGeneratedPayment
@@ -106,6 +113,38 @@ module Amortisation =
             SettlementFigure = ValueNone
             FeesRefundIfSettled = 0L<Cent>
         }
+        /// formats the schedule item as an HTML row
+        let toHtmlRow offsetDay scheduleItem =
+            """<tr style="text-align: right;">"""
+                + $"""<td class="ci00">{offsetDay}</td>"""
+                + $"""<td class="ci01">{scheduleItem.OffsetDate}</td>"""
+                + $"""<td class="ci02">{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOrNa}</td>"""
+                + $"""<td class="ci03">{scheduleItem.ScheduledPayment}</td>"""
+                + $"""<td class="ci04">{scheduleItem.Window}</td>"""
+                + $"""<td class="ci05">{formatCent scheduleItem.PaymentDue}</td>"""
+                + $"""<td class="ci06">{scheduleItem.ActualPayments |> Array.toStringOrNa}</td>"""
+                + $"""<td class="ci07">{scheduleItem.GeneratedPayment}</td>"""
+                + $"""<td class="ci08">{formatCent scheduleItem.NetEffect}</td>"""
+                + $"""<td class="ci09">{scheduleItem.PaymentStatus}</td>"""
+                + $"""<td class="ci10">{scheduleItem.BalanceStatus}</td>"""
+                + $"""<td class="ci11">{formatCent scheduleItem.OriginalSimpleInterest}"""
+                + $"""<td class="ci12">{formatDecimalCent scheduleItem.ContractualInterest}</td>"""
+                + $"""<td class="ci13">{formatDecimalCent scheduleItem.SimpleInterest}</td>"""
+                + $"""<td class="ci14">{formatDecimalCent scheduleItem.NewInterest}</td>"""
+                + $"""<td class="ci15">{Array.toStringOrNa scheduleItem.NewCharges}</td>"""
+                + $"""<td class="ci16">{formatCent scheduleItem.PrincipalPortion}</td>"""
+                + $"""<td class="ci17">{formatCent scheduleItem.FeesPortion}</td>"""
+                + $"""<td class="ci18">{formatCent scheduleItem.InterestPortion}</td>"""
+                + $"""<td class="ci19">{formatCent scheduleItem.ChargesPortion}</td>"""
+                + $"""<td class="ci20">{formatCent scheduleItem.FeesRefund}</td>"""
+                + $"""<td class="ci21">{formatCent scheduleItem.PrincipalBalance}</td>"""
+                + $"""<td class="ci22">{formatCent scheduleItem.FeesBalance}</td>"""
+                + $"""<td class="ci23">{formatDecimalCent scheduleItem.InterestBalance}</td>"""
+                + $"""<td class="ci24">{formatCent scheduleItem.ChargesBalance}</td>"""
+                + $"""<td class="ci25">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>"""
+                + $"""<td class="ci26">{formatCent scheduleItem.FeesRefundIfSettled}</td>"""
+            + "</tr>"
+
 
     /// a container for aggregating figures separately from the main schedule
     [<Struct>]
@@ -126,11 +165,8 @@ module Amortisation =
         CumulativeSimpleInterestM: decimal<Cent>
     }
 
-    /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
-    [<Struct>]
-    type Schedule = {
-        /// a list of amortisation items, showing the events and calculations for a particular offset day
-        ScheduleItems: Map<int<OffsetDay>, ScheduleItem>
+    /// final statistics resulting from the calculations
+    type ScheduleStats = {
         /// the offset day of the final scheduled payment
         FinalScheduledPaymentDay: int<OffsetDay>
         /// the final number of scheduled payments in the schedule
@@ -145,31 +181,91 @@ module Amortisation =
         EffectiveInterestRate: Interest.Rate
     }
 
-    /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
-    module Schedule =
+    /// final statistics resulting from the calculations
+    module ScheduleStats =
         /// renders the final APR as a string, or "n/a" if not available
         let finalAprString = function
         | ValueSome (Solution.Found _, ValueSome percent) -> $"{percent}"
         | _ -> "n/a"
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
         let toHtmlTable schedule =
-            $"<h4>Stats</h4>"
-            + "<table>"
-                + $"<tr><td>Effective Interest Rate:</td><td>{schedule.EffectiveInterestRate}</td></tr>"
-                + $"<tr><td>Final Actual Payment Count:</td><td>{schedule.FinalActualPaymentCount}</td></tr>"
-                + $"""<tr><td>Final APR:</td><td>{finalAprString schedule.FinalApr}</td></tr>"""
-                + $"<tr><td>Final Cost To Borrowing Ratio:</td><td>{schedule.FinalCostToBorrowingRatio}</td></tr>"
-                + $"<tr><td>Final Scheduled Payment Count:</td><td>{schedule.FinalScheduledPaymentCount}</td></tr>"
-                + $"<tr><td>Final Scheduled Payment Day:</td><td>{schedule.FinalScheduledPaymentDay}</td></tr>"
+            "<table>"
+                + "<tr>"
+                    + $"<td>Effective interest rate: <b>{schedule.EffectiveInterestRate}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Final actual payment count: <b>{schedule.FinalActualPaymentCount}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Final APR: <b>{finalAprString schedule.FinalApr}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Final cost-to-borrowing ratio: <b>{schedule.FinalCostToBorrowingRatio}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Final scheduled payment count: <b>{schedule.FinalScheduledPaymentCount}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Final scheduled payment day: <b>{schedule.FinalScheduledPaymentDay}</b></td>"
+                + "</tr>"
             + "</table>"
+
+    /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
+    [<Struct>]
+    type Schedule = {
+        /// a list of amortisation items, showing the events and calculations for a particular offset day
+        ScheduleItems: Map<int<OffsetDay>, ScheduleItem>
+        /// final stats resulting from the calculations
+        ScheduleStats: ScheduleStats
+    }
+
+    /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
+    module Schedule =
+        /// formats the schedule items as an HTML table (stats can be rendered separately)
+        let toHtmlTable schedule =
+            "<table>"
+                + """<thead style="vertical-align: bottom;">"""
+                    + """<th style="text-align: right;">Day</th>"""
+                    + """<th style="text-align: right;">Datestamp&nbsp;&nbsp;</th>"""
+                    + """<th style="text-align: right;">Advances</th>"""
+                    + """<th style="text-align: right;">Scheduled payment</th>"""
+                    + """<th style="text-align: right;">Window</th>"""
+                    + """<th style="text-align: right;">Payment due</th>"""
+                    + """<th style="text-align: right;">Actual payments</th>"""
+                    + """<th style="text-align: right;">Generated payment</th>"""
+                    + """<th style="text-align: right;">Net effect</th>"""
+                    + """<th style="text-align: right;">Payment status</th>"""
+                    + """<th style="text-align: right;">Balance status</th>"""
+                    + """<th style="text-align: right;">Original simple interest</th>"""
+                    + """<th style="text-align: right;">Contractual interest</th>"""
+                    + """<th style="text-align: right;">Simple interest</th>"""
+                    + """<th style="text-align: right;">New interest</th>"""
+                    + """<th style="text-align: right;">New charges</th>"""
+                    + """<th style="text-align: right;">Principal portion</th>"""
+                    + """<th style="text-align: right;">Fees portion</th>"""
+                    + """<th style="text-align: right;">Interest portion</th>"""
+                    + """<th style="text-align: right;">Charges portion</th>"""
+                    + """<th style="text-align: right;">Fees refund</th>"""
+                    + """<th style="text-align: right;">Principal balance</th>"""
+                    + """<th style="text-align: right;">Fees balance</th>"""
+                    + """<th style="text-align: right;">Interest balance</th>"""
+                    + """<th style="text-align: right;">Charges balance</th>"""
+                    + """<th style="text-align: right;">Settlement figure</th>"""
+                    + """<th style="text-align: right;">Fees refund if&nbsp;settled</th>"""
+                + "</thead>"
+                + (schedule.ScheduleItems |> Map.map ScheduleItem.toHtmlRow |> Map.values |> String.concat "")
+            + "</table>"
+
         /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile title description sp schedule =
-            let htmlSchedule = schedule.ScheduleItems |> generateHtmlFromMap [||]
+            let htmlTitle = $"<h2>{title}</h2>"
+            let htmlSchedule = toHtmlTable schedule
+            let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
             let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
-            let htmlDatestamp = String.Format("<p>Generated {0:yyyy-MM-dd 'at' HH:mm:ss}</p>", DateTime.Now)
-            let htmlStats = schedule |> toHtmlTable
+            let htmlDatestamp = $"""<p>Generated: <b>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</b></p>"""
+            let htmlStats = $"<h4>Stats</h4>{ScheduleStats.toHtmlTable schedule.ScheduleStats}"
             let filename = $"out/{title}.md"
-            $"{htmlSchedule}<br /><h3>{title}</h3><p>{description}</p><p>{htmlDatestamp}</p>{htmlParams}{htmlStats}"
+            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlStats}"
             |> outputToFile' filename false
 
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
@@ -610,7 +706,7 @@ module Amortisation =
                 | ToBeGenerated, ValueSome (SettlementDay.SettlementOn day) when day = appliedPaymentDay ->
                     createScheduleItem true
                 | GeneratedValue gv, _ ->
-                    failwith $"Unexpected value: {gv}"
+                    failwith $"Unexpected value: <b>{gv}</b>"
                 | NoGeneratedPayment, _
                 | ToBeGenerated, ValueNone
                 | ToBeGenerated, ValueSome (SettlementDay.SettlementOn _)
@@ -683,17 +779,19 @@ module Amortisation =
         let scheduledPaymentItems = items |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
         {
             ScheduleItems = items
-            FinalScheduledPaymentDay = scheduledPaymentItems |> Map.maxKeyValue |> fst
-            FinalScheduledPaymentCount = scheduledPaymentItems |> Map.count
-            FinalActualPaymentCount = items' |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
-            FinalApr = finalAprSolution |> ValueOption.map(fun s -> s, Apr.toPercent sp.InterestConfig.AprMethod s)
-            FinalCostToBorrowingRatio =
-                if principalTotal = 0L<Cent> then Percent 0m
-                else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
-            EffectiveInterestRate =
-                if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
-                else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
-                |> Percent |> Interest.Rate.Daily
+            ScheduleStats = {
+                FinalScheduledPaymentDay = scheduledPaymentItems |> Map.maxKeyValue |> fst
+                FinalScheduledPaymentCount = scheduledPaymentItems |> Map.count
+                FinalActualPaymentCount = items' |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
+                FinalApr = finalAprSolution |> ValueOption.map(fun s -> s, Apr.toPercent sp.InterestConfig.AprMethod s)
+                FinalCostToBorrowingRatio =
+                    if principalTotal = 0L<Cent> then Percent 0m
+                    else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+                EffectiveInterestRate =
+                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
+                    else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
+                    |> Percent |> Interest.Rate.Daily
+            }
         }
 
     /// generates an amortisation schedule and final statistics

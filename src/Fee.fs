@@ -29,6 +29,11 @@ module Fee =
         /// amortise any fee and principal proportionately
         | AmortiseProportionately
 
+        override fa.ToString() =
+            match fa with
+            | AmortiseBeforePrincipal -> "amortise before principal"
+            | AmortiseProportionately -> "amortise proportionately"
+
     /// how the fees are treated in the event of an early settlement
     [<RequireQualifiedAccess; Struct>]
     type SettlementRefund =
@@ -40,6 +45,13 @@ module Fee =
         | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
         /// the current fee balance is refunded
         | Balance
+        
+        override sr.ToString() =
+            match sr with
+            | Zero -> "no refund"
+            | ProRata -> "pro-rata refund"
+            | ProRataRescheduled day -> $"pro rata refund (based on day {day})"
+            | Balance -> "balance refund"
 
     /// how to handle fees when rescheduling or rolling over
     [<Struct>]
@@ -76,12 +88,14 @@ module Fee =
         /// formats the fee config as an HTML table
         let toHtmlTable config =
             "<table>"
-                + $"<tr><td>{nameof config.FeeTypes}</td><td><table>"
-                    + (config.FeeTypes |> Array.map (fun ft -> $"<tr><td>{ft}</td></tr>") |> String.concat "")
-                + "</table></td></tr>"
-                + $"<tr><td>{nameof config.Rounding}</td><td>{config.Rounding}</td></tr>"
-                + $"<tr><td>{nameof config.FeeAmortisation}</td><td>{config.FeeAmortisation}</td></tr>"
-                + $"<tr><td>{nameof config.SettlementRefund}</td><td>{config.SettlementRefund}</td></tr>"
+                + "<tr>"
+                    + $"<td>fee types: <b>{Array.toStringOrNa config.FeeTypes}</b></td>"
+                    + $"<td>rounding: <b>{config.Rounding}</b></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>fee amortisation: <b>{config.FeeAmortisation}</b></td>"
+                    + $"<td>settlement refund: <b>{config.SettlementRefund}</b></td>"
+                + "</tr>"
             + "</table>"
 
     /// rounds a charge to the nearest integer cent using the specified rounding option

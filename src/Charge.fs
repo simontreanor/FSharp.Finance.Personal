@@ -19,6 +19,12 @@ module Charge =
         /// any other type of penalty charge
         | CustomCharge of ChargeType: string * FeeAmount: Amount
 
+        override ct.ToString() =
+            match ct with
+            | LatePayment amount -> $"late payment <b>{amount}</b>"
+            | InsufficientFunds amount -> $"insufficient funds <b>{amount}</b>"
+            | CustomCharge (name, amount) -> $"{name} <b>{amount}</b>"
+
     /// options on how to handle multiple charges
     [<Struct>]
     type ChargeGrouping =
@@ -28,6 +34,12 @@ module Charge =
         | OneChargeTypePerProduct
         /// all charges are applied
         | AllChargesApplied
+
+        override cg.ToString() =
+            match cg with
+            | OneChargeTypePerDay -> "one charge per day"
+            | OneChargeTypePerProduct -> "one charge per product"
+            | AllChargesApplied -> "all charges applied"
 
     /// options specifying the types of charges, their amounts, and any restrictions on these
     type Config = {
@@ -56,15 +68,17 @@ module Charge =
         /// formats the charge config as an HTML table
         let toHtmlTable config =
             "<table>"
-                + $"<tr><td>{nameof config.ChargeTypes}</td><td><table>"
-                    + (config.ChargeTypes |> Array.map (fun ct -> $"<tr><td>{ct}</td></tr>") |> String.concat "")
-                + "</table></td></tr>"
-                + $"<tr><td>{nameof config.Rounding}</td><td>{config.Rounding}</td></tr>"
-                + $"<tr><td>{nameof config.ChargeHolidays}</td><td><table>"
-                    + (config.ChargeHolidays |> Array.map (fun ch -> $"<tr><td>{ch}</td></tr>") |> String.concat "")
-                + "</table></td></tr>"
-                + $"<tr><td>{nameof config.ChargeGrouping}</td><td>{config.ChargeGrouping}</td></tr>"
-                + $"<tr><td>{nameof config.LatePaymentGracePeriod}</td><td>{config.LatePaymentGracePeriod}</td></tr>"
+                + "<tr>"
+                    + $"<td>types: <b>{Array.toStringOrNa config.ChargeTypes}</b></td>"
+                    + $"<td>grouping: <b>{config.ChargeGrouping}</b></td>"
+                + "</tr>"
+                + $"<tr>"
+                    + $"<td>rounding: <b>{config.Rounding}</b></td>"
+                    + $"<td>late-payment grace period: <b>{config.LatePaymentGracePeriod}</b></td>"
+                + "</tr>"
+                + $"<tr>"
+                    + $"<td colspan='2'>holidays: <b>{Array.toStringOrNa config.ChargeHolidays}</b></td>"
+                + "</tr>"
             + "</table>"
 
     /// rounds a charge to the nearest integer cent using the specified rounding option

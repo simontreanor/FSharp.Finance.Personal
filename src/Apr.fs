@@ -18,6 +18,12 @@ module Apr =
         /// calculates the APR according to the United States rule (not yet implemented)
         | UnitedStatesRule
 
+        override cm.ToString() =
+            match cm with
+            | UnitedKingdom precision -> $"UK FCA to {precision - 2} d.p."
+            | UsActuarial precision -> $"US CFPB actuarial to {precision - 2} d.p."
+            | UnitedStatesRule -> "United States rule"
+
     /// basic calculation to determine the APR
     let annualPercentageRate unitPeriodRate unitPeriodsPerYear =
         unitPeriodRate * unitPeriodsPerYear
