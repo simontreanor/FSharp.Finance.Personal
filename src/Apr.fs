@@ -9,7 +9,7 @@ module Apr =
     open DateDay
 
     /// the calculation method used to determine the APR
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type CalculationMethod =
         /// calculates the APR according to UK FCA rules to the stated decimal precision (note that this is two places more than the percent precision)
         | UnitedKingdom of UkPrecision:int
@@ -17,8 +17,8 @@ module Apr =
         | UsActuarial of UsPrecision:int
         /// calculates the APR according to the United States rule (not yet implemented)
         | UnitedStatesRule
-
-        override cm.ToString() =
+        /// HTML formatting to display the calculation method in a readable format
+        member cm.Html=
             match cm with
             | UnitedKingdom precision -> $"UK FCA to {precision - 2} d.p."
             | UsActuarial precision -> $"US CFPB actuarial to {precision - 2} d.p."

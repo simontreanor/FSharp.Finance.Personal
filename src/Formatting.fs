@@ -40,7 +40,7 @@ module Formatting =
         let addIndexHeader, indexOffset = if indexName.IsSome then Array.append [| $"""<th class="ci0">{indexName.Value}</th>""" |], 1 else id, 0
         let thh =
             names
-            |> Array.mapi(fun i name -> $"""<th class="ci{i + indexOffset}">{splitPascale name |> (_.Trim()(* .Replace(" ", "&nbsp;") *))}</th>""")
+            |> Array.mapi(fun i name -> $"""<th class="ci{i + indexOffset}">{splitPascale name |> _.Trim()}</th>""")
             |> addIndexHeader
             |> String.concat ""
         $"<thead>{thh}</thead>"

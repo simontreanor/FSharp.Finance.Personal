@@ -73,6 +73,7 @@ module Scheduling =
                     $"{s}&nbsp;+&nbsp;{formatCent a}"
                 | _ ->
                     s
+            |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
     
     module ScheduledPayment =
         /// the total amount of the payment
@@ -105,7 +106,7 @@ module Scheduling =
             }
 
     /// the status of the payment, allowing for delays due to payment-provider processing times
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type ActualPaymentStatus =
         /// a write-off payment has been applied
         | WriteOff of WriteOff: int64<Cent>
@@ -117,14 +118,15 @@ module Scheduling =
         | Confirmed of Confirmed: int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
         | Failed of Failed: int64<Cent> * ChargeTypes: Charge.ChargeType array
-
-        override aps.ToString() =
+        /// HTML formatting to display the actual payment status in a readable format
+        member aps.Html =
             match aps with
             | WriteOff amount -> $"write-off {formatCent amount}"
             | Pending amount -> $"pending {formatCent amount}"
             | TimedOut amount -> $"timed out {formatCent amount}"
             | Confirmed amount -> $"confirmed {formatCent amount}"
             | Failed (amount, charges) -> $"failed {formatCent amount} with charges {Array.toStringOrNa charges}"
+            |> _.Replace(" ", "&nbsp;")
     
     /// the status of the payment, allowing for delays due to payment-provider processing times
     module ActualPaymentStatus =
@@ -139,6 +141,7 @@ module Scheduling =
                 0L<Cent>
 
     /// an actual payment made by the customer, optionally including metadata such as bank references etc.
+    [<StructuredFormatDisplay("{Html}")>]
     type ActualPayment = {
         /// the status of the payment
         ActualPaymentStatus: ActualPaymentStatus
@@ -146,8 +149,9 @@ module Scheduling =
         Metadata: Map<string, obj>
     }
     with
-        override ap.ToString() =
-            ap.ActualPaymentStatus.ToString()
+        /// HTML formatting to display the actual payment in a readable format
+        member ap.Html =
+            $"{ap.ActualPaymentStatus}"
 
     /// an actual payment made by the customer, optionally including metadata such as bank references etc.
     module ActualPayment =
@@ -155,9 +159,9 @@ module Scheduling =
         let total =
             _.ActualPaymentStatus >> ActualPaymentStatus.total
         let totalConfirmedOrWrittenOff =
-            _.ActualPaymentStatus >> (function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap  -> ap | _ -> 0L<Cent>)
+            _.ActualPaymentStatus >> function ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap  -> ap | _ -> 0L<Cent>
         let totalPending =
-            _.ActualPaymentStatus >> (function ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
+            _.ActualPaymentStatus >> function ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>
         /// a quick convenient method to create a confirmed actual payment
         let quickConfirmed amount =
             {
@@ -184,7 +188,7 @@ module Scheduling =
             }
 
     /// the status of a payment made by the customer
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type PaymentStatus =
         /// no payment is required on the specified day
         | NoneScheduled
@@ -218,8 +222,8 @@ module Scheduling =
         | NoLongerRequired
         /// a schedule item generated to show the balances on the as-of date
         | InformationOnly
-
-        override ps.ToString() =
+        /// HTML formatting to display the payment status in a readable format
+        member ps.Html =
             match ps with
             | NoneScheduled -> "none scheduled"
             | PaymentPending -> "payment pending"
@@ -237,6 +241,7 @@ module Scheduling =
             | Generated -> "generated"
             | NoLongerRequired -> "no longer required"
             | InformationOnly -> "information only"
+            |> _.Replace(" ", "&nbsp;")
 
     /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
     [<RequireQualifiedAccess; Struct>]
@@ -250,17 +255,18 @@ module Scheduling =
     }
 
     /// the type of the schedule; for scheduled payments, this affects how any payment due is calculated
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduleType =
         /// an original schedule
         | Original
         /// a new schedule created after the original schedule, indicating the day it was created
         | Rescheduled of RescheduleDay: int<OffsetDay>
-
-        override st.ToString() =
+        /// HTML formatting to display the schedule type in a readable format
+        member st.Html =
             match st with
             | Original -> "original"
             | Rescheduled rd -> $"rescheduled on day {rd}"
+            |> _.Replace(" ", "&nbsp;")
 
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
@@ -293,56 +299,56 @@ module Scheduling =
                 + match scheduleConfig with
                     | AutoGenerateSchedule ags ->
                         "<tr>"
-                            + $"<td>type: <b>auto-generate schedule</b></td>"
-                            + $"<td>payment count: <b>{ags.PaymentCount}</b></td>"
+                            + $"<td>type: <i>auto-generate schedule</i></td>"
+                            + $"<td>payment count: <i>{ags.PaymentCount}</i></td>"
                         + "</tr>"
                         + "<tr>"
-                            + $"<td>unit-period config: <b>{ags.UnitPeriodConfig}</b></td>"
-                            + $"<td>max duration: <b>{ags.MaxDuration}</b></td>"
+                            + $"<td>unit-period config: <i>{ags.UnitPeriodConfig}</i></td>"
+                            + $"<td>max duration: <i>{ags.MaxDuration}</i></td>"
                         + "</tr>"
                     | FixedSchedules fsArray -> 
                         $"<tr>"
-                            + "<td colspan='2'>Type: <b>fixed schedules</b></td>"
+                            + "<td colspan='2'>Type: <i>fixed schedules</i></td>"
                         + "</tr>"
                         + (fsArray |> Array.map (fun fs ->
                             "<tr><td><table>"
                                 + "<tr>"
-                                    + $"<td>unit-period config: <b>{fs.UnitPeriodConfig}</b></td>"
-                                    + $"<td>payment count: <b>{fs.PaymentCount}</b></td>"
+                                    + $"<td>unit-period config: <i>{fs.UnitPeriodConfig}</i></td>"
+                                    + $"<td>payment count: <i>{fs.PaymentCount}</i></td>"
                                 + "</tr>"
                                 + "<tr>"
-                                    + $"<td>payment value: <b>{formatCent fs.PaymentValue}</b></td>"
-                                    + $"<td>schedule type: <b>{fs.ScheduleType}</b></td>"
+                                    + $"<td>payment value: <i>{formatCent fs.PaymentValue}</i></td>"
+                                    + $"<td>schedule type: <i>{fs.ScheduleType}</i></td>"
                                 + "</tr>"
                             + "</table></td></tr>"
                         ) |> String.concat "")
                     | CustomSchedule cs ->
                         "<tr>"
-                            + "<td colspan='2'>type: <b>custom schedule</b></td>"
+                            + "<td colspan='2'>type: <i>custom schedule</i></td>"
                         + "</tr>"
                         + (cs |> Map.toList |> List.map (fun (day, sp) -> 
                             $"<tr>"
-                                + $"<td>day: <b>{day}</b></td>"
-                                + $"<td>scheduled payment: <b>{sp}</b></td>"
+                                + $"<td>day: <i>{day}</i></td>"
+                                + $"<td>scheduled payment: <i>{sp}</i></td>"
                             + "</tr>"
                         ) |> String.concat "")
             + "</table>"
 
     /// whether to stick to scheduled payment amounts or add charges and interest to them
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduledPaymentOption =
         /// keep to the scheduled payment amounts even if this results in an open balance
         | AsScheduled
         /// add any charges and interest to the payment in order to close the balance at the end of the schedule
         | AddChargesAndInterest
-
-        override spo.ToString() =
+        /// HTML formatting to display the scheduled payment option in a readable format
+        member spo.Html =
             match spo with
             | AsScheduled -> "as scheduled"
             | AddChargesAndInterest -> "add charges and interest"
 
     /// how to handle a final balance if not closed: leave it open or modify/add payments at the end of the schedule
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type CloseBalanceOption =
         /// do not modify the final payment and leave any open balance as is
         | LeaveOpenBalance
@@ -352,16 +358,17 @@ module Scheduling =
         | AddSingleExtraPayment
         /// add multiple payments to the schedule to close any open balance gradually (interval based on unit-period config)
         | AddMultipleExtraPayments
-
-        override cbo.ToString() =
+        /// HTML formatting to display the close balance option in a readable format
+        member cbo.Html =
             match cbo with
             | LeaveOpenBalance -> "leave open balance"
             | IncreaseFinalPayment -> "increase final payment"
             | AddSingleExtraPayment -> "add single extra payment"
             | AddMultipleExtraPayments -> "add multiple extra payments"
+            |> _.Replace(" ", "&nbsp;")
 
     /// how to handle cases where the payment due is less than the minimum that payment providers can process
-     [<Struct>]
+     [<Struct; StructuredFormatDisplay("{Html}")>]
     type MinimumPayment =
         /// no minimum payment
         | NoMinimumPayment
@@ -369,12 +376,13 @@ module Scheduling =
         | DeferOrWriteOff of DeferOrWriteOff: int64<Cent>
         /// take the minimum payment regardless
         | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
-
-        override mp.ToString() =
+        /// HTML formatting to display the minimum payment in a readable format
+        member mp.Html =
             match mp with
             | NoMinimumPayment -> "no minimum payment"
             | DeferOrWriteOff upToValue -> $"defer or write off up to {formatCent upToValue}"
             | ApplyMinimumPayment minimumPayment -> $"apply minimum payment of {formatCent minimumPayment}"
+            |> _.Replace(" ", "&nbsp;")
 
     /// how to treat scheduled payments
     type PaymentConfig = {
@@ -396,15 +404,15 @@ module Scheduling =
         let toHtmlTable paymentConfig =
             "<table>"
                 + "<tr>"
-                    + $"<td>scheduling: <b>{paymentConfig.ScheduledPaymentOption}</b></td>"
-                    + $"<td>balance-close: <b>{paymentConfig.CloseBalanceOption}</b></td>"
+                    + $"<td>scheduling: <i>{paymentConfig.ScheduledPaymentOption}</i></td>"
+                    + $"<td>balance-close: <i>{paymentConfig.CloseBalanceOption}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>rounding: <b>{paymentConfig.PaymentRounding}</b></td>"
-                    + $"<td>timeout: <b>{paymentConfig.PaymentTimeout}</b></td>"
+                    + $"<td>rounding: <i>{paymentConfig.PaymentRounding}</i></td>"
+                    + $"<td>timeout: <i>{paymentConfig.PaymentTimeout}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td colspan='2'>minimum: <b>{paymentConfig.MinimumPayment}</b></td>"
+                    + $"<td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment}</i></td>"
                 + "</tr>"
             + "</table>"
 
@@ -433,8 +441,8 @@ module Scheduling =
         /// formats the parameters as an HTML table
         let toHtmlTable parameters =
             "<table>"
-                + $"<tr><td>As-of</td><td>{parameters.AsOfDate}</td></tr>"
-                + $"<tr><td>Start</td><td>{parameters.StartDate}</td></tr>"
+                + $"<tr><td>As-of</td><td>%A{parameters.AsOfDate}</td></tr>"
+                + $"<tr><td>Start</td><td>%A{parameters.StartDate}</td></tr>"
                 + $"<tr><td>Principal</td><td>{formatCent parameters.Principal}</td></tr>"
                 + $"<tr><td>Schedule options</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
                 + $"<tr><td>Payment options</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
@@ -894,12 +902,12 @@ module Scheduling =
         | ToBeGenerated
         /// the generated payment value
         | GeneratedValue of int64<Cent>
-        /// HTML formatting to display the generated payment in a concise way
+        /// HTML formatting to display the generated payment in a readable format
         member x.Html =
             match x with
             | NoGeneratedPayment
             | ToBeGenerated ->
-                ""
+                "n/a"
             | GeneratedValue gv ->
                 formatCent gv
 

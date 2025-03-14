@@ -38,7 +38,7 @@ module UnitPeriod =
         }
 
     /// interval between payments
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type UnitPeriod =
         /// non-recurring
         | NoInterval of UnitPeriodDays:int<DurationDay> // cf. (b)(5)(vii)
@@ -50,6 +50,24 @@ module UnitPeriod =
         | SemiMonth
         /// a month or a multiple of months
         | Month of MonthMultiple:int
+        /// HTML formatting to display the unit period in a readable format
+        member up.Html =
+            match up with
+            | NoInterval days ->
+                $"one-off after {days} days"
+            | Day ->
+                "day"
+            | Week multiple when multiple = 1 ->
+                "week"
+            | Week multiple ->
+                $"{multiple}-week"
+            | SemiMonth ->
+                "semi-month"
+            | Month multiple when multiple = 1 ->
+                "month"
+            | Month multiple ->
+                $"{multiple}-month"
+            |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
 
     /// all unit-periods, excluding unlikely ones (opinionated!)
     let all =
@@ -77,7 +95,7 @@ module UnitPeriod =
 
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
-        if (advanceDates |> Array.length) = 1 && (paymentDates |> Array.length) < 2 then
+        if advanceDates |> Array.length = 1 && paymentDates |> Array.length < 2 then
             min term.Duration 365<DurationDay>
             |> NoInterval
         else
@@ -122,7 +140,7 @@ module UnitPeriod =
             0m
 
     /// unit period combined with a start date and multiple where appropriate
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type Config =
         /// single on the given date
         | Single of Date:Date
@@ -134,26 +152,25 @@ module UnitPeriod =
         | SemiMonthly of smYear:int * smMonth:int * Day1:int * Day2:int
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
         | Monthly of MonthMultiple:int * Year:int * Month:int * Day:int
-
-        override upc.ToString() =
+        /// HTML formatting to display the unit-period config in a readable format
+        member upc.Html =
             let formatMonthEnd d = if d = 31 then "month-end" else d.ToString "00"
             match upc with
             | Single d ->
-                $"single on {d}"
+                $"single on %A{d}"
             | Daily sd ->
-                $"daily from {sd}"
+                $"daily from %A{sd}"
+            | Weekly (multiple, wsd) when multiple = 1 ->
+                    $"weekly from %A{wsd}"
             | Weekly (multiple, wsd) ->
-                if multiple = 1 then
-                    $"weekly from {wsd}"
-                else
-                    $"{multiple}-weekly from {wsd}"
+                    $"{multiple}-weekly from %A{wsd}"
             | SemiMonthly (y, m, td1, td2) ->
                 $"""semi-monthly from {y}-{m.ToString "00"} on {formatMonthEnd td1} and {formatMonthEnd td2}"""
-            | Monthly (multiple, y, m, d) ->
-                if multiple = 1 then
+            | Monthly (multiple, y, m, d) when multiple = 1 ->
                     $"""monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
-                else
+            | Monthly (multiple, y, m, d) ->
                     $"""{multiple}-monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
+            |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
 
     /// functions for creating and handling unit-period configs
     module Config =

@@ -6,7 +6,7 @@ open System
 module DateDay =
 
     /// the date at the customer's location - ensure any time-zone conversion is performed before using this - as all calculations are date-only with no time component, summer time or other such time artefacts
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type Date =
         val Year: int
         val Month: int
@@ -18,7 +18,10 @@ module DateDay =
             member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> Date.FromDateTime
             member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> Date.FromDateTime
             member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> Date.FromDateTime
-            override d.ToString() = d.ToDateTime().ToString "yyyy-MM-dd"
+            member d.Html =
+                d.ToDateTime().ToString "yyyy-MM-dd"
+                |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
+
             static member FromIsoString (ds: string) = Date(ds[0..3] |> Convert.ToInt32, ds[5..6] |> Convert.ToInt32, ds[8..9] |> Convert.ToInt32)
             static member (-) (d1: Date, d2: Date) =  d1.ToDateTime() - d2.ToDateTime()
             static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
@@ -40,17 +43,17 @@ module DateDay =
     [<Measure>] type DurationDay
 
     /// a length of time in whole days measured from a start date
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Duration =
         /// unrestricted length of time
         | Unlimited
         /// restricted to a length of time in whole days measured from a start date
         | Maximum of Length: int<DurationDay> * FromDate: Date
-
-        override d.ToString() =
+        /// HTML formatting to display the duration in a readable format
+        member d.Html =
             match d with
             | Unlimited -> "unlimited"
-            | Maximum (length, fromDate) -> $"maximum {length} days from %O{fromDate}"
+            | Maximum (length, fromDate) -> $"maximum {length} days from %A{fromDate}"
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is

@@ -35,7 +35,7 @@ module Calculation =
         Math.Pow(double base', double power)
 
     /// the type of rounding, specifying midpoint-rounding where necessary
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type Rounding =
         /// do not round at all
         | NoRounding
@@ -45,8 +45,8 @@ module Calculation =
         | RoundDown
         /// round up or down to the specified precision based on the given midpoint rounding rules
         | RoundWith of MidpointRounding
-
-        override r.ToString() =
+        /// HTML formatting to display the rounding in a readable format
+        member r.Html =
             match r with
             | NoRounding -> "not rounded"
             | RoundUp -> "rounded up"
@@ -90,7 +90,7 @@ module Calculation =
                 Math.Round(m, places, mpr)
 
     /// a holiday, i.e. a period when no interest and/or charges are accrued
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type DateRange = {
         /// the first date of the holiday period
         Start: Date
@@ -98,7 +98,8 @@ module Calculation =
         End: Date
     }
     with
-        override dr.ToString() =
+        /// HTML formatting to display the date range in a readable format
+        member dr.Html =
             $"{dr.Start} to {dr.End}"
 
     /// determines whether a pending payment has timed out
@@ -160,12 +161,14 @@ module Calculation =
             decimal c * 1m<Cent>
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type Percent =
         | Percent of decimal
-
-        override p.ToString() =
+        /// HTML formatting to display the percentage in a readable format
+        member p.Html =
             let (Percent value) = p
-            $"{value:G10} %%"
+            let format = if value < 1e-03m then "F10" else "G10"
+            $"{value.ToString format} %%"
 
     /// utility functions for percent values
     [<RequireQualifiedAccess>]
@@ -182,7 +185,7 @@ module Calculation =
             p / 100m
 
     /// the type of restriction placed on a possible value
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Restriction =
         /// does not constrain values at all
         | NoLimit
@@ -192,8 +195,8 @@ module Calculation =
         | UpperLimit of UpperLimit:int64<Cent>
         /// constrain values to within a range
         | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
-
-        override r.ToString() =
+        /// HTML formatting to display the restriction in a readable format
+        member r.Html =
             match r with
             | NoLimit -> "no fixed limit"
             | LowerLimit lower -> $"no lower than {Cent.toDecimal lower:N2}"
@@ -215,14 +218,14 @@ module Calculation =
                 value |> min (decimal upper) |> max (decimal lower)
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Amount =
         /// a percentage of the principal, optionally restricted
         | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
         /// a fixed fee
         | Simple of Simple:int64<Cent>
-        
-        override a.ToString() =
+        /// HTML formatting to display the amount in a readable format
+        member a.Html =
             match a with
             | Percentage (Percent percent, restriction, rounding) ->
                 $"{percent} %%, {restriction}, {rounding}"
@@ -360,7 +363,7 @@ module Calculation =
         let toStringOrNa a =
             match a with
             | null | [||] -> "n/a"
-            | _ -> a |> Array.map _.ToString() |> String.concat ", "
+            | _ -> a |> Array.map(fun ai -> $"{ai}") |> String.concat ", "
 
     /// functions for working with maps
     module Map =

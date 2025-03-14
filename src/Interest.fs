@@ -9,7 +9,7 @@ module Interest =
     open DateDay
 
     /// the interest rate expressed as either an annual or a daily rate
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Rate =
         /// a zero rate
         | Zero
@@ -17,8 +17,8 @@ module Interest =
         | Annual of Annual:Percent
         /// the daily interest rate, or the annual interest rate divided by 365
         | Daily of Daily:Percent
-
-        override r.ToString() =
+        /// HTML formatting to display the rate in a readable format
+        member r.Html =
             match r with
             | Zero -> "zero"
             | Annual p -> $"{p} per year"
@@ -47,13 +47,19 @@ module Interest =
     }
 
     /// caps on the total interest accruable
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Cap = {
         /// a cap on the total amount of interest chargeable over the lifetime of a product
         TotalAmount: Amount voption
         /// a cap on the daily amount of interest chargeable
         DailyAmount: Amount voption
     }
+    with
+        /// HTML formatting to display the cap in a readable format
+        member c.Html =
+            let total = match c.TotalAmount with | ValueSome a -> $"{a}" | ValueNone -> "n/a"
+            let daily = match c.DailyAmount with | ValueSome a -> $"{a}" | ValueNone -> "n/a"
+            $"total {total}, daily {daily}"
     
     /// caps on the total interest accruable
     module Cap =
@@ -86,14 +92,14 @@ module Interest =
             |> Map.ofArray
 
     /// the method used to calculate the interest
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Method =
         /// simple interest method, where interest is based on the principal balance and the number of days outstanding
         | Simple
         /// add-on interest method, where the interest accrued over the loan is added to the initial balance and the interest is paid off before the principal balance
         | AddOn
-
-        override m.ToString() =
+        /// HTML formatting to display the method in a readable format
+        member m.Html =
             match m with
             | Simple -> "simple"
             | AddOn -> "add-on"
@@ -125,21 +131,18 @@ module Interest =
         let toHtmlTable config =
             "<table>"
                 + "<tr>"
-                    + $"<td>standard rate: <b>{config.StandardRate}</b></td>"
-                    + $"<td>method: <b>{config.Method}</b></td>"
+                    + $"<td>standard rate: <i>{config.StandardRate}</i></td>"
+                    + $"<td>method: <i>{config.Method}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>interest rounding: <b>{config.InterestRounding}</b></td>"
-                    + $"<td>APR method: <b>{config.AprMethod}</b></td>"
+                    + $"<td>interest rounding: <i>{config.InterestRounding}</i></td>"
+                    + $"<td>APR method: <i>{config.AprMethod}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td colspan='2'>promotional rates: <b>{Array.toStringOrNa config.PromotionalRates}</b></td>"
+                    + $"""<td colspan="2">promotional rates: <i>{Array.toStringOrNa config.PromotionalRates}</i></td>"""
                 + "</tr>"
                 + "<tr>"
-                    + $"<td colspan='2'>daily cap: <b>{config.Cap.DailyAmount}</td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td colspan='2'>total cap: <b>{config.Cap.TotalAmount}</td>"
+                    + $"""<td colspan="2">cap: <i>{config.Cap}</td>"""
                 + "</tr>"
             + "</table>"
 

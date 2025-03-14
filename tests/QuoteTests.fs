@@ -19,8 +19,8 @@ module QuoteTests =
     }
 
     [<Fact>]
-    let QuoteTest001 () =
-        let title = "QuoteTest001"
+    let QuoteTest000 () =
+        let title = "QuoteTest000"
         let description = "Settlement falling on a scheduled payment date"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
@@ -122,8 +122,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest002 () =
-        let title = "QuoteTest002"
+    let QuoteTest001 () =
+        let title = "QuoteTest001"
         let description = "Settlement not falling on a scheduled payment date"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
@@ -223,8 +223,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest003 () =
-        let title = "QuoteTest003"
+    let QuoteTest002 () =
+        let title = "QuoteTest002"
         let description = "Settlement not falling on a scheduled payment date but having an actual payment already made on the same day"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
@@ -324,8 +324,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest004 () =
-        let title = "QuoteTest004"
+    let QuoteTest003 () =
+        let title = "QuoteTest003"
         let description = "Settlement within interest grace period should not accrue interest"
         let startDate = Date(2024, 10, 1).AddDays -3
 
@@ -417,8 +417,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest005 () =
-        let title = "QuoteTest005"
+    let QuoteTest004 () =
+        let title = "QuoteTest004"
         let description = "Settlement just outside interest grace period should accrue interest"
         let startDate = Date(2024, 10, 1).AddDays -4
 
@@ -510,8 +510,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest006 () =
-        let title = "QuoteTest006"
+    let QuoteTest005 () =
+        let title = "QuoteTest005"
         let description = "Settlement when fee is due in full"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
@@ -611,8 +611,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest007 () =
-        let title = "QuoteTest007"
+    let QuoteTest006 () =
+        let title = "QuoteTest006"
         let description = "Get next scheduled payment"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
@@ -702,8 +702,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest008 () =
-        let title = "QuoteTest008"
+    let QuoteTest007 () =
+        let title = "QuoteTest007"
         let description = "Get payment to cover all overdue amounts"
         let startDate = Date(2024, 10, 1).AddDays(-60)
 
@@ -772,8 +772,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest009 () =
-        let title = "QuoteTest009"
+    let QuoteTest008 () =
+        let title = "QuoteTest008"
         let description = "Verified example"
         let startDate = Date(2023, 6, 23)
 
@@ -864,8 +864,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest010 () =
-        let title = "QuoteTest010"
+    let QuoteTest009 () =
+        let title = "QuoteTest009"
         let description = "Verified example"
         let startDate = Date(2022, 11, 28)
 
@@ -964,8 +964,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest011 () =
-        let title = "QuoteTest011"
+    let QuoteTest010 () =
+        let title = "QuoteTest010"
         let description = "When settling a loan with 3-day late-payment grace period, scheduled payments within the grace period should be treated as missed payments, otherwise the quote balance is too low"
         let startDate = Date(2022, 11, 28)
 
@@ -1062,8 +1062,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest012 () =
-        let title = "QuoteTest012"
+    let QuoteTest011 () =
+        let title = "QuoteTest011"
         let description = "Settlement figure should not be lower than principal"
         let startDate = Date(2024, 1, 29)
 
@@ -1149,8 +1149,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0013a`` () =
-        let title = "QuoteTests0013a"
+    let ``QuoteTests012`` () =
+        let title = "QuoteTests012"
         let description = "Loan is settled the day before the last scheduled payment is due"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
@@ -1246,8 +1246,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0013b`` () =
-        let title = "QuoteTests0013b"
+    let ``QuoteTests013`` () =
+        let title = "QuoteTests013"
         let description = "Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)"
         let sp = {
             AsOfDate = Date(2023, 3, 15)
@@ -1343,8 +1343,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0013c`` () =
-        let title = "QuoteTests0013c"
+    let ``QuoteTests014`` () =
+        let title = "QuoteTests014"
         let description = "Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee"
         let sp = {
             AsOfDate = Date(2023, 3, 16)
@@ -1440,8 +1440,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0013d`` () =
-        let title = "QuoteTests0013d"
+    let ``QuoteTests015`` () =
+        let title = "QuoteTests015"
         let description = "Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee"
         let sp = {
             AsOfDate = Date(2023, 3, 19)
@@ -1537,8 +1537,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0014a`` () =
-        let title = "QuoteTests0014a"
+    let ``QuoteTests016`` () =
+        let title = "QuoteTests016"
         let description = "Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
@@ -1634,8 +1634,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0014b`` () =
-        let title = "QuoteTests0014b"
+    let ``QuoteTests017`` () =
+        let title = "QuoteTests017"
         let description = "Loan is settled the same day as an overpayment"
         let sp = {
             AsOfDate = Date(2023, 3, 15)
@@ -1732,8 +1732,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests0014c`` () =
-        let title = "QuoteTests0014c"
+    let ``QuoteTests018`` () =
+        let title = "QuoteTests018"
         let description = "Loan is settled the day after an overpayment"
         let sp = {
             AsOfDate = Date(2023, 3, 16)
@@ -1830,8 +1830,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest015 () =
-        let title = "QuoteTest015"
+    let QuoteTest019 () =
+        let title = "QuoteTest019"
         let description = "Loan refund due for a long time, showing interest owed back"
         let sp = {
             AsOfDate = Date(2024, 2, 5)
@@ -1928,8 +1928,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest016 () =
-        let title = "QuoteTest016"
+    let QuoteTest020 () =
+        let title = "QuoteTest020"
         let description = "Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components"
         let sp = {
             AsOfDate = Date(2022, 12, 20)
@@ -1992,8 +1992,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest017 () =
-        let title = "QuoteTest017"
+    let QuoteTest021 () =
+        let title = "QuoteTest021"
         let description = "Generated settlement figure is correct"
         let sp = {
             AsOfDate = Date(2024, 3, 4)
@@ -2047,8 +2047,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest018 () =
-        let title = "QuoteTest018"
+    let QuoteTest022 () =
+        let title = "QuoteTest022"
         let description = "Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment"
         let sp = {
             AsOfDate = Date(2024, 3, 4)
@@ -2102,8 +2102,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest019 () =
-        let title = "QuoteTest019"
+    let QuoteTest023 () =
+        let title = "QuoteTest023"
         let description = "Curveball"
         let sp = {
             AsOfDate = Date(2024, 3, 7)
@@ -2158,8 +2158,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest020 () =
-        let title = "QuoteTest020"
+    let QuoteTest024 () =
+        let title = "QuoteTest024"
         let description = "Negative interest should accrue to interest balance not principal balance"
         let sp = {
             AsOfDate = Date(2024, 3, 7)
@@ -2213,8 +2213,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let QuoteTest021 () =
-        let title = "QuoteTest021"
+    let QuoteTest025 () =
+        let title = "QuoteTest025"
         let description = "Quote with long period of negative interest accruing"
         let sp = {
             AsOfDate = Date(2024, 4, 5)

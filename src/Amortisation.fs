@@ -11,7 +11,7 @@ module Amortisation =
     open Scheduling
 
     /// the status of the balance on a given offset day
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type BalanceStatus =
         /// the balance has been settled in full
         | ClosedBalance
@@ -19,8 +19,8 @@ module Amortisation =
         | OpenBalance
         /// due to an overpayment or a refund of charges, a refund is due
         | RefundDue
-
-        override bs.ToString() =
+        /// HTML formatting to display the balance status in a readable format
+        member bs.Html =
             match bs with
             | ClosedBalance -> "closed"
             | OpenBalance -> "open"
@@ -117,7 +117,7 @@ module Amortisation =
         let toHtmlRow offsetDay scheduleItem =
             """<tr style="text-align: right;">"""
                 + $"""<td class="ci00">{offsetDay}</td>"""
-                + $"""<td class="ci01">{scheduleItem.OffsetDate}</td>"""
+                + $"""<td class="ci01">%A{scheduleItem.OffsetDate}</td>"""
                 + $"""<td class="ci02">{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOrNa}</td>"""
                 + $"""<td class="ci03">{scheduleItem.ScheduledPayment}</td>"""
                 + $"""<td class="ci04">{scheduleItem.Window}</td>"""
@@ -191,22 +191,22 @@ module Amortisation =
         let toHtmlTable schedule =
             "<table>"
                 + "<tr>"
-                    + $"<td>Effective interest rate: <b>{schedule.EffectiveInterestRate}</b></td>"
+                    + $"<td>Effective interest rate: <i>{schedule.EffectiveInterestRate}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Final actual payment count: <b>{schedule.FinalActualPaymentCount}</b></td>"
+                    + $"<td>Final actual payment count: <i>{schedule.FinalActualPaymentCount}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Final APR: <b>{finalAprString schedule.FinalApr}</b></td>"
+                    + $"<td>Final APR: <i>{finalAprString schedule.FinalApr}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Final cost-to-borrowing ratio: <b>{schedule.FinalCostToBorrowingRatio}</b></td>"
+                    + $"<td>Final cost-to-borrowing ratio: <i>{schedule.FinalCostToBorrowingRatio}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Final scheduled payment count: <b>{schedule.FinalScheduledPaymentCount}</b></td>"
+                    + $"<td>Final scheduled payment count: <i>{schedule.FinalScheduledPaymentCount}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Final scheduled payment day: <b>{schedule.FinalScheduledPaymentDay}</b></td>"
+                    + $"<td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>"
                 + "</tr>"
             + "</table>"
 
@@ -226,7 +226,7 @@ module Amortisation =
             "<table>"
                 + """<thead style="vertical-align: bottom;">"""
                     + """<th style="text-align: right;">Day</th>"""
-                    + """<th style="text-align: right;">Datestamp&nbsp;&nbsp;</th>"""
+                    + """<th style="text-align: right;">Datestamp</th>"""
                     + """<th style="text-align: right;">Advances</th>"""
                     + """<th style="text-align: right;">Scheduled payment</th>"""
                     + """<th style="text-align: right;">Window</th>"""
@@ -262,7 +262,7 @@ module Amortisation =
             let htmlSchedule = toHtmlTable schedule
             let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
             let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
-            let htmlDatestamp = $"""<p>Generated: <b>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</b></p>"""
+            let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
             let htmlStats = $"<h4>Stats</h4>{ScheduleStats.toHtmlTable schedule.ScheduleStats}"
             let filename = $"out/{title}.md"
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlStats}"
@@ -706,7 +706,7 @@ module Amortisation =
                 | ToBeGenerated, ValueSome (SettlementDay.SettlementOn day) when day = appliedPaymentDay ->
                     createScheduleItem true
                 | GeneratedValue gv, _ ->
-                    failwith $"Unexpected value: <b>{gv}</b>"
+                    failwith $"Unexpected value: <i>{gv}</i>"
                 | NoGeneratedPayment, _
                 | ToBeGenerated, ValueNone
                 | ToBeGenerated, ValueSome (SettlementDay.SettlementOn _)

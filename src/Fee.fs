@@ -10,7 +10,7 @@ open DateDay
 module Fee =
 
     /// the type and amount of any fees, such as facilitation fees or CSO/CAB fees, taking into account any constraints
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type FeeType =
         /// a fee enabling the provision of a financial product
         | FacilitationFee of FacilitationFee: Amount
@@ -20,22 +20,30 @@ module Fee =
         | MortageFee of MortageFee: Amount
         /// any other type of product fee
         | CustomFee of FeeType: string * FeeAmount: Amount
+        /// HTML formatting to display the fee type in a readable format
+        member ft.Html =
+            match ft with
+            | FacilitationFee amount -> $"facilitation fee {amount}"
+            | CabOrCsoFee amount -> $"CAB/CSO fee {amount}"
+            | MortageFee amount -> $"mortgage fee {amount}"
+            | CustomFee (name, amount) -> $"{name} {amount}"
+            |> _.Replace(" ", "&nbsp;")
 
     /// how to amortise fees
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type FeeAmortisation =
         /// amortise any fee before amortising principal
         | AmortiseBeforePrincipal
         /// amortise any fee and principal proportionately
         | AmortiseProportionately
-
-        override fa.ToString() =
+        /// HTML formatting to display the fee amortisation in a readable format
+        member fa.Html =
             match fa with
             | AmortiseBeforePrincipal -> "amortise before principal"
             | AmortiseProportionately -> "amortise proportionately"
 
     /// how the fees are treated in the event of an early settlement
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type SettlementRefund =
         /// fees are due in full with no discount or refund
         | Zero
@@ -45,8 +53,8 @@ module Fee =
         | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
         /// the current fee balance is refunded
         | Balance
-        
-        override sr.ToString() =
+        /// HTML formatting to display the settlement refund in a readable format
+        member sr.Html =
             match sr with
             | Zero -> "no refund"
             | ProRata -> "pro-rata refund"
@@ -89,12 +97,12 @@ module Fee =
         let toHtmlTable config =
             "<table>"
                 + "<tr>"
-                    + $"<td>fee types: <b>{Array.toStringOrNa config.FeeTypes}</b></td>"
-                    + $"<td>rounding: <b>{config.Rounding}</b></td>"
+                    + $"<td>fee types: <i>{Array.toStringOrNa config.FeeTypes}</i></td>"
+                    + $"<td>rounding: <i>{config.Rounding}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>fee amortisation: <b>{config.FeeAmortisation}</b></td>"
-                    + $"<td>settlement refund: <b>{config.SettlementRefund}</b></td>"
+                    + $"<td>fee amortisation: <i>{config.FeeAmortisation}</i></td>"
+                    + $"<td>settlement refund: <i>{config.SettlementRefund}</i></td>"
                 + "</tr>"
             + "</table>"
 

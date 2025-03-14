@@ -10,7 +10,7 @@ open DateDay
 module Charge =
 
     /// the type and amount of any charge
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type ChargeType =
         /// a charge incurred because a scheduled payment was not made on time or in full
         | LatePayment of LatePayment: Amount
@@ -18,15 +18,16 @@ module Charge =
         | InsufficientFunds of InsufficientFunds: Amount
         /// any other type of penalty charge
         | CustomCharge of ChargeType: string * FeeAmount: Amount
-
-        override ct.ToString() =
+        /// HTML formatting to display the charge type in a readable format
+        member ct.Html =
             match ct with
-            | LatePayment amount -> $"late payment <b>{amount}</b>"
-            | InsufficientFunds amount -> $"insufficient funds <b>{amount}</b>"
-            | CustomCharge (name, amount) -> $"{name} <b>{amount}</b>"
+            | LatePayment amount -> $"late payment {amount}"
+            | InsufficientFunds amount -> $"insufficient funds {amount}"
+            | CustomCharge (name, amount) -> $"{name} {amount}"
+            |> _.Replace(" ", "&nbsp;")
 
     /// options on how to handle multiple charges
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type ChargeGrouping =
         /// only one charge of any type may be applied per day
         | OneChargeTypePerDay
@@ -34,8 +35,8 @@ module Charge =
         | OneChargeTypePerProduct
         /// all charges are applied
         | AllChargesApplied
-
-        override cg.ToString() =
+        /// HTML formatting to display the charge grouping in a readable format
+        member cg.Html =
             match cg with
             | OneChargeTypePerDay -> "one charge per day"
             | OneChargeTypePerProduct -> "one charge per product"
@@ -69,15 +70,15 @@ module Charge =
         let toHtmlTable config =
             "<table>"
                 + "<tr>"
-                    + $"<td>types: <b>{Array.toStringOrNa config.ChargeTypes}</b></td>"
-                    + $"<td>grouping: <b>{config.ChargeGrouping}</b></td>"
+                    + $"<td>types: <i>{Array.toStringOrNa config.ChargeTypes}</i></td>"
+                    + $"<td>grouping: <i>{config.ChargeGrouping}</i></td>"
                 + "</tr>"
                 + $"<tr>"
-                    + $"<td>rounding: <b>{config.Rounding}</b></td>"
-                    + $"<td>late-payment grace period: <b>{config.LatePaymentGracePeriod}</b></td>"
+                    + $"<td>rounding: <i>{config.Rounding}</i></td>"
+                    + $"<td>late-payment grace period: <i>{config.LatePaymentGracePeriod}</i></td>"
                 + "</tr>"
                 + $"<tr>"
-                    + $"<td colspan='2'>holidays: <b>{Array.toStringOrNa config.ChargeHolidays}</b></td>"
+                    + $"<td colspan='2'>holidays: <i>{Array.toStringOrNa config.ChargeHolidays}</i></td>"
                 + "</tr>"
             + "</table>"
 
