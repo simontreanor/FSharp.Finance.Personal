@@ -57,8 +57,8 @@ module Interest =
     with
         /// HTML formatting to display the cap in a readable format
         member c.Html =
-            let total = match c.TotalAmount with | ValueSome a -> $"{a}" | ValueNone -> "n/a"
-            let daily = match c.DailyAmount with | ValueSome a -> $"{a}" | ValueNone -> "n/a"
+            let total = match c.TotalAmount with ValueSome a -> $"{a}" | ValueNone -> "n/a"
+            let daily = match c.DailyAmount with ValueSome a -> $"{a}" | ValueNone -> "n/a"
             $"total {total}, daily {daily}"
     
     /// caps on the total interest accruable

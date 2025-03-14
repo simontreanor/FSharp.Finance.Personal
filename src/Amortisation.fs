@@ -642,7 +642,7 @@ module Amortisation =
                     | _ ->
                         ValueSome (generatedSettlementPayment' - netEffect')
 
-                let (balances, interestPortionL', generatedPayment) =
+                let balances, interestPortionL', generatedPayment =
                     if isSettlement then
                         // convert the generated payment placeholder with an actual settlement figure 
                         ((0L<Cent>, 0L<Cent>, 0m<Cent>, 0L<Cent>),
@@ -659,7 +659,7 @@ module Amortisation =
                         interestPortionL' - carriedInterestL,
                         ap.GeneratedPayment)
 
-                let (principalBal, feesBal, interestBal, chargesBal) = balances
+                let principalBal, feesBal, interestBal, chargesBal = balances
                 // create the schedule item
                 let scheduleItem = {
                     Window = window
@@ -678,7 +678,7 @@ module Amortisation =
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
                     PrincipalPortion = if isSettlement then si.PrincipalBalance else principalPortion'
-                    FeesPortion = si.FeesBalance - feesRefund
+                    FeesPortion = if isSettlement then si.FeesBalance - feesRefund else feesPortion'
                     InterestPortion = interestPortionL'
                     ChargesPortion = if isSettlement then chargesPortion else chargesPortion - carriedCharges
                     FeesRefund = feesRefund
