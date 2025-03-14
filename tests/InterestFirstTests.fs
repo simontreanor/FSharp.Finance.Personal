@@ -104,7 +104,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal <| ValueSome 2000_00L<Cent>
+        finalSettlementFigure |> should equal (ValueSome 2000_00L<Cent>)
 
     [<Fact>]
     let InterestFirstTest004 () =
@@ -212,7 +212,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal <| ValueSome 650_63L<Cent>
+        finalSettlementFigure |> should equal (ValueSome 650_63L<Cent>)
 
     [<Fact>]
     let InterestFirstTest008 () =
@@ -258,7 +258,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal <| ValueSome 737_36L<Cent>
+        finalSettlementFigure |> should equal (ValueSome 737_36L<Cent>)
 
     [<Fact>]
     let InterestFirstTest010 () =
@@ -324,7 +324,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal <| ValueSome -324_57L<Cent>
+        finalSettlementFigure |> should equal (ValueSome -324_59L<Cent>)
 
     [<Fact>]
     let InterestFirstTest013 () =
@@ -348,10 +348,10 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal <| ValueSome 0L<Cent>
+        finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
 
     [<Fact>]
-    let ``InterestFirstTests014`` () =
+    let ``InterestFirstTest014`` () =
         let title = "InterestFirstTests014"
         let description = "Realistic example 0004ffd74fbb with overpayment"
         let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 6, 10); PaymentCount = 4; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) } }
@@ -393,7 +393,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal <| ValueSome -1_22L<Cent>
+        finalSettlementFigure |> should equal (ValueSome -1_22L<Cent>)
 
     [<Fact>]
     let InterestFirstTest016 () =

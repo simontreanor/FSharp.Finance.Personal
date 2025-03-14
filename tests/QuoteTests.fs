@@ -1149,8 +1149,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests012`` () =
-        let title = "QuoteTests012"
+    let ``QuoteTest012`` () =
+        let title = "QuoteTest012"
         let description = "Loan is settled the day before the last scheduled payment is due"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
@@ -1246,8 +1246,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests013`` () =
-        let title = "QuoteTests013"
+    let ``QuoteTest013`` () =
+        let title = "QuoteTest013"
         let description = "Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)"
         let sp = {
             AsOfDate = Date(2023, 3, 15)
@@ -1343,8 +1343,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests014`` () =
-        let title = "QuoteTests014"
+    let ``QuoteTest014`` () =
+        let title = "QuoteTest014"
         let description = "Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee"
         let sp = {
             AsOfDate = Date(2023, 3, 16)
@@ -1440,8 +1440,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests015`` () =
-        let title = "QuoteTests015"
+    let ``QuoteTest015`` () =
+        let title = "QuoteTest015"
         let description = "Loan is settled four days after the final schedule payment was due (and which was not made) and is outside grace period so incurs a late-payment fee"
         let sp = {
             AsOfDate = Date(2023, 3, 19)
@@ -1537,8 +1537,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests016`` () =
-        let title = "QuoteTests016"
+    let ``QuoteTest016`` () =
+        let title = "QuoteTest016"
         let description = "Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
@@ -1634,8 +1634,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests017`` () =
-        let title = "QuoteTests017"
+    let ``QuoteTest017`` () =
+        let title = "QuoteTest017"
         let description = "Loan is settled the same day as an overpayment"
         let sp = {
             AsOfDate = Date(2023, 3, 15)
@@ -1732,8 +1732,8 @@ module QuoteTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``QuoteTests018`` () =
-        let title = "QuoteTests018"
+    let ``QuoteTest018`` () =
+        let title = "QuoteTest018"
         let description = "Loan is settled the day after an overpayment"
         let sp = {
             AsOfDate = Date(2023, 3, 16)

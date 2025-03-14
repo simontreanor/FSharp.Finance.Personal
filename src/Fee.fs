@@ -27,7 +27,6 @@ module Fee =
             | CabOrCsoFee amount -> $"CAB/CSO fee {amount}"
             | MortageFee amount -> $"mortgage fee {amount}"
             | CustomFee (name, amount) -> $"{name} {amount}"
-            |> _.Replace(" ", "&nbsp;")
 
     /// how to amortise fees
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -97,7 +96,7 @@ module Fee =
         let toHtmlTable config =
             "<table>"
                 + "<tr>"
-                    + $"<td>fee types: <i>{Array.toStringOrNa config.FeeTypes}</i></td>"
+                    + $"""<td>fee types: <i>{Array.toStringOrNa config.FeeTypes |> _.Replace(" ", "&nbsp;")}</i></td>"""
                     + $"<td>rounding: <i>{config.Rounding}</i></td>"
                 + "</tr>"
                 + "<tr>"

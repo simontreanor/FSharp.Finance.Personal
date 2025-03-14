@@ -73,7 +73,6 @@ module Scheduling =
                     $"{s}&nbsp;+&nbsp;{formatCent a}"
                 | _ ->
                     s
-            |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
     
     module ScheduledPayment =
         /// the total amount of the payment
@@ -126,7 +125,6 @@ module Scheduling =
             | TimedOut amount -> $"timed out {formatCent amount}"
             | Confirmed amount -> $"confirmed {formatCent amount}"
             | Failed (amount, charges) -> $"failed {formatCent amount} with charges {Array.toStringOrNa charges}"
-            |> _.Replace(" ", "&nbsp;")
     
     /// the status of the payment, allowing for delays due to payment-provider processing times
     module ActualPaymentStatus =
@@ -241,7 +239,6 @@ module Scheduling =
             | Generated -> "generated"
             | NoLongerRequired -> "no longer required"
             | InformationOnly -> "information only"
-            |> _.Replace(" ", "&nbsp;")
 
     /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
     [<RequireQualifiedAccess; Struct>]
@@ -266,7 +263,6 @@ module Scheduling =
             match st with
             | Original -> "original"
             | Rescheduled rd -> $"rescheduled on day {rd}"
-            |> _.Replace(" ", "&nbsp;")
 
     /// a regular schedule based on a unit-period config with a specific number of payments of a specified amount
     [<RequireQualifiedAccess; Struct>]
@@ -299,32 +295,32 @@ module Scheduling =
                 + match scheduleConfig with
                     | AutoGenerateSchedule ags ->
                         "<tr>"
-                            + $"<td>type: <i>auto-generate schedule</i></td>"
+                            + $"<td>config: <i>auto-generate schedule</i></td>"
                             + $"<td>payment count: <i>{ags.PaymentCount}</i></td>"
                         + "</tr>"
                         + "<tr>"
-                            + $"<td>unit-period config: <i>{ags.UnitPeriodConfig}</i></td>"
+                            + $"""<td style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>"""
                             + $"<td>max duration: <i>{ags.MaxDuration}</i></td>"
                         + "</tr>"
                     | FixedSchedules fsArray -> 
                         $"<tr>"
-                            + "<td colspan='2'>Type: <i>fixed schedules</i></td>"
+                            + """<td colspan="2">config: <i>fixed schedules</i></td>"""
                         + "</tr>"
                         + (fsArray |> Array.map (fun fs ->
                             "<tr><td><table>"
                                 + "<tr>"
-                                    + $"<td>unit-period config: <i>{fs.UnitPeriodConfig}</i></td>"
+                                    + $"""<td style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></td>"""
                                     + $"<td>payment count: <i>{fs.PaymentCount}</i></td>"
                                 + "</tr>"
                                 + "<tr>"
                                     + $"<td>payment value: <i>{formatCent fs.PaymentValue}</i></td>"
-                                    + $"<td>schedule type: <i>{fs.ScheduleType}</i></td>"
+                                    + $"""<td>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></td>"""
                                 + "</tr>"
                             + "</table></td></tr>"
                         ) |> String.concat "")
                     | CustomSchedule cs ->
                         "<tr>"
-                            + "<td colspan='2'>type: <i>custom schedule</i></td>"
+                            + """<td colspan="2">config: <i>custom schedule</i></td>"""
                         + "</tr>"
                         + (cs |> Map.toList |> List.map (fun (day, sp) -> 
                             $"<tr>"
@@ -365,7 +361,6 @@ module Scheduling =
             | IncreaseFinalPayment -> "increase final payment"
             | AddSingleExtraPayment -> "add single extra payment"
             | AddMultipleExtraPayments -> "add multiple extra payments"
-            |> _.Replace(" ", "&nbsp;")
 
     /// how to handle cases where the payment due is less than the minimum that payment providers can process
      [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -382,7 +377,6 @@ module Scheduling =
             | NoMinimumPayment -> "no minimum payment"
             | DeferOrWriteOff upToValue -> $"defer or write off up to {formatCent upToValue}"
             | ApplyMinimumPayment minimumPayment -> $"apply minimum payment of {formatCent minimumPayment}"
-            |> _.Replace(" ", "&nbsp;")
 
     /// how to treat scheduled payments
     type PaymentConfig = {
@@ -405,14 +399,14 @@ module Scheduling =
             "<table>"
                 + "<tr>"
                     + $"<td>scheduling: <i>{paymentConfig.ScheduledPaymentOption}</i></td>"
-                    + $"<td>balance-close: <i>{paymentConfig.CloseBalanceOption}</i></td>"
+                    + $"""<td>balance-close: <i>{paymentConfig.CloseBalanceOption.Html.Replace(" ", "&nbsp;")}</i></td>"""
                 + "</tr>"
                 + "<tr>"
                     + $"<td>rounding: <i>{paymentConfig.PaymentRounding}</i></td>"
                     + $"<td>timeout: <i>{paymentConfig.PaymentTimeout}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment}</i></td>"
+                    + $"""<td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment.Html.Replace(" ", "&nbsp;")}</i></td>"""
                 + "</tr>"
             + "</table>"
 
@@ -695,7 +689,7 @@ module Scheduling =
                     |> min totalInterestCap
                     |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> Rounding.roundTo sp.InterestConfig.InterestRounding 0
-                if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
+                if iteration = 100 || diff <= 0m && diff > -(decimal paymentCount) then
                     None
                 else
                     Some (initialInterestBalance, (iteration + 1, finalInterestTotal))

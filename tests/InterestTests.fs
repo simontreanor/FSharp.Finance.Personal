@@ -224,7 +224,7 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``Cca2004Test001`` () =
+        let Cca2004Test001 () =
             let title = "Cca2004Test001"
             let description = "UK rebate example 1a"
             let principal = 5000_00L<Cent>
@@ -239,7 +239,7 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``Cca2004Tests002`` () =
+        let Cca2004Test002 () =
             let title = "Cca2004Test002"
             let description = "UK rebate example 1b"
             let principal = 5000_00L<Cent>
@@ -254,7 +254,7 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let ``Cca2004Tests003`` () =
+        let ``Cca2004Test003`` () =
             let title = "Cca2004Test003"
             let description = "UK rebate example 1c"
             let principal = 5000_00L<Cent>
@@ -284,7 +284,7 @@ module InterestTests =
             actual |> should equal expected
 
         [<Fact>]
-        let Cca2004Tests005 () =
+        let Cca2004Test005 () =
             let title = "Cca2004Test005"
             let description = "UK rebate example 2a"
             let principal = 10000_00L<Cent>

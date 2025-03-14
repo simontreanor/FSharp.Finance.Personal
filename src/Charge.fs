@@ -24,7 +24,6 @@ module Charge =
             | LatePayment amount -> $"late payment {amount}"
             | InsufficientFunds amount -> $"insufficient funds {amount}"
             | CustomCharge (name, amount) -> $"{name} {amount}"
-            |> _.Replace(" ", "&nbsp;")
 
     /// options on how to handle multiple charges
     [<Struct; StructuredFormatDisplay("{Html}")>]

@@ -59,7 +59,7 @@ module Interest =
         member c.Html =
             let total = match c.TotalAmount with ValueSome a -> $"{a}" | ValueNone -> "n/a"
             let daily = match c.DailyAmount with ValueSome a -> $"{a}" | ValueNone -> "n/a"
-            $"total {total}, daily {daily}"
+            $"total {total}; daily {daily}"
     
     /// caps on the total interest accruable
     module Cap =
@@ -137,6 +137,10 @@ module Interest =
                 + "<tr>"
                     + $"<td>interest rounding: <i>{config.InterestRounding}</i></td>"
                     + $"<td>APR method: <i>{config.AprMethod}</i></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>initial grace period: <i>{config.InitialGracePeriod} day(s)</i></td>"
+                    + $"<td>rate on negative balance: <i>{config.RateOnNegativeBalance}</i></td>"
                 + "</tr>"
                 + "<tr>"
                     + $"""<td colspan="2">promotional rates: <i>{Array.toStringOrNa config.PromotionalRates}</i></td>"""

@@ -345,8 +345,8 @@ module EdgeCaseTests =
         actual |> should equal expected
 
     [<Fact>]
-    let ``EdgeCaseTests004`` () =
-        let title = "EdgeCaseTests004"
+    let ``EdgeCaseTest004`` () =
+        let title = "EdgeCaseTest004"
         let description = "Only one insufficient funds charge per day"
         let sp = {
             AsOfDate = Date(2024, 3, 12)

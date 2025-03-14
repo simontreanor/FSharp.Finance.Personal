@@ -21,8 +21,8 @@ module FeesAndChargesTests =
     module ChargesTests =
 
         [<Fact>]
-        let FeesAndChargesTest000 () =
-            let title = "FeesAndChargesTest000"
+        let ChargesTest000 () =
+            let title = "ChargesTest000"
             let description = "One charge type per day"
             let sp = {
                 AsOfDate = Date(2023, 4, 1)
@@ -112,8 +112,8 @@ module FeesAndChargesTests =
             actual |> should equal expected
 
         [<Fact>]
-        let FeesAndChargesTest001 () =
-            let title = "FeesAndChargesTest001"
+        let ChargesTest001 () =
+            let title = "ChargesTest001"
             let description = "One charge type per product"
             let sp = {
                 AsOfDate = Date(2023, 4, 1)
@@ -203,8 +203,8 @@ module FeesAndChargesTests =
             actual |> should equal expected
 
         [<Fact>]
-        let FeesAndChargesTest002 () =
-            let title = "FeesAndChargesTest002"
+        let ChargesTest002 () =
+            let title = "ChargesTest002"
             let description = "All charges applied"
             let sp = {
                 AsOfDate = Date(2023, 4, 1)

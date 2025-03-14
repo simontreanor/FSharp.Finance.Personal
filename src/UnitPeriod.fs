@@ -67,7 +67,6 @@ module UnitPeriod =
                 "month"
             | Month multiple ->
                 $"{multiple}-month"
-            |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
 
     /// all unit-periods, excluding unlikely ones (opinionated!)
     let all =
@@ -170,7 +169,6 @@ module UnitPeriod =
                     $"""monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
             | Monthly (multiple, y, m, d) ->
                     $"""{multiple}-monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
-            |> fun s -> $"""<span style="white-space: nowrap;">{s}</span>"""
 
     /// functions for creating and handling unit-period configs
     module Config =
