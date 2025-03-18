@@ -80,7 +80,7 @@ module Apr =
                     let calc transfers unitPeriodRate =
                         transfers
                         |> Array.sumBy(fun (amount, years) ->
-                            let divisor = ((1m + unitPeriodRate) |> powm years)
+                            let divisor = 1m + unitPeriodRate |> powm years
                             if Double.IsNaN divisor || divisor = 0. then 0m else amount |> Cent.toDecimal |> fun a -> double a / divisor |> decimal
                         )
                     let generator unitPeriodRate =
