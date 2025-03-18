@@ -53,11 +53,11 @@ module Apr =
 
         /// calculates the APR
         /// 
-        /// $\sum_{k=1}^{m} C_k (1 + X)^{-t_k} = \sum_{l=1}^{m'} D_l (1 + X)^{-s_l}
+        /// \sum_{k=1}^{m} C_k (1 + X)^{-t_k} = \sum_{l=1}^{m'} D_l (1 + X)^{-s_l}
         /// 
         /// which is equivalent to
         /// 
-        /// $\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}
+        /// \sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}
         let calculateApr (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
             if principal = 0L<Cent> || Array.isEmpty transfers then
                 Solution.Impossible
