@@ -46,12 +46,18 @@ module Apr =
         if principal = 0m then
             0m
         else
-            (2m * interestTotal) / (principal * (paymentCount + 1m)) * 100m
+            2m * interestTotal / (principal * (paymentCount + 1m)) * 100m
 
-    /// APR as in https://www.handbook.fca.org.uk/handbook/MCOB/10/?view=chapter
+    /// APR as in FCA [CONC App 1.2.6](https://www.handbook.fca.org.uk/handbook/CONC/App/1/2.html)
     module UnitedKingdom =
 
         /// calculates the APR
+        /// 
+        /// $\sum_{k=1}^{m} C_k (1 + X)^{-t_k} = \sum_{l=1}^{m'} D_l (1 + X)^{-s_l}
+        /// 
+        /// which is equivalent to
+        /// 
+        /// $\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}
         let calculateApr (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
             if principal = 0L<Cent> || Array.isEmpty transfers then
                 Solution.Impossible
@@ -65,8 +71,8 @@ module Apr =
                     let principalM = Cent.toDecimal principal
                     let interestTotal = Cent.toDecimal paymentTotal - principalM
                     let roughUnitPeriodRate = roughUnitPeriodRate principalM interestTotal paymentCount
-                    let ak = [| principal, 0m |]
-                    let a'k' =
+                    let advanceIntervals = [| principal, 0m |]
+                    let paymentIntervals =
                         payments
                         |> Array.map(fun t ->
                             t.Value, decimal (t.TransferDate - startDate).Days / 365m
@@ -74,12 +80,12 @@ module Apr =
                     let calc transfers unitPeriodRate =
                         transfers
                         |> Array.sumBy(fun (amount, years) ->
-                            let divisor = ((1m + unitPeriodRate) |> powm years)
+                            let divisor = 1m + unitPeriodRate |> powm years
                             if Double.IsNaN divisor || divisor = 0. then 0m else amount |> Cent.toDecimal |> fun a -> double a / divisor |> decimal
                         )
                     let generator unitPeriodRate =
-                        let aa = calc ak unitPeriodRate
-                        let pp = calc a'k' unitPeriodRate
+                        let aa = calc advanceIntervals unitPeriodRate
+                        let pp = calc paymentIntervals unitPeriodRate
                         let difference = Decimal.Round(pp - aa, 8)
                         difference
                     Array.solveNewtonRaphson generator 100u roughUnitPeriodRate 1e-6m
