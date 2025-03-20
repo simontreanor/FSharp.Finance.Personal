@@ -547,7 +547,7 @@ module Scheduling =
                     |> min totalInterestCap
                     |> decimal
                 let diff = initialInterestBalance - finalInterestTotal |> Rounding.roundTo sp.InterestConfig.InterestRounding 0
-                if iteration = 100 || (diff <= 0m && diff > -(decimal paymentCount)) then
+                if iteration = 100 || diff <= 0m && diff > -(decimal paymentCount) then
                     None
                 else
                     Some (initialInterestBalance, (iteration + 1, finalInterestTotal))
