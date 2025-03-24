@@ -381,6 +381,14 @@ module Scheduling =
         InterestConfig: Interest.Config
     }
 
+    /// parameters for creating a payment schedule
+    module Parameters =
+        // calculate the maximum interest accruable over the entire schedule due to any interest cap
+        let totalInterestCap sp =
+            sp.InterestConfig.Cap.TotalAmount
+            |> Interest.Cap.total sp.Principal
+            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+
     /// convert an option to a value option
     let toValueOption = function Some x -> ValueSome x | None -> ValueNone
 
@@ -459,7 +467,7 @@ module Scheduling =
         // get the standard daily interest rate
         let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         // calculate the maximum interest accruable over the entire schedule due to any interest cap
-        let totalInterestCap = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.total sp.Principal |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+        let totalInterestCap = Parameters.totalInterestCap sp
         // calculate the initial total interest accruing over the entire schedule
         // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
         // for other interest methods: the initial interest is zero as interest is accrued later
