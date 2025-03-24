@@ -535,7 +535,7 @@ module Scheduling =
                 |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
             schedule <-
                 paymentDays
-                |> Array.scan (generateItem sp sp.InterestConfig.Method scheduledPayment) firstItem
+                |> Array.scan (generateItem sp interestMethod scheduledPayment) firstItem
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
         // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
