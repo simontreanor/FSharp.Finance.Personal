@@ -492,6 +492,38 @@ module Scheduling =
             TotalPrincipal = previousItem.TotalPrincipal + principalPortion
         }
 
+    // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
+    // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
+    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (iteration: int voption, initialInterestBalance) =
+        if iteration.IsNone then
+            None
+        elif Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
+            None
+        else
+            let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment paymentCount sp.Principal feesTotal |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
+            let newSchedule =
+                paymentDays
+                |> Array.scan (fun state pd ->
+                    let scheduledPayment =
+                        match sp.ScheduleConfig with
+                        | AutoGenerateSchedule _ -> ScheduledPayment.quick (ValueSome regularScheduledPayment) ValueNone
+                        | FixedSchedules _
+                        | CustomSchedule _ -> paymentMap[pd]
+                    generateItem sp Interest.Method.AddOn scheduledPayment state pd
+                ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
+            let finalInterestTotal =
+                newSchedule
+                |> Array.last
+                |> _.TotalSimpleInterest
+                |> max 0L<Cent> // interest must not go negative
+                |> min (Parameters.totalInterestCap sp)
+                |> decimal
+            let diff = initialInterestBalance - finalInterestTotal |> Rounding.roundTo sp.InterestConfig.InterestRounding 0
+            if iteration.Value = 100 || diff <= 0m && diff > -(decimal paymentCount) then
+                Some (newSchedule, (ValueNone, finalInterestTotal))
+            else
+                Some (newSchedule, (iteration |> ValueOption.map ((+) 1), finalInterestTotal))
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate sp toleranceOption =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -538,35 +570,6 @@ module Scheduling =
                 |> Array.scan (generateItem sp interestMethod scheduledPayment) firstItem
             let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
             principalBalance
-        // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
-        // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-        let maximiseInterest firstItem (iteration, initialInterestBalance) =
-            if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
-                None
-            else
-                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment paymentCount sp.Principal feesTotal |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
-                schedule <-
-                    paymentDays
-                    |> Array.scan (fun state pd ->
-                        let scheduledPayment =
-                            match sp.ScheduleConfig with
-                            | AutoGenerateSchedule _ -> ScheduledPayment.quick (ValueSome regularScheduledPayment) ValueNone
-                            | FixedSchedules _
-                            | CustomSchedule _ -> paymentMap[pd]
-                        generateItem sp Interest.Method.AddOn scheduledPayment state pd
-                    ) { firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }
-                let finalInterestTotal =
-                    schedule
-                    |> Array.last
-                    |> _.TotalSimpleInterest
-                    |> max 0L<Cent> // interest must not go negative
-                    |> min totalInterestCap
-                    |> decimal
-                let diff = initialInterestBalance - finalInterestTotal |> Rounding.roundTo sp.InterestConfig.InterestRounding 0
-                if iteration = 100 || diff <= 0m && diff > -(decimal paymentCount) then
-                    None
-                else
-                    Some (initialInterestBalance, (iteration + 1, finalInterestTotal))
         // generates a schedule based on the schedule configuration
         let solution =
             match sp.ScheduleConfig with
@@ -588,15 +591,18 @@ module Scheduling =
             // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
             // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher initial interest
             // balance, so the process must be repeated until the total interest and the initial interest are equalised
-            match sp.InterestConfig.Method with
-            | Interest.Method.AddOn ->
-                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
-                Array.unfold (maximiseInterest initialItem) (0, finalInterestTotal) |> ignore
-            | _ ->
-                ()
+            let schedule' =
+                match sp.InterestConfig.Method with
+                | Interest.Method.AddOn ->
+                    let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
+                    (ValueSome 0, finalInterestTotal)
+                    |> Array.unfold (maximiseInterest sp paymentDays initialItem paymentCount feesTotal paymentMap)
+                    |> Array.last
+                | _ ->
+                    schedule
             // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
             let items =
-                schedule
+                schedule'
                 |> Array.map(fun si ->
                     if si.Day = finalPaymentDay && solution <> Solution.Bypassed then
                         let adjustedPayment =
