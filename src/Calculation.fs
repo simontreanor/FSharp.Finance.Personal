@@ -222,8 +222,6 @@ module Calculation =
         | IterationLimitReached of PartialSolution:decimal * IterationLimit:int * MaxTolerance:decimal
         /// a solution was found, returning the solution, the number of iterations required and the final tolerance used
         | Found of Found:decimal * Iteration:int * Tolerance:decimal
-        /// the solver was bypassed and a manual solution was supplied
-        | Bypassed
 
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     [<RequireQualifiedAccess; Struct>]
@@ -262,17 +260,18 @@ module Calculation =
     module Array =
         /// iteratively solves for a given input using a generator function until the output hits zero or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
+        /// note: the generator function should return a tuple of the result and a relevant value (as the result is converging on zero it is not a very relevant value)
         [<TailCall>]
-        let solveBisection (generator: decimal -> decimal) (iterationLimit: uint) initialGuess targetTolerance (toleranceSteps: ToleranceSteps) =
+        let solveBisection (generator: decimal -> (decimal * decimal)) (iterationLimit: uint) initialGuess targetTolerance (toleranceSteps: ToleranceSteps) =
             let initialLowerBound, initialUpperBound = initialGuess * 0.95m, initialGuess * 1.05m
-            // recursively iteration through possible solutions
+            // recursively iterate through possible solutions
             let rec loop iteration lowerBound upperBound tolerance =
                 // find the midpoint of the bounds
                 let midpoint = (lowerBound + upperBound) / 2m
                 // if within the iteration limit
                 if iteration <= int iterationLimit then
                     // generate a result using the new figure
-                    let candidate = generator midpoint
+                    let candidate, relevantValue = generator midpoint
                     // determine the target range
                     let lowerTolerance, upperTolerance =
                         match targetTolerance with
@@ -284,7 +283,7 @@ module Calculation =
                             0m, tolerance
                     // if the solution is within target range, return the value
                     if candidate >= lowerTolerance && candidate <= upperTolerance then
-                        Solution.Found(midpoint, iteration, tolerance)
+                        Solution.Found(relevantValue, iteration, tolerance)
                     // if the solution is too high, alter the range and try again
                     elif candidate > upperTolerance then
                         loop (iteration + 1) midpoint upperBound tolerance

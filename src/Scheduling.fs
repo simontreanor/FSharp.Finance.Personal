@@ -536,6 +536,19 @@ module Scheduling =
             |> Cent.min (Parameters.totalInterestCap sp)
         | _ -> 0L<Cent>
 
+    // generates a payment value based on an approximation, creates a schedule based on that payment value and returns the principal balance at the end of the schedule,
+    // the intention being to use this generator in an iteration by varying the payment value until the final principal balance is zero
+    let generatePaymentValue sp paymentDays firstItem roughPayment =
+        let scheduledPayment =
+            roughPayment
+            |> Cent.round sp.PaymentConfig.PaymentRounding
+            |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
+        let schedule =
+            paymentDays
+            |> Array.fold (generateItem sp sp.InterestConfig.Method scheduledPayment) firstItem
+        let principalBalance = decimal schedule.PrincipalBalance
+        principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate sp toleranceOption =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -548,124 +561,117 @@ module Scheduling =
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
         let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
+        // get the initial interest balance
+        let initialInterestBalance = totalAddOnInterest sp finalPaymentDay
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fees
-        let initialItem = { SimpleItem.initial with InterestBalance = totalAddOnInterest sp finalPaymentDay; PrincipalBalance = sp.Principal + feesTotal }
-        // create a blank schedule that can be modified over several iterations to determine any unknowns such as payment value where necessary
-        let mutable schedule = [||]
+        let initialItem = { SimpleItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = sp.Principal + feesTotal }
         // get the appropriate tolerance steps for determining payment value
         // note: tolerance steps allow for gradual relaxation of the tolerance if no solution is found for the original tolerance
         let toleranceSteps = ToleranceSteps.forPaymentValue paymentCount
-        // generates a payment value based on an approximation, creates a schedule based on that payment value and returns the principal balance at the end of the schedule,
-        // the intention being to use this generator in an iteration by varying the payment value until the final principal balance is zero
-        let generatePaymentValue firstItem interestMethod roughPayment =
-            let scheduledPayment =
-                roughPayment
-                |> Cent.round sp.PaymentConfig.PaymentRounding
-                |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
-            schedule <-
-                paymentDays
-                |> Array.scan (generateItem sp interestMethod scheduledPayment) firstItem
-            let principalBalance = schedule |> Array.last |> _.PrincipalBalance |> decimal
-            principalBalance
+        // generate a schedule based on a map of scheduled payments
+        let generateItems (payments: Map<int<OffsetDay>, ScheduledPayment>) =
+            paymentDays
+            |> Array.scan(fun state pd -> generateItem sp sp.InterestConfig.Method payments[pd] state pd) initialItem
         // generates a schedule based on the schedule configuration
-        let solution =
+        let schedule =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
                 // determines the payment value and generates the schedule iteratively based on that
-                Array.solveBisection (generatePaymentValue initialItem sp.InterestConfig.Method) 100u (totalAddOnInterest sp finalPaymentDay |> decimal |> calculateLevelPayment paymentCount sp.Principal feesTotal) toleranceOption toleranceSteps
+                let solution = Array.solveBisection (generatePaymentValue sp paymentDays initialItem) 100u (initialInterestBalance |> decimal |> calculateLevelPayment paymentCount sp.Principal feesTotal) toleranceOption toleranceSteps
+                match solution with
+                    | Solution.Found (paymentValue, _, _) ->
+                        let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun o -> { o with Value = paymentValue |> Cent.fromDecimal }) })
+                        generateItems paymentMap'
+                    | _ ->
+                        [||]
             | FixedSchedules _
             | CustomSchedule _ ->
                 // the days and payment values are known so the schedule can be generated directly
-                schedule <-
-                    paymentDays
-                    |> Array.scan (fun state pd -> generateItem sp sp.InterestConfig.Method paymentMap[pd] state pd) initialItem
-                Solution.Bypassed
-        // return the generated schedule if possible
-        match solution with
-        | Solution.Found _
-        | Solution.Bypassed ->
-            // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
-            // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
-            // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher initial interest
-            // balance, so the process must be repeated until the total interest and the initial interest are equalised
-            let schedule' =
+                generateItems paymentMap
+        // fail if the schedule is empty
+        if Array.isEmpty schedule then
+            failwith "Unable to calculate simple schedule"
+        else
+        // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
+        // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
+        // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher initial interest
+        // balance, so the process must be repeated until the total interest and the initial interest are equalised
+        let schedule' =
+            match sp.InterestConfig.Method with
+            | Interest.Method.AddOn ->
+                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
+                (ValueSome 0, finalInterestTotal)
+                |> Array.unfold (maximiseInterest sp paymentDays initialItem paymentCount feesTotal paymentMap)
+                |> Array.last
+            | _ ->
+                schedule
+        // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
+        let items =
+            schedule'
+            |> Array.map(fun si ->
+                if si.Day = finalPaymentDay && sp.ScheduleConfig.IsAutoGenerateSchedule then
+                    let adjustedPayment =
+                        si.ScheduledPayment
+                        |> fun p ->
+                            { si.ScheduledPayment with
+                                Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> { o with Value = o.Value + si.PrincipalBalance }) else p.Original
+                                Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
+                            }
+                    let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
+                    let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
+                    { si with
+                        ScheduledPayment = adjustedPayment
+                        PrincipalPortion = adjustedPrincipal
+                        PrincipalBalance = 0L<Cent>
+                        TotalPrincipal = adjustedTotalPrincipal
+                    }
+                else
+                    si
+            )
+        // calculate the total principal paid over the schedule
+        let principalTotal = items |> Array.sumBy _.PrincipalPortion
+        // calculate the total interest accrued over the schedule
+        let interestTotal = items |> Array.sumBy _.InterestPortion
+        // calculate the APR (using the appropriate calculation method) based on the finalised schedule
+        let aprSolution =
+            items
+            |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
+            |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Value = ScheduledPayment.total si.ScheduledPayment })
+            |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
+        // take the scheduled payments for use in further calculations
+        let scheduledPayments = items |> Array.map _.ScheduledPayment |> Array.filter ScheduledPayment.isSome
+        // determine the final payment value, which is often different from the level payment value
+        let finalPayment = scheduledPayments |> Array.tryLast |> Option.map ScheduledPayment.total |> Option.defaultValue 0L<Cent>
+        // return the schedule (as `Items`) plus associated information and statistics
+        {
+            AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
+            Items = items
+            InitialInterestBalance =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn ->
-                    let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest |> decimal
-                    (ValueSome 0, finalInterestTotal)
-                    |> Array.unfold (maximiseInterest sp paymentDays initialItem paymentCount feesTotal paymentMap)
-                    |> Array.last
+                    interestTotal
                 | _ ->
-                    schedule
-            // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
-            let items =
-                schedule'
-                |> Array.map(fun si ->
-                    if si.Day = finalPaymentDay && solution <> Solution.Bypassed then
-                        let adjustedPayment =
-                            si.ScheduledPayment
-                            |> fun p ->
-                                { si.ScheduledPayment with
-                                    Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> { o with Value = o.Value + si.PrincipalBalance }) else p.Original
-                                    Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
-                                }
-                        let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
-                        let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
-                        { si with
-                            ScheduledPayment = adjustedPayment
-                            PrincipalPortion = adjustedPrincipal
-                            PrincipalBalance = 0L<Cent>
-                            TotalPrincipal = adjustedTotalPrincipal
-                        }
-                    else
-                        si
-                )
-            // calculate the total principal paid over the schedule
-            let principalTotal = items |> Array.sumBy _.PrincipalPortion
-            // calculate the total interest accrued over the schedule
-            let interestTotal = items |> Array.sumBy _.InterestPortion
-            // calculate the APR (using the appropriate calculation method) based on the finalised schedule
-            let aprSolution =
-                items
-                |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
-                |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = sp.StartDate.AddDays(int si.Day); Apr.Value = ScheduledPayment.total si.ScheduledPayment })
-                |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
-            // take the scheduled payments for use in further calculations
-            let scheduledPayments = items |> Array.map _.ScheduledPayment |> Array.filter ScheduledPayment.isSome
-            // determine the final payment value, which is often different from the level payment value
-            let finalPayment = scheduledPayments |> Array.tryLast |> Option.map ScheduledPayment.total |> Option.defaultValue 0L<Cent>
-            // return the schedule (as `Items`) plus associated information and statistics
-            {
-                AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
-                Items = items
-                InitialInterestBalance =
-                    match sp.InterestConfig.Method with
-                    | Interest.Method.AddOn ->
-                        interestTotal
-                    | _ ->
-                        0L<Cent>
-                FinalPaymentDay = finalPaymentDay
-                LevelPayment =
-                    scheduledPayments
-                    |> Array.countBy ScheduledPayment.total
-                    |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some)
-                    |> Option.defaultValue finalPayment
-                FinalPayment = finalPayment
-                PaymentTotal =
-                    scheduledPayments
-                    |> Array.sumBy ScheduledPayment.total
-                PrincipalTotal = principalTotal
-                InterestTotal = interestTotal
-                Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
-                CostToBorrowingRatio =
-                    if principalTotal = 0L<Cent> then
-                        Percent 0m
-                    else
-                        decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
-            }
-        | _ ->
-            failwith "Unable to calculate simple schedule"
+                    0L<Cent>
+            FinalPaymentDay = finalPaymentDay
+            LevelPayment =
+                scheduledPayments
+                |> Array.countBy ScheduledPayment.total
+                |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some)
+                |> Option.defaultValue finalPayment
+            FinalPayment = finalPayment
+            PaymentTotal =
+                scheduledPayments
+                |> Array.sumBy ScheduledPayment.total
+            PrincipalTotal = principalTotal
+            InterestTotal = interestTotal
+            Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
+            CostToBorrowingRatio =
+                if principalTotal = 0L<Cent> then
+                    Percent 0m
+                else
+                    decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+        }
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
     let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
