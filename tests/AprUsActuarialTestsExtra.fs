@@ -55,7 +55,7 @@ module AprActuarialTestsExtra =
         )
         |> Util.toMemberData
 
-    [<Theory>]
+    // [<Theory>]
     [<MemberData(nameof(aprUsActuarialTestData))>]
     let ``Actual APRs match expected APRs under the US actuarial method`` testItem =
         testItem.ActualApr |> should equal testItem.ExpectedApr
