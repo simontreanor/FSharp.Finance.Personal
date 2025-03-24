@@ -452,6 +452,13 @@ module Scheduling =
                     |> Array.map(fun d -> OffsetDay.fromDate startDate d, ScheduledPayment.quick (ValueSome 0L<Cent>) ValueNone)
                     |> Map.ofArray
 
+    // calculate the approximate level-payment value
+    let calculateLevelPayment paymentCount principal fees interest =
+        if paymentCount = 0 then
+            0m
+        else
+            (decimal principal + decimal fees + interest) / decimal paymentCount
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -478,8 +485,6 @@ module Scheduling =
                 |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
                 |> Cent.min totalInterestCap
             | _ -> 0L<Cent>
-        // calculate the approximate level-payment value
-        let calculateLevelPayment interest = if paymentCount = 0 then 0m else (decimal sp.Principal + decimal feesTotal + interest) / decimal paymentCount
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fees
         let initialItem = { SimpleItem.initial with InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + feesTotal }
@@ -536,7 +541,7 @@ module Scheduling =
             if Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
                 None
             else
-                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
+                let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment paymentCount sp.Principal feesTotal |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
                 schedule <-
                     paymentDays
                     |> Array.scan (fun state pd ->
@@ -564,7 +569,7 @@ module Scheduling =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
                 // determines the payment value and generates the schedule iteratively based on that
-                Array.solveBisection (generatePaymentValue initialItem sp.InterestConfig.Method) 100u (totalAddOnInterest |> decimal |> calculateLevelPayment) toleranceOption toleranceSteps
+                Array.solveBisection (generatePaymentValue initialItem sp.InterestConfig.Method) 100u (totalAddOnInterest |> decimal |> calculateLevelPayment paymentCount sp.Principal feesTotal) toleranceOption toleranceSteps
             | FixedSchedules _
             | CustomSchedule _ ->
                 // the days and payment values are known so the schedule can be generated directly
