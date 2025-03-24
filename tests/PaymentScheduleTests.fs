@@ -64,7 +64,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``$1200 with short first period`` () =
-            let actual = biweeklyParameters 1200_00L<Cent> 8<DurationDay>|> fun sp -> calculate sp BelowZero
+            let actual = biweeklyParameters 1200_00L<Cent> 8<DurationDay> |> fun sp -> calculate sp BelowZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Biweekly001.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -83,7 +83,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``2) $1200 with first period equal to unit-period length`` () =
-            let actual = biweeklyParameters 1200_00L<Cent> 14<DurationDay>|> fun sp -> calculate sp BelowZero
+            let actual = biweeklyParameters 1200_00L<Cent> 14<DurationDay> |> fun sp -> calculate sp BelowZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Biweekly002.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -102,7 +102,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``3) $1200 with long first period`` () =
-            let actual = biweeklyParameters 1200_00L<Cent> 15<DurationDay>|> fun sp -> calculate sp BelowZero
+            let actual = biweeklyParameters 1200_00L<Cent> 15<DurationDay> |> fun sp -> calculate sp BelowZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Biweekly003.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -155,7 +155,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 4<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 100_00L<Cent> 4<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly001.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -175,7 +175,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 8<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 100_00L<Cent> 8<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly009.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -195,7 +195,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 12<DurationDay> 4|> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 12<DurationDay> 4 |> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly017.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -215,7 +215,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 16<DurationDay> 4|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 16<DurationDay> 4 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly025.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -235,7 +235,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 20<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 100_00L<Cent> 20<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly033.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -255,7 +255,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 24<DurationDay> 4|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 24<DurationDay> 4 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly041.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -275,7 +275,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 28<DurationDay> 4|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 28<DurationDay> 4 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly049.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -295,7 +295,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0100 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 100_00L<Cent> 32<DurationDay> 4|> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 100_00L<Cent> 32<DurationDay> 4 |> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly057.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -315,7 +315,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 4<DurationDay> 5|> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 300_00L<Cent> 4<DurationDay> 5 |> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly002.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -335,7 +335,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 8<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 8<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly010.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -355,7 +355,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 12<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 12<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly018.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -375,7 +375,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 16<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 16<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly026.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -395,7 +395,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 20<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 20<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly034.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -415,7 +415,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 24<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 24<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly042.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -435,7 +435,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 28<DurationDay> 4|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 300_00L<Cent> 28<DurationDay> 4 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly050.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -455,7 +455,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0300 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 300_00L<Cent> 32<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 300_00L<Cent> 32<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly058.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -475,7 +475,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 4<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 4<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly003.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -495,7 +495,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 8<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 8<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly011.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -515,7 +515,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 12<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 12<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly019.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -535,7 +535,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 16<DurationDay> 4|> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 500_00L<Cent> 16<DurationDay> 4 |> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly027.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -555,7 +555,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 20<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 20<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly035.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -575,7 +575,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 24<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 24<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly043.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -595,7 +595,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 28<DurationDay> 4|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 500_00L<Cent> 28<DurationDay> 4 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly051.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -615,7 +615,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0500 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 500_00L<Cent> 32<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 500_00L<Cent> 32<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly059.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -635,7 +635,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 04 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 4<DurationDay> 5|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 700_00L<Cent> 4<DurationDay> 5 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly004.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -655,7 +655,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 08 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 8<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 8<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly012.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -675,7 +675,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 12 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 12<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 12<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly020.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -695,7 +695,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 16 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 16<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 16<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly028.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -715,7 +715,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 20 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 20<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 20<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly036.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -735,7 +735,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 24 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 24<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 24<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly044.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -755,7 +755,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 28 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 28<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 28<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly052.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -775,7 +775,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0700 with 32 days to first payment and 4 repayments`` () =
-            let actual = monthlyParameters 700_00L<Cent> 32<DurationDay> 4|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 700_00L<Cent> 32<DurationDay> 4 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly060.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -795,7 +795,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 4<DurationDay> 6|> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = monthlyParameters 900_00L<Cent> 4<DurationDay> 6 |> fun sp -> calculate sp BelowZero //AroundZero finds positive principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly005.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -815,7 +815,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 8<DurationDay> 6|> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 900_00L<Cent> 8<DurationDay> 6 |> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly013.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -835,7 +835,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 12<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 12<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly021.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -855,7 +855,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 16<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 16<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly029.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -875,7 +875,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 20 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 20<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 20<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly037.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -895,7 +895,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 24 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 24<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 24<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly045.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -915,7 +915,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 28 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 28<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 28<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly053.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -935,7 +935,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£0900 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 900_00L<Cent> 32<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 900_00L<Cent> 32<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly061.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -955,7 +955,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly006.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -975,7 +975,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly014.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -995,7 +995,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly022.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1015,7 +1015,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly030.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1035,7 +1035,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 20 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly038.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1055,7 +1055,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 24 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly046.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1075,7 +1075,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 28 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly054.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1095,7 +1095,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1100 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly062.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1115,7 +1115,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly007.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1135,7 +1135,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 8<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 8<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly015.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1155,7 +1155,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 12<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 12<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly023.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1175,7 +1175,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 16<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 16<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly031.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1195,7 +1195,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 20 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly039.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1215,7 +1215,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 24 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly047.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1235,7 +1235,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 28 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 28<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 28<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly055.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1255,7 +1255,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1300 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly063.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1275,7 +1275,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 04 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 4<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 4<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly008.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1295,7 +1295,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 08 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly016.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1315,7 +1315,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 12 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly024.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1335,7 +1335,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 16 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 16<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 16<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly032.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1355,7 +1355,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 20 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 20<DurationDay> 6|> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = monthlyParameters 1500_00L<Cent> 20<DurationDay> 6 |> fun sp -> calculate sp AboveZero //AroundZero finds negative principal balance first
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly040.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1375,7 +1375,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 24 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 24<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 24<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly048.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1395,7 +1395,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 28 days to first payment and 6 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly056.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1415,7 +1415,7 @@ module PaymentScheduleTests =
 
         [<Fact>]
         let ``£1500 with 32 days to first payment and 5 repayments`` () =
-            let actual = monthlyParameters 1500_00L<Cent> 32<DurationDay> 5|> fun sp -> calculate sp AroundZero
+            let actual = monthlyParameters 1500_00L<Cent> 32<DurationDay> 5 |> fun sp -> calculate sp AroundZero
             actual.Items |> outputArrayToHtml "out/PaymentScheduleTest.Monthly064.md" false
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1472,7 +1472,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp|> fun sp -> calculate sp AroundZero
+            let schedule = sp |> fun sp -> calculate sp AroundZero
             schedule.Items |> outputArrayToHtml "out/PaymentSchedule001.md" false
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1519,7 +1519,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp|> fun sp -> calculate sp BelowZero
+            let schedule = sp |> fun sp -> calculate sp BelowZero
             schedule.Items |> outputArrayToHtml "out/PaymentSchedule002.md" false
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1566,7 +1566,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp|> fun sp -> calculate sp BelowZero
+            let schedule = sp |> fun sp -> calculate sp BelowZero
             schedule.Items |> outputArrayToHtml "out/PaymentSchedule003.md" false
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1613,7 +1613,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp|> fun sp -> calculate sp BelowZero
+            let schedule = sp |> fun sp -> calculate sp BelowZero
             schedule.Items |> outputArrayToHtml "out/PaymentSchedule004.md" false
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1672,9 +1672,9 @@ module PaymentScheduleTests =
                 102<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
             ]
 
-            let schedule1 = sp paymentSchedule1|> fun sp -> calculate sp BelowZero
-            let schedule2 = sp paymentSchedule2|> fun sp -> calculate sp BelowZero
-            let schedule3 = sp paymentSchedule3|> fun sp -> calculate sp BelowZero
+            let schedule1 = sp paymentSchedule1 |> fun sp -> calculate sp BelowZero
+            let schedule2 = sp paymentSchedule2 |> fun sp -> calculate sp BelowZero
+            let schedule3 = sp paymentSchedule3 |> fun sp -> calculate sp BelowZero
 
             let title = "5) Calculation with three different scheduling methods should be identical"
             let html1 = schedule1.Items |> generateHtmlFromArray [||]
