@@ -459,6 +459,20 @@ module Scheduling =
         else
             (decimal principal + decimal fees + interest) / decimal paymentCount
 
+    // calculates the interest accruing on a particular day based on the interest method, payment and previous balances, taking into account any daily and total interest caps
+    let calculateInterest sp interestMethod payment previousItem day =
+        match interestMethod with
+        | Interest.Method.Simple ->
+            let dailyRates = Interest.dailyRates sp.StartDate false sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates previousItem.Day day
+            let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount sp.InterestConfig.InterestRounding dailyRates |> decimal |> Cent.round sp.InterestConfig.InterestRounding
+            let totalInterestCap = Parameters.totalInterestCap sp
+            if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
+        | Interest.Method.AddOn ->
+            if payment <= previousItem.InterestBalance then
+                payment
+            else
+                previousItem.InterestBalance
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate toleranceOption sp =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -493,23 +507,11 @@ module Scheduling =
         // get the appropriate tolerance steps for determining payment value
         // note: tolerance steps allow for gradual relaxation of the tolerance if no solution is found for the original tolerance
         let toleranceSteps = ToleranceSteps.forPaymentValue paymentCount
-        // calculates the interest accruing on a particular day based on the interest method, payment and previous balances, taking into account any daily and total interest caps
-        let calculateInterest interestMethod payment previousItem day =
-            match interestMethod with
-            | Interest.Method.Simple ->
-                let dailyRates = Interest.dailyRates sp.StartDate false sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates previousItem.Day day
-                let simpleInterest = Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount sp.InterestConfig.InterestRounding dailyRates |> decimal |> Cent.round sp.InterestConfig.InterestRounding
-                if previousItem.TotalSimpleInterest + simpleInterest >= totalInterestCap then totalInterestCap - previousItem.TotalInterest else simpleInterest
-            | Interest.Method.AddOn ->
-                if payment <= previousItem.InterestBalance then
-                    payment
-                else
-                    previousItem.InterestBalance
         // generates a schedule item for a particular day by calculating the interest accruing and apportioning the scheduled payment to interest then principal
         let generateItem interestMethod (scheduledPayment: ScheduledPayment) previousItem day =
             let scheduledPaymentTotal = ScheduledPayment.total scheduledPayment
-            let simpleInterest = calculateInterest Interest.Method.Simple scheduledPaymentTotal previousItem day
-            let interestPortion = calculateInterest interestMethod scheduledPaymentTotal previousItem day
+            let simpleInterest = calculateInterest sp Interest.Method.Simple scheduledPaymentTotal previousItem day
+            let interestPortion = calculateInterest sp interestMethod scheduledPaymentTotal previousItem day
             let principalPortion = scheduledPaymentTotal - interestPortion
             {
                 Day = day
