@@ -444,6 +444,11 @@ module Scheduling =
                 + $"<tr><td>Charge options</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
                 + $"<tr><td>Interest options</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
             + "</table>"
+        // calculate the maximum interest accruable over the entire schedule due to any interest cap
+        let totalInterestCap sp =
+            sp.InterestConfig.Cap.TotalAmount
+            |> Interest.Cap.total sp.Principal
+            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
 
      /// a scheduled payment item, with running calculations of interest and principal balance
     type SimpleItem = {
@@ -522,14 +527,6 @@ module Scheduling =
             let filename = $"out/{title}.md"
             $"{htmlSchedule}<br /><h3>{title}</h3><p>{description}</p><p>{htmlDatestamp}</p>{htmlParams}"
             |> outputToFile' filename false
-
-    /// parameters for creating a payment schedule
-    module Parameters =
-        // calculate the maximum interest accruable over the entire schedule due to any interest cap
-        let totalInterestCap sp =
-            sp.InterestConfig.Cap.TotalAmount
-            |> Interest.Cap.total sp.Principal
-            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
 
     /// convert an option to a value option
     let toValueOption = function Some x -> ValueSome x | None -> ValueNone
