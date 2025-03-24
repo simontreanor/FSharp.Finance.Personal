@@ -524,6 +524,18 @@ module Scheduling =
             else
                 Some (newSchedule, (iteration |> ValueOption.map ((+) 1), finalInterestTotal))
 
+    // calculate the initial total interest accruing over the entire schedule
+    // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
+    // for other interest methods: the initial interest is zero as interest is accrued later
+    let totalAddOnInterest sp finalPaymentDay =
+        let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        match sp.InterestConfig.Method with
+        | Interest.Method.AddOn ->
+            Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalPaymentDay
+            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+            |> Cent.min (Parameters.totalInterestCap sp)
+        | _ -> 0L<Cent>
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate sp toleranceOption =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -536,23 +548,9 @@ module Scheduling =
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
         let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
-        // get the standard daily interest rate
-        let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-        // calculate the maximum interest accruable over the entire schedule due to any interest cap
-        let totalInterestCap = Parameters.totalInterestCap sp
-        // calculate the initial total interest accruing over the entire schedule
-        // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
-        // for other interest methods: the initial interest is zero as interest is accrued later
-        let totalAddOnInterest =
-            match sp.InterestConfig.Method with
-            | Interest.Method.AddOn ->
-                (sp.Principal |> Cent.toDecimalCent) * dailyInterestRate * decimal finalPaymentDay
-                |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
-                |> Cent.min totalInterestCap
-            | _ -> 0L<Cent>
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fees
-        let initialItem = { SimpleItem.initial with InterestBalance = totalAddOnInterest; PrincipalBalance = sp.Principal + feesTotal }
+        let initialItem = { SimpleItem.initial with InterestBalance = totalAddOnInterest sp finalPaymentDay; PrincipalBalance = sp.Principal + feesTotal }
         // create a blank schedule that can be modified over several iterations to determine any unknowns such as payment value where necessary
         let mutable schedule = [||]
         // get the appropriate tolerance steps for determining payment value
@@ -575,7 +573,7 @@ module Scheduling =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
                 // determines the payment value and generates the schedule iteratively based on that
-                Array.solveBisection (generatePaymentValue initialItem sp.InterestConfig.Method) 100u (totalAddOnInterest |> decimal |> calculateLevelPayment paymentCount sp.Principal feesTotal) toleranceOption toleranceSteps
+                Array.solveBisection (generatePaymentValue initialItem sp.InterestConfig.Method) 100u (totalAddOnInterest sp finalPaymentDay |> decimal |> calculateLevelPayment paymentCount sp.Principal feesTotal) toleranceOption toleranceSteps
             | FixedSchedules _
             | CustomSchedule _ ->
                 // the days and payment values are known so the schedule can be generated directly
