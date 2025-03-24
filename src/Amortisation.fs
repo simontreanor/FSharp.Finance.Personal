@@ -690,7 +690,7 @@ module Amortisation =
 
     /// generates an amortisation schedule and final statistics
     let generate sp settlementDay trimEnd actualPayments =
-        let schedule = Scheduling.calculate BelowZero sp
+        let schedule = Scheduling.calculate sp BelowZero
         let scheduledPayments =
             schedule.Items
             |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)

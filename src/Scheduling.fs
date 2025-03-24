@@ -493,7 +493,7 @@ module Scheduling =
         }
 
     /// calculates the number of days between two offset days on which interest is chargeable
-    let calculate toleranceOption sp =
+    let calculate sp toleranceOption =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
         let paymentMap = generatePaymentMap sp.StartDate sp.ScheduleConfig
         // get the payment days for use in further calculations

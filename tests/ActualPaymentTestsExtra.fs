@@ -72,7 +72,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate BelowZero sp
+            let schedule = calculate sp BelowZero
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
@@ -337,7 +337,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate BelowZero sp
+            let schedule = Scheduling.calculate sp BelowZero
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
@@ -414,7 +414,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate BelowZero sp
+            let schedule = Scheduling.calculate sp BelowZero
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
