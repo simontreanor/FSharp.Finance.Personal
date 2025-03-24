@@ -1674,7 +1674,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp |> calculate AroundZero
+            let schedule = sp |> fun sp -> calculate sp AroundZero
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1723,7 +1723,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp |> calculate BelowZero
+            let schedule = sp |> fun sp -> calculate sp BelowZero
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1772,7 +1772,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp |> calculate BelowZero
+            let schedule = sp |> fun sp -> calculate sp BelowZero
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1821,7 +1821,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = sp |> calculate BelowZero
+            let schedule = sp |> fun sp -> calculate sp BelowZero
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -1882,9 +1882,9 @@ module PaymentScheduleTests =
                 102<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
             ]
 
-            let schedule1 = sp paymentSchedule1 |> calculate BelowZero
-            let schedule2 = sp paymentSchedule2 |> calculate BelowZero
-            let schedule3 = sp paymentSchedule3 |> calculate BelowZero
+            let schedule1 = sp paymentSchedule1 |> fun sp -> calculate sp BelowZero
+            let schedule2 = sp paymentSchedule2 |> fun sp -> calculate sp BelowZero
+            let schedule3 = sp paymentSchedule3 |> fun sp -> calculate sp BelowZero
 
             let html1 = schedule1.Items |> generateHtmlFromArray [||]
             let html2 = schedule2.Items |> generateHtmlFromArray [||]

@@ -48,7 +48,7 @@ module InterestFirstTests =
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
-            let schedule = sp |> Scheduling.calculate BelowZero
+            let schedule = calculate sp BelowZero
             SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.LevelPayment, schedule.FinalPayment
 
@@ -81,7 +81,7 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actual =
-            let schedule = sp |> Scheduling.calculate BelowZero
+            let schedule = calculate sp BelowZero
             SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.LevelPayment, schedule.FinalPayment
 
