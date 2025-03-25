@@ -402,7 +402,7 @@ module Scheduling =
                 payments
         | FixedSchedules regularFixedSchedules ->
             regularFixedSchedules
-            |> Array.map(fun rfs ->
+            |> Array.collect(fun rfs ->
                 if rfs.PaymentCount = 0 then
                     [||]
                 else
@@ -411,8 +411,7 @@ module Scheduling =
                         [||]
                     else
                         generatePaymentSchedule rfs.PaymentCount Duration.Unlimited Direction.Forward rfs.UnitPeriodConfig
-                        |> Array.map (OffsetDay.fromDate startDate)
-                        |> Array.map(fun d ->
+                        |> Array.map(OffsetDay.fromDate startDate >> fun d ->
                             let originalValue, rescheduledValue =
                                 match rfs.ScheduleType with
                                 | ScheduleType.Original -> ValueSome rfs.PaymentValue, ValueNone
@@ -420,7 +419,6 @@ module Scheduling =
                             d, ScheduledPayment.quick originalValue rescheduledValue
                         )
             )
-            |> Array.concat
             |> Array.sortBy fst
             |> Array.groupBy fst
             |> Array.map(fun (d, spp) ->
@@ -699,7 +697,7 @@ module Scheduling =
             // split any rescheduled payments into latest and previous
             let latestRescheduling, previousReschedulings =
                 match rescheduled with
-                | r :: [] -> ValueSome r, []
+                | [r] -> ValueSome r, []
                 | r :: pr -> ValueSome r, pr
                 | _ -> ValueNone, []
             // update the previous reschedule day, if any
