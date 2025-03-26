@@ -682,14 +682,12 @@ module Scheduling =
             |> Array.choose(fun sp -> if sp.Rescheduled.IsSome then Some sp.Rescheduled.Value.RescheduleDay else None)
             |> Array.distinct
             |> Array.sort
-        // keep a note of whether a payment has been rescheduled prior to the current day, so that original payments on or after this day are nullified
-        let mutable previousRescheduleDay = ValueNone
         // return the list of scheduled payments with the original and rescheduled payments merged
         scheduledPayments
         //group and sort by day
         |> Array.groupBy fst
         |> Array.sortBy fst
-        |> Array.choose(fun (offsetDay, map) ->
+        |> Array.mapFold(fun previousRescheduleDay (offsetDay, map) ->
             // inspect the scheduled payment
             let sp = map |> Array.map snd
             // get any original payment due on the day
@@ -703,40 +701,44 @@ module Scheduling =
                 | r :: pr -> ValueSome r, pr
                 | _ -> ValueNone, []
             // update the previous reschedule day, if any
-            previousRescheduleDay <- rescheduleDays |> Array.tryFind(fun d -> offsetDay >= d) |> toValueOption |> ValueOption.orElse previousRescheduleDay
+            let newRescheduleDay = rescheduleDays |> Array.tryFind(fun d -> offsetDay >= d) |> toValueOption |> ValueOption.orElse previousRescheduleDay
             // create the modified scheduled payment
-            match original, latestRescheduling with
-            // if there are any rescheduled payments, add the latest as well as the list of previously rescheduled payments on the day (also include the original if any on the day)
-            | _, ValueSome r ->
-                Some (offsetDay, {
-                    Original = original |> ValueOption.bind _.Original
-                    Rescheduled = r.Rescheduled
-                    PreviousRescheduled = previousReschedulings |> List.rev |> List.map _.Rescheduled.Value |> List.toArray
-                    Adjustment = r.Adjustment
-                    Metadata = r.Metadata
-                })
-            // if there is no rescheduled payment on the day, but just an original payment, include the original payment as-is
-            // note: if the original payment day is preceded by any rescheduling, then assume that this cancels the original payment, so enter this as a zero-valued rescheduled payment on the day
-            | ValueSome o, ValueNone ->
-                Some (offsetDay, {
-                    Original = o.Original
-                    Rescheduled =
-                        previousRescheduleDay
-                        |> ValueOption.bind(fun prd ->
-                            if offsetDay >= prd then
-                                //overwrite original scheduled payments from start of rescheduled payments
-                                ValueSome { Value = 0L<Cent>; RescheduleDay = prd }
-                            else
-                                ValueNone
-                        )
-                    PreviousRescheduled = [||]
-                    Adjustment = o.Adjustment
-                    Metadata = o.Metadata
-                })
-            // if there are no original or rescheduled payments, ignore
-            | ValueNone, ValueNone ->
-                None
-        )
+            let newScheduledPayment =
+                match original, latestRescheduling with
+                // if there are any rescheduled payments, add the latest as well as the list of previously rescheduled payments on the day (also include the original if any on the day)
+                | _, ValueSome r ->
+                    Some (offsetDay, {
+                        Original = original |> ValueOption.bind _.Original
+                        Rescheduled = r.Rescheduled
+                        PreviousRescheduled = previousReschedulings |> List.rev |> List.map _.Rescheduled.Value |> List.toArray
+                        Adjustment = r.Adjustment
+                        Metadata = r.Metadata
+                    })
+                // if there is no rescheduled payment on the day, but just an original payment, include the original payment as-is
+                // note: if the original payment day is preceded by any rescheduling, then assume that this cancels the original payment, so enter this as a zero-valued rescheduled payment on the day
+                | ValueSome o, ValueNone ->
+                    Some (offsetDay, {
+                        Original = o.Original
+                        Rescheduled =
+                            newRescheduleDay
+                            |> ValueOption.bind(fun nrd ->
+                                if offsetDay >= nrd then
+                                    //overwrite original scheduled payments from start of rescheduled payments
+                                    ValueSome { Value = 0L<Cent>; RescheduleDay = nrd }
+                                else
+                                    ValueNone
+                            )
+                        PreviousRescheduled = [||]
+                        Adjustment = o.Adjustment
+                        Metadata = o.Metadata
+                    })
+                // if there are no original or rescheduled payments, ignore
+                | ValueNone, ValueNone ->
+                    None
+            newScheduledPayment, newRescheduleDay
+        ) ValueNone
+        |> fst
+        |> Array.choose id
         // convert the result to a map
         |> Map.ofArray
 
