@@ -47,14 +47,12 @@ module AppliedPayment =
                     else
                         app
                 )
-            // maintain a list of total charges incurred over the schedule
-            let mutable aggregateCharges = Array.empty<Charge.ChargeType>
             // get a list of unique days on which either a scheduled payment is due or an actual payment is made
             let days = [| scheduledPayments |> Map.keys |> Seq.toArray; actualPayments |> Map.keys |> Seq.toArray |] |> Array.concat |> Array.distinct |> Array.sort
             // create a map of applied payments
             let appliedPaymentMap =
                 days
-                |> Array.map(fun offsetDay ->
+                |> Array.mapFold(fun aggregateCharges offsetDay ->
                     // get any scheduled payment due on the day
                     let scheduledPayment' =
                         scheduledPayments
@@ -150,9 +148,7 @@ module AppliedPayment =
                                 |> Array.collect(fun c ->
                                     match aggregateCharges |> Array.tryFind((=) c) with
                                     | Some _ -> [||]
-                                    | None ->
-                                        aggregateCharges <- Array.append [| c |] aggregateCharges
-                                        [| c |]
+                                    | None -> [| c |]
                                 )
                             | Charge.ChargeGrouping.AllChargesApplied -> cc
                     // create the applied payment
@@ -164,9 +160,11 @@ module AppliedPayment =
                         NetEffect = netEffect
                         PaymentStatus = paymentStatus
                     }
+                    let newAggregateCharges = Array.append charges aggregateCharges
                     // add the day to create a key-value pair for mapping
-                    offsetDay, appliedPayment
-                )
+                    (offsetDay, appliedPayment), newAggregateCharges
+                ) Array.empty<Charge.ChargeType>
+                |> fst
                 // convert the array to a map
                 |> Map.ofArray
             // for settlements or statements, adds a new applied payment or modifies an existing one (generated-payment and payment-status fields)
