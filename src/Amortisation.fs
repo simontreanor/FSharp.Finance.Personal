@@ -429,9 +429,7 @@ module Amortisation =
                 ap.ActualPayments
                 |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // cap the simple interest against the total interest cap
-            let cappedSimpleInterestM =
-                if a.CumulativeSimpleInterestM + simpleInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeSimpleInterestM else simpleInterestM
-                |> if confirmedPaymentTotal = 0L<Cent> then id else Cent.roundTo RoundDown 0
+            let cappedSimpleInterestM = if a.CumulativeSimpleInterestM + simpleInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeSimpleInterestM else simpleInterestM
             // get any values for original simple interest and contractual interest from any original schedule payment on the day
             let originalSimpleInterestL, contractualInterestM =
                 ap.ScheduledPayment.Original

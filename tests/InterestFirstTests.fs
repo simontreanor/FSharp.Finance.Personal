@@ -324,7 +324,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome -324_59L<Cent>)
+        finalSettlementFigure |> should equal (ValueSome -324_57L<Cent>)
 
     [<Fact>]
     let InterestFirstTest013 () =
