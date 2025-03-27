@@ -268,6 +268,124 @@ module Amortisation =
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlStats}"
             |> outputToFile' filename false
 
+    /// calculates the fees total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fees and principal)
+    let feesPercentage principal feesTotal =
+        if principal = 0L<Cent> then
+            Percent 0m
+        else
+            decimal feesTotal / decimal principal |> Percent.fromDecimal
+
+    /// gets the balance status based on the principal balance
+    let getBalanceStatus principalBalance =
+        if principalBalance = 0L<Cent> then
+            ClosedBalance
+        elif principalBalance < 0L<Cent> then
+            RefundDue
+        else
+            OpenBalance
+
+    /// determines whether a schedule is settled within any grace period (e.g. no interest may be due if settlement is made within three days of the advance)
+    let isSettledWithinGracePeriod sp settlementDay =
+        match settlementDay with
+        | ValueSome (SettlementDay.SettlementOn day) ->
+            int day <= int sp.InterestConfig.InitialGracePeriod
+        | ValueSome SettlementDay.SettlementOnAsOfDay ->
+            int <| OffsetDay.fromDate sp.StartDate sp.AsOfDate <= int sp.InterestConfig.InitialGracePeriod
+        | ValueNone ->
+            false
+
+    /// pattern matching for payments due vs payments made
+    let (|NotPaidAtAll|SomePaid|FullyPaid|) (actualPaymentTotal, paymentDueTotal) =
+        if actualPaymentTotal = 0L<Cent> then
+            NotPaidAtAll
+        elif actualPaymentTotal < paymentDueTotal then
+            SomePaid (paymentDueTotal - actualPaymentTotal)
+        else
+            FullyPaid
+
+    /// modifies missed payments or underpayments to reflect whether they are paid later in full or part or not at all within the payment window
+    /// note: this is useful for credit reporting so as not to penalise those who pay late rather than not at all
+    let markMissedPaymentsAsLate (schedule: Map<int<OffsetDay>, ScheduleItem>) =
+        schedule
+        |> Map.toArray
+        |> Array.groupBy (snd >> _.Window)
+        |> Array.map snd
+        |> Array.filter (Array.isEmpty >> not)
+        |> Array.map(fun v ->
+            {|
+                OffsetDay = v |> Array.head |> fst
+                PaymentDueTotal = v |> Array.sumBy (snd >> _.PaymentDue)
+                ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.total)
+                GeneratedPaymentTotal = v |> Array.sumBy (snd >> _.GeneratedPayment >> GeneratedPayment.Total)
+                PaymentStatus = v |> Array.head |> snd |> _.PaymentStatus
+            |}
+        )
+        |> Array.filter(fun a -> a.PaymentStatus = MissedPayment || a.PaymentStatus = Underpayment)
+        |> Array.choose(fun a ->
+            match a.ActualPaymentTotal + a.GeneratedPaymentTotal, a.PaymentDueTotal with
+            | NotPaidAtAll ->
+                None
+            | SomePaid shortfall ->
+                Some (a.OffsetDay, PaidLaterOwing shortfall)
+            | FullyPaid ->
+                Some (a.OffsetDay, PaidLaterInFull)
+        )
+        |> Map.ofArray
+        |> fun m ->
+            if m |> Map.isEmpty then
+                schedule
+            else
+                schedule
+                |> Map.map(fun d si ->
+                    match m |> Map.tryFind d with
+                    | Some cps -> { si with PaymentStatus = cps }
+                    | None -> si
+                )
+
+    // calculates the total fees payable up to a particular day, based on a proportion of days elapsed vs total number of days in the original schedule
+    let calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay =
+        if originalFinalPaymentDay <= 0<OffsetDay> then
+            0L<Cent>
+        elif appliedPaymentDay > originalFinalPaymentDay then
+            0L<Cent>
+        else
+            decimal feesTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round RoundUp
+
+    /// determines any payment due on the day
+    let calculatePaymentDue si (originalPayment: OriginalPayment voption) rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
+        // if the balance is closed or a refund is due, no payment is due
+        if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
+            0L<Cent>
+        // otherwise, calculate the payment due based on scheduled payments and various balances
+        else
+            match originalPayment, rescheduledPayment with
+            // always make rescheduled payment value due in full
+            | _, ValueSome rp ->
+                rp.Value
+            // if the original payment is cancelled due to rescheduling, there nothing is due
+            | ValueSome op, _ when op.Value = 0L<Cent> ->
+                0L<Cent>
+            // reduce the payment due if early/extra payments have been made
+            | ValueSome op, _ when extraPaymentsBalance > 0L<Cent> ->
+                op.Value - extraPaymentsBalance
+            // non-zero original payments are due in full
+            | ValueSome op, _
+                -> op.Value
+            // if there are no original or rescheduled payments on the day, there is nothing due to pay
+            | ValueNone, ValueNone ->
+                0L<Cent>
+            // payment due should never exceed settlement figure
+            |> Cent.min (si.PrincipalBalance + si.FeesBalance + interestPortionL)
+            // payment due should never be negative
+            |> Cent.max 0L<Cent>
+            // apply minimum payment rules
+            |> fun p ->
+                match minimumPayment with
+                | NoMinimumPayment -> p
+                | DeferOrWriteOff minimumPayment when p < minimumPayment -> 0L<Cent>
+                | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
+                | _ -> p
+
     /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let internal calculate sp settlementDay (initialInterestBalanceL: int64<Cent>) (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
@@ -278,90 +396,12 @@ module Amortisation =
         let totalInterestCapM = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.total sp.Principal
         // calculate the total fee value for the entire schedule
         let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
-        // calculate the fees total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fees and principal)
-        let feesPercentage =
-            if sp.Principal = 0L<Cent> then
-                Percent 0m
-            else
-                decimal feesTotal / decimal sp.Principal |> Percent.fromDecimal
-        // gets the balance status based on the principal balance
-        let getBalanceStatus principalBalance =
-            if principalBalance = 0L<Cent> then
-                ClosedBalance
-            elif principalBalance < 0L<Cent> then
-                RefundDue
-            else
-                OpenBalance
-        // determines whether a schedule is settled within any grace period (e.g. no interest may be due if settlement is made within three days of the advance)
-        let isSettledWithinGracePeriod =
-            match settlementDay with
-            | ValueSome (SettlementDay.SettlementOn day) ->
-                int day <= int sp.InterestConfig.InitialGracePeriod
-            | ValueSome SettlementDay.SettlementOnAsOfDay ->
-                int <| OffsetDay.fromDate sp.StartDate sp.AsOfDate <= int sp.InterestConfig.InitialGracePeriod
-            | ValueNone ->
-                false
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
-        let dailyInterestRates fromDay toDay =
-            Interest.dailyRates sp.StartDate isSettledWithinGracePeriod sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates fromDay toDay
-        // pattern matching for payments due vs payments made
-        let (|NotPaidAtAll|SomePaid|FullyPaid|) (actualPaymentTotal, paymentDueTotal) =
-            if actualPaymentTotal = 0L<Cent> then
-                NotPaidAtAll
-            elif actualPaymentTotal < paymentDueTotal then
-                SomePaid (paymentDueTotal - actualPaymentTotal)
-            else
-                FullyPaid
-        // modifies missed payments or underpayments to reflect whether they are paid later in full or part or not at all within the payment window
-        // note: this is useful for credit reporting so as not to penalise those who pay late rather than not at all
-        let markMissedPaymentsAsLate (schedule: Map<int<OffsetDay>, ScheduleItem>) =
-            schedule
-            |> Map.toArray
-            |> Array.groupBy (snd >> _.Window)
-            |> Array.map snd
-            |> Array.filter (Array.isEmpty >> not)
-            |> Array.map(fun v ->
-                {|
-                    OffsetDay = v |> Array.head |> fst
-                    PaymentDueTotal = v |> Array.sumBy (snd >> _.PaymentDue)
-                    ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.total)
-                    GeneratedPaymentTotal = v |> Array.sumBy (snd >> _.GeneratedPayment >> GeneratedPayment.Total)
-                    PaymentStatus = v |> Array.head |> snd |> _.PaymentStatus
-                |}
-            )
-            |> Array.filter(fun a -> a.PaymentStatus = MissedPayment || a.PaymentStatus = Underpayment)
-            |> Array.choose(fun a ->
-                match a.ActualPaymentTotal + a.GeneratedPaymentTotal, a.PaymentDueTotal with
-                | NotPaidAtAll ->
-                    None
-                | SomePaid shortfall ->
-                    Some (a.OffsetDay, PaidLaterOwing shortfall)
-                | FullyPaid ->
-                    Some (a.OffsetDay, PaidLaterInFull)
-            )
-            |> Map.ofArray
-            |> fun m ->
-                if m |> Map.isEmpty then
-                    schedule
-                else
-                    schedule
-                    |> Map.map(fun d si ->
-                        match m |> Map.tryFind d with
-                        | Some cps -> { si with PaymentStatus = cps }
-                        | None -> si
-                    )
+        let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate (isSettledWithinGracePeriod sp settlementDay) sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates fromDay toDay
         // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
         let interestRounding = sp.InterestConfig.InterestRounding
         // get an array of dates on which charges are not incurred
         let chargesHolidays = Charge.holidayDates sp.ChargeConfig sp.StartDate
-        // calculates the total fees payable up to a particular day, based on a proportion of days elapsed vs total number of days in the original schedule
-        let calculateFees appliedPaymentDay originalFinalPaymentDay =
-            if originalFinalPaymentDay <= 0<OffsetDay> then
-                0L<Cent>
-            elif appliedPaymentDay > originalFinalPaymentDay then
-                0L<Cent>
-            else
-                decimal feesTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round RoundUp
         // return the amortisation schedule
         appliedPayments
         // convert the map to an array to allow scanning
@@ -442,40 +482,8 @@ module Amortisation =
                 }
             // keep track of any excess payments made to offset against future payments due
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
-            // determine any payment due on the day
-            let paymentDue =
-                // if the balance is closed or a refund is due, no payment is due
-                if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
-                    0L<Cent>
-                // otherwise, calculate the payment due based on scheduled payments and various balances
-                else
-                    match ap.ScheduledPayment.Original, ap.ScheduledPayment.Rescheduled with
-                    // always make rescheduled payment value due in full
-                    | _, ValueSome rp ->
-                        rp.Value
-                    // if the original payment is cancelled due to rescheduling, there nothing is due
-                    | ValueSome op, _ when op.Value = 0L<Cent> ->
-                        0L<Cent>
-                    // reduce the payment due if early/extra payments have been made
-                    | ValueSome op, _ when extraPaymentsBalance > 0L<Cent> ->
-                        op.Value - extraPaymentsBalance
-                    // non-zero original payments are due in full
-                    | ValueSome op, _
-                        -> op.Value
-                    // if there are no original or rescheduled payments on the day, there is nothing due to pay
-                    | ValueNone, ValueNone ->
-                        0L<Cent>
-                    // payment due should never exceed settlement figure
-                    |> Cent.min (si.PrincipalBalance + si.FeesBalance + interestPortionL)
-                    // payment due should never be negative
-                    |> Cent.max 0L<Cent>
-                    // apply minimum payment rules
-                    |> fun p ->
-                        match sp.PaymentConfig.MinimumPayment with
-                        | NoMinimumPayment -> p
-                        | DeferOrWriteOff minimumPayment when p < minimumPayment -> 0L<Cent>
-                        | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
-                        | _ -> p
+            // get the payment due
+            let paymentDue = calculatePaymentDue si ap.ScheduledPayment.Original ap.ScheduledPayment.Rescheduled extraPaymentsBalance interestPortionL sp.PaymentConfig.MinimumPayment
             // determine the total of any underpayment
             let underpaymentTotal =
                 match ap.PaymentStatus with
@@ -547,7 +555,7 @@ module Amortisation =
                 | Fee.FeeAmortisation.AmortiseBeforePrincipal ->
                     Cent.min si.FeesBalance assignable
                 | Fee.FeeAmortisation.AmortiseProportionately ->
-                    feesPercentage
+                    feesPercentage sp.Principal feesTotal
                     |> Percent.toDecimal
                     |> fun m ->
                         if (1m + m) = 0m then 0L<Cent>
@@ -557,9 +565,9 @@ module Amortisation =
                 match sp.FeeConfig.SettlementRefund with
                 | Fee.SettlementRefund.ProRata ->
                     let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-                    calculateFees appliedPaymentDay originalFinalPaymentDay
+                    calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
                 | Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay ->
-                    calculateFees appliedPaymentDay originalFinalPaymentDay
+                    calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
                 | Fee.SettlementRefund.Balance ->
                     a.CumulativeFees
                 | Fee.SettlementRefund.Zero ->
@@ -749,7 +757,7 @@ module Amortisation =
         |> Array.unzip
         |> fst
         // handle duplicated initial offset day
-        |> fun a -> if (a |> Array.filter(fun (siOffsetDay, _) -> siOffsetDay = 0<OffsetDay>) |> Array.length = 2) then a |> Array.tail else a
+        |> fun a -> if a |> Array.filter(fun (siOffsetDay, _) -> siOffsetDay = 0<OffsetDay>) |> Array.length = 2 then a |> Array.tail else a
         // convert back to a map
         |> Map.ofArray
         // post-process missed payments or underpayments
