@@ -342,7 +342,7 @@ module Amortisation =
                     | None -> si
                 )
 
-    // calculates the total fees payable up to a particular day, based on a proportion of days elapsed vs total number of days in the original schedule
+    /// calculates the total fees payable up to a particular day, based on a proportion of days elapsed vs total number of days in the original schedule
     let calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay =
         if originalFinalPaymentDay <= 0<OffsetDay> then
             0L<Cent>
@@ -386,7 +386,7 @@ module Amortisation =
                 | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
                 | _ -> p
 
-    /// calculate amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
+    /// calculates an amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
     let internal calculate sp settlementDay (initialInterestBalanceL: int64<Cent>) (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
