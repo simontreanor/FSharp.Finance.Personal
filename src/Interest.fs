@@ -212,5 +212,5 @@ module Interest =
             remainingPaymentTotal - settlementFigure
 
     /// if there is less than one cent remaining, discards any fraction
-    let ignoreFractionalCent i =
-        if abs i < 1m<Cent> then 0m<Cent> else i
+    let ignoreFractionalCents (multiplier: int) i =
+        if abs i < decimal multiplier * 1m<Cent> then 0m<Cent> else i

@@ -116,7 +116,13 @@ module IllustrativeTests =
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 181_36L<Cent>) ValueNone
+                ScheduledPayment = {
+                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Rescheduled = ValueNone
+                    PreviousRescheduled = [||]
+                    Adjustment = 0L<Cent>
+                    Metadata = Map.empty
+                }
                 Window = 4
                 PaymentDue = 181_36L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
@@ -197,7 +203,13 @@ module IllustrativeTests =
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 181_36L<Cent>) ValueNone
+                ScheduledPayment = {
+                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Rescheduled = ValueNone
+                    PreviousRescheduled = [||]
+                    Adjustment = 0L<Cent>
+                    Metadata = Map.empty
+                }
                 Window = 4
                 PaymentDue = 181_36L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
@@ -278,7 +290,13 @@ module IllustrativeTests =
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 181_36L<Cent>) ValueNone
+                ScheduledPayment = {
+                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Rescheduled = ValueNone
+                    PreviousRescheduled = [||]
+                    Adjustment = 0L<Cent>
+                    Metadata = Map.empty
+                }
                 Window = 4
                 PaymentDue = 181_36L<Cent>
                 ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
@@ -286,21 +304,21 @@ module IllustrativeTests =
                 NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 0L<Cent>
+                OriginalSimpleInterest = 43_52L<Cent>
                 ContractualInterest = 0m<Cent>
                 SimpleInterest = 43_52.64m<Cent>
-                NewInterest = 0m<Cent>
+                NewInterest = 31.16m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 181_06L<Cent>
+                PrincipalPortion = 181_05L<Cent>
                 FeesPortion = 0L<Cent>
-                InterestPortion = 30L<Cent>
+                InterestPortion = 31L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
-                PrincipalBalance = 28_64L<Cent>
+                PrincipalBalance = 31L<Cent>
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 30L<Cent>
+                SettlementFigure = ValueSome 31L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         actual |> should equal expected

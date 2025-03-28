@@ -402,6 +402,9 @@ module Amortisation =
         let interestRounding = sp.InterestConfig.InterestRounding
         // get an array of dates on which charges are not incurred
         let chargesHolidays = Charge.holidayDates sp.ChargeConfig sp.StartDate
+        // get stats for interest rounding at the end of the schedule
+        let maxAppliedPaymentDay = appliedPayments |> Map.keys |> Seq.max
+        let appliedPaymentCount = appliedPayments |> Map.count
         // return the amortisation schedule
         appliedPayments
         // convert the map to an array to allow scanning
@@ -455,8 +458,23 @@ module Amortisation =
                     else
                         0m<Cent>
                 | Interest.Method.Simple -> simpleInterestM
+            // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
+            let calculateSettlementReduction m =
+                if appliedPaymentDay = maxAppliedPaymentDay then
+                    m - Interest.ignoreFractionalCents appliedPaymentCount m
+                else
+                    0m<Cent>
             // cap the new interest against the total interest cap
-            let cappedNewInterestM = if a.CumulativeInterest + newInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeInterest else newInterestM
+            let cappedNewInterestM, settlementReductionM =
+                let cni =
+                    if a.CumulativeInterest + newInterestM >= totalInterestCapM then
+                        totalInterestCapM - a.CumulativeInterest
+                    else
+                        newInterestM
+                calculateSettlementReduction cni
+                |> max 0m<Cent>
+                |> fun sr -> cni - sr, sr
+            let settlementReductionL = settlementReductionM |> Cent.fromDecimalCent interestRounding
             // of the actual payments made on the day, sum any that are still pending
             let pendingPaymentTotal =
                 ap.ActualPayments
@@ -519,16 +537,20 @@ module Amortisation =
                     let interestAdjustment =
                         if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterestM - initialInterestBalanceM
-                            |> Interest.ignoreFractionalCent
-                            |> fun i -> if accumulator.CumulativeSimpleInterestM + i >= totalInterestCapM then totalInterestCapM - accumulator.CumulativeSimpleInterestM else i
+                            |> Interest.ignoreFractionalCents 1
+                            |> fun i ->
+                                if accumulator.CumulativeSimpleInterestM + i >= totalInterestCapM then
+                                    totalInterestCapM - accumulator.CumulativeSimpleInterestM
+                                else
+                                    i
                         else
                             0m<Cent>
-                    settlement, interestAdjustment
+                    settlement - settlementReductionL, interestAdjustment
                 // otherwise, calculate this later (unless closed balance, as not applicable)
                 | _ ->
                     0L<Cent>, 0m<Cent>
-            // refine the capped new interest value using any interest adjustment, and ignore any value less than one cent
-            let cappedNewInterestM' = cappedNewInterestM + interestAdjustmentM |> Interest.ignoreFractionalCent
+            // refine the capped new interest value using any interest adjustment
+            let cappedNewInterestM' = cappedNewInterestM + interestAdjustmentM
             // get the rounded value of the interest adjustment
             let interestAdjustmentL = interestAdjustmentM |> Cent.fromDecimalCent interestRounding
             // refine the interest portion based on any interest adjustment, and again check against the total interest cap
@@ -659,7 +681,7 @@ module Amortisation =
                     else
                         // refine the interest portion by adding carried interest, and calculate the balances
                         let feesBalance = si.FeesBalance - feesPortion' - feesRefund'
-                        let interestBalance = interestBalanceM |> Interest.ignoreFractionalCent
+                        let interestBalance = interestBalanceM |> Interest.ignoreFractionalCents 1
                         let chargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                         ((principalBalance', feesBalance, interestBalance, chargesBalance),
                         interestPortionL' - carriedInterestL,
