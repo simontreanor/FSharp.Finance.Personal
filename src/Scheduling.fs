@@ -634,7 +634,7 @@ module Scheduling =
     let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (iteration: int voption, initialInterestBalance) =
         if iteration.IsNone then
             None
-        elif Array.isEmpty paymentDays && initialInterestBalance = 0m && firstItem.Day = 0<OffsetDay> then
+        elif Array.isEmpty paymentDays then
             None
         else
             let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment paymentCount sp.Principal feesTotal |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
