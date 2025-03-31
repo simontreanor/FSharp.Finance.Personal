@@ -472,7 +472,7 @@ module ComplianceTests =
             17<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
             48<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
             63<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
-            91<OffsetDay>, [| ActualPayment.quickConfirmed 198_34L<Cent> |]
+            91<OffsetDay>, [| ActualPayment.quickConfirmed 212_00L<Cent> |]
         ]
 
         let schedule =
