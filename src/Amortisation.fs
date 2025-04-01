@@ -172,7 +172,7 @@ module Amortisation =
         /// the final number of actual payments in the schedule (multiple payments made on the same day are counted separately)
         FinalActualPaymentCount: int
         /// the offset day of the final actual payment
-        FinalActualPaymentDay: int<OffsetDay>
+        FinalActualPaymentDay: int<OffsetDay> voption
         /// the APR based on the actual payments made and their timings
         FinalApr: (Solution * Percent voption) voption
         /// the final ratio of (fees + interest + charges) to principal
@@ -198,7 +198,7 @@ module Amortisation =
                 + "<tr>"
                     + $"<td>Final scheduled payment count: <i>{schedule.FinalScheduledPaymentCount}</i></td>"
                     + $"<td>Final actual payment count: <i>{schedule.FinalActualPaymentCount}</i></td>"
-                    + $"<td>Final actual payment day: <i>{schedule.FinalActualPaymentDay}</i></td>"
+                    + $"""<td>Final actual payment day: <i>{schedule.FinalActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>"""
                 + "</tr>"
             + "</table>"
 
@@ -798,12 +798,13 @@ module Amortisation =
             | _ ->
                  ValueNone
         let scheduledPaymentItems = items |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
+        let actualPaymentItems = items |> Map.filter(fun _ si -> si.ActualPayments.Length > 0)
         {
             ScheduleItems = items
             ScheduleStats = {
-                FinalActualPaymentDay = scheduledPaymentItems |> Map.maxKeyValue |> fst
                 FinalScheduledPaymentCount = scheduledPaymentItems |> Map.count
                 FinalActualPaymentCount = items' |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
+                FinalActualPaymentDay = if Map.count actualPaymentItems = 0 then ValueNone else actualPaymentItems |> Map.maxKeyValue |> fst |> ValueSome
                 FinalApr = finalAprSolution |> ValueOption.map(fun s -> s, Apr.toPercent sp.InterestConfig.AprMethod s)
                 FinalCostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m

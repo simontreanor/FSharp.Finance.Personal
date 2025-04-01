@@ -87,7 +87,7 @@ module AprUnitedKingdomTests =
             paymentCounts
             |> Array.map(fun paymentCount ->
                 let schedule = calculate (getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap) BelowZero
-                $"<td>{snd schedule.Stats.Apr}</td>"
+                $"<td>{snd schedule.Stats.InitialApr}</td>"
             )
             |> String.concat ""
             |> fun s -> $"<td>{firstPaymentDay}</td>{s}"

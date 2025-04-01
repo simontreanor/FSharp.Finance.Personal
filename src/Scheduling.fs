@@ -496,21 +496,21 @@ module Scheduling =
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
-        FinalPaymentDay: int<OffsetDay>
+        FinalScheduledPaymentDay: int<OffsetDay>
         /// the amount of all the payments except the final one
         LevelPayment: int64<Cent>
         /// the amount of the final payment
         FinalPayment: int64<Cent>
         /// the total of all payments
-        PaymentTotal: int64<Cent>
+        ScheduledPaymentTotal: int64<Cent>
         /// the total principal paid, which should equal the initial advance (principal)
         PrincipalTotal: int64<Cent>
         /// the total interest accrued
         InterestTotal: int64<Cent>
         /// the APR according to the calculation method specified in the schedule parameters and based on the schedule being settled as agreed
-        Apr: Solution * Percent voption
+        InitialApr: Solution * Percent voption
         /// the cost of borrowing, expressed as a ratio of interest to principal
-        CostToBorrowingRatio: Percent
+        InitialCostToBorrowingRatio: Percent
     }
 
     /// statistics resulting from the simple schedule calculations
@@ -524,16 +524,16 @@ module Scheduling =
             "<table>"
                 + "<tr>"
                     + $"<td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
-                    + $"<td>Cost to borrowing ratio: <i>{schedule.CostToBorrowingRatio}</i></td>"
-                    + $"<td>APR: <i>{finalAprString schedule.Apr}</i></td>"
+                    + $"<td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>"
+                    + $"<td>Initial APR: <i>{finalAprString schedule.InitialApr}</i></td>"
                 + "</tr>"
                 + "<tr>"
                     + $"<td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>"
                     + $"<td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>"
-                    + $"<td>Final payment day: <i>{schedule.FinalPaymentDay}</i></td>"
+                    + $"<td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Total payments: <i>{formatCent schedule.PaymentTotal}</i></td>"
+                    + $"<td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>"
                     + $"<td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>"
                     + $"<td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>"
                 + "</tr>"
@@ -726,13 +726,13 @@ module Scheduling =
         // get the payment days for use in further calculations
         let paymentDays = paymentMap |> Map.keys |> Seq.toArray
         // take the last payment day for use in further calculations
-        let finalPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let finalScheduledPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         // get the payment count for use in further calculations
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
         let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
         // get the initial interest balance
-        let initialInterestBalance = totalAddOnInterest sp finalPaymentDay
+        let initialInterestBalance = totalAddOnInterest sp finalScheduledPaymentDay
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fees
         let initialSimpleItem = { SimpleItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = sp.Principal + feesTotal }
@@ -782,7 +782,7 @@ module Scheduling =
         let items =
             schedule'
             |> Array.map(fun (si, _, _) ->
-                if si.Day = finalPaymentDay && sp.ScheduleConfig.IsAutoGenerateSchedule then
+                if si.Day = finalScheduledPaymentDay && sp.ScheduleConfig.IsAutoGenerateSchedule then
                     let adjustedPayment =
                         si.ScheduledPayment
                         |> fun p ->
@@ -826,20 +826,20 @@ module Scheduling =
                         interestTotal
                     | _ ->
                         0L<Cent>
-                FinalPaymentDay = finalPaymentDay
+                FinalScheduledPaymentDay = finalScheduledPaymentDay
                 LevelPayment =
                     scheduledPayments
                     |> Array.countBy ScheduledPayment.total
                     |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some)
                     |> Option.defaultValue finalPayment
                 FinalPayment = finalPayment
-                PaymentTotal =
+                ScheduledPaymentTotal =
                     scheduledPayments
                     |> Array.sumBy ScheduledPayment.total
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
-                Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
-                CostToBorrowingRatio =
+                InitialApr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
+                InitialCostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then
                         Percent 0m
                     else
