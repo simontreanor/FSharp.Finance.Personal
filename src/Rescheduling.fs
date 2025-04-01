@@ -57,7 +57,7 @@ module Rescheduling =
 
         // append the new schedule to the old schedule up to the point of settlement
         let oldPaymentSchedule =
-            quote.RevisedSchedule.ScheduleItems
+            quote.RevisedSchedule |> fst |> _.ScheduleItems
             |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
             |> Map.map(fun _ si -> si.ScheduledPayment)
             |> Map.toArray

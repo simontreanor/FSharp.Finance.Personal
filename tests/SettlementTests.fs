@@ -59,7 +59,7 @@ module SettlementTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 112<OffsetDay>
+            let scheduledItem = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 112<OffsetDay>
             quote.QuoteResult, scheduledItem
 
         let paymentQuote =
@@ -147,7 +147,7 @@ module SettlementTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 122<OffsetDay>
+            let scheduledItem = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
 
         let paymentQuote =
@@ -236,7 +236,7 @@ module SettlementTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let scheduledItem = quote.RevisedSchedule.ScheduleItems |> Map.find 122<OffsetDay>
+            let scheduledItem = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
 
         let paymentQuote =

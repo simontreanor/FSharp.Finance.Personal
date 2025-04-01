@@ -73,7 +73,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 57<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 57<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote = 
@@ -176,7 +176,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -277,7 +277,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -370,7 +370,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 3<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 3<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -463,7 +463,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 4<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 4<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -564,7 +564,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -667,7 +667,7 @@ module QuoteTests =
         let actual =
             let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
             amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
+            amortisationSchedule |> fst |> _.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
 
         let expected =
             {
@@ -761,7 +761,7 @@ module QuoteTests =
             // let quoteResult =
             //     quote
             //     |> ValueOption.map(fun q ->
-            //         let paymentQuote = q.RevisedSchedule.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
+            //         let paymentQuote = q.RevisedSchedule |> fst |> _.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
             //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled)
             //     )
             ValueNone // not a single item to be returned, as the result is a sum of items
@@ -817,7 +817,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 181<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 181<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -917,7 +917,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 388<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 388<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1015,7 +1015,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 72<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 72<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1102,7 +1102,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 30<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 30<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1199,7 +1199,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1296,7 +1296,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1393,7 +1393,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1490,7 +1490,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 138<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 138<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1587,7 +1587,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1685,7 +1685,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1783,7 +1783,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1881,7 +1881,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
             quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 461<OffsetDay>
+            let item = quote.RevisedSchedule |> fst |> _.ScheduleItems |> Map.find 461<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =

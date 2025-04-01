@@ -66,7 +66,7 @@ module PromotionalRatesTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 323_20m<Cent>
 
     [<Fact>]
@@ -87,7 +87,7 @@ module PromotionalRatesTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 224_00m<Cent>
 
     [<Fact>]
@@ -108,7 +108,7 @@ module PromotionalRatesTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 317_24.36164383m<Cent>
 
     [<Fact>]
@@ -159,7 +159,7 @@ module PromotionalRatesTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 7305<OffsetDay>, {
             OffsetDate = Date(2044, 4, 11)

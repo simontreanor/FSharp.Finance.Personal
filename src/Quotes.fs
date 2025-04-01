@@ -33,9 +33,9 @@ module Quotes =
         // the quote result
         QuoteResult: QuoteResult
         // a statement showing the schedule at the time the quote was generated
-        CurrentSchedule: Amortisation.Schedule
+        CurrentSchedule: Amortisation.Schedule * SimpleSchedule
         // the revised schedule showing the settlement, if applicable
-        RevisedSchedule: Amortisation.Schedule
+        RevisedSchedule: Amortisation.Schedule * SimpleSchedule
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
@@ -47,7 +47,7 @@ module Quotes =
             Amortisation.generate schedulingParameters (ValueSome settlementDay) false actualPayments
         // try to get the schedule item containing the generated value
         let si =
-            revisedAmortisationSchedule.ScheduleItems
+            revisedAmortisationSchedule |> fst |> _.ScheduleItems
             |> Map.values
             |> Seq.tryFind(fun si ->
                 match si.GeneratedPayment, si.PaymentStatus with
@@ -58,7 +58,7 @@ module Quotes =
             )
             |> Option.defaultWith (fun () -> failwith "Unable to find relevant schedule item")
         // get an array of payments pending anywhere in the revised amortisation schedule
-        let pendingPayments = revisedAmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy (_.ActualPayments >> Array.sumBy ActualPayment.totalPending)
+        let pendingPayments = revisedAmortisationSchedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy (_.ActualPayments >> Array.sumBy ActualPayment.totalPending)
         // produce a quote result
         let quoteResult =
             // if there are any payments pending, inform the caller that a quote cannot be generated for this reason

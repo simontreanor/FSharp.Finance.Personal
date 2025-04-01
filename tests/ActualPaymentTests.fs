@@ -109,7 +109,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
         actual |> should equal expected
 
@@ -161,7 +161,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
         actual |> should equal expected
 
@@ -213,7 +213,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
         actual |> should equal expected
 
@@ -265,7 +265,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 140<OffsetDay>, {
             OffsetDate = Date(2023, 3, 21)
@@ -346,7 +346,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 140<OffsetDay>, {
             OffsetDate = Date(2023, 3, 21)
@@ -433,7 +433,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected = 143<OffsetDay>, {
             OffsetDate = Date(2023, 3, 24)
             Advances = [||]
@@ -516,7 +516,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.find 0<OffsetDay>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.find 0<OffsetDay>
 
         let expected = {
             OffsetDate = Date(2022, 11, 1)
@@ -603,7 +603,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 154<OffsetDay>, {
             OffsetDate = startDate.AddDays 154
@@ -690,7 +690,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 143<OffsetDay>, {
             OffsetDate = Date(2023, 3, 24)
@@ -776,7 +776,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
@@ -862,7 +862,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
@@ -950,7 +950,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 134<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
@@ -1028,7 +1028,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = (schedule.ScheduleItems |> Map.values |> Seq.sumBy _.NetEffect) >= sp.Principal
+        let actual = (schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.NetEffect) >= sp.Principal
 
         let expected = true
         
@@ -1107,7 +1107,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_27L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_27L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1161,7 +1161,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_85L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_85L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1216,7 +1216,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_85L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_85L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1272,7 +1272,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_85L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_85L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1328,7 +1328,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 111_50L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 111_50L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1384,7 +1384,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 222_71L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 222_71L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1432,7 +1432,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = ClosedBalance && si.GeneratedPayment = GeneratedValue -119_88L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = ClosedBalance && si.GeneratedPayment = GeneratedValue -119_88L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1477,6 +1477,6 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
         let expected = true
         actual |> should equal expected

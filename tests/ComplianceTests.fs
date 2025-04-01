@@ -72,7 +72,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters1 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -92,7 +92,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters1 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -111,7 +111,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters1 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -131,7 +131,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters1 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let startDate2 = Date(2021, 12, 14)
@@ -188,7 +188,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters2 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -208,7 +208,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters2 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -228,7 +228,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters2 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters3 =
@@ -260,7 +260,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters3 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -280,7 +280,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters3 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -300,7 +300,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters3 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters4 =
@@ -325,7 +325,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters4 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -345,7 +345,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters4 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -365,7 +365,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters4 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters5=
@@ -390,7 +390,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters5 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -410,7 +410,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters5 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal -38_00L<Cent>
 
     [<Fact>]
@@ -430,7 +430,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters5 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters6 =
@@ -461,7 +461,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters6 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -481,7 +481,7 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters6 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -501,6 +501,6 @@ module ComplianceTests =
 
         Schedule.outputHtmlToFile title description scheduleParameters6 schedule
 
-        let principalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 

@@ -491,12 +491,8 @@ module Scheduling =
                 TotalPrincipal = 0L<Cent>
             }
 
-    ///  a schedule of payments, with final statistics based on the payments being made on time and in full
-    type SimpleSchedule = {
-        /// the day, expressed as an offset from the start date, on which the schedule is inspected
-        AsOfDay: int<OffsetDay>
-        /// the items of the schedule
-        Items: SimpleItem array
+    /// final statistics based on the payments being made on time and in full
+    type SimpleScheduleStats = {
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
@@ -515,6 +511,42 @@ module Scheduling =
         Apr: Solution * Percent voption
         /// the cost of borrowing, expressed as a ratio of interest to principal
         CostToBorrowingRatio: Percent
+    }
+
+    /// statistics resulting from the simple schedule calculations
+    module SimpleScheduleStats =
+        /// renders the final APR as a string, or "n/a" if not available
+        let finalAprString = function
+        | Solution.Found _, ValueSome percent -> $"{percent}"
+        | _ -> "n/a"
+        /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
+        let toHtmlTable schedule =
+            "<table>"
+                + "<tr>"
+                    + $"<td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
+                    + $"<td>Cost to borrowing ratio: <i>{schedule.CostToBorrowingRatio}</i></td>"
+                    + $"<td>APR: <i>{finalAprString schedule.Apr}</i></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>"
+                    + $"<td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>"
+                    + $"<td>Final payment day: <i>{schedule.FinalPaymentDay}</i></td>"
+                + "</tr>"
+                + "<tr>"
+                    + $"<td>Total payments: <i>{formatCent schedule.PaymentTotal}</i></td>"
+                    + $"<td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>"
+                    + $"<td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>"
+                + "</tr>"
+            + "</table>"
+
+    ///  a schedule of payments, with statistics
+    type SimpleSchedule = {
+        /// the day, expressed as an offset from the start date, on which the schedule is inspected
+        AsOfDay: int<OffsetDay>
+        /// the items of the schedule
+        Items: SimpleItem array
+        /// the statistics from the schedule
+        Stats: SimpleScheduleStats
     }
 
     ///  a schedule of payments, with final statistics based on the payments being made on time and in full
@@ -787,30 +819,32 @@ module Scheduling =
         {
             AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
             Items = items
-            InitialInterestBalance =
-                match sp.InterestConfig.Method with
-                | Interest.Method.AddOn ->
-                    interestTotal
-                | _ ->
-                    0L<Cent>
-            FinalPaymentDay = finalPaymentDay
-            LevelPayment =
-                scheduledPayments
-                |> Array.countBy ScheduledPayment.total
-                |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some)
-                |> Option.defaultValue finalPayment
-            FinalPayment = finalPayment
-            PaymentTotal =
-                scheduledPayments
-                |> Array.sumBy ScheduledPayment.total
-            PrincipalTotal = principalTotal
-            InterestTotal = interestTotal
-            Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
-            CostToBorrowingRatio =
-                if principalTotal = 0L<Cent> then
-                    Percent 0m
-                else
-                    decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+            Stats = {
+                InitialInterestBalance =
+                    match sp.InterestConfig.Method with
+                    | Interest.Method.AddOn ->
+                        interestTotal
+                    | _ ->
+                        0L<Cent>
+                FinalPaymentDay = finalPaymentDay
+                LevelPayment =
+                    scheduledPayments
+                    |> Array.countBy ScheduledPayment.total
+                    |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some)
+                    |> Option.defaultValue finalPayment
+                FinalPayment = finalPayment
+                PaymentTotal =
+                    scheduledPayments
+                    |> Array.sumBy ScheduledPayment.total
+                PrincipalTotal = principalTotal
+                InterestTotal = interestTotal
+                Apr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
+                CostToBorrowingRatio =
+                    if principalTotal = 0L<Cent> then
+                        Percent 0m
+                    else
+                        decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+            }
         }
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded

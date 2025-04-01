@@ -110,7 +110,7 @@ module IllustrativeTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
@@ -197,7 +197,7 @@ module IllustrativeTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
@@ -284,7 +284,7 @@ module IllustrativeTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {

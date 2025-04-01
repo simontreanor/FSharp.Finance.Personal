@@ -50,7 +50,7 @@ module InterestFirstTests =
         let actual =
             let schedule = calculate sp BelowZero
             SimpleSchedule.outputHtmlToFile title description sp schedule
-            schedule.LevelPayment, schedule.FinalPayment
+            schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
         let expected = 319_26L<Cent>, 319_23L<Cent>
 
@@ -70,7 +70,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalInterestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let finalInterestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
 
         finalInterestBalance |> should equal 1000_00m<Cent>
 
@@ -83,7 +83,7 @@ module InterestFirstTests =
         let actual =
             let schedule = calculate sp BelowZero
             SimpleSchedule.outputHtmlToFile title description sp schedule
-            schedule.LevelPayment, schedule.FinalPayment
+            schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
         let expected = 367_73L<Cent>, 367_72L<Cent>
         actual |> should equal expected
@@ -102,7 +102,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome 2000_00L<Cent>)
 
@@ -124,7 +124,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 838_64L<Cent>
 
@@ -149,7 +149,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 23_88L<Cent>
 
@@ -180,7 +180,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalPrincipalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let finalPrincipalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
 
         finalPrincipalBalance |> should equal 0L<Cent>
 
@@ -210,7 +210,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome 650_63L<Cent>)
 
@@ -235,7 +235,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 838_64L<Cent>
 
@@ -256,7 +256,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome 737_36L<Cent>)
 
@@ -277,7 +277,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 14_65L<Cent>
 
@@ -298,7 +298,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
         totalInterest |> should equal -25_24L<Cent>
 
     [<Fact>]
@@ -322,7 +322,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome -324_57L<Cent>)
 
@@ -346,7 +346,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
 
@@ -370,7 +370,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
 
         finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, ValueSome -12_78L<Cent>)
 
@@ -391,7 +391,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome -1_22L<Cent>)
 
@@ -409,7 +409,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
+        let initialInterestBalance = schedule |> fst |> _.ScheduleItems[0<OffsetDay>].InterestBalance
 
         initialInterestBalance |> should equal 362_34m<Cent>
 
@@ -427,7 +427,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
+        let initialInterestBalance = schedule |> fst |> _.ScheduleItems[0<OffsetDay>].InterestBalance
         
         initialInterestBalance |> should equal 362_34m<Cent>
 
@@ -636,7 +636,7 @@ module InterestFirstTests =
 
         schedule |> Schedule.outputHtmlToFile title description sp
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
@@ -690,7 +690,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
@@ -718,7 +718,7 @@ module InterestFirstTests =
 
         schedule |> Schedule.outputHtmlToFile title description sp
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
@@ -745,7 +745,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
@@ -783,7 +783,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 340_00L<Cent>
 
@@ -824,7 +824,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 1_500_00L<Cent>
 
@@ -892,7 +892,7 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>
 
@@ -959,6 +959,6 @@ module InterestFirstTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>

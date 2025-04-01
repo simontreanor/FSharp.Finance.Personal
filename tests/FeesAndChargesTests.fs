@@ -78,7 +78,7 @@ module FeesAndChargesTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
@@ -169,7 +169,7 @@ module FeesAndChargesTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
@@ -260,7 +260,7 @@ module FeesAndChargesTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
             
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)

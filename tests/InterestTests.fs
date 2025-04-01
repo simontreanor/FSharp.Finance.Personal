@@ -114,7 +114,7 @@ module InterestTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let interestPortion = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
+            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
             interestPortion |> should be (lessThanOrEqualTo 499_00L<Cent>)
 
@@ -160,7 +160,7 @@ module InterestTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let interestPortion = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
+            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
             interestPortion |> should be (lessThanOrEqualTo 616_01L<Cent>)
 
@@ -339,9 +339,9 @@ module InterestTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let levelPayment = schedule |> fst |> _.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let finalPayment = schedule |> fst |> _.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
@@ -358,9 +358,9 @@ module InterestTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let levelPayment = schedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let finalPayment = schedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let levelPayment = schedule |> fst |> _.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let finalPayment = schedule |> fst |> _.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
@@ -391,6 +391,6 @@ module InterestTests =
 
             Schedule.outputHtmlToFile title description sp schedule
 
-            let interestPortion = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
             interestPortion |> should equal 598_08L<Cent>

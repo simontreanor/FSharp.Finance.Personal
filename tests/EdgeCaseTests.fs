@@ -719,7 +719,7 @@ module EdgeCaseTests =
 
         result |> snd |> Schedule.outputHtmlToFile title description sp
 
-        let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = result |> snd |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -806,7 +806,7 @@ module EdgeCaseTests =
 
         result |> snd |> Schedule.outputHtmlToFile title description sp
 
-        let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = result |> snd |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -880,7 +880,7 @@ module EdgeCaseTests =
 
         Schedule.outputHtmlToFile title description sp schedule
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
 
         let expected = 97<OffsetDay>, {
             OffsetDate = Date(2023, 8, 10)
