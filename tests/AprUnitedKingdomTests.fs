@@ -36,8 +36,16 @@ module AprUnitedKingdomTests =
             |> Util.getAprOr 0m
             |> should (equalWithin 0.001) (Percent 84.63m |> Percent.toDecimal)
 
-    let getScheduleParameters (startDate: Date) paymentCount firstPaymentDay interestMethod =
+    let getScheduleParameters (startDate: Date) paymentCount firstPaymentDay interestMethod applyInterestCap =
         let firstPaymentDate = startDate.AddDays firstPaymentDay
+        let interestCap =
+            if applyInterestCap then
+                {
+                    TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
+                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown))
+                } : Interest.Cap
+            else
+                Interest.Cap.Zero
         {
             AsOfDate = startDate
             StartDate = startDate
@@ -65,10 +73,7 @@ module AprUnitedKingdomTests =
             InterestConfig = {
                 Method = interestMethod
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = {
-                    TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
-                }
+                Cap = interestCap
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -77,13 +82,29 @@ module AprUnitedKingdomTests =
             }
         }
 
-    let outputHtmlToFile title description tableRows =
+    let outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description =
+        let tableCells firstPaymentDay =
+            paymentCounts
+            |> Array.map(fun paymentCount ->
+                let schedule = calculate (getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap) BelowZero
+                $"<td>{snd schedule.Apr}</td>"
+            )
+            |> String.concat ""
+            |> fun s -> $"<td>{firstPaymentDay}</td>{s}"
+
+        let tableRows =
+            firstPaymentDays
+            |> Array.map(fun firstPaymentDay ->
+                $"<tr>{tableCells firstPaymentDay}</tr>"
+            )
+            |> String.concat ""
+
         let htmlTitle = $"<h2>{title}</h2>"
         let htmlTable = $"<table><tr><th>First payment day</th><th>4 payments</th><th>5 payments</th><th>6 payments</th></tr>{tableRows}</table>"
         let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
 
         let generalisedParams =
-            Parameters.toHtmlTable (getScheduleParameters (Date(2025, 4, 1)) 4 3 Interest.Method.Simple)
+            Parameters.toHtmlTable (getScheduleParameters (Date(2025, 4, 1)) 4 3 interestMethod applyInterestCap)
             |> fun s -> Regex.Replace(s, "payment count: <i>4</i>", "payment count: <i>{4 to 6}</i>")
             |> fun s -> Regex.Replace(s, "unit-period config: <i>monthly from 2025-04 on 04</i>", "unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i>")
 
@@ -93,55 +114,82 @@ module AprUnitedKingdomTests =
         $"{htmlTitle}{htmlTable}{htmlDescription}{htmlDatestamp}{htmlParams}"
         |> outputToFile' filename false
 
+    let startDate = Date(2025, 4, 1)
+    let paymentCounts = [| 4 .. 6 |]
+    let firstPaymentDays = [| 3 .. 32 |]
+
     [<Fact>] 
     let AprSpreadsheetSimple () =
         let title = "AprSpreadsheetSimple"
         let description = "Range of APRs for different payment counts and first payment days, using the simple interest method"
-        let startDate = Date(2025, 4, 1)
-        let paymentCounts = [| 4 .. 6 |]
-        let firstPaymentDays = [| 3 .. 32 |]
-
-        let tableCells firstPaymentDay =
-            paymentCounts
-            |> Array.map(fun paymentCount ->
-                let schedule = calculate (getScheduleParameters startDate paymentCount firstPaymentDay Interest.Method.Simple) BelowZero
-                $"<td>{snd schedule.Apr}</td>"
-            )
-            |> String.concat ""
-            |> fun s -> $"<td>{firstPaymentDay}</td>{s}"
-
-        let tableRows =
-            firstPaymentDays
-            |> Array.map(fun firstPaymentDay ->
-                $"<tr>{tableCells firstPaymentDay}</tr>"
-            )
-            |> String.concat ""
-        
-        outputHtmlToFile title description tableRows
+        let interestMethod = Interest.Method.Simple
+        let applyInterestCap = true
+       
+        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
     [<Fact>] 
     let AprSpreadsheetAddOn () =
         let title = "AprSpreadsheetAddOn"
         let description = "Range of APRs for different payment counts and first payment days, using the add-on interest method"
-        let startDate = Date(2025, 4, 1)
+        let interestMethod = Interest.Method.AddOn
+        let applyInterestCap = true
 
-        let paymentCounts = [| 4 .. 6 |]
-        let firstPaymentDays = [| 3 .. 32 |]
+        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
-        let tableCells firstPaymentDay =
-            paymentCounts
-            |> Array.map(fun paymentCount ->
-                let schedule = calculate (getScheduleParameters startDate paymentCount firstPaymentDay Interest.Method.AddOn) BelowZero
-                $"<td>{snd schedule.Apr}</td>"
-            )
-            |> String.concat ""
-            |> fun s -> $"<td>{firstPaymentDay}</td>{s}"
+    [<Fact>] 
+    let AprSpreadsheetSimpleNoInterestCap () =
+        let title = "AprSpreadsheetSimpleNoInterestCap"
+        let description = "Range of APRs for different payment counts and first payment days, using the simple interest method with no interest cap"
+        let interestMethod = Interest.Method.Simple
+        let applyInterestCap = false
 
-        let tableRows =
-            firstPaymentDays
-            |> Array.map(fun firstPaymentDay ->
-                $"<tr>{tableCells firstPaymentDay}</tr>"
-            )
-            |> String.concat ""
-        
-        outputHtmlToFile title description tableRows
+        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
+
+    [<Fact>] 
+    let AprSpreadsheetAddOnNoInterestCap () =
+        let title = "AprSpreadsheetAddOnNoInterestCap"
+        let description = "Range of APRs for different payment counts and first payment days, using the add-on interest method with no interest cap"
+        let interestMethod = Interest.Method.AddOn
+        let applyInterestCap = false
+
+        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
+
+    [<Fact>] 
+    let Amortisation_p6_fp23_BeforeAprJump () =
+        let title = "Amortisation_p6_fp23_BeforeAprJump"
+        let description = "Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method (just before APR jump)"
+        let interestMethod = Interest.Method.AddOn
+        let applyInterestCap = true
+        let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
+        let schedule = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+
+    [<Fact>] 
+    let Amortisation_p6_fp24_AfterAprJump () =
+        let title = "Amortisation_p6_fp24_AfterAprJump"
+        let description = "Amortisation schedule, 6 payments, first payment on day 24, using the add-on interest method (just after APR jump)"
+        let interestMethod = Interest.Method.AddOn
+        let applyInterestCap = true
+        let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
+        let schedule = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+
+    [<Fact>] 
+    let AmortisationNoInterestCap_p6_fp23_BeforeAprJump () =
+        let title = "AmortisationNoInterestCap_p6_fp23_BeforeAprJump"
+        let description = "Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method with no interest cap (just before APR jump)"
+        let interestMethod = Interest.Method.AddOn
+        let applyInterestCap = false
+        let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
+        let schedule = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+
+    [<Fact>] 
+    let AmortisationNoInterestCap_p6_fp24_AfterAprJump () =
+        let title = "AmortisationNoInterestCap_p6_fp24_AfterAprJump"
+        let description = "Amortisation schedule, 6 payments, first payment on day 24, using the add-on interest method with no interest cap (just after APR jump)"
+        let interestMethod = Interest.Method.AddOn
+        let applyInterestCap = false
+        let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
+        let schedule = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedule
