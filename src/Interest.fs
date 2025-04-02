@@ -74,11 +74,15 @@ module Interest =
             | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
 
     /// a promotional interest rate valid during the specified date range
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type PromotionalRate = {
         DateRange: DateRange
         Rate: Rate
     }
+    with
+        /// HTML formatting to display the cap in a readable format
+        member c.Html =
+            $"{c.DateRange} at {c.Rate}"
     
     /// a promotional interest rate valid during the specified date range
     module PromotionalRate =

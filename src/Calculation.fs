@@ -100,7 +100,7 @@ module Calculation =
     with
         /// HTML formatting to display the date range in a readable format
         member dr.Html =
-            $"{dr.Start} to {dr.End}"
+            $"%A{dr.Start} to %A{dr.End}"
 
     /// determines whether a pending payment has timed out
     let isTimedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
