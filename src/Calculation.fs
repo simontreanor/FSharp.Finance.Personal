@@ -327,7 +327,7 @@ module Calculation =
                 // otherwise, increment the tolerance limit and try again
                 else
                     let newTolerance = min toleranceSteps.Max (tolerance + toleranceSteps.Step)
-                    let newLowerBound, newUpperBound = midpoint - newTolerance, midpoint * newTolerance
+                    let newLowerBound, newUpperBound = midpoint - newTolerance, midpoint + newTolerance
                     loop 0 newLowerBound newUpperBound newTolerance
             // start the first iteration
             loop 0 initialLowerBound initialUpperBound toleranceSteps.Min
