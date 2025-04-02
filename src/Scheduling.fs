@@ -622,11 +622,13 @@ module Scheduling =
                     |> Map.ofArray
 
     // calculate the approximate level-payment value
-    let calculateLevelPayment paymentCount principal fees interest =
+    let calculateLevelPayment paymentCount paymentRounding principal fees interest =
         if paymentCount = 0 then
-            0m
+            0L<Cent>
         else
-            (decimal principal + decimal fees + interest) / decimal paymentCount
+            (Cent.toDecimalCent principal + Cent.toDecimalCent fees + Cent.toDecimalCent interest) / decimal paymentCount
+            |> Cent.fromDecimalCent paymentRounding
+            
 
     // calculates the interest accruing on a particular day based on the interest method, payment and previous balances, taking into account any daily and total interest caps
     let calculateInterest sp interestMethod payment previousItem day =
@@ -669,7 +671,7 @@ module Scheduling =
         elif Array.isEmpty paymentDays then
             None
         else
-            let regularScheduledPayment = initialInterestBalance |> calculateLevelPayment paymentCount sp.Principal feesTotal |> ( * ) 1m<Cent> |> Cent.fromDecimalCent sp.PaymentConfig.PaymentRounding
+            let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal initialInterestBalance
             let initialTotalInterestLimit = Parameters.totalInterestCap sp
             let newSchedule =
                 paymentDays
@@ -687,9 +689,8 @@ module Scheduling =
                 |> fun (si, _, _) -> si.TotalSimpleInterest
                 |> max 0L<Cent> // interest must not go negative
                 |> min (Parameters.totalInterestCap sp)
-                |> decimal
-            let diff = initialInterestBalance - finalInterestTotal |> Rounding.roundTo sp.InterestConfig.InterestRounding 0
-            if iteration.Value = 100 || diff <= 0m && diff > -(decimal paymentCount) then
+            let diff = initialInterestBalance - finalInterestTotal |> int64
+            if iteration.Value = 100 || diff <= 0L && diff > -paymentCount then
                 Some (newSchedule, (ValueNone, finalInterestTotal))
             else
                 Some (newSchedule, (iteration |> ValueOption.map ((+) 1), finalInterestTotal))
@@ -749,9 +750,19 @@ module Scheduling =
         let schedule =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
+                // calculate the estimated interest payable over the entire schedule
+                let estimatedInterestTotal =
+                    match sp.InterestConfig.Method with
+                    | Interest.Method.AddOn ->
+                        initialInterestBalance
+                    | Interest.Method.Simple ->
+                        let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+                        Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 2m / 3m |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
                 // determines the payment value and generates the schedule iteratively based on that
-                let solution = Array.solveBisection (generatePaymentValue sp paymentDays initialSimpleItem initialTotalInterestLimit) 100u (initialInterestBalance |> decimal |> calculateLevelPayment paymentCount sp.Principal feesTotal) toleranceOption toleranceSteps
-                match solution with
+                let generator = generatePaymentValue sp paymentDays initialSimpleItem initialTotalInterestLimit
+                let iterationLimit = 100u
+                let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
+                match Array.solveBisection generator iterationLimit initialGuess toleranceOption toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun o -> { o with Value = paymentValue |> Cent.fromDecimal }) })
                         generateItems paymentMap'
@@ -772,7 +783,7 @@ module Scheduling =
         let schedule' =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
-                let finalInterestTotal = schedule |> Array.last |> fun (si, _, _) -> si.TotalSimpleInterest |> decimal
+                let finalInterestTotal = schedule |> Array.last |> fun (si, _, _) -> si.TotalSimpleInterest
                 (ValueSome 0, finalInterestTotal)
                 |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feesTotal paymentMap)
                 |> Array.last
