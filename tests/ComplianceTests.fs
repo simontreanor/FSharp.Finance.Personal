@@ -15,7 +15,7 @@ module ComplianceTests =
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
     }
 
     let startDate1 = Date(2023, 11, 6)
@@ -34,7 +34,7 @@ module ComplianceTests =
             PaymentConfig = { 
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
+                PaymentRounding = NoRounding
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
@@ -45,7 +45,7 @@ module ComplianceTests =
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
                     TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown)
+                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
@@ -150,7 +150,7 @@ module ComplianceTests =
             PaymentConfig = { 
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
+                PaymentRounding = NoRounding
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
@@ -161,7 +161,7 @@ module ComplianceTests =
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
                     TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown)
+                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]

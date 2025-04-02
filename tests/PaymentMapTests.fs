@@ -36,7 +36,7 @@ module PaymentMapTests =
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = {
                 Total = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-                Daily = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown))
+                Daily = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
             }
             InitialGracePeriod = 0<DurationDay>
             PromotionalRates = [||]
