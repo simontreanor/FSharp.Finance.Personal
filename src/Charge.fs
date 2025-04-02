@@ -60,7 +60,7 @@ module Charge =
         /// a default config value, with no charges but recommended settings
         let initialRecommended = {
             ChargeTypes = [||]
-            Rounding = NoRounding
+            Rounding = RoundDown
             ChargeHolidays = [||]
             ChargeGrouping = OneChargeTypePerDay
             LatePaymentGracePeriod = 0<DurationDay>

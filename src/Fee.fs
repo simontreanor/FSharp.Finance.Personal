@@ -87,7 +87,7 @@ module Fee =
         /// a default config value, with no fees but recommended settings
         let initialRecommended = {
             FeeTypes = [||]
-            Rounding = NoRounding
+            Rounding = RoundDown
             FeeAmortisation = AmortiseProportionately
             SettlementRefund = SettlementRefund.ProRata
         }
