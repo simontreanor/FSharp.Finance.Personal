@@ -555,7 +555,7 @@ module Scheduling =
         let outputHtmlToFile title description sp schedule =
             let htmlSchedule = schedule.Items |> generateHtmlFromArray [||]
             let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
-            let htmlDatestamp = sprintf "<p>Generated {0:yyyy-MM-dd 'at' HH:mm:ss}</p>", DateTime.Now
+            let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
             let filename = $"out/{title}.md"
             $"{htmlSchedule}<br /><h3>{title}</h3><p>{description}</p><p>{htmlDatestamp}</p>{htmlParams}"
             |> outputToFile' filename false
