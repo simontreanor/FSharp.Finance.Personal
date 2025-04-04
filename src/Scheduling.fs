@@ -682,7 +682,7 @@ module Scheduling =
                         | FixedSchedules _
                         | CustomSchedule _ -> paymentMap[pd]
                     generateItem sp Interest.Method.AddOn scheduledPayment simpleItem totalSimpleInterestLimit totalInterestLimit pd
-                ) ({ firstItem with InterestBalance = int64 initialInterestBalance * 1L<Cent> }, initialTotalInterestLimit, initialTotalInterestLimit)
+                ) ({ firstItem with InterestBalance = initialInterestBalance }, initialTotalInterestLimit, initialTotalInterestLimit)
             let finalInterestTotal =
                 newSchedule
                 |> Array.last
@@ -757,7 +757,7 @@ module Scheduling =
                         initialInterestBalance
                     | Interest.Method.Simple ->
                         let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-                        Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 2m / 3m |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                        Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem initialTotalInterestLimit
                 let iterationLimit = 100u
