@@ -10,7 +10,6 @@ module ComplianceTests =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
 
     let interestCapExample : Interest.Cap = {
@@ -43,10 +42,7 @@ module ComplianceTests =
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
-                Cap = {
-                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
-                }
+                Cap = interestCapExample
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -504,3 +500,29 @@ module ComplianceTests =
         let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
+    let scheduleParameters7 =
+        { scheduleParameters1 with
+            AsOfDate = Date(2025, 4, 4)
+            StartDate = Date(2025, 4, 4)
+            Principal = 317_26L<Cent>
+            ScheduleConfig = AutoGenerateSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 4, 23)
+                PaymentCount = 4
+                MaxDuration = Duration.Unlimited
+            }
+        }
+
+    [<Fact>]
+    let ComplianceTest019 () =
+        let title = "ComplianceTest019"
+        let description = "Total repayable on interest-first loan with repayments starting on day 19 and total loan length 110 days"
+
+        let schedule = Amortisation.generate scheduleParameters7 ValueNone false Map.empty
+
+        Schedule.outputHtmlToFile title description scheduleParameters7 schedule
+
+        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+        let totalOriginalSimpleInterest = schedule |> fst |> _.ScheduleItems |> Map.toArray |> Array.sumBy (snd >>  _.OriginalSimpleInterest)
+        let initialInterestBalance = schedule |> fst |> _.ScheduleItems[0<OffsetDay>] |> _.InterestBalance
+        totalOriginalSimpleInterest |> should equal initialInterestBalance
