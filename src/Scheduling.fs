@@ -665,12 +665,13 @@ module Scheduling =
 
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (iteration: int voption, initialInterestBalance) =
-        if iteration.IsNone then
+    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (state: (int * int64<Cent>) voption) =
+        if state.IsNone then
             None
         elif Array.isEmpty paymentDays then
             None
         else
+            let iteration, initialInterestBalance = state.Value
             let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal initialInterestBalance
             let initialTotalInterestLimit = Parameters.totalInterestCap sp
             let newSchedule =
@@ -689,11 +690,11 @@ module Scheduling =
                 |> fun (si, _, _) -> si.TotalSimpleInterest
                 |> max 0L<Cent> // interest must not go negative
                 |> min (Parameters.totalInterestCap sp)
-            let diff = initialInterestBalance - finalInterestTotal |> int64
-            if iteration.Value = 100 || diff <= 0L && diff > -paymentCount then
-                Some (newSchedule, (ValueNone, finalInterestTotal))
+            let difference = initialInterestBalance - finalInterestTotal |> int64
+            if difference = 0 || iteration = 100 then
+                Some (newSchedule, ValueNone)
             else
-                Some (newSchedule, (iteration |> ValueOption.map ((+) 1), finalInterestTotal))
+                Some (newSchedule, ValueSome (iteration + 1, finalInterestTotal))
 
     // calculate the initial total interest accruing over the entire schedule
     // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
@@ -716,7 +717,9 @@ module Scheduling =
             |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
         let schedule, _, _ =
             paymentDays
-            |> Array.fold(fun (simpleItem, totalSimpleInterestLimit, totalInterestLimit) pd -> generateItem sp sp.InterestConfig.Method scheduledPayment simpleItem totalSimpleInterestLimit totalInterestLimit pd) (firstItem, initialTotalInterestLimit, initialTotalInterestLimit)
+            |> Array.fold(fun (simpleItem, totalSimpleInterestLimit, totalInterestLimit) pd ->
+                generateItem sp sp.InterestConfig.Method scheduledPayment simpleItem totalSimpleInterestLimit totalInterestLimit pd
+            ) (firstItem, initialTotalInterestLimit, initialTotalInterestLimit)
         let principalBalance = decimal schedule.PrincipalBalance
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
@@ -784,7 +787,7 @@ module Scheduling =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 let finalInterestTotal = schedule |> Array.last |> fun (si, _, _) -> si.TotalSimpleInterest
-                (ValueSome 0, finalInterestTotal)
+                ValueSome (0, finalInterestTotal)
                 |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feesTotal paymentMap)
                 |> Array.last
             | _ ->
