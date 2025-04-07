@@ -523,6 +523,3 @@ module ComplianceTests =
 
         let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
-        let totalOriginalSimpleInterest = schedule |> fst |> _.ScheduleItems |> Map.toArray |> Array.sumBy (snd >>  _.OriginalSimpleInterest)
-        let initialInterestBalance = schedule |> fst |> _.ScheduleItems[0<OffsetDay>] |> _.InterestBalance
-        totalOriginalSimpleInterest |> should equal initialInterestBalance

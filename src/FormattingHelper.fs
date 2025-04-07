@@ -37,8 +37,6 @@ module FormattingHelper =
     /// an array of properties representing internal interest calculations
     let hideInterestProperties =
         [|
-            nameof asi.OriginalSimpleInterest
-            nameof asi.ContractualInterest
             nameof asi.SimpleInterest
         |]
 

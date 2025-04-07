@@ -31,7 +31,7 @@ module IllustrativeTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentValue window contractualInterest interestAdjustment interestPortion principalPortion =
+    let quickExpectedFinalItem date offsetDay paymentValue window interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
             OffsetDate = date
@@ -44,8 +44,6 @@ module IllustrativeTests =
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = contractualInterest
             SimpleInterest = interestAdjustment
             NewInterest = interestAdjustment
             NewCharges = [||]
@@ -117,7 +115,7 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Original = ValueSome 181_36L<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
@@ -130,8 +128,6 @@ module IllustrativeTests =
                 NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 43_52L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 43_52.64m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
@@ -204,7 +200,7 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Original = ValueSome 181_36L<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
@@ -217,8 +213,6 @@ module IllustrativeTests =
                 NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 43_52L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 43_52.64m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
@@ -291,7 +285,7 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Original = ValueSome 181_36L<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
@@ -304,8 +298,6 @@ module IllustrativeTests =
                 NetEffect = 181_36L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 43_52L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 43_52.64m<Cent>
                 NewInterest = 31.16m<Cent>
                 NewCharges = [||]

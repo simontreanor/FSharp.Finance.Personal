@@ -52,10 +52,6 @@ module Amortisation =
         NewCharges: Charge.ChargeType array
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
-        /// the simple interest initially calculated at the start date
-        OriginalSimpleInterest: int64<Cent>
-        /// the interest initially calculated according to the interest method at the start date
-        ContractualInterest: decimal<Cent>
         /// the simple interest accruable between the previous amortisation day and the current day
         SimpleInterest: decimal<Cent>
         /// the new interest charged between the previous amortisation day and the current day, less any initial interest
@@ -96,8 +92,6 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
@@ -127,8 +121,6 @@ module Amortisation =
                 + $"""<td class="ci08">{formatCent scheduleItem.NetEffect}</td>"""
                 + $"""<td class="ci09">{scheduleItem.PaymentStatus.Html.Replace(" ", "&nbsp;")}</td>"""
                 + $"""<td class="ci10">{scheduleItem.BalanceStatus.Html.Replace(" ", "&nbsp;")}</td>"""
-                + $"""<td class="ci11">{formatCent scheduleItem.OriginalSimpleInterest}"""
-                + $"""<td class="ci12">{formatDecimalCent scheduleItem.ContractualInterest}</td>"""
                 + $"""<td class="ci13">{formatDecimalCent scheduleItem.SimpleInterest}</td>"""
                 + $"""<td class="ci14">{formatDecimalCent scheduleItem.NewInterest}</td>"""
                 + $"""<td class="ci15">{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}</td>"""
@@ -228,8 +220,6 @@ module Amortisation =
                     + """<th style="text-align: right;">Net effect</th>"""
                     + """<th style="text-align: right;">Payment status</th>"""
                     + """<th style="text-align: right;">Balance status</th>"""
-                    + """<th style="text-align: right;">Original simple interest</th>"""
-                    + """<th style="text-align: right;">Contractual interest</th>"""
                     + """<th style="text-align: right;">Simple interest</th>"""
                     + """<th style="text-align: right;">New interest</th>"""
                     + """<th style="text-align: right;">New charges</th>"""
@@ -345,7 +335,7 @@ module Amortisation =
             decimal feesTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round RoundUp
 
     /// determines any payment due on the day
-    let calculatePaymentDue si (originalPayment: OriginalPayment voption) rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
+    let calculatePaymentDue si originalPayment rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
         // if the balance is closed or a refund is due, no payment is due
         if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
             0L<Cent>
@@ -356,14 +346,14 @@ module Amortisation =
             | _, ValueSome rp ->
                 rp.Value
             // if the original payment is cancelled due to rescheduling, there nothing is due
-            | ValueSome op, _ when op.Value = 0L<Cent> ->
+            | ValueSome op, _ when op = 0L<Cent> ->
                 0L<Cent>
             // reduce the payment due if early/extra payments have been made
             | ValueSome op, _ when extraPaymentsBalance > 0L<Cent> ->
-                op.Value - extraPaymentsBalance
+                op - extraPaymentsBalance
             // non-zero original payments are due in full
             | ValueSome op, _
-                -> op.Value
+                -> op
             // if there are no original or rescheduled payments on the day, there is nothing due to pay
             | ValueNone, ValueNone ->
                 0L<Cent>
@@ -426,11 +416,6 @@ module Amortisation =
                 |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // cap the simple interest against the total interest cap
             let cappedSimpleInterestM = if a.CumulativeSimpleInterestM + simpleInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeSimpleInterestM else simpleInterestM
-            // get any values for original simple interest and contractual interest from any original schedule payment on the day
-            let originalSimpleInterestL, contractualInterestM =
-                ap.ScheduledPayment.Original
-                |> ValueOption.map(fun op -> op.SimpleInterest, op.ContractualInterest)
-                |> ValueOption.defaultValue (0L<Cent>, 0m<Cent>)
             // apply the cumulative simple interest to the accumulator
             let accumulator =
                 { a with
@@ -693,8 +678,6 @@ module Amortisation =
                     NetEffect = if isSettlement then netEffect + GeneratedPayment.Total generatedPayment else netEffect'
                     PaymentStatus = paymentStatus
                     BalanceStatus = if isSettlement then ClosedBalance else balanceStatus
-                    OriginalSimpleInterest = originalSimpleInterestL
-                    ContractualInterest = contractualInterestM
                     SimpleInterest = cappedSimpleInterestM
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
@@ -823,18 +806,7 @@ module Amortisation =
         let scheduledPayments =
             simpleSchedule.Items
             |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
-            |> Array.map(fun si ->
-                let originalSimpleInterest, contractualInterest =
-                    match sp.InterestConfig.Method with
-                    | Interest.Method.AddOn ->
-                        si.SimpleInterest, Cent.toDecimalCent si.InterestPortion
-                    | _ ->
-                        0L<Cent>, 0m<Cent>
-                si.Day,
-                { si.ScheduledPayment with
-                    Original = si.ScheduledPayment.Original |> ValueOption.map(fun op -> { op with SimpleInterest = originalSimpleInterest; ContractualInterest = contractualInterest })
-                }
-            )
+            |> Array.map(fun si -> si.Day, { si.ScheduledPayment with Original = si.ScheduledPayment.Original } )
             |> Map.ofArray
 
         let amortisationSchedule =

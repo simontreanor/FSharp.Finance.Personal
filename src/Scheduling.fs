@@ -9,20 +9,6 @@ module Scheduling =
     open Formatting
     open UnitPeriod
 
-    /// an originally scheduled payment, including the original simple interest and contractual interest calculations
-    [<Struct; StructuredFormatDisplay("{Html}")>]
-    type OriginalPayment =
-        {
-            /// the original payment amount
-            Value: int64<Cent>
-            /// the original simple interest
-            SimpleInterest: int64<Cent>
-            /// the contractually calculated interest
-            ContractualInterest: decimal<Cent>
-        }
-        member x.Html =
-            formatCent x.Value
-
     /// a rescheduled payment, including the day on which the payment was created
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type RescheduledPayment =
@@ -40,7 +26,7 @@ module Scheduling =
     type ScheduledPayment =
         {
             /// any original payment
-            Original: OriginalPayment voption
+            Original: int64<Cent> voption
             /// the payment relating to the latest rescheduling, if any
             /// > NB: if set to `ValueSome 0L<Cent>` this indicates that the original payment is no longer due
             Rescheduled: RescheduledPayment voption
@@ -56,11 +42,11 @@ module Scheduling =
             let previous = if Array.isEmpty x.PreviousRescheduled then "" else x.PreviousRescheduled |> Array.map(fun pr -> $"<s>r {formatCent pr.Value}</s>&nbsp;") |> Array.reduce (+)
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r when r.Value = 0L<Cent> ->
-                $"""<s>original {formatCent o.Value}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
+                $"""<s>original {formatCent o}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
             | ValueSome o, ValueSome r ->
-                $"<s>o {formatCent o.Value}</s>&nbsp;{previous}r {formatCent r.Value}"
+                $"<s>o {formatCent o}</s>&nbsp;{previous}r {formatCent r.Value}"
             | ValueSome o, ValueNone ->
-                $"original {formatCent o.Value}"
+                $"original {formatCent o}"
             | ValueNone, ValueSome r ->
                 $"""{(if previous = "" then "rescheduled&nbsp;" else previous)}{formatCent r.Value}"""
             | ValueNone, ValueNone ->
@@ -81,7 +67,7 @@ module Scheduling =
             | _, ValueSome r ->
                 r.Value
             | ValueSome o, ValueNone ->
-                o.Value
+                o
             | ValueNone, ValueNone ->
                 0L<Cent>
             |> (+) sp.Adjustment
@@ -100,7 +86,7 @@ module Scheduling =
         /// a quick convenient method to create a basic scheduled payment
         let quick originalAmount rescheduledAmount =
             { zero with
-                Original =  originalAmount |> ValueOption.map(fun oa -> { Value = oa; SimpleInterest = 0L<Cent>; ContractualInterest = 0m<Cent> })
+                Original =  originalAmount
                 Rescheduled = rescheduledAmount
             }
 
@@ -767,7 +753,7 @@ module Scheduling =
                 let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
                 match Array.solveBisection generator iterationLimit initialGuess toleranceOption toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
-                        let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun o -> { o with Value = paymentValue |> Cent.fromDecimal }) })
+                        let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
                         generateItems paymentMap'
                     | _ ->
                         [||]
@@ -801,7 +787,7 @@ module Scheduling =
                         si.ScheduledPayment
                         |> fun p ->
                             { si.ScheduledPayment with
-                                Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> { o with Value = o.Value + si.PrincipalBalance }) else p.Original
+                                Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> o + si.PrincipalBalance) else p.Original
                                 Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
                             }
                     let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance

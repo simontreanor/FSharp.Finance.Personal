@@ -30,7 +30,7 @@ module ActualPaymentTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentValue contractualInterest interestAdjustment interestPortion principalPortion =
+    let quickExpectedFinalItem date offsetDay paymentValue interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
             OffsetDate = date
@@ -43,8 +43,6 @@ module ActualPaymentTests =
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = contractualInterest
             SimpleInterest = interestAdjustment
             NewInterest = interestAdjustment
             NewCharges = [||]
@@ -110,7 +108,7 @@ module ActualPaymentTests =
         Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 0m<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -162,7 +160,7 @@ module ActualPaymentTests =
         Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 0m<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -214,7 +212,7 @@ module ActualPaymentTests =
         Schedule.outputHtmlToFile title description sp schedule
 
         let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
-        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 0m<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
+        let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -278,8 +276,6 @@ module ActualPaymentTests =
             NetEffect = 1193_95L<Cent>
             PaymentStatus = ExtraPayment
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 26_75.760m<Cent>
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
@@ -359,8 +355,6 @@ module ActualPaymentTests =
             NetEffect = 1474_59L<Cent>
             PaymentStatus = ExtraPayment
             BalanceStatus = RefundDue
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 26_75.760m<Cent>
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
@@ -445,8 +439,6 @@ module ActualPaymentTests =
             NetEffect = -280_64L<Cent>
             PaymentStatus = Refunded
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
@@ -529,8 +521,6 @@ module ActualPaymentTests =
             NetEffect = 1500_00L<Cent>
             PaymentStatus = ExtraPayment
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
@@ -616,8 +606,6 @@ module ActualPaymentTests =
             NetEffect = 243_66L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 24_54.144m<Cent>
             NewInterest = 24_54.144m<Cent>
             NewCharges = [||]
@@ -703,8 +691,6 @@ module ActualPaymentTests =
             NetEffect = -280_83L<Cent>
             PaymentStatus = Refunded
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = -18.45304110M<Cent>
             NewInterest = -18.45304110M<Cent>
             NewCharges = [||]
@@ -789,8 +775,6 @@ module ActualPaymentTests =
             NetEffect = 491_53L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 89_95.392m<Cent>
             NewInterest = 89_95.392m<Cent>
             NewCharges = [||]
@@ -875,8 +859,6 @@ module ActualPaymentTests =
             NetEffect = 491_53L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = OpenBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 118_33.696m<Cent>
             NewInterest = 118_33.696m<Cent>
             NewCharges = [||]
@@ -963,8 +945,6 @@ module ActualPaymentTests =
             NetEffect = 500_00L<Cent>
             PaymentStatus = Overpayment
             BalanceStatus = RefundDue
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 79_07.200m<Cent>
             NewInterest = 79_07.200m<Cent>
             NewCharges = [||]
