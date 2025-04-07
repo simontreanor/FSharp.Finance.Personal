@@ -172,7 +172,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp04_r5"
             let description = "£0100 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 100_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -197,7 +197,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp08_r5"
             let description = "£0100 with 08 days to first payment and 5 repayments"
             let sp = monthlyParameters 100_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -222,7 +222,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp12_r4"
             let description = "£0100 with 12 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 12<DurationDay> 4
-            let actual = calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = calculate sp AboveZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -247,7 +247,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp16_r4"
             let description = "£0100 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -297,7 +297,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp24_r4"
             let description = "£0100 with 24 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -322,7 +322,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp28_r4"
             let description = "£0100 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -347,7 +347,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp32_r4"
             let description = "£0100 with 32 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = calculate sp AboveZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -372,7 +372,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp04_r5"
             let description = "£0300 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 300_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = calculate sp AboveZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -447,7 +447,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp16_r4"
             let description = "£0300 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -472,7 +472,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp20_r4"
             let description = "£0300 with 20 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -497,7 +497,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp24_r4"
             let description = "£0300 with 24 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -522,7 +522,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp28_r4"
             let description = "£0300 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -547,7 +547,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp32_r4"
             let description = "£0300 with 32 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -572,7 +572,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp04_r5"
             let description = "£0500 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 500_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -597,7 +597,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp08_r5"
             let description = "£0500 with 08 days to first payment and 5 repayments"
             let sp = monthlyParameters 500_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -605,13 +605,13 @@ module PaymentScheduleTests =
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
                     FinalScheduledPaymentDay = 130<OffsetDay>
-                    LevelPayment = 157_15L<Cent>
-                    FinalPayment = 157_19L<Cent>
-                    ScheduledPaymentTotal = 785_79L<Cent>
+                    LevelPayment = 157_16L<Cent>
+                    FinalPayment = 157_12L<Cent>
+                    ScheduledPaymentTotal = 785_76L<Cent>
                     PrincipalTotal = 500_00L<Cent>
-                    InterestTotal = 285_79L<Cent>
+                    InterestTotal = 285_76L<Cent>
                     InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.6m)
-                    InitialCostToBorrowingRatio = Percent 57.16m
+                    InitialCostToBorrowingRatio = Percent 57.15m
                 }
             }
             actual |> should equal expected
@@ -647,7 +647,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp16_r4"
             let description = "£0500 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = calculate sp AboveZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -672,7 +672,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp20_r4"
             let description = "£0500 with 20 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -680,12 +680,12 @@ module PaymentScheduleTests =
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
                     FinalScheduledPaymentDay = 111<OffsetDay>
-                    LevelPayment = 195_46L<Cent>
-                    FinalPayment = 195_49L<Cent>
-                    ScheduledPaymentTotal = 781_87L<Cent>
+                    LevelPayment = 195_47L<Cent>
+                    FinalPayment = 195_44L<Cent>
+                    ScheduledPaymentTotal = 781_85L<Cent>
                     PrincipalTotal = 500_00L<Cent>
-                    InterestTotal = 281_87L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1299.6m)
+                    InterestTotal = 281_85L<Cent>
+                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1299.5m)
                     InitialCostToBorrowingRatio = Percent 56.37m
                 }
             }
@@ -697,7 +697,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp24_r4"
             let description = "£0500 with 24 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -722,7 +722,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp28_r4"
             let description = "£0500 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -772,7 +772,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp04_r5"
             let description = "£0700 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 700_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -797,7 +797,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp08_r5"
             let description = "£0700 with 08 days to first payment and 5 repayments"
             let sp = monthlyParameters 700_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -822,7 +822,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp12_r4"
             let description = "£0700 with 12 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 12<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -830,11 +830,11 @@ module PaymentScheduleTests =
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
                     FinalScheduledPaymentDay = 103<OffsetDay>
-                    LevelPayment = 258_58L<Cent>
-                    FinalPayment = 258_60L<Cent>
-                    ScheduledPaymentTotal = 1034_34L<Cent>
+                    LevelPayment = 258_59L<Cent>
+                    FinalPayment = 258_55L<Cent>
+                    ScheduledPaymentTotal = 1034_32L<Cent>
                     PrincipalTotal = 700_00L<Cent>
-                    InterestTotal = 334_34L<Cent>
+                    InterestTotal = 334_32L<Cent>
                     InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1311.9m)
                     InitialCostToBorrowingRatio = Percent 47.76m
                 }
@@ -847,7 +847,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp16_r4"
             let description = "£0700 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -872,7 +872,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp20_r4"
             let description = "£0700 with 20 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -922,7 +922,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp28_r4"
             let description = "£0700 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -947,7 +947,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp32_r4"
             let description = "£0700 with 32 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -972,7 +972,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp04_r6"
             let description = "£0900 with 04 days to first payment and 6 repayments"
             let sp = monthlyParameters 900_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp BelowZero //AroundZero finds positive principal balance first
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -997,7 +997,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp08_r6"
             let description = "£0900 with 08 days to first payment and 6 repayments"
             let sp = monthlyParameters 900_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = calculate sp AboveZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1047,7 +1047,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp16_r6"
             let description = "£0900 with 16 days to first payment and 6 repayments"
             let sp = monthlyParameters 900_00L<Cent> 16<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1122,7 +1122,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp28_r5"
             let description = "£0900 with 28 days to first payment and 5 repayments"
             let sp = monthlyParameters 900_00L<Cent> 28<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1147,7 +1147,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp32_r5"
             let description = "£0900 with 32 days to first payment and 5 repayments"
             let sp = monthlyParameters 900_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1172,7 +1172,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp04_r6"
             let description = "£1100 with 04 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1197,7 +1197,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp08_r6"
             let description = "£1100 with 08 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1205,11 +1205,11 @@ module PaymentScheduleTests =
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
                     FinalScheduledPaymentDay = 160<OffsetDay>
-                    LevelPayment = 314_38L<Cent>
-                    FinalPayment = 314_42L<Cent>
-                    ScheduledPaymentTotal = 1886_32L<Cent>
+                    LevelPayment = 314_39L<Cent>
+                    FinalPayment = 314_34L<Cent>
+                    ScheduledPaymentTotal = 1886_29L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
-                    InterestTotal = 786_32L<Cent>
+                    InterestTotal = 786_29L<Cent>
                     InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1291m)
                     InitialCostToBorrowingRatio = Percent 71.48m
                 }
@@ -1222,7 +1222,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp12_r6"
             let description = "£1100 with 12 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1247,7 +1247,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp16_r6"
             let description = "£1100 with 16 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1272,7 +1272,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp20_r5"
             let description = "£1100 with 20 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1280,11 +1280,11 @@ module PaymentScheduleTests =
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
                     FinalScheduledPaymentDay = 142<OffsetDay>
-                    LevelPayment = 376_86L<Cent>
-                    FinalPayment = 376_87L<Cent>
-                    ScheduledPaymentTotal = 1884_31L<Cent>
+                    LevelPayment = 376_87L<Cent>
+                    FinalPayment = 376_82L<Cent>
+                    ScheduledPaymentTotal = 1884_30L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
-                    InterestTotal = 784_31L<Cent>
+                    InterestTotal = 784_30L<Cent>
                     InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1292.9m)
                     InitialCostToBorrowingRatio = Percent 71.3m
                 }
@@ -1297,7 +1297,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp24_r5"
             let description = "£1100 with 24 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1322,7 +1322,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp28_r5"
             let description = "£1100 with 28 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1347,7 +1347,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp32_r5"
             let description = "£1100 with 32 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1372,7 +1372,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp04_r6"
             let description = "£1300 with 04 days to first payment and 6 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1405,12 +1405,12 @@ module PaymentScheduleTests =
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
                     FinalScheduledPaymentDay = 160<OffsetDay>
-                    LevelPayment = 371_54L<Cent>
-                    FinalPayment = 371_58L<Cent>
-                    ScheduledPaymentTotal = 2229_28L<Cent>
+                    LevelPayment = 371_55L<Cent>
+                    FinalPayment = 371_49L<Cent>
+                    ScheduledPaymentTotal = 2229_24L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
-                    InterestTotal = 929_28L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1290.9m)
+                    InterestTotal = 929_24L<Cent>
+                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1291m)
                     InitialCostToBorrowingRatio = Percent 71.48m
                 }
             }
@@ -1472,7 +1472,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp20_r6"
             let description = "£1300 with 20 days to first payment and 6 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1497,7 +1497,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp24_r6"
             let description = "£1300 with 24 days to first payment and 6 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1547,7 +1547,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp32_r5"
             let description = "£1300 with 32 days to first payment and 5 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1597,7 +1597,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp08_r6"
             let description = "£1500 with 08 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1622,7 +1622,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp12_r6"
             let description = "£1500 with 12 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1672,7 +1672,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp20_r6"
             let description = "£1500 with 20 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 20<DurationDay> 6
-            let actual = calculate sp AboveZero //AroundZero finds negative principal balance first
+            let actual = calculate sp AboveZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1722,7 +1722,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp28_r6"
             let description = "£1500 with 28 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let actual = calculate sp BelowZero
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1808,7 +1808,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = calculate sp AroundZero
+            let schedule = calculate sp BelowZero
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
