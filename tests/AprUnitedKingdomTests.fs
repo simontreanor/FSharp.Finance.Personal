@@ -42,14 +42,14 @@ module AprUnitedKingdomTests =
             if applyInterestCap then
                 {
                     TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown))
+                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
                 } : Interest.Cap
             else
                 Interest.Cap.Zero
         {
             AsOfDate = startDate
             StartDate = startDate
-            Principal = 500_00L<Cent>
+            Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Config.defaultMonthly 1 firstPaymentDate
                 PaymentCount = paymentCount
@@ -72,7 +72,7 @@ module AprUnitedKingdomTests =
             }
             InterestConfig = {
                 Method = interestMethod
-                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.798m)
                 Cap = interestCap
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]

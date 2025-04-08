@@ -68,10 +68,18 @@ module Interest =
             Cap.TotalAmount = ValueNone
             Cap.DailyAmount = ValueNone
         }
-        /// calculates the total interest cap
-        let total (initialPrincipal: int64<Cent>) = function
-            | ValueSome amount -> Amount.total initialPrincipal amount |> max 0m<Cent>
-            | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
+
+        /// if the base value plus the added value exceeds the cap total, return the difference between the cap total and the base value
+        let cappedAddedValue capAmount principalBalance baseValue addedValue =
+            match capAmount with
+            | ValueSome amount ->
+                let capTotal = Amount.total principalBalance amount |> max 0m<Cent>
+                if baseValue + addedValue > capTotal then
+                    capTotal - baseValue
+                else
+                    addedValue
+            | ValueNone ->
+                addedValue
 
     /// a promotional interest rate valid during the specified date range
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
@@ -170,16 +178,12 @@ module Interest =
         )
 
     /// calculates the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
-    let calculate (balance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
-        let dailyCap = Cap.total balance dailyInterestCap
-
+    let calculate (principalBalance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
         dailyRates
         |> Array.sumBy (fun dr ->
-            dr.InterestRate
-            |> Rate.daily
-            |> Percent.toDecimal
-            |> fun r -> decimal balance * r * 1m<Cent>
-            |> min dailyCap
+            let rate = dr.InterestRate |> Rate.daily |> Percent.toDecimal
+            let interest = decimal principalBalance * rate * 1m<Cent>
+            Cap.cappedAddedValue dailyInterestCap principalBalance 0m<Cent> interest
         )
         |> Cent.roundTo interestRounding 8
 

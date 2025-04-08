@@ -502,14 +502,15 @@ module ComplianceTests =
 
     let scheduleParameters7 =
         { scheduleParameters1 with
-            AsOfDate = Date(2025, 4, 4)
-            StartDate = Date(2025, 4, 4)
+            AsOfDate = Date(2025, 4, 1)
+            StartDate = Date(2025, 4, 1)
             Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 4, 23)
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 4, 20)
                 PaymentCount = 4
                 MaxDuration = Duration.Unlimited
             }
+            InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
         }
 
     [<Fact>]

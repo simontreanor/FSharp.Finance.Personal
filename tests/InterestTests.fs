@@ -61,15 +61,15 @@ module InterestTests =
     module CapTests =
 
         [<Fact>]
-        let ``No cap total on a €100 principal yields a very large number`` () =
-            let actual = Cap.Zero.TotalAmount |> Cap.total 100_00L<Cent>
-            let expected = 92_233_720_368_547_758_07m<Cent>
+        let ``Trying to add €150 interest to a €75 cumulative interest total with no cap on a principal of €200 allows the full €150`` () =
+            let actual = Cap.cappedAddedValue Cap.Zero.TotalAmount 200_00L<Cent> 75_00m<Cent> 150_00m<Cent>
+            let expected = 150_00m<Cent>
             actual |> should equal expected
 
         [<Fact>]
-        let ``100% cap total on a €100 principal yields €100`` () =
-            let actual = interestCapExample.TotalAmount |> Cap.total 100_00L<Cent>
-            let expected = 100_00m<Cent>
+        let ``Trying to add €150 interest to a €75 cumulative interest total with a 100% total cap on a principal of €200 only allows €125`` () =
+            let actual = Cap.cappedAddedValue interestCapExample.TotalAmount 200_00L<Cent> 75_00m<Cent> 150_00m<Cent>
+            let expected = 125_00m<Cent>
             actual |> should equal expected
 
         [<Fact>]

@@ -375,8 +375,6 @@ module Amortisation =
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
         let initialInterestBalanceM = Cent.toDecimalCent initialInterestBalanceL
-        // calculate the maximum interest accruable over the entire schedule due to any interest cap
-        let totalInterestCapM = sp.InterestConfig.Cap.TotalAmount |> Interest.Cap.total sp.Principal
         // calculate the total fee value for the entire schedule
         let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
@@ -415,7 +413,7 @@ module Amortisation =
                 ap.ActualPayments
                 |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
             // cap the simple interest against the total interest cap
-            let cappedSimpleInterestM = if a.CumulativeSimpleInterestM + simpleInterestM >= totalInterestCapM then totalInterestCapM - a.CumulativeSimpleInterestM else simpleInterestM
+            let cappedSimpleInterestM = Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal a.CumulativeSimpleInterestM simpleInterestM
             // apply the cumulative simple interest to the accumulator
             let accumulator =
                 { a with
@@ -444,11 +442,7 @@ module Amortisation =
                     0m<Cent>
             // cap the new interest against the total interest cap
             let cappedNewInterestM, settlementReductionM =
-                let cni =
-                    if a.CumulativeInterest + newInterestM >= totalInterestCapM then
-                        totalInterestCapM - a.CumulativeInterest
-                    else
-                        newInterestM
+                let cni = Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal a.CumulativeInterest newInterestM
                 calculateSettlementReduction cni
                 |> max 0m<Cent>
                 |> fun sr -> cni - sr, sr
@@ -516,11 +510,7 @@ module Amortisation =
                         if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterestM - initialInterestBalanceM
                             |> Interest.ignoreFractionalCents 1
-                            |> fun i ->
-                                if accumulator.CumulativeSimpleInterestM + i >= totalInterestCapM then
-                                    totalInterestCapM - accumulator.CumulativeSimpleInterestM
-                                else
-                                    i
+                            |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal accumulator.CumulativeSimpleInterestM
                         else
                             0m<Cent>
                     settlement - settlementReductionL, interestAdjustment
@@ -533,8 +523,10 @@ module Amortisation =
             let interestAdjustmentL = interestAdjustmentM |> Cent.fromDecimalCent interestRounding
             // refine the interest portion based on any interest adjustment, and again check against the total interest cap
             let interestPortionL' =
-                (a.CumulativeInterestPortions, interestPortionL + interestAdjustmentL, Cent.fromDecimalCent interestRounding totalInterestCapM)
-                |> fun (cip, i, tic) -> if cip + i >= tic then tic - cip else i
+                interestPortionL + interestAdjustmentL
+                |> Cent.toDecimalCent
+                |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal (Cent.toDecimalCent a.CumulativeInterestPortions)
+                |> Cent.fromDecimalCent interestRounding
             // determine how much of the net effect can be apportioned and whether any immediate adjustments need to be made to the scheduled payment due to charges and interest, depending on settings
             let assignable, scheduledPaymentAdjustment =
                 if netEffect = 0L<Cent> then
