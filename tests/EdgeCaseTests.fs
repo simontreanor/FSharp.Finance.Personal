@@ -715,11 +715,11 @@ module EdgeCaseTests =
             SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
-        let oldschedules, newSchedules = reschedule sp rp actualPayments
+        let schedules = reschedule sp rp actualPayments
 
-        newSchedules |> Schedule.outputHtmlToFile title description sp
+        schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
 
-        let actual = newSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -800,11 +800,11 @@ module EdgeCaseTests =
             SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
-        let oldSchedules, newSchedules = reschedule sp rp actualPayments
+        let schedules = reschedule sp rp actualPayments
 
-        newSchedules |> Schedule.outputHtmlToFile title description sp
+        schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
 
-        let actual = newSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)

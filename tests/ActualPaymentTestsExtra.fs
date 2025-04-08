@@ -253,9 +253,9 @@ module ActualPaymentTestsExtra =
                 ChargeHolidays = [||]
                 SettlementDay = ValueNone
             }
-            let oldSchedules, newSchedules = reschedule sp rp actualPayments
-            newSchedules |> Schedule.outputHtmlToFile title description sp
-            newSchedules.AmortisationSchedule.ScheduleItems
+            let schedules = reschedule sp rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1969<OffsetDay>, {
@@ -586,9 +586,9 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
-            let oldSchedules, newSchedules = rollOver sp rp actualPayments
-            newSchedules |> Schedule.outputHtmlToFile title description sp
-            newSchedules.AmortisationSchedule.ScheduleItems
+            let schedules = rollOver sp rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1793<OffsetDay>, {
@@ -680,9 +680,9 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
-            let oldSchedules, newSchedules = rollOver sp rp actualPayments
-            newSchedules |> Schedule.outputHtmlToFile title description sp
-            newSchedules.AmortisationSchedule.ScheduleItems
+            let schedules = rollOver sp rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1793<OffsetDay>, {

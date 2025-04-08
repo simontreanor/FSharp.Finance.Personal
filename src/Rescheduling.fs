@@ -77,10 +77,10 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rescheduledSchedule = Amortisation.generate spNew rp.SettlementDay true actualPayments
+        let rescheduledSchedules = Amortisation.generate spNew rp.SettlementDay true actualPayments
 
         // return the results
-        quote.RevisedSchedules, rescheduledSchedule
+        {| OldSchedules = quote.RevisedSchedules; NewSchedules = rescheduledSchedules |}
 
     /// parameters for creating a rolled-over schedule
     [<RequireQualifiedAccess>]
@@ -145,7 +145,7 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rolledOverSchedule = Amortisation.generate spNew ValueNone true Map.empty
+        let rolledOverSchedules = Amortisation.generate spNew ValueNone true Map.empty
 
         // return the results
-        quote.RevisedSchedules, rolledOverSchedule
+        {| OldSchedules = quote.RevisedSchedules; NewSchedules = rolledOverSchedules |}
