@@ -384,6 +384,7 @@ module Amortisation =
         // get an array of dates on which charges are not incurred
         let chargesHolidays = Charge.holidayDates sp.ChargeConfig sp.StartDate
         // get stats for interest rounding at the end of the schedule
+        let maxAppliedPaymentDay = appliedPayments |> Map.keys |> Seq.max
         let appliedPaymentCount = appliedPayments |> Map.count
         // return the amortisation schedule
         appliedPayments
@@ -433,8 +434,19 @@ module Amortisation =
                     else
                         0m<Cent>
                 | Interest.Method.Simple -> simpleInterestM
+            // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
+            let calculateSettlementReduction m =
+                if appliedPaymentDay = maxAppliedPaymentDay then
+                    m - Interest.ignoreFractionalCents appliedPaymentCount m
+                else
+                    0m<Cent>
             // cap the new interest against the total interest cap
-            let cappedNewInterestM = Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal a.CumulativeInterest newInterestM
+            let cappedNewInterestM, settlementReductionM =
+                let cni = Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal a.CumulativeInterest newInterestM
+                calculateSettlementReduction cni
+                |> max 0m<Cent>
+                |> fun sr -> cni - sr, sr
+            let settlementReductionL = settlementReductionM |> Cent.fromDecimalCent interestRounding
             // of the actual payments made on the day, sum any that are still pending
             let pendingPaymentTotal =
                 ap.ActualPayments
@@ -492,9 +504,7 @@ module Amortisation =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance ->
                     // get a settlement figure for the add-on interest method based on the actual simple interest accrued up to now
-                    let settlement =
-                        sp.Principal + cumulativeSimpleInterestL - accumulator.CumulativeActualPayments
-                        |> fun s -> if abs s < int64 appliedPaymentCount * 1L<Cent> then 0L<Cent> else s
+                    let settlement = sp.Principal + cumulativeSimpleInterestL - accumulator.CumulativeActualPayments
                     // determine whether an interest adjustment is required based on the difference between cumulative simple interest and the initial interest balance
                     let interestAdjustment =
                         if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
@@ -503,7 +513,7 @@ module Amortisation =
                             |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal accumulator.CumulativeSimpleInterestM
                         else
                             0m<Cent>
-                    settlement, interestAdjustment
+                    settlement - settlementReductionL, interestAdjustment
                 // otherwise, calculate this later (unless closed balance, as not applicable)
                 | _ ->
                     0L<Cent>, 0m<Cent>
