@@ -10,6 +10,7 @@ open FSharp.Finance.Personal
 
 module AprUnitedKingdomTests =
 
+    open Amortisation
     open Apr
     open Calculation
     open DateDay
@@ -89,6 +90,9 @@ module AprUnitedKingdomTests =
             |> Array.map(fun paymentCount ->
                 let sp = getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap
                 let schedules = Amortisation.generate sp ValueNone false Map.empty
+
+                Schedule.outputHtmlToFile $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp schedules
+
                 $"<td>{schedules.AmortisationSchedule.ScheduleStats.FinalApr}</td>"
             )
             |> String.concat ""
