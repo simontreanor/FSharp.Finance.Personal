@@ -15,8 +15,8 @@ module ActualPaymentTestsExtra =
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
@@ -47,7 +47,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -129,7 +129,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -212,7 +212,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -308,7 +308,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -467,7 +467,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -547,7 +547,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -641,7 +641,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata

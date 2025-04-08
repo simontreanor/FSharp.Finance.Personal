@@ -41,8 +41,8 @@ module AprUnitedKingdomTests =
         let interestCap =
             if applyInterestCap then
                 {
-                    TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+                    TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
                 } : Interest.Cap
             else
                 Interest.Cap.Zero

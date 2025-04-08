@@ -13,8 +13,8 @@ module ComplianceTests =
     open Scheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     let startDate1 = Date(2023, 11, 6)
@@ -156,8 +156,8 @@ module ComplianceTests =
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
-                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
+                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
@@ -301,7 +301,7 @@ module ComplianceTests =
 
     let scheduleParameters4 =
         { scheduleParameters3 with
-            InterestConfig.Cap.DailyAmount = ValueSome <| Amount.Percentage(Percent 0.8m, Restriction.NoLimit, RoundDown)
+            InterestConfig.Cap.DailyAmount = ValueSome <| Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
         }
 
     [<Fact>]
@@ -309,10 +309,10 @@ module ComplianceTests =
         let title = "ComplianceTest010"
         let description = "Repayments made on time - 0.8% daily interest cap"
         let actualPayments = Map [
-            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            107<OffsetDay>, [| ActualPayment.quickConfirmed 209_37L<Cent> |]
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            107<OffsetDay>, [| ActualPayment.quickConfirmed 209_43L<Cent> |]
         ]
 
         let schedule =
@@ -329,10 +329,10 @@ module ComplianceTests =
         let title = "ComplianceTest011"
         let description = "Early repayment - 0.8% daily interest cap"
         let actualPayments = Map [
-            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            63<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            91<OffsetDay>, [| ActualPayment.quickConfirmed 160_81L<Cent> |]
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            63<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            91<OffsetDay>, [| ActualPayment.quickConfirmed 160_85L<Cent> |]
         ]
 
         let schedule =
@@ -349,10 +349,10 @@ module ComplianceTests =
         let title = "ComplianceTest012"
         let description = "Late repayment - 0.8% daily interest cap"
         let actualPayments = Map [
-            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
-            122<OffsetDay>, [| ActualPayment.quickConfirmed 234_42L<Cent> |]
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
+            122<OffsetDay>, [| ActualPayment.quickConfirmed 234_57L<Cent> |]
         ]
 
         let schedule =
@@ -364,9 +364,9 @@ module ComplianceTests =
         let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters5=
+    let scheduleParameters5 =
         { scheduleParameters3 with
-            InterestConfig.Cap.TotalAmount = ValueSome <| Amount.Percentage(Percent 100m, Restriction.NoLimit, RoundDown)
+            InterestConfig.Cap.TotalAmount = ValueSome <| Amount.Percentage(Percent 100m, Restriction.NoLimit)
         }
 
     [<Fact>]

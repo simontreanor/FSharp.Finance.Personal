@@ -14,8 +14,8 @@ module PaymentScheduleTests =
     open Scheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     module Biweekly =
@@ -38,7 +38,7 @@ module PaymentScheduleTests =
                     PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
-                    FeeTypes = [| Fee.FeeType.FacilitationFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                    FeeTypes = [| Fee.FeeType.FacilitationFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1936,7 +1936,7 @@ module PaymentScheduleTests =
             }
             FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
-                ChargeTypes = [| Charge.LatePayment (Amount.Percentage(Percent 5m, Restriction.UpperLimit 750L<Cent>, RoundWith MidpointRounding.ToEven)) |]
+                ChargeTypes = [| Charge.LatePayment (Amount.Percentage(Percent 5m, Restriction.UpperLimit 750L<Cent>)) |]
                 Rounding = RoundWith MidpointRounding.ToEven
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
@@ -1982,7 +1982,7 @@ module PaymentScheduleTests =
             }
             FeeConfig = Fee.Config.initialRecommended
             ChargeConfig = {
-                ChargeTypes = [| Charge.LatePayment (Amount.Percentage(Percent 5m, Restriction.UpperLimit 750L<Cent>, RoundWith MidpointRounding.ToEven)) |]
+                ChargeTypes = [| Charge.LatePayment (Amount.Percentage(Percent 5m, Restriction.UpperLimit 750L<Cent>)) |]
                 Rounding = RoundWith MidpointRounding.ToEven
                 ChargeHolidays = [||]
                 ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay

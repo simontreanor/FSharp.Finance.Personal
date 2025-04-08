@@ -221,14 +221,14 @@ module Calculation =
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Amount =
         /// a percentage of the principal, optionally restricted
-        | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
+        | Percentage of Percentage:Percent * Restriction:Restriction
         /// a fixed fee
         | Simple of Simple:int64<Cent>
         /// HTML formatting to display the amount in a readable format
         member a.Html =
             match a with
-            | Percentage (Percent percent, restriction, rounding) ->
-                $"{percent} %%, {restriction}, {rounding}"
+            | Percentage (Percent percent, restriction) ->
+                $"{percent} %%, {restriction}"
             | Simple simple ->
                 $"{Cent.toDecimal simple:N2}"
 
@@ -237,10 +237,9 @@ module Calculation =
         /// calculates the total amount based on any restrictions
         let total (baseValue: int64<Cent>) amount =
             match amount with
-            | Amount.Percentage (percent, restriction, rounding) ->
+            | Amount.Percentage (percent, restriction) ->
                 decimal baseValue * Percent.toDecimal percent
                 |> Restriction.calculate restriction
-                |> Rounding.round rounding
             | Amount.Simple simple ->
                 decimal simple
             |> ( * ) 1m<Cent>
