@@ -316,6 +316,30 @@ module Scheduling =
                         ) |> String.concat "")
             + "</table>"
 
+    /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
+    [<Struct; StructuredFormatDisplay("{Html}")>]
+    type LevelPaymentOption =
+        /// the final payment must be lower than the level payment
+        | LowerFinalPayment
+        /// the final payment must be around the same as the level payment but can be higher or lower
+        | SimilarFinalPayment
+        /// the final payment must be higher than the level payment
+        | HigherFinalPayment
+        /// HTML formatting to display the level-payment option in a readable format
+        member spo.Html =
+            match spo with
+            | LowerFinalPayment -> "final payment lower than level payment"
+            | SimilarFinalPayment -> "final payment around the same as level payment"
+            | HigherFinalPayment -> "final payment higher than level payment"
+
+    /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
+    module LevelPaymentOption =
+        /// converts the level-payment option to a target tolerance for use in the bisection method solver
+        let toTargetTolerance = function
+            | LowerFinalPayment -> BelowZero
+            | SimilarFinalPayment -> AroundZero
+            | HigherFinalPayment -> AboveZero
+
     /// whether to stick to scheduled payment amounts or add charges and interest to them
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduledPaymentOption =
@@ -367,7 +391,7 @@ module Scheduling =
     /// how to treat scheduled payments
     type PaymentConfig = {
         /// what tolerance to use for the final principal balance when calculating the level payments
-        Tolerance: TargetTolerance
+        Tolerance: LevelPaymentOption
         /// whether to modify scheduled payment amounts to keep the schedule on-track
         ScheduledPaymentOption: ScheduledPaymentOption
         /// whether to leave a final balance open or close it using various methods
@@ -685,11 +709,11 @@ module Scheduling =
             let tolerance = int64 paymentCount * 1L<Cent>
             let minBalance, maxBalance =
                 match sp.PaymentConfig.Tolerance with
-                    | BelowZero ->
+                    | LowerFinalPayment ->
                         -tolerance, 0L<Cent>
-                    | AroundZero ->
+                    | SimilarFinalPayment ->
                         -tolerance, tolerance
-                    | AboveZero ->
+                    | HigherFinalPayment ->
                         0L<Cent>, tolerance
 
             let difference = state.InterestBalance - finalInterestTotal |> int64
@@ -766,7 +790,7 @@ module Scheduling =
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem
                 let iterationLimit = 100u
                 let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
-                match Array.solveBisection generator iterationLimit initialGuess sp.PaymentConfig.Tolerance toleranceSteps with
+                match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance sp.PaymentConfig.Tolerance) toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
                         generateItems paymentMap'

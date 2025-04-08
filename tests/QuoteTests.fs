@@ -34,7 +34,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -136,7 +136,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -236,7 +236,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -336,7 +336,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -428,7 +428,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -520,7 +520,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -620,7 +620,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -710,7 +710,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundDown
@@ -781,7 +781,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -872,7 +872,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -971,7 +971,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1068,7 +1068,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1152,7 +1152,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1248,7 +1248,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1344,7 +1344,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1440,7 +1440,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1536,7 +1536,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1632,7 +1632,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1729,7 +1729,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1826,7 +1826,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1923,7 +1923,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1984,7 +1984,7 @@ module QuoteTests =
             Principal = 230_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2040,7 +2040,7 @@ module QuoteTests =
             Principal = 230_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2096,7 +2096,7 @@ module QuoteTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2153,7 +2153,7 @@ module QuoteTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2209,7 +2209,7 @@ module QuoteTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp

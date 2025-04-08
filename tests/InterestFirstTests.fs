@@ -21,7 +21,7 @@ module InterestFirstTests =
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2); PaymentCount = 5; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) }
             PaymentConfig = {
-                Tolerance = BelowZero
+                Tolerance = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp

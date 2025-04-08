@@ -58,7 +58,7 @@ module UnitPeriodConfigTests =
                     Principal = 100000L<Cent>
                     ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); PaymentCount = 12; MaxDuration = Duration.Unlimited }
                     PaymentConfig = {
-                        Tolerance = BelowZero
+                        Tolerance = LowerFinalPayment
                         ScheduledPaymentOption = AsScheduled
                         CloseBalanceOption = LeaveOpenBalance
                         PaymentRounding = RoundUp
@@ -121,7 +121,7 @@ module UnitPeriodConfigTests =
                 Principal = 70000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); PaymentCount = 12; MaxDuration = Duration.Unlimited }
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -188,7 +188,7 @@ module UnitPeriodConfigTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -277,7 +277,7 @@ module UnitPeriodConfigTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -366,7 +366,7 @@ module UnitPeriodConfigTests =
                 Principal = 100000L<Cent>
                 ScheduleConfig = CustomSchedule originalScheduledPayments
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp

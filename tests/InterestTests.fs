@@ -86,7 +86,7 @@ module InterestTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -133,7 +133,7 @@ module InterestTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -307,7 +307,7 @@ module InterestTests =
                 Principal = 5000_00L<Cent>
                 ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentValue = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
                 PaymentConfig = {
-                    Tolerance = BelowZero
+                    Tolerance = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
