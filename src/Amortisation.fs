@@ -176,17 +176,17 @@ module Amortisation =
     /// final statistics resulting from the calculations
     module ScheduleStats =
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
-        let toHtmlTable schedule =
+        let toHtmlTable scheduleStats =
             "<table>"
                 + "<tr>"
-                    + $"<td>Effective interest rate: <i>{schedule.EffectiveInterestRate}</i></td>"
-                    + $"<td>Final cost-to-borrowing ratio: <i>{schedule.FinalCostToBorrowingRatio}</i></td>"
-                    + $"<td>Final APR: <i>{schedule.FinalApr}</i></td>"
+                    + $"<td>Effective interest rate: <i>{scheduleStats.EffectiveInterestRate}</i></td>"
+                    + $"<td>Final cost-to-borrowing ratio: <i>{scheduleStats.FinalCostToBorrowingRatio}</i></td>"
+                    + $"<td>Final APR: <i>{scheduleStats.FinalApr}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>Final scheduled payment count: <i>{schedule.FinalScheduledPaymentCount}</i></td>"
-                    + $"<td>Final actual payment count: <i>{schedule.FinalActualPaymentCount}</i></td>"
-                    + $"""<td>Final actual payment day: <i>{schedule.FinalActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>"""
+                    + $"<td>Final scheduled payment count: <i>{scheduleStats.FinalScheduledPaymentCount}</i></td>"
+                    + $"<td>Final actual payment count: <i>{scheduleStats.FinalActualPaymentCount}</i></td>"
+                    + $"""<td>Final actual payment day: <i>{scheduleStats.FinalActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>"""
                 + "</tr>"
             + "</table>"
 

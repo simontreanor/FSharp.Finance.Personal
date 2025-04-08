@@ -176,7 +176,7 @@ module Calculation =
         /// create a percent value from a decimal, e.g. 0.5 -> 50%
         let fromDecimal (m: decimal) =
             m * 100m |> Percent
-        /// round a percent value to two decimal places
+        /// round a percent value to the specified number of decimal places
         let round (places: int) (Percent p) =
             Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places p
             |> Percent
