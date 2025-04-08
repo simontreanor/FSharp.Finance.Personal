@@ -100,7 +100,7 @@ module Calculation =
     with
         /// HTML formatting to display the date range in a readable format
         member dr.Html =
-            $"{dr.Start} to {dr.End}"
+            $"%A{dr.Start} to %A{dr.End}"
 
     /// determines whether a pending payment has timed out
     let isTimedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
@@ -176,7 +176,7 @@ module Calculation =
         /// create a percent value from a decimal, e.g. 0.5 -> 50%
         let fromDecimal (m: decimal) =
             m * 100m |> Percent
-        /// round a percent value to two decimal places
+        /// round a percent value to the specified number of decimal places
         let round (places: int) (Percent p) =
             Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places p
             |> Percent
@@ -221,14 +221,14 @@ module Calculation =
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Amount =
         /// a percentage of the principal, optionally restricted
-        | Percentage of Percentage:Percent * Restriction:Restriction * Rounding:Rounding
+        | Percentage of Percentage:Percent * Restriction:Restriction
         /// a fixed fee
         | Simple of Simple:int64<Cent>
         /// HTML formatting to display the amount in a readable format
         member a.Html =
             match a with
-            | Percentage (Percent percent, restriction, rounding) ->
-                $"{percent} %%, {restriction}, {rounding}"
+            | Percentage (Percent percent, restriction) ->
+                $"{percent} %%, {restriction}"
             | Simple simple ->
                 $"{Cent.toDecimal simple:N2}"
 
@@ -237,10 +237,9 @@ module Calculation =
         /// calculates the total amount based on any restrictions
         let total (baseValue: int64<Cent>) amount =
             match amount with
-            | Amount.Percentage (percent, restriction, rounding) ->
+            | Amount.Percentage (percent, restriction) ->
                 decimal baseValue * Percent.toDecimal percent
                 |> Restriction.calculate restriction
-                |> Rounding.round rounding
             | Amount.Simple simple ->
                 decimal simple
             |> ( * ) 1m<Cent>
@@ -294,7 +293,7 @@ module Calculation =
         /// optionally relaxing the tolerance until a solution is found
         /// note: the generator function should return a tuple of the result and a relevant value (as the result is converging on zero it is not a very relevant value)
         let solveBisection (generator: decimal -> (decimal * decimal)) (iterationLimit: uint) initialGuess targetTolerance (toleranceSteps: ToleranceSteps) =
-            let initialLowerBound, initialUpperBound = initialGuess * 0.95m, initialGuess * 1.05m
+            let initialLowerBound, initialUpperBound = initialGuess * 0.25m, initialGuess * 4m
             // recursively iterate through possible solutions
             let rec loop iteration lowerBound upperBound tolerance =
                 // find the midpoint of the bounds
@@ -327,7 +326,7 @@ module Calculation =
                 // otherwise, increment the tolerance limit and try again
                 else
                     let newTolerance = min toleranceSteps.Max (tolerance + toleranceSteps.Step)
-                    let newLowerBound, newUpperBound = midpoint - newTolerance, midpoint * newTolerance
+                    let newLowerBound, newUpperBound = midpoint - newTolerance, midpoint + newTolerance
                     loop 0 newLowerBound newUpperBound newTolerance
             // start the first iteration
             loop 0 initialLowerBound initialUpperBound toleranceSteps.Min
@@ -375,3 +374,10 @@ module Calculation =
             |> Array.map(fun (k, v) -> k, Array.collect snd v)
             // convert to a map
             |> Map.ofArray
+
+    /// wrapper to extract APR value from solution
+    let getAprOr defaultValue = function
+        | Solution.Found(apr, _, _) ->
+            apr
+        | _ ->
+            defaultValue

@@ -14,8 +14,8 @@ module QuoteTests =
     open Quotes
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     [<Fact>]
@@ -34,6 +34,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -41,7 +42,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -72,8 +73,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 57<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 57<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote = 
@@ -101,8 +102,6 @@ module QuoteTests =
                 NetEffect = 1969_72L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 3_71.12573150m<Cent>
                 NewInterest = 3_71.12573150m<Cent>
                 NewCharges = [||]
@@ -137,6 +136,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -144,7 +144,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -175,8 +175,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -202,8 +202,6 @@ module QuoteTests =
                 NetEffect = 2026_50L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 2_78.34429863m<Cent>
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
@@ -238,6 +236,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -245,7 +244,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -276,8 +275,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -303,8 +302,6 @@ module QuoteTests =
                 NetEffect = 2026_50L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 2_78.34429863m<Cent>
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
@@ -339,6 +336,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -356,7 +354,7 @@ module QuoteTests =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown); DailyAmount = ValueNone }
+                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -369,8 +367,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 3<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 3<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -396,8 +394,6 @@ module QuoteTests =
                 NetEffect = 1200_00L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 0m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
@@ -432,6 +428,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -449,7 +446,7 @@ module QuoteTests =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown); DailyAmount = ValueNone }
+                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = ValueNone }
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
@@ -462,8 +459,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 4<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 4<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -489,8 +486,6 @@ module QuoteTests =
                 NetEffect = 1238_40L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 38_40m<Cent>
                 NewInterest = 38_40m<Cent>
                 NewCharges = [||]
@@ -525,6 +520,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -532,7 +528,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -563,8 +559,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 60<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -590,8 +586,6 @@ module QuoteTests =
                 NetEffect = 3420_03L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 2_78.34429863m<Cent>
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
@@ -626,6 +620,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -633,7 +628,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -665,9 +660,9 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
 
         let expected =
             {
@@ -681,8 +676,6 @@ module QuoteTests =
                 NetEffect = 323_15L<Cent>
                 PaymentStatus = NotYetDue
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 8_55.69209452m<Cent>
                 NewInterest = 8_55.69209452m<Cent>
                 NewCharges = [||]
@@ -717,6 +710,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundDown
@@ -724,7 +718,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -761,7 +755,7 @@ module QuoteTests =
             // let quoteResult =
             //     quote
             //     |> ValueOption.map(fun q ->
-            //         let paymentQuote = q.RevisedSchedule.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
+            //         let paymentQuote = q.RevisedSchedule |> fst |> _.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
             //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled)
             //     )
             ValueNone // not a single item to be returned, as the result is a sum of items
@@ -787,6 +781,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -794,7 +789,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -816,8 +811,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 181<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 181<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -843,8 +838,6 @@ module QuoteTests =
                 NetEffect = 1311_67L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 16_35.61643835m<Cent>
                 NewInterest = 16_35.61643835m<Cent>
                 NewCharges = [||]
@@ -879,6 +872,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -886,7 +880,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -916,8 +910,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 388<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 388<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -943,8 +937,6 @@ module QuoteTests =
                 NetEffect = 1261_73L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 75_11.98884657m<Cent>
                 NewInterest = 75_11.98884657m<Cent>
                 NewCharges = [||]
@@ -979,6 +971,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -986,7 +979,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1014,8 +1007,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 72<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 72<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1041,8 +1034,6 @@ module QuoteTests =
                 NetEffect = 973_53L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 1_04.87518082m<Cent>
                 NewInterest = 1_04.87518082m<Cent>
                 NewCharges = [||]
@@ -1077,6 +1068,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1101,8 +1093,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 30<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 30<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1128,8 +1120,6 @@ module QuoteTests =
                 NetEffect = 495_76L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 95_76m<Cent>
                 NewInterest = 95_76m<Cent>
                 NewCharges = [||]
@@ -1162,6 +1152,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1198,8 +1189,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1225,8 +1216,6 @@ module QuoteTests =
                 NetEffect = 429_24L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 76_24.800m<Cent>
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
@@ -1259,6 +1248,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1295,8 +1285,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1322,8 +1312,6 @@ module QuoteTests =
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 79_07.200m<Cent>
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
@@ -1356,6 +1344,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1392,8 +1381,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1419,8 +1408,6 @@ module QuoteTests =
                 NetEffect = 434_89L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 2_82.400m<Cent>
                 NewInterest = 2_82.400m<Cent>
                 NewCharges = [||]
@@ -1453,6 +1440,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1489,8 +1477,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 138<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 138<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1516,8 +1504,6 @@ module QuoteTests =
                 NetEffect = 453_36L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 11_29.600m<Cent>
                 NewInterest = 11_29.600m<Cent>
                 NewCharges = [||]
@@ -1550,6 +1536,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1586,8 +1573,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 133<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1613,8 +1600,6 @@ module QuoteTests =
                 NetEffect = 429_24L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 76_24.800m<Cent>
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
@@ -1647,6 +1632,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1684,8 +1670,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 134<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1711,8 +1697,6 @@ module QuoteTests =
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 79_07.200m<Cent>
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
@@ -1745,6 +1729,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1782,8 +1767,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 135<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1809,8 +1794,6 @@ module QuoteTests =
                 NetEffect = -67_95L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = -1.48887672M<Cent>
                 NewInterest = -1.48887672M<Cent>
                 NewCharges = [||]
@@ -1843,6 +1826,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1880,8 +1864,8 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-            let item = quote.RevisedSchedule.ScheduleItems |> Map.find 461<OffsetDay>
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            let item = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 461<OffsetDay>
             quote.QuoteResult, item
 
         let paymentQuote =
@@ -1907,8 +1891,6 @@ module QuoteTests =
                 NetEffect = -72_80L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = -4_86.86268494M<Cent>
                 NewInterest = -4_86.86268494M<Cent>
                 NewCharges = [||]
@@ -1941,6 +1923,7 @@ module QuoteTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1974,7 +1957,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2001,6 +1984,7 @@ module QuoteTests =
             Principal = 230_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2029,7 +2013,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2056,6 +2040,7 @@ module QuoteTests =
             Principal = 230_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2084,7 +2069,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2111,6 +2096,7 @@ module QuoteTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2140,7 +2126,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2167,6 +2153,7 @@ module QuoteTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2195,7 +2182,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -2222,6 +2209,7 @@ module QuoteTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -2250,7 +2238,7 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =

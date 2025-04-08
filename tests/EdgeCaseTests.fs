@@ -16,8 +16,8 @@ module EdgeCaseTests =
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     [<Fact>]
@@ -35,6 +35,7 @@ module EdgeCaseTests =
                 104<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40L<Cent>) ValueNone
             ]
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -42,7 +43,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -66,7 +67,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -98,6 +99,7 @@ module EdgeCaseTests =
                 105<OffsetDay>, ScheduledPayment.quick (ValueSome 11500L<Cent>) ValueNone
             ]
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -105,7 +107,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -129,7 +131,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -161,6 +163,7 @@ module EdgeCaseTests =
                 104<OffsetDay>, ScheduledPayment.quick (ValueSome 34350L<Cent>) ValueNone
             ]
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -168,7 +171,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -192,7 +195,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -226,6 +229,7 @@ module EdgeCaseTests =
                 245<OffsetDay>, ScheduledPayment.quick (ValueSome 27600L<Cent>) ValueNone
             ]
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -233,7 +237,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -327,7 +331,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -361,6 +365,7 @@ module EdgeCaseTests =
                 245<OffsetDay>, ScheduledPayment.quick (ValueSome 27600L<Cent>) ValueNone
             ]
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -368,7 +373,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -462,7 +467,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -490,6 +495,7 @@ module EdgeCaseTests =
             Principal = 500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 7, 15); PaymentCount = 6; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -591,7 +597,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -618,6 +624,7 @@ module EdgeCaseTests =
             Principal = 150000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 1, 7); PaymentCount = 6; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -647,7 +654,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -675,6 +682,7 @@ module EdgeCaseTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -715,11 +723,11 @@ module EdgeCaseTests =
             SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
-        let result = reschedule sp rp actualPayments
+        let schedules = reschedule sp rp actualPayments
 
-        result |> snd |> Schedule.outputHtmlToFile title description sp
+        schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
 
-        let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -732,8 +740,6 @@ module EdgeCaseTests =
             NetEffect = 83_74L<Cent>
             PaymentStatus = Generated
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 4_32.256m<Cent>
             NewInterest = 4_32.256m<Cent>
             NewCharges = [||]
@@ -762,6 +768,7 @@ module EdgeCaseTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -802,11 +809,11 @@ module EdgeCaseTests =
             SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
-        let result = reschedule sp rp actualPayments
+        let schedules = reschedule sp rp actualPayments
 
-        result |> snd |> Schedule.outputHtmlToFile title description sp
+        schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
 
-        let actual = result |> snd |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -819,8 +826,6 @@ module EdgeCaseTests =
             NetEffect = 10_19L<Cent>
             PaymentStatus = Generated
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 52.608m<Cent>
             NewInterest = 52.608m<Cent>
             NewCharges = [||]
@@ -849,6 +854,7 @@ module EdgeCaseTests =
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = Duration.Unlimited }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -874,13 +880,13 @@ module EdgeCaseTests =
             21<OffsetDay>, [| ActualPayment.quickConfirmed 181_01L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 97<OffsetDay>, {
             OffsetDate = Date(2023, 8, 10)
@@ -893,8 +899,6 @@ module EdgeCaseTests =
             NetEffect = 0L<Cent>
             PaymentStatus = NoLongerRequired
             BalanceStatus = RefundDue
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = -8.79210959m<Cent>
             NewInterest = -8.79210959m<Cent>
             NewCharges = [||]

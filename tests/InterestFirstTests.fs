@@ -21,6 +21,7 @@ module InterestFirstTests =
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2); PaymentCount = 5; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -32,7 +33,7 @@ module InterestFirstTests =
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
-                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding) }
+                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
@@ -48,9 +49,9 @@ module InterestFirstTests =
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             SimpleSchedule.outputHtmlToFile title description sp schedule
-            schedule.LevelPayment, schedule.FinalPayment
+            schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
         let expected = 319_26L<Cent>, 319_23L<Cent>
 
@@ -64,13 +65,13 @@ module InterestFirstTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalInterestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let finalInterestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
 
         finalInterestBalance |> should equal 1000_00m<Cent>
 
@@ -81,11 +82,11 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             SimpleSchedule.outputHtmlToFile title description sp schedule
-            schedule.LevelPayment, schedule.FinalPayment
+            schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
-        let expected = 367_73L<Cent>, 367_72L<Cent>
+        let expected = 367_73L<Cent>, 367_71L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -96,13 +97,13 @@ module InterestFirstTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome 2000_00L<Cent>)
 
@@ -118,15 +119,15 @@ module InterestFirstTests =
                 17<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |] //all
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
-        totalInterest |> should equal 838_64L<Cent>
+        totalInterest |> should equal 838_63L<Cent>
 
     [<Fact>]
     let InterestFirstTest005 () =
@@ -143,13 +144,13 @@ module InterestFirstTests =
                 5<OffsetDay>, [| ActualPayment.quickConfirmed 367_72L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 23_88L<Cent>
 
@@ -174,13 +175,13 @@ module InterestFirstTests =
                 168<OffsetDay>, [| ActualPayment.quickConfirmed 810_18L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalPrincipalBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let finalPrincipalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
 
         finalPrincipalBalance |> should equal 0L<Cent>
 
@@ -204,15 +205,15 @@ module InterestFirstTests =
                 35<OffsetDay>, [| ActualPayment.quickConfirmed 294_91L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 650_63L<Cent>)
+        finalSettlementFigure |> should equal (ValueSome 650_64L<Cent>)
 
     [<Fact>]
     let InterestFirstTest008 () =
@@ -229,15 +230,15 @@ module InterestFirstTests =
                 132<OffsetDay>, [| ActualPayment.quickConfirmed 367_72L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
-        totalInterest |> should equal 838_64L<Cent>
+        totalInterest |> should equal 838_63L<Cent>
 
     [<Fact>]
     let InterestFirstTest009 () =
@@ -250,15 +251,15 @@ module InterestFirstTests =
                 1<OffsetDay>, [| ActualPayment.quickConfirmed 1007_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 737_36L<Cent>)
+        finalSettlementFigure |> should equal (ValueSome 737_35L<Cent>)
 
     [<Fact>]
     let InterestFirstTest010 () =
@@ -271,13 +272,13 @@ module InterestFirstTests =
                 1<OffsetDay>, [| ActualPayment.quickConfirmed 1007_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterest |> should equal 14_65L<Cent>
 
@@ -292,13 +293,13 @@ module InterestFirstTests =
                 10<OffsetDay>, [| ActualPayment.quickConfirmed 1000_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterest = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
         totalInterest |> should equal -25_24L<Cent>
 
     [<Fact>]
@@ -316,13 +317,13 @@ module InterestFirstTests =
                 (Date(2022,  7, 15) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.quickConfirmed 204_80L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome -324_57L<Cent>)
 
@@ -340,13 +341,13 @@ module InterestFirstTests =
                 (Date(2023, 10, 18) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.quickConfirmed  88_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
 
@@ -364,13 +365,13 @@ module InterestFirstTests =
                 (Date(2023, 10, 18) |> OffsetDay.fromDate sp.StartDate), [| ActualPayment.quickConfirmed 100_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
 
         finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, ValueSome -12_78L<Cent>)
 
@@ -385,13 +386,13 @@ module InterestFirstTests =
                 1<OffsetDay>, [| ActualPayment.quickConfirmed 1007_00L<Cent>; ActualPayment.quickConfirmed 2_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let finalSettlementFigure = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
+        let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
         finalSettlementFigure |> should equal (ValueSome -1_22L<Cent>)
 
@@ -403,15 +404,15 @@ module InterestFirstTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
+        let initialInterestBalance = schedules.AmortisationSchedule.ScheduleItems[0<OffsetDay>].InterestBalance
 
-        initialInterestBalance |> should equal 362_34m<Cent>
+        initialInterestBalance |> should equal 362_35m<Cent>
 
     [<Fact>]
     let InterestFirstTest017 () =
@@ -421,15 +422,15 @@ module InterestFirstTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let initialInterestBalance = schedule.ScheduleItems[0<OffsetDay>].InterestBalance
+        let initialInterestBalance = schedules.AmortisationSchedule.ScheduleItems[0<OffsetDay>].InterestBalance
         
-        initialInterestBalance |> should equal 362_34m<Cent>
+        initialInterestBalance |> should equal 362_35m<Cent>
 
     [<Fact>]
     let InterestFirstTest018 () =
@@ -630,13 +631,13 @@ module InterestFirstTests =
             |]
             |> Map.ofArrayWithMerge
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule |> Schedule.outputHtmlToFile title description sp
+        schedules |> Schedule.outputHtmlToFile title description sp
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
@@ -684,13 +685,13 @@ module InterestFirstTests =
                 314<OffsetDay>, [| ActualPayment.quickConfirmed 25000L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 740_00L<Cent>
 
@@ -712,13 +713,13 @@ module InterestFirstTests =
             |]
             |> Map.ofArray
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedule |> Schedule.outputHtmlToFile title description sp
+        schedules |> Schedule.outputHtmlToFile title description sp
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
@@ -739,13 +740,13 @@ module InterestFirstTests =
                 20<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 16_00L<Cent>
 
@@ -777,13 +778,13 @@ module InterestFirstTests =
                 305<OffsetDay>, [| ActualPayment.quickConfirmed 16678L<Cent>  |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 340_00L<Cent>
 
@@ -818,13 +819,13 @@ module InterestFirstTests =
                 426<OffsetDay>, [| ActualPayment.quickFailed 20000L<Cent> [||]; ActualPayment.quickConfirmed 20000L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 1_500_00L<Cent>
 
@@ -886,13 +887,13 @@ module InterestFirstTests =
                 1316<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>
 
@@ -953,12 +954,12 @@ module InterestFirstTests =
                 1316<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
             ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let totalInterestPortions = schedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+        let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
         totalInterestPortions |> should equal 350_00L<Cent>

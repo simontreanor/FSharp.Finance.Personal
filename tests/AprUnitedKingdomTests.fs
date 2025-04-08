@@ -10,6 +10,7 @@ open FSharp.Finance.Personal
 
 module AprUnitedKingdomTests =
 
+    open Amortisation
     open Apr
     open Calculation
     open DateDay
@@ -21,19 +22,19 @@ module AprUnitedKingdomTests =
         [<Fact>]
         let ``APR calculation 1 payment 0L<Cent>`` () =
             UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [| { TransferType = Payment; TransferDate = Date(2012, 10, 10); Value = 500_00L<Cent> } |]
-            |> Util.getAprOr -1m
+            |> getAprOr -1m
             |> should (equalWithin 0.001) 0m
 
         [<Fact>] 
         let ``APR calculation 1 payment`` () =
             UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [| { TransferType = Payment; TransferDate = Date(2012, 10, 15); Value = 510_00L<Cent> } |]
-            |> Util.getAprOr 0m
+            |> getAprOr 0m
             |> should (equalWithin 0.001) (Percent 324.436m |> Percent.toDecimal)
 
         [<Fact>] 
         let ``APR calculation 2 payments`` () =
             UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [| { TransferType = Payment; TransferDate = Date(2012, 11, 10); Value = 270_00L<Cent> }; { TransferType = Payment; TransferDate = Date(2012, 12, 10); Value = 270_00L<Cent> } |]
-            |> Util.getAprOr 0m
+            |> getAprOr 0m
             |> should (equalWithin 0.001) (Percent 84.63m |> Percent.toDecimal)
 
     let getScheduleParameters (startDate: Date) paymentCount firstPaymentDay interestMethod applyInterestCap =
@@ -41,21 +42,22 @@ module AprUnitedKingdomTests =
         let interestCap =
             if applyInterestCap then
                 {
-                    TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, RoundDown))
+                    TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+                    DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
                 } : Interest.Cap
             else
                 Interest.Cap.Zero
         {
             AsOfDate = startDate
             StartDate = startDate
-            Principal = 500_00L<Cent>
+            Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = UnitPeriod.Config.defaultMonthly 1 firstPaymentDate
                 PaymentCount = paymentCount
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -72,7 +74,7 @@ module AprUnitedKingdomTests =
             }
             InterestConfig = {
                 Method = interestMethod
-                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily (Percent 0.798m)
                 Cap = interestCap
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
@@ -86,8 +88,12 @@ module AprUnitedKingdomTests =
         let tableCells firstPaymentDay =
             paymentCounts
             |> Array.map(fun paymentCount ->
-                let schedule = calculate (getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap) BelowZero
-                $"<td>{snd schedule.Apr}</td>"
+                let sp = getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap
+                let schedules = Amortisation.generate sp ValueNone false Map.empty
+
+                Schedule.outputHtmlToFile $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp schedules
+
+                $"<td>{schedules.AmortisationSchedule.ScheduleStats.FinalApr}</td>"
             )
             |> String.concat ""
             |> fun s -> $"<td>{firstPaymentDay}</td>{s}"
@@ -161,8 +167,8 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules
 
     [<Fact>] 
     let Amortisation_p6_fp24_AfterAprJump () =
@@ -171,8 +177,8 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules
 
     [<Fact>] 
     let AmortisationNoInterestCap_p6_fp23_BeforeAprJump () =
@@ -181,8 +187,8 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules
 
     [<Fact>] 
     let AmortisationNoInterestCap_p6_fp24_AfterAprJump () =
@@ -191,5 +197,5 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules

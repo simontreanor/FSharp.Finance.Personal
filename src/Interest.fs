@@ -68,17 +68,29 @@ module Interest =
             Cap.TotalAmount = ValueNone
             Cap.DailyAmount = ValueNone
         }
-        /// calculates the total interest cap
-        let total (initialPrincipal: int64<Cent>) = function
-            | ValueSome amount -> Amount.total initialPrincipal amount |> max 0m<Cent>
-            | ValueNone -> decimal Int64.MaxValue * 1m<Cent>
+
+        /// if the base value plus the added value exceeds the cap total, return the difference between the cap total and the base value
+        let cappedAddedValue capAmount principalBalance baseValue addedValue =
+            match capAmount with
+            | ValueSome amount ->
+                let capTotal = Amount.total principalBalance amount |> max 0m<Cent>
+                if baseValue + addedValue > capTotal then
+                    capTotal - baseValue
+                else
+                    addedValue
+            | ValueNone ->
+                addedValue
 
     /// a promotional interest rate valid during the specified date range
-    [<RequireQualifiedAccess; Struct>]
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type PromotionalRate = {
         DateRange: DateRange
         Rate: Rate
     }
+    with
+        /// HTML formatting to display the cap in a readable format
+        member c.Html =
+            $"{c.DateRange} at {c.Rate}"
     
     /// a promotional interest rate valid during the specified date range
     module PromotionalRate =
@@ -166,16 +178,12 @@ module Interest =
         )
 
     /// calculates the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
-    let calculate (balance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
-        let dailyCap = Cap.total balance dailyInterestCap
-
+    let calculate (principalBalance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
         dailyRates
         |> Array.sumBy (fun dr ->
-            dr.InterestRate
-            |> Rate.daily
-            |> Percent.toDecimal
-            |> fun r -> decimal balance * r * 1m<Cent>
-            |> min dailyCap
+            let rate = dr.InterestRate |> Rate.daily |> Percent.toDecimal
+            let interest = decimal principalBalance * rate * 1m<Cent>
+            Cap.cappedAddedValue dailyInterestCap principalBalance 0m<Cent> interest
         )
         |> Cent.roundTo interestRounding 8
 
@@ -187,10 +195,10 @@ module Interest =
             let round = Cent.roundTo (RoundWith MidpointRounding.AwayFromZero) 2
             let sum1 =
                 [1 .. m]
-                |> List.sumBy(fun i -> A[i] * ((1m + r) |> powi a[i] |> decimal) |> round)
+                |> List.sumBy(fun i -> A[i] * (1m + r |> powi a[i] |> decimal) |> round)
             let sum2 =
                 [1 .. n]
-                |> List.sumBy(fun j -> B[j] * ((1m + r) |> powi b[j] |> decimal) |> round)
+                |> List.sumBy(fun j -> B[j] * (1m + r |> powi b[j] |> decimal) |> round)
             sum1 - sum2
 
     /// calculates the amount of rebate due following an early settlement
@@ -199,7 +207,7 @@ module Interest =
             0L<Cent>
         else
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
-            let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
+            let paymentMap = payments |> Array.map(fun (i, p) -> i, decimal p * 1m<Cent>) |> Map.ofArray
             let aprUnitPeriodRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
             let advanceCount = 1
             let paymentCount = payments |> Array.length |> min settlementPeriod

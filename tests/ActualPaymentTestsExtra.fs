@@ -15,8 +15,8 @@ module ActualPaymentTestsExtra =
     open Rescheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
@@ -40,6 +40,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -47,7 +48,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -72,12 +73,12 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 131<OffsetDay>, {
             OffsetDate = Date(2023, 12, 1)
@@ -90,8 +91,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 407_64L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 3_30.67257534m<Cent>
             NewInterest = 3_30.67257534m<Cent>
             NewCharges = [||]
@@ -124,6 +123,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -131,7 +131,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -160,9 +160,9 @@ module ActualPaymentTestsExtra =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 172<OffsetDay>, {
             OffsetDate = Date(2022, 8, 27)
@@ -175,8 +175,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 170_04L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 64.65046575m<Cent>
             NewInterest = 64.65046575m<Cent>
             NewCharges = [||]
@@ -209,6 +207,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -216,7 +215,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -257,9 +256,9 @@ module ActualPaymentTestsExtra =
                 ChargeHolidays = [||]
                 SettlementDay = ValueNone
             }
-            let oldSchedule, newSchedule = reschedule sp rp actualPayments
-            newSchedule |> Schedule.outputHtmlToFile title description sp
-            newSchedule.ScheduleItems
+            let schedules = reschedule sp rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1969<OffsetDay>, {
@@ -273,8 +272,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 9_80L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 3.72866027m<Cent>
             NewInterest = 3.72866027m<Cent>
             NewCharges = [||]
@@ -307,6 +304,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -314,7 +312,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -339,12 +337,12 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate sp BelowZero
+            let schedule = Scheduling.calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 1025<OffsetDay>, {
             OffsetDate = Date(2026, 8, 27)
@@ -357,8 +355,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 137_36L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
@@ -391,6 +387,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -418,12 +415,12 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate sp BelowZero
+            let schedule = Scheduling.calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 185<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
@@ -436,8 +433,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 51_53L<Cent>
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 9_43.040m<Cent>
             NewInterest = 9_43.040m<Cent>
             NewCharges = [||]
@@ -470,6 +465,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -477,7 +473,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -503,9 +499,9 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
             OffsetDate = Date(2022, 7, 30)
@@ -518,8 +514,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 1_28.41170136m<Cent>
             NewInterest = 1_28.41170136m<Cent>
             NewCharges = [||]
@@ -552,6 +546,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -559,7 +554,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -598,9 +593,9 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
-            let oldSchedule, newSchedule = rollOver sp rp actualPayments
-            newSchedule |> Schedule.outputHtmlToFile title description sp
-            newSchedule.ScheduleItems
+            let schedules = rollOver sp rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1793<OffsetDay>, {
@@ -614,8 +609,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 7.11384109m<Cent>
             NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
@@ -648,6 +641,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -655,7 +649,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit, RoundDown)) |]
+                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -694,9 +688,9 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
-            let oldSchedule, newSchedule = rollOver sp rp actualPayments
-            newSchedule |> Schedule.outputHtmlToFile title description sp
-            newSchedule.ScheduleItems
+            let schedules = rollOver sp rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1793<OffsetDay>, {
@@ -710,8 +704,6 @@ module ActualPaymentTestsExtra =
             NetEffect = 18_71L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 7.11384109m<Cent>
             NewInterest = 7.11384109m<Cent>
             NewCharges = [||]

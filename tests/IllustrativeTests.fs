@@ -15,8 +15,8 @@ module IllustrativeTests =
     open Scheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     let quickActualPayments (days: int array) levelPayment finalPayment =
@@ -31,7 +31,7 @@ module IllustrativeTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentValue window contractualInterest interestAdjustment interestPortion principalPortion =
+    let quickExpectedFinalItem date offsetDay paymentValue window interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
             OffsetDate = date
@@ -44,8 +44,6 @@ module IllustrativeTests =
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = contractualInterest
             SimpleInterest = interestAdjustment
             NewInterest = interestAdjustment
             NewCharges = [||]
@@ -76,6 +74,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -102,40 +101,38 @@ module IllustrativeTests =
             }
         }
 
-        let actualPayments = quickActualPayments [| 30; 60; 91; 121 |] 181_37L<Cent> 181_36L<Cent>
+        let actualPayments = quickActualPayments [| 30; 60; 91; 121 |] 181_38L<Cent> 181_34L<Cent>
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Original = ValueSome 181_34L<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
                 Window = 4
-                PaymentDue = 181_36L<Cent>
-                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
+                PaymentDue = 181_34L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 181_36L<Cent>
+                NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 43_52L<Cent>
-                ContractualInterest = 0m<Cent>
-                SimpleInterest = 43_52.64m<Cent>
+                SimpleInterest = 43_52.16m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 181_36L<Cent>
+                PrincipalPortion = 181_34L<Cent>
                 FeesPortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
@@ -163,6 +160,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -189,40 +187,38 @@ module IllustrativeTests =
             }
         }
 
-        let actualPayments = quickActualPayments [| 59; 60; 91; 121 |] 181_37L<Cent> 181_36L<Cent>
+        let actualPayments = quickActualPayments [| 59; 60; 91; 121 |] 181_38L<Cent> 181_34L<Cent>
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Original = ValueSome 181_34L<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
                 Window = 4
-                PaymentDue = 181_36L<Cent>
-                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
+                PaymentDue = 181_34L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 181_36L<Cent>
+                NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = ClosedBalance
-                OriginalSimpleInterest = 43_52L<Cent>
-                ContractualInterest = 0m<Cent>
-                SimpleInterest = 43_52.64m<Cent>
+                SimpleInterest = 43_52.16m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 181_36L<Cent>
+                PrincipalPortion = 181_34L<Cent>
                 FeesPortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
@@ -250,6 +246,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -276,49 +273,47 @@ module IllustrativeTests =
             }
         }
 
-        let actualPayments = quickActualPayments [| 60; 61; 91; 121 |] 181_37L<Cent> 181_36L<Cent>
+        let actualPayments = quickActualPayments [| 60; 61; 91; 121 |] 181_38L<Cent> 181_34L<Cent>
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome { Value = 181_36L<Cent>; SimpleInterest = 43_52L<Cent>; ContractualInterest = 0m<Cent> }
+                    Original = ValueSome 181_34L<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
                 Window = 4
-                PaymentDue = 181_36L<Cent>
-                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_36L<Cent>; Metadata = Map.empty } |]
+                PaymentDue = 181_34L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>; Metadata = Map.empty } |]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 181_36L<Cent>
+                NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 43_52L<Cent>
-                ContractualInterest = 0m<Cent>
-                SimpleInterest = 43_52.64m<Cent>
-                NewInterest = 31.16m<Cent>
+                SimpleInterest = 43_52.16m<Cent>
+                NewInterest = 29.44m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 181_05L<Cent>
                 FeesPortion = 0L<Cent>
-                InterestPortion = 31L<Cent>
+                InterestPortion = 29L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeesRefund = 0L<Cent>
-                PrincipalBalance = 31L<Cent>
+                PrincipalBalance = 29L<Cent>
                 FeesBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 31L<Cent>
+                SettlementFigure = ValueSome 29L<Cent>
                 FeesRefundIfSettled = 0L<Cent>
             }
         actual |> should equal expected

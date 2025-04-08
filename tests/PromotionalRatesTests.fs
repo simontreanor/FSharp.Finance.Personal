@@ -13,8 +13,8 @@ module PromotionalRatesTests =
     open Scheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     let startDate = Date(2024, 8, 23)
@@ -28,7 +28,8 @@ module PromotionalRatesTests =
                 PaymentCount = 4
                 MaxDuration = Duration.Maximum (180<DurationDay>, startDate)
             }
-            PaymentConfig = { 
+            PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -41,8 +42,8 @@ module PromotionalRatesTests =
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
-                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
+                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = promotionalRates |> ValueOption.defaultValue [||]
@@ -60,13 +61,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 323_20m<Cent>
 
     [<Fact>]
@@ -81,13 +82,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 224_00m<Cent>
 
     [<Fact>]
@@ -102,13 +103,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let interestBalance = schedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 317_24.36164383m<Cent>
 
     [<Fact>]
@@ -124,6 +125,7 @@ module PromotionalRatesTests =
                 { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentValue = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
             |]
             PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -153,13 +155,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 7305<OffsetDay>, {
             OffsetDate = Date(2044, 4, 11)
@@ -172,8 +174,6 @@ module PromotionalRatesTests =
             NetEffect = 1523_25L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            OriginalSimpleInterest = 0L<Cent>
-            ContractualInterest = 0m<Cent>
             SimpleInterest = 10_26.07665657m<Cent>
             NewInterest = 10_26.07665657m<Cent>
             NewCharges = [||]

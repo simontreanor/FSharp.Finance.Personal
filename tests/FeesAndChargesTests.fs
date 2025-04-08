@@ -14,8 +14,8 @@ module FeesAndChargesTests =
     open Scheduling
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding))
+        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
     }
 
     module ChargesTests =
@@ -34,6 +34,7 @@ module FeesAndChargesTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -72,13 +73,13 @@ module FeesAndChargesTests =
                     125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
                 ]
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
@@ -91,8 +92,6 @@ module FeesAndChargesTests =
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 11256.472m<Cent>
                 NewInterest = 11256.472m<Cent>
                 NewCharges = [||]
@@ -125,6 +124,7 @@ module FeesAndChargesTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -163,13 +163,13 @@ module FeesAndChargesTests =
                     125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
                 ]
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
@@ -182,8 +182,6 @@ module FeesAndChargesTests =
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 10665.24m<Cent>
                 NewInterest = 10665.24m<Cent>
                 NewCharges = [||]
@@ -216,6 +214,7 @@ module FeesAndChargesTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -254,13 +253,13 @@ module FeesAndChargesTests =
                     125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
                 ]
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let actual = schedule.ScheduleItems |> Map.maxKeyValue
+            let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
             
             let expected = 125<OffsetDay>, {
                 OffsetDate = Date(2023, 3, 31)
@@ -273,8 +272,6 @@ module FeesAndChargesTests =
                 NetEffect = 456_84L<Cent>
                 PaymentStatus = PaymentMade
                 BalanceStatus = OpenBalance
-                OriginalSimpleInterest = 0L<Cent>
-                ContractualInterest = 0m<Cent>
                 SimpleInterest = 11552.088m<Cent>
                 NewInterest = 11552.088m<Cent>
                 NewCharges = [||]

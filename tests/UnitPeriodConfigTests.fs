@@ -58,6 +58,7 @@ module UnitPeriodConfigTests =
                     Principal = 100000L<Cent>
                     ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); PaymentCount = 12; MaxDuration = Duration.Unlimited }
                     PaymentConfig = {
+                        LevelPaymentOption = LowerFinalPayment
                         ScheduledPaymentOption = AsScheduled
                         CloseBalanceOption = LeaveOpenBalance
                         PaymentRounding = RoundUp
@@ -65,7 +66,7 @@ module UnitPeriodConfigTests =
                         PaymentTimeout = 3<DurationDay>
                     }
                     FeeConfig = {
-                        FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                        FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                         Rounding = RoundDown
                         FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                         SettlementRefund = Fee.SettlementRefund.ProRata
@@ -104,10 +105,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "56.513 %"
+            let expected = Percent 56.513m
             actual |> should equal expected
 
         [<Fact>]
@@ -120,6 +121,7 @@ module UnitPeriodConfigTests =
                 Principal = 70000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); PaymentCount = 12; MaxDuration = Duration.Unlimited }
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -127,7 +129,7 @@ module UnitPeriodConfigTests =
                     PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
-                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
@@ -165,10 +167,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "986.813 %"
+            let expected = Percent 986.813m
 
             actual |> should equal expected
 
@@ -186,6 +188,7 @@ module UnitPeriodConfigTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -193,7 +196,7 @@ module UnitPeriodConfigTests =
                     PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
-                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
@@ -253,10 +256,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "516.758 %"
+            let expected = Percent 516.758m
 
             actual |> should equal expected
 
@@ -274,6 +277,7 @@ module UnitPeriodConfigTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -281,7 +285,7 @@ module UnitPeriodConfigTests =
                     PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
-                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit, RoundDown)) |]
+                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
@@ -315,10 +319,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "930.559 %"
+            let expected = Percent 930.559m
 
             actual |> should equal expected
 
@@ -362,6 +366,7 @@ module UnitPeriodConfigTests =
                 Principal = 100000L<Cent>
                 ScheduleConfig = CustomSchedule originalScheduledPayments
                 PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -369,7 +374,7 @@ module UnitPeriodConfigTests =
                     PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = {
-                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit, RoundDown)) |]
+                    FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
@@ -436,9 +441,9 @@ module UnitPeriodConfigTests =
                                 fsr
                     }
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
-                quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "699.525 %"
+            let expected = Percent 699.525m
 
             actual |> should equal expected

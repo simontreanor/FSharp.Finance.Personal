@@ -36,7 +36,7 @@ module Rescheduling =
         let newPaymentSchedule =
             match rp.PaymentSchedule with
             | AutoGenerateSchedule _ ->
-                Scheduling.calculate { sp with ScheduleConfig = rp.PaymentSchedule } BelowZero
+                Scheduling.calculate { sp with ScheduleConfig = rp.PaymentSchedule }
                 |> _.Items
                 |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
                 |> Array.map(fun si -> si.Day, si.ScheduledPayment)
@@ -57,7 +57,7 @@ module Rescheduling =
 
         // append the new schedule to the old schedule up to the point of settlement
         let oldPaymentSchedule =
-            quote.RevisedSchedule.ScheduleItems
+            quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
             |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
             |> Map.map(fun _ si -> si.ScheduledPayment)
             |> Map.toArray
@@ -77,10 +77,10 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rescheduledSchedule = Amortisation.generate spNew rp.SettlementDay true actualPayments
+        let rescheduledSchedules = Amortisation.generate spNew rp.SettlementDay true actualPayments
 
         // return the results
-        quote.RevisedSchedule, rescheduledSchedule
+        {| OldSchedules = quote.RevisedSchedules; NewSchedules = rescheduledSchedules |}
 
     /// parameters for creating a rolled-over schedule
     [<RequireQualifiedAccess>]
@@ -145,7 +145,7 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rolledOverSchedule = Amortisation.generate spNew ValueNone true Map.empty
+        let rolledOverSchedules = Amortisation.generate spNew ValueNone true Map.empty
 
         // return the results
-        quote.RevisedSchedule, rolledOverSchedule
+        {| OldSchedules = quote.RevisedSchedules; NewSchedules = rolledOverSchedules |}
