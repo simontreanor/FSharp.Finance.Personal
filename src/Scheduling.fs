@@ -681,7 +681,7 @@ module Scheduling =
 
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: {| Iteration: int; InterestBalance: int64<Cent> |} voption) =
+    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: struct {| Iteration: int; InterestBalance: int64<Cent> |} voption) =
         if stateOption.IsNone then
             None
         elif Array.isEmpty paymentDays then
@@ -723,7 +723,7 @@ module Scheduling =
             if difference = 0 && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
                 Some (newSchedule, ValueNone)
             else
-                Some (newSchedule, ValueSome {| Iteration = state.Iteration + 1; InterestBalance = finalInterestTotal |})
+                Some (newSchedule, ValueSome struct {| Iteration = state.Iteration + 1; InterestBalance = finalInterestTotal |})
 
     // calculate the initial total interest accruing over the entire schedule
     // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
@@ -815,7 +815,7 @@ module Scheduling =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest
-                ValueSome {| Iteration = 0; InterestBalance = finalInterestTotal |}
+                ValueSome struct {| Iteration = 0; InterestBalance = finalInterestTotal |}
                 |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feesTotal paymentMap)
                 |> Array.last
             | _ ->
