@@ -517,10 +517,6 @@ module Scheduling =
         PrincipalTotal: int64<Cent>
         /// the total interest accrued
         InterestTotal: int64<Cent>
-        /// the APR according to the calculation method specified in the schedule parameters and based on the schedule being settled as agreed
-        InitialApr: Solution * Percent
-        /// the cost of borrowing, expressed as a ratio of interest to principal
-        InitialCostToBorrowingRatio: Percent
     }
 
     /// statistics resulting from the simple schedule calculations
@@ -533,17 +529,17 @@ module Scheduling =
         let toHtmlTable schedule =
             "<table>"
                 + "<tr>"
-                    + $"<td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
-                    + $"<td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>"
-                    + $"<td>Initial APR: <i>{schedule.InitialApr}</i></td>"
+                    + $"<td colspan='2'>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
                 + "</tr>"
                 + "<tr>"
                     + $"<td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>"
                     + $"<td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>"
-                    + $"<td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>"
                 + "</tr>"
                 + "<tr>"
+                    + $"<td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>"
                     + $"<td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>"
+                + "</tr>"
+                + "<tr>"
                     + $"<td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>"
                     + $"<td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>"
                 + "</tr>"
@@ -875,12 +871,6 @@ module Scheduling =
                     |> Array.sumBy ScheduledPayment.total
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
-                InitialApr = aprSolution, Apr.toPercent sp.InterestConfig.AprMethod aprSolution
-                InitialCostToBorrowingRatio =
-                    if principalTotal = 0L<Cent> then
-                        Percent 0m
-                    else
-                        decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
             }
         }
 
