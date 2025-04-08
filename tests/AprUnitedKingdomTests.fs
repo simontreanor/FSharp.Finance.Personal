@@ -56,7 +56,7 @@ module AprUnitedKingdomTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp

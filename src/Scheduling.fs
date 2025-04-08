@@ -328,9 +328,9 @@ module Scheduling =
         /// HTML formatting to display the level-payment option in a readable format
         member spo.Html =
             match spo with
-            | LowerFinalPayment -> "final payment lower than level payment"
-            | SimilarFinalPayment -> "final payment around the same as level payment"
-            | HigherFinalPayment -> "final payment higher than level payment"
+            | LowerFinalPayment -> "lower final payment"
+            | SimilarFinalPayment -> "similar final payment"
+            | HigherFinalPayment -> "higher final payment"
 
     /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
     module LevelPaymentOption =
@@ -391,7 +391,7 @@ module Scheduling =
     /// how to treat scheduled payments
     type PaymentConfig = {
         /// what tolerance to use for the final principal balance when calculating the level payments
-        Tolerance: LevelPaymentOption
+        LevelPaymentOption: LevelPaymentOption
         /// whether to modify scheduled payment amounts to keep the schedule on-track
         ScheduledPaymentOption: ScheduledPaymentOption
         /// whether to leave a final balance open or close it using various methods
@@ -419,6 +419,9 @@ module Scheduling =
                 + "</tr>"
                 + "<tr>"
                     + $"""<td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment.Html.Replace(" ", "&nbsp;")}</i></td>"""
+                + "</tr>"
+                + "<tr>"
+                    + $"""<td colspan='2'>level-payment option: <i>{paymentConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>"""
                 + "</tr>"
             + "</table>"
 
@@ -708,7 +711,7 @@ module Scheduling =
             let principalBalance = newSchedule |> Array.last |> _.PrincipalBalance
             let tolerance = int64 paymentCount * 1L<Cent>
             let minBalance, maxBalance =
-                match sp.PaymentConfig.Tolerance with
+                match sp.PaymentConfig.LevelPaymentOption with
                     | LowerFinalPayment ->
                         -tolerance, 0L<Cent>
                     | SimilarFinalPayment ->
@@ -790,7 +793,7 @@ module Scheduling =
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem
                 let iterationLimit = 100u
                 let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
-                match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance sp.PaymentConfig.Tolerance) toleranceSteps with
+                match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance sp.PaymentConfig.LevelPaymentOption) toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
                         generateItems paymentMap'

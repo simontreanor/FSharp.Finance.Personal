@@ -31,7 +31,7 @@ module ComplianceTests =
                     120<OffsetDay>, ScheduledPayment.quick (ValueSome 451_43L<Cent>) ValueNone
                 ]
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = NoRounding
@@ -145,7 +145,7 @@ module ComplianceTests =
                     107<OffsetDay>, ScheduledPayment.quick (ValueSome 209_40L<Cent>) ValueNone
                 ]
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = NoRounding

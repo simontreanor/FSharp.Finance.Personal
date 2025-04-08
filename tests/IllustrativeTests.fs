@@ -74,7 +74,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -160,7 +160,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -246,7 +246,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp

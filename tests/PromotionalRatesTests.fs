@@ -29,7 +29,7 @@ module PromotionalRatesTests =
                 MaxDuration = Duration.Maximum (180<DurationDay>, startDate)
             }
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -125,7 +125,7 @@ module PromotionalRatesTests =
                 { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentValue = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
             |]
             PaymentConfig = {
-                Tolerance = LowerFinalPayment
+                LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
