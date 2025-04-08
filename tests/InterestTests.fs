@@ -108,13 +108,13 @@ module InterestTests =
 
             let actualPayments = Map.empty
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
+            let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
             interestPortion |> should be (lessThanOrEqualTo 499_00L<Cent>)
 
@@ -154,13 +154,13 @@ module InterestTests =
 
             let actualPayments = Map.empty
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
+            let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
             interestPortion |> should be (lessThanOrEqualTo 616_01L<Cent>)
 
@@ -333,15 +333,15 @@ module InterestTests =
 
             let actualPayments = Map.empty
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp ValueNone true
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let levelPayment = schedule |> fst |> _.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let finalPayment = schedule |> fst |> _.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let levelPayment = schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let finalPayment = schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
@@ -352,15 +352,15 @@ module InterestTests =
 
             let actualPayments = Map.empty
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp ValueNone true
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let levelPayment = schedule |> fst |> _.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let finalPayment = schedule |> fst |> _.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
-            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let levelPayment = schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let finalPayment = schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
+            let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
             [ levelPayment; finalPayment; interestPortion ] |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
 
         [<Fact>]
@@ -385,12 +385,12 @@ module InterestTests =
                     365<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
                 ]
 
-            let schedule =
+            let schedules =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) true
 
-            Schedule.outputHtmlToFile title description sp schedule
+            Schedule.outputHtmlToFile title description sp schedules
 
-            let interestPortion = schedule |> fst |> _.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
             interestPortion |> should equal 598_08L<Cent>

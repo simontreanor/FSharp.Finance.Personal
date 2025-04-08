@@ -66,7 +66,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -129,7 +129,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -192,7 +192,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -327,7 +327,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -462,7 +462,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -591,7 +591,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -647,7 +647,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedule |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
             quote.QuoteResult
 
         let expected =
@@ -715,11 +715,11 @@ module EdgeCaseTests =
             SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
-        let result = reschedule sp rp actualPayments
+        let oldschedules, newSchedules = reschedule sp rp actualPayments
 
-        result |> snd |> Schedule.outputHtmlToFile title description sp
+        newSchedules |> Schedule.outputHtmlToFile title description sp
 
-        let actual = result |> snd |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = newSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -800,11 +800,11 @@ module EdgeCaseTests =
             SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
         }
 
-        let result = reschedule sp rp actualPayments
+        let oldSchedules, newSchedules = reschedule sp rp actualPayments
 
-        result |> snd |> Schedule.outputHtmlToFile title description sp
+        newSchedules |> Schedule.outputHtmlToFile title description sp
 
-        let actual = result |> snd |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = newSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 88<OffsetDay>, {
             OffsetDate = Date(2024, 4, 30)
@@ -870,13 +870,13 @@ module EdgeCaseTests =
             21<OffsetDay>, [| ActualPayment.quickConfirmed 181_01L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 97<OffsetDay>, {
             OffsetDate = Date(2023, 8, 10)

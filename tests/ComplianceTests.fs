@@ -62,13 +62,13 @@ module ComplianceTests =
             120<OffsetDay>, [| ActualPayment.quickConfirmed 451_43L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters1 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters1 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters1 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -82,13 +82,13 @@ module ComplianceTests =
             101<OffsetDay>, [| ActualPayment.quickConfirmed 350_31L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters1 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters1 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters1 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -101,13 +101,13 @@ module ComplianceTests =
             90<OffsetDay>, [| ActualPayment.quickConfirmed 794_55L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters1 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters1 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters1 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -121,13 +121,13 @@ module ComplianceTests =
             130<OffsetDay>, [| ActualPayment.quickConfirmed 505_60L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters1 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters1 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters1 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let startDate2 = Date(2021, 12, 14)
@@ -178,13 +178,13 @@ module ComplianceTests =
             107<OffsetDay>, [| ActualPayment.quickConfirmed 209_40L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters2 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters2 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters2 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -198,13 +198,13 @@ module ComplianceTests =
             91<OffsetDay>, [| ActualPayment.quickConfirmed 160_81L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters2 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters2 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters2 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -218,13 +218,13 @@ module ComplianceTests =
             122<OffsetDay>, [| ActualPayment.quickConfirmed 234_52L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters2 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters2 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters2 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters3 =
@@ -250,13 +250,13 @@ module ComplianceTests =
             107<OffsetDay>, [| ActualPayment.quickConfirmed 263_48L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters3 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters3 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters3 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -270,13 +270,13 @@ module ComplianceTests =
             91<OffsetDay>, [| ActualPayment.quickConfirmed 175_99L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters3 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters3 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters3 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -290,13 +290,13 @@ module ComplianceTests =
             122<OffsetDay>, [| ActualPayment.quickConfirmed 310_90L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters3 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters3 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters3 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters4 =
@@ -315,13 +315,13 @@ module ComplianceTests =
             107<OffsetDay>, [| ActualPayment.quickConfirmed 209_43L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters4 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters4 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters4 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -335,13 +335,13 @@ module ComplianceTests =
             91<OffsetDay>, [| ActualPayment.quickConfirmed 160_85L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters4 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters4 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters4 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -355,13 +355,13 @@ module ComplianceTests =
             122<OffsetDay>, [| ActualPayment.quickConfirmed 234_57L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters4 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters4 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters4 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters5 =
@@ -380,13 +380,13 @@ module ComplianceTests =
             107<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters5 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters5 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters5 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -400,13 +400,13 @@ module ComplianceTests =
             91<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters5 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters5 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters5 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal -38_00L<Cent>
 
     [<Fact>]
@@ -420,13 +420,13 @@ module ComplianceTests =
             122<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters5 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters5 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters5 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters6 =
@@ -451,13 +451,13 @@ module ComplianceTests =
             107<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters6 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters6 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters6 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -471,13 +471,13 @@ module ComplianceTests =
             91<OffsetDay>, [| ActualPayment.quickConfirmed 212_00L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters6 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters6 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters6 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
@@ -491,13 +491,13 @@ module ComplianceTests =
             122<OffsetDay>, [| ActualPayment.quickConfirmed 250_00L<Cent> |]
         ]
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate scheduleParameters6 ValueNone false
 
-        Schedule.outputHtmlToFile title description scheduleParameters6 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters6 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters7 =
@@ -518,9 +518,9 @@ module ComplianceTests =
         let title = "ComplianceTest019"
         let description = "Total repayable on interest-first loan with repayments starting on day 19 and total loan length 110 days"
 
-        let schedule = Amortisation.generate scheduleParameters7 ValueNone false Map.empty
+        let schedules = Amortisation.generate scheduleParameters7 ValueNone false Map.empty
 
-        Schedule.outputHtmlToFile title description scheduleParameters7 schedule
+        Schedule.outputHtmlToFile title description scheduleParameters7 schedules
 
-        let principalBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>

@@ -57,7 +57,7 @@ module Rescheduling =
 
         // append the new schedule to the old schedule up to the point of settlement
         let oldPaymentSchedule =
-            quote.RevisedSchedule |> fst |> _.ScheduleItems
+            quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
             |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
             |> Map.map(fun _ si -> si.ScheduledPayment)
             |> Map.toArray
@@ -80,7 +80,7 @@ module Rescheduling =
         let rescheduledSchedule = Amortisation.generate spNew rp.SettlementDay true actualPayments
 
         // return the results
-        quote.RevisedSchedule, rescheduledSchedule
+        quote.RevisedSchedules, rescheduledSchedule
 
     /// parameters for creating a rolled-over schedule
     [<RequireQualifiedAccess>]
@@ -148,4 +148,4 @@ module Rescheduling =
         let rolledOverSchedule = Amortisation.generate spNew ValueNone true Map.empty
 
         // return the results
-        quote.RevisedSchedule, rolledOverSchedule
+        quote.RevisedSchedules, rolledOverSchedule

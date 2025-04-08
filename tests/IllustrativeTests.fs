@@ -102,13 +102,13 @@ module IllustrativeTests =
 
         let actualPayments = quickActualPayments [| 30; 60; 91; 121 |] 181_37L<Cent> 181_36L<Cent>
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
@@ -187,13 +187,13 @@ module IllustrativeTests =
 
         let actualPayments = quickActualPayments [| 59; 60; 91; 121 |] 181_37L<Cent> 181_36L<Cent>
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {
@@ -272,13 +272,13 @@ module IllustrativeTests =
 
         let actualPayments = quickActualPayments [| 60; 61; 91; 121 |] 181_37L<Cent> 181_36L<Cent>
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
             121<OffsetDay>,
             {

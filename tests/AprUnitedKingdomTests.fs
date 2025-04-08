@@ -161,8 +161,8 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules
 
     [<Fact>] 
     let Amortisation_p6_fp24_AfterAprJump () =
@@ -171,8 +171,8 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules
 
     [<Fact>] 
     let AmortisationNoInterestCap_p6_fp23_BeforeAprJump () =
@@ -181,8 +181,8 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules
 
     [<Fact>] 
     let AmortisationNoInterestCap_p6_fp24_AfterAprJump () =
@@ -191,5 +191,5 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
-        let schedule = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedule
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        Amortisation.Schedule.outputHtmlToFile title description sp schedules

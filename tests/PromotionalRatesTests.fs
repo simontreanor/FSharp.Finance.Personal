@@ -60,13 +60,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let interestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 323_20m<Cent>
 
     [<Fact>]
@@ -81,13 +81,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let interestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 224_00m<Cent>
 
     [<Fact>]
@@ -102,13 +102,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let interestBalance = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
+        let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 317_24.36164383m<Cent>
 
     [<Fact>]
@@ -153,13 +153,13 @@ module PromotionalRatesTests =
 
         let actualPayments = Map.empty
 
-        let schedule =
+        let schedules =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedule
+        Schedule.outputHtmlToFile title description sp schedules
 
-        let actual = schedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 7305<OffsetDay>, {
             OffsetDate = Date(2044, 4, 11)

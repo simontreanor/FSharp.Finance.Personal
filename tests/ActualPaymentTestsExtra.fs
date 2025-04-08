@@ -75,9 +75,9 @@ module ActualPaymentTestsExtra =
             let schedule = calculate sp BelowZero
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 131<OffsetDay>, {
             OffsetDate = Date(2023, 12, 1)
@@ -158,9 +158,9 @@ module ActualPaymentTestsExtra =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 172<OffsetDay>, {
             OffsetDate = Date(2022, 8, 27)
@@ -253,9 +253,9 @@ module ActualPaymentTestsExtra =
                 ChargeHolidays = [||]
                 SettlementDay = ValueNone
             }
-            let oldSchedule, newSchedule = reschedule sp rp actualPayments
-            newSchedule |> Schedule.outputHtmlToFile title description sp
-            newSchedule |> fst |> _.ScheduleItems
+            let oldSchedules, newSchedules = reschedule sp rp actualPayments
+            newSchedules |> Schedule.outputHtmlToFile title description sp
+            newSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1969<OffsetDay>, {
@@ -336,9 +336,9 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate sp BelowZero
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 1025<OffsetDay>, {
             OffsetDate = Date(2026, 8, 27)
@@ -413,9 +413,9 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate sp BelowZero
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule |> fst |> _.ScheduleItems |> Map.maxKeyValue
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 185<OffsetDay>, {
             OffsetDate = Date(2023, 3, 15)
@@ -493,9 +493,9 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile title description sp
-            amortisationSchedule |> fst |> _.ScheduleItems |> Map.find 144<OffsetDay>
+            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
             OffsetDate = Date(2022, 7, 30)
@@ -586,9 +586,9 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
-            let oldSchedule, newSchedule = rollOver sp rp actualPayments
-            newSchedule |> Schedule.outputHtmlToFile title description sp
-            newSchedule |> fst |> _.ScheduleItems
+            let oldSchedules, newSchedules = rollOver sp rp actualPayments
+            newSchedules |> Schedule.outputHtmlToFile title description sp
+            newSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1793<OffsetDay>, {
@@ -680,9 +680,9 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
-            let oldSchedule, newSchedule = rollOver sp rp actualPayments
-            newSchedule |> Schedule.outputHtmlToFile title description sp
-            newSchedule |> fst |> _.ScheduleItems
+            let oldSchedules, newSchedules = rollOver sp rp actualPayments
+            newSchedules |> Schedule.outputHtmlToFile title description sp
+            newSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
         let expected = 1793<OffsetDay>, {
