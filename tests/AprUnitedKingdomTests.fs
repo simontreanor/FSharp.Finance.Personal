@@ -56,6 +56,7 @@ module AprUnitedKingdomTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -86,7 +87,7 @@ module AprUnitedKingdomTests =
         let tableCells firstPaymentDay =
             paymentCounts
             |> Array.map(fun paymentCount ->
-                let schedule = calculate (getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap) BelowZero
+                let schedule = getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap |> calculate
                 $"<td>{snd schedule.Stats.InitialApr}</td>"
             )
             |> String.concat ""

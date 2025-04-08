@@ -74,6 +74,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -159,6 +160,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -244,6 +246,7 @@ module IllustrativeTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp

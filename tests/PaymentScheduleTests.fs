@@ -31,6 +31,7 @@ module PaymentScheduleTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    Tolerance = BelowZero
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -66,7 +67,7 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Biweekly_1200_fp08_r11 () =
             let title = "PaymentScheduleTest_Biweekly_1200_fp08_r11"
             let sp = biweeklyParameters 1200_00L<Cent> 8<DurationDay>
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title "$1200 with short first period" sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -90,7 +91,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Biweekly_1200_fp14_r11"
             let description = "$1200 with first period equal to unit-period length"
             let sp = biweeklyParameters 1200_00L<Cent> 14<DurationDay>
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -114,7 +115,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Biweekly_1200_fp15_r11"
             let description = "$1200 with long first period"
             let sp = biweeklyParameters 1200_00L<Cent> 15<DurationDay>
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -147,6 +148,7 @@ module PaymentScheduleTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    Tolerance = BelowZero
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundWith MidpointRounding.AwayFromZero
@@ -172,7 +174,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp04_r5"
             let description = "£0100 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 100_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -197,7 +199,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp08_r5"
             let description = "£0100 with 08 days to first payment and 5 repayments"
             let sp = monthlyParameters 100_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -221,8 +223,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp12_r4 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp12_r4"
             let description = "£0100 with 12 days to first payment and 4 repayments"
-            let sp = monthlyParameters 100_00L<Cent> 12<DurationDay> 4
-            let actual = calculate sp AboveZero
+            let sp = { monthlyParameters 100_00L<Cent> 12<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AboveZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -247,7 +249,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp16_r4"
             let description = "£0100 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -271,8 +273,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp20_r4 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp20_r4"
             let description = "£0100 with 20 days to first payment and 4 repayments"
-            let sp = monthlyParameters 100_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 100_00L<Cent> 20<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -297,7 +299,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp24_r4"
             let description = "£0100 with 24 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -322,7 +324,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0100_fp28_r4"
             let description = "£0100 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 100_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -346,8 +348,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp32_r4 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp32_r4"
             let description = "£0100 with 32 days to first payment and 4 repayments"
-            let sp = monthlyParameters 100_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp AboveZero
+            let sp = { monthlyParameters 100_00L<Cent> 32<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AboveZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -371,8 +373,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp04_r5 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp04_r5"
             let description = "£0300 with 04 days to first payment and 5 repayments"
-            let sp = monthlyParameters 300_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp AboveZero
+            let sp = { monthlyParameters 300_00L<Cent> 4<DurationDay> 5 with Parameters.PaymentConfig.Tolerance = AboveZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -396,8 +398,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp08_r5 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp08_r5"
             let description = "£0300 with 08 days to first payment and 5 repayments"
-            let sp = monthlyParameters 300_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 300_00L<Cent> 8<DurationDay> 5 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -421,8 +423,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp12_r4 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp12_r4"
             let description = "£0300 with 12 days to first payment and 4 repayments"
-            let sp = monthlyParameters 300_00L<Cent> 12<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 300_00L<Cent> 12<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -447,7 +449,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp16_r4"
             let description = "£0300 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -472,7 +474,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp20_r4"
             let description = "£0300 with 20 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -497,7 +499,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp24_r4"
             let description = "£0300 with 24 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -522,7 +524,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp28_r4"
             let description = "£0300 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -547,7 +549,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0300_fp32_r4"
             let description = "£0300 with 32 days to first payment and 4 repayments"
             let sp = monthlyParameters 300_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -572,7 +574,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp04_r5"
             let description = "£0500 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 500_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -597,7 +599,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp08_r5"
             let description = "£0500 with 08 days to first payment and 5 repayments"
             let sp = monthlyParameters 500_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -621,8 +623,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp12_r4 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp12_r4"
             let description = "£0500 with 12 days to first payment and 4 repayments"
-            let sp = monthlyParameters 500_00L<Cent> 12<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 500_00L<Cent> 12<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -646,8 +648,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp16_r4 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp16_r4"
             let description = "£0500 with 16 days to first payment and 4 repayments"
-            let sp = monthlyParameters 500_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp AboveZero
+            let sp = { monthlyParameters 500_00L<Cent> 16<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AboveZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -672,7 +674,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp20_r4"
             let description = "£0500 with 20 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -697,7 +699,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp24_r4"
             let description = "£0500 with 24 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -722,7 +724,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0500_fp28_r4"
             let description = "£0500 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 500_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -746,8 +748,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp32_r4 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp32_r4"
             let description = "£0500 with 32 days to first payment and 4 repayments"
-            let sp = monthlyParameters 500_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 500_00L<Cent> 32<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -772,7 +774,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp04_r5"
             let description = "£0700 with 04 days to first payment and 5 repayments"
             let sp = monthlyParameters 700_00L<Cent> 4<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -797,7 +799,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp08_r5"
             let description = "£0700 with 08 days to first payment and 5 repayments"
             let sp = monthlyParameters 700_00L<Cent> 8<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -822,7 +824,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp12_r4"
             let description = "£0700 with 12 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 12<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -847,7 +849,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp16_r4"
             let description = "£0700 with 16 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 16<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -872,7 +874,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp20_r4"
             let description = "£0700 with 20 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 20<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -896,8 +898,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp24_r4 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp24_r4"
             let description = "£0700 with 24 days to first payment and 4 repayments"
-            let sp = monthlyParameters 700_00L<Cent> 24<DurationDay> 4
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 700_00L<Cent> 24<DurationDay> 4 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -922,7 +924,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp28_r4"
             let description = "£0700 with 28 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 28<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -947,7 +949,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0700_fp32_r4"
             let description = "£0700 with 32 days to first payment and 4 repayments"
             let sp = monthlyParameters 700_00L<Cent> 32<DurationDay> 4
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -972,7 +974,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp04_r6"
             let description = "£0900 with 04 days to first payment and 6 repayments"
             let sp = monthlyParameters 900_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -996,8 +998,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp08_r6 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp08_r6"
             let description = "£0900 with 08 days to first payment and 6 repayments"
-            let sp = monthlyParameters 900_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp AboveZero
+            let sp = { monthlyParameters 900_00L<Cent> 8<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AboveZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1021,8 +1023,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp12_r6 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp12_r6"
             let description = "£0900 with 12 days to first payment and 6 repayments"
-            let sp = monthlyParameters 900_00L<Cent> 12<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 900_00L<Cent> 12<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1047,7 +1049,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp16_r6"
             let description = "£0900 with 16 days to first payment and 6 repayments"
             let sp = monthlyParameters 900_00L<Cent> 16<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1071,8 +1073,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp20_r5 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp20_r5"
             let description = "£0900 with 20 days to first payment and 5 repayments"
-            let sp = monthlyParameters 900_00L<Cent> 20<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 900_00L<Cent> 20<DurationDay> 5 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1096,8 +1098,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp24_r5 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp24_r5"
             let description = "£0900 with 24 days to first payment and 5 repayments"
-            let sp = monthlyParameters 900_00L<Cent> 24<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 900_00L<Cent> 24<DurationDay> 5 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1122,7 +1124,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp28_r5"
             let description = "£0900 with 28 days to first payment and 5 repayments"
             let sp = monthlyParameters 900_00L<Cent> 28<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1147,7 +1149,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_0900_fp32_r5"
             let description = "£0900 with 32 days to first payment and 5 repayments"
             let sp = monthlyParameters 900_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1172,7 +1174,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp04_r6"
             let description = "£1100 with 04 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1197,7 +1199,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp08_r6"
             let description = "£1100 with 08 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1222,7 +1224,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp12_r6"
             let description = "£1100 with 12 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1247,7 +1249,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp16_r6"
             let description = "£1100 with 16 days to first payment and 6 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1272,7 +1274,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp20_r5"
             let description = "£1100 with 20 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1297,7 +1299,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp24_r5"
             let description = "£1100 with 24 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1322,7 +1324,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp28_r5"
             let description = "£1100 with 28 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1347,7 +1349,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1100_fp32_r5"
             let description = "£1100 with 32 days to first payment and 5 repayments"
             let sp = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1372,7 +1374,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp04_r6"
             let description = "£1300 with 04 days to first payment and 6 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1396,8 +1398,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp08_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp08_r6"
             let description = "£1300 with 08 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1300_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1300_00L<Cent> 8<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1421,8 +1423,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp12_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp12_r6"
             let description = "£1300 with 12 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1300_00L<Cent> 12<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1300_00L<Cent> 12<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1446,8 +1448,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp16_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp16_r6"
             let description = "£1300 with 16 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1300_00L<Cent> 16<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1300_00L<Cent> 16<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1472,7 +1474,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp20_r6"
             let description = "£1300 with 20 days to first payment and 6 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1497,7 +1499,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp24_r6"
             let description = "£1300 with 24 days to first payment and 6 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1521,8 +1523,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp28_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp28_r6"
             let description = "£1300 with 28 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1300_00L<Cent> 28<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1300_00L<Cent> 28<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1547,7 +1549,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1300_fp32_r5"
             let description = "£1300 with 32 days to first payment and 5 repayments"
             let sp = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1571,8 +1573,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp04_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp04_r6"
             let description = "£1500 with 04 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1500_00L<Cent> 4<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1500_00L<Cent> 4<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1597,7 +1599,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp08_r6"
             let description = "£1500 with 08 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1622,7 +1624,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp12_r6"
             let description = "£1500 with 12 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1646,8 +1648,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp16_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp16_r6"
             let description = "£1500 with 16 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1500_00L<Cent> 16<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1500_00L<Cent> 16<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1671,8 +1673,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp20_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp20_r6"
             let description = "£1500 with 20 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1500_00L<Cent> 20<DurationDay> 6
-            let actual = calculate sp AboveZero
+            let sp = { monthlyParameters 1500_00L<Cent> 20<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AboveZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1696,8 +1698,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp24_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp24_r6"
             let description = "£1500 with 24 days to first payment and 6 repayments"
-            let sp = monthlyParameters 1500_00L<Cent> 24<DurationDay> 6
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1500_00L<Cent> 24<DurationDay> 6 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1722,7 +1724,7 @@ module PaymentScheduleTests =
             let title = "PaymentScheduleTest_Monthly_1500_fp28_r6"
             let description = "£1500 with 28 days to first payment and 6 repayments"
             let sp = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6
-            let actual = calculate sp BelowZero
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1746,8 +1748,8 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp32_r5 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp32_r5"
             let description = "£1500 with 32 days to first payment and 5 repayments"
-            let sp = monthlyParameters 1500_00L<Cent> 32<DurationDay> 5
-            let actual = calculate sp AroundZero
+            let sp = { monthlyParameters 1500_00L<Cent> 32<DurationDay> 5 with Parameters.PaymentConfig.Tolerance = AroundZero }
+            let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile title description sp
             let expected = {
                 AsOfDay = 0<OffsetDay>
@@ -1781,6 +1783,7 @@ module PaymentScheduleTests =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1808,7 +1811,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
@@ -1830,6 +1833,7 @@ module PaymentScheduleTests =
                 MaxDuration = Duration.Maximum(183<DurationDay>, Date(2024, 5, 8))
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1857,7 +1861,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
@@ -1879,6 +1883,7 @@ module PaymentScheduleTests =
                 MaxDuration = Duration.Maximum (184<DurationDay>, Date(2024, 5, 8))
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -1906,7 +1911,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
@@ -1928,6 +1933,7 @@ module PaymentScheduleTests =
                 MaxDuration = Duration.Maximum (190<DurationDay>, Date(2024, 6, 24))
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundWith MidpointRounding.ToEven
@@ -1955,7 +1961,7 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             schedule |> SimpleSchedule.outputHtmlToFile title description sp
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
@@ -1974,6 +1980,7 @@ module PaymentScheduleTests =
             Principal = 100_00L<Cent>
             ScheduleConfig = paymentSchedule
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundWith MidpointRounding.ToEven
@@ -2016,9 +2023,9 @@ module PaymentScheduleTests =
                 102<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
             ]
 
-            let schedule1 = sp paymentSchedule1 |> fun sp -> calculate sp BelowZero
-            let schedule2 = sp paymentSchedule2 |> fun sp -> calculate sp BelowZero
-            let schedule3 = sp paymentSchedule3 |> fun sp -> calculate sp BelowZero
+            let schedule1 = sp paymentSchedule1 |> fun sp -> calculate sp
+            let schedule2 = sp paymentSchedule2 |> fun sp -> calculate sp
+            let schedule3 = sp paymentSchedule3 |> fun sp -> calculate sp
 
             let html1 = schedule1.Items |> generateHtmlFromArray [||]
             let html2 = schedule2.Items |> generateHtmlFromArray [||]

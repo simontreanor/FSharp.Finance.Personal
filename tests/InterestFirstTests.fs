@@ -21,6 +21,7 @@ module InterestFirstTests =
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 8, 2); PaymentCount = 5; MaxDuration = Duration.Maximum (180<DurationDay>, startDate) }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -48,7 +49,7 @@ module InterestFirstTests =
         let sp = { scheduleParameters with Parameters.InterestConfig.Method = Interest.Method.Simple }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
@@ -81,7 +82,7 @@ module InterestFirstTests =
         let sp = scheduleParameters
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 

@@ -40,6 +40,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -72,7 +73,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = calculate sp BelowZero
+            let schedule = calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = Amortisation.generate sp ValueNone false actualPayments
@@ -122,6 +123,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -205,6 +207,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -301,6 +304,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -333,7 +337,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate sp BelowZero
+            let schedule = Scheduling.calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = Amortisation.generate sp ValueNone false actualPayments
@@ -383,6 +387,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -410,7 +415,7 @@ module ActualPaymentTestsExtra =
         }
 
         let actual =
-            let schedule = Scheduling.calculate sp BelowZero
+            let schedule = Scheduling.calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = Amortisation.generate sp ValueNone false actualPayments
@@ -460,6 +465,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -540,6 +546,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp
@@ -634,6 +641,7 @@ module ActualPaymentTestsExtra =
                 MaxDuration = Duration.Unlimited
             }
             PaymentConfig = {
+                Tolerance = BelowZero
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
                 PaymentRounding = RoundUp

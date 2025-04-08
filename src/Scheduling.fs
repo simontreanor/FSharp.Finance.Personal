@@ -366,6 +366,8 @@ module Scheduling =
 
     /// how to treat scheduled payments
     type PaymentConfig = {
+        /// what tolerance to use for the final principal balance when calculating the level payments
+        Tolerance: TargetTolerance
         /// whether to modify scheduled payment amounts to keep the schedule on-track
         ScheduledPaymentOption: ScheduledPaymentOption
         /// whether to leave a final balance open or close it using various methods
@@ -678,8 +680,20 @@ module Scheduling =
                 |> Cent.toDecimalCent
                 |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal 0m<Cent>
                 |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+
+            let principalBalance = newSchedule |> Array.last |> _.PrincipalBalance
+            let tolerance = int64 paymentCount * 1L<Cent>
+            let minBalance, maxBalance =
+                match sp.PaymentConfig.Tolerance with
+                    | BelowZero ->
+                        -tolerance, 0L<Cent>
+                    | AroundZero ->
+                        -tolerance, tolerance
+                    | AboveZero ->
+                        0L<Cent>, tolerance
+
             let difference = state.InterestBalance - finalInterestTotal |> int64
-            if difference = 0 || state.Iteration = 100 then
+            if difference = 0 && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
                 Some (newSchedule, ValueNone)
             else
                 Some (newSchedule, ValueSome {| Iteration = state.Iteration + 1; InterestBalance = finalInterestTotal |})
@@ -713,7 +727,7 @@ module Scheduling =
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
     /// calculates the number of days between two offset days on which interest is chargeable
-    let calculate sp toleranceOption =
+    let calculate sp =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
         let paymentMap = generatePaymentMap sp.StartDate sp.ScheduleConfig
         // get the payment days for use in further calculations
@@ -752,7 +766,7 @@ module Scheduling =
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem
                 let iterationLimit = 100u
                 let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
-                match Array.solveBisection generator iterationLimit initialGuess toleranceOption toleranceSteps with
+                match Array.solveBisection generator iterationLimit initialGuess sp.PaymentConfig.Tolerance toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
                         generateItems paymentMap'

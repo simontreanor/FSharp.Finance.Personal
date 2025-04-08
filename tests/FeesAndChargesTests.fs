@@ -34,6 +34,7 @@ module FeesAndChargesTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    Tolerance = BelowZero
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -123,6 +124,7 @@ module FeesAndChargesTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    Tolerance = BelowZero
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp
@@ -212,6 +214,7 @@ module FeesAndChargesTests =
                     MaxDuration = Duration.Unlimited
                 }
                 PaymentConfig = {
+                    Tolerance = BelowZero
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
                     PaymentRounding = RoundUp

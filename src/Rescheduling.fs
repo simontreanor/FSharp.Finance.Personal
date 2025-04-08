@@ -36,7 +36,7 @@ module Rescheduling =
         let newPaymentSchedule =
             match rp.PaymentSchedule with
             | AutoGenerateSchedule _ ->
-                Scheduling.calculate { sp with ScheduleConfig = rp.PaymentSchedule } BelowZero
+                Scheduling.calculate { sp with ScheduleConfig = rp.PaymentSchedule }
                 |> _.Items
                 |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
                 |> Array.map(fun si -> si.Day, si.ScheduledPayment)
