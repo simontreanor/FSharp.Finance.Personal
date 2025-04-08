@@ -311,10 +311,10 @@ module ComplianceTests =
         let title = "ComplianceTest010"
         let description = "Repayments made on time - 0.8% daily interest cap"
         let actualPayments = Map [
-            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            107<OffsetDay>, [| ActualPayment.quickConfirmed 209_43L<Cent> |]
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            107<OffsetDay>, [| ActualPayment.quickConfirmed 209_42L<Cent> |]
         ]
 
         let schedules =
@@ -331,10 +331,10 @@ module ComplianceTests =
         let title = "ComplianceTest011"
         let description = "Early repayment - 0.8% daily interest cap"
         let actualPayments = Map [
-            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            63<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            91<OffsetDay>, [| ActualPayment.quickConfirmed 160_85L<Cent> |]
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            63<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            91<OffsetDay>, [| ActualPayment.quickConfirmed 160_82L<Cent> |]
         ]
 
         let schedules =
@@ -351,10 +351,10 @@ module ComplianceTests =
         let title = "ComplianceTest012"
         let description = "Late repayment - 0.8% daily interest cap"
         let actualPayments = Map [
-            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_44L<Cent> |]
-            122<OffsetDay>, [| ActualPayment.quickConfirmed 234_57L<Cent> |]
+            17<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            48<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            76<OffsetDay>, [| ActualPayment.quickConfirmed 209_45L<Cent> |]
+            122<OffsetDay>, [| ActualPayment.quickConfirmed 234_54L<Cent> |]
         ]
 
         let schedules =

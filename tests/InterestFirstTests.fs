@@ -86,7 +86,7 @@ module InterestFirstTests =
             SimpleSchedule.outputHtmlToFile title description sp schedule
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
-        let expected = 367_73L<Cent>, 367_72L<Cent>
+        let expected = 367_73L<Cent>, 367_71L<Cent>
         actual |> should equal expected
 
     [<Fact>]
@@ -127,7 +127,7 @@ module InterestFirstTests =
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
-        totalInterest |> should equal 838_64L<Cent>
+        totalInterest |> should equal 838_63L<Cent>
 
     [<Fact>]
     let InterestFirstTest005 () =
@@ -213,7 +213,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 650_63L<Cent>)
+        finalSettlementFigure |> should equal (ValueSome 650_64L<Cent>)
 
     [<Fact>]
     let InterestFirstTest008 () =
@@ -238,7 +238,7 @@ module InterestFirstTests =
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
-        totalInterest |> should equal 838_64L<Cent>
+        totalInterest |> should equal 838_63L<Cent>
 
     [<Fact>]
     let InterestFirstTest009 () =
@@ -259,7 +259,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 737_36L<Cent>)
+        finalSettlementFigure |> should equal (ValueSome 737_35L<Cent>)
 
     [<Fact>]
     let InterestFirstTest010 () =
@@ -325,7 +325,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome -324_57L<Cent>)
+        finalSettlementFigure |> should equal (ValueSome -324_56L<Cent>)
 
     [<Fact>]
     let InterestFirstTest013 () =
@@ -412,7 +412,7 @@ module InterestFirstTests =
 
         let initialInterestBalance = schedules.AmortisationSchedule.ScheduleItems[0<OffsetDay>].InterestBalance
 
-        initialInterestBalance |> should equal 362_34m<Cent>
+        initialInterestBalance |> should equal 362_35m<Cent>
 
     [<Fact>]
     let InterestFirstTest017 () =
@@ -430,7 +430,7 @@ module InterestFirstTests =
 
         let initialInterestBalance = schedules.AmortisationSchedule.ScheduleItems[0<OffsetDay>].InterestBalance
         
-        initialInterestBalance |> should equal 362_34m<Cent>
+        initialInterestBalance |> should equal 362_35m<Cent>
 
     [<Fact>]
     let InterestFirstTest018 () =

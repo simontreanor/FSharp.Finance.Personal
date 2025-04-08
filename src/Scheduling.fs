@@ -467,7 +467,7 @@ module Scheduling =
         /// the scheduled payment
         ScheduledPayment: ScheduledPayment
         /// the simple interest accrued since the previous payment
-        SimpleInterest: int64<Cent>
+        SimpleInterest: decimal<Cent>
         /// the interest portion paid off by the payment
         InterestPortion: int64<Cent>
         /// the principal portion paid off by the payment
@@ -477,7 +477,7 @@ module Scheduling =
         /// the principal balance carried forward
         PrincipalBalance: int64<Cent>
         /// the total simple interest accrued from the start date to the current date
-        TotalSimpleInterest: int64<Cent>
+        TotalSimpleInterest: decimal<Cent>
         /// the total interest payable from the start date to the current date
         TotalInterest: int64<Cent>
         /// the total principal payable from the start date to the current date
@@ -491,12 +491,12 @@ module Scheduling =
             { 
                 Day = 0<OffsetDay>
                 ScheduledPayment = ScheduledPayment.zero
-                SimpleInterest = 0L<Cent>
+                SimpleInterest = 0m<Cent>
                 InterestPortion = 0L<Cent>
                 PrincipalPortion = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                TotalSimpleInterest = 0L<Cent>
+                TotalSimpleInterest = 0m<Cent>
                 TotalInterest = 0L<Cent>
                 TotalPrincipal = 0L<Cent>
             }
@@ -636,7 +636,7 @@ module Scheduling =
         if paymentCount = 0 then
             0L<Cent>
         else
-            (Cent.toDecimalCent principal + Cent.toDecimalCent fees + Cent.toDecimalCent interest) / decimal paymentCount
+            (Cent.toDecimalCent principal + Cent.toDecimalCent fees + interest) / decimal paymentCount
             |> Cent.fromDecimalCent paymentRounding
             
 
@@ -646,22 +646,19 @@ module Scheduling =
         | Interest.Method.Simple ->
             Interest.dailyRates sp.StartDate false sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates previousItem.Day day
             |> Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount sp.InterestConfig.InterestRounding
-            |> decimal
-            |> Cent.round sp.InterestConfig.InterestRounding
         | Interest.Method.AddOn ->
-            payment
-            |> min previousItem.InterestBalance
+            Cent.toDecimalCent payment
+            |> min (Cent.toDecimalCent previousItem.InterestBalance)
 
     // generates a schedule item for a particular day by calculating the interest accruing and apportioning the scheduled payment to interest then principal
     let generateItem sp interestMethod scheduledPayment previousItem day =
         let scheduledPaymentTotal = ScheduledPayment.total scheduledPayment
         let simpleInterest =
             calculateInterest sp Interest.Method.Simple scheduledPaymentTotal previousItem day
-            |> fun i -> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal (Cent.toDecimalCent previousItem.TotalSimpleInterest) (Cent.toDecimalCent i)
-            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+            |> fun i -> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal previousItem.TotalSimpleInterest i
         let interestPortion =
             calculateInterest sp interestMethod scheduledPaymentTotal previousItem day
-            |> fun i -> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal (Cent.toDecimalCent previousItem.TotalInterest) (Cent.toDecimalCent i)
+            |> fun i -> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal (Cent.toDecimalCent previousItem.TotalInterest) i
             |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
         let principalPortion = scheduledPaymentTotal - interestPortion
         let simpleItem =
@@ -681,7 +678,7 @@ module Scheduling =
 
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: struct {| Iteration: int; InterestBalance: int64<Cent> |} voption) =
+    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: struct {| Iteration: int; InterestBalance: decimal<Cent> |} voption) =
         if stateOption.IsNone then
             None
         elif Array.isEmpty paymentDays then
@@ -698,15 +695,13 @@ module Scheduling =
                         | FixedSchedules _
                         | CustomSchedule _ -> paymentMap[pd]
                     generateItem sp Interest.Method.AddOn scheduledPayment simpleItem pd
-                ) { firstItem with InterestBalance = state.InterestBalance }
+                ) { firstItem with InterestBalance = state.InterestBalance |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding }
             let finalInterestTotal =
                 newSchedule
                 |> Array.last
                 |> _.TotalSimpleInterest
-                |> max 0L<Cent> // interest must not go negative
-                |> Cent.toDecimalCent
+                |> max 0m<Cent> // interest must not go negative
                 |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal 0m<Cent>
-                |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
 
             let principalBalance = newSchedule |> Array.last |> _.PrincipalBalance
             let tolerance = int64 paymentCount * 1L<Cent>
@@ -719,8 +714,8 @@ module Scheduling =
                     | HigherFinalPayment ->
                         0L<Cent>, tolerance
 
-            let difference = state.InterestBalance - finalInterestTotal |> int64
-            if difference = 0 && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
+            let difference = state.InterestBalance - finalInterestTotal |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+            if difference = 0L<Cent> && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
                 Some (newSchedule, ValueNone)
             else
                 Some (newSchedule, ValueSome struct {| Iteration = state.Iteration + 1; InterestBalance = finalInterestTotal |})
@@ -785,10 +780,10 @@ module Scheduling =
                 let estimatedInterestTotal =
                     match sp.InterestConfig.Method with
                     | Interest.Method.AddOn ->
-                        initialInterestBalance
+                        initialInterestBalance |> Cent.toDecimalCent
                     | Interest.Method.Simple ->
                         let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-                        Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                        Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem
                 let iterationLimit = 100u
