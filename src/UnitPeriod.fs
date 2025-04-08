@@ -72,17 +72,17 @@ module UnitPeriod =
     let all =
         [|
             [| 1, Day |]
-            // [| 1 .. 52 |] |> Array.map(fun i -> (i * 7), Week i)
-            [| 1; 2; 4 |] |> Array.map(fun i -> (i * 7), Week i)
+            // [| 1 .. 52 |] |> Array.map(fun i -> i * 7, Week i)
+            [| 1; 2; 4 |] |> Array.map(fun i -> i * 7, Week i)
             [| 15, SemiMonth |]
-            // [| 1 .. 12 |] |> Array.map(fun i -> (i * 30), Month i)
-            [| 1; 2; 3; 6; 12 |] |> Array.map(fun i -> (i * 30), Month i)
+            // [| 1 .. 12 |] |> Array.map(fun i -> i * 30, Month i)
+            [| 1; 2; 3; 6; 12 |] |> Array.map(fun i -> i * 30, Month i)
         |]
         |> Array.concat
         |> Array.sortBy fst
 
     /// coerce a length to the nearest unit-period
-    let normalise length =
+    let internal normalise length =
         all
         |> Array.minBy(fun (days, _) -> abs (days - length))
 
@@ -289,9 +289,9 @@ module UnitPeriod =
             | Daily _
             | Weekly _ as c ->
                 c
-            | SemiMonthly (_, _, day1, day2) as c when day1 >= 1 && day1 <= 15 && day2 >= 16 && day2 <= 31 && ((day2 < 31 && day2 - day1 = 15) || (day2 = 31 && day1 = 15)) ->
+            | SemiMonthly (_, _, day1, day2) as c when day1 >= 1 && day1 <= 15 && day2 >= 16 && day2 <= 31 && (day2 < 31 && day2 - day1 = 15 || day2 = 31 && day1 = 15) ->
                 c
-            | SemiMonthly (_, _, day1, day2) as c when day2 >= 1 && day2 <= 15 && day1 >= 16 && day1 <= 31 && ((day1 < 31 && day1 - day2 = 15) || (day1 = 31 && day2 = 15)) ->
+            | SemiMonthly (_, _, day1, day2) as c when day2 >= 1 && day2 <= 15 && day1 >= 16 && day1 <= 31 && (day1 < 31 && day1 - day2 = 15 || day1 = 31 && day2 = 15) ->
                 c
             | Monthly (_, _, _, day) as c when day >= 1 && day <= 31 ->
                 c
@@ -306,11 +306,11 @@ module UnitPeriod =
         | Daily _ ->
             float maxDuration
         | Weekly (multiple, _) when multiple > 0 ->
-            ((float maxDuration) / (float multiple * 7.))
+            float maxDuration / (float multiple * 7.)
         | SemiMonthly _ ->
-            ((float maxDuration) / 15.)
+            float maxDuration / 15.
         | Monthly (multiple, _, _, _) when multiple > 0 ->
-            ((float maxDuration) / (float multiple * 30.))
+            float maxDuration / (float multiple * 30.)
         | _ ->
             1.
         |> int

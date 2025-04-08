@@ -831,7 +831,7 @@ module Scheduling =
                 LevelPayment =
                     scheduledPayments
                     |> Array.countBy ScheduledPayment.total
-                    |> fun a -> (if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some)
+                    |> fun a -> if Seq.isEmpty a then None else a |> Seq.maxBy snd |> fst |> Some
                     |> Option.defaultValue finalPayment
                 FinalPayment = finalPayment
                 ScheduledPaymentTotal =

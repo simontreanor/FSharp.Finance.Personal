@@ -195,10 +195,10 @@ module Interest =
             let round = Cent.roundTo (RoundWith MidpointRounding.AwayFromZero) 2
             let sum1 =
                 [1 .. m]
-                |> List.sumBy(fun i -> A[i] * ((1m + r) |> powi a[i] |> decimal) |> round)
+                |> List.sumBy(fun i -> A[i] * (1m + r |> powi a[i] |> decimal) |> round)
             let sum2 =
                 [1 .. n]
-                |> List.sumBy(fun j -> B[j] * ((1m + r) |> powi b[j] |> decimal) |> round)
+                |> List.sumBy(fun j -> B[j] * (1m + r |> powi b[j] |> decimal) |> round)
             sum1 - sum2
 
     /// calculates the amount of rebate due following an early settlement
@@ -207,7 +207,7 @@ module Interest =
             0L<Cent>
         else
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
-            let paymentMap = payments |> Array.map(fun (i, p) -> (i, decimal p * 1m<Cent>)) |> Map.ofArray
+            let paymentMap = payments |> Array.map(fun (i, p) -> i, decimal p * 1m<Cent>) |> Map.ofArray
             let aprUnitPeriodRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
             let advanceCount = 1
             let paymentCount = payments |> Array.length |> min settlementPeriod

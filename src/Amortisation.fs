@@ -786,7 +786,7 @@ module Amortisation =
                     else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
                 EffectiveInterestRate =
                     if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
-                    else (decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund)) / decimal finalPaymentDay
+                    else decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund) / decimal finalPaymentDay
                     |> Percent |> Interest.Rate.Daily
             }
         }
