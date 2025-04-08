@@ -281,9 +281,8 @@ module Apr =
         | Solution.IterationLimitReached(apr, _, _) ->
             Decimal.Round(apr, precision)
             |> Percent.fromDecimal
-            |> ValueSome
         | _ ->
-            ValueNone
+            Percent 0m
 
     /// calculates the APR rate for the specified unit-period as per UK regulation
     let ukUnitPeriodRate unitPeriod apr =

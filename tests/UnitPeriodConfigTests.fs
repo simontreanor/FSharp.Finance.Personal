@@ -106,9 +106,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "56.513 %"
+            let expected = Percent 56.513m
             actual |> should equal expected
 
         [<Fact>]
@@ -168,9 +168,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "986.813 %"
+            let expected = Percent 986.813m
 
             actual |> should equal expected
 
@@ -257,9 +257,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "516.758 %"
+            let expected = Percent 516.758m
 
             actual |> should equal expected
 
@@ -320,9 +320,9 @@ module UnitPeriodConfigTests =
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "930.559 %"
+            let expected = Percent 930.559m
 
             actual |> should equal expected
 
@@ -442,8 +442,8 @@ module UnitPeriodConfigTests =
                     }
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr |> ScheduleStats.finalAprString
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
-            let expected = "699.525 %"
+            let expected = Percent 699.525m
 
             actual |> should equal expected

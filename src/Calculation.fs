@@ -374,3 +374,10 @@ module Calculation =
             |> Array.map(fun (k, v) -> k, Array.collect snd v)
             // convert to a map
             |> Map.ofArray
+
+    /// wrapper to extract APR value from solution
+    let getAprOr defaultValue = function
+        | Solution.Found(apr, _, _) ->
+            apr
+        | _ ->
+            defaultValue

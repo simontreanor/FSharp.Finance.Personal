@@ -166,7 +166,7 @@ module Amortisation =
         /// the offset day of the final actual payment
         FinalActualPaymentDay: int<OffsetDay> voption
         /// the APR based on the actual payments made and their timings
-        FinalApr: (Solution * Percent voption) voption
+        FinalApr: Percent
         /// the final ratio of (fees + interest + charges) to principal
         FinalCostToBorrowingRatio: Percent
         /// the daily interest rate derived from interest over (principal + fees), ignoring charges 
@@ -175,17 +175,13 @@ module Amortisation =
 
     /// final statistics resulting from the calculations
     module ScheduleStats =
-        /// renders the final APR as a string, or "n/a" if not available
-        let finalAprString = function
-        | ValueSome (Solution.Found _, ValueSome percent) -> $"{percent}"
-        | _ -> "n/a"
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
         let toHtmlTable schedule =
             "<table>"
                 + "<tr>"
                     + $"<td>Effective interest rate: <i>{schedule.EffectiveInterestRate}</i></td>"
                     + $"<td>Final cost-to-borrowing ratio: <i>{schedule.FinalCostToBorrowingRatio}</i></td>"
-                    + $"<td>Final APR: <i>{finalAprString schedule.FinalApr}</i></td>"
+                    + $"<td>Final APR: <i>{schedule.FinalApr}</i></td>"
                 + "</tr>"
                 + "<tr>"
                     + $"<td>Final scheduled payment count: <i>{schedule.FinalScheduledPaymentCount}</i></td>"
@@ -504,7 +500,9 @@ module Amortisation =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance ->
                     // get a settlement figure for the add-on interest method based on the actual simple interest accrued up to now
-                    let settlement = sp.Principal + cumulativeSimpleInterestL - accumulator.CumulativeActualPayments
+                    let settlement =
+                        sp.Principal + cumulativeSimpleInterestL - accumulator.CumulativeActualPayments
+                        |> fun s -> if abs s < int64 appliedPaymentCount * 1L<Cent> then 0L<Cent> else s
                     // determine whether an interest adjustment is required based on the difference between cumulative simple interest and the initial interest balance
                     let interestAdjustment =
                         if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
@@ -763,15 +761,11 @@ module Amortisation =
         let finalPaymentDay = finalItemDay
         let finalBalanceStatus = finalItem.BalanceStatus
         let finalAprSolution =
-            match settlementDay with
-            | ValueSome _ when finalBalanceStatus = ClosedBalance ->
-                items'
-                |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-                |> Array.map(fun asi -> { TransferType = Apr.TransferType.Payment; TransferDate = asi.OffsetDate; Value = asi.NetEffect } : Apr.Transfer)
-                |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
-                |> ValueSome
-            | _ ->
-                 ValueNone
+            items'
+            |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
+            |> Array.map(fun asi -> { TransferType = Apr.TransferType.Payment; TransferDate = asi.OffsetDate; Value = asi.NetEffect } : Apr.Transfer)
+            |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
+            |> Apr.toPercent sp.InterestConfig.AprMethod
         let scheduledPaymentItems = items |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
         let actualPaymentItems = items |> Map.filter(fun _ si -> si.ActualPayments.Length > 0)
         {
@@ -780,7 +774,7 @@ module Amortisation =
                 FinalScheduledPaymentCount = scheduledPaymentItems |> Map.count
                 FinalActualPaymentCount = items' |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
                 FinalActualPaymentDay = if Map.count actualPaymentItems = 0 then ValueNone else actualPaymentItems |> Map.maxKeyValue |> fst |> ValueSome
-                FinalApr = finalAprSolution |> ValueOption.map(fun s -> s, Apr.toPercent sp.InterestConfig.AprMethod s)
+                FinalApr = finalAprSolution
                 FinalCostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m
                     else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2

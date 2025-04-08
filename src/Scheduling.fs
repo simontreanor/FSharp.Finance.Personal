@@ -518,7 +518,7 @@ module Scheduling =
         /// the total interest accrued
         InterestTotal: int64<Cent>
         /// the APR according to the calculation method specified in the schedule parameters and based on the schedule being settled as agreed
-        InitialApr: Solution * Percent voption
+        InitialApr: Solution * Percent
         /// the cost of borrowing, expressed as a ratio of interest to principal
         InitialCostToBorrowingRatio: Percent
     }
@@ -535,7 +535,7 @@ module Scheduling =
                 + "<tr>"
                     + $"<td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
                     + $"<td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>"
-                    + $"<td>Initial APR: <i>{finalAprString schedule.InitialApr}</i></td>"
+                    + $"<td>Initial APR: <i>{schedule.InitialApr}</i></td>"
                 + "</tr>"
                 + "<tr>"
                     + $"<td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>"

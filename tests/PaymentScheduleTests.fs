@@ -80,7 +80,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 3547_83L<Cent>
                     PrincipalTotal = 3473_64L<Cent>
                     InterestTotal = 74_19L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 717.412507m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 717.412507m
                     InitialCostToBorrowingRatio = Percent 67.59m
                 }
             }
@@ -104,7 +104,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 3553_63L<Cent>
                     PrincipalTotal = 3473_64L<Cent>
                     InterestTotal = 79_99L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 637.159359m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 637.159359m
                     InitialCostToBorrowingRatio = Percent 67.76m
                 }
             }
@@ -128,7 +128,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 3554_60L<Cent>
                     PrincipalTotal = 3473_64L<Cent>
                     InterestTotal = 80_96L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 623.703586m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 623.703586m
                     InitialCostToBorrowingRatio = Percent 67.78m
                 }
             }
@@ -187,7 +187,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 152_42L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 52_42L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1280.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1280.8m
                     InitialCostToBorrowingRatio = Percent 52.42m
                 }
             }
@@ -212,7 +212,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 157_14L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 57_14L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1295.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1295.9m
                     InitialCostToBorrowingRatio = Percent 57.14m
                 }
             }
@@ -237,7 +237,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 147_77L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 47_77L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1312.3m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1312.3m
                     InitialCostToBorrowingRatio = Percent 47.77m
                 }
             }
@@ -262,7 +262,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 152_06L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 52_06L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1309m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1309m
                     InitialCostToBorrowingRatio = Percent 52.06m
                 }
             }
@@ -287,7 +287,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 156_38L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 56_38L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1299.7m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1299.7m
                     InitialCostToBorrowingRatio = Percent 56.38m
                 }
             }
@@ -312,7 +312,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 160_22L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 60_22L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1287.7m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1287.7m
                     InitialCostToBorrowingRatio = Percent 60.22m
                 }
             }
@@ -337,7 +337,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 164_50L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 64_50L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1268.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1268.8m
                     InitialCostToBorrowingRatio = Percent 64.5m
                 }
             }
@@ -362,7 +362,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 168_82L<Cent>
                     PrincipalTotal = 100_00L<Cent>
                     InterestTotal = 68_82L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1248.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1248.6m
                     InitialCostToBorrowingRatio = Percent 68.82m
                 }
             }
@@ -387,7 +387,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 457_34L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 157_34L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1281.4m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1281.4m
                     InitialCostToBorrowingRatio = Percent 52.45m
                 }
             }
@@ -412,7 +412,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 471_47L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 171_47L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.5m
                     InitialCostToBorrowingRatio = Percent 57.16m
                 }
             }
@@ -437,7 +437,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 443_30L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 143_30L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1312.1m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1312.1m
                     InitialCostToBorrowingRatio = Percent 47.77m
                 }
             }
@@ -462,7 +462,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 456_18L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 156_18L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1308.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1308.8m
                     InitialCostToBorrowingRatio = Percent 52.06m
                 }
             }
@@ -487,7 +487,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 469_12L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 169_12L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1299.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1299.6m
                     InitialCostToBorrowingRatio = Percent 56.37m
                 }
             }
@@ -512,7 +512,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 480_68L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 180_68L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1287.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1287.8m
                     InitialCostToBorrowingRatio = Percent 60.23m
                 }
             }
@@ -537,7 +537,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 493_55L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 193_55L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1269.3m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1269.3m
                     InitialCostToBorrowingRatio = Percent 64.52m
                 }
             }
@@ -562,7 +562,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 506_44L<Cent>
                     PrincipalTotal = 300_00L<Cent>
                     InterestTotal = 206_44L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1248.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1248.6m
                     InitialCostToBorrowingRatio = Percent 68.81m
                 }
             }
@@ -587,7 +587,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 762_19L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 262_19L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1281.2m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1281.2m
                     InitialCostToBorrowingRatio = Percent 52.44m
                 }
             }
@@ -612,7 +612,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 785_76L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 285_76L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.6m
                     InitialCostToBorrowingRatio = Percent 57.15m
                 }
             }
@@ -637,7 +637,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 738_81L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 238_81L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1311.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1311.9m
                     InitialCostToBorrowingRatio = Percent 47.76m
                 }
             }
@@ -662,7 +662,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 760_33L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 260_33L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1309m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1309m
                     InitialCostToBorrowingRatio = Percent 52.07m
                 }
             }
@@ -687,7 +687,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 781_85L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 281_85L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1299.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1299.5m
                     InitialCostToBorrowingRatio = Percent 56.37m
                 }
             }
@@ -712,7 +712,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 801_12L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 301_12L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1287.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1287.6m
                     InitialCostToBorrowingRatio = Percent 60.22m
                 }
             }
@@ -737,7 +737,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 822_58L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 322_58L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1269.3m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1269.3m
                     InitialCostToBorrowingRatio = Percent 64.52m
                 }
             }
@@ -762,7 +762,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 844_06L<Cent>
                     PrincipalTotal = 500_00L<Cent>
                     InterestTotal = 344_06L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1248.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1248.5m
                     InitialCostToBorrowingRatio = Percent 68.81m
                 }
             }
@@ -787,7 +787,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1067_07L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 367_07L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1281.3m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1281.3m
                     InitialCostToBorrowingRatio = Percent 52.44m
                 }
             }
@@ -812,7 +812,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1100_07L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 400_07L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.5m
                     InitialCostToBorrowingRatio = Percent 57.15m
                 }
             }
@@ -837,7 +837,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1034_32L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 334_32L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1311.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1311.9m
                     InitialCostToBorrowingRatio = Percent 47.76m
                 }
             }
@@ -862,7 +862,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1064_46L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 364_46L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1309.1m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1309.1m
                     InitialCostToBorrowingRatio = Percent 52.07m
                 }
             }
@@ -887,7 +887,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1094_60L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 394_60L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1299.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1299.5m
                     InitialCostToBorrowingRatio = Percent 56.37m
                 }
             }
@@ -912,7 +912,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1121_58L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 421_58L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1287.7m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1287.7m
                     InitialCostToBorrowingRatio = Percent 60.23m
                 }
             }
@@ -937,7 +937,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1151_63L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 451_63L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1269.4m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1269.4m
                     InitialCostToBorrowingRatio = Percent 64.52m
                 }
             }
@@ -962,7 +962,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1181_65L<Cent>
                     PrincipalTotal = 700_00L<Cent>
                     InterestTotal = 481_65L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1248.4m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1248.4m
                     InitialCostToBorrowingRatio = Percent 68.81m
                 }
             }
@@ -987,7 +987,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1497_03L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 597_03L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1277.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1277.8m
                     InitialCostToBorrowingRatio = Percent 66.34m
                 }
             }
@@ -1012,7 +1012,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1543_39L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 643_39L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1291.1m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1291.1m
                     InitialCostToBorrowingRatio = Percent 71.49m
                 }
             }
@@ -1037,7 +1037,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1589_65L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 689_65L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.2m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.2m
                     InitialCostToBorrowingRatio = Percent 76.63m
                 }
             }
@@ -1062,7 +1062,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1635_94L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 735_94L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1294.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1294.9m
                     InitialCostToBorrowingRatio = Percent 81.77m
                 }
             }
@@ -1087,7 +1087,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1541_71L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 641_71L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1292.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1292.9m
                     InitialCostToBorrowingRatio = Percent 71.3m
                 }
             }
@@ -1112,7 +1112,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1579_01L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 679_01L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1283.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1283.5m
                     InitialCostToBorrowingRatio = Percent 75.45m
                 }
             }
@@ -1137,7 +1137,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1621_30L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 721_30L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1267.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1267.9m
                     InitialCostToBorrowingRatio = Percent 80.14m
                 }
             }
@@ -1162,7 +1162,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1663_60L<Cent>
                     PrincipalTotal = 900_00L<Cent>
                     InterestTotal = 763_60L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1249.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1249.8m
                     InitialCostToBorrowingRatio = Percent 84.84m
                 }
             }
@@ -1187,7 +1187,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1829_69L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 729_69L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1277.7m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1277.7m
                     InitialCostToBorrowingRatio = Percent 66.34m
                 }
             }
@@ -1212,7 +1212,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1886_29L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 786_29L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1291m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1291m
                     InitialCostToBorrowingRatio = Percent 71.48m
                 }
             }
@@ -1237,7 +1237,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1942_89L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 842_89L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.2m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.2m
                     InitialCostToBorrowingRatio = Percent 76.63m
                 }
             }
@@ -1262,7 +1262,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1999_49L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 899_49L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1294.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1294.9m
                     InitialCostToBorrowingRatio = Percent 81.77m
                 }
             }
@@ -1287,7 +1287,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1884_30L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 784_30L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1292.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1292.9m
                     InitialCostToBorrowingRatio = Percent 71.3m
                 }
             }
@@ -1312,7 +1312,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1929_89L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 829_89L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1283.5m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1283.5m
                     InitialCostToBorrowingRatio = Percent 75.44m
                 }
             }
@@ -1337,7 +1337,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 1981_58L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 881_58L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1267.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1267.9m
                     InitialCostToBorrowingRatio = Percent 80.14m
                 }
             }
@@ -1362,7 +1362,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2033_30L<Cent>
                     PrincipalTotal = 1100_00L<Cent>
                     InterestTotal = 933_30L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1249.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1249.8m
                     InitialCostToBorrowingRatio = Percent 84.85m
                 }
             }
@@ -1387,7 +1387,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2162_37L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 862_37L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1277.7m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1277.7m
                     InitialCostToBorrowingRatio = Percent 66.34m
                 }
             }
@@ -1412,7 +1412,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2229_24L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 929_24L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1291m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1291m
                     InitialCostToBorrowingRatio = Percent 71.48m
                 }
             }
@@ -1437,7 +1437,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2296_19L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 996_19L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.2m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.2m
                     InitialCostToBorrowingRatio = Percent 76.63m
                 }
             }
@@ -1462,7 +1462,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2363_06L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 1063_06L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1295m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1295m
                     InitialCostToBorrowingRatio = Percent 81.77m
                 }
             }
@@ -1487,7 +1487,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2429_92L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 1129_92L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1288.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1288.6m
                     InitialCostToBorrowingRatio = Percent 86.92m
                 }
             }
@@ -1512,7 +1512,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2489_45L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 1189_45L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1280.4m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1280.4m
                     InitialCostToBorrowingRatio = Percent 91.5m
                 }
             }
@@ -1537,7 +1537,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2556_14L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 1256_14L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1266.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1266.6m
                     InitialCostToBorrowingRatio = Percent 96.63m
                 }
             }
@@ -1562,7 +1562,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2402_98L<Cent>
                     PrincipalTotal = 1300_00L<Cent>
                     InterestTotal = 1102_98L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1249.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1249.8m
                     InitialCostToBorrowingRatio = Percent 84.84m
                 }
             }
@@ -1587,7 +1587,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2495_06L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 995_06L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1277.7m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1277.7m
                     InitialCostToBorrowingRatio = Percent 66.34m
                 }
             }
@@ -1612,7 +1612,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2572_20L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1072_20L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1290.9m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1290.9m
                     InitialCostToBorrowingRatio = Percent 71.48m
                 }
             }
@@ -1637,7 +1637,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2649_42L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1149_42L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1296.2m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1296.2m
                     InitialCostToBorrowingRatio = Percent 76.63m
                 }
             }
@@ -1662,7 +1662,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2726_60L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1226_60L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1295m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1295m
                     InitialCostToBorrowingRatio = Percent 81.77m
                 }
             }
@@ -1687,7 +1687,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2803_78L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1303_78L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1288.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1288.6m
                     InitialCostToBorrowingRatio = Percent 86.92m
                 }
             }
@@ -1712,7 +1712,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2872_46L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1372_46L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1280.4m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1280.4m
                     InitialCostToBorrowingRatio = Percent 91.5m
                 }
             }
@@ -1737,7 +1737,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2949_37L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1449_37L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1266.6m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1266.6m
                     InitialCostToBorrowingRatio = Percent 96.62m
                 }
             }
@@ -1762,7 +1762,7 @@ module PaymentScheduleTests =
                     ScheduledPaymentTotal = 2772_69L<Cent>
                     PrincipalTotal = 1500_00L<Cent>
                     InterestTotal = 1272_69L<Cent>
-                    InitialApr = fst actual.Stats.InitialApr, ValueSome(Percent 1249.8m)
+                    InitialApr = fst actual.Stats.InitialApr, Percent 1249.8m
                     InitialCostToBorrowingRatio = Percent 84.85m
                 }
             }
