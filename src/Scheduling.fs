@@ -500,6 +500,20 @@ module Scheduling =
                 TotalInterest = 0L<Cent>
                 TotalPrincipal = 0L<Cent>
             }
+        /// formats the simple item as an HTML row
+        let toHtmlRow simpleItem =
+            """<tr style="text-align: right;">"""
+                + $"""<td class="ci00">{simpleItem.Day}</td>"""
+                + $"""<td class="ci01" style="white-space: nowrap;">{simpleItem.ScheduledPayment |> ScheduledPayment.total |> formatCent}</td>"""
+                + $"""<td class="ci02">{formatDecimalCent simpleItem.SimpleInterest}</td>"""
+                + $"""<td class="ci03">{formatCent simpleItem.InterestPortion}</td>"""
+                + $"""<td class="ci04">{formatCent simpleItem.PrincipalPortion}</td>"""
+                + $"""<td class="ci05">{formatCent simpleItem.InterestBalance}</td>"""
+                + $"""<td class="ci06">{formatCent simpleItem.PrincipalBalance}</td>"""
+                + $"""<td class="ci07">{formatDecimalCent simpleItem.TotalSimpleInterest}</td>"""
+                + $"""<td class="ci08">{formatCent simpleItem.TotalInterest}</td>"""
+                + $"""<td class="ci09">{formatCent simpleItem.TotalPrincipal}</td>"""
+            + "</tr>"
 
     /// final statistics based on the payments being made on time and in full
     type SimpleScheduleStats = {
@@ -517,6 +531,10 @@ module Scheduling =
         PrincipalTotal: int64<Cent>
         /// the total interest accrued
         InterestTotal: int64<Cent>
+        /// the APR according to the calculation method specified in the schedule parameters and based on the schedule being settled as agreed
+        InitialApr: Percent
+        /// the cost of borrowing, expressed as a ratio of interest to principal
+        InitialCostToBorrowingRatio: Percent
     }
 
     /// statistics resulting from the simple schedule calculations
@@ -529,17 +547,17 @@ module Scheduling =
         let toHtmlTable schedule =
             "<table>"
                 + "<tr>"
-                    + $"<td colspan='2'>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
+                    + $"<td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
+                    + $"<td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>"
+                    + $"<td>Initial APR: <i>{schedule.InitialApr}</i></td>"
                 + "</tr>"
                 + "<tr>"
                     + $"<td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>"
                     + $"<td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>"
-                + "</tr>"
-                + "<tr>"
                     + $"<td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>"
-                    + $"<td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>"
                 + "</tr>"
                 + "<tr>"
+                    + $"<td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>"
                     + $"<td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>"
                     + $"<td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>"
                 + "</tr>"
@@ -555,15 +573,36 @@ module Scheduling =
         Stats: SimpleScheduleStats
     }
 
-    ///  a schedule of payments, with final statistics based on the payments being made on time and in full
+    ///  a schedule of payments, with statistics
     module SimpleSchedule =
+        /// formats the schedule items as an HTML table (stats can be rendered separately)
+        let toHtmlTable schedule =
+            "<table>"
+                + """<thead style="vertical-align: bottom;">"""
+                    + """<th style="text-align: right;">Day</th>"""
+                    + """<th style="text-align: right;">Scheduled payment</th>"""
+                    + """<th style="text-align: right;">Simple interest</th>"""
+                    + """<th style="text-align: right;">Interest portion</th>"""
+                    + """<th style="text-align: right;">Principal portion</th>"""
+                    + """<th style="text-align: right;">Interest balance</th>"""
+                    + """<th style="text-align: right;">Principal balance</th>"""
+                    + """<th style="text-align: right;">Total simple interest</th>"""
+                    + """<th style="text-align: right;">Total interest</th>"""
+                    + """<th style="text-align: right;">Total principal</th>"""
+                + "</thead>"
+                + (schedule.Items |> Array.map SimpleItem.toHtmlRow |> String.concat "")
+            + "</table>"
+
         /// renders the simple schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile title description sp schedule =
-            let htmlSchedule = schedule.Items |> generateHtmlFromArray [||]
+            let htmlTitle = $"<h2>{title}</h2>"
+            let htmlSchedule = toHtmlTable schedule
+            let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
             let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
             let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
+            let htmlScheduleStats = $"<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedule.Stats}"
             let filename = $"out/{title}.md"
-            $"{htmlSchedule}<br /><h3>{title}</h3><p>{description}</p><p>{htmlDatestamp}</p>{htmlParams}"
+            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}"
             |> outputToFile' filename false
 
     /// convert an option to a value option
@@ -871,6 +910,12 @@ module Scheduling =
                     |> Array.sumBy ScheduledPayment.total
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
+                InitialApr = Apr.toPercent sp.InterestConfig.AprMethod aprSolution
+                InitialCostToBorrowingRatio =
+                    if principalTotal = 0L<Cent> then
+                        Percent 0m
+                    else
+                        decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
             }
         }
 
