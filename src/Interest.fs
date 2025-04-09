@@ -132,7 +132,7 @@ module Interest =
         /// the interest rate applicable for any period in which a refund is owing
         RateOnNegativeBalance: Rate
         /// how to round interest
-        InterestRounding: Rounding
+        Rounding: Rounding
         /// which APR calculation method to use
         AprMethod: Apr.CalculationMethod
     }
@@ -147,7 +147,7 @@ module Interest =
                     + $"<td>method: <i>{config.Method}</i></td>"
                 + "</tr>"
                 + "<tr>"
-                    + $"<td>interest rounding: <i>{config.InterestRounding}</i></td>"
+                    + $"<td>rounding: <i>{config.Rounding}</i></td>"
                     + $"<td>APR method: <i>{config.AprMethod}</i></td>"
                 + "</tr>"
                 + "<tr>"

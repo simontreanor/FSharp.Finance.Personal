@@ -42,13 +42,13 @@ module EdgeCaseTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.initialRecommended
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -57,7 +57,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -106,13 +106,13 @@ module EdgeCaseTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.initialRecommended
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -121,7 +121,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -170,13 +170,13 @@ module EdgeCaseTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.initialRecommended
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -185,7 +185,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -236,13 +236,13 @@ module EdgeCaseTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.initialRecommended
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -251,7 +251,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -372,13 +372,13 @@ module EdgeCaseTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = Charge.Config.initialRecommended
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -387,7 +387,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -502,8 +502,8 @@ module EdgeCaseTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -512,7 +512,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -631,8 +631,8 @@ module EdgeCaseTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -641,7 +641,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -689,8 +689,8 @@ module EdgeCaseTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -699,7 +699,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -775,8 +775,8 @@ module EdgeCaseTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -785,7 +785,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -861,8 +861,8 @@ module EdgeCaseTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -871,7 +871,7 @@ module EdgeCaseTests =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 

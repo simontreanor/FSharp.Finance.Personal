@@ -28,8 +28,8 @@ module InterestFirstTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
@@ -37,7 +37,7 @@ module InterestFirstTests =
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
         }

@@ -52,8 +52,8 @@ module FormattingHelper =
         match generationOptions with
         | Some go ->
             [|
-                if Array.isEmpty go.GoParameters.FeeConfig.FeeTypes then hideFeesProperties else [||]
-                if Array.isEmpty go.GoParameters.ChargeConfig.ChargeTypes then hideChargesProperties else [||]
+                if go.GoParameters.FeeConfig.IsSome && Array.isEmpty go.GoParameters.FeeConfig.Value.FeeTypes then hideFeesProperties else [||]
+                if go.GoParameters.ChargeConfig.IsSome && Array.isEmpty go.GoParameters.ChargeConfig.Value.ChargeTypes then hideChargesProperties else [||]
                 if (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) then hideInterestProperties else [||]
                 if not go.GoQuote then hideQuoteProperties else [||]
                 if not go.GoExtra then hideExtraProperties else [||]

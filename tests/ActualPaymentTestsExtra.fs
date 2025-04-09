@@ -47,13 +47,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -68,7 +68,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -130,13 +130,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -151,7 +151,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -214,13 +214,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -235,7 +235,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -311,13 +311,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -332,7 +332,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -394,8 +394,8 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = {
+            FeeConfig = None
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -409,7 +409,7 @@ module ActualPaymentTestsExtra =
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
         }
@@ -472,13 +472,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -493,7 +493,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -553,13 +553,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -574,7 +574,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 
@@ -648,13 +648,13 @@ module ActualPaymentTestsExtra =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
             }
-            ChargeConfig = {
+            ChargeConfig = Some {
                 ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                 Rounding = RoundDown
                 ChargeHolidays = [||]
@@ -669,7 +669,7 @@ module ActualPaymentTestsExtra =
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 8
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 

@@ -84,42 +84,42 @@ module Fee =
 
     /// options specifying the types of fees, their amounts, and any restrictions on these
     module Config =
-        /// a default config value, with no fees but recommended settings
-        let initialRecommended = {
-            FeeTypes = [||]
-            Rounding = NoRounding
-            FeeAmortisation = AmortiseProportionately
-            SettlementRefund = SettlementRefund.ProRata
-        }
-
         /// formats the fee config as an HTML table
         let toHtmlTable config =
-            "<table>"
-                + "<tr>"
-                    + $"""<td>fee types: <i>{Array.toStringOrNa config.FeeTypes |> _.Replace(" ", "&nbsp;")}</i></td>"""
-                    + $"<td>rounding: <i>{config.Rounding}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>fee amortisation: <i>{config.FeeAmortisation}</i></td>"
-                    + $"<td>settlement refund: <i>{config.SettlementRefund}</i></td>"
-                + "</tr>"
-            + "</table>"
-
-    /// rounds a charge to the nearest integer cent using the specified rounding option
-    let round config =
-        Cent.fromDecimalCent config.Rounding
+            match config with
+            | Some c ->
+                "<table>"
+                    + "<tr>"
+                        + $"""<td>fee types: <i>{Array.toStringOrNa c.FeeTypes |> _.Replace(" ", "&nbsp;")}</i></td>"""
+                        + $"<td>rounding: <i>{c.Rounding}</i></td>"
+                    + "</tr>"
+                    + "<tr>"
+                        + $"<td>fee amortisation: <i>{c.FeeAmortisation}</i></td>"
+                        + $"<td>settlement refund: <i>{c.SettlementRefund}</i></td>"
+                    + "</tr>"
+                + "</table>"
+            | None ->
+                "<table><tr><td>no fees</td></tr></table>"
 
     /// calculates the total amount of fees based on the fee configuration
     let total feeConfig baseValue feeType =
-        match feeType with
-        | FacilitationFee amount
-        | CabOrCsoFee amount
-        | MortageFee amount
-        | CustomFee (_, amount) -> amount |> Amount.total baseValue
-        |> round feeConfig
+        match feeConfig with
+        | Some fc ->
+            match feeType with
+            | FacilitationFee amount
+            | CabOrCsoFee amount
+            | MortageFee amount
+            | CustomFee (_, amount) -> amount |> Amount.total baseValue
+            |> Cent.fromDecimalCent fc.Rounding
+        | None ->
+            0L<Cent>
 
     /// calculates the total sum of all fees based on either default or custom fee types
     let grandTotal feeConfig baseValue customFeeTypes =
-        customFeeTypes
-        |> ValueOption.defaultValue feeConfig.FeeTypes
-        |> Array.sumBy (total feeConfig baseValue)
+        match feeConfig with
+        | Some fc ->
+            customFeeTypes
+            |> ValueOption.defaultValue fc.FeeTypes
+            |> Array.sumBy (total feeConfig baseValue)
+        | None ->
+            0L<Cent>

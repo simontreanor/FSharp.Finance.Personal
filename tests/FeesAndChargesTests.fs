@@ -41,8 +41,8 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.initialRecommended
-                ChargeConfig = {
+                FeeConfig = None
+                ChargeConfig = Some {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
                     ChargeHolidays = [||]
@@ -56,7 +56,7 @@ module FeesAndChargesTests =
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 }
             }
@@ -131,8 +131,8 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.initialRecommended
-                ChargeConfig = {
+                FeeConfig = None
+                ChargeConfig = Some {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
                     ChargeHolidays = [||]
@@ -146,7 +146,7 @@ module FeesAndChargesTests =
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 }
             }
@@ -221,8 +221,8 @@ module FeesAndChargesTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.initialRecommended
-                ChargeConfig = {
+                FeeConfig = None
+                ChargeConfig = Some {
                     ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
                     Rounding = RoundDown
                     ChargeHolidays = [||]
@@ -236,7 +236,7 @@ module FeesAndChargesTests =
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                 }
             }

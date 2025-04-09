@@ -93,8 +93,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.initialRecommended
-                ChargeConfig = Charge.Config.initialRecommended
+                FeeConfig = None
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
@@ -103,7 +103,7 @@ module InterestTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 
@@ -140,8 +140,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.initialRecommended
-                ChargeConfig = Charge.Config.initialRecommended
+                FeeConfig = None
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
@@ -150,7 +150,7 @@ module InterestTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 
@@ -314,8 +314,8 @@ module InterestTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = Fee.Config.initialRecommended
-                ChargeConfig = Charge.Config.initialRecommended
+                FeeConfig = None
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 13.1475m
@@ -324,7 +324,7 @@ module InterestTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Annual (Percent 8m)
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 

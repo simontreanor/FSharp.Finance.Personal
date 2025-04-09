@@ -36,8 +36,8 @@ module PromotionalRatesTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
@@ -48,7 +48,7 @@ module PromotionalRatesTests =
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = promotionalRates |> ValueOption.defaultValue [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
         }
@@ -132,13 +132,13 @@ module PromotionalRatesTests =
                 MinimumPayment = NoMinimumPayment
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = {
+            FeeConfig = Some {
                 FeeTypes = [| Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent> |]
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
                 SettlementRefund = Fee.SettlementRefund.Zero
             }
-            ChargeConfig = Charge.Config.initialRecommended
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Annual <| Percent 7.985m
@@ -149,7 +149,7 @@ module PromotionalRatesTests =
                 |]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                InterestRounding = RoundDown
+                Rounding = RoundDown
             }
         }
 

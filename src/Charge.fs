@@ -57,51 +57,55 @@ module Charge =
 
     /// options specifying the types of charges, their amounts, and any restrictions on these
     module Config =
-        /// a default config value, with no charges but recommended settings
-        let initialRecommended = {
-            ChargeTypes = [||]
-            Rounding = NoRounding
-            ChargeHolidays = [||]
-            ChargeGrouping = OneChargeTypePerDay
-            LatePaymentGracePeriod = 0<DurationDay>
-        }
         /// formats the charge config as an HTML table
         let toHtmlTable config =
-            "<table>"
-                + "<tr>"
-                    + $"<td>charge types: <i>{Array.toStringOrNa config.ChargeTypes}</i></td>"
-                    + $"<td>grouping: <i>{config.ChargeGrouping}</i></td>"
-                + "</tr>"
-                + $"<tr>"
-                    + $"<td>rounding: <i>{config.Rounding}</i></td>"
-                    + $"<td>late-payment grace period: <i>{config.LatePaymentGracePeriod}</i></td>"
-                + "</tr>"
-                + $"<tr>"
-                    + $"<td colspan='2'>holidays: <i>{Array.toStringOrNa config.ChargeHolidays}</i></td>"
-                + "</tr>"
-            + "</table>"
-
-    /// rounds a charge to the nearest integer cent using the specified rounding option
-    let round config =
-        Cent.fromDecimalCent config.Rounding
+            match config with
+            | Some c ->
+                "<table>"
+                    + "<tr>"
+                        + $"<td>charge types: <i>{Array.toStringOrNa c.ChargeTypes}</i></td>"
+                        + $"<td>grouping: <i>{c.ChargeGrouping}</i></td>"
+                    + "</tr>"
+                    + $"<tr>"
+                        + $"<td>rounding: <i>{c.Rounding}</i></td>"
+                        + $"<td>late-payment grace period: <i>{c.LatePaymentGracePeriod}</i></td>"
+                    + "</tr>"
+                    + $"<tr>"
+                        + $"<td colspan='2'>holidays: <i>{Array.toStringOrNa c.ChargeHolidays}</i></td>"
+                    + "</tr>"
+                + "</table>"
+            | None ->
+                "<table><tr><td>no charges</td></tr></table>"
 
     /// calculates the total of a charge
     let total chargeConfig baseValue chargeType =
-        match chargeType with
-        | LatePayment amount
-        | InsufficientFunds amount
-        | CustomCharge (_, amount) -> amount |> Amount.total baseValue
-        |> round chargeConfig
+        match chargeConfig with
+        | Some cc ->
+            match chargeType with
+            | LatePayment amount
+            | InsufficientFunds amount
+            | CustomCharge (_, amount) -> amount |> Amount.total baseValue
+            |> Cent.fromDecimalCent cc.Rounding
+        | None ->
+            0L<Cent>
 
     /// calculates the total sum of any charges incurred
     let grandTotal chargeConfig baseValue customChargeTypes =
-        customChargeTypes
-        |> ValueOption.defaultValue chargeConfig.ChargeTypes
-        |> Array.sumBy (total chargeConfig baseValue)
+        match chargeConfig with
+        | Some cc ->
+            customChargeTypes
+            |> ValueOption.defaultValue cc.ChargeTypes
+            |> Array.sumBy (total chargeConfig baseValue)
+        | None ->
+            0L<Cent>
 
     /// generates a date range during which charges are not incurred
     let holidayDates chargeConfig startDate =
-        chargeConfig.ChargeHolidays
-        |> Array.collect(fun (ih: DateRange) ->
-            [| (ih.Start - startDate).Days .. (ih.End - startDate).Days |]
-        )
+        match chargeConfig with
+        | Some cc ->
+            cc.ChargeHolidays
+            |> Array.collect(fun (dr: DateRange) ->
+                [| (dr.Start - startDate).Days .. (dr.End - startDate).Days |]
+            )
+        | None ->
+            [||]

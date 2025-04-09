@@ -66,8 +66,8 @@ module Rescheduling =
         let spNew =
             { sp with
                 ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> CustomSchedule
-                FeeConfig.SettlementRefund = rp.FeeSettlementRefund
-                ChargeConfig.ChargeHolidays = rp.ChargeHolidays
+                FeeConfig = sp.FeeConfig |> Option.map(fun fc -> { fc with SettlementRefund = rp.FeeSettlementRefund })
+                ChargeConfig = sp.ChargeConfig |> Option.map(fun cc -> { cc with ChargeHolidays = rp.ChargeHolidays })
                 InterestConfig =
                     { sp.InterestConfig with
                         InitialGracePeriod = 0<DurationDay>
@@ -120,26 +120,29 @@ module Rescheduling =
                 Principal = principalPortion
                 ScheduleConfig = rp.PaymentSchedule
                 FeeConfig =
-                    match rp.FeeHandling with
-                    | Fee.FeeHandling.CarryOverAsIs ->
-                        { sp.FeeConfig with
-                            FeeTypes = [| Fee.CustomFee ("Rollover Fee", Amount.Simple feesPortion) |]
-                            SettlementRefund =
-                                if feesRefundIfSettled = 0L<Cent> then
-                                    Fee.SettlementRefund.Zero
-                                else
-                                    match sp.FeeConfig.SettlementRefund with
-                                    | Fee.SettlementRefund.ProRata
-                                    | Fee.SettlementRefund.ProRataRescheduled _ ->
-                                        Fee.SettlementRefund.ProRataRescheduled rp.OriginalFinalPaymentDay
-                                    | _ as fsr ->
-                                        fsr
-                        }
-                    | _ ->
-                        { sp.FeeConfig with
-                            FeeTypes = [||]
-                            SettlementRefund = Fee.SettlementRefund.Zero
-                        }
+                    sp.FeeConfig
+                    |> Option.map(fun fc ->
+                        match rp.FeeHandling with
+                        | Fee.FeeHandling.CarryOverAsIs ->
+                            { fc with
+                                FeeTypes = [| Fee.CustomFee ("Rollover Fee", Amount.Simple feesPortion) |]
+                                SettlementRefund =
+                                    if feesRefundIfSettled = 0L<Cent> then
+                                        Fee.SettlementRefund.Zero
+                                    else
+                                        match fc.SettlementRefund with
+                                        | Fee.SettlementRefund.ProRata
+                                        | Fee.SettlementRefund.ProRataRescheduled _ ->
+                                            Fee.SettlementRefund.ProRataRescheduled rp.OriginalFinalPaymentDay
+                                        | _ as fsr ->
+                                            fsr
+                            }
+                        | _ ->
+                            { fc with
+                                FeeTypes = [||]
+                                SettlementRefund = Fee.SettlementRefund.Zero
+                            }
+                    )
                 InterestConfig = rp.InterestConfig
                 PaymentConfig = rp.PaymentConfig
             }

@@ -65,13 +65,13 @@ module UnitPeriodConfigTests =
                         MinimumPayment = DeferOrWriteOff 50L<Cent>
                         PaymentTimeout = 3<DurationDay>
                     }
-                    FeeConfig = {
+                    FeeConfig = Some {
                         FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                         Rounding = RoundDown
                         FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                         SettlementRefund = Fee.SettlementRefund.ProRata
                     }
-                    ChargeConfig = Charge.Config.initialRecommended
+                    ChargeConfig = None
                     InterestConfig = {
                         Method = Interest.Method.Simple
                         StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -80,7 +80,7 @@ module UnitPeriodConfigTests =
                         PromotionalRates = [||]
                         RateOnNegativeBalance = Interest.Rate.Zero
                         AprMethod = Apr.CalculationMethod.UsActuarial 5
-                        InterestRounding = RoundDown
+                        Rounding = RoundDown
                     }
                 }
             
@@ -128,13 +128,13 @@ module UnitPeriodConfigTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = {
+                FeeConfig = Some {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
                 }
-                ChargeConfig = Charge.Config.initialRecommended
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -143,7 +143,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 
@@ -195,13 +195,13 @@ module UnitPeriodConfigTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = {
+                FeeConfig = Some {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
                 }
-                ChargeConfig = Charge.Config.initialRecommended
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -210,7 +210,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 
@@ -284,13 +284,13 @@ module UnitPeriodConfigTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = {
+                FeeConfig = Some {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
                 }
-                ChargeConfig = Charge.Config.initialRecommended
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -299,7 +299,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 
@@ -373,13 +373,13 @@ module UnitPeriodConfigTests =
                     MinimumPayment = DeferOrWriteOff 50L<Cent>
                     PaymentTimeout = 3<DurationDay>
                 }
-                FeeConfig = {
+                FeeConfig = Some {
                     FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
                 }
-                ChargeConfig = Charge.Config.initialRecommended
+                ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
                     StandardRate = Interest.Rate.Annual (Percent 9.95m)
@@ -388,7 +388,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
-                    InterestRounding = RoundDown
+                    Rounding = RoundDown
                 }
             }
 
@@ -432,13 +432,19 @@ module UnitPeriodConfigTests =
                             |> Array.concat
                             |> Map.ofArray
                             |> CustomSchedule
-                        FeeConfig.SettlementRefund =
-                            match sp.FeeConfig.SettlementRefund with
-                            | Fee.SettlementRefund.ProRata
-                            | Fee.SettlementRefund.ProRataRescheduled _ ->
-                                Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
-                            | _ as fsr ->
-                                fsr
+                        FeeConfig =
+                            sp.FeeConfig
+                            |> Option.map(fun fc ->
+                                { fc with
+                                    SettlementRefund =
+                                        match fc.SettlementRefund with
+                                        | Fee.SettlementRefund.ProRata
+                                        | Fee.SettlementRefund.ProRataRescheduled _ ->
+                                            Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
+                                        | _ as fsr ->
+                                            fsr
+                                }
+                            )
                     }
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp

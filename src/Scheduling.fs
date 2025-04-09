@@ -438,9 +438,9 @@ module Scheduling =
         /// options relating to scheduled payments
         PaymentConfig: PaymentConfig
         /// options relating to fees
-        FeeConfig: Fee.Config
+        FeeConfig: Fee.Config option
         /// options relating to charges
-        ChargeConfig: Charge.Config
+        ChargeConfig: Charge.Config option
         /// options relating to interest
         InterestConfig: Interest.Config
     }
@@ -680,7 +680,7 @@ module Scheduling =
         match interestMethod with
         | Interest.Method.Simple ->
             Interest.dailyRates sp.StartDate false sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates previousItem.Day day
-            |> Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount sp.InterestConfig.InterestRounding
+            |> Interest.calculate previousItem.PrincipalBalance sp.InterestConfig.Cap.DailyAmount sp.InterestConfig.Rounding
         | Interest.Method.AddOn ->
             Cent.toDecimalCent payment
             |> min (Cent.toDecimalCent previousItem.InterestBalance)
@@ -694,7 +694,7 @@ module Scheduling =
         let interestPortion =
             calculateInterest sp interestMethod scheduledPaymentTotal previousItem day
             |> fun i -> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal (Cent.toDecimalCent previousItem.TotalInterest) i
-            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+            |> Cent.fromDecimalCent sp.InterestConfig.Rounding
         let principalPortion = scheduledPaymentTotal - interestPortion
         let simpleItem =
             {
@@ -730,7 +730,7 @@ module Scheduling =
                         | FixedSchedules _
                         | CustomSchedule _ -> paymentMap[pd]
                     generateItem sp Interest.Method.AddOn scheduledPayment simpleItem pd
-                ) { firstItem with InterestBalance = state.InterestBalance |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding }
+                ) { firstItem with InterestBalance = state.InterestBalance |> Cent.fromDecimalCent sp.InterestConfig.Rounding }
             let finalInterestTotal =
                 newSchedule
                 |> Array.last
@@ -749,7 +749,7 @@ module Scheduling =
                     | HigherFinalPayment ->
                         0L<Cent>, tolerance
 
-            let difference = state.InterestBalance - finalInterestTotal |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+            let difference = state.InterestBalance - finalInterestTotal |> Cent.fromDecimalCent sp.InterestConfig.Rounding
             if difference = 0L<Cent> && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
                 Some (newSchedule, ValueNone)
             else
@@ -764,7 +764,7 @@ module Scheduling =
         | Interest.Method.AddOn ->
             Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalPaymentDay
             |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal 0m<Cent>
-            |> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+            |> Cent.fromDecimalCent sp.InterestConfig.Rounding
         | _ ->
             0L<Cent>
 

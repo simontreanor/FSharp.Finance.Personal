@@ -64,14 +64,8 @@ module AprUnitedKingdomTests =
                 MinimumPayment = DeferOrWriteOff 50L<Cent>
                 PaymentTimeout = 3<DurationDay>
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = {
-                ChargeTypes = [||]
-                Rounding = RoundDown
-                ChargeHolidays = [||]
-                ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                LatePaymentGracePeriod = 0<DurationDay>
-            }
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = interestMethod
                 StandardRate = Interest.Rate.Daily (Percent 0.798m)
@@ -79,7 +73,7 @@ module AprUnitedKingdomTests =
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = CalculationMethod.UnitedKingdom 3
             }
         }

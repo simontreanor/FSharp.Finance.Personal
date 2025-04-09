@@ -376,7 +376,7 @@ module Amortisation =
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
         let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate (isSettledWithinGracePeriod sp settlementDay) sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates fromDay toDay
         // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
-        let interestRounding = sp.InterestConfig.InterestRounding
+        let interestRounding = sp.InterestConfig.Rounding
         // get an array of dates on which charges are not incurred
         let chargesHolidays = Charge.holidayDates sp.ChargeConfig sp.StartDate
         // get stats for interest rounding at the end of the schedule
@@ -539,26 +539,34 @@ module Amortisation =
             let scheduledPayment = { ap.ScheduledPayment with Adjustment = scheduledPaymentAdjustment }
             // apportion the fees
             let feesPortion =
-                match sp.FeeConfig.FeeAmortisation with
-                | Fee.FeeAmortisation.AmortiseBeforePrincipal ->
-                    Cent.min si.FeesBalance assignable
-                | Fee.FeeAmortisation.AmortiseProportionately ->
-                    feesPercentage sp.Principal feesTotal
-                    |> Percent.toDecimal
-                    |> fun m ->
-                        if (1m + m) = 0m then 0L<Cent>
-                        else decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
+                match sp.FeeConfig with
+                | Some feeConfig ->
+                    match feeConfig.FeeAmortisation with
+                    | Fee.FeeAmortisation.AmortiseBeforePrincipal ->
+                        Cent.min si.FeesBalance assignable
+                    | Fee.FeeAmortisation.AmortiseProportionately ->
+                        feesPercentage sp.Principal feesTotal
+                        |> Percent.toDecimal
+                        |> fun m ->
+                            if (1m + m) = 0m then 0L<Cent>
+                            else decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
+                | None ->
+                    0L<Cent>
             // determine the value of any fee refund in the event of settlement, depending on settings
             let feesRefundIfSettled =
-                match sp.FeeConfig.SettlementRefund with
-                | Fee.SettlementRefund.ProRata ->
-                    let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-                    calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
-                | Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay ->
-                    calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
-                | Fee.SettlementRefund.Balance ->
-                    a.CumulativeFees
-                | Fee.SettlementRefund.Zero ->
+                match sp.FeeConfig with
+                | Some feeConfig ->
+                    match feeConfig.SettlementRefund with
+                    | Fee.SettlementRefund.ProRata ->
+                        let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+                        calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
+                    | Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay ->
+                        calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
+                    | Fee.SettlementRefund.Balance ->
+                        a.CumulativeFees
+                    | Fee.SettlementRefund.Zero ->
+                        0L<Cent>
+                | None ->
                     0L<Cent>
             // ensure any fee refund is positive
             let feesRefund = Cent.max 0L<Cent> feesRefundIfSettled
@@ -728,7 +736,13 @@ module Amortisation =
                 FeesBalance = feesTotal
                 InterestBalance = initialInterestBalanceM
                 SettlementFigure = ValueSome <| sp.Principal + feesTotal
-                FeesRefundIfSettled = match sp.FeeConfig.SettlementRefund with Fee.SettlementRefund.Zero -> 0L<Cent> | _ -> feesTotal
+                FeesRefundIfSettled =
+                    match sp.FeeConfig with
+                    | Some fc ->
+                        match fc.SettlementRefund with
+                        | Fee.SettlementRefund.Zero -> 0L<Cent>
+                        | _ -> feesTotal
+                    | None -> 0L<Cent>
             }), {
                 CumulativeScheduledPayments = 0L<Cent>
                 CumulativeActualPayments = 0L<Cent>

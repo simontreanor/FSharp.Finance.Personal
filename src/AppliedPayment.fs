@@ -26,7 +26,7 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay settlementDay (chargeConfig: Charge.Config) paymentTimeout (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
+    let applyPayments asOfDay settlementDay (chargeConfig: Charge.Config option) paymentTimeout (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
         // guard against empty maps
         if Map.isEmpty scheduledPayments then
             Map.empty
@@ -73,10 +73,14 @@ module AppliedPayment =
                         |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
                     // determine the values of any parameters relating to charges
                     let latePaymentGracePeriod, latePaymentCharge, chargeGrouping =
-                        chargeConfig
-                        |> fun cc ->
-                            let lpc = cc.ChargeTypes |> Array.tryPick(function Charge.LatePayment _ as c -> Some c | _ -> None)
-                            cc.LatePaymentGracePeriod, lpc, cc.ChargeGrouping
+                        match chargeConfig with
+                        | Some cc ->
+                            cc
+                            |> fun cc ->
+                                let lpc = cc.ChargeTypes |> Array.tryPick(function Charge.LatePayment _ as c -> Some c | _ -> None)
+                                cc.LatePaymentGracePeriod, lpc, cc.ChargeGrouping
+                        | None ->
+                            0<DurationDay>, None, Charge.ChargeGrouping.AllChargesApplied
                     // calculate the net effect and payment status for the day
                     let netEffect, paymentStatus =
                         // if a payment is pending, this overrides any other net effect or status for the day
@@ -95,7 +99,7 @@ module AppliedPayment =
                             | 0L<Cent>, cpt ->
                                 cpt, ExtraPayment
                             // a payment due on or before the day
-                            | spt, cpt when cpt < spt && offsetDay <= asOfDay && (int offsetDay + int latePaymentGracePeriod) >= int asOfDay ->
+                            | spt, cpt when cpt < spt && offsetDay <= asOfDay && int offsetDay + int latePaymentGracePeriod >= int asOfDay ->
                                 match settlementDay with
                                 // settlement requested on a future day
                                 | ValueSome (SettlementDay.SettlementOn day) when day > offsetDay ->

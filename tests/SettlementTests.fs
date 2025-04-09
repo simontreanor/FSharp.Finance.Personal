@@ -36,8 +36,8 @@ module SettlementTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -45,7 +45,7 @@ module SettlementTests =
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
             }
         }
@@ -123,8 +123,8 @@ module SettlementTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -132,7 +132,7 @@ module SettlementTests =
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
             }
         }
@@ -210,8 +210,8 @@ module SettlementTests =
                 PaymentTimeout = 0<DurationDay>
                 MinimumPayment = NoMinimumPayment
             }
-            FeeConfig = Fee.Config.initialRecommended
-            ChargeConfig = Charge.Config.initialRecommended
+            FeeConfig = None
+            ChargeConfig = None
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
@@ -219,7 +219,7 @@ module SettlementTests =
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                InterestRounding = RoundDown
+                Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
             }
         }
