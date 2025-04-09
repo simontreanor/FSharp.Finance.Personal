@@ -69,7 +69,7 @@ module Charge =
         let toHtmlTable config =
             "<table>"
                 + "<tr>"
-                    + $"<td>types: <i>{Array.toStringOrNa config.ChargeTypes}</i></td>"
+                    + $"<td>charge types: <i>{Array.toStringOrNa config.ChargeTypes}</i></td>"
                     + $"<td>grouping: <i>{config.ChargeGrouping}</i></td>"
                 + "</tr>"
                 + $"<tr>"
