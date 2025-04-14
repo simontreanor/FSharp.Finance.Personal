@@ -531,10 +531,10 @@ module ComplianceTests =
     let ComplianceTest020 () =
         let title = "ComplianceTest020"
         let description = "Total repayable on interest-first loan of £300 with repayments starting on day 19 and total loan length 110 days"
+        let sp = { scheduleParameters7 with Principal = 300_00L<Cent> }
+        let schedules = Amortisation.generate sp ValueNone false Map.empty
 
-        let schedules = Amortisation.generate { scheduleParameters7 with Principal = 300_00L<Cent> } ValueNone false Map.empty
-
-        Schedule.outputHtmlToFile title description scheduleParameters7 schedules
+        Schedule.outputHtmlToFile title description sp schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
