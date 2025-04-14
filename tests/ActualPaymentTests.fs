@@ -47,16 +47,16 @@ module ActualPaymentTests =
             NewInterest = interestAdjustment
             NewCharges = [||]
             PrincipalPortion = principalPortion
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = interestPortion
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
     [<Fact>]
@@ -292,16 +292,16 @@ module ActualPaymentTests =
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
             PrincipalPortion = 557_45L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 606_50L<Cent>
             ChargesPortion = 30_00L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -374,16 +374,16 @@ module ActualPaymentTests =
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
             PrincipalPortion = 838_09L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 606_50L<Cent>
             ChargesPortion = 30_00L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = -280_64L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome -280_64L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -461,16 +461,16 @@ module ActualPaymentTests =
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = -280_64L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -546,16 +546,16 @@ module ActualPaymentTests =
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 1500_00L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -634,16 +634,16 @@ module ActualPaymentTests =
             NewInterest = 24_54.144m<Cent>
             NewCharges = [||]
             PrincipalPortion = 219_12L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 24_54L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 243_66L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -722,16 +722,16 @@ module ActualPaymentTests =
             NewInterest = -18.45304110M<Cent>
             NewCharges = [||]
             PrincipalPortion = -280_64L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = -19L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -809,16 +809,16 @@ module ActualPaymentTests =
             NewInterest = 89_95.392m<Cent>
             NewCharges = [||]
             PrincipalPortion = 401_58L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 89_95L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 491_53L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -896,16 +896,16 @@ module ActualPaymentTests =
             NewInterest = 118_33.696m<Cent>
             NewCharges = [||]
             PrincipalPortion = 373_20L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 118_33L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 155_09L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 646_62L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -985,16 +985,16 @@ module ActualPaymentTests =
             NewInterest = 79_07.200m<Cent>
             NewCharges = [||]
             PrincipalPortion = 420_93L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 79_07L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = -67_93L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome -67_93L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
         
         actual |> should equal expected
@@ -1073,7 +1073,7 @@ module ActualPaymentTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1151,7 +1151,7 @@ module ActualPaymentTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1206,7 +1206,7 @@ module ActualPaymentTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1262,7 +1262,7 @@ module ActualPaymentTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1319,7 +1319,7 @@ module ActualPaymentTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1376,7 +1376,7 @@ module ActualPaymentTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata

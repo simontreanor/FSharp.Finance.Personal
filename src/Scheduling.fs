@@ -48,7 +48,7 @@ module Scheduling =
             | ValueSome o, ValueNone ->
                 $"original {formatCent o}"
             | ValueNone, ValueSome r ->
-                $"""{(if previous = "" then "rescheduled&nbsp;" else previous)}{formatCent r.Value}"""
+                $"""{if previous = "" then "rescheduled&nbsp;" else previous}{formatCent r.Value}"""
             | ValueNone, ValueNone ->
                 "n/a"
             |> fun s ->
@@ -106,12 +106,12 @@ module Scheduling =
         /// HTML formatting to display the actual payment status in a readable format
         member aps.Html =
             match aps with
-            | WriteOff amount -> $"write-off {formatCent amount}"
-            | Pending amount -> $"pending {formatCent amount}"
-            | TimedOut amount -> $"timed out {formatCent amount}"
-            | Confirmed amount -> $"confirmed {formatCent amount}"
-            | Failed (amount, ValueSome charge) -> $"failed {formatCent amount} ({charge})"
-            | Failed (amount, ValueNone) -> $"failed {formatCent amount}"
+            | WriteOff amount -> $"write-off <b>{formatCent amount}</b>"
+            | Pending amount -> $"pending <b>{formatCent amount}</b>"
+            | TimedOut amount -> $"{formatCent amount} timed out"
+            | Confirmed amount -> $"confirmed <b>{formatCent amount}</b>"
+            | Failed (amount, ValueSome charge) -> $"{formatCent amount} failed ({charge})"
+            | Failed (amount, ValueNone) -> $"{formatCent amount} failed"
     
     /// the status of the payment, allowing for delays due to payment-provider processing times
     module ActualPaymentStatus =
@@ -438,7 +438,7 @@ module Scheduling =
         ScheduleConfig: ScheduleConfig
         /// options relating to scheduled payments
         PaymentConfig: PaymentConfig
-        /// options relating to fees
+        /// options relating to fee
         FeeConfig: Fee.Config option
         /// options relating to charges
         ChargeConfig: Charge.Config option
@@ -668,11 +668,11 @@ module Scheduling =
                     |> Map.ofArray
 
     // calculate the approximate level-payment value
-    let calculateLevelPayment paymentCount paymentRounding principal fees interest =
+    let calculateLevelPayment paymentCount paymentRounding principal fee interest =
         if paymentCount = 0 then
             0L<Cent>
         else
-            (Cent.toDecimalCent principal + Cent.toDecimalCent fees + interest) / decimal paymentCount
+            (Cent.toDecimalCent principal + Cent.toDecimalCent fee + interest) / decimal paymentCount
             |> Cent.fromDecimalCent paymentRounding
             
 
@@ -714,14 +714,14 @@ module Scheduling =
 
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let maximiseInterest sp paymentDays firstItem paymentCount feesTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: struct {| Iteration: int; InterestBalance: decimal<Cent> |} voption) =
+    let maximiseInterest sp paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: struct {| Iteration: int; InterestBalance: decimal<Cent> |} voption) =
         if stateOption.IsNone then
             None
         elif Array.isEmpty paymentDays then
             None
         else
             let state = stateOption.Value
-            let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal state.InterestBalance
+            let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feeTotal state.InterestBalance
             let newSchedule =
                 paymentDays
                 |> Array.scan (fun simpleItem pd ->
@@ -795,12 +795,12 @@ module Scheduling =
         // get the payment count for use in further calculations
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
-        let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
+        let feeTotal = Fee.total sp.FeeConfig sp.Principal
         // get the initial interest balance
         let initialInterestBalance = totalAddOnInterest sp finalScheduledPaymentDay
         // create the initial item for the schedule based on the initial interest and principal
-        // note: for simplicity, principal includes fees
-        let initialSimpleItem = { SimpleItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = sp.Principal + feesTotal }
+        // note: for simplicity, principal includes fee
+        let initialSimpleItem = { SimpleItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = sp.Principal + feeTotal }
         // get the appropriate tolerance steps for determining payment value
         // note: tolerance steps allow for gradual relaxation of the tolerance if no solution is found for the original tolerance
         let toleranceSteps = ToleranceSteps.forPaymentValue paymentCount
@@ -823,7 +823,7 @@ module Scheduling =
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem
                 let iterationLimit = 100u
-                let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feesTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
+                let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
                 match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance sp.PaymentConfig.LevelPaymentOption) toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
@@ -847,7 +847,7 @@ module Scheduling =
             | Interest.Method.AddOn ->
                 let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest
                 ValueSome struct {| Iteration = 0; InterestBalance = finalInterestTotal |}
-                |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feesTotal paymentMap)
+                |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feeTotal paymentMap)
                 |> Array.last
             | _ ->
                 schedule
@@ -916,7 +916,7 @@ module Scheduling =
                     if principalTotal = 0L<Cent> then
                         Percent 0m
                     else
-                        decimal (feesTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+                        decimal (feeTotal + interestTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
             }
         }
 
@@ -989,21 +989,21 @@ module Scheduling =
         // convert the result to a map
         |> Map.ofArray
 
-    /// a breakdown of how an actual payment is apportioned to principal, fees, interest and charges
+    /// a breakdown of how an actual payment is apportioned to principal, fee, interest and charges
     type Apportionment = {
         PrincipalPortion: int64<Cent>
-        FeesPortion: int64<Cent>
+        FeePortion: int64<Cent>
         InterestPortion: int64<Cent>
         ChargesPortion: int64<Cent>
     }
 
-    /// a breakdown of how an actual payment is apportioned to principal, fees, interest and charges
+    /// a breakdown of how an actual payment is apportioned to principal, fee, interest and charges
     module Apportionment =
-        /// add principal, fees, interest and charges to an existing apportionment
-        let Add principal fees interest charges apportionment =
+        /// add principal, fee, interest and charges to an existing apportionment
+        let Add principal fee interest charges apportionment =
             { apportionment with 
                 PrincipalPortion = apportionment.PrincipalPortion + principal
-                FeesPortion = apportionment.FeesPortion + fees
+                FeePortion = apportionment.FeePortion + fee
                 InterestPortion = apportionment.InterestPortion + interest
                 ChargesPortion = apportionment.ChargesPortion + charges
             }
@@ -1011,14 +1011,14 @@ module Scheduling =
         /// a default value for an apportionment, with all portions set to zero
         let Zero = {
             PrincipalPortion = 0L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
         }
 
         /// the total value of all the portions of an apportionment
         let Total apportionment =
-            apportionment.PrincipalPortion + apportionment.FeesPortion + apportionment.InterestPortion + apportionment.ChargesPortion 
+            apportionment.PrincipalPortion + apportionment.FeePortion + apportionment.InterestPortion + apportionment.ChargesPortion 
 
     /// a generated payment, where applicable
     [<Struct; StructuredFormatDisplay("{Html}")>]

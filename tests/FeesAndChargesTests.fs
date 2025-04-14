@@ -5,7 +5,7 @@ open FsUnit.Xunit
 
 open FSharp.Finance.Personal
 
-module FeesAndChargesTests =
+module FeeAndChargesTests =
 
     open Amortisation
     open Calculation
@@ -103,16 +103,16 @@ module FeesAndChargesTests =
                 NewInterest = 11256.472m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 344_28L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 112_56L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 109_61L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 109_61L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
             actual |> should equal expected
@@ -200,16 +200,16 @@ module FeesAndChargesTests =
                 NewInterest = 10665.24m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 350_19L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 106_65L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 79_86L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 79_86L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
             actual |> should equal expected
@@ -297,16 +297,16 @@ module FeesAndChargesTests =
                 NewInterest = 11552.088m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 341_32L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 115_52L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 124_49L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 124_49L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
             actual |> should equal expected

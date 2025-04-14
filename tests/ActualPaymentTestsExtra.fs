@@ -48,7 +48,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -102,16 +102,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 3_30.67257534m<Cent>
             NewCharges = [||]
             PrincipalPortion = 161_76L<Cent>
-            FeesPortion = 242_58L<Cent>
+            FeePortion = 242_58L<Cent>
             InterestPortion = 3_30L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -138,7 +138,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -193,16 +193,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 64.65046575m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_79L<Cent>
-            FeesPortion = 101_61L<Cent>
+            FeePortion = 101_61L<Cent>
             InterestPortion = 64L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 170_04L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -229,7 +229,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -270,7 +270,7 @@ module ActualPaymentTestsExtra =
                 ]
             let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
-                FeeSettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay'
+                FeeettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]
@@ -296,16 +296,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 3.72866027m<Cent>
             NewCharges = [||]
             PrincipalPortion = 4_39L<Cent>
-            FeesPortion = 5_38L<Cent>
+            FeePortion = 5_38L<Cent>
             InterestPortion = 3L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 9_80L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -332,7 +332,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -386,16 +386,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 52_14L<Cent>
-            FeesPortion = 85_22L<Cent>
+            FeePortion = 85_22L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -466,16 +466,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 9_43.040m<Cent>
             NewCharges = [||]
             PrincipalPortion = 42_10L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 9_43L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -502,7 +502,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 7<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -554,16 +554,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 1_28.41170136m<Cent>
             NewCharges = [||]
             PrincipalPortion = 134_62L<Cent>
-            FeesPortion = 6_50L<Cent>
+            FeePortion = 6_50L<Cent>
             InterestPortion = 1_28L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 195_35L<Cent>
+            FeeRefund = 195_35L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 142_40L<Cent>
-            FeesRefundIfSettled = 195_35L<Cent>
+            FeeRefundIfSettled = 195_35L<Cent>
         }
 
         actual |> should equal expected
@@ -571,7 +571,7 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ActualPaymentTestExtra006 () =
         let title = "ActualPaymentTestExtra006"
-        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees rolled over)"
+        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee rolled over)"
         let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
@@ -590,7 +590,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -656,16 +656,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 9_26L<Cent>
-            FeesPortion = 9_38L<Cent>
+            FeePortion = 9_38L<Cent>
             InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 18_71L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -673,7 +673,7 @@ module ActualPaymentTestsExtra =
     [<Fact>]
     let ActualPaymentTestExtra007 () =
         let title = "ActualPaymentTestExtra007"
-        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fees not rolled over)"
+        let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee not rolled over)"
         let sp = {
             AsOfDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
@@ -692,7 +692,7 @@ module ActualPaymentTestsExtra =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -758,16 +758,16 @@ module ActualPaymentTestsExtra =
             NewInterest = 7.11384109m<Cent>
             NewCharges = [||]
             PrincipalPortion = 18_64L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 18_71L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected

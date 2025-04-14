@@ -68,11 +68,11 @@ module SettlementTests =
                 PaymentValue = 98_52L<Cent>
                 Apportionment = {
                     PrincipalPortion = 81_56L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 16_96L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected =
@@ -92,16 +92,16 @@ module SettlementTests =
                 NewInterest = 16_96.448m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 81_56L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 16_96L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 98_52L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -155,11 +155,11 @@ module SettlementTests =
                 PaymentValue = 105_04L<Cent>
                 Apportionment = {
                     PrincipalPortion = 81_56L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 23_48L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected =
@@ -179,16 +179,16 @@ module SettlementTests =
                 NewInterest = 4_56.736m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 81_56L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 23_48L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 105_04L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -243,11 +243,11 @@ module SettlementTests =
                 PaymentValue = 53_30L<Cent>
                 Apportionment = {
                     PrincipalPortion = 50_48L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 2_82L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected =
@@ -267,16 +267,16 @@ module SettlementTests =
                 NewInterest = 2_82.688m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 50_48L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 2_82L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 53_30L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected

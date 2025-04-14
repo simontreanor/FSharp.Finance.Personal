@@ -133,7 +133,7 @@ module PromotionalRatesTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent> |]
+                FeeType = Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent>
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -178,16 +178,16 @@ module PromotionalRatesTests =
             NewInterest = 10_26.07665657m<Cent>
             NewCharges = [||]
             PrincipalPortion = 1512_99L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 10_26L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 1523_25L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected

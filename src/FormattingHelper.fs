@@ -7,13 +7,13 @@ module FormattingHelper =
 
     let private asi = Unchecked.defaultof<Amortisation.ScheduleItem>
  
-    /// an array of properties relating to (product) fees
-    let hideFeesProperties =
+    /// an array of properties relating to (product) fee
+    let hideFeeProperties =
         [|
-            nameof asi.FeesPortion
-            nameof asi.FeesRefund
-            nameof asi.FeesBalance
-            nameof asi.FeesRefundIfSettled
+            nameof asi.FeePortion
+            nameof asi.FeeRefund
+            nameof asi.FeeBalance
+            nameof asi.FeeRefundIfSettled
         |]
     /// an array of properties relating to (penalty) charges
     let hideChargesProperties =
@@ -30,7 +30,7 @@ module FormattingHelper =
     /// an array of properties representing extra information
     let hideExtraProperties =
         [|
-            nameof asi.FeesRefundIfSettled
+            nameof asi.FeeRefundIfSettled
             nameof asi.SettlementFigure
             nameof asi.Window
         |]
@@ -52,8 +52,8 @@ module FormattingHelper =
         match generationOptions with
         | Some go ->
             [|
-                if go.GoParameters.FeeConfig.IsSome && Array.isEmpty go.GoParameters.FeeConfig.Value.FeeTypes then hideFeesProperties else [||]
-                if go.GoParameters.ChargeConfig.IsSome && Map.isEmpty go.GoParameters.ChargeConfig.Value.ChargeTypes then hideChargesProperties else [||]
+                if go.GoParameters.FeeConfig.IsNone then hideFeeProperties else [||]
+                if go.GoParameters.ChargeConfig.IsNone || Map.isEmpty go.GoParameters.ChargeConfig.Value.ChargeTypes then hideChargesProperties else [||]
                 if (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) then hideInterestProperties else [||]
                 if not go.GoQuote then hideQuoteProperties else [||]
                 if not go.GoExtra then hideExtraProperties else [||]

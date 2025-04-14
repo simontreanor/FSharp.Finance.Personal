@@ -5,9 +5,9 @@ open DateDay
 open Formatting
 
 /// a penalty charge
-/// > NB: differences between charges and fees:
-/// > - charges are not up-front amounts, they are incurred as a result of a breach of agreed terms
-/// > - charges are not added to the principal balance and do not therefore accrue interest
+/// > NB: differences between charge and fee:
+/// > - a charge is not an up-front amount, it is incurred as a result of a breach of agreed terms
+/// > - a charge is not added to the principal balance and does not therefore accrue interest
 module Charge =
 
     /// options on how to handle multiple charges
@@ -79,7 +79,7 @@ module Charge =
         /// formats the charge config as an HTML table
         let toHtmlTable (config: Config option) =
             if config.IsNone || config.Value.ChargeTypes.IsEmpty then
-                "<table><tr><td>no charges</td></tr></table>"
+                "no charges"
             else
                 "<table>"
                     + "<tr>"

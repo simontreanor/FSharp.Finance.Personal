@@ -361,7 +361,7 @@ module Calculation =
         let toStringOrNa a =
             match a with
             | null | [||] -> "n/a"
-            | _ -> a |> Array.map(fun ai -> $"{ai}") |> String.concat ", "
+            | _ -> a |> Array.map(fun ai -> $"{ai}") |> String.concat "<br/>"
 
     /// functions for working with maps
     module Map =

@@ -11,10 +11,10 @@ module Quotes =
     type PaymentQuote = {
         // the value of the payment
         PaymentValue: int64<Cent>
-        // how the payment is apportioned to charges, interest, fees, and principal
+        // how the payment is apportioned to charges, interest, fee, and principal
         Apportionment: Apportionment
-        // the value of any fees refund that would be due if settled
-        FeesRefundIfSettled: int64<Cent>
+        // the value of any fee refund that would be due if settled
+        FeeRefundIfSettled: int64<Cent>
     }
 
     /// the result of a quote with a breakdown of constituent amounts where relevant
@@ -76,34 +76,34 @@ module Quotes =
                             PaymentValue = GeneratedPayment.Total si.GeneratedPayment
                             Apportionment = {
                                 PrincipalPortion = si.PrincipalPortion
-                                FeesPortion = si.FeesPortion
+                                FeePortion = si.FeePortion
                                 InterestPortion = si.InterestPortion
                                 ChargesPortion = si.ChargesPortion
                             }
-                            FeesRefundIfSettled = si.FeesRefundIfSettled
+                            FeeRefundIfSettled = si.FeeRefundIfSettled
                         }
-                    // if there is an existing payment on the day and the generated value is positive, apportion the existing payment first (in the order charges->interest->fees->principal), then apportion the generated payment
+                    // if there is an existing payment on the day and the generated value is positive, apportion the existing payment first (in the order charges->interest->fee->principal), then apportion the generated payment
                     elif generatedValue >= 0L<Cent> then
                         let chargesPortion = Cent.min si.ChargesPortion existingPayments
                         let interestPortion = Cent.min si.InterestPortion (Cent.max 0L<Cent> (existingPayments - chargesPortion))
-                        let feesPortion = Cent.min si.FeesPortion (Cent.max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
-                        let principalPortion = Cent.max 0L<Cent> (existingPayments - feesPortion - chargesPortion - interestPortion)
+                        let feePortion = Cent.min si.FeePortion (Cent.max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
+                        let principalPortion = Cent.max 0L<Cent> (existingPayments - feePortion - chargesPortion - interestPortion)
                         PaymentQuote {
                             PaymentValue = GeneratedPayment.Total si.GeneratedPayment
                             Apportionment = {
                                 PrincipalPortion = si.PrincipalPortion - principalPortion
-                                FeesPortion = si.FeesPortion - feesPortion
+                                FeePortion = si.FeePortion - feePortion
                                 InterestPortion = si.InterestPortion - interestPortion
                                 ChargesPortion = si.ChargesPortion - chargesPortion
                             }
-                            FeesRefundIfSettled = si.FeesRefundIfSettled
+                            FeeRefundIfSettled = si.FeeRefundIfSettled
                         }
                     // if there is an existing payment on the day and the generated value is negative, because of the apportionment order, any negative balance lies with the principal only, so the generated payment only has a principal portion
                     else
                         PaymentQuote {
                             PaymentValue = GeneratedPayment.Total si.GeneratedPayment
                             Apportionment = { Apportionment.Zero with PrincipalPortion = GeneratedPayment.Total si.GeneratedPayment }
-                            FeesRefundIfSettled = si.FeesRefundIfSettled
+                            FeeRefundIfSettled = si.FeeRefundIfSettled
                         }
                 // where there is no generated payment, inform the caller that a quote could not be generated
                 | _ ->

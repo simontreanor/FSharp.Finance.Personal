@@ -2,14 +2,15 @@ namespace FSharp.Finance.Personal
 
 open Calculation
 open DateDay
+open Formatting
 
 /// a product fee
-/// > NOTE: differences between fees and charges:
-/// > - fees are up-front amounts paid under agreed terms for receiving an advance
-/// > - fees are added to the principal balance and therefore accrue interest
+/// > NOTE: differences between fee and charge:
+/// > - a fee is an up-front amount paid under agreed terms for receiving an advance
+/// > - a fee is added to the principal balance and therefore accrues interest
 module Fee =
 
-    /// the type and amount of any fees, such as facilitation fees or CSO/CAB fees, taking into account any constraints
+    /// the type and amount of any fee, such as facilitation fee or CSO/CAB fee, taking into account any constraints
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type FeeType =
         /// a fee enabling the provision of a financial product
@@ -28,7 +29,7 @@ module Fee =
             | MortageFee amount -> $"mortgage fee {amount}"
             | CustomFee (name, amount) -> $"{name} {amount}"
 
-    /// how to amortise fees
+    /// how to amortise the fee
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type FeeAmortisation =
         /// amortise any fee before amortising principal
@@ -41,14 +42,14 @@ module Fee =
             | AmortiseBeforePrincipal -> "amortise before principal"
             | AmortiseProportionately -> "amortise proportionately"
 
-    /// how the fees are treated in the event of an early settlement
+    /// how the fee is treated in the event of an early settlement
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type SettlementRefund =
-        /// fees are due in full with no discount or refund
+        /// fee is due in full with no discount or refund
         | Zero
-        /// for original (non-rescheduled) amortisations: fees are refunded proportionately based on the current final payment day
+        /// for original (non-rescheduled) amortisations: fee is refunded proportionately based on the current final payment day
         | ProRata
-        /// for rescheduled amortisations: fees are refunded proportionately based on the original final payment day
+        /// for rescheduled amortisations: fee is refunded proportionately based on the original final payment day
         | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
         /// the current fee balance is refunded
         | Balance
@@ -60,7 +61,7 @@ module Fee =
             | ProRataRescheduled day -> $"pro rata refund (based on day {day})"
             | Balance -> "balance refund"
 
-    /// how to handle fees when rescheduling or rolling over
+    /// how to handle any fee when rescheduling or rolling over
     [<Struct>]
     type FeeHandling =
         /// move any outstanding fee balance to the principal balance
@@ -70,19 +71,19 @@ module Fee =
         /// write off any outstanding fee balance
         | WriteOffFeeBalance
 
-    /// options specifying the types of fees, their amounts, and any restrictions on these
+    /// options specifying the type of fee and how it is calculated
     type Config = {
-        /// a list of product fees applicable to a product
-        FeeTypes: FeeType array
-        /// how to round fees
+        /// a fee applicable to a product
+        FeeType: FeeType
+        /// how to round the fee
         Rounding: Rounding
-        /// how to amortise fees in relation to principal
+        /// how to amortise the fee in relation to the principal
         FeeAmortisation: FeeAmortisation
-        /// how fees are treated when a product is repaid early
+        /// how the fee is treated when a product is repaid early
         SettlementRefund: SettlementRefund
     }
 
-    /// options specifying the types of fees, their amounts, and any restrictions on these
+    /// options specifying the type of fee and how it is calculated
     module Config =
         /// formats the fee config as an HTML table
         let toHtmlTable config =
@@ -90,7 +91,7 @@ module Fee =
             | Some c ->
                 "<table>"
                     + "<tr>"
-                        + $"""<td>fee types: <i>{Array.toStringOrNa c.FeeTypes |> _.Replace(" ", "&nbsp;")}</i></td>"""
+                        + $"""<td>fee type: <i>{c.FeeType}</i></td>"""
                         + $"<td>rounding: <i>{c.Rounding}</i></td>"
                     + "</tr>"
                     + "<tr>"
@@ -99,27 +100,17 @@ module Fee =
                     + "</tr>"
                 + "</table>"
             | None ->
-                "<table><tr><td>no fees</td></tr></table>"
+                "no fee"
 
-    /// calculates the total amount of fees based on the fee configuration
-    let total feeConfig baseValue feeType =
+    /// calculates the total fee based on the fee configuration
+    let total feeConfig baseValue =
         match feeConfig with
         | Some fc ->
-            match feeType with
+            match fc.FeeType with
             | FacilitationFee amount
             | CabOrCsoFee amount
             | MortageFee amount
             | CustomFee (_, amount) -> amount |> Amount.total baseValue
             |> Cent.fromDecimalCent fc.Rounding
-        | None ->
-            0L<Cent>
-
-    /// calculates the total sum of all fees based on either default or custom fee types
-    let grandTotal feeConfig baseValue customFeeTypes =
-        match feeConfig with
-        | Some fc ->
-            customFeeTypes
-            |> ValueOption.defaultValue fc.FeeTypes
-            |> Array.sumBy (total feeConfig baseValue)
         | None ->
             0L<Cent>

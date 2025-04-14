@@ -42,7 +42,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -89,11 +89,11 @@ module QuoteTests =
                 PaymentValue = 1969_72L<Cent>
                 Apportionment = {
                     PrincipalPortion = 1175_80L<Cent>
-                    FeesPortion = 790_21L<Cent>
+                    FeePortion = 790_21L<Cent>
                     InterestPortion = 3_71L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 1437_53L<Cent>
+                FeeRefundIfSettled = 1437_53L<Cent>
             }
 
         let expected =
@@ -113,16 +113,16 @@ module QuoteTests =
                 NewInterest = 3_71.12573150m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 790_21L<Cent>
+                FeePortion = 790_21L<Cent>
                 InterestPortion = 3_71L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 1437_53L<Cent>
+                FeeRefund = 1437_53L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 1969_72L<Cent>
-                FeesRefundIfSettled = 1437_53L<Cent>
+                FeeRefundIfSettled = 1437_53L<Cent>
             }
 
         actual |> should equal expected
@@ -151,7 +151,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -198,11 +198,11 @@ module QuoteTests =
                 PaymentValue = 2016_50L<Cent>
                 Apportionment = {
                     PrincipalPortion = 1175_80L<Cent>
-                    FeesPortion = 834_21L<Cent>
+                    FeePortion = 834_21L<Cent>
                     InterestPortion = 6_49L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 1393_53L<Cent>
+                FeeRefundIfSettled = 1393_53L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -220,16 +220,16 @@ module QuoteTests =
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 834_21L<Cent>
+                FeePortion = 834_21L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 1393_53L<Cent>
+                FeeRefund = 1393_53L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 2016_50L<Cent>
-                FeesRefundIfSettled = 1393_53L<Cent>
+                FeeRefundIfSettled = 1393_53L<Cent>
             }
 
         actual |> should equal expected
@@ -258,7 +258,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -305,11 +305,11 @@ module QuoteTests =
                 PaymentValue = 1991_50L<Cent>
                 Apportionment = {
                     PrincipalPortion = 1175_80L<Cent>
-                    FeesPortion = 815_70L<Cent>
+                    FeePortion = 815_70L<Cent>
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 1393_53L<Cent>
+                FeeRefundIfSettled = 1393_53L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -327,16 +327,16 @@ module QuoteTests =
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 834_21L<Cent>
+                FeePortion = 834_21L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 1393_53L<Cent>
+                FeeRefund = 1393_53L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 1991_50L<Cent>
-                FeesRefundIfSettled = 1393_53L<Cent>
+                FeeRefundIfSettled = 1393_53L<Cent>
             }
 
         actual |> should equal expected
@@ -404,11 +404,11 @@ module QuoteTests =
                 PaymentValue = 1200_00L<Cent>
                 Apportionment = {
                     PrincipalPortion = 1200_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -426,16 +426,16 @@ module QuoteTests =
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1200_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 1200_00L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -503,11 +503,11 @@ module QuoteTests =
                 PaymentValue = 1238_40L<Cent>
                 Apportionment = {
                     PrincipalPortion = 1200_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 38_40L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -525,16 +525,16 @@ module QuoteTests =
                 NewInterest = 38_40m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1200_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 38_40L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 1238_40L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -563,7 +563,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -612,11 +612,11 @@ module QuoteTests =
                 PaymentValue = 3410_03L<Cent>
                 Apportionment = {
                     PrincipalPortion = 1175_80L<Cent>
-                    FeesPortion = 2227_74L<Cent>
+                    FeePortion = 2227_74L<Cent>
                     InterestPortion = 6_49L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -634,16 +634,16 @@ module QuoteTests =
                 NewInterest = 2_78.34429863m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 1175_80L<Cent>
-                FeesPortion = 2227_74L<Cent>
+                FeePortion = 2227_74L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 3410_03L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -672,7 +672,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -731,16 +731,16 @@ module QuoteTests =
                 NewInterest = 7_68.32100821m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 108_25L<Cent>
-                FeesPortion = 205_13L<Cent>
+                FeePortion = 205_13L<Cent>
                 InterestPortion = 9_77L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 776_92L<Cent>
-                FeesBalance = 1471_94L<Cent>
+                FeeBalance = 1471_94L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 2572_01L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -769,7 +769,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.Zero
@@ -814,12 +814,12 @@ module QuoteTests =
             //     quote
             //     |> ValueOption.map(fun q ->
             //         let paymentQuote = q.RevisedSchedule |> fst |> _.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
-            //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled)
+            //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeePortion, si.InterestPortion, si.ChargesPortion, si.FeeRefundIfSettled)
             //     )
             ValueNone // not a single item to be returned, as the result is a sum of items
 
         let expected =
-            ValueNone //ValueSome <| PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeesPortion, si.InterestPortion, si.ChargesPortion, si.FeesRefundIfSettled),
+            ValueNone //ValueSome <| PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeePortion, si.InterestPortion, si.ChargesPortion, si.FeeRefundIfSettled),
 
         actual |> should equal expected
 
@@ -847,7 +847,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -878,11 +878,11 @@ module QuoteTests =
                 PaymentValue = 1311_67L<Cent>
                 Apportionment = {
                     PrincipalPortion = 500_00L<Cent>
-                    FeesPortion = 750_00L<Cent>
+                    FeePortion = 750_00L<Cent>
                     InterestPortion = 61_67L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -900,16 +900,16 @@ module QuoteTests =
                 NewInterest = 16_35.61643835m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 500_00L<Cent>
-                FeesPortion = 750_00L<Cent>
+                FeePortion = 750_00L<Cent>
                 InterestPortion = 61_67L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 1311_67L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -938,7 +938,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -977,11 +977,11 @@ module QuoteTests =
                 PaymentValue = 1261_73L<Cent>
                 Apportionment = {
                     PrincipalPortion = 471_07L<Cent>
-                    FeesPortion = 706_56L<Cent>
+                    FeePortion = 706_56L<Cent>
                     InterestPortion = 84_10L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -999,16 +999,16 @@ module QuoteTests =
                 NewInterest = 75_11.98884657m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 471_07L<Cent>
-                FeesPortion = 706_56L<Cent>
+                FeePortion = 706_56L<Cent>
                 InterestPortion = 84_10L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 1261_73L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1037,7 +1037,7 @@ module QuoteTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -1074,11 +1074,11 @@ module QuoteTests =
                 PaymentValue = 973_53L<Cent>
                 Apportionment = {
                     PrincipalPortion = 769_46L<Cent>
-                    FeesPortion = 195_68L<Cent>
+                    FeePortion = 195_68L<Cent>
                     InterestPortion = 8_39L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 958_45L<Cent>
+                FeeRefundIfSettled = 958_45L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1096,16 +1096,16 @@ module QuoteTests =
                 NewInterest = 1_04.87518082m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 769_46L<Cent>
-                FeesPortion = 195_68L<Cent>
+                FeePortion = 195_68L<Cent>
                 InterestPortion = 8_39L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 958_45L<Cent>
+                FeeRefund = 958_45L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 973_53L<Cent>
-                FeesRefundIfSettled = 958_45L<Cent>
+                FeeRefundIfSettled = 958_45L<Cent>
             }
 
         actual |> should equal expected
@@ -1160,11 +1160,11 @@ module QuoteTests =
                 PaymentValue = 495_76L<Cent>
                 Apportionment = {
                     PrincipalPortion = 400_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 95_76L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1182,16 +1182,16 @@ module QuoteTests =
                 NewInterest = 95_76m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 400_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 95_76L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 495_76L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1258,11 +1258,11 @@ module QuoteTests =
                 PaymentValue = 429_24L<Cent>
                 Apportionment = {
                     PrincipalPortion = 353_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 76_24L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1280,16 +1280,16 @@ module QuoteTests =
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 76_24L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 429_24L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1356,11 +1356,11 @@ module QuoteTests =
                 PaymentValue = 432_07L<Cent>
                 Apportionment = {
                     PrincipalPortion = 353_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 79_07L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1378,16 +1378,16 @@ module QuoteTests =
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 79_07L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 432_07L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1454,11 +1454,11 @@ module QuoteTests =
                 PaymentValue = 434_89L<Cent>
                 Apportionment = {
                     PrincipalPortion = 353_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 81_89L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1476,16 +1476,16 @@ module QuoteTests =
                 NewInterest = 2_82.400m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 81_89L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 434_89L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1552,11 +1552,11 @@ module QuoteTests =
                 PaymentValue = 453_36L<Cent>
                 Apportionment = {
                     PrincipalPortion = 353_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 90_36L<Cent>
                     ChargesPortion = 10_00L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1574,16 +1574,16 @@ module QuoteTests =
                 NewInterest = 11_29.600m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 90_36L<Cent>
                 ChargesPortion = 10_00L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 453_36L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1650,11 +1650,11 @@ module QuoteTests =
                 PaymentValue = 429_24L<Cent>
                 Apportionment = {
                     PrincipalPortion = 353_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 76_24L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1672,16 +1672,16 @@ module QuoteTests =
                 NewInterest = 76_24.800m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 76_24L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 429_24L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1749,11 +1749,11 @@ module QuoteTests =
                 PaymentValue = -67_93L<Cent>
                 Apportionment = {
                     PrincipalPortion = -67_93L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1771,16 +1771,16 @@ module QuoteTests =
                 NewInterest = 79_07.200m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 353_00L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = 79_07L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome -67_93L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1848,11 +1848,11 @@ module QuoteTests =
                 PaymentValue = -67_95L<Cent>
                 Apportionment = {
                     PrincipalPortion = -67_93L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = -2L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1870,16 +1870,16 @@ module QuoteTests =
                 NewInterest = -1.48887672M<Cent>
                 NewCharges = [||]
                 PrincipalPortion = -67_93L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = -2L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome -67_95L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1947,11 +1947,11 @@ module QuoteTests =
                 PaymentValue = -72_80L<Cent>
                 Apportionment = {
                     PrincipalPortion = -67_93L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = -4_87L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1969,16 +1969,16 @@ module QuoteTests =
                 NewInterest = -4_86.86268494M<Cent>
                 NewCharges = [||]
                 PrincipalPortion = -67_93L<Cent>
-                FeesPortion = 0L<Cent>
+                FeePortion = 0L<Cent>
                 InterestPortion = -4_87L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeesRefund = 0L<Cent>
+                FeeRefund = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                FeesBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome -72_80L<Cent>
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2041,11 +2041,11 @@ module QuoteTests =
                 PaymentValue = 0L<Cent>
                 Apportionment = {
                     PrincipalPortion = 0L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2097,11 +2097,11 @@ module QuoteTests =
                 PaymentValue = -5_83L<Cent>
                 Apportionment = {
                     PrincipalPortion = -5_83L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2161,11 +2161,11 @@ module QuoteTests =
                 PaymentValue = 57_51L<Cent>
                 Apportionment = {
                     PrincipalPortion = 3_17L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 54_34L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2218,11 +2218,11 @@ module QuoteTests =
                 PaymentValue = 104_69L<Cent>
                 Apportionment = {
                     PrincipalPortion = 91_52L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 13_17L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2274,11 +2274,11 @@ module QuoteTests =
                 PaymentValue = -91_06L<Cent>
                 Apportionment = {
                     PrincipalPortion = -88_40L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = -2_66L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2330,11 +2330,11 @@ module QuoteTests =
                 PaymentValue = -13_84L<Cent>
                 Apportionment = {
                     PrincipalPortion = -12_94L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = -90L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected

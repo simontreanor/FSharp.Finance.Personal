@@ -1,6 +1,6 @@
 namespace FSharp.Finance.Personal
 
-/// calculating the principal balance over time, taking into account the effects of charges, interest and fees
+/// calculating the principal balance over time, taking into account the effects of charges, interest and fee
 module Amortisation =
 
     open System
@@ -26,7 +26,7 @@ module Amortisation =
             | OpenBalance -> "open"
             | RefundDue -> "refund due"
 
-    /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
+    /// amortisation schedule item showing apportionment of payments to principal, fee, interest and charges
     type ScheduleItem = {
         /// the date of amortisation
         OffsetDate: Date
@@ -58,27 +58,27 @@ module Amortisation =
         NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the interest
         InterestPortion: int64<Cent>
-        /// any fee refund, on the final amortisation day, if the fees are pro-rated in the event of early settlement
-        FeesRefund: int64<Cent>
-        /// the portion of the net effect assigned to the fees
-        FeesPortion: int64<Cent>
+        /// any fee refund, on the final amortisation day, if the fee is pro-rated in the event of early settlement
+        FeeRefund: int64<Cent>
+        /// the portion of the net effect assigned to the fee
+        FeePortion: int64<Cent>
         /// the portion of the net effect assigned to the principal
         PrincipalPortion: int64<Cent>
         /// the charges balance to be carried forward
         ChargesBalance: int64<Cent>
         /// the interest balance to be carried forward
         InterestBalance: decimal<Cent>
-        /// the fees balance to be carried forward
-        FeesBalance: int64<Cent>
+        /// the fee balance to be carried forward
+        FeeBalance: int64<Cent>
         /// the principal balance to be carried forward
         PrincipalBalance: int64<Cent>
         /// the settlement figure as of the current day
         SettlementFigure: int64<Cent> voption
-        /// the pro-rated fees as of the current day
-        FeesRefundIfSettled: int64<Cent>
+        /// the pro-rated fee as of the current day
+        FeeRefundIfSettled: int64<Cent>
     }
     
-    /// amortisation schedule item showing apportionment of payments to principal, fees, interest and charges
+    /// amortisation schedule item showing apportionment of payments to principal, fee, interest and charges
     module ScheduleItem =
         /// a default value with no data
         let initial = {
@@ -96,16 +96,16 @@ module Amortisation =
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueNone
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
         /// formats the schedule item as an HTML row
         let toHtmlRow offsetDay scheduleItem =
@@ -125,16 +125,16 @@ module Amortisation =
                 + $"""<td class="ci14">{formatDecimalCent scheduleItem.NewInterest}</td>"""
                 + $"""<td class="ci15">{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}</td>"""
                 + $"""<td class="ci16">{formatCent scheduleItem.PrincipalPortion}</td>"""
-                + $"""<td class="ci17">{formatCent scheduleItem.FeesPortion}</td>"""
+                + $"""<td class="ci17">{formatCent scheduleItem.FeePortion}</td>"""
                 + $"""<td class="ci18">{formatCent scheduleItem.InterestPortion}</td>"""
                 + $"""<td class="ci19">{formatCent scheduleItem.ChargesPortion}</td>"""
-                + $"""<td class="ci20">{formatCent scheduleItem.FeesRefund}</td>"""
+                + $"""<td class="ci20">{formatCent scheduleItem.FeeRefund}</td>"""
                 + $"""<td class="ci21">{formatCent scheduleItem.PrincipalBalance}</td>"""
-                + $"""<td class="ci22">{formatCent scheduleItem.FeesBalance}</td>"""
+                + $"""<td class="ci22">{formatCent scheduleItem.FeeBalance}</td>"""
                 + $"""<td class="ci23">{formatDecimalCent scheduleItem.InterestBalance}</td>"""
                 + $"""<td class="ci24">{formatCent scheduleItem.ChargesBalance}</td>"""
                 + $"""<td class="ci25">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>"""
-                + $"""<td class="ci26">{formatCent scheduleItem.FeesRefundIfSettled}</td>"""
+                + $"""<td class="ci26">{formatCent scheduleItem.FeeRefundIfSettled}</td>"""
             + "</tr>"
 
 
@@ -147,8 +147,8 @@ module Amortisation =
         CumulativeActualPayments: int64<Cent>
         /// the total of generated payments made up to the current day
         CumulativeGeneratedPayments: int64<Cent>
-        /// the total of fees paid up to the current day
-        CumulativeFees: int64<Cent>
+        /// the total fee paid up to the current day
+        CumulativeFee: int64<Cent>
         /// the total of interest accrued up to the current day
         CumulativeInterest: decimal<Cent>
         /// the total of interest portions up to the current day
@@ -167,9 +167,9 @@ module Amortisation =
         FinalActualPaymentDay: int<OffsetDay> voption
         /// the APR based on the actual payments made and their timings
         FinalApr: Percent
-        /// the final ratio of (fees + interest + charges) to principal
+        /// the final ratio of (fee + interest + charges) to principal
         FinalCostToBorrowingRatio: Percent
-        /// the daily interest rate derived from interest over (principal + fees), ignoring charges 
+        /// the daily interest rate derived from interest over (principal + fee), ignoring charges 
         EffectiveInterestRate: Interest.Rate
     }
 
@@ -220,16 +220,16 @@ module Amortisation =
                     + """<th style="text-align: right;">New interest</th>"""
                     + """<th style="text-align: right;">New charges</th>"""
                     + """<th style="text-align: right;">Principal portion</th>"""
-                    + """<th style="text-align: right;">Fees portion</th>"""
+                    + """<th style="text-align: right;">Fee portion</th>"""
                     + """<th style="text-align: right;">Interest portion</th>"""
                     + """<th style="text-align: right;">Charges portion</th>"""
-                    + """<th style="text-align: right;">Fees refund</th>"""
+                    + """<th style="text-align: right;">Fee refund</th>"""
                     + """<th style="text-align: right;">Principal balance</th>"""
-                    + """<th style="text-align: right;">Fees balance</th>"""
+                    + """<th style="text-align: right;">Fee balance</th>"""
                     + """<th style="text-align: right;">Interest balance</th>"""
                     + """<th style="text-align: right;">Charges balance</th>"""
                     + """<th style="text-align: right;">Settlement figure</th>"""
-                    + """<th style="text-align: right;">Fees refund if&nbsp;settled</th>"""
+                    + """<th style="text-align: right;">Fee refund if&nbsp;settled</th>"""
                 + "</thead>"
                 + (schedule.ScheduleItems |> Map.map ScheduleItem.toHtmlRow |> Map.values |> String.concat "")
             + "</table>"
@@ -247,12 +247,12 @@ module Amortisation =
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}{htmlAmortisationStats}"
             |> outputToFile' filename false
 
-    /// calculates the fees total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fees and principal)
-    let feesPercentage principal feesTotal =
+    /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
+    let feePercentage principal feeTotal =
         if principal = 0L<Cent> then
             Percent 0m
         else
-            decimal feesTotal / decimal principal |> Percent.fromDecimal
+            decimal feeTotal / decimal principal |> Percent.fromDecimal
 
     /// gets the balance status based on the principal balance
     let getBalanceStatus principalBalance =
@@ -321,14 +321,14 @@ module Amortisation =
                     | None -> si
                 )
 
-    /// calculates the total fees payable up to a particular day, based on a proportion of days elapsed vs total number of days in the original schedule
-    let calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay =
+    /// calculates the total fee payable up to a particular day, based on a proportion of days elapsed vs total number of days in the original schedule
+    let calculateFee feeTotal appliedPaymentDay originalFinalPaymentDay =
         if originalFinalPaymentDay <= 0<OffsetDay> then
             0L<Cent>
         elif appliedPaymentDay > originalFinalPaymentDay then
             0L<Cent>
         else
-            decimal feesTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round RoundUp
+            decimal feeTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round RoundUp
 
     /// determines any payment due on the day
     let calculatePaymentDue si originalPayment rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
@@ -354,7 +354,7 @@ module Amortisation =
             | ValueNone, ValueNone ->
                 0L<Cent>
             // payment due should never exceed settlement figure
-            |> Cent.min (si.PrincipalBalance + si.FeesBalance + interestPortionL)
+            |> Cent.min (si.PrincipalBalance + si.FeeBalance + interestPortionL)
             // payment due should never be negative
             |> Cent.max 0L<Cent>
             // apply minimum payment rules
@@ -365,14 +365,14 @@ module Amortisation =
                 | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
                 | _ -> p
 
-    /// calculates an amortisation schedule detailing how elements (principal, fees, interest and charges) are paid off over time
+    /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate sp settlementDay (initialInterestBalanceL: int64<Cent>) (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
         let initialInterestBalanceM = Cent.toDecimalCent initialInterestBalanceL
         // calculate the total fee value for the entire schedule
-        let feesTotal = Fee.grandTotal sp.FeeConfig sp.Principal ValueNone
+        let feeTotal = Fee.total sp.FeeConfig sp.Principal
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
         let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate (isSettledWithinGracePeriod sp settlementDay) sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates fromDay toDay
         // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
@@ -397,11 +397,11 @@ module Amortisation =
                 if si.PrincipalBalance <= 0L<Cent> then
                     dailyInterestRates siOffsetDay appliedPaymentDay
                     |> Array.map(fun dr -> { dr with InterestRate = sp.InterestConfig.RateOnNegativeBalance })
-                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) ValueNone interestRounding
+                    |> Interest.calculate (si.PrincipalBalance + si.FeeBalance) ValueNone interestRounding
                 // otherwise, apply the daily interest rates as normal, applied daily caps as necessary
                 else
                     dailyInterestRates siOffsetDay appliedPaymentDay
-                    |> Interest.calculate (si.PrincipalBalance + si.FeesBalance) sp.InterestConfig.Cap.DailyAmount interestRounding
+                    |> Interest.calculate (si.PrincipalBalance + si.FeeBalance) sp.InterestConfig.Cap.DailyAmount interestRounding
             // of the actual payments made on the day, sum any that are confirmed or written off
             let confirmedPaymentTotal =
                 ap.ActualPayments
@@ -533,59 +533,59 @@ module Amortisation =
                         sign netEffect, sign chargesPortion - sign interestPortionL'
             // refine the scheduled payment with any adjustment
             let scheduledPayment = { ap.ScheduledPayment with Adjustment = scheduledPaymentAdjustment }
-            // apportion the fees
-            let feesPortion =
+            // apportion the fee
+            let feePortion =
                 match sp.FeeConfig with
                 | Some feeConfig ->
                     match feeConfig.FeeAmortisation with
                     | Fee.FeeAmortisation.AmortiseBeforePrincipal ->
-                        Cent.min si.FeesBalance assignable
+                        Cent.min si.FeeBalance assignable
                     | Fee.FeeAmortisation.AmortiseProportionately ->
-                        feesPercentage sp.Principal feesTotal
+                        feePercentage sp.Principal feeTotal
                         |> Percent.toDecimal
                         |> fun m ->
                             if (1m + m) = 0m then 0L<Cent>
-                            else decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeesBalance
+                            else decimal assignable * m / (1m + m) |> Cent.round RoundUp |> Cent.max 0L<Cent> |> Cent.min si.FeeBalance
                 | None ->
                     0L<Cent>
             // determine the value of any fee refund in the event of settlement, depending on settings
-            let feesRefundIfSettled =
+            let feeRefundIfSettled =
                 match sp.FeeConfig with
                 | Some feeConfig ->
                     match feeConfig.SettlementRefund with
                     | Fee.SettlementRefund.ProRata ->
                         let originalFinalPaymentDay = sp.ScheduleConfig |> generatePaymentMap sp.StartDate |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-                        calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
+                        calculateFee feeTotal appliedPaymentDay originalFinalPaymentDay
                     | Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay ->
-                        calculateFees feesTotal appliedPaymentDay originalFinalPaymentDay
+                        calculateFee feeTotal appliedPaymentDay originalFinalPaymentDay
                     | Fee.SettlementRefund.Balance ->
-                        a.CumulativeFees
+                        a.CumulativeFee
                     | Fee.SettlementRefund.Zero ->
                         0L<Cent>
                 | None ->
                     0L<Cent>
             // ensure any fee refund is positive
-            let feesRefund = Cent.max 0L<Cent> feesRefundIfSettled
+            let feeRefund = Cent.max 0L<Cent> feeRefundIfSettled
             // refine the settlement figure depending on the interest method
             let generatedSettlementPayment' =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn ->
                     generatedSettlementPayment
                 | _ ->
-                    si.PrincipalBalance + si.FeesBalance - feesRefund + interestPortionL' + chargesPortion
+                    si.PrincipalBalance + si.FeeBalance - feeRefund + interestPortionL' + chargesPortion
             // refine the fee portion and refund if a refund is actually applied on the day, i.e. if the net effect covers the settlement figure
-            let feesPortion', feesRefund' =
-                if feesPortion > 0L<Cent> && generatedSettlementPayment' <= netEffect then
-                    Cent.max 0L<Cent> (si.FeesBalance - feesRefund), feesRefund
+            let feePortion', feeRefund' =
+                if feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect then
+                    Cent.max 0L<Cent> (si.FeeBalance - feeRefund), feeRefund
                 else
-                    sign feesPortion, 0L<Cent>
+                    sign feePortion, 0L<Cent>
             // apportion the principal
-            let principalPortion = Cent.max 0L<Cent> (assignable - feesPortion')
+            let principalPortion = Cent.max 0L<Cent> (assignable - feePortion')
             // calculate the principal balance
             let principalBalance = si.PrincipalBalance - sign principalPortion
             // if any future payment creates a negative principal balance, adjust these figures accordingly
             let paymentDue', netEffect', principalPortion', principalBalance' =
-                if ap.PaymentStatus = NotYetDue && feesRefund' > 0L<Cent> && principalBalance < 0L<Cent> then
+                if ap.PaymentStatus = NotYetDue && feeRefund' > 0L<Cent> && principalBalance < 0L<Cent> then
                     paymentDue + principalBalance, netEffect + principalBalance, sign principalPortion + principalBalance, 0L<Cent>
                 else
                     paymentDue, netEffect, sign principalPortion, principalBalance
@@ -652,14 +652,14 @@ module Amortisation =
                         | gp -> gp)
                     else
                         // refine the interest portion by adding carried interest, and calculate the balances
-                        let feesBalance = si.FeesBalance - feesPortion' - feesRefund'
+                        let feeBalance = si.FeeBalance - feePortion' - feeRefund'
                         let interestBalance = interestBalanceM |> Interest.ignoreFractionalCents 1
                         let chargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
-                        ((principalBalance', feesBalance, interestBalance, chargesBalance),
+                        ((principalBalance', feeBalance, interestBalance, chargesBalance),
                         interestPortionL' - carriedInterestL,
                         ap.GeneratedPayment)
 
-                let principalBal, feesBal, interestBal, chargesBal = balances
+                let principalBal, feeBal, interestBal, chargesBal = balances
                 // create the schedule item
                 let scheduleItem = {
                     Window = window
@@ -676,16 +676,16 @@ module Amortisation =
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
                     PrincipalPortion = if isSettlement then si.PrincipalBalance else principalPortion'
-                    FeesPortion = if isSettlement then si.FeesBalance - feesRefund else feesPortion'
+                    FeePortion = if isSettlement then si.FeeBalance - feeRefund else feePortion'
                     InterestPortion = interestPortionL'
                     ChargesPortion = if isSettlement then chargesPortion else chargesPortion - carriedCharges
-                    FeesRefund = feesRefund
+                    FeeRefund = feeRefund
                     PrincipalBalance = principalBal
-                    FeesBalance = feesBal
+                    FeeBalance = feeBal
                     InterestBalance = interestBal
                     ChargesBalance = chargesBal
                     SettlementFigure = settlementFigure
-                    FeesRefundIfSettled = if not isSettlement && paymentStatus = NoLongerRequired then 0L<Cent> else feesRefundIfSettled
+                    FeeRefundIfSettled = if not isSettlement && paymentStatus = NoLongerRequired then 0L<Cent> else feeRefundIfSettled
                 }
                 // calculate the rounding difference between the decimal and integer interest balances
                 let interestRoundingDifferenceM = 
@@ -716,7 +716,7 @@ module Amortisation =
                 { accumulator with
                     CumulativeScheduledPayments = accumulator.CumulativeScheduledPayments + scheduledPaymentAdjustment
                     CumulativeGeneratedPayments = a.CumulativeGeneratedPayments + generatedPayment
-                    CumulativeFees = a.CumulativeFees + feesPortion'
+                    CumulativeFee = a.CumulativeFee + feePortion'
                     CumulativeInterest = accumulator.CumulativeInterest - interestRoundingDifferenceM
                     CumulativeInterestPortions = a.CumulativeInterestPortions + scheduleItem.InterestPortion
                 }
@@ -729,21 +729,21 @@ module Amortisation =
                 OffsetDate = sp.StartDate
                 Advances = [| sp.Principal |]
                 PrincipalBalance = sp.Principal
-                FeesBalance = feesTotal
+                FeeBalance = feeTotal
                 InterestBalance = initialInterestBalanceM
-                SettlementFigure = ValueSome <| sp.Principal + feesTotal
-                FeesRefundIfSettled =
+                SettlementFigure = ValueSome <| sp.Principal + feeTotal
+                FeeRefundIfSettled =
                     match sp.FeeConfig with
                     | Some fc ->
                         match fc.SettlementRefund with
                         | Fee.SettlementRefund.Zero -> 0L<Cent>
-                        | _ -> feesTotal
+                        | _ -> feeTotal
                     | None -> 0L<Cent>
             }), {
                 CumulativeScheduledPayments = 0L<Cent>
                 CumulativeActualPayments = 0L<Cent>
                 CumulativeGeneratedPayments = 0L<Cent>
-                CumulativeFees = 0L<Cent>
+                CumulativeFee = 0L<Cent>
                 CumulativeInterest = initialInterestBalanceM
                 CumulativeInterestPortions = 0L<Cent>
                 CumulativeSimpleInterestM = 0m<Cent>
@@ -764,10 +764,10 @@ module Amortisation =
         let finalItemDay, finalItem = items |> Map.maxKeyValue
         let items' = items |> Map.toArray |> Array.map snd
         let principalTotal = items' |> Array.sumBy _.PrincipalPortion
-        let feesTotal = items' |> Array.sumBy _.FeesPortion
+        let feeTotal = items' |> Array.sumBy _.FeePortion
         let interestTotal = items' |> Array.sumBy _.InterestPortion
         let chargesTotal = items' |> Array.sumBy _.ChargesPortion
-        let feesRefund = finalItem.FeesRefund
+        let feeRefund = finalItem.FeeRefund
         let finalPaymentDay = finalItemDay
         let finalBalanceStatus = finalItem.BalanceStatus
         let finalAprSolution =
@@ -787,10 +787,10 @@ module Amortisation =
                 FinalApr = finalAprSolution
                 FinalCostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then Percent 0m
-                    else decimal (feesTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+                    else decimal (feeTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
                 EffectiveInterestRate =
-                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feesTotal - feesRefund = 0L<Cent> then 0m
-                    else decimal interestTotal / decimal (principalTotal + feesTotal - feesRefund) / decimal finalPaymentDay
+                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feeTotal - feeRefund = 0L<Cent> then 0m
+                    else decimal interestTotal / decimal (principalTotal + feeTotal - feeRefund) / decimal finalPaymentDay
                     |> Percent |> Interest.Rate.Daily
             }
         }

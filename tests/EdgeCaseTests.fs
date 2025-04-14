@@ -43,7 +43,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -75,11 +75,11 @@ module EdgeCaseTests =
                 PaymentValue = 500_79L<Cent>
                 Apportionment = {
                     PrincipalPortion = 177_81L<Cent>
-                    FeesPortion = 274_64L<Cent>
+                    FeePortion = 274_64L<Cent>
                     InterestPortion = 48_34L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -107,7 +107,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -139,11 +139,11 @@ module EdgeCaseTests =
                 PaymentValue = 455_55L<Cent>
                 Apportionment = {
                     PrincipalPortion = 148_17L<Cent>
-                    FeesPortion = 228_86L<Cent>
+                    FeePortion = 228_86L<Cent>
                     InterestPortion = 78_52L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -171,7 +171,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -203,11 +203,11 @@ module EdgeCaseTests =
                 PaymentValue = 1221_54L<Cent>
                 Apportionment = {
                     PrincipalPortion = 427_28L<Cent>
-                    FeesPortion = 660_00L<Cent>
+                    FeePortion = 660_00L<Cent>
                     InterestPortion = 134_26L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -237,7 +237,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -339,11 +339,11 @@ module EdgeCaseTests =
                 PaymentValue = 466_41L<Cent>
                 Apportionment = {
                     PrincipalPortion = 151_32L<Cent>
-                    FeesPortion = 233_66L<Cent>
+                    FeePortion = 233_66L<Cent>
                     InterestPortion = 81_43L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -373,7 +373,7 @@ module EdgeCaseTests =
                 PaymentTimeout = 3<DurationDay>
             }
             FeeConfig = Some {
-                FeeTypes = [| Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit)) |]
+                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 SettlementRefund = Fee.SettlementRefund.ProRata
@@ -484,11 +484,11 @@ module EdgeCaseTests =
                 PaymentValue = 479_92L<Cent>
                 Apportionment = {
                     PrincipalPortion = 155_70L<Cent>
-                    FeesPortion = 240_43L<Cent>
+                    FeePortion = 240_43L<Cent>
                     InterestPortion = 83_79L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -614,11 +614,11 @@ module EdgeCaseTests =
                 PaymentValue = 64916L<Cent>
                 Apportionment = {
                     PrincipalPortion = 500_00L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 149_16L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -671,11 +671,11 @@ module EdgeCaseTests =
                 PaymentValue = -76_80L<Cent>
                 Apportionment = {
                     PrincipalPortion = -76_80L<Cent>
-                    FeesPortion = 0L<Cent>
+                    FeePortion = 0L<Cent>
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeesRefundIfSettled = 0L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -722,7 +722,7 @@ module EdgeCaseTests =
         let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeSettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
+            FeeettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
@@ -752,16 +752,16 @@ module EdgeCaseTests =
             NewInterest = 4_32.256m<Cent>
             NewCharges = [||]
             PrincipalPortion = 67_54L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 16_20L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 83_74L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -807,7 +807,7 @@ module EdgeCaseTests =
         let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeSettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
+            FeeettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
@@ -837,16 +837,16 @@ module EdgeCaseTests =
             NewInterest = 52.608m<Cent>
             NewCharges = [||]
             PrincipalPortion = 8_22L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 1_97L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = 0L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 10_19L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -910,16 +910,16 @@ module EdgeCaseTests =
             NewInterest = -8.79210959m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
-            FeesPortion = 0L<Cent>
+            FeePortion = 0L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
-            FeesRefund = 0L<Cent>
+            FeeRefund = 0L<Cent>
             PrincipalBalance = -12_94L<Cent>
-            FeesBalance = 0L<Cent>
+            FeeBalance = 0L<Cent>
             InterestBalance = -21.55484933m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome -13_16L<Cent>
-            FeesRefundIfSettled = 0L<Cent>
+            FeeRefundIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected

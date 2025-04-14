@@ -39,7 +39,7 @@ module PaymentScheduleTests =
                     PaymentTimeout = 3<DurationDay>
                 }
                 FeeConfig = Some {
-                    FeeTypes = [| Fee.FeeType.FacilitationFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit)) |]
+                    FeeType = Fee.FeeType.FacilitationFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     SettlementRefund = Fee.SettlementRefund.ProRata
