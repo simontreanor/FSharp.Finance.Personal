@@ -36,27 +36,28 @@ let scheduleParameters =
             MaxDuration = Duration.Unlimited
         }
         PaymentConfig = {
+            LevelPaymentOption = LowerFinalPayment
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
             PaymentRounding = RoundUp
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
         }
-        FeeConfig = Fee.Config.initialRecommended
-        ChargeConfig = Charge.Config.initialRecommended
+        FeeConfig = None
+        ChargeConfig = None
         InterestConfig = {
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Annual (Percent 6.9m)
-            Cap = Interest.Cap.zero
+            Cap = Interest.Cap.Zero
             InitialGracePeriod = 0<DurationDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero
+            Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-            InterestRounding = RoundDown
         }
     }
     
-let schedule = scheduleParameters |> calculate AroundZero
+let schedule = scheduleParameters |> calculate
 
 schedule
 
@@ -66,7 +67,7 @@ schedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-let html = schedule.Items |> Formatting.generateHtmlFromArray [||]
+let html = schedule |> SimpleSchedule.toHtmlTable
 
 $"""<div style="overflow-x: auto;">{html}</div>"""
 

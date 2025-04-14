@@ -21,7 +21,9 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 #r "nuget:FSharp.Finance.Personal"
 
+open System
 open FSharp.Finance.Personal
+open Amortisation
 open Calculation
 open DateDay
 open Scheduling
@@ -37,32 +39,27 @@ let scheduleParameters =
             MaxDuration = Duration.Unlimited
         }
         PaymentConfig = {
+            LevelPaymentOption = LowerFinalPayment
             ScheduledPaymentOption = AsScheduled
             CloseBalanceOption = LeaveOpenBalance
             PaymentRounding = RoundUp
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>
         }
-        FeeConfig = Fee.Config.initialRecommended
-        ChargeConfig = {
-            ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-            Rounding = RoundDown
-            ChargeHolidays = [||]
-            ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-            LatePaymentGracePeriod = 0<DurationDay>
-        }
+        FeeConfig = None
+        ChargeConfig = None
         InterestConfig = {
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = {
-                TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit, RoundDown)
-                DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit, NoRounding)
+                TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
             }
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero
+            Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-            InterestRounding = RoundDown
         }
     }
 
@@ -75,11 +72,11 @@ let actualPayments =
         125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
     ]
 
-let amortisationSchedule =
+let schedules =
     actualPayments
     |> Amortisation.generate scheduleParameters ValueNone false
 
-amortisationSchedule
+schedules.AmortisationSchedule
 
 (*** include-it ***)
 
@@ -87,7 +84,7 @@ amortisationSchedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-let html = amortisationSchedule.ScheduleItems |> Formatting.generateHtmlFromMap [||]
+let html = Schedule.toHtmlTable schedules.AmortisationSchedule
 
 $"""<div style="overflow-x: auto;">{html}</div>"""
 
