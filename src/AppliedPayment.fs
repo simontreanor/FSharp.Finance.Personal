@@ -20,7 +20,7 @@ module AppliedPayment =
         with
             /// HTML formatting to display the applied charge in a readable format
             member ac.Html =
-                $"{ac.ChargeType} {formatCent ac.Total}"
+                $"<i>{ac.ChargeType}</i> {formatCent ac.Total}"
 
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     [<Struct>]

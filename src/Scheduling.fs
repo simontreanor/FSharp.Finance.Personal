@@ -39,18 +39,18 @@ module Scheduling =
         }
         /// HTML formatting to display the scheduled payment in a concise way
         member x.Html =
-            let previous = if Array.isEmpty x.PreviousRescheduled then "" else x.PreviousRescheduled |> Array.map(fun pr -> $"<s>r {formatCent pr.Value}</s>&nbsp;") |> Array.reduce (+)
+            let previous = if Array.isEmpty x.PreviousRescheduled then "" else x.PreviousRescheduled |> Array.map(fun pr -> $"<s><i>r</i> {formatCent pr.Value}</s>&nbsp;") |> Array.reduce (+)
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r when r.Value = 0L<Cent> ->
-                $"""<s>original {formatCent o}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
+                $"""<i><s>original</i> {formatCent o}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
             | ValueSome o, ValueSome r ->
-                $"<s>o {formatCent o}</s>&nbsp;{previous}r {formatCent r.Value}"
+                $"<s><i>o</i> {formatCent o}</s>&nbsp;{previous}<i>r</i> {formatCent r.Value}"
             | ValueSome o, ValueNone ->
-                $"original {formatCent o}"
+                $"<i>original</i> {formatCent o}"
             | ValueNone, ValueSome r ->
-                $"""{if previous = "" then "rescheduled&nbsp;" else previous}{formatCent r.Value}"""
+                $"""{if previous = "" then "<i>rescheduled</i>&nbsp;" else previous}{formatCent r.Value}"""
             | ValueNone, ValueNone ->
-                "n/a"
+                "<i>n/a<i>"
             |> fun s ->
                 match x.Adjustment with
                 | a when a < 0L<Cent> ->
@@ -106,12 +106,12 @@ module Scheduling =
         /// HTML formatting to display the actual payment status in a readable format
         member aps.Html =
             match aps with
-            | WriteOff amount -> $"write-off <b>{formatCent amount}</b>"
-            | Pending amount -> $"pending <b>{formatCent amount}</b>"
-            | TimedOut amount -> $"{formatCent amount} timed out"
-            | Confirmed amount -> $"confirmed <b>{formatCent amount}</b>"
-            | Failed (amount, ValueSome charge) -> $"{formatCent amount} failed ({charge})"
-            | Failed (amount, ValueNone) -> $"{formatCent amount} failed"
+            | WriteOff amount -> $"<i>write-off</i> {formatCent amount}"
+            | Pending amount -> $"<i>pending</i> {formatCent amount}"
+            | TimedOut amount -> $"{formatCent amount} <i>timed out</i>"
+            | Confirmed amount -> $"<i>confirmed</i> {formatCent amount}"
+            | Failed (amount, ValueSome charge) -> $"{formatCent amount} <i>failed ({charge})</i>"
+            | Failed (amount, ValueNone) -> $"{formatCent amount} <i>failed</i>"
     
     /// the status of the payment, allowing for delays due to payment-provider processing times
     module ActualPaymentStatus =
@@ -210,22 +210,22 @@ module Scheduling =
         /// HTML formatting to display the payment status in a readable format
         member ps.Html =
             match ps with
-            | NoneScheduled -> "none scheduled"
-            | PaymentPending -> "payment pending"
-            | PaymentMade -> "payment made"
-            | NothingDue -> "nothing due"
-            | PaidLaterInFull -> "paid later in full"
-            | PaidLaterOwing s -> $"paid later owing {formatCent s}"
-            | MissedPayment -> "missed payment"
-            | Underpayment -> "underpayment"
-            | Overpayment -> "overpayment"
-            | ExtraPayment -> "extra payment"
-            | Refunded -> "refunded"
-            | NotYetDue -> "not yet due"
-            | PaymentDue -> "payment due"
-            | Generated -> "generated"
-            | NoLongerRequired -> "no longer required"
-            | InformationOnly -> "information only"
+            | NoneScheduled -> "<i>none scheduled</i>"
+            | PaymentPending -> "<i>payment pending</i>"
+            | PaymentMade -> "<i>payment made</i>"
+            | NothingDue -> "<i>nothing due</i>"
+            | PaidLaterInFull -> "<i>paid later in full</i>"
+            | PaidLaterOwing shortfall -> $"<i>paid later owing</i> {formatCent shortfall}"
+            | MissedPayment -> "<i>missed payment</i>"
+            | Underpayment -> "<i>underpayment</i>"
+            | Overpayment -> "<i>overpayment</i>"
+            | ExtraPayment -> "<i>extra payment</i>"
+            | Refunded -> "<i>refunded</i>"
+            | NotYetDue -> "<i>not yet due</i>"
+            | PaymentDue -> "<i>payment due</i>"
+            | Generated -> "<i>generated</i>"
+            | NoLongerRequired -> "<i>no longer required</i>"
+            | InformationOnly -> "<i>information only</i>"
 
     /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
     [<RequireQualifiedAccess; Struct>]
@@ -543,7 +543,7 @@ module Scheduling =
         /// renders the final APR as a string, or "n/a" if not available
         let finalAprString = function
         | Solution.Found _, ValueSome percent -> $"{percent}"
-        | _ -> "n/a"
+        | _ -> "<i>n/a</i>"
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
         let toHtmlTable schedule =
             "<table>"
@@ -1034,7 +1034,7 @@ module Scheduling =
             match x with
             | NoGeneratedPayment
             | ToBeGenerated ->
-                "n/a"
+                "<i>n/a</i>"
             | GeneratedValue gv ->
                 formatCent gv
 

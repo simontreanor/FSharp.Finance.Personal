@@ -24,10 +24,10 @@ module Fee =
         /// HTML formatting to display the fee type in a readable format
         member ft.Html =
             match ft with
-            | FacilitationFee amount -> $"facilitation fee {amount}"
-            | CabOrCsoFee amount -> $"CAB/CSO fee {amount}"
-            | MortageFee amount -> $"mortgage fee {amount}"
-            | CustomFee (name, amount) -> $"{name} {amount}"
+            | FacilitationFee amount -> $"<i>facilitation fee</i> {amount}"
+            | CabOrCsoFee amount -> $"<i>CAB/CSO fee</i> {amount}"
+            | MortageFee amount -> $"<i>mortgage fee</i> {amount}"
+            | CustomFee (name, amount) -> $"<i>{name}</i> {amount}"
 
     /// how to amortise the fee
     [<Struct; StructuredFormatDisplay("{Html}")>]

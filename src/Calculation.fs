@@ -360,7 +360,7 @@ module Calculation =
         /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
         let toStringOrNa a =
             match a with
-            | null | [||] -> "n/a"
+            | null | [||] -> "<i>n/a</i>"
             | _ -> a |> Array.map(fun ai -> $"{ai}") |> String.concat "<br/>"
 
     /// functions for working with maps

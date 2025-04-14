@@ -38,9 +38,9 @@ module Charge =
     } with
         /// HTML formatting to display the charge conditions in a readable format
         member cc.Html =
-            $"<td><i>{formatCent cc.Value}</i></td>"
-            + $"<td><i>{cc.ChargeGrouping}</i></td>"
-            + $"<td><i>{Array.toStringOrNa cc.ChargeHolidays}</i></td>"
+            $"<td>{formatCent cc.Value}</td>"
+            + $"<td>{cc.ChargeGrouping}</td>"
+            + $"<td>{Array.toStringOrNa cc.ChargeHolidays}</td>"
 
     /// the conditions under which charges are applied
     module ChargeConditions =
