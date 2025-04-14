@@ -518,9 +518,21 @@ module ComplianceTests =
     [<Fact>]
     let ComplianceTest019 () =
         let title = "ComplianceTest019"
-        let description = "Total repayable on interest-first loan with repayments starting on day 19 and total loan length 110 days"
+        let description = "Total repayable on interest-first loan of €317.26 with repayments starting on day 19 and total loan length 110 days"
 
         let schedules = Amortisation.generate scheduleParameters7 ValueNone false Map.empty
+
+        Schedule.outputHtmlToFile title description scheduleParameters7 schedules
+
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ComplianceTest020 () =
+        let title = "ComplianceTest020"
+        let description = "Total repayable on interest-first loan of £300 with repayments starting on day 19 and total loan length 110 days"
+
+        let schedules = Amortisation.generate { scheduleParameters7 with Principal = 300_00L<Cent> } ValueNone false Map.empty
 
         Schedule.outputHtmlToFile title description scheduleParameters7 schedules
 

@@ -781,17 +781,35 @@ module Amortisation =
         {
             ScheduleItems = items
             ScheduleStats = {
-                FinalScheduledPaymentCount = scheduledPaymentItems |> Map.count
-                FinalActualPaymentCount = items' |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
-                FinalActualPaymentDay = if Map.count actualPaymentItems = 0 then ValueNone else actualPaymentItems |> Map.maxKeyValue |> fst |> ValueSome
+                FinalScheduledPaymentCount =
+                    scheduledPaymentItems
+                    |> Map.count
+                FinalActualPaymentCount =
+                    items'
+                    |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
+                FinalActualPaymentDay =
+                    if Map.count actualPaymentItems = 0 then
+                        ValueNone
+                    else
+                        actualPaymentItems
+                        |> Map.maxKeyValue
+                        |> fst
+                        |> ValueSome
                 FinalApr = finalAprSolution
                 FinalCostToBorrowingRatio =
-                    if principalTotal = 0L<Cent> then Percent 0m
-                    else decimal (feeTotal + interestTotal + chargesTotal) / decimal principalTotal |> Percent.fromDecimal |> Percent.round 2
+                    if principalTotal = 0L<Cent> then
+                        Percent 0m
+                    else
+                        decimal (feeTotal + interestTotal + chargesTotal) / decimal principalTotal
+                        |> Percent.fromDecimal
+                        |> Percent.round 2
                 EffectiveInterestRate =
-                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feeTotal - feeRefund = 0L<Cent> then 0m
-                    else decimal interestTotal / decimal (principalTotal + feeTotal - feeRefund) / decimal finalPaymentDay
-                    |> Percent |> Interest.Rate.Daily
+                    if finalPaymentDay = 0<OffsetDay> || principalTotal + feeTotal - feeRefund = 0L<Cent> then
+                        0m
+                    else
+                        decimal interestTotal / decimal (principalTotal + feeTotal - feeRefund) / decimal finalPaymentDay
+                    |> Percent.fromDecimal
+                    |> Interest.Rate.Daily
             }
         }
 
