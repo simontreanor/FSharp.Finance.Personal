@@ -198,10 +198,10 @@ module Calculation =
         /// HTML formatting to display the restriction in a readable format
         member r.Html =
             match r with
-            | NoLimit -> "no fixed limit"
-            | LowerLimit lower -> $"no lower than {Cent.toDecimal lower:N2}"
-            | UpperLimit upper -> $"no higher than {Cent.toDecimal upper:N2}"
-            | WithinRange (lower, upper) -> $"between {Cent.toDecimal lower:N2} and {Cent.toDecimal upper:N2}"
+            | NoLimit -> ""
+            | LowerLimit lower -> $"min {Cent.toDecimal lower:N2}"
+            | UpperLimit upper -> $"max {Cent.toDecimal upper:N2}"
+            | WithinRange (lower, upper) -> $"min {Cent.toDecimal lower:N2} max {Cent.toDecimal upper:N2}"
 
     /// the type of restriction placed on a possible value
     module Restriction =
@@ -228,7 +228,7 @@ module Calculation =
         member a.Html =
             match a with
             | Percentage (Percent percent, restriction) ->
-                $"{percent} %%, {restriction}"
+                $"{percent} %% {restriction}".Trim()
             | Simple simple ->
                 $"{Cent.toDecimal simple:N2}"
 
