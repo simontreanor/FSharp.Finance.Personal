@@ -20,8 +20,6 @@ module Rescheduling =
         RateOnNegativeBalance: Interest.Rate
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalInterestRates: Interest.PromotionalRate array
-        /// any period during which charges are not payable
-        ChargeHolidays: DateRange array
         /// whether and when to generate a settlement figure, otherwise just a statement will be generated
         SettlementDay: SettlementDay voption
     }
@@ -67,7 +65,6 @@ module Rescheduling =
             { sp with
                 ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> CustomSchedule
                 FeeConfig = sp.FeeConfig |> Option.map(fun fc -> { fc with SettlementRefund = rp.FeeSettlementRefund })
-                ChargeConfig = sp.ChargeConfig |> Option.map(fun cc -> { cc with ChargeHolidays = rp.ChargeHolidays })
                 InterestConfig =
                     { sp.InterestConfig with
                         InitialGracePeriod = 0<DurationDay>

@@ -45,11 +45,18 @@ module PaymentScheduleTests =
                     SettlementRefund = Fee.SettlementRefund.ProRata
                 }
                 ChargeConfig = Some {
-                    ChargeTypes = [| Charge.InsufficientFunds (Amount.Simple 7_50L<Cent>); Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                    Rounding = RoundDown
-                    ChargeHolidays = [||]
-                    ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                    LatePaymentGracePeriod = 0<DurationDay>
+                    ChargeTypes = Map [
+                        Charge.InsufficientFunds, {
+                            Value = 7_50L<Cent>
+                            ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                            ChargeHolidays = [||]
+                        }
+                        Charge.LatePayment, {
+                            Value = 10_00L<Cent>
+                            ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                            ChargeHolidays = [||]
+                        }
+                    ]
                 }
                 InterestConfig = {
                     Method = Interest.Method.Simple
@@ -1792,11 +1799,13 @@ module PaymentScheduleTests =
             }
             FeeConfig = None
             ChargeConfig = Some {
-                ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = RoundDown
-                ChargeHolidays = [||]
-                ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+                ChargeTypes = Map [
+                    Charge.LatePayment, {
+                        Value = 7_50L<Cent>
+                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                        ChargeHolidays = [||]
+                    }
+                ]
             }
             InterestConfig = {
                 Method = Interest.Method.Simple
@@ -1842,11 +1851,13 @@ module PaymentScheduleTests =
             }
             FeeConfig = None
             ChargeConfig = Some {
-                ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = RoundDown
-                ChargeHolidays = [||]
-                ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+                ChargeTypes = Map [
+                    Charge.LatePayment, {
+                        Value = 7_50L<Cent>
+                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                        ChargeHolidays = [||]
+                    }
+                ]
             }
             InterestConfig = {
                 Method = Interest.Method.Simple
@@ -1892,11 +1903,13 @@ module PaymentScheduleTests =
             }
             FeeConfig = None
             ChargeConfig = Some {
-                ChargeTypes = [| Charge.LatePayment (Amount.Simple 10_00L<Cent>) |]
-                Rounding = RoundDown
-                ChargeHolidays = [||]
-                ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+                ChargeTypes = Map [
+                    Charge.LatePayment, {
+                        Value = 7_50L<Cent>
+                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                        ChargeHolidays = [||]
+                    }
+                ]
             }
             InterestConfig = {
                 Method = Interest.Method.Simple
@@ -1942,11 +1955,13 @@ module PaymentScheduleTests =
             }
             FeeConfig = None
             ChargeConfig = Some {
-                ChargeTypes = [| Charge.LatePayment (Amount.Percentage(Percent 5m, Restriction.UpperLimit 750L<Cent>)) |]
-                Rounding = RoundWith MidpointRounding.ToEven
-                ChargeHolidays = [||]
-                ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+                ChargeTypes = Map [
+                    Charge.LatePayment, {
+                        Value = 7_50L<Cent>
+                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                        ChargeHolidays = [||]
+                    }
+                ]
             }
             InterestConfig = {
                 Method = Interest.Method.Simple
@@ -1989,11 +2004,13 @@ module PaymentScheduleTests =
             }
             FeeConfig = None
             ChargeConfig = Some {
-                ChargeTypes = [| Charge.LatePayment (Amount.Percentage(Percent 5m, Restriction.UpperLimit 750L<Cent>)) |]
-                Rounding = RoundWith MidpointRounding.ToEven
-                ChargeHolidays = [||]
-                ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                LatePaymentGracePeriod = 3<DurationDay>
+                ChargeTypes = Map [
+                    Charge.LatePayment, {
+                        Value = 7_50L<Cent>
+                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                        ChargeHolidays = [||]
+                    }
+                ]
             }
             InterestConfig = {
                 Method = Interest.Method.Simple

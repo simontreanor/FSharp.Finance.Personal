@@ -49,7 +49,7 @@ module Interest =
     /// caps on the total interest accruable
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Cap = {
-        /// a cap on the total amount of interest chargeable over the lifetime of a product
+        /// a cap on the total amount of interest chargeable over the entire schedule
         TotalAmount: Amount voption
         /// a cap on the daily amount of interest chargeable
         DailyAmount: Amount voption
@@ -125,7 +125,7 @@ module Interest =
         StandardRate: Rate
         /// any total or daily caps on interest
         Cap: Cap
-        /// any grace period at the start of a product, during which if a product is settled no interest is payable
+        /// any grace period at the start of a schedule, during which if settled no interest is payable
         InitialGracePeriod: int<DurationDay>
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalRates: PromotionalRate array

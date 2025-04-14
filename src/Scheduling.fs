@@ -102,7 +102,7 @@ module Scheduling =
         /// the payment has been confirmed
         | Confirmed of Confirmed: int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
-        | Failed of Failed: int64<Cent> * ChargeTypes: Charge.ChargeType array
+        | Failed of Failed: int64<Cent> * ChargeType: Charge.ChargeType voption
         /// HTML formatting to display the actual payment status in a readable format
         member aps.Html =
             match aps with
@@ -110,7 +110,8 @@ module Scheduling =
             | Pending amount -> $"pending {formatCent amount}"
             | TimedOut amount -> $"timed out {formatCent amount}"
             | Confirmed amount -> $"confirmed {formatCent amount}"
-            | Failed (amount, charges) -> $"failed {formatCent amount} with charges {Array.toStringOrNa charges}"
+            | Failed (amount, ValueSome charge) -> $"failed {formatCent amount} ({charge})"
+            | Failed (amount, ValueNone) -> $"failed {formatCent amount}"
     
     /// the status of the payment, allowing for delays due to payment-provider processing times
     module ActualPaymentStatus =
@@ -400,7 +401,7 @@ module Scheduling =
         PaymentRounding: Rounding
         /// the minimum payment that can be taken and how to handle it
         MinimumPayment: MinimumPayment
-        /// the duration after which a pending payment is considered a missed payment
+        /// the duration after which a pending payment is considered a missed payment and charges are applied
         PaymentTimeout: int<DurationDay>
     }
 

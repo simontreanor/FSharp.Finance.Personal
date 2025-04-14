@@ -2,6 +2,7 @@ namespace FSharp.Finance.Personal
 
 open Calculation
 open DateDay
+open Formatting
 
 /// a penalty charge
 /// > NB: differences between charges and fees:
@@ -9,103 +10,83 @@ open DateDay
 /// > - charges are not added to the principal balance and do not therefore accrue interest
 module Charge =
 
-    /// the type and amount of any charge
-    [<Struct; StructuredFormatDisplay("{Html}")>]
-    type ChargeType =
-        /// a charge incurred because a scheduled payment was not made on time or in full
-        | LatePayment of LatePayment: Amount
-        /// a charge incurred to cover banking costs when a payment attempt is rejected due to a lack of funds
-        | InsufficientFunds of InsufficientFunds: Amount
-        /// any other type of penalty charge
-        | CustomCharge of ChargeType: string * FeeAmount: Amount
-        /// HTML formatting to display the charge type in a readable format
-        member ct.Html =
-            match ct with
-            | LatePayment amount -> $"late payment {amount}"
-            | InsufficientFunds amount -> $"insufficient funds {amount}"
-            | CustomCharge (name, amount) -> $"{name} {amount}"
-
     /// options on how to handle multiple charges
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ChargeGrouping =
-        /// only one charge of any type may be applied per day
+        /// only one charge of any type may be applied per day - only the first charge of each type per day is applied
         | OneChargeTypePerDay
-        /// only one charge of any type may be applied per product
-        | OneChargeTypePerProduct
+        /// only one charge of any type may be applied per schedule - only the first charge of each type per scheduled is applied
+        | OneChargeTypePerSchedule
         /// all charges are applied
         | AllChargesApplied
         /// HTML formatting to display the charge grouping in a readable format
         member cg.Html =
             match cg with
             | OneChargeTypePerDay -> "one charge per day"
-            | OneChargeTypePerProduct -> "one charge per product"
+            | OneChargeTypePerSchedule -> "one charge per schedule"
             | AllChargesApplied -> "all charges applied"
+
+    /// the conditions under which charges are applied
+    [<Struct; StructuredFormatDisplay("{Html}")>]
+    type ChargeConditions = {
+        /// the amount of the charge
+        Value: int64<Cent>
+        /// whether to group charges by type per day
+        ChargeGrouping: ChargeGrouping
+        /// any period during which no charges are payable
+        ChargeHolidays: DateRange array
+    } with
+        /// HTML formatting to display the charge conditions in a readable format
+        member cc.Html =
+            $"<td><i>{formatCent cc.Value}</i></td>"
+            + $"<td><i>{cc.ChargeGrouping}</i></td>"
+            + $"<td><i>{Array.toStringOrNa cc.ChargeHolidays}</i></td>"
+
+    /// the conditions under which charges are applied
+    module ChargeConditions =
+        /// generates a range of offset days during which charges are not incurred
+        let getHolidays startDate chargeHolidays =
+            chargeHolidays
+            |> Array.collect(fun (dr: DateRange) ->
+                [| (dr.Start - startDate).Days .. (dr.End - startDate).Days |]
+                |> Array.map ((*) 1<OffsetDay>)
+            )
+
+    /// the type and conditions of any charge
+    [<Struct; StructuredFormatDisplay("{Html}")>]
+    type ChargeType =
+        /// a charge incurred because a scheduled payment was not made on time or in full
+        | LatePayment
+        /// a charge incurred to cover banking costs when a payment attempt is rejected due to a lack of funds
+        | InsufficientFunds
+        /// any other type of penalty charge
+        | CustomCharge of string
+        /// HTML formatting to display the charge type in a readable format
+        member ct.Html =
+            match ct with
+            | LatePayment -> $"late payment"
+            | InsufficientFunds -> $"insufficient funds"
+            | CustomCharge name -> name
 
     /// options specifying the types of charges, their amounts, and any restrictions on these
     type Config = {
-        /// a list of penalty charges applicable to a product
-        ChargeTypes: ChargeType array
-        /// how to round charges
-        Rounding: Rounding
-        /// any period during which charges are not payable
-        ChargeHolidays: DateRange array
-        /// whether to group charges by type per day
-        ChargeGrouping: ChargeGrouping
-        /// the number of days' grace period after which late-payment charges apply
-        LatePaymentGracePeriod: int<DurationDay>
+        /// a list of penalty charges that can be incurred
+        ChargeTypes: Map<ChargeType, ChargeConditions>
     }
 
     /// options specifying the types of charges, their amounts, and any restrictions on these
     module Config =
         /// formats the charge config as an HTML table
-        let toHtmlTable config =
-            match config with
-            | Some c ->
+        let toHtmlTable (config: Config option) =
+            if config.IsNone || config.Value.ChargeTypes.IsEmpty then
+                "<table><tr><td>no charges</td></tr></table>"
+            else
                 "<table>"
                     + "<tr>"
-                        + $"<td>charge types: <i>{Array.toStringOrNa c.ChargeTypes}</i></td>"
-                        + $"<td>grouping: <i>{c.ChargeGrouping}</i></td>"
+                        + "<th>Type</th>"
+                        + "<th>Charge</th>"
+                        + "<th>Grouping</th>"
+                        + "<th>Holidays</th>"
                     + "</tr>"
-                    + $"<tr>"
-                        + $"<td>rounding: <i>{c.Rounding}</i></td>"
-                        + $"<td>late-payment grace period: <i>{c.LatePaymentGracePeriod}</i></td>"
-                    + "</tr>"
-                    + $"<tr>"
-                        + $"<td colspan='2'>holidays: <i>{Array.toStringOrNa c.ChargeHolidays}</i></td>"
-                    + "</tr>"
+                    + (config.Value.ChargeTypes |> Map.map(fun ct cc -> $"<tr><td>{ct}</td>{cc}</tr>") |> Map.values |> String.concat "")
                 + "</table>"
-            | None ->
-                "<table><tr><td>no charges</td></tr></table>"
-
-    /// calculates the total of a charge
-    let total chargeConfig baseValue chargeType =
-        match chargeConfig with
-        | Some cc ->
-            match chargeType with
-            | LatePayment amount
-            | InsufficientFunds amount
-            | CustomCharge (_, amount) -> amount |> Amount.total baseValue
-            |> Cent.fromDecimalCent cc.Rounding
-        | None ->
-            0L<Cent>
-
-    /// calculates the total sum of any charges incurred
-    let grandTotal chargeConfig baseValue customChargeTypes =
-        match chargeConfig with
-        | Some cc ->
-            customChargeTypes
-            |> ValueOption.defaultValue cc.ChargeTypes
-            |> Array.sumBy (total chargeConfig baseValue)
-        | None ->
-            0L<Cent>
-
-    /// generates a date range during which charges are not incurred
-    let holidayDates chargeConfig startDate =
-        match chargeConfig with
-        | Some cc ->
-            cc.ChargeHolidays
-            |> Array.collect(fun (dr: DateRange) ->
-                [| (dr.Start - startDate).Days .. (dr.End - startDate).Days |]
-            )
-        | None ->
-            [||]

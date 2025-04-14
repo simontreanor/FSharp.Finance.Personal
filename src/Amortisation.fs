@@ -49,7 +49,7 @@ module Amortisation =
         /// the overall balance status
         BalanceStatus: BalanceStatus
         /// any new charges incurred between the previous amortisation day and the current day
-        NewCharges: Charge.ChargeType array
+        NewCharges: AppliedCharge array
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
         /// the simple interest accruable between the previous amortisation day and the current day
@@ -377,8 +377,6 @@ module Amortisation =
         let dailyInterestRates fromDay toDay = Interest.dailyRates sp.StartDate (isSettledWithinGracePeriod sp settlementDay) sp.InterestConfig.StandardRate sp.InterestConfig.PromotionalRates fromDay toDay
         // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
         let interestRounding = sp.InterestConfig.Rounding
-        // get an array of dates on which charges are not incurred
-        let chargesHolidays = Charge.holidayDates sp.ChargeConfig sp.StartDate
         // get stats for interest rounding at the end of the schedule
         let maxAppliedPaymentDay = appliedPayments |> Map.keys |> Seq.max
         let appliedPaymentCount = appliedPayments |> Map.count
@@ -482,10 +480,8 @@ module Amortisation =
                 if paymentDue = 0L<Cent> then
                     0L<Cent>, [||]
                 else
-                    if chargesHolidays |> Array.exists ((=) (int siOffsetDay)) then
-                        0L<Cent>, [||]
-                    else
-                        Charge.grandTotal sp.ChargeConfig underpaymentTotal (ValueSome ap.ChargeTypes), ap.ChargeTypes
+                    ap.AppliedCharges
+                    |> Array.sumBy _.Total, ap.AppliedCharges
             // apportion the charges
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
             // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful inspection of the future schedule
@@ -811,7 +807,7 @@ module Amortisation =
 
         let amortisationSchedule =
             scheduledPayments
-            |> applyPayments asOfDay settlementDay sp.ChargeConfig sp.PaymentConfig.PaymentTimeout actualPayments
+            |> applyPayments asOfDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.PaymentTimeout actualPayments
             |> calculate sp settlementDay simpleSchedule.Stats.InitialInterestBalance
             |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
             |> calculateStats sp settlementDay
