@@ -1,6 +1,6 @@
 (**
 ---
-title: Amortisation examples
+title: Amortisation Examples
 category: Examples
 categoryindex: 2
 index: 3

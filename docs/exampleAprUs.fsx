@@ -1,6 +1,6 @@
 (**
 ---
-title: US APR example
+title: US APR Example
 category: Examples
 categoryindex: 2
 index: 2
@@ -10,9 +10,9 @@ keywords: APR US
 *)
 
 (**
-# US APR calculation
+# US APR Calculation
 
-## Basic example
+## Basic Example
 
 The following example shows a loan of $5,000.00 taken out on 10th January 1978 and repaid in 24 monthly instalments:
 

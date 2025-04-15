@@ -1,6 +1,6 @@
 (**
 ---
-title: UK APR example
+title: UK APR Example
 category: Examples
 categoryindex: 2
 index: 1
@@ -10,9 +10,9 @@ keywords: APR UK
 *)
 
 (**
-# UK APR calculation
+# UK APR Calculation
 
-## Basic example
+## Basic Example
 
 The following example shows a loan of £500.00 taken out on 10th October 2012 and repaid in two monthly instalments:
 

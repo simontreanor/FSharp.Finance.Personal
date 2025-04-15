@@ -12,7 +12,7 @@ keywords: payment schedule unit-period
 (**
 # Payment Schedule Examples
 
-## Basic example #1
+## Basic Example #1
 
 The following example shows the scheduled for a car loan of £10,000 taken out on 7 February 2024 with 36 monthly repayments:
 

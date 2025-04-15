@@ -1,5 +1,5 @@
 ---
-title: Algorithms in depth
+title: Algorithms in Depth
 category: Technical
 categoryindex: 3
 index: 2
