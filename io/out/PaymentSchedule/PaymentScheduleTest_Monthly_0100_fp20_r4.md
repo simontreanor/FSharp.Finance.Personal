@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>£0100 with 20 days to first payment and 4 repayments</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:13</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:49</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -99,7 +99,7 @@
                     <td>payment count: <i>4</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2023-12 on 27</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2023-12 on 27</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

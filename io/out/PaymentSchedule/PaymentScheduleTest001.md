@@ -39,7 +39,7 @@
 </table>
 <h4>Description</h4>
 <p><i>If there are no other payments, level payment should equal final payment</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:11</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:48</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -63,7 +63,7 @@
                     <td>payment count: <i>1</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>daily from 2023-01-03</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>daily from 2023-01-03</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

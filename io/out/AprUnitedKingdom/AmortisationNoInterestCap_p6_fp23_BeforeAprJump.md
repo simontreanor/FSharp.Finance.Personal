@@ -217,7 +217,7 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method with no interest cap (just before APR jump)</i></p><p>Generated: <i>2025-04-15 at 20:30:15</i></p><h4>Parameters</h4>
+<p><h4>Description</h4><i>Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method with no interest cap (just before APR jump)</i></p><p>Generated: <i>2025-04-15 at 20:41:51</i></p><h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -240,7 +240,7 @@
                     <td>payment count: <i>6</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 24</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 24</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

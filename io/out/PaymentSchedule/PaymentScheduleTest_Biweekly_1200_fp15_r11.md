@@ -159,7 +159,7 @@
 </table>
 <h4>Description</h4>
 <p><i>$1200 with long first period</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:11</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:48</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -183,7 +183,7 @@
                     <td>payment count: <i>11</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>2-weekly from 2023-11-30</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>2-weekly from 2023-11-30</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

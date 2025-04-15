@@ -99,7 +99,7 @@
 </table>
 <h4>Description</h4>
 <p><i>UK APR test amortisation schedule, first payment day 7, payment count 6</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:16</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:52</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -123,7 +123,7 @@
                     <td>payment count: <i>6</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 08</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 08</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

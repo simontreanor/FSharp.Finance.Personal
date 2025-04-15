@@ -568,7 +568,7 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>never settles down</i></p><p>Generated: <i>2025-04-15 at 20:30:13</i></p><h4>Parameters</h4>
+<p><h4>Description</h4><i>never settles down</i></p><p>Generated: <i>2025-04-15 at 20:41:49</i></p><h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -591,7 +591,7 @@
                     <td>payment count: <i>19</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>8-weekly from 2023-11-23</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>8-weekly from 2023-11-23</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

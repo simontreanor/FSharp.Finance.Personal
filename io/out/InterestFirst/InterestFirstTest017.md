@@ -190,7 +190,7 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)</i></p><p>Generated: <i>2025-04-15 at 20:30:12</i></p><h4>Parameters</h4>
+<p><h4>Description</h4><i>Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)</i></p><p>Generated: <i>2025-04-15 at 20:41:48</i></p><h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -213,7 +213,7 @@
                     <td>payment count: <i>5</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-08 on 02</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-08 on 02</i></td>
                     <td>max duration: <i>maximum 180 days from 2024-07-23</i></td>
                 </tr>
             </table>

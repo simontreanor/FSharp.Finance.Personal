@@ -287,7 +287,7 @@ module Scheduling =
                     <td>payment count: <i>{ags.PaymentCount}</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>
                     <td>max duration: <i>{ags.MaxDuration}</i></td>
                 </tr>
             </table>"""

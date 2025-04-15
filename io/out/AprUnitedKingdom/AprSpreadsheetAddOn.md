@@ -189,7 +189,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Range of APRs for different payment counts and first payment days, using the add-on interest method</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:16</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:52</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -213,7 +213,7 @@
                     <td>payment count: <i>{4 to 6}</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Payment count must not be exceeded</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:12</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:48</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -99,7 +99,7 @@
                     <td>payment count: <i>4</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-07 on 04</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-07 on 04</i></td>
                     <td>max duration: <i>maximum 190 days from 2024-06-24</i></td>
                 </tr>
             </table>

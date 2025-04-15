@@ -190,7 +190,7 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Standard schedule with mid-monthly payments from 14 days and paid off on time</i></p><p>Generated: <i>2025-04-15 at 20:30:12</i></p><h4>Parameters</h4>
+<p><h4>Description</h4><i>Standard schedule with mid-monthly payments from 14 days and paid off on time</i></p><p>Generated: <i>2025-04-15 at 20:41:48</i></p><h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -213,7 +213,7 @@
                     <td>payment count: <i>5</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2022-11 on 15</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2022-11 on 15</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

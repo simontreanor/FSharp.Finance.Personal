@@ -99,7 +99,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Term must not exceed maximum duration</i></p>
-<p>Generated: <i>2025-04-15 at 20:30:11</i></p>
+<p>Generated: <i>2025-04-15 at 20:41:48</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -123,7 +123,7 @@
                     <td>payment count: <i>7</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-05 on 18</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-05 on 18</i></td>
                     <td>max duration: <i>maximum 184 days from 2024-05-08</i></td>
                 </tr>
             </table>

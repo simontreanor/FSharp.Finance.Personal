@@ -622,7 +622,7 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Irregular payment schedule does not break APR calculation</i></p><p>Generated: <i>2025-04-15 at 20:30:12</i></p><h4>Parameters</h4>
+<p><h4>Description</h4><i>Irregular payment schedule does not break APR calculation</i></p><p>Generated: <i>2025-04-15 at 20:41:48</i></p><h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -645,7 +645,7 @@
                     <td>payment count: <i>11</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>2-weekly from 2022-10-28</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>2-weekly from 2022-10-28</i></td>
                     <td>max duration: <i>unlimited</i></td>
                 </tr>
             </table>

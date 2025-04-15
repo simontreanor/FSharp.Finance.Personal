@@ -163,7 +163,7 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Baseline with no promotional rates</i></p><p>Generated: <i>2025-04-15 at 20:30:14</i></p><h4>Parameters</h4>
+<p><h4>Description</h4><i>Baseline with no promotional rates</i></p><p>Generated: <i>2025-04-15 at 20:41:49</i></p><h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -186,7 +186,7 @@
                     <td>payment count: <i>4</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-09 on 02</i></td>""
+                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-09 on 02</i></td>
                     <td>max duration: <i>maximum 180 days from 2024-08-23</i></td>
                 </tr>
             </table>
