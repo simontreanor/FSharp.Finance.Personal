@@ -89,16 +89,17 @@ module Fee =
         let toHtmlTable config =
             match config with
             | Some c ->
-                "<table>"
-                    + "<tr>"
-                        + $"""<td>fee type: <i>{c.FeeType}</i></td>"""
-                        + $"<td>rounding: <i>{c.Rounding}</i></td>"
-                    + "</tr>"
-                    + "<tr>"
-                        + $"<td>fee amortisation: <i>{c.FeeAmortisation}</i></td>"
-                        + $"<td>settlement refund: <i>{c.SettlementRefund}</i></td>"
-                    + "</tr>"
-                + "</table>"
+                $"""
+            <table>
+                <tr>
+                    <td>fee type: <i>{c.FeeType}</i></td>
+                    <td>rounding: <i>{c.Rounding}</i></td>
+                </tr>
+                <tr>
+                    <td>fee amortisation: <i>{c.FeeAmortisation}</i></td>
+                    <td>settlement refund: <i>{c.SettlementRefund}</i></td>
+                </tr>
+            </table>"""
             | None ->
                 "no fee"
 

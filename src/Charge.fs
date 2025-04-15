@@ -81,12 +81,18 @@ module Charge =
             if config.IsNone || config.Value.ChargeTypes.IsEmpty then
                 "no charges"
             else
-                "<table>"
-                    + "<tr>"
-                        + "<th>Type</th>"
-                        + "<th>Charge</th>"
-                        + "<th>Grouping</th>"
-                        + "<th>Holidays</th>"
-                    + "</tr>"
-                    + (config.Value.ChargeTypes |> Map.map(fun ct cc -> $"<tr><td>{ct}</td>{cc}</tr>") |> Map.values |> String.concat "")
-                + "</table>"
+                let renderRow ct cc =
+                    $"""
+                <tr>
+                    <td>{ct}</td>
+                    {cc}
+                </tr>"""
+                $"""
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Charge</th>
+                    <th>Grouping</th>
+                    <th>Holidays</th>
+                </tr>{config.Value.ChargeTypes |> Map.map renderRow |> Map.values |> String.concat ""}
+            </table>"""

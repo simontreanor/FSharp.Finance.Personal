@@ -108,34 +108,34 @@ module Amortisation =
             FeeRefundIfSettled = 0L<Cent>
         }
         /// formats the schedule item as an HTML row
-        let toHtmlRow offsetDay scheduleItem =
-            """<tr style="text-align: right;">"""
-                + $"""<td class="ci00">{offsetDay}</td>"""
-                + $"""<td class="ci01" style="white-space: nowrap;">%A{scheduleItem.OffsetDate}</td>"""
-                + $"""<td class="ci02">{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOrNa}</td>"""
-                + $"""<td class="ci03" style="white-space: nowrap;">{scheduleItem.ScheduledPayment}</td>"""
-                + $"""<td class="ci04">{scheduleItem.Window}</td>"""
-                + $"""<td class="ci05">{formatCent scheduleItem.PaymentDue}</td>"""
-                + $"""<td class="ci06">{scheduleItem.ActualPayments |> Array.toStringOrNa |> _.Replace(" ", "&nbsp;")}</td>"""
-                + $"""<td class="ci07">{scheduleItem.GeneratedPayment}</td>"""
-                + $"""<td class="ci08">{formatCent scheduleItem.NetEffect}</td>"""
-                + $"""<td class="ci09">{scheduleItem.PaymentStatus.Html.Replace(" ", "&nbsp;")}</td>"""
-                + $"""<td class="ci10">{scheduleItem.BalanceStatus.Html.Replace(" ", "&nbsp;")}</td>"""
-                + $"""<td class="ci13">{formatDecimalCent scheduleItem.SimpleInterest}</td>"""
-                + $"""<td class="ci14">{formatDecimalCent scheduleItem.NewInterest}</td>"""
-                + $"""<td class="ci15">{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}</td>"""
-                + $"""<td class="ci16">{formatCent scheduleItem.PrincipalPortion}</td>"""
-                + $"""<td class="ci17">{formatCent scheduleItem.FeePortion}</td>"""
-                + $"""<td class="ci18">{formatCent scheduleItem.InterestPortion}</td>"""
-                + $"""<td class="ci19">{formatCent scheduleItem.ChargesPortion}</td>"""
-                + $"""<td class="ci20">{formatCent scheduleItem.FeeRefund}</td>"""
-                + $"""<td class="ci21">{formatCent scheduleItem.PrincipalBalance}</td>"""
-                + $"""<td class="ci22">{formatCent scheduleItem.FeeBalance}</td>"""
-                + $"""<td class="ci23">{formatDecimalCent scheduleItem.InterestBalance}</td>"""
-                + $"""<td class="ci24">{formatCent scheduleItem.ChargesBalance}</td>"""
-                + $"""<td class="ci25">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>"""
-                + $"""<td class="ci26">{formatCent scheduleItem.FeeRefundIfSettled}</td>"""
-            + "</tr>"
+        let toHtmlRow offsetDay scheduleItem = $"""
+    <tr style="text-align: right;">
+        <td class="ci00">{offsetDay}</td>
+        <td class="ci01" style="white-space: nowrap;">%A{scheduleItem.OffsetDate}</td>
+        <td class="ci02">{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOrNa}</td>
+        <td class="ci03" style="white-space: nowrap;">{scheduleItem.ScheduledPayment}</td>
+        <td class="ci04">{scheduleItem.Window}</td>
+        <td class="ci05">{formatCent scheduleItem.PaymentDue}</td>
+        <td class="ci06">{scheduleItem.ActualPayments |> Array.toStringOrNa |> _.Replace(" ", "&nbsp;")}</td>
+        <td class="ci07">{scheduleItem.GeneratedPayment}</td>
+        <td class="ci08">{formatCent scheduleItem.NetEffect}</td>
+        <td class="ci09">{scheduleItem.PaymentStatus.Html.Replace(" ", "&nbsp;")}</td>
+        <td class="ci10">{scheduleItem.BalanceStatus.Html.Replace(" ", "&nbsp;")}</td>
+        <td class="ci13">{formatDecimalCent scheduleItem.SimpleInterest}</td>
+        <td class="ci14">{formatDecimalCent scheduleItem.NewInterest}</td>
+        <td class="ci15">{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}</td>
+        <td class="ci16">{formatCent scheduleItem.PrincipalPortion}</td>
+        <td class="ci17">{formatCent scheduleItem.FeePortion}</td>
+        <td class="ci18">{formatCent scheduleItem.InterestPortion}</td>
+        <td class="ci19">{formatCent scheduleItem.ChargesPortion}</td>
+        <td class="ci20">{formatCent scheduleItem.FeeRefund}</td>
+        <td class="ci21">{formatCent scheduleItem.PrincipalBalance}</td>
+        <td class="ci22">{formatCent scheduleItem.FeeBalance}</td>
+        <td class="ci23">{formatDecimalCent scheduleItem.InterestBalance}</td>
+        <td class="ci24">{formatCent scheduleItem.ChargesBalance}</td>
+        <td class="ci25">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>
+        <td class="ci26">{formatCent scheduleItem.FeeRefundIfSettled}</td>
+    </tr>"""
 
 
     /// a container for aggregating figures separately from the main schedule
@@ -176,19 +176,20 @@ module Amortisation =
     /// final statistics resulting from the calculations
     module ScheduleStats =
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
-        let toHtmlTable scheduleStats =
-            "<table>"
-                + "<tr>"
-                    + $"<td>Effective interest rate: <i>{scheduleStats.EffectiveInterestRate}</i></td>"
-                    + $"<td>Final cost-to-borrowing ratio: <i>{scheduleStats.FinalCostToBorrowingRatio}</i></td>"
-                    + $"<td>Final APR: <i>{scheduleStats.FinalApr}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>Final scheduled payment count: <i>{scheduleStats.FinalScheduledPaymentCount}</i></td>"
-                    + $"<td>Final actual payment count: <i>{scheduleStats.FinalActualPaymentCount}</i></td>"
-                    + $"""<td>Final actual payment day: <i>{scheduleStats.FinalActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>"""
-                + "</tr>"
-            + "</table>"
+        let toHtmlTable scheduleStats = $"""
+<table>
+    <tr>
+        <td>Effective interest rate: <i>{scheduleStats.EffectiveInterestRate}</i></td>
+        <td>Final cost-to-borrowing ratio: <i>{scheduleStats.FinalCostToBorrowingRatio}</i></td>
+        <td>Final APR: <i>{scheduleStats.FinalApr}</i></td>
+    </tr>
+    <tr>
+        <td>Final scheduled payment count: <i>{scheduleStats.FinalScheduledPaymentCount}</i></td>
+        <td>Final actual payment count: <i>{scheduleStats.FinalActualPaymentCount}</i></td>
+        <td>Final actual payment day: <i>{scheduleStats.FinalActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>
+    </tr>
+</table>
+"""
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
     [<Struct>]
@@ -208,37 +209,37 @@ module Amortisation =
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
     module Schedule =
         /// formats the schedule items as an HTML table (stats can be rendered separately)
-        let toHtmlTable schedule =
-            "<table>"
-                + """<thead style="vertical-align: bottom;">"""
-                    + """<th style="text-align: right;">Day</th>"""
-                    + """<th style="text-align: right;">Datestamp</th>"""
-                    + """<th style="text-align: right;">Advances</th>"""
-                    + """<th style="text-align: right;">Scheduled payment</th>"""
-                    + """<th style="text-align: right;">Window</th>"""
-                    + """<th style="text-align: right;">Payment due</th>"""
-                    + """<th style="text-align: right;">Actual payments</th>"""
-                    + """<th style="text-align: right;">Generated payment</th>"""
-                    + """<th style="text-align: right;">Net effect</th>"""
-                    + """<th style="text-align: right;">Payment status</th>"""
-                    + """<th style="text-align: right;">Balance status</th>"""
-                    + """<th style="text-align: right;">Simple interest</th>"""
-                    + """<th style="text-align: right;">New interest</th>"""
-                    + """<th style="text-align: right;">New charges</th>"""
-                    + """<th style="text-align: right;">Principal portion</th>"""
-                    + """<th style="text-align: right;">Fee portion</th>"""
-                    + """<th style="text-align: right;">Interest portion</th>"""
-                    + """<th style="text-align: right;">Charges portion</th>"""
-                    + """<th style="text-align: right;">Fee refund</th>"""
-                    + """<th style="text-align: right;">Principal balance</th>"""
-                    + """<th style="text-align: right;">Fee balance</th>"""
-                    + """<th style="text-align: right;">Interest balance</th>"""
-                    + """<th style="text-align: right;">Charges balance</th>"""
-                    + """<th style="text-align: right;">Settlement figure</th>"""
-                    + """<th style="text-align: right;">Fee refund if&nbsp;settled</th>"""
-                + "</thead>"
-                + (schedule.ScheduleItems |> Map.map ScheduleItem.toHtmlRow |> Map.values |> String.concat "")
-            + "</table>"
+        let toHtmlTable schedule = $"""
+<table>
+    <thead style="vertical-align: bottom;">
+        <th style="text-align: right;">Day</th>
+        <th style="text-align: right;">Datestamp</th>
+        <th style="text-align: right;">Advances</th>
+        <th style="text-align: right;">Scheduled payment</th>
+        <th style="text-align: right;">Window</th>
+        <th style="text-align: right;">Payment due</th>
+        <th style="text-align: right;">Actual payments</th>
+        <th style="text-align: right;">Generated payment</th>
+        <th style="text-align: right;">Net effect</th>
+        <th style="text-align: right;">Payment status</th>
+        <th style="text-align: right;">Balance status</th>
+        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">New interest</th>
+        <th style="text-align: right;">New charges</th>
+        <th style="text-align: right;">Principal portion</th>
+        <th style="text-align: right;">Fee portion</th>
+        <th style="text-align: right;">Interest portion</th>
+        <th style="text-align: right;">Charges portion</th>
+        <th style="text-align: right;">Fee refund</th>
+        <th style="text-align: right;">Principal balance</th>
+        <th style="text-align: right;">Fee balance</th>
+        <th style="text-align: right;">Interest balance</th>
+        <th style="text-align: right;">Charges balance</th>
+        <th style="text-align: right;">Settlement figure</th>
+        <th style="text-align: right;">Fee refund if&nbsp;settled</th>
+    </thead>{schedule.ScheduleItems |> Map.map ScheduleItem.toHtmlRow |> Map.values |> String.concat ""}
+</table>
+"""
 
         /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile folder title description sp (schedules: GenerationResult) =

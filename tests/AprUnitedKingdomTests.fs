@@ -89,29 +89,46 @@ module AprUnitedKingdomTests =
 
                 simpleSchedule |> SimpleSchedule.outputHtmlToFile folder $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp
 
-                $"<td>{simpleSchedule.Stats.InitialApr}</td>"
+                $"""
+        <td>{simpleSchedule.Stats.InitialApr}</td>"""
             )
             |> String.concat ""
-            |> fun s -> $"<td>{firstPaymentDay}</td>{s}"
+            |> fun s -> $"""
+        <td>{firstPaymentDay}</td>{s}"""
 
         let tableRows =
             firstPaymentDays
             |> Array.map(fun firstPaymentDay ->
-                $"<tr>{tableCells firstPaymentDay}</tr>"
+                $"""
+    <tr>{tableCells firstPaymentDay}
+    </tr>"""
             )
             |> String.concat ""
 
         let htmlTitle = $"<h2>{title}</h2>"
-        let htmlTable = $"<table><tr><th>First payment day</th><th>4 payments</th><th>5 payments</th><th>6 payments</th></tr>{tableRows}</table>"
-        let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
+        let htmlTable =
+            $"""
+<table>
+    <tr>
+        <th>First payment day</th>
+        <th>4 payments</th>
+        <th>5 payments</th>
+        <th>6 payments</th>
+    </tr>{tableRows}
+</table>"""
+        let htmlDescription = $"""
+<h4>Description</h4>
+<p><i>{description}</i></p>"""
 
         let generalisedParams =
             Parameters.toHtmlTable (getScheduleParameters (Date(2025, 4, 1)) 4 3 interestMethod applyInterestCap)
             |> fun s -> Regex.Replace(s, "payment count: <i>4</i>", "payment count: <i>{4 to 6}</i>")
             |> fun s -> Regex.Replace(s, "unit-period config: <i>monthly from 2025-04 on 04</i>", "unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i>")
 
-        let htmlParams = $"<h4>Parameters</h4>{generalisedParams}"
-        let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
+        let htmlParams = $"""
+<h4>Parameters</h4>{generalisedParams}"""
+        let htmlDatestamp = $"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
         let filename = $"out/{folder}/{title}.md"
         $"{htmlTitle}{htmlTable}{htmlDescription}{htmlDatestamp}{htmlParams}"
         |> outputToFile' filename false

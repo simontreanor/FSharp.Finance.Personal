@@ -71,7 +71,12 @@ module Formatting =
         let propertyInfos = typeof<'a> |> FSharpType.GetRecordFields
         let header = propertyInfos |> filterColumns hideProperties |> fun pii -> formatHtmlTableHeader ValueNone (pii |> Array.map _.Name)
         let rows = items |> formatHtmlTableRows hideProperties propertyInfos
-        $"<table>{header}{rows}</table>"
+        $"""
+<table>
+    {header}
+    {rows}
+</table>
+"""
 
     /// creates HTML files from an array
     let outputArrayToHtml fileName append data =
@@ -96,7 +101,12 @@ module Formatting =
         let propertyInfos = typeof<'b> |> FSharpType.GetRecordFields
         let header = propertyInfos |> filterColumns hideProperties |> fun pii -> formatHtmlTableHeader (ValueSome indexName) (pii |> Array.map _.Name)
         let rows = data |> formatHtmlTableRowsFromMap hideProperties propertyInfos
-        $"<table>{header}{rows}</table>"
+        $"""
+<table>
+    {header}
+    {rows}
+</table>
+"""
 
     /// generates a formatted HTML table from a map with the index name "Day"
     let generateHtmlFromMap hideProperties (data: Map<'a, 'b>) =

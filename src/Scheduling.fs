@@ -278,44 +278,57 @@ module Scheduling =
     module ScheduleConfig =
         /// formats the schedule config as an HTML table
         let toHtmlTable scheduleConfig =
-            "<table>"
-                + match scheduleConfig with
-                    | AutoGenerateSchedule ags ->
-                        "<tr>"
-                            + $"<td>config: <i>auto-generate schedule</i></td>"
-                            + $"<td>payment count: <i>{ags.PaymentCount}</i></td>"
-                        + "</tr>"
-                        + "<tr>"
-                            + $"""<td style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>"""
-                            + $"<td>max duration: <i>{ags.MaxDuration}</i></td>"
-                        + "</tr>"
-                    | FixedSchedules fsArray -> 
-                        $"<tr>"
-                            + """<td colspan="2">config: <i>fixed schedules</i></td>"""
-                        + "</tr>"
-                        + (fsArray |> Array.map (fun fs ->
-                            "<tr><td><table>"
-                                + "<tr>"
-                                    + $"""<td style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></td>"""
-                                    + $"<td>payment count: <i>{fs.PaymentCount}</i></td>"
-                                + "</tr>"
-                                + "<tr>"
-                                    + $"<td>payment value: <i>{formatCent fs.PaymentValue}</i></td>"
-                                    + $"""<td>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></td>"""
-                                + "</tr>"
-                            + "</table></td></tr>"
-                        ) |> String.concat "")
-                    | CustomSchedule cs ->
-                        "<tr>"
-                            + """<td colspan="2">config: <i>custom schedule</i></td>"""
-                        + "</tr>"
-                        + (cs |> Map.toList |> List.map (fun (day, sp) -> 
-                            $"<tr>"
-                                + $"<td>day: <i>{day}</i></td>"
-                                + $"<td>scheduled payment: <i>{sp}</i></td>"
-                            + "</tr>"
-                        ) |> String.concat "")
-            + "</table>"
+            match scheduleConfig with
+            | AutoGenerateSchedule ags ->
+                $"""
+            <table>
+                <tr>
+                    <td>config: <i>auto-generate schedule</i></td>
+                    <td>payment count: <i>{ags.PaymentCount}</i></td>
+                </tr>
+                <tr>
+                    <td style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>""
+                    <td>max duration: <i>{ags.MaxDuration}</i></td>
+                </tr>
+            </table>"""
+            | FixedSchedules fsArray ->
+                let renderRow (fs: FixedSchedule) =
+                    $"""
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></td>
+                    <td>payment count: <i>{fs.PaymentCount}</i></td>
+                </tr>
+                <tr>
+                    <td>payment value: <i>{formatCent fs.PaymentValue}</i></td>
+                    <td>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></td>
+                </tr>
+            </table>
+        </td>
+    </tr>"""
+                $"""
+            <table>
+                <tr>
+                    <td colspan="2">config: <i>fixed schedules</i></td>
+                </tr>
+                {fsArray |> Array.map renderRow |> String.concat ""}
+            </table>"""
+            | CustomSchedule cs ->
+                let renderRow day sp =
+                    $"""
+                <tr>
+                    <td>day: <i>{day}</i></td>
+                    <td>scheduled payment: <i>{sp}</i></td>
+                </tr>"""
+                $"""
+            <table>
+                <tr>
+                    <td colspan="2">config: <i>custom schedule</i></td>
+                </tr>
+                {cs |> Map.toList |> List.map (fun (day, sp) -> renderRow day sp) |> String.concat ""}
+            </table>"""
 
     /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -409,22 +422,23 @@ module Scheduling =
     module PaymentConfig =
         ///formats the payment config as an HTML table
         let toHtmlTable paymentConfig =
-            "<table>"
-                + "<tr>"
-                    + $"<td>scheduling: <i>{paymentConfig.ScheduledPaymentOption}</i></td>"
-                    + $"""<td>balance-close: <i>{paymentConfig.CloseBalanceOption.Html.Replace(" ", "&nbsp;")}</i></td>"""
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>rounding: <i>{paymentConfig.PaymentRounding}</i></td>"
-                    + $"<td>timeout: <i>{paymentConfig.PaymentTimeout}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"""<td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment.Html.Replace(" ", "&nbsp;")}</i></td>"""
-                + "</tr>"
-                + "<tr>"
-                    + $"""<td colspan='2'>level-payment option: <i>{paymentConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>"""
-                + "</tr>"
-            + "</table>"
+            $"""
+            <table>
+                <tr>
+                    <td>scheduling: <i>{paymentConfig.ScheduledPaymentOption}</i></td>
+                    <td>balance-close: <i>{paymentConfig.CloseBalanceOption.Html.Replace(" ", "&nbsp;")}</i></td>
+                </tr>
+                <tr>
+                    <td>rounding: <i>{paymentConfig.PaymentRounding}</i></td>
+                    <td>timeout: <i>{paymentConfig.PaymentTimeout}</i></td>
+                </tr>
+                <tr>
+                    <td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment.Html.Replace(" ", "&nbsp;")}</i></td>
+                </tr>
+                <tr>
+                    <td colspan='2'>level-payment option: <i>{paymentConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>
+                </tr>
+            </table>"""
 
    /// parameters for creating a payment schedule
     type Parameters = {
@@ -450,16 +464,46 @@ module Scheduling =
     module Parameters =
         /// formats the parameters as an HTML table
         let toHtmlTable parameters =
-            "<table>"
-                + $"<tr><td>As-of</td><td>%A{parameters.AsOfDate}</td></tr>"
-                + $"<tr><td>Start</td><td>%A{parameters.StartDate}</td></tr>"
-                + $"<tr><td>Principal</td><td>{formatCent parameters.Principal}</td></tr>"
-                + $"<tr><td>Schedule options</td><td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}</td></tr>"
-                + $"<tr><td>Payment options</td><td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}</td></tr>"
-                + $"<tr><td>Fee options</td><td>{Fee.Config.toHtmlTable parameters.FeeConfig}</td></tr>"
-                + $"<tr><td>Charge options</td><td>{Charge.Config.toHtmlTable parameters.ChargeConfig}</td></tr>"
-                + $"<tr><td>Interest options</td><td>{Interest.Config.toHtmlTable parameters.InterestConfig}</td></tr>"
-            + "</table>"
+            $"""
+<table>
+    <tr>
+        <td>As-of</td>
+        <td>%A{parameters.AsOfDate}</td>
+    </tr>
+    <tr>
+        <td>Start</td>
+        <td>%A{parameters.StartDate}</td>
+    </tr>
+    <tr>
+        <td>Principal</td>
+        <td>{formatCent parameters.Principal}</td>
+    </tr>
+    <tr>
+        <td>Schedule options</td>
+        <td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Payment options</td>
+        <td>{PaymentConfig.toHtmlTable parameters.PaymentConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Fee options</td>
+        <td>{Fee.Config.toHtmlTable parameters.FeeConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Charge options</td>
+        <td>{Charge.Config.toHtmlTable parameters.ChargeConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Interest options</td>
+        <td>{Interest.Config.toHtmlTable parameters.InterestConfig}
+        </td>
+    </tr>
+</table>"""
 
      /// a scheduled payment item, with running calculations of interest and principal balance
     type SimpleItem = {
@@ -502,19 +546,19 @@ module Scheduling =
                 TotalPrincipal = 0L<Cent>
             }
         /// formats the simple item as an HTML row
-        let toHtmlRow simpleItem =
-            """<tr style="text-align: right;">"""
-                + $"""<td class="ci00">{simpleItem.Day}</td>"""
-                + $"""<td class="ci01" style="white-space: nowrap;">{simpleItem.ScheduledPayment |> ScheduledPayment.total |> formatCent}</td>"""
-                + $"""<td class="ci02">{formatDecimalCent simpleItem.SimpleInterest}</td>"""
-                + $"""<td class="ci03">{formatCent simpleItem.InterestPortion}</td>"""
-                + $"""<td class="ci04">{formatCent simpleItem.PrincipalPortion}</td>"""
-                + $"""<td class="ci05">{formatCent simpleItem.InterestBalance}</td>"""
-                + $"""<td class="ci06">{formatCent simpleItem.PrincipalBalance}</td>"""
-                + $"""<td class="ci07">{formatDecimalCent simpleItem.TotalSimpleInterest}</td>"""
-                + $"""<td class="ci08">{formatCent simpleItem.TotalInterest}</td>"""
-                + $"""<td class="ci09">{formatCent simpleItem.TotalPrincipal}</td>"""
-            + "</tr>"
+        let toHtmlRow simpleItem = $"""
+    <tr style="text-align: right;">
+        <td class="ci00">{simpleItem.Day}</td>
+        <td class="ci01" style="white-space: nowrap;">{simpleItem.ScheduledPayment |> ScheduledPayment.total |> formatCent}</td>
+        <td class="ci02">{formatDecimalCent simpleItem.SimpleInterest}</td>
+        <td class="ci03">{formatCent simpleItem.InterestPortion}</td>
+        <td class="ci04">{formatCent simpleItem.PrincipalPortion}</td>
+        <td class="ci05">{formatCent simpleItem.InterestBalance}</td>
+        <td class="ci06">{formatCent simpleItem.PrincipalBalance}</td>
+        <td class="ci07">{formatDecimalCent simpleItem.TotalSimpleInterest}</td>
+        <td class="ci08">{formatCent simpleItem.TotalInterest}</td>
+        <td class="ci09">{formatCent simpleItem.TotalPrincipal}</td>
+    </tr>"""
 
     /// final statistics based on the payments being made on time and in full
     type SimpleScheduleStats = {
@@ -546,23 +590,25 @@ module Scheduling =
         | _ -> "<i>n/a</i>"
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
         let toHtmlTable schedule =
-            "<table>"
-                + "<tr>"
-                    + $"<td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>"
-                    + $"<td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>"
-                    + $"<td>Initial APR: <i>{schedule.InitialApr}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>"
-                    + $"<td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>"
-                    + $"<td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>"
-                    + $"<td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>"
-                    + $"<td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>"
-                + "</tr>"
-            + "</table>"
+            $"""
+<table>
+    <tr>
+        <td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>
+        <td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>
+        <td>Initial APR: <i>{schedule.InitialApr}</i></td>
+    </tr>
+    <tr>
+        <td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>
+        <td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>
+        <td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>
+    </tr>
+    <tr>
+        <td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>
+        <td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>
+        <td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>
+    </tr>
+</table>
+"""
 
     ///  a schedule of payments, with statistics
     type SimpleSchedule = {
@@ -578,32 +624,37 @@ module Scheduling =
     module SimpleSchedule =
         /// formats the schedule items as an HTML table (stats can be rendered separately)
         let toHtmlTable schedule =
-            "<table>"
-                + """<thead style="vertical-align: bottom;">"""
-                    + """<th style="text-align: right;">Day</th>"""
-                    + """<th style="text-align: right;">Scheduled payment</th>"""
-                    + """<th style="text-align: right;">Simple interest</th>"""
-                    + """<th style="text-align: right;">Interest portion</th>"""
-                    + """<th style="text-align: right;">Principal portion</th>"""
-                    + """<th style="text-align: right;">Interest balance</th>"""
-                    + """<th style="text-align: right;">Principal balance</th>"""
-                    + """<th style="text-align: right;">Total simple interest</th>"""
-                    + """<th style="text-align: right;">Total interest</th>"""
-                    + """<th style="text-align: right;">Total principal</th>"""
-                + "</thead>"
-                + (schedule.Items |> Array.map SimpleItem.toHtmlRow |> String.concat "")
-            + "</table>"
+            $"""
+<table>
+    <thead style="vertical-align: bottom;">
+        <th style="text-align: right;">Day</th>
+        <th style="text-align: right;">Scheduled payment</th>
+        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Interest portion</th>
+        <th style="text-align: right;">Principal portion</th>
+        <th style="text-align: right;">Interest balance</th>
+        <th style="text-align: right;">Principal balance</th>
+        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total interest</th>
+        <th style="text-align: right;">Total principal</th>
+    </thead>{schedule.Items |> Array.map SimpleItem.toHtmlRow |> String.concat ""}
+</table>"""
 
         /// renders the simple schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile folder title description sp schedule =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedule
-            let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
-            let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
-            let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
-            let htmlScheduleStats = $"<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedule.Stats}"
+            let htmlDescription = $"""
+<h4>Description</h4>
+<p><i>{description}</i></p>"""
+            let htmlParams = $"""
+<h4>Parameters</h4>{Parameters.toHtmlTable sp}"""
+            let htmlDatestamp = $"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
+            let htmlScheduleStats = $"""
+<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedule.Stats}"""
             let filename = $"out/{folder}/{title}.md"
-            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}"
+            $"""{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}"""
             |> outputToFile' filename false
 
     /// convert an option to a value option

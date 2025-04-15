@@ -141,26 +141,27 @@ module Interest =
     module Config =
         /// formats the interest config as an HTML table
         let toHtmlTable config =
-            "<table>"
-                + "<tr>"
-                    + $"<td>standard rate: <i>{config.StandardRate}</i></td>"
-                    + $"<td>method: <i>{config.Method}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>rounding: <i>{config.Rounding}</i></td>"
-                    + $"<td>APR method: <i>{config.AprMethod}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"<td>initial grace period: <i>{config.InitialGracePeriod} day(s)</i></td>"
-                    + $"<td>rate on negative balance: <i>{config.RateOnNegativeBalance}</i></td>"
-                + "</tr>"
-                + "<tr>"
-                    + $"""<td colspan="2">promotional rates: <i>{Array.toStringOrNa config.PromotionalRates}</i></td>"""
-                + "</tr>"
-                + "<tr>"
-                    + $"""<td colspan="2">cap: <i>{config.Cap}</td>"""
-                + "</tr>"
-            + "</table>"
+            $"""
+            <table>
+                <tr>
+                    <td>standard rate: <i>{config.StandardRate}</i></td>
+                    <td>method: <i>{config.Method}</i></td>
+                </tr>
+                <tr>
+                    <td>rounding: <i>{config.Rounding}</i></td>
+                    <td>APR method: <i>{config.AprMethod}</i></td>
+                </tr>
+                <tr>
+                    <td>initial grace period: <i>{config.InitialGracePeriod} day(s)</i></td>
+                    <td>rate on negative balance: <i>{config.RateOnNegativeBalance}</i></td>
+                </tr>
+                <tr>
+                    <td colspan="2">promotional rates: <i>{Array.toStringOrNa config.PromotionalRates}</i></td>
+                </tr>
+                <tr>
+                    <td colspan="2">cap: <i>{config.Cap}</td>
+                </tr>
+            </table>"""
 
     /// calculates the interest chargeable on a range of days
     let dailyRates (startDate: Date) isSettledWithinGracePeriod standardRate promotionalRates (fromDay: int<OffsetDay>) (toDay: int<OffsetDay>) =
