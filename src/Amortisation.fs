@@ -199,6 +199,12 @@ module Amortisation =
         ScheduleStats: ScheduleStats
     }
 
+    /// results of the amortisation schedule generation
+    type GenerationResult = {
+        AmortisationSchedule: Schedule
+        SimpleSchedule: SimpleSchedule
+    }
+
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
     module Schedule =
         /// formats the schedule items as an HTML table (stats can be rendered separately)
@@ -235,7 +241,7 @@ module Amortisation =
             + "</table>"
 
         /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
-        let outputHtmlToFile title description sp (schedules: {| AmortisationSchedule: Schedule; SimpleSchedule: SimpleSchedule |}) =
+        let outputHtmlToFile title description sp (schedules: GenerationResult) =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedules.AmortisationSchedule
             let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
@@ -832,4 +838,4 @@ module Amortisation =
 
         let simpleSchedule = simpleSchedule
     
-        {| AmortisationSchedule = amortisationSchedule; SimpleSchedule = simpleSchedule |}
+        { AmortisationSchedule = amortisationSchedule; SimpleSchedule = simpleSchedule }

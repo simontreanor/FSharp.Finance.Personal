@@ -33,9 +33,9 @@ module Quotes =
         // the quote result
         QuoteResult: QuoteResult
         // a statement showing the schedule at the time the quote was generated
-        CurrentSchedules: {| AmortisationSchedule: Amortisation.Schedule; SimpleSchedule: SimpleSchedule |}
+        CurrentSchedules: Amortisation.GenerationResult
         // the revised schedule showing the settlement, if applicable
-        RevisedSchedules: {| AmortisationSchedule: Amortisation.Schedule; SimpleSchedule: SimpleSchedule |}
+        RevisedSchedules: Amortisation.GenerationResult
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
