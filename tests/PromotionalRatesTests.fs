@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module PromotionalRatesTests =
 
+    let folder = "PromotionalRates"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -65,7 +67,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 323_20m<Cent>
@@ -86,7 +88,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 224_00m<Cent>
@@ -107,7 +109,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let interestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
         interestBalance |> should equal 317_24.36164383m<Cent>
@@ -159,7 +161,7 @@ module PromotionalRatesTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 

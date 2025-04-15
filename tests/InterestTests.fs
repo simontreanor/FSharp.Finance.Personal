@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module InterestTests =
 
+    let folder = "Interest"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -113,7 +115,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
@@ -160,7 +162,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
@@ -340,7 +342,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone true
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let levelPayment = schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let finalPayment = schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
@@ -359,7 +361,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone true
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let levelPayment = schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let finalPayment = schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
@@ -392,7 +394,7 @@ module InterestTests =
                 actualPayments
                 |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) true
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 

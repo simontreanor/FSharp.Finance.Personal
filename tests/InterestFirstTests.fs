@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module InterestFirstTests =
 
+    let folder = "InterestFirst"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -50,7 +52,7 @@ module InterestFirstTests =
 
         let actual =
             let schedule = calculate sp
-            SimpleSchedule.outputHtmlToFile title description sp schedule
+            SimpleSchedule.outputHtmlToFile folder title description sp schedule
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
         let expected = 319_26L<Cent>, 319_23L<Cent>
@@ -69,7 +71,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalInterestBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestBalance
 
@@ -83,7 +85,7 @@ module InterestFirstTests =
 
         let actual =
             let schedule = calculate sp
-            SimpleSchedule.outputHtmlToFile title description sp schedule
+            SimpleSchedule.outputHtmlToFile folder title description sp schedule
             schedule.Stats.LevelPayment, schedule.Stats.FinalPayment
 
         let expected = 367_73L<Cent>, 367_71L<Cent>
@@ -101,7 +103,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
@@ -123,7 +125,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -148,7 +150,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -179,7 +181,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalPrincipalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
 
@@ -209,7 +211,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
@@ -234,7 +236,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -255,7 +257,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
@@ -276,7 +278,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -297,7 +299,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterest = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
         totalInterest |> should equal -25_24L<Cent>
@@ -321,7 +323,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
@@ -345,7 +347,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
@@ -369,7 +371,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
 
@@ -390,7 +392,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
@@ -408,7 +410,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let initialInterestBalance = schedules.AmortisationSchedule.ScheduleItems[0<OffsetDay>].InterestBalance
 
@@ -426,7 +428,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let initialInterestBalance = schedules.AmortisationSchedule.ScheduleItems[0<OffsetDay>].InterestBalance
         
@@ -635,7 +637,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedules |> Schedule.outputHtmlToFile title description sp
+        schedules |> Schedule.outputHtmlToFile folder title description sp
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -689,7 +691,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -717,7 +719,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        schedules |> Schedule.outputHtmlToFile title description sp
+        schedules |> Schedule.outputHtmlToFile folder title description sp
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -744,7 +746,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -782,7 +784,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -823,7 +825,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -891,7 +893,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 
@@ -958,7 +960,7 @@ module InterestFirstTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let totalInterestPortions = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 

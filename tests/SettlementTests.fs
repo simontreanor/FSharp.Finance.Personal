@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module SettlementTests =
 
+    let folder = "Settlement"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -59,7 +61,7 @@ module SettlementTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 112<OffsetDay>
             quote.QuoteResult, scheduledItem
 
@@ -146,7 +148,7 @@ module SettlementTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
 
@@ -234,7 +236,7 @@ module SettlementTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
 

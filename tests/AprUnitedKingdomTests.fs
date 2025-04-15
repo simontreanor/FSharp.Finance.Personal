@@ -10,6 +10,8 @@ open FSharp.Finance.Personal
 
 module AprUnitedKingdomTests =
 
+    let folder = "AprUnitedKingdom"
+
     open Amortisation
     open Apr
     open Calculation
@@ -78,14 +80,14 @@ module AprUnitedKingdomTests =
             }
         }
 
-    let outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description =
+    let outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description =
         let tableCells firstPaymentDay =
             paymentCounts
             |> Array.map(fun paymentCount ->
                 let sp = getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap
                 let simpleSchedule = calculate sp
 
-                simpleSchedule |> SimpleSchedule.outputHtmlToFile $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp
+                simpleSchedule |> SimpleSchedule.outputHtmlToFile folder $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp
 
                 $"<td>{simpleSchedule.Stats.InitialApr}</td>"
             )
@@ -110,7 +112,7 @@ module AprUnitedKingdomTests =
 
         let htmlParams = $"<h4>Parameters</h4>{generalisedParams}"
         let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
-        let filename = $"out/{title}.md"
+        let filename = $"out/{folder}/{title}.md"
         $"{htmlTitle}{htmlTable}{htmlDescription}{htmlDatestamp}{htmlParams}"
         |> outputToFile' filename false
 
@@ -125,7 +127,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.Simple
         let applyInterestCap = true
        
-        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
+        outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
     [<Fact>] 
     let AprSpreadsheetAddOn () =
@@ -134,7 +136,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
 
-        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
+        outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
     [<Fact>] 
     let AprSpreadsheetSimpleNoInterestCap () =
@@ -143,7 +145,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.Simple
         let applyInterestCap = false
 
-        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
+        outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
     [<Fact>] 
     let AprSpreadsheetAddOnNoInterestCap () =
@@ -152,7 +154,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
 
-        outputHtmlToFile startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
+        outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
     [<Fact>] 
     let Amortisation_p6_fp23_BeforeAprJump () =
@@ -162,7 +164,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
         let schedules = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description sp schedules
 
     [<Fact>] 
     let Amortisation_p6_fp24_AfterAprJump () =
@@ -172,7 +174,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description sp schedules
 
     [<Fact>] 
     let AmortisationNoInterestCap_p6_fp23_BeforeAprJump () =
@@ -182,7 +184,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
         let schedules = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description sp schedules
 
     [<Fact>] 
     let AmortisationNoInterestCap_p6_fp24_AfterAprJump () =
@@ -192,4 +194,4 @@ module AprUnitedKingdomTests =
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = Amortisation.generate sp ValueNone false Map.empty
-        Amortisation.Schedule.outputHtmlToFile title description sp schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description sp schedules

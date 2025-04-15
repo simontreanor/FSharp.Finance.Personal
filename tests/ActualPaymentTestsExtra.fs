@@ -8,6 +8,8 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTestsExtra =
 
+    let folder = "ActualPayment"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -84,7 +86,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = Amortisation.generate sp ValueNone false actualPayments
-            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 131<OffsetDay>, {
@@ -175,7 +177,7 @@ module ActualPaymentTestsExtra =
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
             let schedules = Amortisation.generate sp ValueNone false actualPayments
-            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 172<OffsetDay>, {
@@ -277,7 +279,7 @@ module ActualPaymentTestsExtra =
                 SettlementDay = ValueNone
             }
             let schedules = reschedule sp rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
@@ -368,7 +370,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = Amortisation.generate sp ValueNone false actualPayments
-            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 1025<OffsetDay>, {
@@ -448,7 +450,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = Amortisation.generate sp ValueNone false actualPayments
-            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 185<OffsetDay>, {
@@ -536,7 +538,7 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
             let schedules = Amortisation.generate sp ValueNone false actualPayments
-            schedules |> Schedule.outputHtmlToFile title description sp
+            schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
@@ -637,7 +639,7 @@ module ActualPaymentTestsExtra =
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
             let schedules = rollOver sp rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
@@ -739,7 +741,7 @@ module ActualPaymentTestsExtra =
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
             let schedules = rollOver sp rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 

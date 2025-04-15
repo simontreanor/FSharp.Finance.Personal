@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module ActualPaymentTests =
 
+    let folder = "ActualPayment"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -108,7 +110,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 125<OffsetDay> 456_84L<Cent> 90_78.288m<Cent> 90_78L<Cent> 366_06L<Cent>
@@ -163,7 +165,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected = quickExpectedFinalItem (Date(2023, 3, 31)) 153<OffsetDay> 556_00L<Cent> 110_48.896m<Cent> 110_48L<Cent> 445_52L<Cent>
@@ -218,7 +220,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected = quickExpectedFinalItem (Date(2023, 3, 15)) 134<OffsetDay> 491_53L<Cent> 89_95.392m<Cent> 89_95L<Cent> 401_58L<Cent>
@@ -273,7 +275,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -355,7 +357,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -443,7 +445,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected = 143<OffsetDay>, {
@@ -527,7 +529,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.find 0<OffsetDay>
 
@@ -615,7 +617,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -703,7 +705,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -790,7 +792,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -877,7 +879,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -966,7 +968,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -1043,7 +1045,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = (schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.NetEffect) >= sp.Principal
 
@@ -1123,7 +1125,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_27L<Cent>
         let expected = true
@@ -1178,7 +1180,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_85L<Cent>
         let expected = true
@@ -1234,7 +1236,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_85L<Cent>
         let expected = true
@@ -1291,7 +1293,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_85L<Cent>
         let expected = true
@@ -1348,7 +1350,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 111_50L<Cent>
         let expected = true
@@ -1405,7 +1407,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.PrincipalBalance = 222_71L<Cent>
         let expected = true
@@ -1454,7 +1456,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = ClosedBalance && si.GeneratedPayment = GeneratedValue -119_88L<Cent>
         let expected = true
@@ -1500,7 +1502,7 @@ module ActualPaymentTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
         let expected = true

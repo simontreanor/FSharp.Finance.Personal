@@ -595,14 +595,14 @@ module Scheduling =
             + "</table>"
 
         /// renders the simple schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
-        let outputHtmlToFile title description sp schedule =
+        let outputHtmlToFile folder title description sp schedule =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedule
             let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
             let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
             let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
             let htmlScheduleStats = $"<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedule.Stats}"
-            let filename = $"out/{title}.md"
+            let filename = $"out/{folder}/{title}.md"
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}"
             |> outputToFile' filename false
 

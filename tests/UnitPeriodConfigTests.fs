@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module UnitPeriodConfigTests =
 
+    let folder = "UnitPeriodConfig"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -105,7 +107,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 56.513m
@@ -167,7 +169,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 986.813m
@@ -256,7 +258,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 516.758m
@@ -319,7 +321,7 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 930.559m
@@ -447,7 +449,7 @@ module UnitPeriodConfigTests =
                             )
                     }
                 let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 699.525m

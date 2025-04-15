@@ -13,6 +13,8 @@ open FSharp.Finance.Personal
 /// (c) Examples for the actuarial method
 module AprUsActuarialTests =
 
+    let folder = "AprUsActuarial"
+
     open Apr
     open Calculation
     open DateDay

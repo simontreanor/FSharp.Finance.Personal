@@ -241,7 +241,7 @@ module Amortisation =
             + "</table>"
 
         /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
-        let outputHtmlToFile title description sp (schedules: GenerationResult) =
+        let outputHtmlToFile folder title description sp (schedules: GenerationResult) =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedules.AmortisationSchedule
             let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
@@ -249,7 +249,7 @@ module Amortisation =
             let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
             let htmlScheduleStats = $"<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedules.SimpleSchedule.Stats}"
             let htmlAmortisationStats = $"<h4>Final Stats</h4>{ScheduleStats.toHtmlTable schedules.AmortisationSchedule.ScheduleStats}"
-            let filename = $"out/{title}.md"
+            let filename = $"out/{folder}/{title}.md"
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}{htmlAmortisationStats}"
             |> outputToFile' filename false
 

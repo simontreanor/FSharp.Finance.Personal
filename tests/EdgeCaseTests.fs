@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module EdgeCaseTests =
 
+    let folder = "EdgeCase"
+
     open Amortisation
     open Calculation
     open DateDay
@@ -67,7 +69,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -131,7 +133,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -195,7 +197,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -331,7 +333,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -476,7 +478,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -606,7 +608,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -663,7 +665,7 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile title description sp
+            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
         let expected =
@@ -733,7 +735,7 @@ module EdgeCaseTests =
 
         let schedules = reschedule sp rp actualPayments
 
-        schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+        schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
 
         let actual = schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -818,7 +820,7 @@ module EdgeCaseTests =
 
         let schedules = reschedule sp rp actualPayments
 
-        schedules.NewSchedules |> Schedule.outputHtmlToFile title description sp
+        schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
 
         let actual = schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -891,7 +893,7 @@ module EdgeCaseTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 

@@ -7,6 +7,8 @@ open FSharp.Finance.Personal
 
 module IllustrativeTests =
 
+    let folder = "Illustrative"
+
     open System
     open Amortisation
     open Calculation
@@ -101,7 +103,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
@@ -181,7 +183,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =
@@ -261,7 +263,7 @@ module IllustrativeTests =
             actualPayments
             |> Amortisation.generate sp ValueNone false
 
-        Schedule.outputHtmlToFile title description sp schedules
+        Schedule.outputHtmlToFile folder title description sp schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
         let expected =

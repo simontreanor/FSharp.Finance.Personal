@@ -20,6 +20,8 @@ module FeeAndChargesTests =
 
     module ChargesTests =
 
+        let folder = "Charges"
+
         [<Fact>]
         let ChargesTest000 () =
             let title = "ChargesTest000"
@@ -84,7 +86,7 @@ module FeeAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -181,7 +183,7 @@ module FeeAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -278,7 +280,7 @@ module FeeAndChargesTests =
                 actualPayments
                 |> Amortisation.generate sp ValueNone false
 
-            Schedule.outputHtmlToFile title description sp schedules
+            Schedule.outputHtmlToFile folder title description sp schedules
 
             let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
             
