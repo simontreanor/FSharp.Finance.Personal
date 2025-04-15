@@ -10,7 +10,29 @@ keywords: payment APR charge edge-case illustrative interest schedule promotiona
 *)
 
 (**
-# Unit-Test Output
+# Unit-Tests Output
+
+<style>
+details {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+summary {
+    padding: 0.5rem 1rem;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    font-weight: bold;
+}
+details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+details table td {
+    padding: 0.5rem;
+    border-top: 1px solid #eee;
+}
+</style>
 *)
 
 (*** hide ***)
@@ -22,34 +44,36 @@ open System.Text.RegularExpressions
 
 let descriptionPattern = Regex "<p><h4>Description</h4><i>(.+?)</i></p>"
 
-// Generate the documentation content 
-let content =
-    Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
-    |> Directory.EnumerateDirectories
-    |> Seq.map(fun directoryPath ->
-        let directoryName = Path.GetFileName directoryPath
-        
-        let filesTable = 
-            directoryPath
-            |> Directory.EnumerateFiles
-            |> Seq.map(fun filePath ->
-                let fileName = Path.GetFileName filePath
-                
-                let description =
-                    let m = File.ReadAllText filePath |> descriptionPattern.Match
-                    if m.Success then
-                        m.Groups[1].Value
-                    else
-                        "(no description)"
-                
-                $"| [{fileName}](/io/out/{directoryName}/{fileName}) | {description} |"
-            )
-            |> String.concat "\n"
-        
-        $"## {directoryName}\n\n| File | Description |\n| --- | --- |\n{filesTable}\n\n"
-    )
-    |> String.concat "\n"
+Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
+|> Directory.EnumerateDirectories
+|> Seq.map(fun directoryPath ->
+    let directoryName = Path.GetFileName directoryPath
+    
+    let filesRows = 
+        directoryPath
+        |> Directory.EnumerateFiles
+        |> Seq.map(fun filePath ->
+            let fileName = Path.GetFileName filePath
+            
+            let description =
+                let m = File.ReadAllText filePath |> descriptionPattern.Match
+                if m.Success then
+                    m.Groups[1].Value
+                else
+                    "(no description)"
+            
+            $"""<tr><td><a href="/{directoryName}/{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
+        )
+        |> String.concat ""
+    
+    $"""<details>
+    <summary>{directoryName}</summary>
+    <table>
+        <tr><td><b>Test</b></td><td><b>Description</b></td></tr>
+        {filesRows}
+    </table>
+</details>"""
+)
+|> String.concat ""
 
-printf "%s" content
-
-(*** include-output-raw ***)
+(*** include-it-raw ***)
