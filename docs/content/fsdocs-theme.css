@@ -1,0 +1,90 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 16px;
+}
+
+a {
+    color: #0366d6;
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+h3 { font-size: 1.25em; }
+
+code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    padding: 16px;
+    overflow: auto;
+    line-height: 1.45;
+    border-radius: 3px;
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+blockquote {
+    padding: 0 1em;
+    margin: 0 0 16px 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+table th, table td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+table th {
+    font-weight: 600;
+}
+
+img {
+    max-width: 100%;
+}
+
+ul, ol {
+    padding-left: 2em;
+}
+
+li+li {
+    margin-top: 0.25em;
+}
+
+details {
+    margin-bottom: 1rem;
+}
+summary {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+details table td {
+    padding: 0.5rem;
+    border-top: 1px solid #eee;
+}

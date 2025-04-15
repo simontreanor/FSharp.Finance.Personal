@@ -1,6 +1,6 @@
 (**
 ---
-title: Unit-Test Output
+title: Unit-Test Outputs
 category: Output
 categoryindex: 4
 index: 1
@@ -10,26 +10,20 @@ keywords: payment APR charge edge-case illustrative interest schedule promotiona
 *)
 
 (**
-# Unit-Tests Output
+# Unit-Test Outputs
 
-<style>
-details {
-    margin-bottom: 1rem;
-}
-summary {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-weight: bold;
-}
-details table {
-    width: 100%;
-    border-collapse: collapse;
-}
-details table td {
-    padding: 0.5rem;
-    border-top: 1px solid #eee;
-}
-</style>
+Each of the following categories contains a number of unit-test outputs along with the parameters used and some statistics.
+Click on a category to expand it.
+<br />
+<br />
+
+> Note: load any schedule table into Excel by following these steps:
+> 
+> 1. Click **Data** > **From Web**
+> 2. Paste the URL of the schedule page and click **OK**
+> 3. In the Navigator dialog, select the relevant table from HTML tables
+> 4. Click **Load**
+
 *)
 
 (*** hide ***)
@@ -56,7 +50,7 @@ Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
                     m.Groups[1].Value
                 else
                     "(no description)"
-            $"""<tr><td><a href="/FSharp.Finance.Personal/content/{directoryName}/{fileName}.html" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
+            $"""<tr><td><a href="content/{directoryName}/{fileName}.html" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
         )
         |> String.concat ""
     $"""<details>
