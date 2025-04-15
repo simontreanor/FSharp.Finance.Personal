@@ -49,14 +49,14 @@ Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
         directoryPath
         |> Directory.EnumerateFiles
         |> Seq.map(fun filePath ->
-            let fileName = Path.GetFileName filePath
+            let fileName = Path.GetFileNameWithoutExtension filePath
             let description =
                 let m = File.ReadAllText filePath |> descriptionPattern.Match
                 if m.Success then
                     m.Groups[1].Value
                 else
                     "(no description)"
-            $"""<tr><td><a href="/FSharp.Finance.Personal/content/{directoryName}/{fileName}" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
+            $"""<tr><td><a href="/FSharp.Finance.Personal/content/{directoryName}/{fileName}.html" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
         )
         |> String.concat ""
     $"""<details>
