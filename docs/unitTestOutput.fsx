@@ -56,7 +56,7 @@ Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
                     m.Groups[1].Value
                 else
                     "(no description)"
-            $"""<tr><td><a href="/{directoryName}/{fileName}" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
+            $"""<tr><td><a href="/FSharp.Finance.Personal/content/{directoryName}/{fileName}" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
         )
         |> String.concat ""
     $"""<details>
