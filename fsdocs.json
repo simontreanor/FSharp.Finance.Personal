@@ -1,8 +1,0 @@
-{
-    "staticContent": ["io/out"],
-    "output": "output",
-    "copyOptions": {
-        "includeDirectories": true,
-        "recursive": true
-    }
-}

@@ -24,6 +24,12 @@ jobs:
       - name: Build code
         run: dotnet build -c Release
 
+      - name: Copy test output files to static content
+        run: |
+          mkdir -p ./docs/content
+          cp -R ./io/out/* ./docs/content/
+        shell: bash
+       
       - name: Generate the documentation
         run: dotnet fsdocs build --clean --properties Configuration=Release --eval
       

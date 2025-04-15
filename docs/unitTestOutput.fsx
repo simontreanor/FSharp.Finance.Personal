@@ -15,12 +15,9 @@ keywords: payment APR charge edge-case illustrative interest schedule promotiona
 <style>
 details {
     margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
 summary {
     padding: 0.5rem 1rem;
-    background-color: #f5f5f5;
     cursor: pointer;
     font-weight: bold;
 }
@@ -48,31 +45,27 @@ Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
 |> Directory.EnumerateDirectories
 |> Seq.map(fun directoryPath ->
     let directoryName = Path.GetFileName directoryPath
-    
     let filesRows = 
         directoryPath
         |> Directory.EnumerateFiles
         |> Seq.map(fun filePath ->
             let fileName = Path.GetFileName filePath
-            
             let description =
                 let m = File.ReadAllText filePath |> descriptionPattern.Match
                 if m.Success then
                     m.Groups[1].Value
                 else
                     "(no description)"
-            
-            $"""<tr><td><a href="/{directoryName}/{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
+            $"""<tr><td><a href="/{directoryName}/{fileName}" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
         )
         |> String.concat ""
-    
     $"""<details>
-    <summary>{directoryName}</summary>
-    <table>
-        <tr><td><b>Test</b></td><td><b>Description</b></td></tr>
-        {filesRows}
-    </table>
-</details>"""
+        <summary>{directoryName}</summary>
+        <table>
+            <tr><td><b>Test</b></td><td><b>Description</b></td></tr>
+            {filesRows}
+        </table>
+    </details>"""
 )
 |> String.concat ""
 
