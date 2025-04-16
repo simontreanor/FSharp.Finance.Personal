@@ -382,7 +382,7 @@
 
 <h4>Description</h4>
 <p><i>Get payment to cover all overdue amounts</i></p>
-<p>Generated: <i>2025-04-16 using library version 2.1.1</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
