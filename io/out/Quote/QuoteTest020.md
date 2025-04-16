@@ -193,7 +193,7 @@
 
 <h4>Description</h4>
 <p><i>Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components</i></p>
-<p>Generated: <i>2025-04-16 using library version 2.1.0</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>

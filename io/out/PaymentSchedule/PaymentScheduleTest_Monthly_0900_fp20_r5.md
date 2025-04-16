@@ -87,7 +87,7 @@
 </table>
 <h4>Description</h4>
 <p><i>£0900 with 20 days to first payment and 5 repayments</i></p>
-<p>Generated: <i>2025-04-16 using library version 2.1.0</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
