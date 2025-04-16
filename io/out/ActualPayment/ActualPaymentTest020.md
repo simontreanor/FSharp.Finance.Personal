@@ -213,7 +213,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">13.1952</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">135.59</td>
+        <td class="ci25">100.11</td>
         <td class="ci26">0.00</td>
     </tr>
 </table>

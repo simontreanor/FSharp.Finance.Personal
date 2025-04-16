@@ -644,7 +644,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 243_66L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -819,7 +819,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 491_53L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -906,7 +906,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 646_62L<Cent>
+            SettlementFigure = ValueSome 155_09L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -1504,6 +1504,6 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
-        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 135_59L<Cent>
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 100_11L<Cent>
         let expected = true
         actual |> should equal expected

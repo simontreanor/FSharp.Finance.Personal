@@ -132,7 +132,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-6,076.12</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">3,399.27</td>
     </tr>
     <tr style="text-align: right;">
@@ -159,7 +159,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-5,914.25</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -186,7 +186,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-5,752.38</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -213,7 +213,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-5,590.51</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -240,7 +240,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-5,428.64</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -267,7 +267,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-5,266.77</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -294,7 +294,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-5,104.90</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -321,7 +321,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-4,943.03</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -348,7 +348,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-4,781.16</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -375,7 +375,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-4,619.29</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -402,7 +402,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-4,457.42</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -429,7 +429,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-4,295.55</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -456,7 +456,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-4,133.68</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -483,7 +483,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,971.81</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -510,7 +510,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,809.94</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -537,7 +537,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,648.07</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -564,7 +564,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,486.20</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -591,7 +591,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,324.33</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -618,7 +618,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,162.46</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -645,7 +645,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-3,000.59</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -672,7 +672,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-2,838.72</td>
+        <td class="ci25">-2,676.85</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">

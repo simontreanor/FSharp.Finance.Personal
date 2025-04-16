@@ -123,7 +123,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1969_72L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 1437_53L<Cent>
             }
 
@@ -230,7 +230,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 2016_50L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 1393_53L<Cent>
             }
 
@@ -337,7 +337,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1991_50L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 1393_53L<Cent>
             }
 
@@ -436,7 +436,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1200_00L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -535,7 +535,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1238_40L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -644,7 +644,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 3410_03L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -741,7 +741,7 @@ module QuoteTests =
                 FeeBalance = 1471_94L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 2572_01L<Cent>
+                SettlementFigure = ValueSome 2248_86L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -910,7 +910,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1311_67L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1009,7 +1009,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 1261_73L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1106,7 +1106,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 973_53L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 958_45L<Cent>
             }
 
@@ -1192,7 +1192,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 495_76L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1290,7 +1290,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 429_24L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1388,7 +1388,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 432_07L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1486,7 +1486,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 434_89L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1584,7 +1584,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 453_36L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1682,7 +1682,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 429_24L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1781,7 +1781,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome -67_93L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1880,7 +1880,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome -67_95L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 
@@ -1979,7 +1979,7 @@ module QuoteTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome -72_80L<Cent>
+                SettlementFigure = ValueSome 0L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
 

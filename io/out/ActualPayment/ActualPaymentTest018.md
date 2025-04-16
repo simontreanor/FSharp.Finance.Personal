@@ -699,7 +699,7 @@
         <td class="ci22">507.69</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">953.06</td>
+        <td class="ci25">836.53</td>
         <td class="ci26">155.36</td>
     </tr>
     <tr style="text-align: right;">
@@ -726,7 +726,7 @@
         <td class="ci22">343.75</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">838.12</td>
+        <td class="ci25">566.46</td>
         <td class="ci26">0.00</td>
     </tr>
 </table>
