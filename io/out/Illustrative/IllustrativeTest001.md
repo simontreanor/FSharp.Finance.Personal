@@ -192,7 +192,9 @@
 </table>
 
 <h4>Description</h4>
-<p><i>Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid before second repayment due date (30/04/2025)</i></p>
+<p><i>Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid
+            before second repayment due date (30/04/2025); this shows that early missed payments not not accrue extra interest because the principal balance is not decreasing while there is a
+            positive interest balance</i></p>
 <p>Generated: <i>2025-04-16 using library version 2.1.1</i></p>
 <h4>Parameters</h4>
 <table>
