@@ -7,6 +7,13 @@ module Calculation =
 
     open DateDay
 
+    /// the version of the library
+    let libraryVersion =
+        IO.Path.Combine(__SOURCE_DIRECTORY__, "FSharp.Finance.Personal.fsproj")
+        |> IO.File.ReadAllText
+        |> Text.RegularExpressions.Regex("<Version>(.*?)</Version>").Match
+        |> _.Groups[1].Value
+
     /// holds the result of a division, separated into quotient and remainder
     [<Struct>]
     type DivisionResult = {

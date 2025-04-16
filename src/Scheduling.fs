@@ -650,7 +650,7 @@ module Scheduling =
             let htmlParams = $"""
 <h4>Parameters</h4>{Parameters.toHtmlTable sp}"""
             let htmlDatestamp = $"""
-<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
             let htmlScheduleStats = $"""
 <h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedule.Stats}"""
             let filename = $"out/{folder}/{title}.md"

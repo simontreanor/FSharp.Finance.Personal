@@ -245,11 +245,17 @@ module Amortisation =
         let outputHtmlToFile folder title description sp (schedules: GenerationResult) =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedules.AmortisationSchedule
-            let htmlDescription = $"<p><h4>Description</h4><i>{description}</i></p>"
-            let htmlParams = $"<h4>Parameters</h4>{Parameters.toHtmlTable sp}"
-            let htmlDatestamp = $"""<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
-            let htmlScheduleStats = $"<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedules.SimpleSchedule.Stats}"
-            let htmlAmortisationStats = $"<h4>Final Stats</h4>{ScheduleStats.toHtmlTable schedules.AmortisationSchedule.ScheduleStats}"
+            let htmlDescription = $"""
+<h4>Description</h4>
+<p><i>{description}</i></p>"""
+            let htmlParams = $"""
+<h4>Parameters</h4>{Parameters.toHtmlTable sp}"""
+            let htmlDatestamp = $"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
+            let htmlScheduleStats = $"""
+<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedules.SimpleSchedule.Stats}"""
+            let htmlAmortisationStats = $"""
+<h4>Final Stats</h4>{ScheduleStats.toHtmlTable schedules.AmortisationSchedule.ScheduleStats}"""
             let filename = $"out/{folder}/{title}.md"
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}{htmlAmortisationStats}"
             |> outputToFile' filename false

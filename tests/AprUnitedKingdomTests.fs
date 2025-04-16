@@ -128,7 +128,7 @@ module AprUnitedKingdomTests =
         let htmlParams = $"""
 <h4>Parameters</h4>{generalisedParams}"""
         let htmlDatestamp = $"""
-<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd 'at' HH:mm:ss"}</i></p>"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
         let filename = $"out/{folder}/{title}.md"
         $"{htmlTitle}{htmlTable}{htmlDescription}{htmlDatestamp}{htmlParams}"
         |> outputToFile' filename false
