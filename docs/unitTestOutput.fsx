@@ -33,7 +33,7 @@ Click on a category to expand it.
 open System.IO
 open System.Text.RegularExpressions
 
-let descriptionPattern = Regex "<p><h4>Description</h4><i>(.+?)</i></p>"
+let descriptionPattern = Regex "<h4>Description</h4>\s*<p><i>(.+?)</i></p>"
 
 Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
 |> Directory.EnumerateDirectories

@@ -9,7 +9,7 @@ obj/
 
 .vs/*
 
-# io/out/*
+docs/content/**/
 
 # FSharp.Formatting
 .fsdocs/
