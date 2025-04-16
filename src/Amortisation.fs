@@ -654,7 +654,7 @@ module Amortisation =
                         ValueSome generatedSettlementPayment'
                     | _ ->
                         ValueSome (generatedSettlementPayment' - netEffect')
-
+                // deteremine the settlement balances or carried balances
                 let balances, interestPortionL', generatedPayment =
                     if isSettlement then
                         // convert the generated payment placeholder with an actual settlement figure 
@@ -671,8 +671,11 @@ module Amortisation =
                         ((principalBalance', feeBalance, interestBalance, chargesBalance),
                         interestPortionL' - carriedInterestL,
                         ap.GeneratedPayment)
-
+                // assign the separate balances
                 let principalBal, feeBal, interestBal, chargesBal = balances
+                // ensure the settlement figure is never more than the total balances
+                let balanceTotal = principalBal + feeBal + Cent.fromDecimalCent sp.InterestConfig.Rounding interestBal + chargesBal
+                let settlementFigure' = settlementFigure |> ValueOption.map(fun sf -> (balanceTotal, sf) ||> if sf < 0L<Cent> then Cent.max else Cent.min)
                 // create the schedule item
                 let scheduleItem = {
                     Window = window
@@ -697,7 +700,7 @@ module Amortisation =
                     FeeBalance = feeBal
                     InterestBalance = interestBal
                     ChargesBalance = chargesBal
-                    SettlementFigure = settlementFigure
+                    SettlementFigure = settlementFigure'
                     FeeRefundIfSettled = if not isSettlement && paymentStatus = NoLongerRequired then 0L<Cent> else feeRefundIfSettled
                 }
                 // calculate the rounding difference between the decimal and integer interest balances
@@ -707,7 +710,7 @@ module Amortisation =
                     else
                         interestBalanceM - Cent.toDecimalCent interestBalanceL
                 // returns the offset day, schedule item, generated payment, and interest rounding difference (zero in this case as it is already factored into the settlement figure)
-                appliedPaymentDay, scheduleItem, (if isSettlement then settlementFigure.Value else 0L<Cent>), interestRoundingDifferenceM
+                appliedPaymentDay, scheduleItem, (if isSettlement then settlementFigure'.Value else 0L<Cent>), interestRoundingDifferenceM
 
             // get the relevant type of item based on the intended purpose
             let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =

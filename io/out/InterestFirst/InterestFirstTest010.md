@@ -105,7 +105,7 @@
         <td class="ci22">0.00</td>
         <td class="ci23">0.0000</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">7.65</td>
+        <td class="ci25">0.00</td>
         <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">

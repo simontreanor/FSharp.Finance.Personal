@@ -9,21 +9,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Util.fs" />
-    <Compile Include="FeesAndChargesTests.fs" />
-    <Compile Include="InterestTests.fs" />
-    <Compile Include="InterestFirstTests.fs" />
-    <Compile Include="UnitPeriodConfigTests.fs" />
-    <Compile Include="EdgeCaseTests.fs" />
+    <Compile Include="ActualPaymentTests.fs" />
+    <Compile Include="ActualPaymentTestsExtra.fs" />
     <Compile Include="AprUnitedKingdomTests.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
+    <Compile Include="ComplianceTests.fs" />
+    <Compile Include="EdgeCaseTests.fs" />
+    <Compile Include="FeesAndChargesTests.fs" />
+    <Compile Include="IllustrativeTests.fs" />
+    <Compile Include="InterestFirstTests.fs" />
+    <Compile Include="InterestTests.fs" />
     <Compile Include="PaymentScheduleTests.fs" />
-    <Compile Include="ActualPaymentTests.fs" /><Compile Include="IllustrativeTests.fs" />
-    <Compile Include="ActualPaymentTestsExtra.fs" />
+    <Compile Include="PromotionalRatesTests.fs" />
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
-    <Compile Include="PromotionalRatesTests.fs" />
-    <Compile Include="ComplianceTests.fs" />
+    <Compile Include="UnitPeriodConfigTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="9.0.201" />

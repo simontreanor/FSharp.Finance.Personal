@@ -203,7 +203,7 @@ module ActualPaymentTestsExtra =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 170_04L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -306,7 +306,7 @@ module ActualPaymentTestsExtra =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 9_80L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -564,7 +564,7 @@ module ActualPaymentTestsExtra =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 142_40L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 195_35L<Cent>
         }
 
@@ -666,7 +666,7 @@ module ActualPaymentTestsExtra =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 18_71L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -768,7 +768,7 @@ module ActualPaymentTestsExtra =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 18_71L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 

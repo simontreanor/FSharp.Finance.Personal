@@ -762,7 +762,7 @@ module EdgeCaseTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 83_74L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
@@ -847,7 +847,7 @@ module EdgeCaseTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 10_19L<Cent>
+            SettlementFigure = ValueSome 0L<Cent>
             FeeRefundIfSettled = 0L<Cent>
         }
 
