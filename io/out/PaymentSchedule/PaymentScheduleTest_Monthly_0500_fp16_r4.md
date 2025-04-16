@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>£0500 with 16 days to first payment and 4 repayments</i></p>
-<p>Generated: <i>2025-04-15 at 20:41:48</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.0</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>

@@ -217,7 +217,11 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method with no interest cap (just before APR jump)</i></p><p>Generated: <i>2025-04-15 at 20:41:51</i></p><h4>Parameters</h4>
+
+<h4>Description</h4>
+<p><i>Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method with no interest cap (just before APR jump)</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.0</i></p>
+<h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -302,7 +306,8 @@
             </table>
         </td>
     </tr>
-</table><h4>Initial Stats</h4>
+</table>
+<h4>Initial Stats</h4>
 <table>
     <tr>
         <td>Initial interest balance: <i>374.11</i></td>
@@ -320,6 +325,7 @@
         <td>Total interest: <i>374.11</i></td>
     </tr>
 </table>
+
 <h4>Final Stats</h4>
 <table>
     <tr>

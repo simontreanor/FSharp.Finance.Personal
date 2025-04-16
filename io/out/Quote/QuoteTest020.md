@@ -190,7 +190,11 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components</i></p><p>Generated: <i>2025-04-15 at 20:41:49</i></p><h4>Parameters</h4>
+
+<h4>Description</h4>
+<p><i>Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.0</i></p>
+<h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -287,7 +291,8 @@
             </table>
         </td>
     </tr>
-</table><h4>Initial Stats</h4>
+</table>
+<h4>Initial Stats</h4>
 <table>
     <tr>
         <td>Initial interest balance: <i>0.00</i></td>
@@ -305,6 +310,7 @@
         <td>Total interest: <i>171.39</i></td>
     </tr>
 </table>
+
 <h4>Final Stats</h4>
 <table>
     <tr>

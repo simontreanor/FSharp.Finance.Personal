@@ -298,7 +298,11 @@
         <td class="ci26">0.00</td>
     </tr>
 </table>
-<p><h4>Description</h4><i>Quote returning nothing</i></p><p>Generated: <i>2025-04-15 at 20:41:48</i></p><h4>Parameters</h4>
+
+<h4>Description</h4>
+<p><i>Quote returning nothing</i></p>
+<p>Generated: <i>2025-04-16 using library version 2.1.0</i></p>
+<h4>Parameters</h4>
 <table>
     <tr>
         <td>As-of</td>
@@ -383,7 +387,8 @@
             </table>
         </td>
     </tr>
-</table><h4>Initial Stats</h4>
+</table>
+<h4>Initial Stats</h4>
 <table>
     <tr>
         <td>Initial interest balance: <i>0.00</i></td>
@@ -401,6 +406,7 @@
         <td>Total interest: <i>1,135.60</i></td>
     </tr>
 </table>
+
 <h4>Final Stats</h4>
 <table>
     <tr>
