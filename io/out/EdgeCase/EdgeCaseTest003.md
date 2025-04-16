@@ -782,7 +782,6 @@
                 <tr>
                     <td colspan="2">config: <i>custom schedule</i></td>
                 </tr>
-                
                 <tr>
                     <td>day: <i>8</i></td>
                     <td>scheduled payment: <i><i>original</i> 225.00</i></td>

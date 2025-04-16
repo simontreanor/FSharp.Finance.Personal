@@ -294,26 +294,25 @@ module Scheduling =
             | FixedSchedules fsArray ->
                 let renderRow (fs: FixedSchedule) =
                     $"""
-    <tr>
-        <td>
-            <table>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></td>
-                    <td>payment count: <i>{fs.PaymentCount}</i></td>
-                </tr>
-                <tr>
-                    <td>payment value: <i>{formatCent fs.PaymentValue}</i></td>
-                    <td>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></td>
-                </tr>
-            </table>
-        </td>
-    </tr>"""
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></td>
+                                <td>payment count: <i>{fs.PaymentCount}</i></td>
+                            </tr>
+                            <tr>
+                                <td>payment value: <i>{formatCent fs.PaymentValue}</i></td>
+                                <td>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>"""
                 $"""
             <table>
                 <tr>
                     <td colspan="2">config: <i>fixed schedules</i></td>
-                </tr>
-                {fsArray |> Array.map renderRow |> String.concat ""}
+                </tr>{fsArray |> Array.map renderRow |> String.concat ""}
             </table>"""
             | CustomSchedule cs ->
                 let renderRow day sp =
@@ -326,8 +325,7 @@ module Scheduling =
             <table>
                 <tr>
                     <td colspan="2">config: <i>custom schedule</i></td>
-                </tr>
-                {cs |> Map.toList |> List.map (fun (day, sp) -> renderRow day sp) |> String.concat ""}
+                </tr>{cs |> Map.toList |> List.map (fun (day, sp) -> renderRow day sp) |> String.concat ""}
             </table>"""
 
     /// when calculating the level payments, whether the final payment should be lower or higher than the level payment

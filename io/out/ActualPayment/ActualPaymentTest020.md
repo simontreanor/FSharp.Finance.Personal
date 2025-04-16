@@ -242,21 +242,20 @@
                 <tr>
                     <td colspan="2">config: <i>fixed schedules</i></td>
                 </tr>
-                
-    <tr>
-        <td>
-            <table>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-04 on 19</i></td>
-                    <td>payment count: <i>4</i></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-04 on 19</i></td>
+                                <td>payment count: <i>4</i></td>
+                            </tr>
+                            <tr>
+                                <td>payment value: <i>35.48</i></td>
+                                <td>schedule type: <i>original</i></td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
-                <tr>
-                    <td>payment value: <i>35.48</i></td>
-                    <td>schedule type: <i>original</i></td>
-                </tr>
-            </table>
-        </td>
-    </tr>
             </table>
         </td>
     </tr>

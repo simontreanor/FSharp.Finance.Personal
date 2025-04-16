@@ -620,35 +620,34 @@
                 <tr>
                     <td colspan="2">config: <i>fixed schedules</i></td>
                 </tr>
-                
-    <tr>
-        <td>
-            <table>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2018-03 on 01</i></td>
-                    <td>payment count: <i>11</i></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="white-space: nowrap;">unit-period config: <i>monthly from 2018-03 on 01</i></td>
+                                <td>payment count: <i>11</i></td>
+                            </tr>
+                            <tr>
+                                <td>payment value: <i>55.60</i></td>
+                                <td>schedule type: <i>original</i></td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
                 <tr>
-                    <td>payment value: <i>55.60</i></td>
-                    <td>schedule type: <i>original</i></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="white-space: nowrap;">unit-period config: <i>monthly from 2019-02 on 01</i></td>
+                                <td>payment count: <i>1</i></td>
+                            </tr>
+                            <tr>
+                                <td>payment value: <i>55.58</i></td>
+                                <td>schedule type: <i>original</i></td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <table>
-                <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2019-02 on 01</i></td>
-                    <td>payment count: <i>1</i></td>
-                </tr>
-                <tr>
-                    <td>payment value: <i>55.58</i></td>
-                    <td>schedule type: <i>original</i></td>
-                </tr>
-            </table>
-        </td>
-    </tr>
             </table>
         </td>
     </tr>

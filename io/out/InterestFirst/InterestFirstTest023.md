@@ -539,21 +539,20 @@
                 <tr>
                     <td colspan="2">config: <i>fixed schedules</i></td>
                 </tr>
-                
-    <tr>
-        <td>
-            <table>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2023-01 on 02</i></td>
-                    <td>payment count: <i>6</i></td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td style="white-space: nowrap;">unit-period config: <i>monthly from 2023-01 on 02</i></td>
+                                <td>payment count: <i>6</i></td>
+                            </tr>
+                            <tr>
+                                <td>payment value: <i>500.00</i></td>
+                                <td>schedule type: <i>original</i></td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
-                <tr>
-                    <td>payment value: <i>500.00</i></td>
-                    <td>schedule type: <i>original</i></td>
-                </tr>
-            </table>
-        </td>
-    </tr>
             </table>
         </td>
     </tr>
