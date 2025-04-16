@@ -145,7 +145,10 @@ module IllustrativeTests =
     [<Fact>]
     let IllustrativeTest001 () =
         let title = "IllustrativeTest001"
-        let description = "Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid before second repayment due date (30/04/2025)"
+        let description =
+            """Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and then paid
+            before second repayment due date (30/04/2025); this shows that early missed payments not not accrue extra interest because the principal balance is not decreasing while there is a
+            positive interest balance"""
         let sp = {
             AsOfDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
@@ -225,7 +228,9 @@ module IllustrativeTests =
     [<Fact>]
     let IllustrativeTest002 () =
         let title = "IllustrativeTest002"
-        let description = "Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed first repayment and did not pay before second repayment due date (30/04/2025)"
+        let description =
+            """Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) 
+            - missed first repayment and did not pay before second repayment due date (30/04/2025); this shows a final open balance due the extra day's interest"""
         let sp = {
             AsOfDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
@@ -298,6 +303,89 @@ module IllustrativeTests =
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 29L<Cent>
+                FeeRefundIfSettled = 0L<Cent>
+            }
+        actual |> should equal expected
+
+    [<Fact>]
+    let IllustrativeTest003 () =
+        let title = "IllustrativeTest003"
+        let description =
+            """Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed third repayment and then paid before 
+            fourth repayment due date (30/06/2025); this shows (in contrast to test 001) that extra interest is in fact accrued on late payment because when there is no interest balance, the principal
+            balance remains higher than it would have been if the payment had been made on time"""
+        let sp = {
+            AsOfDate = Date(2025, 7, 1)
+            StartDate = Date(2025, 3, 1)
+            Principal = 400_00L<Cent>
+            ScheduleConfig = AutoGenerateSchedule {
+                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 3, 31)
+                PaymentCount = 4
+                MaxDuration = Duration.Unlimited
+            }
+            PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
+                ScheduledPaymentOption = AsScheduled
+                CloseBalanceOption = LeaveOpenBalance
+                PaymentRounding = RoundUp
+                MinimumPayment = DeferOrWriteOff 50L<Cent>
+                PaymentTimeout = 3<DurationDay>
+            }
+            FeeConfig = None
+            ChargeConfig = None
+            InterestConfig = {
+                Method = Interest.Method.AddOn
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = interestCapExample
+                InitialGracePeriod = 3<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = Interest.Rate.Zero
+                Rounding = RoundDown
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            }
+        }
+
+        let actualPayments = quickActualPayments [| 30; 60; 120; 121 |] 181_38L<Cent> 181_34L<Cent>
+
+        let schedules =
+            actualPayments
+            |> Amortisation.generate sp ValueNone false
+
+        Schedule.outputHtmlToFile folder title description sp schedules
+
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
+        let expected =
+            121<OffsetDay>,
+            {
+                OffsetDate = Date(2025, 6, 30)
+                Advances = [||]
+                ScheduledPayment = {
+                    Original = ValueSome 181_34L<Cent>
+                    Rescheduled = ValueNone
+                    PreviousRescheduled = [||]
+                    Adjustment = 0L<Cent>
+                    Metadata = Map.empty
+                }
+                Window = 4
+                PaymentDue = 181_34L<Cent>
+                ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>; Metadata = Map.empty } |]
+                GeneratedPayment = NoGeneratedPayment
+                NetEffect = 181_34L<Cent>
+                PaymentStatus = PaymentMade
+                BalanceStatus = OpenBalance
+                SimpleInterest = 1_77.568m<Cent>
+                NewInterest = 1_77.568m<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 179_57L<Cent>
+                FeePortion = 0L<Cent>
+                InterestPortion = 1_77L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeeRefund = 0L<Cent>
+                PrincipalBalance = 42_39L<Cent>
+                FeeBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
+                ChargesBalance = 0L<Cent>
+                SettlementFigure = ValueSome 42_39L<Cent>
                 FeeRefundIfSettled = 0L<Cent>
             }
         actual |> should equal expected
