@@ -219,6 +219,8 @@ module Interest =
             sum1 - sum2
 
     /// calculates the amount of rebate due following an early settlement
+    /// 
+    /// note: the APR is the initial APR as determined at the start of the agreement
     let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction) unitPeriod paymentRounding =
         if payments |> Array.isEmpty then
             0L<Cent>
