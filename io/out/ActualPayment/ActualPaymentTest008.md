@@ -254,7 +254,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">1,474.59</td>
         <td class="ci09"><i>extra&nbsp;payment</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">26.7576</td>
         <td class="ci12">26.7576</td>
         <td class="ci13"><i>n/a</i></td>
@@ -280,7 +280,7 @@
         <td class="ci06"><i>confirmed</i>&nbsp;-280.83</td>
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">-280.83</td>
-        <td class="ci09"><i>rebateed</i></td>
+        <td class="ci09"><i>refunded</i></td>
         <td class="ci10">closed</td>
         <td class="ci11">-0.1845</td>
         <td class="ci12">-0.1845</td>
@@ -300,7 +300,7 @@
 </table>
 
 <h4>Description</h4>
-<p><i>Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then rebateed (with interest due to the customer on the negative balance)</i></p>
+<p><i>Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)</i></p>
 <p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>

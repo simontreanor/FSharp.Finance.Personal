@@ -64,7 +64,7 @@
         <td class="ci06"><i>confirmed</i>&nbsp;-5.10</td>
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">-5.10</td>
-        <td class="ci09"><i>rebateed</i></td>
+        <td class="ci09"><i>refunded</i></td>
         <td class="ci10">open</td>
         <td class="ci11">10.0000</td>
         <td class="ci12">10.0000</td>

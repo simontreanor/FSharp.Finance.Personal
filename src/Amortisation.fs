@@ -17,14 +17,14 @@ module Amortisation =
         | ClosedBalance
         /// the balance is open, meaning further payments will be required to settle it
         | OpenBalance
-        /// due to an overpayment or a rebate of charges, a rebate is due
-        | RebateDue
+        /// due to an overpayment or a refund of charges, a refund is due
+        | RefundDue
         /// HTML formatting to display the balance status in a readable format
         member bs.Html =
             match bs with
             | ClosedBalance -> "closed"
             | OpenBalance -> "open"
-            | RebateDue -> "rebate due"
+            | RefundDue -> "refund due"
 
     /// amortisation schedule item showing apportionment of payments to principal, fee, interest and charges
     type ScheduleItem = {
@@ -273,7 +273,7 @@ module Amortisation =
         if principalBalance = 0L<Cent> then
             ClosedBalance
         elif principalBalance < 0L<Cent> then
-            RebateDue
+            RefundDue
         else
             OpenBalance
 
@@ -348,8 +348,8 @@ module Amortisation =
 
     /// determines any payment due on the day
     let calculatePaymentDue si originalPayment rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
-        // if the balance is closed or a rebate is due, no payment is due
-        if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RebateDue then
+        // if the balance is closed or a refund is due, no payment is due
+        if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
             0L<Cent>
         // otherwise, calculate the payment due based on scheduled payments and various balances
         else
@@ -487,7 +487,7 @@ module Amortisation =
                 |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
             // apportion the interest
             let interestPortionM =
-                // if a rebate is made and the settlement figure is postive, the payment should be apportioned to principal rather than interest (this likely represents a goodwill gesture so should directly benefit the customer)
+                // if a refund is made and the settlement figure is postive, the payment should be apportioned to principal rather than interest (this likely represents a goodwill gesture so should directly benefit the customer)
                 if confirmedPaymentTotal < 0L<Cent> && si.SettlementFigure.IsSome && si.SettlementFigure.Value >= 0L<Cent> then
                     0m<Cent>
                 // otherwise, add new interest to the interest balance as normal
@@ -527,7 +527,7 @@ module Amortisation =
             // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful inspection of the future schedule
             // (e.g. seeing if the schedule will be settled as agreed)
             let netEffect = if appliedPaymentDay > asOfDay then Cent.min ap.NetEffect paymentDue else ap.NetEffect
-            // simplifies any rebate apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative
+            // simplifies any refund apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
             // get the rounded cumulative simple interest
             let cumulativeSimpleInterestL = accumulator.CumulativeSimpleInterestM |> Cent.fromDecimalCent interestRounding
@@ -541,7 +541,7 @@ module Amortisation =
                         |> fun s -> if abs s < int64 appliedPaymentCount * 1L<Cent> then 0L<Cent> else s
                     // determine whether an interest adjustment is required based on the difference between cumulative simple interest and the initial interest balance
                     let interestAdjustment =
-                        if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RebateDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
+                        if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                             accumulator.CumulativeSimpleInterestM - initialInterestBalanceM
                             |> Interest.ignoreFractionalCents 1
                             |> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal accumulator.CumulativeSimpleInterestM
@@ -663,11 +663,11 @@ module Amortisation =
                         NoLongerRequired
                     | _, true ->
                         Generated
-                    | RebateDue, _ when netEffect' < 0L<Cent> ->
-                        Rebateed
-                    | RebateDue, _ when netEffect' > 0L<Cent> ->
+                    | RefundDue, _ when netEffect' < 0L<Cent> ->
+                        Refunded
+                    | RefundDue, _ when netEffect' > 0L<Cent> ->
                         Overpayment
-                    | RebateDue, _ ->
+                    | RefundDue, _ ->
                         NoLongerRequired
                     | _ when
                         ap.PaymentStatus <> InformationOnly

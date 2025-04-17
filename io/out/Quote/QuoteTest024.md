@@ -92,7 +92,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">200.00</td>
         <td class="ci09"><i>overpayment</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">21.6000</td>
         <td class="ci12">21.6000</td>
         <td class="ci13"><i>n/a</i></td>
@@ -119,7 +119,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.6006</td>
         <td class="ci12">-0.6006</td>
         <td class="ci13"><i>n/a</i></td>
@@ -146,7 +146,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.5813</td>
         <td class="ci12">-0.5813</td>
         <td class="ci13"><i>n/a</i></td>

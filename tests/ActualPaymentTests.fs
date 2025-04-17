@@ -371,7 +371,7 @@ module ActualPaymentTests =
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 1474_59L<Cent>
             PaymentStatus = ExtraPayment
-            BalanceStatus = RebateDue
+            BalanceStatus = RefundDue
             SimpleInterest = 26_75.760m<Cent>
             NewInterest = 26_75.760m<Cent>
             NewCharges = [||]
@@ -393,7 +393,7 @@ module ActualPaymentTests =
     [<Fact>]
     let ActualPaymentTest005 () =
         let title = "ActualPaymentTest005"
-        let description = "Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then rebateed"
+        let description = "Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded"
         let sp = {
             AsOfDate = Date(2023, 3, 25)
             StartDate = Date(2022, 11, 1)
@@ -457,7 +457,7 @@ module ActualPaymentTests =
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = -280_64L<Cent>
-            PaymentStatus = Rebateed
+            PaymentStatus = Refunded
             BalanceStatus = ClosedBalance
             SimpleInterest = 0m<Cent>
             NewInterest = 0m<Cent>
@@ -653,7 +653,7 @@ module ActualPaymentTests =
     [<Fact>]
     let ActualPaymentTest008 () =
         let title = "ActualPaymentTest008"
-        let description = "Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then rebateed (with interest due to the customer on the negative balance)"
+        let description = "Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)"
         let sp = {
             AsOfDate = Date(2023, 3, 25)
             StartDate = Date(2022, 11, 1)
@@ -718,7 +718,7 @@ module ActualPaymentTests =
             ActualPayments = [| { ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>; Metadata = Map.empty } |]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = -280_83L<Cent>
-            PaymentStatus = Rebateed
+            PaymentStatus = Refunded
             BalanceStatus = ClosedBalance
             SimpleInterest = -18.45304110M<Cent>
             NewInterest = -18.45304110M<Cent>
@@ -982,7 +982,7 @@ module ActualPaymentTests =
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 500_00L<Cent>
             PaymentStatus = Overpayment
-            BalanceStatus = RebateDue
+            BalanceStatus = RefundDue
             SimpleInterest = 79_07.200m<Cent>
             NewInterest = 79_07.200m<Cent>
             NewCharges = [||]
@@ -1127,7 +1127,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
-        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RebateDue && si.PrincipalBalance = -61_27L<Cent>
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -61_27L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1182,7 +1182,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
-        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RebateDue && si.PrincipalBalance = -2176_85L<Cent>
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2176_85L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1238,7 +1238,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
-        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RebateDue && si.PrincipalBalance = -2676_85L<Cent>
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -2676_85L<Cent>
         let expected = true
         actual |> should equal expected
 
@@ -1295,7 +1295,7 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
-        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RebateDue && si.PrincipalBalance = -3176_85L<Cent>
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = RefundDue && si.PrincipalBalance = -3176_85L<Cent>
         let expected = true
         actual |> should equal expected
 

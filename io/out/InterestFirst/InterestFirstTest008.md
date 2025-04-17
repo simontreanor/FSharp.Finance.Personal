@@ -173,7 +173,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">367.72</td>
         <td class="ci09"><i>overpayment</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">88.2504</td>
         <td class="ci12">0.0000</td>
         <td class="ci13"><i>n/a</i></td>

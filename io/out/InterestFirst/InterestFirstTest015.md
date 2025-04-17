@@ -65,7 +65,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">1,009.00</td>
         <td class="ci09"><i>extra&nbsp;payment</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">8.0000</td>
         <td class="ci12">-830.6300</td>
         <td class="ci13"><i>n/a</i></td>
@@ -92,7 +92,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.0020</td>
         <td class="ci12">-0.0020</td>
         <td class="ci13"><i>n/a</i></td>
@@ -119,7 +119,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.0068</td>
         <td class="ci12">-0.0068</td>
         <td class="ci13"><i>n/a</i></td>
@@ -146,7 +146,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.0066</td>
         <td class="ci12">-0.0066</td>
         <td class="ci13"><i>n/a</i></td>
@@ -173,7 +173,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.0068</td>
         <td class="ci12">-0.0068</td>
         <td class="ci13"><i>n/a</i></td>
@@ -200,7 +200,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-0.0066</td>
         <td class="ci12">-0.0066</td>
         <td class="ci13"><i>n/a</i></td>

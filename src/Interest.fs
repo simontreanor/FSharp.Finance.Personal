@@ -129,7 +129,7 @@ module Interest =
         InitialGracePeriod: int<DurationDay>
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalRates: PromotionalRate array
-        /// the interest rate applicable for any period in which a rebate is owing
+        /// the interest rate applicable for any period in which a refund is owing
         RateOnNegativeBalance: Rate
         /// how to round interest
         Rounding: Rounding

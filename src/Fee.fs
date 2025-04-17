@@ -47,11 +47,11 @@ module Fee =
     type SettlementRebate =
         /// fee is due in full with no discount or rebate
         | Zero
-        /// for original (non-rescheduled) amortisations: fee is rebateed proportionately based on the current final payment day
+        /// for original (non-rescheduled) amortisations: fee is rebated proportionately based on the current final payment day
         | ProRata
-        /// for rescheduled amortisations: fee is rebateed proportionately based on the original final payment day
+        /// for rescheduled amortisations: fee is rebated proportionately based on the original final payment day
         | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
-        /// the current fee balance is rebateed
+        /// the current fee balance is rebated
         | Balance
         /// HTML formatting to display the settlement rebate in a readable format
         member sr.Html =

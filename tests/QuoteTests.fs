@@ -1593,7 +1593,7 @@ module QuoteTests =
     [<Fact>]
     let ``QuoteTest016`` () =
         let title = "QuoteTest016"
-        let description = "Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a rebate to be due)"
+        let description = "Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)"
         let sp = {
             AsOfDate = Date(2023, 3, 14)
             StartDate = Date(2022, 11, 1)
@@ -1889,7 +1889,7 @@ module QuoteTests =
     [<Fact>]
     let QuoteTest019 () =
         let title = "QuoteTest019"
-        let description = "Loan rebate due for a long time, showing interest owed back"
+        let description = "Loan refund due for a long time, showing interest owed back"
         let sp = {
             AsOfDate = Date(2024, 2, 5)
             StartDate = Date(2022, 11, 1)

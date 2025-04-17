@@ -173,7 +173,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">500.00</td>
         <td class="ci09"><i>overpayment</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">79.0720</td>
         <td class="ci12">79.0720</td>
         <td class="ci13"><i>n/a</i></td>
@@ -219,7 +219,7 @@
 </table>
 
 <h4>Description</h4>
-<p><i>Loan rebate due for a long time, showing interest owed back</i></p>
+<p><i>Loan refund due for a long time, showing interest owed back</i></p>
 <p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>

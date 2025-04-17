@@ -65,7 +65,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">1,000.00</td>
         <td class="ci09"><i>overpayment</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">8.0000</td>
         <td class="ci12">-75.8500</td>
         <td class="ci13"><i>n/a</i></td>
@@ -92,7 +92,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-6.0607</td>
         <td class="ci12">-6.0607</td>
         <td class="ci13"><i>n/a</i></td>
@@ -119,7 +119,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-5.8652</td>
         <td class="ci12">-5.8652</td>
         <td class="ci13"><i>n/a</i></td>
@@ -146,7 +146,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-6.0607</td>
         <td class="ci12">-6.0607</td>
         <td class="ci13"><i>n/a</i></td>
@@ -173,7 +173,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
-        <td class="ci10">rebate&nbsp;due</td>
+        <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">-5.8652</td>
         <td class="ci12">-5.8652</td>
         <td class="ci13"><i>n/a</i></td>
@@ -219,7 +219,7 @@
 </table>
 
 <h4>Description</h4>
-<p><i>Add-on interest method with small loan and massive payment leading to a rebate needed</i></p>
+<p><i>Add-on interest method with small loan and massive payment leading to a refund needed</i></p>
 <p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>

@@ -219,7 +219,7 @@
 </table>
 
 <h4>Description</h4>
-<p><i>Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a rebate to be due)</i></p>
+<p><i>Loan is settled the day before an overpayment (note: if looked at from a later date the overpayment will cause a refund to be due)</i></p>
 <p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>

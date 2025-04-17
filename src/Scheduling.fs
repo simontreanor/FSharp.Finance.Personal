@@ -195,8 +195,8 @@ module Scheduling =
         | Overpayment
         /// a payment was made on a day when no payments were scheduled
         | ExtraPayment
-        /// a rebate was processed
-        | Rebateed
+        /// a refund was processed
+        | Refunded
         /// a scheduled payment is in the future (seen from the as-of date)
         | NotYetDue
         /// a scheduled payment has not been made on time but is within the late-charge grace period
@@ -220,7 +220,7 @@ module Scheduling =
             | Underpayment -> "<i>underpayment</i>"
             | Overpayment -> "<i>overpayment</i>"
             | ExtraPayment -> "<i>extra payment</i>"
-            | Rebateed -> "<i>rebateed</i>"
+            | Refunded -> "<i>refunded</i>"
             | NotYetDue -> "<i>not yet due</i>"
             | PaymentDue -> "<i>payment due</i>"
             | Generated -> "<i>generated</i>"
