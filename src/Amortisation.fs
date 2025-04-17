@@ -620,6 +620,7 @@ module Amortisation =
                             // if the statutory rebate is higher than the fee rebate calculated above, use the higher figure
                             calculateStatutoryFeeRebate sp appliedPayments simpleScheduleStats appliedPaymentDay window
                             |> Cent.max feeRebateIfSettled
+                            |> Cent.min feeTotal
                         | _ ->
                             feeRebateIfSettled
                     Cent.max 0L<Cent> (si.FeeBalance - feeRebate'), feeRebate'
