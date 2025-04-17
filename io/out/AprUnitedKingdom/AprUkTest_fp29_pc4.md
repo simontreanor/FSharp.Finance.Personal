@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>UK APR test amortisation schedule, first payment day 29, payment count 4</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -172,7 +172,7 @@
     <tr>
         <td>Level payment: <i>143.31</i></td>
         <td>Final payment: <i>143.30</i></td>
-        <td>Final scheduled payment day: <i>121</i></td>
+        <td>Last scheduled payment day: <i>121</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>573.23</i></td>

@@ -355,7 +355,7 @@
 
 <h4>Description</h4>
 <p><i>Check that charge for late payment is not applied on scheduled payment date when payment has not yet been made</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -464,7 +464,7 @@
     <tr>
         <td>Level payment: <i>243.86</i></td>
         <td>Final payment: <i>243.66</i></td>
-        <td>Final scheduled payment day: <i>154</i></td>
+        <td>Last scheduled payment day: <i>154</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>2,682.26</i></td>
@@ -478,11 +478,13 @@
     <tr>
         <td>Effective interest rate: <i>0.5118008658 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>78.82 %</i></td>
-        <td>Final APR: <i>1492.1 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>11</i></td>
+        <td>Required scheduled payment count: <i>11</i></td>
+        <td>Last required scheduled payment day: <i>154</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>3</i></td>
-        <td>Final actual payment day: <i>42</i></td>
+        <td>Last actual payment day: <i>42</i></td>
     </tr>
 </table>

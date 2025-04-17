@@ -220,7 +220,7 @@
 
 <h4>Description</h4>
 <p><i>Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -329,7 +329,7 @@
     <tr>
         <td>Level payment: <i>491.53</i></td>
         <td>Final payment: <i>491.53</i></td>
-        <td>Final scheduled payment day: <i>134</i></td>
+        <td>Last scheduled payment day: <i>134</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>2,457.65</i></td>
@@ -343,11 +343,13 @@
     <tr>
         <td>Effective interest rate: <i>0.4616740741 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>62.33 %</i></td>
-        <td>Final APR: <i>1314.3 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>5</i></td>
+        <td>Required scheduled payment count: <i>5</i></td>
+        <td>Last required scheduled payment day: <i>134</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>4</i></td>
-        <td>Final actual payment day: <i>106</i></td>
+        <td>Last actual payment day: <i>106</i></td>
     </tr>
 </table>

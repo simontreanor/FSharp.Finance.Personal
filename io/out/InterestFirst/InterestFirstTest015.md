@@ -247,7 +247,7 @@
 
 <h4>Description</h4>
 <p><i>Add-on interest method with big early repayment followed by tiny overpayment</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -344,7 +344,7 @@
     <tr>
         <td>Level payment: <i>367.73</i></td>
         <td>Final payment: <i>367.71</i></td>
-        <td>Final scheduled payment day: <i>132</i></td>
+        <td>Last scheduled payment day: <i>132</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>1,838.63</i></td>
@@ -358,11 +358,13 @@
     <tr>
         <td>Effective interest rate: <i>0.0007800000 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>0.78 %</i></td>
-        <td>Final APR: <i>2531.9 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>5</i></td>
+        <td>Required scheduled payment count: <i>0</i></td>
+        <td>Last required scheduled payment day: <i>ValueNone</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>2</i></td>
-        <td>Final actual payment day: <i>1</i></td>
+        <td>Last actual payment day: <i>1</i></td>
     </tr>
 </table>

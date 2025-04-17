@@ -733,7 +733,7 @@
 
 <h4>Description</h4>
 <p><i>Pending payments should only apply if not timed out</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -840,7 +840,7 @@
     <tr>
         <td>Level payment: <i>271.89</i></td>
         <td>Final payment: <i>271.66</i></td>
-        <td>Final scheduled payment day: <i>174</i></td>
+        <td>Last scheduled payment day: <i>174</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>6,525.13</i></td>
@@ -854,11 +854,13 @@
     <tr>
         <td>Effective interest rate: <i>0.01845136904 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>162.65 %</i></td>
-        <td>Final APR: <i>438.584 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>24</i></td>
+        <td>Required scheduled payment count: <i>24</i></td>
+        <td>Last required scheduled payment day: <i>174</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>3</i></td>
-        <td>Final actual payment day: <i>27</i></td>
+        <td>Last actual payment day: <i>27</i></td>
     </tr>
 </table>

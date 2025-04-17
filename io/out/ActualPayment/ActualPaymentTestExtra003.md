@@ -571,7 +571,7 @@
 
 <h4>Description</h4>
 <p><i>never settles down</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -694,7 +694,7 @@
     <tr>
         <td>Level payment: <i>137.48</i></td>
         <td>Final payment: <i>137.36</i></td>
-        <td>Final scheduled payment day: <i>1025</i></td>
+        <td>Last scheduled payment day: <i>1025</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>2,612.00</i></td>
@@ -708,11 +708,13 @@
     <tr>
         <td>Effective interest rate: <i>0.02309682188 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>226.5 %</i></td>
-        <td>Final APR: <i>1831.898315 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>19</i></td>
+        <td>Required scheduled payment count: <i>19</i></td>
+        <td>Last required scheduled payment day: <i>1025</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>19</i></td>
-        <td>Final actual payment day: <i>1025</i></td>
+        <td>Last actual payment day: <i>1025</i></td>
     </tr>
 </table>

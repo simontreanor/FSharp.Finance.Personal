@@ -3541,7 +3541,7 @@
 
 <h4>Description</h4>
 <p><i>Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee not rolled over)</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -3664,7 +3664,7 @@
     <tr>
         <td>Level payment: <i>20.00</i></td>
         <td>Final payment: <i>20.00</i></td>
-        <td>Final scheduled payment day: <i>2157</i></td>
+        <td>Last scheduled payment day: <i>2157</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>3,100.00</i></td>
@@ -3678,11 +3678,13 @@
     <tr>
         <td>Effective interest rate: <i>0.01468105829 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>26.32 %</i></td>
-        <td>Final APR: <i>9.912325 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>129</i></td>
+        <td>Required scheduled payment count: <i>129</i></td>
+        <td>Last required scheduled payment day: <i>1793</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>0</i></td>
-        <td>Final actual payment day: <i>n/a</i></td>
+        <td>Last actual payment day: <i>n/a</i></td>
     </tr>
 </table>

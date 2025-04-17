@@ -220,7 +220,7 @@
 
 <h4>Description</h4>
 <p><i>Amortisation schedule, 6 payments, first payment on day 23, using the add-on interest method (just before APR jump)</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -317,7 +317,7 @@
     <tr>
         <td>Level payment: <i>105.76</i></td>
         <td>Final payment: <i>105.72</i></td>
-        <td>Final scheduled payment day: <i>176</i></td>
+        <td>Last scheduled payment day: <i>176</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>634.52</i></td>
@@ -331,11 +331,13 @@
     <tr>
         <td>Effective interest rate: <i>0.5681818182 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>100 %</i></td>
-        <td>Final APR: <i>1633.5 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>6</i></td>
+        <td>Required scheduled payment count: <i>6</i></td>
+        <td>Last required scheduled payment day: <i>176</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>0</i></td>
-        <td>Final actual payment day: <i>n/a</i></td>
+        <td>Last actual payment day: <i>n/a</i></td>
     </tr>
 </table>

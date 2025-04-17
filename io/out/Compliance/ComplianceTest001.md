@@ -220,7 +220,7 @@
 
 <h4>Description</h4>
 <p><i>Repayments made early</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -329,7 +329,7 @@
     <tr>
         <td>Level payment: <i>451.46</i></td>
         <td>Final payment: <i>451.43</i></td>
-        <td>Final scheduled payment day: <i>120</i></td>
+        <td>Last scheduled payment day: <i>120</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>1,805.81</i></td>
@@ -343,11 +343,13 @@
     <tr>
         <td>Effective interest rate: <i>0.5872416667 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>70.47 %</i></td>
-        <td>Final APR: <i>2007.5 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>4</i></td>
+        <td>Required scheduled payment count: <i>3</i></td>
+        <td>Last required scheduled payment day: <i>90</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>4</i></td>
-        <td>Final actual payment day: <i>101</i></td>
+        <td>Last actual payment day: <i>101</i></td>
     </tr>
 </table>

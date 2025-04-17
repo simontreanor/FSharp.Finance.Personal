@@ -409,7 +409,7 @@
 
 <h4>Description</h4>
 <p><i>Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -532,7 +532,7 @@
     <tr>
         <td>Level payment: <i>171.02</i></td>
         <td>Final payment: <i>170.90</i></td>
-        <td>Final scheduled payment day: <i>172</i></td>
+        <td>Last scheduled payment day: <i>172</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>2,052.12</i></td>
@@ -546,11 +546,13 @@
     <tr>
         <td>Effective interest rate: <i>0.01402384924 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>131.02 %</i></td>
-        <td>Final APR: <i>614.571716 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>12</i></td>
+        <td>Required scheduled payment count: <i>10</i></td>
+        <td>Last required scheduled payment day: <i>144</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>1</i></td>
-        <td>Final actual payment day: <i>0</i></td>
+        <td>Last actual payment day: <i>0</i></td>
     </tr>
 </table>

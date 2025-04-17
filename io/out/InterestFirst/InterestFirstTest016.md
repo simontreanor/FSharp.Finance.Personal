@@ -193,7 +193,7 @@
 
 <h4>Description</h4>
 <p><i>Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -290,7 +290,7 @@
     <tr>
         <td>Level payment: <i>272.48</i></td>
         <td>Final payment: <i>272.43</i></td>
-        <td>Final scheduled payment day: <i>132</i></td>
+        <td>Last scheduled payment day: <i>132</i></td>
     </tr>
     <tr>
         <td>Total scheduled payments: <i>1,362.35</i></td>
@@ -304,11 +304,13 @@
     <tr>
         <td>Effective interest rate: <i>0.2745075758 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>36.24 %</i></td>
-        <td>Final APR: <i>440.1 %</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>5</i></td>
+        <td>Required scheduled payment count: <i>5</i></td>
+        <td>Last required scheduled payment day: <i>132</i></td>
+    </tr>
+    <tr>
         <td>Final actual payment count: <i>0</i></td>
-        <td>Final actual payment day: <i>n/a</i></td>
+        <td>Last actual payment day: <i>n/a</i></td>
     </tr>
 </table>
