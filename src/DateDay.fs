@@ -39,19 +39,6 @@ module DateDay =
     /// a duration of a number of days
     [<Measure>] type DurationDay
 
-    /// a length of time in whole days measured from a start date
-    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
-    type Duration =
-        /// unrestricted length of time
-        | Unlimited
-        /// restricted to a length of time in whole days measured from a start date
-        | Maximum of Length: int<DurationDay> * FromDate: Date
-        /// HTML formatting to display the duration in a readable format
-        member d.Html =
-            match d with
-            | Unlimited -> "unlimited"
-            | Maximum (length, fromDate) -> $"maximum {length} days from %A{fromDate}"
-
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
     /// possible to start with e.g. (2024, 02, 31) and this will yield 2024-02-29 29 2024-03-31 2024-04-30 etc.
