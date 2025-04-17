@@ -12,12 +12,12 @@ module AprUnitedKingdomTests =
 
     let folder = "AprUnitedKingdom"
 
-    open Amortisation
     open Apr
     open Calculation
     open DateDay
     open Formatting
     open Scheduling
+    open UnitPeriod
 
     module Quirky =
 
@@ -54,9 +54,8 @@ module AprUnitedKingdomTests =
             StartDate = startDate
             Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Config.defaultMonthly 1 firstPaymentDate
-                PaymentCount = paymentCount
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Config.defaultMonthly 1 firstPaymentDate
+                ScheduleLength = PaymentCount paymentCount
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment

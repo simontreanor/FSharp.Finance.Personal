@@ -9,12 +9,11 @@ module IllustrativeTests =
 
     let folder = "Illustrative"
 
-    open System
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -71,9 +70,8 @@ module IllustrativeTests =
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 3, 31)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2025, 3, 31)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -154,9 +152,8 @@ module IllustrativeTests =
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 3, 31)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2025, 3, 31)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -236,9 +233,8 @@ module IllustrativeTests =
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 3, 31)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2025, 3, 31)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -319,9 +315,8 @@ module IllustrativeTests =
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 3, 31)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2025, 3, 31)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment

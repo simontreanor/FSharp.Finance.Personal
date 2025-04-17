@@ -14,8 +14,8 @@ module UnitPeriodConfigTests =
     open DateDay
     open Scheduling
     open Quotes
-
     open UnitPeriod
+
     module DefaultConfig =
 
         [<Fact>]
@@ -58,7 +58,7 @@ module UnitPeriodConfigTests =
                     AsOfDate = Date(2024, 3, 5)
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
-                    ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); PaymentCount = 12; MaxDuration = Duration.Unlimited }
+                    ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); ScheduleLength = PaymentCount 12 }
                     PaymentConfig = {
                         LevelPaymentOption = LowerFinalPayment
                         ScheduledPaymentOption = AsScheduled
@@ -121,7 +121,7 @@ module UnitPeriodConfigTests =
                 AsOfDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
-                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); PaymentCount = 12; MaxDuration = Duration.Unlimited }
+                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); ScheduleLength = PaymentCount 12 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
@@ -186,8 +186,7 @@ module UnitPeriodConfigTests =
                 Principal = 65000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = Weekly(2, Date(2023, 2, 2))
-                    PaymentCount = 11
-                    MaxDuration = Duration.Unlimited
+                    ScheduleLength = PaymentCount 11
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -275,8 +274,7 @@ module UnitPeriodConfigTests =
                 Principal = 50000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
                     UnitPeriodConfig = Weekly(2, Date(2022, 10, 28))
-                    PaymentCount = 11;
-                    MaxDuration = Duration.Unlimited
+                    ScheduleLength = PaymentCount 11
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment

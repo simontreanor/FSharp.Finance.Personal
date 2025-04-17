@@ -12,9 +12,9 @@ module SettlementTests =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
     open Quotes
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -29,7 +29,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 19)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig =  Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -116,7 +116,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -203,7 +203,7 @@ module SettlementTests =
             AsOfDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 12, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled

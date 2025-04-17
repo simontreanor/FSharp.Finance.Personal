@@ -13,6 +13,7 @@ module PromotionalRatesTests =
     open Calculation
     open DateDay
     open Scheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -26,9 +27,8 @@ module PromotionalRatesTests =
             StartDate = startDate
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 9, 2)
-                PaymentCount = 4
-                MaxDuration = Duration.Maximum (180<DurationDay>, startDate)
+                UnitPeriodConfig = Monthly(1, 2024, 9, 2)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -123,8 +123,8 @@ module PromotionalRatesTests =
             StartDate = Date(2024, 4, 11)
             Principal = 192_000_00L<Cent>
             ScheduleConfig = FixedSchedules [|
-                { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentValue = 1225_86L<Cent>; ScheduleType = ScheduleType.Original }
-                { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentValue = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
+                { UnitPeriodConfig = Monthly(1, 2024, 5, 11); PaymentCount = 60; PaymentValue = 1225_86L<Cent>; ScheduleType = ScheduleType.Original }
+                { UnitPeriodConfig = Monthly(1, 2029, 5, 11); PaymentCount = 180; PaymentValue = 1525_12L<Cent>; ScheduleType = ScheduleType.Original }
             |]
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment

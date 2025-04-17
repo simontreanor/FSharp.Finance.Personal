@@ -9,13 +9,14 @@ module InterestTests =
 
     let folder = "Interest"
 
+    open System
+
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Interest
     open Scheduling
-    open System
+    open UnitPeriod
 
     let interestCapExample : Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -83,9 +84,8 @@ module InterestTests =
                 StartDate = Date(2023, 2, 9)
                 Principal = 499_00L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14)
-                    PaymentCount = 4
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = Monthly(1, 2023, 2, 14)
+                    ScheduleLength = PaymentCount 4
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -130,9 +130,8 @@ module InterestTests =
                 StartDate = Date(2023, 2, 9)
                 Principal = 499_00L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 2, 14)
-                    PaymentCount = 4
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = Monthly(1, 2023, 2, 14)
+                    ScheduleLength = PaymentCount 4
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -221,7 +220,7 @@ module InterestTests =
             let apr = Percent 14m
             let settlementPeriod = 12
             let settlementPartPeriod = Fraction.Zero
-            let unitPeriod = UnitPeriod.Month 1
+            let unitPeriod = Month 1
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 860_52L<Cent>
@@ -236,7 +235,7 @@ module InterestTests =
             let apr = Percent 14m
             let settlementPeriod = 12
             let settlementPartPeriod = Fraction.Simple (28, 30)
-            let unitPeriod = UnitPeriod.Month 1
+            let unitPeriod = Month 1
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 819_71L<Cent>
@@ -251,7 +250,7 @@ module InterestTests =
             let apr = Percent 14m
             let settlementPeriod = 12
             let settlementPartPeriod = Fraction.Simple (28, 31)
-            let unitPeriod = UnitPeriod.Month 1
+            let unitPeriod = Month 1
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 821_03L<Cent>
@@ -266,7 +265,7 @@ module InterestTests =
             let apr = Percent 14m
             let settlementPeriod = 13
             let settlementPartPeriod = Fraction.Simple (28, 30)
-            let unitPeriod = UnitPeriod.Month 1
+            let unitPeriod = Month 1
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 776_90L<Cent>
@@ -281,7 +280,7 @@ module InterestTests =
             let apr = Percent 16m
             let settlementPeriod = 73
             let settlementPartPeriod = Fraction.Zero
-            let unitPeriod = UnitPeriod.Month 1
+            let unitPeriod = Month 1
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 6702_45L<Cent>
@@ -296,7 +295,7 @@ module InterestTests =
             let apr = Percent 16m
             let settlementPeriod = 73
             let settlementPartPeriod = Fraction.Simple (28, 30)
-            let unitPeriod = UnitPeriod.Month 1
+            let unitPeriod = Month 1
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
             let actual = calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding
             let expected = 6606_95L<Cent>
@@ -307,7 +306,7 @@ module InterestTests =
                 StartDate = Date(2010, 3, 1)
                 AsOfDate = Date(2011, 3, 1)
                 Principal = 5000_00L<Cent>
-                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentValue = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
+                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentValue = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
@@ -353,7 +352,7 @@ module InterestTests =
         let Cca2004Test007 () =
             let title = "Cca2004Test007"
             let description = "Initial statement (simple interest, autogenerated payment amounts) matching level payment of £134.57"
-            let sp = { scheduleParameters with AsOfDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2010, 4, 1); PaymentCount = 48; MaxDuration = Duration.Unlimited } }
+            let sp = { scheduleParameters with AsOfDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2010, 4, 1); ScheduleLength = PaymentCount 48 } }
 
             let actualPayments = Map.empty
 

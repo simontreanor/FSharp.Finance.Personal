@@ -10,8 +10,8 @@ module FeeAndChargesTests =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -31,9 +31,8 @@ module FeeAndChargesTests =
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
-                    PaymentCount = 5
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                    ScheduleLength = PaymentCount 5
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -128,9 +127,8 @@ module FeeAndChargesTests =
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
-                    PaymentCount = 5
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                    ScheduleLength = PaymentCount 5
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -225,9 +223,8 @@ module FeeAndChargesTests =
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
-                    PaymentCount = 5
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                    ScheduleLength = PaymentCount 5
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment

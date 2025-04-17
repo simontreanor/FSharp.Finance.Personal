@@ -13,6 +13,7 @@ module ComplianceTests =
     open Calculation
     open DateDay
     open Scheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -234,9 +235,8 @@ module ComplianceTests =
     let scheduleParameters3 =
         { scheduleParameters2 with
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2021, 12, 31)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2021, 12, 31)
+                ScheduleLength = PaymentCount 4
             }
             Parameters.PaymentConfig.Rounding = RoundUp
             InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 1.2m
@@ -510,9 +510,8 @@ module ComplianceTests =
             StartDate = Date(2025, 4, 1)
             Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2025, 4, 20)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2025, 4, 20)
+                ScheduleLength = PaymentCount 4
             }
             InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
         }

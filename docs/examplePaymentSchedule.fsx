@@ -32,8 +32,7 @@ let scheduleParameters =
         Principal = 10000_00L<Cent>
         ScheduleConfig = AutoGenerateSchedule {
             UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
-            PaymentCount = 36
-            MaxDuration = Duration.Unlimited
+            ScheduleLength = PaymentCount 36
         }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment

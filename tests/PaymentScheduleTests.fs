@@ -14,6 +14,7 @@ module PaymentScheduleTests =
     open DateDay
     open Formatting
     open Scheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -28,9 +29,8 @@ module PaymentScheduleTests =
                 StartDate = startDate
                 Principal = principal
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays(int offset))
-                    PaymentCount = 11
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = Weekly(2, startDate.AddDays(int offset))
+                    ScheduleLength = PaymentCount 11
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -152,9 +152,8 @@ module PaymentScheduleTests =
                 StartDate = startDate
                 Principal = principal
                 ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = (startDate.AddDays(int offset) |> fun d -> UnitPeriod.Monthly(1, d.Year, d.Month, d.Day * 1))
-                    PaymentCount = paymentCount
-                    MaxDuration = Duration.Unlimited
+                    UnitPeriodConfig = (startDate.AddDays(int offset) |> fun d -> Monthly(1, d.Year, d.Month, d.Day * 1))
+                    ScheduleLength = PaymentCount paymentCount
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -1787,9 +1786,8 @@ module PaymentScheduleTests =
             StartDate = Date(2022, 12, 19)
             Principal = 300_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Daily(Date(2023, 1, 3))
-                PaymentCount = 1
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Daily(Date(2023, 1, 3))
+                ScheduleLength = PaymentCount 1
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1839,9 +1837,8 @@ module PaymentScheduleTests =
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 8)
-                PaymentCount = 7
-                MaxDuration = Duration.Maximum(183<DurationDay>, Date(2024, 5, 8))
+                UnitPeriodConfig = Monthly(1, 2024, 5, 8)
+                ScheduleLength = MaxDuration 183<DurationDay>
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1891,9 +1888,8 @@ module PaymentScheduleTests =
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 5, 18)
-                PaymentCount = 7
-                MaxDuration = Duration.Maximum (184<DurationDay>, Date(2024, 5, 8))
+                UnitPeriodConfig = Monthly(1, 2024, 5, 18)
+                ScheduleLength = MaxDuration 184<DurationDay>
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1943,9 +1939,8 @@ module PaymentScheduleTests =
             StartDate = Date(2024, 6, 24)
             Principal = 100_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4)
-                PaymentCount = 4
-                MaxDuration = Duration.Maximum (190<DurationDay>, Date(2024, 6, 24))
+                UnitPeriodConfig = Monthly(1, 2024, 7, 4)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -2027,12 +2022,12 @@ module PaymentScheduleTests =
         }
 
         let actual =
-            let paymentSchedule1 = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 7, 4); PaymentCount = 4; MaxDuration = Duration.Maximum (190<DurationDay>, Date(2024, 6, 24)) }
+            let paymentSchedule1 = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 7, 4); ScheduleLength = PaymentCount 4 }
 
             let paymentSchedule2 =
                 FixedSchedules [|
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024,  7, 4); PaymentCount = 3; PaymentValue = 36_48L<Cent>; ScheduleType = ScheduleType.Original }
-                    { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentValue = 36_44L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = Monthly(1, 2024,  7, 4); PaymentCount = 3; PaymentValue = 36_48L<Cent>; ScheduleType = ScheduleType.Original }
+                    { UnitPeriodConfig = Monthly(1, 2024, 10, 4); PaymentCount = 1; PaymentValue = 36_44L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
 
             let paymentSchedule3 = CustomSchedule <| Map [

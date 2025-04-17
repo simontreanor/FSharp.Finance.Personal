@@ -14,6 +14,7 @@ module QuoteTests =
     open DateDay
     open Scheduling
     open Quotes
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -31,9 +32,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -140,9 +140,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -247,9 +246,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -354,9 +352,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1))
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> Monthly(1, sd.Year, sd.Month, sd.Day * 1))
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -453,9 +450,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> UnitPeriod.Monthly(1, sd.Year, sd.Month, sd.Day * 1))
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> Monthly(1, sd.Year, sd.Month, sd.Day * 1))
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -552,9 +548,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -661,9 +656,8 @@ module QuoteTests =
             AsOfDate = Date(2024, 10, 1)
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -758,9 +752,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, startDate.AddDays 15)
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -836,9 +829,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2023, 6, 30))
-                PaymentCount = 10
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2023, 6, 30))
+                ScheduleLength = PaymentCount 10
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -927,9 +919,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 12, 12))
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1026,9 +1017,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 1200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 12, 12))
-                PaymentCount = 11
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 12, 12))
+                ScheduleLength = PaymentCount 11
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1123,9 +1113,8 @@ module QuoteTests =
             StartDate = startDate
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 2, 28)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2024, 2, 28)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1207,9 +1196,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1305,9 +1293,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1403,9 +1390,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1501,9 +1487,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1599,9 +1584,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1697,9 +1681,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1796,9 +1779,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1895,9 +1877,8 @@ module QuoteTests =
             StartDate = Date(2022, 11, 1)
             Principal = 1500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 15)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2022, 11, 15)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -1994,9 +1975,8 @@ module QuoteTests =
             StartDate = Date(2022, 12, 19)
             Principal = 250_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 1, 20)
-                PaymentCount = 4
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2023, 1, 20)
+                ScheduleLength = PaymentCount 4
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -2060,7 +2040,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 4)
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2018, 2, 28); ScheduleLength = PaymentCount 3 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -2116,7 +2096,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 4)
             StartDate = Date(2018, 2, 3)
             Principal = 230_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2018, 2, 28); PaymentCount = 3; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2018, 2, 28); ScheduleLength = PaymentCount 3 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -2180,7 +2160,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 7)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 2, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -2237,7 +2217,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 3, 7)
             StartDate = Date(2023, 9, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 9, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 9, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -2293,7 +2273,7 @@ module QuoteTests =
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 5, 10); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled

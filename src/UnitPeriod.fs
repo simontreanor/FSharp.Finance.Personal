@@ -326,6 +326,16 @@ module UnitPeriod =
             | invalidConfig ->
                 fix invalidConfig
 
+    /// defines the length of a payment schedule, either by the number of payments or by the maximum duration
+    [<Struct; StructuredFormatDisplay("{Html}")>]
+    type ScheduleLength =
+        | PaymentCount of Payments: int
+        | MaxDuration of Days: int<DurationDay>
+        member sl.Html =
+            match sl with
+            | PaymentCount payments -> $"<i>payment count</i> {payments}"
+            | MaxDuration days -> $"<i>max duration</i> {days}"
+
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxDuration: int<DurationDay>) (config: Config) =
         match config with
@@ -352,12 +362,12 @@ module UnitPeriod =
         | Reverse
 
     /// generate a payment schedule based on a unit-period config
-    let generatePaymentSchedule count maxDuration direction unitPeriodConfig =
+    let generatePaymentSchedule scheduleLength direction unitPeriodConfig =
+        let count =
+            match scheduleLength with
+            | PaymentCount c -> c
+            | MaxDuration d -> maxPaymentCount d unitPeriodConfig
         if count = 0 then [||] else
-        let limitedCount =
-            match maxDuration with
-            | Duration.Maximum (d, _) -> min count (maxPaymentCount d unitPeriodConfig)
-            | Duration.Unlimited -> count
         let adjustMonthEnd (monthEndTrackingDay: int) (d: Date) =
             if d.Day > 15 && monthEndTrackingDay > 28 then
                 TrackingDay.toDate d.Year d.Month monthEndTrackingDay
@@ -395,7 +405,7 @@ module UnitPeriod =
                         |> adjustMonthEnd monthEndTrackingDay
                     |]
                 )
-                >> Array.take limitedCount
+                >> Array.take count
             | Monthly (multiple, year, month, td) ->
                 let startDate = TrackingDay.toDate year month td
                 Array.map (fun c ->
@@ -404,10 +414,10 @@ module UnitPeriod =
                 )
         match direction with
         | Direction.Forward ->
-            [| 0 .. (limitedCount - 1) |]
+            [| 0 .. (count - 1) |]
             |> generate unitPeriodConfig
         | Direction.Reverse ->
-            [| 0 .. -1 .. -(limitedCount - 1) |]
+            [| 0 .. -1 .. -(count - 1) |]
             |> generate unitPeriodConfig |> Array.sort
 
     /// for a given interval and array of dates, devise the unit-period config

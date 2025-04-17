@@ -12,10 +12,10 @@ module EdgeCaseTests =
     open Amortisation
     open Calculation
     open DateDay
-    open Formatting
     open Scheduling
     open Quotes
     open Rescheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -504,7 +504,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2022, 6, 22)
             Principal = 500_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 7, 15); PaymentCount = 6; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2022, 7, 15); ScheduleLength = PaymentCount 6 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -633,7 +633,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 12)
             StartDate = Date(2021, 12, 26)
             Principal = 150000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2022, 1, 7); PaymentCount = 6; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2022, 1, 7); ScheduleLength = PaymentCount 6 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -691,7 +691,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 2, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -776,7 +776,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 2, 22); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 2, 22); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
@@ -861,7 +861,7 @@ module EdgeCaseTests =
             AsOfDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = UnitPeriod.Config.Monthly(1, 2023, 5, 10); PaymentCount = 4; MaxDuration = Duration.Unlimited }
+            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 5, 10); ScheduleLength = PaymentCount 4 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled

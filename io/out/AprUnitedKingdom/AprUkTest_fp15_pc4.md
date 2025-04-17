@@ -96,11 +96,10 @@
             <table>
                 <tr>
                     <td>config: <i>auto-generate schedule</i></td>
-                    <td>payment count: <i>4</i></td>
+                    <td>schedule length: <i><i>payment count</i> 4</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 16</i></td>
-                    <td>max duration: <i>unlimited</i></td>
+                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 16</i></td>
                 </tr>
             </table>
         </td>

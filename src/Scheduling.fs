@@ -232,10 +232,8 @@ module Scheduling =
     type AutoGenerateSchedule = {
         // the unit-period config
         UnitPeriodConfig: UnitPeriod.Config
-        // the number of payments (subject to the maximum duration)
-        PaymentCount: int
-        // the maximum duration from a given date
-        MaxDuration: Duration
+        // the length of the schedule
+        ScheduleLength: ScheduleLength
     }
 
     /// the type of the schedule; for scheduled payments, this affects how any payment due is calculated
@@ -284,11 +282,10 @@ module Scheduling =
             <table>
                 <tr>
                     <td>config: <i>auto-generate schedule</i></td>
-                    <td>payment count: <i>{ags.PaymentCount}</i></td>
+                    <td>schedule length: <i>{ags.ScheduleLength}</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>
-                    <td>max duration: <i>{ags.MaxDuration}</i></td>
+                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>
                 </tr>
             </table>"""
             | FixedSchedules fsArray ->
@@ -677,7 +674,7 @@ module Scheduling =
                     if startDate > unitPeriodConfigStartDate then
                         [||]
                     else
-                        generatePaymentSchedule rfs.PaymentCount Duration.Unlimited Direction.Forward rfs.UnitPeriodConfig
+                        generatePaymentSchedule (PaymentCount rfs.PaymentCount) Direction.Forward rfs.UnitPeriodConfig
                         |> Array.map(OffsetDay.fromDate startDate >> fun d ->
                             let originalValue, rescheduledValue =
                                 match rfs.ScheduleType with
@@ -706,14 +703,16 @@ module Scheduling =
             )
             |> Map.ofArray
         | AutoGenerateSchedule rs ->
-            if rs.PaymentCount = 0 then
+            match rs.ScheduleLength with
+            | PaymentCount 0
+            | MaxDuration 0<DurationDay> ->
                 Map.empty
-            else
+            | _ ->
                 let unitPeriodConfigStartDate = Config.startDate rs.UnitPeriodConfig
                 if startDate > unitPeriodConfigStartDate then
                     Map.empty
                 else
-                    generatePaymentSchedule rs.PaymentCount rs.MaxDuration Direction.Forward rs.UnitPeriodConfig
+                    generatePaymentSchedule rs.ScheduleLength Direction.Forward rs.UnitPeriodConfig
                     |> Array.map(fun d -> OffsetDay.fromDate startDate d, ScheduledPayment.quick (ValueSome 0L<Cent>) ValueNone)
                     |> Map.ofArray
 

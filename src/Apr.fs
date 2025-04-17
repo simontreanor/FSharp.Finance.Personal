@@ -134,8 +134,9 @@ module Apr =
             let multiple = Math.Max(1, multiple)
             let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
+            let scheduleLength = UnitPeriod.PaymentCount <| (transferCount + 1) * multiple
             let unitPeriod = transferDates |> UnitPeriod.detect UnitPeriod.Direction.Reverse (UnitPeriod.Month 1)
-            let schedule = UnitPeriod.generatePaymentSchedule ((transferCount + 1) * multiple) Duration.Unlimited UnitPeriod.Direction.Reverse unitPeriod |> Array.filter(fun d -> d >= termStart)
+            let schedule = UnitPeriod.generatePaymentSchedule scheduleLength UnitPeriod.Direction.Reverse unitPeriod |> Array.filter(fun d -> d >= termStart)
             let scheduleCount = schedule |> Array.length
             let lastWholeMonthBackIndex = 0
             let lastWholeUnitPeriodBackIndex = (scheduleCount - 1) % multiple
@@ -162,8 +163,9 @@ module Apr =
         let semiMonthlyUnitPeriods termStart transfers =
             let transferDates = transfers |> Array.map _.TransferDate
             let transferCount = transfers |> Array.length
+            let scheduleLength = UnitPeriod.PaymentCount <| transferCount + 2
             let frequency = transferDates |> UnitPeriod.detect UnitPeriod.Direction.Reverse UnitPeriod.SemiMonth
-            let schedule = UnitPeriod.generatePaymentSchedule (transferCount + 2) Duration.Unlimited UnitPeriod.Direction.Reverse frequency |> Array.filter(fun d -> d >= termStart)
+            let schedule = UnitPeriod.generatePaymentSchedule scheduleLength UnitPeriod.Direction.Reverse frequency |> Array.filter(fun d -> d >= termStart)
             let scheduleCount = schedule |> Array.length
             let offset = scheduleCount - transferCount
             [| 0 .. (transferCount - 1) |]

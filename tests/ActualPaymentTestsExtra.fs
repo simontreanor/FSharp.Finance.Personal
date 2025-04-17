@@ -15,6 +15,7 @@ module ActualPaymentTestsExtra =
     open DateDay
     open Scheduling
     open Rescheduling
+    open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
         TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
@@ -37,9 +38,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly(1, 2023, 8, 1)
-                PaymentCount = 5
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly(1, 2023, 8, 1)
+                ScheduleLength = PaymentCount 5
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -127,9 +127,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-                PaymentCount = 12
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                ScheduleLength = PaymentCount 12
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -218,9 +217,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-                PaymentCount = 12
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                ScheduleLength = PaymentCount 12
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -273,7 +271,7 @@ module ActualPaymentTestsExtra =
             let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
                 FeeettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay'
-                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]
                 SettlementDay = ValueNone
@@ -321,9 +319,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2023, 11, 6)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly (8, Date(2023, 11, 23))
-                PaymentCount = 19
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly (8, Date(2023, 11, 23))
+                ScheduleLength = PaymentCount 19
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -411,9 +408,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2022, 9, 11)
             Principal = 200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Monthly (1, 2022, 9, 15)
-                PaymentCount = 7
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Monthly (1, 2022, 9, 15)
+                ScheduleLength = PaymentCount 7
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -491,9 +487,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-                PaymentCount = 12
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                ScheduleLength = PaymentCount 12
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -579,9 +574,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-                PaymentCount = 12
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                ScheduleLength = PaymentCount 12
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -633,7 +627,7 @@ module ActualPaymentTestsExtra =
                 ]
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
-                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
                 InterestConfig = sp.InterestConfig
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
@@ -681,9 +675,8 @@ module ActualPaymentTestsExtra =
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = UnitPeriod.Weekly(2, Date(2022, 3, 26))
-                PaymentCount = 12
-                MaxDuration = Duration.Unlimited
+                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                ScheduleLength = PaymentCount 12
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -735,7 +728,7 @@ module ActualPaymentTestsExtra =
                 ]
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
-                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
                 InterestConfig = sp.InterestConfig
                 PaymentConfig = sp.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal

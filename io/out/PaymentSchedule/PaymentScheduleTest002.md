@@ -120,11 +120,10 @@
             <table>
                 <tr>
                     <td>config: <i>auto-generate schedule</i></td>
-                    <td>payment count: <i>7</i></td>
+                    <td>schedule length: <i><i>max duration</i> 183</i></td>
                 </tr>
                 <tr>
-                    <td style="white-space: nowrap;">unit-period config: <i>monthly from 2024-05 on 08</i></td>
-                    <td>max duration: <i>maximum 183 days from 2024-05-08</i></td>
+                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>monthly from 2024-05 on 08</i></td>
                 </tr>
             </table>
         </td>

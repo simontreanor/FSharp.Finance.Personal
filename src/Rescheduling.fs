@@ -45,7 +45,7 @@ module Rescheduling =
                         match fs.ScheduleType with
                         | ScheduleType.Original -> ScheduledPayment.quick (ValueSome fs.PaymentValue) ValueNone
                         | ScheduleType.Rescheduled rescheduleDay -> ScheduledPayment.quick ValueNone (ValueSome { Value = fs.PaymentValue; RescheduleDay = rescheduleDay })
-                    UnitPeriod.generatePaymentSchedule fs.PaymentCount Duration.Unlimited UnitPeriod.Direction.Forward fs.UnitPeriodConfig
+                    UnitPeriod.generatePaymentSchedule (UnitPeriod.PaymentCount fs.PaymentCount) UnitPeriod.Direction.Forward fs.UnitPeriodConfig
                     |> Array.map(fun d -> OffsetDay.fromDate sp.StartDate d, scheduledPayment)
                 )
                 |> Array.concat
