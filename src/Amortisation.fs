@@ -121,20 +121,20 @@ module Amortisation =
         <td class="ci08">{formatCent scheduleItem.NetEffect}</td>
         <td class="ci09">{scheduleItem.PaymentStatus.Html.Replace(" ", "&nbsp;")}</td>
         <td class="ci10">{scheduleItem.BalanceStatus.Html.Replace(" ", "&nbsp;")}</td>
-        <td class="ci13">{formatDecimalCent scheduleItem.SimpleInterest}</td>
-        <td class="ci14">{formatDecimalCent scheduleItem.NewInterest}</td>
-        <td class="ci15">{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}</td>
-        <td class="ci16">{formatCent scheduleItem.PrincipalPortion}</td>
-        <td class="ci17">{formatCent scheduleItem.FeePortion}</td>
-        <td class="ci18">{formatCent scheduleItem.InterestPortion}</td>
-        <td class="ci19">{formatCent scheduleItem.ChargesPortion}</td>
-        <td class="ci20">{formatCent scheduleItem.FeeRefund}</td>
-        <td class="ci21">{formatCent scheduleItem.PrincipalBalance}</td>
-        <td class="ci22">{formatCent scheduleItem.FeeBalance}</td>
-        <td class="ci23">{formatDecimalCent scheduleItem.InterestBalance}</td>
-        <td class="ci24">{formatCent scheduleItem.ChargesBalance}</td>
-        <td class="ci25">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>
-        <td class="ci26">{formatCent scheduleItem.FeeRefundIfSettled}</td>
+        <td class="ci11">{formatDecimalCent scheduleItem.SimpleInterest}</td>
+        <td class="ci12">{formatDecimalCent scheduleItem.NewInterest}</td>
+        <td class="ci13">{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}</td>
+        <td class="ci14">{formatCent scheduleItem.PrincipalPortion}</td>
+        <td class="ci15">{formatCent scheduleItem.FeePortion}</td>
+        <td class="ci16">{formatCent scheduleItem.InterestPortion}</td>
+        <td class="ci17">{formatCent scheduleItem.ChargesPortion}</td>
+        <td class="ci18">{formatCent scheduleItem.FeeRefund}</td>
+        <td class="ci19">{formatCent scheduleItem.PrincipalBalance}</td>
+        <td class="ci20">{formatCent scheduleItem.FeeBalance}</td>
+        <td class="ci21">{formatDecimalCent scheduleItem.InterestBalance}</td>
+        <td class="ci22">{formatCent scheduleItem.ChargesBalance}</td>
+        <td class="ci23">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>
+        <td class="ci24">{formatCent scheduleItem.FeeRefundIfSettled}</td>
     </tr>"""
 
 
@@ -341,7 +341,9 @@ module Amortisation =
         elif appliedPaymentDay > originalFinalPaymentDay then
             0L<Cent>
         else
-            decimal feeTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay |> Cent.round RoundUp
+            decimal feeTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay) / decimal originalFinalPaymentDay
+            |> Cent.round RoundUp
+            |> Cent.max 0L<Cent>
 
     /// determines any payment due on the day
     let calculatePaymentDue si originalPayment rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
@@ -577,19 +579,17 @@ module Amortisation =
                         0L<Cent>
                 | None ->
                     0L<Cent>
-            // ensure any fee refund is positive
-            let feeRefund = Cent.max 0L<Cent> feeRefundIfSettled
             // refine the settlement figure depending on the interest method
             let generatedSettlementPayment' =
                 match sp.InterestConfig.Method with
                 | Interest.Method.AddOn ->
                     generatedSettlementPayment
                 | _ ->
-                    si.PrincipalBalance + si.FeeBalance - feeRefund + interestPortionL' + chargesPortion
+                    si.PrincipalBalance + si.FeeBalance - feeRefundIfSettled + interestPortionL' + chargesPortion
             // refine the fee portion and refund if a refund is actually applied on the day, i.e. if the net effect covers the settlement figure
-            let feePortion', feeRefund' =
-                if feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect then
-                    Cent.max 0L<Cent> (si.FeeBalance - feeRefund), feeRefund
+            let feePortion', feeRefund =
+                if ap.GeneratedPayment.IsToBeGenerated || feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect then
+                    Cent.max 0L<Cent> (si.FeeBalance - feeRefundIfSettled), feeRefundIfSettled
                 else
                     sign feePortion, 0L<Cent>
             // apportion the principal
@@ -598,7 +598,7 @@ module Amortisation =
             let principalBalance = si.PrincipalBalance - sign principalPortion
             // if any future payment creates a negative principal balance, adjust these figures accordingly
             let paymentDue', netEffect', principalPortion', principalBalance' =
-                if ap.PaymentStatus = NotYetDue && feeRefund' > 0L<Cent> && principalBalance < 0L<Cent> then
+                if ap.PaymentStatus = NotYetDue && feeRefund > 0L<Cent> && principalBalance < 0L<Cent> then
                     paymentDue + principalBalance, netEffect + principalBalance, sign principalPortion + principalBalance, 0L<Cent>
                 else
                     paymentDue, netEffect, sign principalPortion, principalBalance
@@ -665,7 +665,7 @@ module Amortisation =
                         | gp -> gp)
                     else
                         // refine the interest portion by adding carried interest, and calculate the balances
-                        let feeBalance = si.FeeBalance - feePortion' - feeRefund'
+                        let feeBalance = si.FeeBalance - feePortion' - feeRefund
                         let interestBalance = interestBalanceM |> Interest.ignoreFractionalCents 1
                         let chargesBalance = si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
                         ((principalBalance', feeBalance, interestBalance, chargesBalance),
