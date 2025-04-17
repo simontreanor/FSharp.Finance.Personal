@@ -159,15 +159,15 @@ module Amortisation =
 
     /// final statistics resulting from the calculations
     [<Struct>]
-    type ScheduleStats = {
+    type FinalStats = {
         /// the final number of scheduled payments in the schedule
-        FinalScheduledPaymentCount: int
+        RequiredScheduledPaymentCount: int
+        /// the offset day of the final required scheduled payment
+        LastRequiredScheduledPaymentDay: int<OffsetDay> voption
         /// the final number of actual payments in the schedule (multiple payments made on the same day are counted separately)
         FinalActualPaymentCount: int
         /// the offset day of the final actual payment
-        FinalActualPaymentDay: int<OffsetDay> voption
-        /// the APR based on the actual payments made and their timings
-        FinalApr: Percent
+        LastActualPaymentDay: int<OffsetDay> voption
         /// the final ratio of (fee + interest + charges) to principal
         FinalCostToBorrowingRatio: Percent
         /// the daily interest rate derived from interest over (principal + fee), ignoring charges 
@@ -175,19 +175,21 @@ module Amortisation =
     }
 
     /// final statistics resulting from the calculations
-    module ScheduleStats =
+    module FinalStats =
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
-        let toHtmlTable scheduleStats = $"""
+        let toHtmlTable finalStats = $"""
 <table>
     <tr>
-        <td>Effective interest rate: <i>{scheduleStats.EffectiveInterestRate}</i></td>
-        <td>Final cost-to-borrowing ratio: <i>{scheduleStats.FinalCostToBorrowingRatio}</i></td>
-        <td>Final APR: <i>{scheduleStats.FinalApr}</i></td>
+        <td>Effective interest rate: <i>{finalStats.EffectiveInterestRate}</i></td>
+        <td>Final cost-to-borrowing ratio: <i>{finalStats.FinalCostToBorrowingRatio}</i></td>
     </tr>
     <tr>
-        <td>Final scheduled payment count: <i>{scheduleStats.FinalScheduledPaymentCount}</i></td>
-        <td>Final actual payment count: <i>{scheduleStats.FinalActualPaymentCount}</i></td>
-        <td>Final actual payment day: <i>{scheduleStats.FinalActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>
+        <td>Required scheduled payment count: <i>{finalStats.RequiredScheduledPaymentCount}</i></td>
+        <td>Last required scheduled payment day: <i>{finalStats.LastRequiredScheduledPaymentDay}</i></td>
+    </tr>
+    <tr>
+        <td>Final actual payment count: <i>{finalStats.FinalActualPaymentCount}</i></td>
+        <td>Last actual payment day: <i>{finalStats.LastActualPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>
     </tr>
 </table>
 """
@@ -198,7 +200,7 @@ module Amortisation =
         /// a list of amortisation items, showing the events and calculations for a particular offset day
         ScheduleItems: Map<int<OffsetDay>, ScheduleItem>
         /// final stats resulting from the calculations
-        ScheduleStats: ScheduleStats
+        FinalStats: FinalStats
     }
 
     /// results of the amortisation schedule generation
@@ -253,12 +255,12 @@ module Amortisation =
 <h4>Parameters</h4>{Parameters.toHtmlTable sp}"""
             let htmlDatestamp = $"""
 <p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
-            let htmlScheduleStats = $"""
-<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedules.SimpleSchedule.Stats}"""
+            let htmlFinalStats = $"""
+<h4>Initial Stats</h4>{InitialStats.toHtmlTable schedules.SimpleSchedule.Stats}"""
             let htmlAmortisationStats = $"""
-<h4>Final Stats</h4>{ScheduleStats.toHtmlTable schedules.AmortisationSchedule.ScheduleStats}"""
+<h4>Final Stats</h4>{FinalStats.toHtmlTable schedules.AmortisationSchedule.FinalStats}"""
             let filename = $"out/{folder}/{title}.md"
-            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}{htmlAmortisationStats}"
+            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlFinalStats}{htmlAmortisationStats}"
             |> outputToFile' filename false
 
     /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
@@ -382,7 +384,7 @@ module Amortisation =
                 | _ -> p
 
     /// for UK FCA-regulated agreements, calculates the fee rebate due
-    let calculateStatutoryFeeRebate sp (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) simpleScheduleStats appliedPaymentDay window =
+    let calculateStatutoryFeeRebate sp (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) initialStats appliedPaymentDay window =
         let originalScheduledPayments =
             appliedPayments
             |> Map.filter(fun _ ap -> ap.ScheduledPayment.Original.IsSome)
@@ -394,7 +396,7 @@ module Amortisation =
                 UnitPeriod.Config.unitPeriod ags.UnitPeriodConfig
             | FixedSchedules _
             | CustomSchedule _ ->
-                let finalScheduledPaymentDate = simpleScheduleStats.FinalScheduledPaymentDay |> OffsetDay.toDate sp.StartDate
+                let finalScheduledPaymentDate = initialStats.LastScheduledPaymentDay |> OffsetDay.toDate sp.StartDate
                 let transactionTerm = UnitPeriod.transactionTerm sp.StartDate sp.StartDate finalScheduledPaymentDate sp.StartDate
                 let paymentDates = originalScheduledPayments |> Array.map (_.OffsetDay >> OffsetDay.toDate sp.StartDate)
                 UnitPeriod.nearest transactionTerm [| sp.StartDate |] paymentDates
@@ -403,14 +405,14 @@ module Amortisation =
         let denominator = UnitPeriod.roughLength unitPeriod
         let settlementPartPeriod = Fraction.Simple(numerator, denominator)
         let payments = originalScheduledPayments |> Array.map(fun osp -> osp.Window, osp.OriginalScheduledPaymentValue)
-        Interest.calculateRebate sp.Principal payments simpleScheduleStats.InitialApr window settlementPartPeriod unitPeriod sp.PaymentConfig.Rounding
+        Interest.calculateRebate sp.Principal payments initialStats.InitialApr window settlementPartPeriod unitPeriod sp.PaymentConfig.Rounding
 
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
-    let internal calculate sp settlementDay simpleScheduleStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
+    let internal calculate sp settlementDay initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
-        let initialInterestBalanceM = Cent.toDecimalCent simpleScheduleStats.InitialInterestBalance
+        let initialInterestBalanceM = Cent.toDecimalCent initialStats.InitialInterestBalance
         // calculate the total fee value for the entire schedule
         let feeTotal = Fee.total sp.FeeConfig sp.Principal
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
@@ -618,7 +620,7 @@ module Amortisation =
                         match sp.InterestConfig.AprMethod with
                         | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
                             // if the statutory rebate is higher than the fee rebate calculated above, use the higher figure
-                            calculateStatutoryFeeRebate sp appliedPayments simpleScheduleStats appliedPaymentDay window
+                            calculateStatutoryFeeRebate sp appliedPayments initialStats appliedPaymentDay window
                             |> Cent.max feeRebateIfSettled
                             |> Cent.min feeTotal
                         | _ ->
@@ -819,25 +821,26 @@ module Amortisation =
         let chargesTotal = items' |> Array.sumBy _.ChargesPortion
         let feeRebate = finalItem.FeeRebate
         let finalPaymentDay = finalItemDay
-        let finalBalanceStatus = finalItem.BalanceStatus
-        let finalAprSolution =
-            items'
-            |> Array.filter(fun asi -> asi.NetEffect > 0L<Cent>)
-            |> Array.map(fun asi -> { TransferType = Apr.TransferType.Payment; TransferDate = asi.OffsetDate; Value = asi.NetEffect } : Apr.Transfer)
-            |> Apr.calculate sp.InterestConfig.AprMethod sp.Principal sp.StartDate
-            |> Apr.toPercent sp.InterestConfig.AprMethod
-        let scheduledPaymentItems = items |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
+        let requiredScheduledPaymentItems = items |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment && not si.PaymentStatus.IsNoLongerRequired)
         let actualPaymentItems = items |> Map.filter(fun _ si -> si.ActualPayments.Length > 0)
         {
             ScheduleItems = items
-            ScheduleStats = {
-                FinalScheduledPaymentCount =
-                    scheduledPaymentItems
+            FinalStats = {
+                RequiredScheduledPaymentCount =
+                    requiredScheduledPaymentItems
                     |> Map.count
+                LastRequiredScheduledPaymentDay =
+                    if Map.count requiredScheduledPaymentItems = 0 then
+                        ValueNone
+                    else
+                        requiredScheduledPaymentItems
+                        |> Map.maxKeyValue
+                        |> fst
+                        |> ValueSome
                 FinalActualPaymentCount =
                     items'
                     |> Array.sumBy(fun asi -> Array.length asi.ActualPayments)
-                FinalActualPaymentDay =
+                LastActualPaymentDay =
                     if Map.count actualPaymentItems = 0 then
                         ValueNone
                     else
@@ -845,7 +848,6 @@ module Amortisation =
                         |> Map.maxKeyValue
                         |> fst
                         |> ValueSome
-                FinalApr = finalAprSolution
                 FinalCostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then
                         Percent 0m

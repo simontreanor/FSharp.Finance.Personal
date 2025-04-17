@@ -537,11 +537,11 @@ module Scheduling =
 
     /// final statistics based on the payments being made on time and in full
     [<Struct>]
-    type SimpleScheduleStats = {
+    type InitialStats = {
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
-        FinalScheduledPaymentDay: int<OffsetDay>
+        LastScheduledPaymentDay: int<OffsetDay>
         /// the amount of all the payments except the final one
         LevelPayment: int64<Cent>
         /// the amount of the final payment
@@ -559,29 +559,29 @@ module Scheduling =
     }
 
     /// statistics resulting from the simple schedule calculations
-    module SimpleScheduleStats =
+    module InitialStats =
         /// renders the final APR as a string, or "n/a" if not available
         let finalAprString = function
         | Solution.Found _, ValueSome percent -> $"{percent}"
         | _ -> "<i>n/a</i>"
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
-        let toHtmlTable schedule =
+        let toHtmlTable initialStats =
             $"""
 <table>
     <tr>
-        <td>Initial interest balance: <i>{formatCent schedule.InitialInterestBalance}</i></td>
-        <td>Initial cost-to-borrowing ratio: <i>{schedule.InitialCostToBorrowingRatio}</i></td>
-        <td>Initial APR: <i>{schedule.InitialApr}</i></td>
+        <td>Initial interest balance: <i>{formatCent initialStats.InitialInterestBalance}</i></td>
+        <td>Initial cost-to-borrowing ratio: <i>{initialStats.InitialCostToBorrowingRatio}</i></td>
+        <td>Initial APR: <i>{initialStats.InitialApr}</i></td>
     </tr>
     <tr>
-        <td>Level payment: <i>{formatCent schedule.LevelPayment}</i></td>
-        <td>Final payment: <i>{formatCent schedule.FinalPayment}</i></td>
-        <td>Final scheduled payment day: <i>{schedule.FinalScheduledPaymentDay}</i></td>
+        <td>Level payment: <i>{formatCent initialStats.LevelPayment}</i></td>
+        <td>Final payment: <i>{formatCent initialStats.FinalPayment}</i></td>
+        <td>Last scheduled payment day: <i>{initialStats.LastScheduledPaymentDay}</i></td>
     </tr>
     <tr>
-        <td>Total scheduled payments: <i>{formatCent schedule.ScheduledPaymentTotal}</i></td>
-        <td>Total principal: <i>{formatCent schedule.PrincipalTotal}</i></td>
-        <td>Total interest: <i>{formatCent schedule.InterestTotal}</i></td>
+        <td>Total scheduled payments: <i>{formatCent initialStats.ScheduledPaymentTotal}</i></td>
+        <td>Total principal: <i>{formatCent initialStats.PrincipalTotal}</i></td>
+        <td>Total interest: <i>{formatCent initialStats.InterestTotal}</i></td>
     </tr>
 </table>
 """
@@ -593,7 +593,7 @@ module Scheduling =
         /// the items of the schedule
         Items: SimpleItem array
         /// the statistics from the schedule
-        Stats: SimpleScheduleStats
+        Stats: InitialStats
     }
 
     ///  a schedule of payments, with statistics
@@ -627,10 +627,10 @@ module Scheduling =
 <h4>Parameters</h4>{Parameters.toHtmlTable sp}"""
             let htmlDatestamp = $"""
 <p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
-            let htmlScheduleStats = $"""
-<h4>Initial Stats</h4>{SimpleScheduleStats.toHtmlTable schedule.Stats}"""
+            let htmlFinalStats = $"""
+<h4>Initial Stats</h4>{InitialStats.toHtmlTable schedule.Stats}"""
             let filename = $"out/{folder}/{title}.md"
-            $"""{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlScheduleStats}"""
+            $"""{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlFinalStats}"""
             |> outputToFile' filename false
 
     /// convert an option to a value option
@@ -928,7 +928,7 @@ module Scheduling =
                         interestTotal
                     | _ ->
                         0L<Cent>
-                FinalScheduledPaymentDay = finalScheduledPaymentDay
+                LastScheduledPaymentDay = finalScheduledPaymentDay
                 LevelPayment =
                     scheduledPayments
                     |> Array.countBy ScheduledPayment.total

@@ -133,23 +133,6 @@ module AprUsActuarialTests =
         let expected = Percent 7.30m
         actual |> should equal expected
 
-    /// (c)(5) Single advance, single payment transaction
-    let calculate5 advance payment =
-        let consummationDate = advance.TransferDate
-        let firstFinanceChargeEarnedDate = consummationDate
-        let advances = [| advance |]
-        let payments = [| payment |]
-        UsActuarial.generalEquation consummationDate firstFinanceChargeEarnedDate advances payments
-        |> getAprOr 0m |> Percent.fromDecimal |> Percent.round 2
-
-    [<Fact>]
-    let ``Example (c)(5)(i): Single advance, single payment (term of less than 1 year, measured in days)`` () =
-        let advance = { TransferType = Payment; TransferDate = Date(1978, 1, 3); Value = 1000_00L<Cent> }
-        let payment = { TransferType = Payment; TransferDate = Date(1978, 9, 15); Value = 1080_00L<Cent> }
-        let actual = calculate5 advance payment
-        let expected = Percent 11.45m
-        actual |> should equal expected
-
     /// examples created while debugging the notebook, used to test edge-cases, all confirmed using Excel
     module ExtraExamples =
 

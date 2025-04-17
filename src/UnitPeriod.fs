@@ -40,8 +40,6 @@ module UnitPeriod =
     /// interval between payments
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type UnitPeriod =
-        /// non-recurring
-        | NoInterval of UnitPeriodDays:int<DurationDay> // cf. (b)(5)(vii)
         /// a day
         | Day
         /// a week or a multiple of weeks
@@ -53,8 +51,6 @@ module UnitPeriod =
         /// HTML formatting to display the unit period in a readable format
         member up.Html =
             match up with
-            | NoInterval days ->
-                $"one-off after {days} days"
             | Day ->
                 "day"
             | Week multiple when multiple = 1 ->
@@ -94,39 +90,35 @@ module UnitPeriod =
 
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
-        if advanceDates |> Array.length = 1 && paymentDates |> Array.length < 2 then
-            min term.Duration 365<DurationDay>
-            |> NoInterval
-        else
-            let periodLengths =
-                [| [| term.Start |]; advanceDates; paymentDates |]
-                |> Array.concat
-                |> Array.sort
-                |> Array.distinct
-                |> Array.windowed 2
-                |> Array.map ((fun a -> (a[1] - a[0]).Days) >> normalise >> fst)
-            let commonPeriodLengths =
-                periodLengths
-                |> commonLengths
-            if Array.isEmpty commonPeriodLengths then
-                periodLengths
-                |> Array.countBy id
-                |> Array.sortBy snd
-                |> Array.averageBy (snd >> decimal)
-                |> roundMidpointTowardsZero
-                |> int
+        let periodLengths =
+            [| [| term.Start |]; advanceDates; paymentDates |]
+            |> Array.concat
+            |> Array.sort
+            |> Array.distinct
+            |> Array.windowed 2
+            |> Array.map ((fun a -> (a[1] - a[0]).Days) >> normalise >> fst)
+        let commonPeriodLengths =
+            if Array.isEmpty periodLengths then
+                [||]
             else
-                commonPeriodLengths
-                |> Array.sortBy snd
-                |> Array.maxBy snd
-                |> fst
-            |> normalise
-            |> snd
+                commonLengths periodLengths
+        if Array.isEmpty commonPeriodLengths then
+            periodLengths
+            |> Array.countBy id
+            |> Array.sortBy snd
+            |> Array.averageBy (snd >> decimal)
+            |> roundMidpointTowardsZero
+            |> int
+        else
+            commonPeriodLengths
+            |> Array.sortBy snd
+            |> Array.maxBy snd
+            |> fst
+        |> normalise
+        |> snd
 
     /// number of unit-periods in a year
     let numberPerYear = function
-        | NoInterval unitPeriodDays when unitPeriodDays > 0<DurationDay> ->
-            365m / decimal unitPeriodDays
         | Day ->
             365m
         | Week multiple when multiple > 0 ->
@@ -141,8 +133,6 @@ module UnitPeriod =
     /// approximate length of unit period in days, used e.g. as the denominator in unit-period fractions
     let roughLength unitPeriod =
         match unitPeriod with
-        | NoInterval _ ->
-            365
         | Day ->
             1
         | Week multiple ->
@@ -155,8 +145,6 @@ module UnitPeriod =
     /// unit period combined with a start date and multiple where appropriate
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type Config =
-        /// single on the given date
-        | Single of Date:Date
         /// daily starting on the given date
         | Daily of StartDate:Date
         /// (multi-)weekly: every n weeks starting on the given date
@@ -169,8 +157,6 @@ module UnitPeriod =
         member upc.Html =
             let formatMonthEnd d = if d = 31 then "month-end" else d.ToString "00"
             match upc with
-            | Single d ->
-                $"single on %A{d}"
             | Daily sd ->
                 $"daily from %A{sd}"
             | Weekly (multiple, wsd) when multiple = 1 ->
@@ -224,8 +210,6 @@ module UnitPeriod =
         /// create a unit-period config from a unit period (using month-end tracking for semi-monthly and monthly unit periods)
         let from startDate unitPeriod =
             match unitPeriod with
-            | NoInterval _ ->
-                Single startDate
             | Day ->
                 Daily startDate
             | Week weekMultiple ->
@@ -238,8 +222,6 @@ module UnitPeriod =
         /// get the underlying unit period from a unit-period config
         let unitPeriod unitPeriodConfig =
             match unitPeriodConfig with
-            | Single _ ->
-                NoInterval 0<DurationDay>
             | Daily _ ->
                 Day
             | Weekly (multiple, _) ->
@@ -252,8 +234,6 @@ module UnitPeriod =
         /// approximate length of unit period in days, used e.g. for generating rescheduling iterations
         let roughLength unitPeriodConfig =
             match unitPeriodConfig with
-            | Single _ ->
-                365m
             | Daily _ ->
                 1m
             | Weekly (multiple, _) ->
@@ -266,8 +246,6 @@ module UnitPeriod =
         /// gets the start date based on a unit-period config
         let startDate unitPeriodConfig =
             match unitPeriodConfig with
-            | Single d ->
-                d
             | Daily sd ->
                 sd
             | Weekly (_, wsd) ->
@@ -299,7 +277,6 @@ module UnitPeriod =
         /// fixes an incorrect config by using a default configuration
         let internal fix unitPeriodConfig =
             match unitPeriodConfig with
-            | Single _
             | Daily _
             | Weekly _ as c ->
                 c
@@ -313,7 +290,6 @@ module UnitPeriod =
         /// constrains the freqencies to valid values
         let constrain unitPeriodConfig =
             match unitPeriodConfig with
-            | Single _
             | Daily _
             | Weekly _ as c ->
                 c
@@ -339,8 +315,6 @@ module UnitPeriod =
     /// generates a suggested number of payments to constrain the loan within a certain duration
     let maxPaymentCount (maxDuration: int<DurationDay>) (config: Config) =
         match config with
-        | Single _ ->
-            1.
         | Daily _ ->
             float maxDuration
         | Weekly (multiple, _) when multiple > 0 ->
@@ -375,10 +349,6 @@ module UnitPeriod =
                 d
         let generate upc =
             match upc |> Config.constrain with
-            | Single startDate ->
-                Array.map (fun _ ->
-                    startDate
-                )
             | Daily startDate ->
                 Array.map startDate.AddDays
             | Weekly (multiple, startDate) ->
@@ -434,8 +404,6 @@ module UnitPeriod =
             let transferDates = transform transferDates
             let firstTransferDate = Array.head transferDates
             match interval with
-            | NoInterval _ ->
-                Single firstTransferDate
             | Day ->
                 Daily firstTransferDate
             | Week multiple ->

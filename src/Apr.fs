@@ -204,11 +204,10 @@ module Apr =
         /// map an array of transfers to an array of whole and fractional unit periods
         let mapUnitPeriods unitPeriod =
             match unitPeriod with
-            | (UnitPeriod.NoInterval _) -> singleUnitPeriod
             | UnitPeriod.Day -> dailyUnitPeriods
-            | (UnitPeriod.Week multiple) -> weeklyUnitPeriods multiple
+            | UnitPeriod.Week multiple -> weeklyUnitPeriods multiple
             | UnitPeriod.SemiMonth -> semiMonthlyUnitPeriods
-            | (UnitPeriod.Month multiple) -> monthlyUnitPeriods multiple
+            | UnitPeriod.Month multiple -> monthlyUnitPeriods multiple
 
         /// (b)(8) General equation.
         let generalEquation consummationDate firstFinanceChargeEarnedDate advances payments =
