@@ -44,7 +44,7 @@ module PaymentScheduleTests =
                     FeeType = Fee.FeeType.FacilitationFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                     Rounding = RoundDown
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                    SettlementRefund = Fee.SettlementRefund.ProRata
+                    SettlementRebate = Fee.SettlementRebate.ProRata
                 }
                 ChargeConfig = Some {
                     ChargeTypes = Map [

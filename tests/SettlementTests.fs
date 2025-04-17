@@ -74,7 +74,7 @@ module SettlementTests =
                     InterestPortion = 16_96L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected =
@@ -97,13 +97,13 @@ module SettlementTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 16_96L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -161,7 +161,7 @@ module SettlementTests =
                     InterestPortion = 23_48L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected =
@@ -184,13 +184,13 @@ module SettlementTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 23_48L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -249,7 +249,7 @@ module SettlementTests =
                     InterestPortion = 2_82L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected =
@@ -272,13 +272,13 @@ module SettlementTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 2_82L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected

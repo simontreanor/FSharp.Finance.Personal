@@ -11,9 +11,9 @@ module FormattingHelper =
     let hideFeeProperties =
         [|
             nameof asi.FeePortion
-            nameof asi.FeeRefund
+            nameof asi.FeeRebate
             nameof asi.FeeBalance
-            nameof asi.FeeRefundIfSettled
+            nameof asi.FeeRebateIfSettled
         |]
     /// an array of properties relating to (penalty) charges
     let hideChargesProperties =
@@ -30,7 +30,7 @@ module FormattingHelper =
     /// an array of properties representing extra information
     let hideExtraProperties =
         [|
-            nameof asi.FeeRefundIfSettled
+            nameof asi.FeeRebateIfSettled
             nameof asi.SettlementFigure
             nameof asi.Window
         |]

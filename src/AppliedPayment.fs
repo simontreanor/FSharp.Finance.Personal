@@ -108,9 +108,9 @@ module AppliedPayment =
                             // no payments due or made (possibly the day is included for information only, e.g. to force calculation of balances)
                             | 0L<Cent>, 0L<Cent> ->
                                 0L<Cent>, NoneScheduled
-                            // no payment due, but a refund issued
+                            // no payment due, but a rebate issued
                             | 0L<Cent>, cpt when cpt < 0L<Cent> ->
-                                cpt, Refunded
+                                cpt, Rebateed
                             // no payment due, but a payment made
                             | 0L<Cent>, cpt ->
                                 cpt, ExtraPayment

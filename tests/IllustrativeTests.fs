@@ -53,13 +53,13 @@ module IllustrativeTests =
             FeePortion = 0L<Cent>
             InterestPortion = interestPortion
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
     [<Fact>]
@@ -132,13 +132,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
 
@@ -215,13 +215,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
 
@@ -297,13 +297,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 29L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 29L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 29L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
 
@@ -380,13 +380,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 1_77L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 42_39L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 42_39L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
 

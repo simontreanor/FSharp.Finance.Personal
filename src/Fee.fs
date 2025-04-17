@@ -44,22 +44,22 @@ module Fee =
 
     /// how the fee is treated in the event of an early settlement
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
-    type SettlementRefund =
-        /// fee is due in full with no discount or refund
+    type SettlementRebate =
+        /// fee is due in full with no discount or rebate
         | Zero
-        /// for original (non-rescheduled) amortisations: fee is refunded proportionately based on the current final payment day
+        /// for original (non-rescheduled) amortisations: fee is rebateed proportionately based on the current final payment day
         | ProRata
-        /// for rescheduled amortisations: fee is refunded proportionately based on the original final payment day
+        /// for rescheduled amortisations: fee is rebateed proportionately based on the original final payment day
         | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
-        /// the current fee balance is refunded
+        /// the current fee balance is rebateed
         | Balance
-        /// HTML formatting to display the settlement refund in a readable format
+        /// HTML formatting to display the settlement rebate in a readable format
         member sr.Html =
             match sr with
-            | Zero -> "no refund"
-            | ProRata -> "pro-rata refund"
-            | ProRataRescheduled day -> $"pro rata refund (based on day {day})"
-            | Balance -> "balance refund"
+            | Zero -> "no rebate"
+            | ProRata -> "pro-rata rebate"
+            | ProRataRescheduled day -> $"pro rata rebate (based on day {day})"
+            | Balance -> "balance rebate"
 
     /// how to handle any fee when rescheduling or rolling over
     [<Struct>]
@@ -80,7 +80,7 @@ module Fee =
         /// how to amortise the fee in relation to the principal
         FeeAmortisation: FeeAmortisation
         /// how the fee is treated when a product is repaid early
-        SettlementRefund: SettlementRefund
+        SettlementRebate: SettlementRebate
     }
 
     /// options specifying the type of fee and how it is calculated
@@ -97,7 +97,7 @@ module Fee =
                 </tr>
                 <tr>
                     <td>fee amortisation: <i>{c.FeeAmortisation}</i></td>
-                    <td>settlement refund: <i>{c.SettlementRefund}</i></td>
+                    <td>settlement rebate: <i>{c.SettlementRebate}</i></td>
                 </tr>
             </table>"""
             | None ->

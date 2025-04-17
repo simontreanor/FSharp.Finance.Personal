@@ -287,7 +287,7 @@ module InterestFirstTests =
     [<Fact>]
     let InterestFirstTest011 () =
         let title = "InterestFirstTest011"
-        let description = "Add-on interest method with small loan and massive payment leading to a refund needed"
+        let description = "Add-on interest method with small loan and massive payment leading to a rebate needed"
         let sp = { scheduleParameters with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
 
         let actualPayments =
