@@ -34,9 +34,9 @@ module PromotionalRatesTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = None
@@ -130,9 +130,9 @@ module PromotionalRatesTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = NoMinimumPayment
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = NoMinimumPayment
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent>

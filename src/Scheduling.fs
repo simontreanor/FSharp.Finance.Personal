@@ -409,11 +409,11 @@ module Scheduling =
         /// whether to leave a final balance open or close it using various methods
         CloseBalanceOption: CloseBalanceOption
         /// how to round payments
-        PaymentRounding: Rounding
+        Rounding: Rounding
         /// the minimum payment that can be taken and how to handle it
-        MinimumPayment: MinimumPayment
+        Minimum: MinimumPayment
         /// the duration after which a pending payment is considered a missed payment and charges are applied
-        PaymentTimeout: int<DurationDay>
+        Timeout: int<DurationDay>
     }
 
     /// how to treat scheduled payments
@@ -427,11 +427,11 @@ module Scheduling =
                     <td>balance-close: <i>{paymentConfig.CloseBalanceOption.Html.Replace(" ", "&nbsp;")}</i></td>
                 </tr>
                 <tr>
-                    <td>rounding: <i>{paymentConfig.PaymentRounding}</i></td>
-                    <td>timeout: <i>{paymentConfig.PaymentTimeout}</i></td>
+                    <td>rounding: <i>{paymentConfig.Rounding}</i></td>
+                    <td>timeout: <i>{paymentConfig.Timeout}</i></td>
                 </tr>
                 <tr>
-                    <td colspan='2'>minimum: <i>{paymentConfig.MinimumPayment.Html.Replace(" ", "&nbsp;")}</i></td>
+                    <td colspan='2'>minimum: <i>{paymentConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></td>
                 </tr>
                 <tr>
                     <td colspan='2'>level-payment option: <i>{paymentConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>
@@ -559,6 +559,7 @@ module Scheduling =
     </tr>"""
 
     /// final statistics based on the payments being made on time and in full
+    [<Struct>]
     type SimpleScheduleStats = {
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
@@ -770,7 +771,7 @@ module Scheduling =
             None
         else
             let state = stateOption.Value
-            let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feeTotal state.InterestBalance
+            let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.Rounding sp.Principal feeTotal state.InterestBalance
             let newSchedule =
                 paymentDays
                 |> Array.scan (fun simpleItem pd ->
@@ -823,7 +824,7 @@ module Scheduling =
     let generatePaymentValue sp paymentDays firstItem roughPayment =
         let scheduledPayment =
             roughPayment
-            |> Cent.round sp.PaymentConfig.PaymentRounding
+            |> Cent.round sp.PaymentConfig.Rounding
             |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
         let schedule =
             paymentDays
@@ -872,7 +873,7 @@ module Scheduling =
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue sp paymentDays initialSimpleItem
                 let iterationLimit = 100u
-                let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.PaymentRounding sp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
+                let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.Rounding sp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
                 match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance sp.PaymentConfig.LevelPaymentOption) toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })

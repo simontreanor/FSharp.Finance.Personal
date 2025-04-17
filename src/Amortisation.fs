@@ -403,7 +403,7 @@ module Amortisation =
         let denominator = UnitPeriod.roughLength unitPeriod
         let settlementPartPeriod = Fraction.Simple(numerator, denominator)
         let payments = originalScheduledPayments |> Array.map(fun osp -> osp.Window, osp.OriginalScheduledPaymentValue)
-        Interest.calculateRebate sp.Principal payments simpleScheduleStats.InitialApr window settlementPartPeriod unitPeriod sp.PaymentConfig.PaymentRounding
+        Interest.calculateRebate sp.Principal payments simpleScheduleStats.InitialApr window settlementPartPeriod unitPeriod sp.PaymentConfig.Rounding
 
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate sp settlementDay simpleScheduleStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
@@ -505,7 +505,7 @@ module Amortisation =
             // keep track of any excess payments made to offset against future payments due
             let extraPaymentsBalance = a.CumulativeActualPayments - a.CumulativeScheduledPayments - a.CumulativeGeneratedPayments
             // get the payment due
-            let paymentDue = calculatePaymentDue si ap.ScheduledPayment.Original ap.ScheduledPayment.Rescheduled extraPaymentsBalance interestPortionL sp.PaymentConfig.MinimumPayment
+            let paymentDue = calculatePaymentDue si ap.ScheduledPayment.Original ap.ScheduledPayment.Rescheduled extraPaymentsBalance interestPortionL sp.PaymentConfig.Minimum
             // determine the total of any underpayment
             let underpaymentTotal =
                 match ap.PaymentStatus with
@@ -874,7 +874,7 @@ module Amortisation =
 
         let amortisationSchedule =
             scheduledPayments
-            |> applyPayments asOfDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.PaymentTimeout actualPayments
+            |> applyPayments asOfDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.Timeout actualPayments
             |> calculate sp settlementDay simpleSchedule.Stats
             |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
             |> calculateStats sp settlementDay

@@ -62,9 +62,9 @@ module AprUnitedKingdomTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = None
