@@ -733,7 +733,7 @@
 
 <h4>Description</h4>
 <p><i>Pending payments should only apply if not timed out</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>

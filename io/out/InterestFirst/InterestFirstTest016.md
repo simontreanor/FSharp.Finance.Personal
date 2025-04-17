@@ -193,7 +193,7 @@
 
 <h4>Description</h4>
 <p><i>Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.2.0</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
