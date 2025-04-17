@@ -25,7 +25,6 @@ module InterestFirstTests =
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
-                CloseBalanceOption = LeaveOpenBalance
                 Rounding = RoundUp
                 Minimum = DeferOrWriteOff 50L<Cent>
                 Timeout = 3<DurationDay>

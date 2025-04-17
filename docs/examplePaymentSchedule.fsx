@@ -37,7 +37,6 @@ let scheduleParameters =
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
             ScheduledPaymentOption = AsScheduled
-            CloseBalanceOption = LeaveOpenBalance
             PaymentRounding = RoundUp
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>

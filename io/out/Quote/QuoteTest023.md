@@ -309,17 +309,18 @@
             <table>
                 <tr>
                     <td>scheduling: <i>as scheduled</i></td>
-                    <td>balance-close: <i>leave&nbsp;open&nbsp;balance</i></td>
                 </tr>
                 <tr>
                     <td>rounding: <i>rounded up</i></td>
+                </tr>
+                <tr>
                     <td>timeout: <i>0</i></td>
                 </tr>
                 <tr>
-                    <td colspan='2'>minimum: <i>no&nbsp;minimum&nbsp;payment</i></td>
+                    <td>minimum: <i>no&nbsp;minimum&nbsp;payment</i></td>
                 </tr>
                 <tr>
-                    <td colspan='2'>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
+                    <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
                 </tr>
             </table>
         </td>

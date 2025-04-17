@@ -362,25 +362,6 @@ module Scheduling =
             | AsScheduled -> "as scheduled"
             | AddChargesAndInterest -> "add charges and interest"
 
-    /// how to handle a final balance if not closed: leave it open or modify/add payments at the end of the schedule
-    [<Struct; StructuredFormatDisplay("{Html}")>]
-    type CloseBalanceOption =
-        /// do not modify the final payment and leave any open balance as is
-        | LeaveOpenBalance
-        /// increase the final payment to close any open balance
-        | IncreaseFinalPayment
-        /// add a single payment to the schedule to close any open balance immediately (interval based on unit-period config)
-        | AddSingleExtraPayment
-        /// add multiple payments to the schedule to close any open balance gradually (interval based on unit-period config)
-        | AddMultipleExtraPayments
-        /// HTML formatting to display the close balance option in a readable format
-        member cbo.Html =
-            match cbo with
-            | LeaveOpenBalance -> "leave open balance"
-            | IncreaseFinalPayment -> "increase final payment"
-            | AddSingleExtraPayment -> "add single extra payment"
-            | AddMultipleExtraPayments -> "add multiple extra payments"
-
     /// how to handle cases where the payment due is less than the minimum that payment providers can process
      [<Struct; StructuredFormatDisplay("{Html}")>]
     type MinimumPayment =
@@ -403,8 +384,6 @@ module Scheduling =
         LevelPaymentOption: LevelPaymentOption
         /// whether to modify scheduled payment amounts to keep the schedule on-track
         ScheduledPaymentOption: ScheduledPaymentOption
-        /// whether to leave a final balance open or close it using various methods
-        CloseBalanceOption: CloseBalanceOption
         /// how to round payments
         Rounding: Rounding
         /// the minimum payment that can be taken and how to handle it
@@ -421,17 +400,18 @@ module Scheduling =
             <table>
                 <tr>
                     <td>scheduling: <i>{paymentConfig.ScheduledPaymentOption}</i></td>
-                    <td>balance-close: <i>{paymentConfig.CloseBalanceOption.Html.Replace(" ", "&nbsp;")}</i></td>
                 </tr>
                 <tr>
                     <td>rounding: <i>{paymentConfig.Rounding}</i></td>
+                </tr>
+                <tr>
                     <td>timeout: <i>{paymentConfig.Timeout}</i></td>
                 </tr>
                 <tr>
-                    <td colspan='2'>minimum: <i>{paymentConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></td>
+                    <td>minimum: <i>{paymentConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></td>
                 </tr>
                 <tr>
-                    <td colspan='2'>level-payment option: <i>{paymentConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>
+                    <td>level-payment option: <i>{paymentConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>
                 </tr>
             </table>"""
 

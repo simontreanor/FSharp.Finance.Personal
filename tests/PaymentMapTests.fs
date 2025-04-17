@@ -27,7 +27,6 @@ module PaymentMapTests =
         }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
-            CloseBalanceOption = LeaveOpenBalance
         }
         FeeConfig = None
         ChargeConfig = None
