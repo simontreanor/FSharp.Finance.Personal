@@ -14,6 +14,7 @@ module PaymentMapTests =
     open Formatting
     open PaymentSchedule
     open Percentages
+    open UnitPeriod
     open ValueOptionCE
 
     let exampleParametersUk asOfDate startDate principal unitPeriodConfig paymentCount interestMethod = {
@@ -22,8 +23,7 @@ module PaymentMapTests =
         Principal = principal
         PaymentSchedule = AutoGenerateSchedule {
             UnitPeriodConfig = unitPeriodConfig
-            PaymentCount = paymentCount,
-            MaxDuration = Duration.Maximum (180<DurationDay>, startDate)
+            ScheduleLength = PaymentCount paymentCount,
         }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
@@ -56,7 +56,7 @@ module PaymentMapTests =
         let description = "Basic scenario"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
-        let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
+        let unitPeriodConfig = Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
             let schedule = sp |> calculate BelowZero
@@ -88,7 +88,7 @@ module PaymentMapTests =
         let description = "Very early exact repayments"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
-        let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
+        let unitPeriodConfig = Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
             let schedule = sp |> calculate BelowZero
@@ -123,7 +123,7 @@ module PaymentMapTests =
         let description = "Paid off but with erratic payment timings"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
-        let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
+        let unitPeriodConfig = Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
             let schedule = sp |> calculate BelowZero
@@ -156,7 +156,7 @@ module PaymentMapTests =
         let description = "Erratic payment timings but not paid off"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
-        let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
+        let unitPeriodConfig = Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
             let schedule = sp |> calculate BelowZero
@@ -188,7 +188,7 @@ module PaymentMapTests =
         let description = "No payments at all"
         let startDate = Date(2024, 8, 5)
         let asOfDate = startDate.AddDays 180
-        let unitPeriodConfig = UnitPeriod.Config.Monthly(1, 2024, 8, 15)
+        let unitPeriodConfig = Monthly(1, 2024, 8, 15)
         let sp = exampleParametersUk asOfDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
             let schedule = sp |> calculate BelowZero
