@@ -158,6 +158,7 @@ module Amortisation =
     }
 
     /// final statistics resulting from the calculations
+    [<Struct>]
     type ScheduleStats = {
         /// the final number of scheduled payments in the schedule
         FinalScheduledPaymentCount: int
@@ -380,12 +381,36 @@ module Amortisation =
                 | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
                 | _ -> p
 
+    /// for UK FCA-regulated agreements, calculates the fee rebate due
+    let calculateStatutoryFeeRebate sp (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) simpleScheduleStats appliedPaymentDay window =
+        let originalScheduledPayments =
+            appliedPayments
+            |> Map.filter(fun _ ap -> ap.ScheduledPayment.Original.IsSome)
+            |> Map.toArray
+            |> Array.mapi(fun i (d, ap) -> {| Window = i; OffsetDay = d; OriginalScheduledPaymentValue = ap.ScheduledPayment.Original.Value |})
+        let unitPeriod =
+            match sp.ScheduleConfig with
+            | AutoGenerateSchedule ags ->
+                UnitPeriod.Config.unitPeriod ags.UnitPeriodConfig
+            | FixedSchedules _
+            | CustomSchedule _ ->
+                let finalScheduledPaymentDate = simpleScheduleStats.FinalScheduledPaymentDay |> OffsetDay.toDate sp.StartDate
+                let transactionTerm = UnitPeriod.transactionTerm sp.StartDate sp.StartDate finalScheduledPaymentDate sp.StartDate
+                let paymentDates = originalScheduledPayments |> Array.map (_.OffsetDay >> OffsetDay.toDate sp.StartDate)
+                UnitPeriod.nearest transactionTerm [| sp.StartDate |] paymentDates
+        let previousScheduledPaymentDate = originalScheduledPayments |> Array.filter(fun osp -> osp.OffsetDay <= appliedPaymentDay) |> Array.last |> _.OffsetDay
+        let numerator = appliedPaymentDay - previousScheduledPaymentDate |> int
+        let denominator = UnitPeriod.roughLength unitPeriod
+        let settlementPartPeriod = Fraction.Simple(numerator, denominator)
+        let payments = originalScheduledPayments |> Array.map(fun osp -> osp.Window, osp.OriginalScheduledPaymentValue)
+        Interest.calculateRebate sp.Principal payments simpleScheduleStats.InitialApr window settlementPartPeriod unitPeriod sp.PaymentConfig.PaymentRounding
+
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
-    let internal calculate sp settlementDay (initialInterestBalanceL: int64<Cent>) (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
+    let internal calculate sp settlementDay simpleScheduleStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
         let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
-        let initialInterestBalanceM = Cent.toDecimalCent initialInterestBalanceL
+        let initialInterestBalanceM = Cent.toDecimalCent simpleScheduleStats.InitialInterestBalance
         // calculate the total fee value for the entire schedule
         let feeTotal = Fee.total sp.FeeConfig sp.Principal
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
@@ -589,7 +614,15 @@ module Amortisation =
             // refine the fee portion and rebate if a rebate is actually applied on the day, i.e. if the net effect covers the settlement figure
             let feePortion', feeRebate =
                 if ap.GeneratedPayment.IsToBeGenerated || feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect then
-                    Cent.max 0L<Cent> (si.FeeBalance - feeRebateIfSettled), feeRebateIfSettled
+                    let feeRebate' =
+                        match sp.InterestConfig.AprMethod with
+                        | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
+                            // if the statutory rebate is higher than the fee rebate calculated above, use the higher figure
+                            calculateStatutoryFeeRebate sp appliedPayments simpleScheduleStats appliedPaymentDay window
+                            |> Cent.max feeRebateIfSettled
+                        | _ ->
+                            feeRebateIfSettled
+                    Cent.max 0L<Cent> (si.FeeBalance - feeRebate'), feeRebate'
                 else
                     sign feePortion, 0L<Cent>
             // apportion the principal
@@ -842,10 +875,8 @@ module Amortisation =
         let amortisationSchedule =
             scheduledPayments
             |> applyPayments asOfDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.PaymentTimeout actualPayments
-            |> calculate sp settlementDay simpleSchedule.Stats.InitialInterestBalance
+            |> calculate sp settlementDay simpleSchedule.Stats
             |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
             |> calculateStats sp settlementDay
 
-        let simpleSchedule = simpleSchedule
-    
         { AmortisationSchedule = amortisationSchedule; SimpleSchedule = simpleSchedule }

@@ -23,7 +23,6 @@ module AppliedPayment =
                 $"<i>{ac.ChargeType}</i> {formatCent ac.Total}"
 
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
-    [<Struct>]
     type AppliedPayment = {
         /// the amount of any scheduled payment due on the current day
         ScheduledPayment: ScheduledPayment
