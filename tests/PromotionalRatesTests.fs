@@ -34,9 +34,9 @@ module PromotionalRatesTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = None
@@ -130,15 +130,15 @@ module PromotionalRatesTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = NoMinimumPayment
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = NoMinimumPayment
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.MortageFee <| Amount.Simple 999_00L<Cent>
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
-                SettlementRefund = Fee.SettlementRefund.Zero
+                SettlementRebate = Fee.SettlementRebate.Zero
             }
             ChargeConfig = None
             InterestConfig = {
@@ -183,13 +183,13 @@ module PromotionalRatesTests =
             FeePortion = 0L<Cent>
             InterestPortion = 10_26L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected

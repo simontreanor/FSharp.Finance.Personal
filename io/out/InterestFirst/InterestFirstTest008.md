@@ -19,13 +19,13 @@
         <th style="text-align: right;">Fee portion</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Charges portion</th>
-        <th style="text-align: right;">Fee refund</th>
+        <th style="text-align: right;">Fee rebate</th>
         <th style="text-align: right;">Principal balance</th>
         <th style="text-align: right;">Fee balance</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Charges balance</th>
         <th style="text-align: right;">Settlement figure</th>
-        <th style="text-align: right;">Fee refund if&nbsp;settled</th>
+        <th style="text-align: right;">Fee rebate if&nbsp;settled</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -39,20 +39,20 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>none&nbsp;scheduled</i></td>
         <td class="ci10">open</td>
-        <td class="ci13">0.0000</td>
-        <td class="ci14">0.0000</td>
-        <td class="ci15"><i>n/a</i></td>
+        <td class="ci11">0.0000</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13"><i>n/a</i></td>
+        <td class="ci14">0.00</td>
+        <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
         <td class="ci18">0.00</td>
-        <td class="ci19">0.00</td>
+        <td class="ci19">1,000.00</td>
         <td class="ci20">0.00</td>
-        <td class="ci21">1,000.00</td>
+        <td class="ci21">838.6300</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">838.6300</td>
+        <td class="ci23">1,000.00</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">1,000.00</td>
-        <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">10</td>
@@ -66,20 +66,20 @@
         <td class="ci08">367.73</td>
         <td class="ci09"><i>payment&nbsp;made</i></td>
         <td class="ci10">open</td>
-        <td class="ci13">80.0000</td>
-        <td class="ci14">0.0000</td>
-        <td class="ci15"><i>n/a</i></td>
-        <td class="ci16">0.00</td>
+        <td class="ci11">80.0000</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13"><i>n/a</i></td>
+        <td class="ci14">0.00</td>
+        <td class="ci15">0.00</td>
+        <td class="ci16">367.73</td>
         <td class="ci17">0.00</td>
-        <td class="ci18">367.73</td>
-        <td class="ci19">0.00</td>
+        <td class="ci18">0.00</td>
+        <td class="ci19">1,000.00</td>
         <td class="ci20">0.00</td>
-        <td class="ci21">1,000.00</td>
+        <td class="ci21">470.9000</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">470.9000</td>
+        <td class="ci23">712.27</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">712.27</td>
-        <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">41</td>
@@ -93,20 +93,20 @@
         <td class="ci08">367.73</td>
         <td class="ci09"><i>payment&nbsp;made</i></td>
         <td class="ci10">open</td>
-        <td class="ci13">248.0000</td>
-        <td class="ci14">0.0000</td>
-        <td class="ci15"><i>n/a</i></td>
-        <td class="ci16">0.00</td>
+        <td class="ci11">248.0000</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13"><i>n/a</i></td>
+        <td class="ci14">0.00</td>
+        <td class="ci15">0.00</td>
+        <td class="ci16">367.73</td>
         <td class="ci17">0.00</td>
-        <td class="ci18">367.73</td>
-        <td class="ci19">0.00</td>
+        <td class="ci18">0.00</td>
+        <td class="ci19">1,000.00</td>
         <td class="ci20">0.00</td>
-        <td class="ci21">1,000.00</td>
+        <td class="ci21">103.1700</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">103.1700</td>
+        <td class="ci23">592.54</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">592.54</td>
-        <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">71</td>
@@ -120,20 +120,20 @@
         <td class="ci08">367.73</td>
         <td class="ci09"><i>payment&nbsp;made</i></td>
         <td class="ci10">open</td>
-        <td class="ci13">240.0000</td>
-        <td class="ci14">0.0000</td>
-        <td class="ci15"><i>n/a</i></td>
-        <td class="ci16">264.56</td>
+        <td class="ci11">240.0000</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13"><i>n/a</i></td>
+        <td class="ci14">264.56</td>
+        <td class="ci15">0.00</td>
+        <td class="ci16">103.17</td>
         <td class="ci17">0.00</td>
-        <td class="ci18">103.17</td>
-        <td class="ci19">0.00</td>
+        <td class="ci18">0.00</td>
+        <td class="ci19">735.44</td>
         <td class="ci20">0.00</td>
-        <td class="ci21">735.44</td>
+        <td class="ci21">0.0000</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">0.0000</td>
+        <td class="ci23">464.81</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">464.81</td>
-        <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">102</td>
@@ -147,20 +147,20 @@
         <td class="ci08">367.73</td>
         <td class="ci09"><i>payment&nbsp;made</i></td>
         <td class="ci10">open</td>
-        <td class="ci13">182.3891</td>
-        <td class="ci14">0.0000</td>
-        <td class="ci15"><i>n/a</i></td>
-        <td class="ci16">367.73</td>
+        <td class="ci11">182.3891</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13"><i>n/a</i></td>
+        <td class="ci14">367.73</td>
+        <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
         <td class="ci18">0.00</td>
-        <td class="ci19">0.00</td>
+        <td class="ci19">367.71</td>
         <td class="ci20">0.00</td>
-        <td class="ci21">367.71</td>
+        <td class="ci21">0.0000</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">0.0000</td>
+        <td class="ci23">279.46</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">279.46</td>
-        <td class="ci26">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">132</td>
@@ -174,26 +174,26 @@
         <td class="ci08">367.72</td>
         <td class="ci09"><i>overpayment</i></td>
         <td class="ci10">refund&nbsp;due</td>
-        <td class="ci13">88.2504</td>
-        <td class="ci14">0.0000</td>
-        <td class="ci15"><i>n/a</i></td>
-        <td class="ci16">367.72</td>
+        <td class="ci11">88.2504</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13"><i>n/a</i></td>
+        <td class="ci14">367.72</td>
+        <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
         <td class="ci18">0.00</td>
-        <td class="ci19">0.00</td>
+        <td class="ci19">-0.01</td>
         <td class="ci20">0.00</td>
-        <td class="ci21">-0.01</td>
+        <td class="ci21">0.0000</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">0.0000</td>
+        <td class="ci23">-0.01</td>
         <td class="ci24">0.00</td>
-        <td class="ci25">-0.01</td>
-        <td class="ci26">0.00</td>
     </tr>
 </table>
 
 <h4>Description</h4>
 <p><i>Add-on interest method with normal repayments</i></p>
-<p>Generated: <i>2025-04-16 using library version 2.1.2</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>

@@ -36,9 +36,9 @@ module ComplianceTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = None
@@ -150,9 +150,9 @@ module ComplianceTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = NoRounding
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = NoRounding
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = None
@@ -238,7 +238,7 @@ module ComplianceTests =
                 PaymentCount = 4
                 MaxDuration = Duration.Unlimited
             }
-            Parameters.PaymentConfig.PaymentRounding = RoundUp
+            Parameters.PaymentConfig.Rounding = RoundUp
             InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 1.2m
             InterestConfig.Cap = Interest.Cap.Zero
         }

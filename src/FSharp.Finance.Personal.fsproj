@@ -36,6 +36,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadMeFile>README.md</PackageReadMeFile>
     <IncludeContentInPack>true</IncludeContentInPack>
+    <UsesMarkdownComments>true</UsesMarkdownComments>
   </PropertyGroup>
   <ItemGroup Condition="'$(Configuration)'=='Release'">
     <None Include="../LICENSE">

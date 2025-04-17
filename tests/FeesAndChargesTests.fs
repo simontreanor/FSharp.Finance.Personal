@@ -39,9 +39,9 @@ module FeeAndChargesTests =
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
-                    PaymentRounding = RoundUp
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    Rounding = RoundUp
+                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Timeout = 3<DurationDay>
                 }
                 FeeConfig = None
                 ChargeConfig = Some {
@@ -108,13 +108,13 @@ module FeeAndChargesTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 112_56L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 109_61L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 109_61L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
             actual |> should equal expected
@@ -136,9 +136,9 @@ module FeeAndChargesTests =
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
-                    PaymentRounding = RoundUp
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    Rounding = RoundUp
+                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Timeout = 3<DurationDay>
                 }
                 FeeConfig = None
                 ChargeConfig = Some {
@@ -205,13 +205,13 @@ module FeeAndChargesTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 106_65L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 79_86L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 79_86L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
             actual |> should equal expected
@@ -233,9 +233,9 @@ module FeeAndChargesTests =
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
                     CloseBalanceOption = LeaveOpenBalance
-                    PaymentRounding = RoundUp
-                    MinimumPayment = DeferOrWriteOff 50L<Cent>
-                    PaymentTimeout = 3<DurationDay>
+                    Rounding = RoundUp
+                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Timeout = 3<DurationDay>
                 }
                 FeeConfig = None
                 ChargeConfig = Some {
@@ -302,13 +302,13 @@ module FeeAndChargesTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 115_52L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 124_49L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 124_49L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
             actual |> should equal expected

@@ -45,15 +45,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -107,13 +107,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 242_58L<Cent>
             InterestPortion = 3_30L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -135,15 +135,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -198,13 +198,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 101_61L<Cent>
             InterestPortion = 64L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -226,15 +226,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -272,7 +272,7 @@ module ActualPaymentTestsExtra =
                 ]
             let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
-                FeeettlementRefund = Fee.SettlementRefund.ProRataRescheduled originalFinalPaymentDay'
+                FeeettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = UnitPeriod.Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]
@@ -301,13 +301,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 5_38L<Cent>
             InterestPortion = 3L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -329,15 +329,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.Zero
+                SettlementRebate = Fee.SettlementRebate.Zero
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -391,13 +391,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 85_22L<Cent>
             InterestPortion = 0L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -419,9 +419,9 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -471,13 +471,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 0L<Cent>
             InterestPortion = 9_43L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -499,15 +499,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 7<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 7<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -559,13 +559,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 6_50L<Cent>
             InterestPortion = 1_28L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 195_35L<Cent>
+            FeeRebate = 195_35L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 195_35L<Cent>
+            FeeRebateIfSettled = 195_35L<Cent>
         }
 
         actual |> should equal expected
@@ -587,15 +587,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -661,13 +661,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 9_38L<Cent>
             InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected
@@ -689,15 +689,15 @@ module ActualPaymentTestsExtra =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -763,13 +763,13 @@ module ActualPaymentTestsExtra =
             FeePortion = 0L<Cent>
             InterestPortion = 7L<Cent>
             ChargesPortion = 0L<Cent>
-            FeeRefund = 0L<Cent>
+            FeeRebate = 0L<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
             SettlementFigure = ValueSome 0L<Cent>
-            FeeRefundIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0L<Cent>
         }
 
         actual |> should equal expected

@@ -189,7 +189,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Range of APRs for different payment counts and first payment days, using the simple interest method</i></p>
-<p>Generated: <i>2025-04-16 using library version 2.1.2</i></p>
+<p>Generated: <i>2025-04-17 using library version 2.1.2</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>

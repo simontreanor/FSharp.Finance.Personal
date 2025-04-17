@@ -138,6 +138,20 @@ module UnitPeriod =
         | _ ->
             0m
 
+    /// approximate length of unit period in days, used e.g. as the denominator in unit-period fractions
+    let roughLength unitPeriod =
+        match unitPeriod with
+        | NoInterval _ ->
+            365
+        | Day ->
+            1
+        | Week multiple ->
+            7 * multiple
+        | SemiMonth ->
+            15
+        | Month multiple ->
+            30 * multiple
+
     /// unit period combined with a start date and multiple where appropriate
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type Config =
@@ -220,6 +234,20 @@ module UnitPeriod =
                 defaultSemiMonthly startDate
             | Month monthMultiple ->
                 defaultMonthly monthMultiple startDate
+
+        /// get the underlying unit period from a unit-period config
+        let unitPeriod unitPeriodConfig =
+            match unitPeriodConfig with
+            | Single _ ->
+                NoInterval 0<DurationDay>
+            | Daily _ ->
+                Day
+            | Weekly (multiple, _) ->
+                Week multiple
+            | SemiMonthly _ ->
+                SemiMonth
+            | Monthly (multiple, _, _, _) ->
+                Month multiple
 
         /// approximate length of unit period in days, used e.g. for generating rescheduling iterations
         let roughLength unitPeriodConfig =

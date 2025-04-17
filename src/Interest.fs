@@ -188,7 +188,23 @@ module Interest =
         )
         |> Cent.roundTo interestRounding 8
 
-    /// calculates the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1)
+    /// calculates the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1):
+    /// 
+    /// 4.—(1) The amount of the rebate is the difference between the total amount of the repayments of credit that would fall due for payment after the settlement date
+    /// if early settlement did not take place and the amount given by the following formula:
+    /// 
+    /// $$\sum_{i=1}^{m} A_i(1 + r)^{a_i} - \sum_{j=1}^{n} B_j(1 + r)^{b_j}$$
+    /// 
+    /// where:
+    /// 
+    /// $A_i$ = the amount of the ith advance of credit,
+    /// $B_j$ = the amount of the jth repayment of credit,
+    /// $r$ = the periodic rate equivalent of the APR/100,
+    /// $m$ = the number of advances of credit made before the settlement date,
+    /// $n$ = the number of repayments of credit made before the settlement date,
+    /// $a_i$ = the time between the ith advance of credit and the settlement date, expressed in periods,
+    /// $b_j$ = the time between the jth repayment of credit and the settlement date, expressed in periods, and
+    /// $\sum$ represents the sum of all the terms indicated.
     let internal ``CCA 2004 regulation 4(1) formula`` (A: Map<int, decimal<Cent>>) (B: Map<int, decimal<Cent>>) (r: decimal) (m: int) (n: int) (a: Map<int, int>) (b: Map<int, int>) =
         if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
             0m<Cent>
@@ -203,21 +219,51 @@ module Interest =
             sum1 - sum2
 
     /// calculates the amount of rebate due following an early settlement
+    /// 
+    /// note: the APR is the initial APR as determined at the start of the agreement
     let calculateRebate (principal: int64<Cent>) (payments: (int * int64<Cent>) array) (apr: Percent) (settlementPeriod: int) (settlementPartPeriod: Fraction) unitPeriod paymentRounding =
         if payments |> Array.isEmpty then
             0L<Cent>
         else
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
-            let paymentMap = payments |> Array.map(fun (i, p) -> i, decimal p * 1m<Cent>) |> Map.ofArray
-            let aprUnitPeriodRate = apr |> Apr.ukUnitPeriodRate unitPeriod |> Percent.toDecimal |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
+            let paymentMap =
+                payments
+                |> Array.map(fun (i, p) -> i, decimal p * 1m<Cent>)
+                |> Map.ofArray
+            let aprUnitPeriodRate =
+                apr
+                |> Apr.ukUnitPeriodRate unitPeriod
+                |> Percent.toDecimal
+                |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
             let advanceCount = 1
-            let paymentCount = payments |> Array.length |> min settlementPeriod
+            let paymentCount =
+                payments
+                |> Array.length
+                |> min settlementPeriod
             let advanceIntervalMap = Map [ (1, settlementPeriod) ]
-            let paymentIntervalMap = payments |> Array.take paymentCount |> Array.scan(fun state p -> fst state + 1, int settlementPeriod - int (fst p)) (0, settlementPeriod) |> Array.tail |> Map.ofArray
-            let addPartPeriodTotal (sf: decimal<Cent>) = settlementPartPeriod |> fun spp -> sf * (1m + aprUnitPeriodRate |> powm (Fraction.toDecimal spp) |> decimal)
+            let paymentIntervalMap =
+                payments
+                |> Array.take paymentCount
+                |> Array.scan(fun state p -> fst state + 1, int settlementPeriod - int (fst p)) (0, settlementPeriod)
+                |> Array.tail
+                |> Map.ofArray
+            let addPartPeriodTotal (sf: decimal<Cent>) =
+                settlementPartPeriod
+                |> fun spp ->
+                    sf * (
+                        1m + aprUnitPeriodRate
+                        |> powm (Fraction.toDecimal spp)
+                        |> decimal
+                    )
             let wholePeriodTotal = ``CCA 2004 regulation 4(1) formula`` advanceMap paymentMap aprUnitPeriodRate advanceCount paymentCount advanceIntervalMap paymentIntervalMap
-            let settlementFigure = wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
-            let remainingPaymentTotal = payments |> Array.filter (fun (i, _) -> i > settlementPeriod) |> Array.sumBy snd
+            let settlementFigure =
+                wholePeriodTotal
+                |> addPartPeriodTotal
+                |> Cent.fromDecimalCent paymentRounding
+            let remainingPaymentTotal =
+                payments
+                |> Array.filter (fun (i, _) -> i > settlementPeriod)
+                |> Array.sumBy snd
             remainingPaymentTotal - settlementFigure
 
     /// if there is less than one cent remaining, discards any fraction

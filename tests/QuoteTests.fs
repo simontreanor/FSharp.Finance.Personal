@@ -39,15 +39,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -95,7 +95,7 @@ module QuoteTests =
                     InterestPortion = 3_71L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 1437_53L<Cent>
+                FeeRebateIfSettled = 1437_53L<Cent>
             }
 
         let expected =
@@ -118,13 +118,13 @@ module QuoteTests =
                 FeePortion = 790_21L<Cent>
                 InterestPortion = 3_71L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 1437_53L<Cent>
+                FeeRebate = 1437_53L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 1437_53L<Cent>
+                FeeRebateIfSettled = 1437_53L<Cent>
             }
 
         actual |> should equal expected
@@ -148,15 +148,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -204,7 +204,7 @@ module QuoteTests =
                     InterestPortion = 6_49L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 1393_53L<Cent>
+                FeeRebateIfSettled = 1393_53L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -225,13 +225,13 @@ module QuoteTests =
                 FeePortion = 834_21L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 1393_53L<Cent>
+                FeeRebate = 1393_53L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 1393_53L<Cent>
+                FeeRebateIfSettled = 1393_53L<Cent>
             }
 
         actual |> should equal expected
@@ -255,15 +255,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -311,7 +311,7 @@ module QuoteTests =
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 1393_53L<Cent>
+                FeeRebateIfSettled = 1393_53L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -332,13 +332,13 @@ module QuoteTests =
                 FeePortion = 834_21L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 1393_53L<Cent>
+                FeeRebate = 1393_53L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 1393_53L<Cent>
+                FeeRebateIfSettled = 1393_53L<Cent>
             }
 
         actual |> should equal expected
@@ -362,9 +362,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -410,7 +410,7 @@ module QuoteTests =
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -431,13 +431,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -461,9 +461,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -509,7 +509,7 @@ module QuoteTests =
                     InterestPortion = 38_40L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -530,13 +530,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 38_40L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -560,15 +560,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.Zero
+                SettlementRebate = Fee.SettlementRebate.Zero
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -618,7 +618,7 @@ module QuoteTests =
                     InterestPortion = 6_49L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -639,13 +639,13 @@ module QuoteTests =
                 FeePortion = 2227_74L<Cent>
                 InterestPortion = 6_49L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -669,15 +669,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.Zero
+                SettlementRebate = Fee.SettlementRebate.Zero
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -736,13 +736,13 @@ module QuoteTests =
                 FeePortion = 205_13L<Cent>
                 InterestPortion = 9_77L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 776_92L<Cent>
                 FeeBalance = 1471_94L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 2248_86L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -766,15 +766,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundDown
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundDown
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.Zero
+                SettlementRebate = Fee.SettlementRebate.Zero
             }
             ChargeConfig = Some {
                 ChargeTypes = Map [
@@ -816,12 +816,12 @@ module QuoteTests =
             //     quote
             //     |> ValueOption.map(fun q ->
             //         let paymentQuote = q.RevisedSchedule |> fst |> _.ScheduleItems |> Array.filter(fun si -> match si.PaymentStatus with MissedPayment -> si.ScheduledPayment.Total | PaidLaterOwing plo -> plo | _ -> 0L<Cent>))
-            //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeePortion, si.InterestPortion, si.ChargesPortion, si.FeeRefundIfSettled)
+            //         PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeePortion, si.InterestPortion, si.ChargesPortion, si.FeeRebateIfSettled)
             //     )
             ValueNone // not a single item to be returned, as the result is a sum of items
 
         let expected =
-            ValueNone //ValueSome <| PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeePortion, si.InterestPortion, si.ChargesPortion, si.FeeRefundIfSettled),
+            ValueNone //ValueSome <| PaymentQuote (GeneratedPayment.Total si.GeneratedPayment, si.PrincipalPortion, si.FeePortion, si.InterestPortion, si.ChargesPortion, si.FeeRebateIfSettled),
 
         actual |> should equal expected
 
@@ -844,15 +844,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = None
             InterestConfig = {
@@ -884,7 +884,7 @@ module QuoteTests =
                     InterestPortion = 61_67L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -905,13 +905,13 @@ module QuoteTests =
                 FeePortion = 750_00L<Cent>
                 InterestPortion = 61_67L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -935,15 +935,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = None
             InterestConfig = {
@@ -983,7 +983,7 @@ module QuoteTests =
                     InterestPortion = 84_10L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1004,13 +1004,13 @@ module QuoteTests =
                 FeePortion = 706_56L<Cent>
                 InterestPortion = 84_10L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1034,15 +1034,15 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = Some {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRefund = Fee.SettlementRefund.ProRata
+                SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = None
             InterestConfig = {
@@ -1080,7 +1080,7 @@ module QuoteTests =
                     InterestPortion = 8_39L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 958_45L<Cent>
+                FeeRebateIfSettled = 958_45L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1101,13 +1101,13 @@ module QuoteTests =
                 FeePortion = 195_68L<Cent>
                 InterestPortion = 8_39L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 958_45L<Cent>
+                FeeRebate = 958_45L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 958_45L<Cent>
+                FeeRebateIfSettled = 958_45L<Cent>
             }
 
         actual |> should equal expected
@@ -1131,9 +1131,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = None
@@ -1166,7 +1166,7 @@ module QuoteTests =
                     InterestPortion = 95_76L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1187,13 +1187,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 95_76L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1215,9 +1215,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1264,7 +1264,7 @@ module QuoteTests =
                     InterestPortion = 76_24L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1285,13 +1285,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 76_24L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1313,9 +1313,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1362,7 +1362,7 @@ module QuoteTests =
                     InterestPortion = 79_07L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1383,13 +1383,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 79_07L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1411,9 +1411,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1460,7 +1460,7 @@ module QuoteTests =
                     InterestPortion = 81_89L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1481,13 +1481,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 81_89L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1509,9 +1509,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1558,7 +1558,7 @@ module QuoteTests =
                     InterestPortion = 90_36L<Cent>
                     ChargesPortion = 10_00L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1579,13 +1579,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 90_36L<Cent>
                 ChargesPortion = 10_00L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1607,9 +1607,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1656,7 +1656,7 @@ module QuoteTests =
                     InterestPortion = 76_24L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1677,13 +1677,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 76_24L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1705,9 +1705,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1755,7 +1755,7 @@ module QuoteTests =
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1776,13 +1776,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 79_07L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1804,9 +1804,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1854,7 +1854,7 @@ module QuoteTests =
                     InterestPortion = -2L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1875,13 +1875,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = -2L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -1903,9 +1903,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -1953,7 +1953,7 @@ module QuoteTests =
                     InterestPortion = -4_87L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         let expected = PaymentQuote paymentQuote, {
@@ -1974,13 +1974,13 @@ module QuoteTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = -4_87L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRefund = 0L<Cent>
+                FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
                 SettlementFigure = ValueSome 0L<Cent>
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2002,9 +2002,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                MinimumPayment = DeferOrWriteOff 50L<Cent>
-                PaymentTimeout = 3<DurationDay>
+                Rounding = RoundUp
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -2047,7 +2047,7 @@ module QuoteTests =
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2065,9 +2065,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
+                Rounding = RoundUp
+                Timeout = 0<DurationDay>
+                Minimum = NoMinimumPayment
             }
             FeeConfig = None
             ChargeConfig = None
@@ -2103,7 +2103,7 @@ module QuoteTests =
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2121,9 +2121,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
+                Rounding = RoundUp
+                Timeout = 0<DurationDay>
+                Minimum = NoMinimumPayment
             }
             FeeConfig = None
             ChargeConfig = Some {
@@ -2167,7 +2167,7 @@ module QuoteTests =
                     InterestPortion = 54_34L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2185,9 +2185,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
+                Rounding = RoundUp
+                Timeout = 0<DurationDay>
+                Minimum = NoMinimumPayment
             }
             FeeConfig = None
             ChargeConfig = None
@@ -2224,7 +2224,7 @@ module QuoteTests =
                     InterestPortion = 13_17L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2242,9 +2242,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
+                Rounding = RoundUp
+                Timeout = 0<DurationDay>
+                Minimum = NoMinimumPayment
             }
             FeeConfig = None
             ChargeConfig = None
@@ -2280,7 +2280,7 @@ module QuoteTests =
                     InterestPortion = -2_66L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
@@ -2298,9 +2298,9 @@ module QuoteTests =
                 LevelPaymentOption = LowerFinalPayment
                 ScheduledPaymentOption = AsScheduled
                 CloseBalanceOption = LeaveOpenBalance
-                PaymentRounding = RoundUp
-                PaymentTimeout = 0<DurationDay>
-                MinimumPayment = NoMinimumPayment
+                Rounding = RoundUp
+                Timeout = 0<DurationDay>
+                Minimum = NoMinimumPayment
             }
             FeeConfig = None
             ChargeConfig = None
@@ -2336,7 +2336,7 @@ module QuoteTests =
                     InterestPortion = -90L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRefundIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
             }
 
         actual |> should equal expected
