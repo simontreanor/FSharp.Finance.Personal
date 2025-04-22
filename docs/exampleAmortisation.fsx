@@ -21,12 +21,12 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 #r "nuget:FSharp.Finance.Personal"
 
-open System
 open FSharp.Finance.Personal
 open Amortisation
 open Calculation
 open DateDay
 open Scheduling
+open UnitPeriod
 
 let scheduleParameters =
     {
@@ -34,15 +34,15 @@ let scheduleParameters =
         StartDate = Date(2022, 11, 26)
         Principal = 1500_00L<Cent>
         ScheduleConfig = AutoGenerateSchedule {
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2022, 11, 31)
+            UnitPeriodConfig = Monthly(1, 2022, 11, 31)
             ScheduleLength = PaymentCount 5
         }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
             ScheduledPaymentOption = AsScheduled
-            PaymentRounding = RoundUp
-            MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>
+            Rounding = RoundUp
+            Minimum = DeferOrWriteOff 50L<Cent>
+            Timeout = 3<DurationDay>
         }
         FeeConfig = None
         ChargeConfig = None
