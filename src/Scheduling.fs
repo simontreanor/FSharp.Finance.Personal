@@ -741,9 +741,16 @@ module Scheduling =
             }
         simpleItem
 
+    // the state of the interest maximisation process, which is used to iterate over the schedule until the interest balance converges
+    [<Struct>]
+    type MaximiseInterestState = {
+        Iteration: int
+        InterestBalance: decimal<Cent>
+    }
+
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let maximiseInterest sp paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: struct {| Iteration: int; InterestBalance: decimal<Cent> |} voption) =
+    let maximiseInterest sp paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: MaximiseInterestState voption) =
         if stateOption.IsNone then
             None
         elif Array.isEmpty paymentDays then
@@ -783,7 +790,7 @@ module Scheduling =
             if difference = 0L<Cent> && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
                 Some (newSchedule, ValueNone)
             else
-                Some (newSchedule, ValueSome struct {| Iteration = state.Iteration + 1; InterestBalance = finalInterestTotal |})
+                Some (newSchedule, ValueSome { Iteration = state.Iteration + 1; InterestBalance = finalInterestTotal })
 
     // calculate the initial total interest accruing over the entire schedule
     // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
@@ -838,7 +845,7 @@ module Scheduling =
             paymentDays
             |> Array.scan(fun simpleItem pd -> generateItem sp sp.InterestConfig.Method payments[pd] simpleItem pd) initialSimpleItem
         // generates a schedule based on the schedule configuration
-        let schedule =
+        let simpleItems =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
                 // calculate the estimated interest payable over the entire schedule
@@ -864,25 +871,25 @@ module Scheduling =
                 // the days and payment values are known so the schedule can be generated directly
                 generateItems paymentMap
         // fail if the schedule is empty
-        if Array.isEmpty schedule then
+        if Array.isEmpty simpleItems then
             failwith "Unable to calculate simple schedule"
         else
         // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
         // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
         // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher initial interest
         // balance, so the process must be repeated until the total interest and the initial interest are equalised
-        let schedule' =
+        let simpleItems' =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
-                let finalInterestTotal = schedule |> Array.last |> _.TotalSimpleInterest
-                ValueSome struct {| Iteration = 0; InterestBalance = finalInterestTotal |}
+                let finalInterestTotal = simpleItems |> Array.last |> _.TotalSimpleInterest
+                ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
                 |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feeTotal paymentMap)
                 |> Array.last
             | _ ->
-                schedule
+                simpleItems
         // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
         let items =
-            schedule'
+            simpleItems'
             |> Array.map(fun si ->
                 if si.Day = finalScheduledPaymentDay && sp.ScheduleConfig.IsAutoGenerateSchedule then
                     let adjustedPayment =
