@@ -549,3 +549,57 @@ module ComplianceTests =
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
+
+    let scheduleParameters8 = {
+        AsOfDate = Date(2025, 4, 22)
+        StartDate = Date(2025, 4, 22)
+        Principal = 1000_00L<Cent>
+        ScheduleConfig = AutoGenerateSchedule {
+            UnitPeriodConfig = Monthly(1, 2025, 5, 22)
+            ScheduleLength = PaymentCount 4
+        }
+        PaymentConfig = {
+            LevelPaymentOption = LowerFinalPayment
+            ScheduledPaymentOption = AsScheduled
+            Rounding = RoundUp
+            Minimum = DeferOrWriteOff 50L<Cent>
+            Timeout = 3<DurationDay>
+        }
+        FeeConfig = None
+        ChargeConfig = None
+        InterestConfig = {
+            Method = Interest.Method.AddOn
+            StandardRate = Interest.Rate.Daily (Percent 0.798m)
+            Cap = {
+                TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
+                DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
+            }
+            InitialGracePeriod = 3<DurationDay>
+            PromotionalRates = [||]
+            RateOnNegativeBalance = Interest.Rate.Zero
+            Rounding = RoundDown
+            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+        }
+    }
+
+    [<Fact>]
+    let ComplianceTest022 () =
+        let title = "ComplianceTest022"
+        let description = "Add-on-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
+        let schedules = Amortisation.generate scheduleParameters8 ValueNone false Map.empty
+
+        Schedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ComplianceTest023 () =
+        let title = "ComplianceTest023"
+        let description = "Simple-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
+        let schedules = Amortisation.generate { scheduleParameters8 with InterestConfig.Method = Interest.Method.Simple } ValueNone false Map.empty
+
+        Schedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+
+        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        principalBalance |> should equal 0L<Cent>
