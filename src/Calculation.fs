@@ -300,7 +300,7 @@ module Calculation =
         /// optionally relaxing the tolerance until a solution is found
         /// note: the generator function should return a tuple of the result and a relevant value (as the result is converging on zero it is not a very relevant value)
         let solveBisection (generator: decimal -> (decimal * decimal)) (iterationLimit: uint) initialGuess targetTolerance (toleranceSteps: ToleranceSteps) =
-            let initialLowerBound, initialUpperBound = initialGuess * 0.25m, initialGuess * 4m
+            let initialLowerBound, initialUpperBound = initialGuess * 0.75m, initialGuess * 1.25m
             // recursively iterate through possible solutions
             let rec loop iteration lowerBound upperBound tolerance =
                 // find the midpoint of the bounds
