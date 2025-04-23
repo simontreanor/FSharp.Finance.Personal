@@ -33,9 +33,6 @@ jobs:
       - name: Install prerelease fsdocs tool
         run: dotnet tool update fsdocs-tool --prerelease
 
-      - name: List installed dotnet tools
-        run: dotnet tool list
-
       - name: Generate the documentation
         run: dotnet fsdocs build --clean --properties Configuration=Release --eval --ignoreuncategorized
       
