@@ -743,14 +743,14 @@ module Scheduling =
 
     // the state of the interest maximisation process, which is used to iterate over the schedule until the interest balance converges
     [<Struct>]
-    type MaximiseInterestState = {
+    type EqualiseInterestState = {
         Iteration: int
         InterestBalance: decimal<Cent>
     }
 
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let maximiseInterest sp paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: MaximiseInterestState voption) =
+    let equaliseInterest sp paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: EqualiseInterestState voption) =
         if stateOption.IsNone then
             None
         elif Array.isEmpty paymentDays then
@@ -876,14 +876,14 @@ module Scheduling =
         else
         // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
         // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
-        // the principal balance is paid off more slowly than it would otherwise be; this, in turn, generates higher interest, which leads to a higher initial interest
-        // balance, so the process must be repeated until the total interest and the initial interest are equalised
+        // the principal balance is paid off at a different pace than it would otherwise be; this, in turn, generates different interest, which leads to a different
+        // initial interest balance, so the process must be repeated until the total interest and the initial interest are equalised
         let simpleItems' =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 let finalInterestTotal = simpleItems |> Array.last |> _.TotalSimpleInterest
                 ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
-                |> Array.unfold (maximiseInterest sp paymentDays initialSimpleItem paymentCount feeTotal paymentMap)
+                |> Array.unfold (equaliseInterest sp paymentDays initialSimpleItem paymentCount feeTotal paymentMap)
                 |> Array.last
             | _ ->
                 simpleItems
