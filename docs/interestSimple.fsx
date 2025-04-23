@@ -149,7 +149,7 @@ as the schedule is simple, but for more complex schedules, several iterations ma
 *)
 
 // precalculations
-let firstItem = { SimpleItem.initial PrincipalBalance = parameters.Principal }
+let firstItem = { SimpleItem.initial with PrincipalBalance = parameters.Principal }
 let paymentCount = Array.length paymentDays
 let roughPayment =
     calculateLevelPayment paymentCount parameters.PaymentConfig.Rounding parameters.Principal 0L<Cent> 0m<Cent>
