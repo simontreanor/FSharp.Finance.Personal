@@ -99,7 +99,7 @@
 </table>
 <h4>Description</h4>
 <p><i>UK APR test amortisation schedule, first payment day 32, payment count 6</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
+<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>

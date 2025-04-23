@@ -166,7 +166,7 @@
 
 <h4>Description</h4>
 <p><i>Total repayable on interest-first loan of €317.26 with repayments starting on day 19 and total loan length 110 days</i></p>
-<p>Generated: <i>2025-04-17 using library version 2.2.1</i></p>
+<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
