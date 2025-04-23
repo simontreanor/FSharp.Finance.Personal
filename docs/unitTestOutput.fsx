@@ -37,11 +37,13 @@ let descriptionPattern = Regex "<h4>Description</h4>\s*<p><i>(.+?)</i></p>"
 
 Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
 |> Directory.EnumerateDirectories
+|> Seq.sort
 |> Seq.map(fun directoryPath ->
     let directoryName = Path.GetFileName directoryPath
     let filesRows = 
         directoryPath
         |> Directory.EnumerateFiles
+        |> Seq.sort
         |> Seq.map(fun filePath ->
             let fileName = Path.GetFileNameWithoutExtension filePath
             let description =
