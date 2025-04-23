@@ -820,6 +820,30 @@ module Scheduling =
         let principalBalance = decimal schedule.PrincipalBalance
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
+    /// handle any principal balance overpayment (due to rounding) on the final payment of a schedule
+    let adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule simpleItems =
+        simpleItems
+        |> Array.map(fun si ->
+            if si.Day = finalScheduledPaymentDay && isAutoGenerateSchedule then
+                let adjustedPayment =
+                    si.ScheduledPayment
+                    |> fun p ->
+                        { si.ScheduledPayment with
+                            Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> o + si.PrincipalBalance) else p.Original
+                            Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
+                        }
+                let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
+                let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
+                { si with
+                    ScheduledPayment = adjustedPayment
+                    PrincipalPortion = adjustedPrincipal
+                    PrincipalBalance = 0L<Cent>
+                    TotalPrincipal = adjustedTotalPrincipal
+                }
+            else
+                si
+        )
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculate sp =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -878,7 +902,7 @@ module Scheduling =
         // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
         // the principal balance is paid off at a different pace than it would otherwise be; this, in turn, generates different interest, which leads to a different
         // initial interest balance, so the process must be repeated until the total interest and the initial interest are equalised
-        let simpleItems' =
+        let items =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 let finalInterestTotal = simpleItems |> Array.last |> _.TotalSimpleInterest
@@ -887,29 +911,7 @@ module Scheduling =
                 |> Array.last
             | _ ->
                 simpleItems
-        // handle any principal balance overpayment (due to rounding) on the final payment of a schedule
-        let items =
-            simpleItems'
-            |> Array.map(fun si ->
-                if si.Day = finalScheduledPaymentDay && sp.ScheduleConfig.IsAutoGenerateSchedule then
-                    let adjustedPayment =
-                        si.ScheduledPayment
-                        |> fun p ->
-                            { si.ScheduledPayment with
-                                Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> o + si.PrincipalBalance) else p.Original
-                                Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
-                            }
-                    let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
-                    let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
-                    { si with
-                        ScheduledPayment = adjustedPayment
-                        PrincipalPortion = adjustedPrincipal
-                        PrincipalBalance = 0L<Cent>
-                        TotalPrincipal = adjustedTotalPrincipal
-                    }
-                else
-                    si
-            )
+            |> adjustFinalPayment finalScheduledPaymentDay sp.ScheduleConfig.IsAutoGenerateSchedule
         // calculate the total principal paid over the schedule
         let principalTotal = items |> Array.sumBy _.PrincipalPortion
         // calculate the total interest accrued over the schedule
