@@ -586,20 +586,20 @@ module ComplianceTests =
     let ComplianceTest022 () =
         let title = "ComplianceTest022"
         let description = "Add-on-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
-        let schedules = Amortisation.generate scheduleParameters8 ValueNone false Map.empty
+        let schedules = Scheduling.calculate scheduleParameters8
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+        SimpleSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
 
-        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.Items |> Array.last |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
     let ComplianceTest023 () =
         let title = "ComplianceTest023"
         let description = "Simple-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
-        let schedules = Amortisation.generate { scheduleParameters8 with InterestConfig.Method = Interest.Method.Simple } ValueNone false Map.empty
+        let schedules = Scheduling.calculate { scheduleParameters8 with InterestConfig.Method = Interest.Method.Simple }
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+        SimpleSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
 
-        let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
+        let principalBalance = schedules.Items |> Array.last |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
