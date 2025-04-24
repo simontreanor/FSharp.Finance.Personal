@@ -24,6 +24,7 @@ open FSharp.Finance.Personal
 open Calculation
 open DateDay
 open Scheduling
+open UnitPeriod
 
 let scheduleParameters =
     {
@@ -31,15 +32,15 @@ let scheduleParameters =
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
         ScheduleConfig = AutoGenerateSchedule {
-            UnitPeriodConfig = UnitPeriod.Monthly(1, 2024, 3, 7)
+            UnitPeriodConfig = Monthly(1, 2024, 3, 7)
             ScheduleLength = PaymentCount 36
         }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
             ScheduledPaymentOption = AsScheduled
-            PaymentRounding = RoundUp
-            MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3<DurationDay>
+            Rounding = RoundUp
+            Minimum = DeferOrWriteOff 50L<Cent>
+            Timeout = 3<DurationDay>
         }
         FeeConfig = None
         ChargeConfig = None
