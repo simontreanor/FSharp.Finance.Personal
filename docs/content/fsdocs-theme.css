@@ -79,6 +79,11 @@ summary {
     cursor: pointer;
     font-weight: bold;
 }
+details > div {
+    border-left: 4px solid #dfe2e5;
+    margin-left: 1rem;
+    padding-left: 1rem;
+}
 details table {
     width: 100%;
     border-collapse: collapse;
