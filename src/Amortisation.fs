@@ -812,7 +812,7 @@ module Amortisation =
         |> markMissedPaymentsAsLate
 
     /// wraps the amortisation schedule in some statistics, and optionally calculates the final APR (optional because it can be processor-intensive)
-    let calculateStats sp settlementDay (items: Map<int<OffsetDay>, ScheduleItem>) =
+    let calculateStats (items: Map<int<OffsetDay>, ScheduleItem>) =
         let finalItemDay, finalItem = items |> Map.maxKeyValue
         let items' = items |> Map.toArray |> Array.map snd
         let principalTotal = items' |> Array.sumBy _.PrincipalPortion
@@ -880,6 +880,6 @@ module Amortisation =
             |> applyPayments evaluationDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.Timeout actualPayments
             |> calculate sp settlementDay simpleSchedule.Stats
             |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
-            |> calculateStats sp settlementDay
+            |> calculateStats
 
         { AmortisationSchedule = amortisationSchedule; SimpleSchedule = simpleSchedule }
