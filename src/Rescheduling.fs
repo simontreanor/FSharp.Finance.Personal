@@ -21,7 +21,7 @@ module Rescheduling =
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalInterestRates: Interest.PromotionalRate array
         /// whether and when to generate a settlement figure, otherwise just a statement will be generated
-        SettlementDay: SettlementDay voption
+        SettlementDay: SettlementDay
     }
 
     /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
@@ -143,7 +143,7 @@ module Rescheduling =
             }
 
         // create the new amortisation schedule
-        let rolledOverSchedules = Amortisation.generate spNew ValueNone true Map.empty
+        let rolledOverSchedules = Amortisation.generate spNew SettlementDay.NoSettlement true Map.empty
 
         // return the results
         {| OldSchedules = quote.RevisedSchedules; NewSchedules = rolledOverSchedules |}

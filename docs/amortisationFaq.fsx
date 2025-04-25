@@ -325,7 +325,7 @@ let amortisation4 =
         { parameters with
             AsOfDate = Date(2025, 7, 3) // inspect the schedule on day 70
         }
-        (ValueSome SettlementDay.SettlementOnAsOfDay) // settlement quotation requested on day 70
+        SettlementDay.SettlementOnAsOfDay // settlement quotation requested on day 70
         false // don't clip unrequired payments from the end of the schedule
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -381,7 +381,7 @@ let amortisation5 =
             AsOfDate = Date(2025, 7, 3) // inspect the schedule on day 70
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
-        (ValueSome SettlementDay.SettlementOnAsOfDay) // settlement quotation requested on day 70
+        SettlementDay.SettlementOnAsOfDay // settlement quotation requested on day 70
         false // don't clip unrequired payments from the end of the schedule
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 454_15L<Cent> |]
@@ -493,7 +493,7 @@ let actualPayments =
 let refinanceExampleSchedule =
     Amortisation.generate
         refinanceExampleParameters
-        (ValueSome SettlementDay.SettlementOnAsOfDay) // settlement quotation requested on day 152
+        SettlementDay.SettlementOnAsOfDay // settlement quotation requested on day 152
         false // don't clip unrequired payments from the end of the schedule
         actualPayments
 
@@ -681,7 +681,7 @@ let amortisation8 =
         { parameters with
             AsOfDate = Date(2025, 7, 3) // inspect the schedule on day 70
         }
-        (ValueSome <| SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
+        (SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
         false // don't clip unrequired payments from the end of the schedule
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -703,7 +703,7 @@ let amortisation8' =
         { parameters with
             AsOfDate = Date(2025, 7, 3) // inspect the schedule on day 70
         }
-        (ValueSome <| SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
+        (SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
         false // don't clip unrequired payments from the end of the schedule
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]

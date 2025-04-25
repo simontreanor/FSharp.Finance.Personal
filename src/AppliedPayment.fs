@@ -117,14 +117,14 @@ module AppliedPayment =
                             | spt, cpt when cpt < spt && offsetDay <= asOfDay && int offsetDay + int paymentTimeout >= int asOfDay ->
                                 match settlementDay with
                                 // settlement requested on a future day
-                                | ValueSome (SettlementDay.SettlementOn day) when day > offsetDay ->
+                                | SettlementDay.SettlementOn day when day > offsetDay ->
                                     0L<Cent>, PaymentDue
-                                | ValueSome SettlementDay.SettlementOnAsOfDay when asOfDay > offsetDay ->
+                                | SettlementDay.SettlementOnAsOfDay when asOfDay > offsetDay ->
                                     0L<Cent>, PaymentDue
                                 // settlement requested on the day, requiring a generated payment to be calculated (calculation deferred until amortisation schedule is generated)
-                                | ValueSome (SettlementDay.SettlementOn day) when day = offsetDay ->
+                                | SettlementDay.SettlementOn day when day = offsetDay ->
                                     0L<Cent>, Generated
-                                | ValueSome SettlementDay.SettlementOnAsOfDay when asOfDay = offsetDay ->
+                                | SettlementDay.SettlementOnAsOfDay when asOfDay = offsetDay ->
                                     0L<Cent>, Generated
                                 // no settlement on day, or statement requested
                                 | _ ->
@@ -238,13 +238,13 @@ module AppliedPayment =
             // add or modify the applied payments depending on whether the intended purpose is a settlement or just a statement
             match settlementDay with
                 // settlement on a specific day
-                | ValueSome (SettlementDay.SettlementOn day) ->
+                | SettlementDay.SettlementOn day ->
                     appliedPayments day ToBeGenerated Generated
                 // settlement on the as-of day
-                | ValueSome SettlementDay.SettlementOnAsOfDay ->
+                | SettlementDay.SettlementOnAsOfDay ->
                     appliedPayments asOfDay ToBeGenerated Generated
                 // statement only
-                | ValueNone ->
+                | SettlementDay.NoSettlement ->
                     let maxPaymentDay = appliedPaymentMap |> Map.maxKeyValue |> fst
                     // when inspecting after the end of the schedule, just return the schedule with no applied payments added
                     if asOfDay >= maxPaymentDay then

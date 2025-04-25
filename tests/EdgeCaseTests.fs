@@ -722,7 +722,7 @@ module EdgeCaseTests =
             ]
             RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             PromotionalInterestRates = [||]
-            SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
+            SettlementDay = SettlementDay.SettlementOn 88<OffsetDay>
         }
 
         let schedules = reschedule sp rp actualPayments
@@ -806,7 +806,7 @@ module EdgeCaseTests =
             ]
             RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)
             PromotionalInterestRates = [||]
-            SettlementDay = ValueSome <| SettlementDay.SettlementOn 88<OffsetDay>
+            SettlementDay = SettlementDay.SettlementOn 88<OffsetDay>
         }
 
         let schedules = reschedule sp rp actualPayments
@@ -881,7 +881,7 @@ module EdgeCaseTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 

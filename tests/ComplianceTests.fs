@@ -67,7 +67,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 ValueNone false
+            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
 
@@ -87,7 +87,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 ValueNone false
+            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
 
@@ -106,7 +106,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 ValueNone false
+            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
 
@@ -126,7 +126,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 ValueNone false
+            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
 
@@ -183,7 +183,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters2 ValueNone false
+            |> Amortisation.generate scheduleParameters2 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters2 schedules
 
@@ -203,7 +203,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters2 ValueNone false
+            |> Amortisation.generate scheduleParameters2 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters2 schedules
 
@@ -223,7 +223,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters2 ValueNone false
+            |> Amortisation.generate scheduleParameters2 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters2 schedules
 
@@ -254,7 +254,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters3 ValueNone false
+            |> Amortisation.generate scheduleParameters3 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters3 schedules
 
@@ -274,7 +274,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters3 ValueNone false
+            |> Amortisation.generate scheduleParameters3 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters3 schedules
 
@@ -294,7 +294,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters3 ValueNone false
+            |> Amortisation.generate scheduleParameters3 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters3 schedules
 
@@ -319,7 +319,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters4 ValueNone false
+            |> Amortisation.generate scheduleParameters4 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters4 schedules
 
@@ -339,7 +339,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters4 ValueNone false
+            |> Amortisation.generate scheduleParameters4 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters4 schedules
 
@@ -359,7 +359,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters4 ValueNone false
+            |> Amortisation.generate scheduleParameters4 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters4 schedules
 
@@ -384,7 +384,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters5 ValueNone false
+            |> Amortisation.generate scheduleParameters5 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters5 schedules
 
@@ -404,7 +404,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters5 ValueNone false
+            |> Amortisation.generate scheduleParameters5 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters5 schedules
 
@@ -424,7 +424,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters5 ValueNone false
+            |> Amortisation.generate scheduleParameters5 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters5 schedules
 
@@ -455,7 +455,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters6 ValueNone false
+            |> Amortisation.generate scheduleParameters6 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters6 schedules
 
@@ -475,7 +475,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters6 ValueNone false
+            |> Amortisation.generate scheduleParameters6 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters6 schedules
 
@@ -495,7 +495,7 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters6 ValueNone false
+            |> Amortisation.generate scheduleParameters6 SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description scheduleParameters6 schedules
 
@@ -519,7 +519,7 @@ module ComplianceTests =
         let title = "ComplianceTest019"
         let description = "Total repayable on interest-first loan of €317.26 with repayments starting on day 19 and total loan length 110 days"
 
-        let schedules = Amortisation.generate scheduleParameters7 ValueNone false Map.empty
+        let schedules = Amortisation.generate scheduleParameters7 SettlementDay.NoSettlement false Map.empty
 
         Schedule.outputHtmlToFile folder title description scheduleParameters7 schedules
 
@@ -531,7 +531,7 @@ module ComplianceTests =
         let title = "ComplianceTest020"
         let description = "Total repayable on interest-first loan of £300 with repayments starting on day 19 and total loan length 110 days"
         let sp = { scheduleParameters7 with Principal = 300_00L<Cent> }
-        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -543,7 +543,7 @@ module ComplianceTests =
         let title = "ComplianceTest021"
         let description = "Total repayable on interest-first loan of £250 with repayments starting on day 19 and total loan length 110 days"
         let sp = { scheduleParameters7 with Principal = 250_00L<Cent> }
-        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
 
         Schedule.outputHtmlToFile folder title description sp schedules
 

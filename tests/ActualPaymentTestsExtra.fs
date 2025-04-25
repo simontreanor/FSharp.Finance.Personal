@@ -84,7 +84,7 @@ module ActualPaymentTestsExtra =
             let schedule = calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -173,7 +173,7 @@ module ActualPaymentTestsExtra =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -271,7 +271,7 @@ module ActualPaymentTestsExtra =
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]
-                SettlementDay = ValueNone
+                SettlementDay = SettlementDay.NoSettlement
             }
             let schedules = reschedule sp rp actualPayments
             schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
@@ -362,7 +362,7 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -440,7 +440,7 @@ module ActualPaymentTestsExtra =
             let schedule = Scheduling.calculate sp
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -526,7 +526,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
-            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 

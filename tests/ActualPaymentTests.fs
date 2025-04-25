@@ -106,7 +106,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -159,7 +159,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -212,7 +212,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -265,7 +265,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -345,7 +345,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -431,7 +431,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -513,7 +513,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -599,7 +599,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -685,7 +685,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -770,7 +770,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -855,7 +855,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -942,7 +942,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1017,7 +1017,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1095,7 +1095,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1148,7 +1148,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1202,7 +1202,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1257,7 +1257,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1312,7 +1312,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1367,7 +1367,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1415,7 +1415,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp (ValueSome SettlementDay.SettlementOnAsOfDay) false
+            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -1460,7 +1460,7 @@ module ActualPaymentTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp ValueNone false
+            |> Amortisation.generate sp SettlementDay.NoSettlement false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 

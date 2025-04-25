@@ -700,7 +700,7 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let schedules = Amortisation.generate sp ValueNone false actualPayments
+            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description sp
             schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.find(fun si -> ScheduledPayment.isSome si.ScheduledPayment && si.OffsetDate >= sp.AsOfDate)
 
@@ -795,7 +795,7 @@ module QuoteTests =
             |> Map.ofArray
 
         let actual =
-            let amortisationSchedule = Amortisation.generate sp ValueNone false actualPayments
+            let amortisationSchedule = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
             amortisationSchedule |> Schedule.outputHtmlToFile folder title description sp
             // let quoteResult =
             //     quote

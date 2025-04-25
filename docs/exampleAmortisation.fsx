@@ -72,7 +72,7 @@ let actualPayments =
 
 let schedules =
     actualPayments
-    |> Amortisation.generate scheduleParameters ValueNone false
+    |> Amortisation.generate scheduleParameters SettlementDay.NoSettlement false
 
 schedules.AmortisationSchedule
 

@@ -178,7 +178,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
-        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description sp schedules
 
     [<Fact>] 
@@ -188,7 +188,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
-        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description sp schedules
 
     [<Fact>] 
@@ -198,7 +198,7 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 23 interestMethod applyInterestCap
-        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description sp schedules
 
     [<Fact>] 
@@ -208,5 +208,5 @@ module AprUnitedKingdomTests =
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
         let sp = getScheduleParameters startDate 6 24 interestMethod applyInterestCap
-        let schedules = Amortisation.generate sp ValueNone false Map.empty
+        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description sp schedules

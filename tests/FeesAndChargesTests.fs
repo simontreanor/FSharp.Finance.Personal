@@ -82,7 +82,7 @@ module FeeAndChargesTests =
 
             let schedules =
                 actualPayments
-                |> Amortisation.generate sp ValueNone false
+                |> Amortisation.generate sp SettlementDay.NoSettlement false
 
             Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -177,7 +177,7 @@ module FeeAndChargesTests =
 
             let schedules =
                 actualPayments
-                |> Amortisation.generate sp ValueNone false
+                |> Amortisation.generate sp SettlementDay.NoSettlement false
 
             Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -272,7 +272,7 @@ module FeeAndChargesTests =
 
             let schedules =
                 actualPayments
-                |> Amortisation.generate sp ValueNone false
+                |> Amortisation.generate sp SettlementDay.NoSettlement false
 
             Schedule.outputHtmlToFile folder title description sp schedules
 

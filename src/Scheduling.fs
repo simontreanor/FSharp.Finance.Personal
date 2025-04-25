@@ -1090,3 +1090,5 @@ module Scheduling =
         | SettlementOn of SettlementDay: int<OffsetDay>
         /// quote a settlement figure on the as-of day
         | SettlementOnAsOfDay
+        /// no settlement figure is required
+        | NoSettlement

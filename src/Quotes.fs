@@ -41,10 +41,10 @@ module Quotes =
     /// calculates a revised schedule showing the generated payment for the given quote type
     let getQuote settlementDay schedulingParameters (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
         // generate a statement showing the current state of the amortisation schedule - this will only be used in the return value in case the caller requires a comparison
-        let currentSchedules = Amortisation.generate schedulingParameters ValueNone false actualPayments
+        let currentSchedules = Amortisation.generate schedulingParameters SettlementDay.NoSettlement false actualPayments
         // generate a revised statement showing a generated settlement figure on the relevant date
         let revisedSchedules =
-            Amortisation.generate schedulingParameters (ValueSome settlementDay) false actualPayments
+            Amortisation.generate schedulingParameters settlementDay false actualPayments
         // try to get the schedule item containing the generated value
         let si =
             revisedSchedules.AmortisationSchedule.ScheduleItems

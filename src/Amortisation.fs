@@ -282,11 +282,11 @@ module Amortisation =
     /// determines whether a schedule is settled within any grace period (e.g. no interest may be due if settlement is made within three days of the advance)
     let isSettledWithinGracePeriod sp settlementDay =
         match settlementDay with
-        | ValueSome (SettlementDay.SettlementOn day) ->
+        | SettlementDay.SettlementOn day ->
             int day <= int sp.InterestConfig.InitialGracePeriod
-        | ValueSome SettlementDay.SettlementOnAsOfDay ->
+        | SettlementDay.SettlementOnAsOfDay ->
             int <| OffsetDay.fromDate sp.StartDate sp.AsOfDate <= int sp.InterestConfig.InitialGracePeriod
-        | ValueNone ->
+        | SettlementDay.NoSettlement ->
             false
 
     /// pattern matching for payments due vs payments made
@@ -751,16 +751,16 @@ module Amortisation =
             // get the relevant type of item based on the intended purpose
             let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =
                 match ap.GeneratedPayment, settlementDay with
-                | ToBeGenerated, ValueSome SettlementDay.SettlementOnAsOfDay when asOfDay = appliedPaymentDay ->
+                | ToBeGenerated, SettlementDay.SettlementOnAsOfDay when asOfDay = appliedPaymentDay ->
                     createScheduleItem true
-                | ToBeGenerated, ValueSome (SettlementDay.SettlementOn day) when day = appliedPaymentDay ->
+                | ToBeGenerated, SettlementDay.SettlementOn day when day = appliedPaymentDay ->
                     createScheduleItem true
                 | GeneratedValue gv, _ ->
                     failwith $"Unexpected value: <i>{gv}</i>"
                 | NoGeneratedPayment, _
-                | ToBeGenerated, ValueNone
-                | ToBeGenerated, ValueSome (SettlementDay.SettlementOn _)
-                | ToBeGenerated, ValueSome SettlementDay.SettlementOnAsOfDay ->
+                | ToBeGenerated, SettlementDay.NoSettlement
+                | ToBeGenerated, SettlementDay.SettlementOn _
+                | ToBeGenerated, SettlementDay.SettlementOnAsOfDay ->
                     createScheduleItem false
 
             // refine the accumulator values
