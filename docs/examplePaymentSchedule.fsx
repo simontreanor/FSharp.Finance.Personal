@@ -28,7 +28,7 @@ open UnitPeriod
 
 let scheduleParameters =
     {
-        AsOfDate = Date(2024, 02, 07)
+        EvaluationDate = Date(2024, 02, 07)
         StartDate = Date(2024, 02, 07)
         Principal = 10000_00L<Cent>
         ScheduleConfig = AutoGenerateSchedule {

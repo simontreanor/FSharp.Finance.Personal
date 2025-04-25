@@ -55,7 +55,7 @@ module UnitPeriodConfigTests =
             let title = "UnitPeriodConfigTest000"
             let description = "Irregular payment schedule does not break detect function"
             let sp = {
-                    AsOfDate = Date(2024, 3, 5)
+                    EvaluationDate = Date(2024, 3, 5)
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
                     ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); ScheduleLength = PaymentCount 12 }
@@ -105,7 +105,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
@@ -117,7 +117,7 @@ module UnitPeriodConfigTests =
             let title = "UnitPeriodConfigTest001"
             let description = "Irregular payment schedule does not break APR calculation"
             let sp = {
-                AsOfDate = Date(2024, 3, 5)
+                EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); ScheduleLength = PaymentCount 12 }
@@ -166,7 +166,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
@@ -179,7 +179,7 @@ module UnitPeriodConfigTests =
             let title = "UnitPeriodConfigTest002"
             let description = "Irregular payment schedule does not break APR calculation"
             let sp = {
-                AsOfDate = Date(2024, 3, 5)
+                EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 1, 20)
                 Principal = 65000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
@@ -253,7 +253,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
@@ -266,7 +266,7 @@ module UnitPeriodConfigTests =
             let title = "UnitPeriodConfigTest003"
             let description = "Irregular payment schedule does not break APR calculation"
             let sp = {
-                AsOfDate = Date(2024, 3, 5)
+                EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2022, 10, 13)
                 Principal = 50000L<Cent>
                 ScheduleConfig = AutoGenerateSchedule {
@@ -314,7 +314,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
@@ -357,7 +357,7 @@ module UnitPeriodConfigTests =
                 ]
 
             let sp = {
-                AsOfDate = startDate
+                EvaluationDate = startDate
                 StartDate = startDate
                 Principal = 100000L<Cent>
                 ScheduleConfig = CustomSchedule originalScheduledPayments
@@ -411,7 +411,7 @@ module UnitPeriodConfigTests =
                 let originalFinalPaymentDay = originalScheduledPayments |> Map.maxKeyValue |> fst
                 let quoteSp =
                     { sp with
-                        AsOfDate = Date(2024, 3, 6)
+                        EvaluationDate = Date(2024, 3, 6)
                         ScheduleConfig =
                             [|
                                 Map.toArray originalScheduledPayments
@@ -441,7 +441,7 @@ module UnitPeriodConfigTests =
                                 }
                             )
                     }
-                let quote = getQuote SettlementDay.SettlementOnAsOfDay quoteSp actualPayments
+                let quote = getQuote SettlementDay.SettlementOnEvaluationDay quoteSp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 

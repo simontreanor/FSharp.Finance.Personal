@@ -110,8 +110,8 @@ module Calculation =
             $"%A{dr.Start} to %A{dr.End}"
 
     /// determines whether a pending payment has timed out
-    let isTimedOut paymentTimeout (asOfDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
-        (int asOfDay - int paymentDay) * 1<DurationDay> > paymentTimeout
+    let isTimedOut paymentTimeout (evaluationDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
+        (int evaluationDay - int paymentDay) * 1<DurationDay> > paymentTimeout
 
     /// a fraction
     [<RequireQualifiedAccess; Struct>]

@@ -37,7 +37,7 @@ open Scheduling
 open UnitPeriod
 (*** ***)
 let parameters = {
-    AsOfDate = Date(2025, 4, 22)
+    EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
     Principal = 1000_00L<Cent>
     ScheduleConfig = AutoGenerateSchedule {
@@ -192,7 +192,7 @@ let simpleItems =
 *)
 
 (*** hide ***)
-{ AsOfDay = 0<OffsetDay>; Items = simpleItems; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
+{ EvaluationDay = 0<OffsetDay>; Items = simpleItems; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -224,7 +224,7 @@ let simpleItems' =
 *)
 
 (*** hide ***)
-{ AsOfDay = 0<OffsetDay>; Items = simpleItems'; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
+{ EvaluationDay = 0<OffsetDay>; Items = simpleItems'; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -239,7 +239,7 @@ let items =
     |> adjustFinalPayment finalScheduledPaymentDay parameters.ScheduleConfig.IsAutoGenerateSchedule
 
 (*** hide ***)
-{ AsOfDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
+{ EvaluationDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
