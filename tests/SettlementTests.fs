@@ -26,7 +26,7 @@ module SettlementTests =
         let title = "SettlementTest001"
         let description = "Final payment due on Friday: what would I pay if I paid it today?"
         let sp = {
-            AsOfDate = Date(2024, 3, 19)
+            EvaluationDate = Date(2024, 3, 19)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig =  Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
@@ -59,7 +59,7 @@ module SettlementTests =
             ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 112<OffsetDay>
             quote.QuoteResult, scheduledItem
@@ -112,7 +112,7 @@ module SettlementTests =
         let title = "SettlementTest002"
         let description = "Final payment due on Friday: what would I pay if I paid it one week too late?"
         let sp = {
-            AsOfDate = Date(2024, 3, 29)
+            EvaluationDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
@@ -145,7 +145,7 @@ module SettlementTests =
             ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem
@@ -198,7 +198,7 @@ module SettlementTests =
         let title = "SettlementTest003"
         let description = "Final payment due on Friday: what if I pay £50 on Friday and the rest next week one week too late?"
         let sp = {
-            AsOfDate = Date(2024, 3, 29)
+            EvaluationDate = Date(2024, 3, 29)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
@@ -232,7 +232,7 @@ module SettlementTests =
             ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
             quote.QuoteResult, scheduledItem

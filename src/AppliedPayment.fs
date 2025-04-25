@@ -39,7 +39,7 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments asOfDay startDate settlementDay (chargeConfig: Charge.Config option) paymentTimeout (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
+    let applyPayments evaluationDay startDate settlementDay (chargeConfig: Charge.Config option) paymentTimeout (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
         // guard against empty maps
         if Map.isEmpty scheduledPayments then
             Map.empty
@@ -48,7 +48,7 @@ module AppliedPayment =
             let actualPayments =
                 actualPayments
                 |> Map.map(fun d app ->
-                    if isTimedOut paymentTimeout asOfDay d then
+                    if isTimedOut paymentTimeout evaluationDay d then
                         app
                         |> Array.map(fun ap ->
                             match ap.ActualPaymentStatus with
@@ -114,23 +114,23 @@ module AppliedPayment =
                             | 0L<Cent>, cpt ->
                                 cpt, ExtraPayment
                             // a payment due on or before the day
-                            | spt, cpt when cpt < spt && offsetDay <= asOfDay && int offsetDay + int paymentTimeout >= int asOfDay ->
+                            | spt, cpt when cpt < spt && offsetDay <= evaluationDay && int offsetDay + int paymentTimeout >= int evaluationDay ->
                                 match settlementDay with
                                 // settlement requested on a future day
                                 | SettlementDay.SettlementOn day when day > offsetDay ->
                                     0L<Cent>, PaymentDue
-                                | SettlementDay.SettlementOnAsOfDay when asOfDay > offsetDay ->
+                                | SettlementDay.SettlementOnEvaluationDay when evaluationDay > offsetDay ->
                                     0L<Cent>, PaymentDue
                                 // settlement requested on the day, requiring a generated payment to be calculated (calculation deferred until amortisation schedule is generated)
                                 | SettlementDay.SettlementOn day when day = offsetDay ->
                                     0L<Cent>, Generated
-                                | SettlementDay.SettlementOnAsOfDay when asOfDay = offsetDay ->
+                                | SettlementDay.SettlementOnEvaluationDay when evaluationDay = offsetDay ->
                                     0L<Cent>, Generated
                                 // no settlement on day, or statement requested
                                 | _ ->
                                     spt, PaymentDue
                             // a payment due on a future day
-                            | spt, _ when offsetDay > asOfDay ->
+                            | spt, _ when offsetDay > evaluationDay ->
                                 spt, NotYetDue
                             // a payment due but no payment made
                             | spt, 0L<Cent> when spt > 0L<Cent> ->
@@ -240,15 +240,15 @@ module AppliedPayment =
                 // settlement on a specific day
                 | SettlementDay.SettlementOn day ->
                     appliedPayments day ToBeGenerated Generated
-                // settlement on the as-of day
-                | SettlementDay.SettlementOnAsOfDay ->
-                    appliedPayments asOfDay ToBeGenerated Generated
+                // settlement on the evaluation day
+                | SettlementDay.SettlementOnEvaluationDay ->
+                    appliedPayments evaluationDay ToBeGenerated Generated
                 // statement only
                 | SettlementDay.NoSettlement ->
                     let maxPaymentDay = appliedPaymentMap |> Map.maxKeyValue |> fst
                     // when inspecting after the end of the schedule, just return the schedule with no applied payments added
-                    if asOfDay >= maxPaymentDay then
+                    if evaluationDay >= maxPaymentDay then
                         appliedPaymentMap
                     // otherwise, add an information-only entry if the payment day is not present
                     else
-                        appliedPayments asOfDay NoGeneratedPayment InformationOnly
+                        appliedPayments evaluationDay NoGeneratedPayment InformationOnly

@@ -50,7 +50,7 @@ module AprUnitedKingdomTests =
             else
                 Interest.Cap.Zero
         {
-            AsOfDate = startDate
+            EvaluationDate = startDate
             StartDate = startDate
             Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {

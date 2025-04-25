@@ -66,7 +66,7 @@ module IllustrativeTests =
         let title = "IllustrativeTest000"
         let description = "Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time"
         let sp = {
-            AsOfDate = Date(2025, 7, 1)
+            EvaluationDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -147,7 +147,7 @@ module IllustrativeTests =
             before second repayment due date (30/04/2025); this shows that early missed payments not not accrue extra interest because the principal balance is not decreasing while there is a
             positive interest balance"""
         let sp = {
-            AsOfDate = Date(2025, 7, 1)
+            EvaluationDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -227,7 +227,7 @@ module IllustrativeTests =
             """Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) 
             - missed first repayment and did not pay before second repayment due date (30/04/2025); this shows a final open balance due the extra day's interest"""
         let sp = {
-            AsOfDate = Date(2025, 7, 1)
+            EvaluationDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -308,7 +308,7 @@ module IllustrativeTests =
             fourth repayment due date (30/06/2025); this shows (in contrast to test 001) that extra interest is in fact accrued on late payment because when there is no interest balance, the principal
             balance remains higher than it would have been if the payment had been made on time"""
         let sp = {
-            AsOfDate = Date(2025, 7, 1)
+            EvaluationDate = Date(2025, 7, 1)
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {

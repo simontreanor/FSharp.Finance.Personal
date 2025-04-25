@@ -28,7 +28,7 @@ module Rescheduling =
     let reschedule sp (rp: RescheduleParameters) actualPayments =
 
         // get the settlement quote
-        let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+        let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
 
         // create a new payment schedule either by auto-generating it or using manual payments
         let newPaymentSchedule =
@@ -98,7 +98,7 @@ module Rescheduling =
     let rollOver sp (rp: RolloverParameters) actualPayments =
 
         // get the settlement quote
-        let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+        let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
 
         // process the quote and extract the portions if applicable
         let principalPortion, feePortion, feeRebateIfSettled =
@@ -113,7 +113,7 @@ module Rescheduling =
         // configure the parameters for the new schedule
         let spNew =
             { sp with
-                StartDate = sp.AsOfDate
+                StartDate = sp.EvaluationDate
                 Principal = principalPortion
                 ScheduleConfig = rp.PaymentSchedule
                 FeeConfig =

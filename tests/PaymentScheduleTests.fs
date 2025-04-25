@@ -25,7 +25,7 @@ module PaymentScheduleTests =
         let biweeklyParameters principal offset =
             let startDate = Date(2023, 11, 15)
             {
-                AsOfDate = startDate
+                EvaluationDate = startDate
                 StartDate = startDate
                 Principal = principal
                 ScheduleConfig = AutoGenerateSchedule {
@@ -78,7 +78,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title "$1200 with short first period" sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -102,7 +102,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -126,7 +126,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -147,7 +147,7 @@ module PaymentScheduleTests =
         let monthlyParameters principal offset paymentCount =
             let startDate = Date(2023, 12, 07)
             {
-                AsOfDate = startDate
+                EvaluationDate = startDate
                 StartDate = startDate
                 Principal = principal
                 ScheduleConfig = AutoGenerateSchedule {
@@ -183,7 +183,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -208,7 +208,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -233,7 +233,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -258,7 +258,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -283,7 +283,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -308,7 +308,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -333,7 +333,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -358,7 +358,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -383,7 +383,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -408,7 +408,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -433,7 +433,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -458,7 +458,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -483,7 +483,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -508,7 +508,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -533,7 +533,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -558,7 +558,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -583,7 +583,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -608,7 +608,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -633,7 +633,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -658,7 +658,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -683,7 +683,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -708,7 +708,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -733,7 +733,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -758,7 +758,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -783,7 +783,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -808,7 +808,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -833,7 +833,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -858,7 +858,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -883,7 +883,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -908,7 +908,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -933,7 +933,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -958,7 +958,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -983,7 +983,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1008,7 +1008,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1033,7 +1033,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1058,7 +1058,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1083,7 +1083,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1108,7 +1108,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1133,7 +1133,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1158,7 +1158,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1183,7 +1183,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1208,7 +1208,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1233,7 +1233,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1258,7 +1258,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1283,7 +1283,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1308,7 +1308,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1333,7 +1333,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1358,7 +1358,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1383,7 +1383,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1408,7 +1408,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1433,7 +1433,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1458,7 +1458,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1483,7 +1483,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1508,7 +1508,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1533,7 +1533,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1558,7 +1558,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1583,7 +1583,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1608,7 +1608,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1633,7 +1633,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1658,7 +1658,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1683,7 +1683,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1708,7 +1708,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1733,7 +1733,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1758,7 +1758,7 @@ module PaymentScheduleTests =
             let actual = calculate sp
             actual |> SimpleSchedule.outputHtmlToFile folder title description sp
             let expected = {
-                AsOfDay = 0<OffsetDay>
+                EvaluationDay = 0<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
@@ -1780,7 +1780,7 @@ module PaymentScheduleTests =
         let title = "PaymentScheduleTest001"
         let description = "If there are no other payments, level payment should equal final payment"
         let sp = {
-            AsOfDate = Date(2022, 12, 19)
+            EvaluationDate = Date(2022, 12, 19)
             StartDate = Date(2022, 12, 19)
             Principal = 300_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -1830,7 +1830,7 @@ module PaymentScheduleTests =
         let title = "PaymentScheduleTest002"
         let description = "Term must not exceed maximum duration"
         let sp = {
-            AsOfDate = Date(2024, 5, 8)
+            EvaluationDate = Date(2024, 5, 8)
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -1880,7 +1880,7 @@ module PaymentScheduleTests =
         let title = "PaymentScheduleTest003"
         let description = "Term must not exceed maximum duration"
         let sp = {
-            AsOfDate = Date(2024, 5, 8)
+            EvaluationDate = Date(2024, 5, 8)
             StartDate = Date(2024, 5, 8)
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -1930,7 +1930,7 @@ module PaymentScheduleTests =
         let title = "PaymentScheduleTest004"
         let description = "Payment count must not be exceeded"
         let sp = {
-            AsOfDate = Date(2024, 6, 24)
+            EvaluationDate = Date(2024, 6, 24)
             StartDate = Date(2024, 6, 24)
             Principal = 100_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -1981,7 +1981,7 @@ module PaymentScheduleTests =
         let description = "Calculation with three equivalent but different payment schedules types should be identical"
 
         let sp paymentSchedule = {
-            AsOfDate = Date(2024, 6, 24)
+            EvaluationDate = Date(2024, 6, 24)
             StartDate = Date(2024, 6, 24)
             Principal = 100_00L<Cent>
             ScheduleConfig = paymentSchedule

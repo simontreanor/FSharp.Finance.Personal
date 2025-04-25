@@ -23,7 +23,7 @@ module PromotionalRatesTests =
     let startDate = Date(2024, 8, 23)
     let scheduleParameters promotionalRates =
         {
-            AsOfDate = startDate.AddDays 180
+            EvaluationDate = startDate.AddDays 180
             StartDate = startDate
             Principal = 400_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -118,7 +118,7 @@ module PromotionalRatesTests =
         let title = "PromotionalRatesTest004"
         let description = "Mortgage quote with a five-year fixed interest deal and a mortgage fee added to the loan"
         let sp = {
-            AsOfDate = Date(2024, 4, 11)
+            EvaluationDate = Date(2024, 4, 11)
             StartDate = Date(2024, 4, 11)
             Principal = 192_000_00L<Cent>
             ScheduleConfig = FixedSchedules [|

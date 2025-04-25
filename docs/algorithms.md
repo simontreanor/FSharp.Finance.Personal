@@ -63,8 +63,8 @@ necessary.
 
 Here, we take our initial scheduled payments plus any actual payments made, and group them by day, and create a payment status based on the
 relative timings and amounts. It also applies late payment charges where necessary. It also marks any days for which a settlement figure will
-need to be generated, or, for statements, it inserts an entry for the as-of day into the schedule (if it isn't already there) to enable an exact
-balance for the as-of day to be calculated.
+need to be generated, or, for statements, it inserts an entry for the evaluation day into the schedule (if it isn't already there) to enable an exact
+balance for the evaluation day to be calculated.
 
 > NB: the applied payments stage is an intermediate calculation stage and most of the finalised calculations are performed in the next stage
 

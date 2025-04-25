@@ -27,7 +27,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest000"
         let description = "Quote returning nothing"
         let sp = {
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2023, 2, 9)
             Principal = 30000L<Cent>
             ScheduleConfig = CustomSchedule <| Map [
@@ -67,7 +67,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -90,7 +90,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest001"
         let description = "Quote returning nothing"
         let sp = {
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2022, 2, 2)
             Principal = 25000L<Cent>
             ScheduleConfig = CustomSchedule <| Map [
@@ -130,7 +130,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -153,7 +153,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest002"
         let description = "Quote returning nothing"
         let sp = {
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2022, 12, 2)
             Principal = 75000L<Cent>
             ScheduleConfig = CustomSchedule <| Map [
@@ -193,7 +193,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -216,7 +216,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest003"
         let description = "Quote returning nothing"
         let sp = {
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
             ScheduleConfig = CustomSchedule <| Map [
@@ -328,7 +328,7 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -351,7 +351,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest004"
         let description = "Only one insufficient funds charge per day"
         let sp = {
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2020, 10, 8)
             Principal = 50000L<Cent>
             ScheduleConfig = CustomSchedule <| Map [
@@ -472,7 +472,7 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -496,7 +496,7 @@ module EdgeCaseTests =
         let description = "Quote returning nothing"
         let sp = {
 
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2022, 6, 22)
             Principal = 500_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2022, 7, 15); ScheduleLength = PaymentCount 6 }
@@ -601,7 +601,7 @@ module EdgeCaseTests =
         |]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -624,7 +624,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest006"
         let description = "Quote returning nothing"
         let sp = {
-            AsOfDate = Date(2024, 3, 12)
+            EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2021, 12, 26)
             Principal = 150000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2022, 1, 7); ScheduleLength = PaymentCount 6 }
@@ -657,7 +657,7 @@ module EdgeCaseTests =
         ]
 
         let actual =
-            let quote = getQuote SettlementDay.SettlementOnAsOfDay sp actualPayments
+            let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
             quote.QuoteResult
 
@@ -681,7 +681,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest007"
         let description = "Quote returning nothing"
         let sp = {
-            AsOfDate = Date(2024, 3, 14)
+            EvaluationDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 2, 22); ScheduleLength = PaymentCount 4 }
@@ -713,7 +713,7 @@ module EdgeCaseTests =
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
 
-        let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+        let rescheduleDay = sp.EvaluationDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
             FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
@@ -765,7 +765,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest008"
         let description = "Partial write-off"
         let sp = {
-            AsOfDate = Date(2024, 3, 14)
+            EvaluationDate = Date(2024, 3, 14)
             StartDate = Date(2024, 2, 2)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 2, 22); ScheduleLength = PaymentCount 4 }
@@ -797,7 +797,7 @@ module EdgeCaseTests =
 
         let originalFinalPaymentDay = ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
 
-        let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+        let rescheduleDay = sp.EvaluationDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
             FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
@@ -849,7 +849,7 @@ module EdgeCaseTests =
         let title = "EdgeCaseTest009"
         let description = "Negative principal balance accruing interest"
         let sp = {
-            AsOfDate = Date(2024, 4, 5)
+            EvaluationDate = Date(2024, 4, 5)
             StartDate = Date(2023, 5, 5)
             Principal = 25000L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 5, 10); ScheduleLength = PaymentCount 4 }

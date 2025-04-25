@@ -197,7 +197,7 @@ module Scheduling =
         | ExtraPayment
         /// a refund was processed
         | Refunded
-        /// a scheduled payment is in the future (seen from the as-of date)
+        /// a scheduled payment is in the future (seen from the evaluation date)
         | NotYetDue
         /// a scheduled payment has not been made on time but is within the late-charge grace period
         | PaymentDue
@@ -205,7 +205,7 @@ module Scheduling =
         | Generated
         /// no payment needed because the loan has already been settled
         | NoLongerRequired
-        /// a schedule item generated to show the balances on the as-of date
+        /// a schedule item generated to show the balances on the evaluation date
         | InformationOnly
         /// HTML formatting to display the payment status in a readable format
         member ps.Html =
@@ -418,7 +418,7 @@ module Scheduling =
    /// parameters for creating a payment schedule
     type Parameters = {
         /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
-        AsOfDate: Date
+        EvaluationDate: Date
         /// the start date of the schedule, typically the day on which the principal is advanced
         StartDate: Date
         /// the principal
@@ -442,11 +442,11 @@ module Scheduling =
             $"""
 <table>
     <tr>
-        <td>As-of</td>
-        <td>%A{parameters.AsOfDate}</td>
+        <td>Evaluation Date</td>
+        <td>%A{parameters.EvaluationDate}</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>%A{parameters.StartDate}</td>
     </tr>
     <tr>
@@ -589,7 +589,7 @@ module Scheduling =
     ///  a schedule of payments, with statistics
     type SimpleSchedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is inspected
-        AsOfDay: int<OffsetDay>
+        EvaluationDay: int<OffsetDay>
         /// the items of the schedule
         Items: SimpleItem array
         /// the statistics from the schedule
@@ -928,7 +928,7 @@ module Scheduling =
         let finalPayment = scheduledPayments |> Array.tryLast |> Option.map ScheduledPayment.total |> Option.defaultValue 0L<Cent>
         // return the schedule (as `Items`) plus associated information and statistics
         {
-            AsOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
+            EvaluationDay = (sp.EvaluationDate - sp.StartDate).Days * 1<OffsetDay>
             Items = items
             Stats = {
                 InitialInterestBalance =
@@ -1088,7 +1088,7 @@ module Scheduling =
     type SettlementDay =
         /// quote a settlement figure on the specified day
         | SettlementOn of SettlementDay: int<OffsetDay>
-        /// quote a settlement figure on the as-of day
-        | SettlementOnAsOfDay
+        /// quote a settlement figure on the evaluation day
+        | SettlementOnEvaluationDay
         /// no settlement figure is required
         | NoSettlement

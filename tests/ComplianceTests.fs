@@ -23,7 +23,7 @@ module ComplianceTests =
     let startDate1 = Date(2023, 11, 6)
     let scheduleParameters1 =
         {
-            AsOfDate = startDate1.AddDays 180
+            EvaluationDate = startDate1.AddDays 180
             StartDate = startDate1
             Principal = 1000_00L<Cent>
             ScheduleConfig =
@@ -136,7 +136,7 @@ module ComplianceTests =
     let startDate2 = Date(2021, 12, 14)
     let scheduleParameters2 =
         {
-            AsOfDate = startDate2.AddDays 180
+            EvaluationDate = startDate2.AddDays 180
             StartDate = startDate2
             Principal = 500_00L<Cent>
             ScheduleConfig =
@@ -504,7 +504,7 @@ module ComplianceTests =
 
     let scheduleParameters7 =
         { scheduleParameters1 with
-            AsOfDate = Date(2025, 4, 1)
+            EvaluationDate = Date(2025, 4, 1)
             StartDate = Date(2025, 4, 1)
             Principal = 317_26L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -551,7 +551,7 @@ module ComplianceTests =
         principalBalance |> should equal 0L<Cent>
 
     let scheduleParameters8 = {
-        AsOfDate = Date(2025, 4, 22)
+        EvaluationDate = Date(2025, 4, 22)
         StartDate = Date(2025, 4, 22)
         Principal = 1000_00L<Cent>
         ScheduleConfig = AutoGenerateSchedule {

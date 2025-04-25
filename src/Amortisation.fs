@@ -284,8 +284,8 @@ module Amortisation =
         match settlementDay with
         | SettlementDay.SettlementOn day ->
             int day <= int sp.InterestConfig.InitialGracePeriod
-        | SettlementDay.SettlementOnAsOfDay ->
-            int <| OffsetDay.fromDate sp.StartDate sp.AsOfDate <= int sp.InterestConfig.InitialGracePeriod
+        | SettlementDay.SettlementOnEvaluationDay ->
+            int <| OffsetDay.fromDate sp.StartDate sp.EvaluationDate <= int sp.InterestConfig.InitialGracePeriod
         | SettlementDay.NoSettlement ->
             false
 
@@ -409,8 +409,8 @@ module Amortisation =
 
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate sp settlementDay initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
-        // get the as-of day (the day the schedule is inspected) based on the as-of date in the schedule parameters
-        let asOfDay = (sp.AsOfDate - sp.StartDate).Days * 1<OffsetDay>
+        // get the evaluation day (the day the schedule is inspected) based on the evaluation date in the schedule parameters
+        let evaluationDay = (sp.EvaluationDate - sp.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
         let initialInterestBalanceM = Cent.toDecimalCent initialStats.InitialInterestBalance
         // calculate the total fee value for the entire schedule
@@ -528,7 +528,7 @@ module Amortisation =
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
             // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful inspection of the future schedule
             // (e.g. seeing if the schedule will be settled as agreed)
-            let netEffect = if appliedPaymentDay > asOfDay then Cent.min ap.NetEffect paymentDue else ap.NetEffect
+            let netEffect = if appliedPaymentDay > evaluationDay then Cent.min ap.NetEffect paymentDue else ap.NetEffect
             // simplifies any refund apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
             // get the rounded cumulative simple interest
@@ -751,7 +751,7 @@ module Amortisation =
             // get the relevant type of item based on the intended purpose
             let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =
                 match ap.GeneratedPayment, settlementDay with
-                | ToBeGenerated, SettlementDay.SettlementOnAsOfDay when asOfDay = appliedPaymentDay ->
+                | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay when evaluationDay = appliedPaymentDay ->
                     createScheduleItem true
                 | ToBeGenerated, SettlementDay.SettlementOn day when day = appliedPaymentDay ->
                     createScheduleItem true
@@ -760,7 +760,7 @@ module Amortisation =
                 | NoGeneratedPayment, _
                 | ToBeGenerated, SettlementDay.NoSettlement
                 | ToBeGenerated, SettlementDay.SettlementOn _
-                | ToBeGenerated, SettlementDay.SettlementOnAsOfDay ->
+                | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay ->
                     createScheduleItem false
 
             // refine the accumulator values
@@ -867,7 +867,7 @@ module Amortisation =
 
     /// generates an amortisation schedule and final statistics
     let generate sp settlementDay trimEnd actualPayments =
-        let asOfDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+        let evaluationDay = sp.EvaluationDate |> OffsetDay.fromDate sp.StartDate
         let simpleSchedule = Scheduling.calculate sp
         let scheduledPayments =
             simpleSchedule.Items
@@ -877,7 +877,7 @@ module Amortisation =
 
         let amortisationSchedule =
             scheduledPayments
-            |> applyPayments asOfDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.Timeout actualPayments
+            |> applyPayments evaluationDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.Timeout actualPayments
             |> calculate sp settlementDay simpleSchedule.Stats
             |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
             |> calculateStats sp settlementDay

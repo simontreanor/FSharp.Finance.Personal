@@ -18,7 +18,7 @@ module InterestFirstTests =
     let startDate = Date(2024, 7, 23)
     let scheduleParameters =
         {
-            AsOfDate = startDate.AddDays 180
+            EvaluationDate = startDate.AddDays 180
             StartDate = startDate
             Principal = 1000_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2024, 8, 2); ScheduleLength = PaymentCount 5 }
@@ -112,7 +112,7 @@ module InterestFirstTests =
     let InterestFirstTest004 () =
         let title = "InterestFirstTest004"
         let description = "Add-on interest method with early repayment"
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9) }
+        let sp = { scheduleParameters with EvaluationDate = Date(2024, 8, 9) }
 
         let actualPayments =
             Map [
@@ -245,7 +245,7 @@ module InterestFirstTests =
     let InterestFirstTest009 () =
         let title = "InterestFirstTest009"
         let description = "Add-on interest method with single early repayment"
-        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
+        let sp = { scheduleParameters with EvaluationDate = startDate.AddDays 2 }
 
         let actualPayments =
             Map [
@@ -266,7 +266,7 @@ module InterestFirstTests =
     let InterestFirstTest010 () =
         let title = "InterestFirstTest010"
         let description = "Add-on interest method with single early repayment then a quote one day later"
-        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 2 }
+        let sp = { scheduleParameters with EvaluationDate = startDate.AddDays 2 }
 
         let actualPayments =
             Map [
@@ -275,7 +275,7 @@ module InterestFirstTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
+            |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -287,7 +287,7 @@ module InterestFirstTests =
     let InterestFirstTest011 () =
         let title = "InterestFirstTest011"
         let description = "Add-on interest method with small loan and massive payment leading to a refund needed"
-        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
+        let sp = { scheduleParameters with EvaluationDate = startDate.AddDays 180; Principal = 100_00L<Cent> }
 
         let actualPayments =
             Map [
@@ -296,7 +296,7 @@ module InterestFirstTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
+            |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -307,7 +307,7 @@ module InterestFirstTests =
     let InterestFirstTest012 () =
         let title = "InterestFirstTest012"
         let description = "Realistic example 501ac58e62a5"
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2022, 4, 1); ScheduleLength = PaymentCount 4 } }
+        let sp = { scheduleParameters with EvaluationDate = Date(2024, 8, 9); StartDate = Date(2022, 2, 28); Principal = 400_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2022, 4, 1); ScheduleLength = PaymentCount 4 } }
 
         let actualPayments =
             Map [
@@ -320,7 +320,7 @@ module InterestFirstTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
+            |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -332,7 +332,7 @@ module InterestFirstTests =
     let InterestFirstTest013 () =
         let title = "InterestFirstTest013"
         let description = "Realistic example 0004ffd74fbb"
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 6, 10); ScheduleLength = PaymentCount 4 } }
+        let sp = { scheduleParameters with EvaluationDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 6, 10); ScheduleLength = PaymentCount 4 } }
 
         let actualPayments =
             Map [
@@ -344,7 +344,7 @@ module InterestFirstTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
+            |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -356,7 +356,7 @@ module InterestFirstTests =
     let ``InterestFirstTest014`` () =
         let title = "InterestFirstTests014"
         let description = "Realistic example 0004ffd74fbb with overpayment"
-        let sp = { scheduleParameters with AsOfDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 6, 10); ScheduleLength = PaymentCount 4 } }
+        let sp = { scheduleParameters with EvaluationDate = Date(2024, 8, 9); StartDate = Date(2023, 6, 7); Principal = 200_00L<Cent>; ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2023, 6, 10); ScheduleLength = PaymentCount 4 } }
 
         let actualPayments =
             Map [
@@ -368,7 +368,7 @@ module InterestFirstTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
+            |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -380,7 +380,7 @@ module InterestFirstTests =
     let InterestFirstTest015 () =
         let title = "InterestFirstTest015"
         let description = "Add-on interest method with big early repayment followed by tiny overpayment"
-        let sp = { scheduleParameters with AsOfDate = startDate.AddDays 1000 }
+        let sp = { scheduleParameters with EvaluationDate = startDate.AddDays 1000 }
 
         let actualPayments =
             Map [
@@ -389,7 +389,7 @@ module InterestFirstTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate sp SettlementDay.SettlementOnAsOfDay false
+            |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
@@ -401,7 +401,7 @@ module InterestFirstTests =
     let InterestFirstTest016 () =
         let title = "InterestFirstTest016"
         let description = "Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)"
-        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.InterestConfig.Cap = Interest.Cap.Zero }
+        let sp = { scheduleParameters with EvaluationDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Parameters.InterestConfig.Cap = Interest.Cap.Zero }
 
         let actualPayments = Map.empty
 
@@ -419,7 +419,7 @@ module InterestFirstTests =
     let InterestFirstTest017 () =
         let title = "InterestFirstTest017"
         let description = "Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)"
-        let sp = { scheduleParameters with AsOfDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m }
+        let sp = { scheduleParameters with EvaluationDate = startDate; Parameters.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m }
 
         let actualPayments = Map.empty
 
@@ -439,7 +439,7 @@ module InterestFirstTests =
         let description = "Realistic test 6045bd0ffc0f with correction on final day"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
                 Parameters.InterestConfig.RateOnNegativeBalance = Interest.Rate.Zero
@@ -648,7 +648,7 @@ module InterestFirstTests =
         let description = "Realistic test 6045bd0ffc0f"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 9, 22)
                 Principal = 740_00L<Cent>
                 ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = Monthly(1, 2023, 9, 29); PaymentCount = 4; PaymentValue = 293_82L<Cent>; ScheduleType = ScheduleType.Original } |]
@@ -702,7 +702,7 @@ module InterestFirstTests =
         let description = "Realistic test 6045bd123363 with correction on final day"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 1, 14)
                 Principal = 100_00L<Cent>
                 ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentValue = 42_40L<Cent>; ScheduleType = ScheduleType.Original } |]
@@ -730,7 +730,7 @@ module InterestFirstTests =
         let description = "Realistic test 6045bd123363"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2023, 1, 14)
                 Principal = 100_00L<Cent>
                 ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = Monthly(1, 2023, 2, 3); PaymentCount = 4; PaymentValue = 42_40L<Cent>; ScheduleType = ScheduleType.Original } |]
@@ -757,7 +757,7 @@ module InterestFirstTests =
         let description = "Realistic test 0004ffd74fbbn"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2018, 1, 26)
                 Principal = 340_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
@@ -795,7 +795,7 @@ module InterestFirstTests =
         let description = "Realistic test 0003ff008ae5"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2022, 12, 1)
                 Principal = 1_500_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
@@ -836,7 +836,7 @@ module InterestFirstTests =
         let description = "Realistic test 0003ff00bffb with actuarial method"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2021, 2, 2)
                 Principal = 350_00L<Cent>
                 ScheduleConfig = FixedSchedules [|
@@ -904,7 +904,7 @@ module InterestFirstTests =
         let description = "Realistic test 0003ff00bffb with add-on method"
         let sp =
             { scheduleParameters with
-                AsOfDate = Date(2024, 9, 17)
+                EvaluationDate = Date(2024, 9, 17)
                 StartDate = Date(2021, 2, 2)
                 Principal = 350_00L<Cent>
                 ScheduleConfig = FixedSchedules [|

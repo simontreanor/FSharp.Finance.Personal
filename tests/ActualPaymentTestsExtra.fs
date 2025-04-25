@@ -34,7 +34,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra000"
         let description = "Simple schedule fully settled on time"
         let sp = {
-            AsOfDate = Date(2023, 12, 1)
+            EvaluationDate = Date(2023, 12, 1)
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -122,7 +122,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra001"
         let description = "Schedule with a payment on day 0L<Cent>, seen from a date before scheduled payments are due to start"
         let sp = {
-            AsOfDate = Date(2022, 3, 25)
+            EvaluationDate = Date(2022, 3, 25)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -211,7 +211,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra002"
         let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off"
         let sp = {
-            AsOfDate = Date(2022, 8, 31)
+            EvaluationDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -258,14 +258,14 @@ module ActualPaymentTestsExtra =
         }
 
         let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
+        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.EvaluationDate - sp.StartDate).Days) * 1<OffsetDay>
 
         let actual =
             let actualPayments =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
+            let rescheduleDay = sp.EvaluationDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
                 FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
@@ -312,7 +312,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra003"
         let description = "never settles down"
         let sp = {
-            AsOfDate = Date(2026, 8, 27)
+            EvaluationDate = Date(2026, 8, 27)
             StartDate = Date(2023, 11, 6)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -400,7 +400,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra004"
         let description = "large negative payment"
         let sp = {
-            AsOfDate = Date(2023, 12, 11)
+            EvaluationDate = Date(2023, 12, 11)
             StartDate = Date(2022, 9, 11)
             Principal = 200_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -478,7 +478,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra005"
         let description = "Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period"
         let sp = {
-            AsOfDate = Date(2022, 4, 1)
+            EvaluationDate = Date(2022, 4, 1)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -564,7 +564,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra006"
         let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee rolled over)"
         let sp = {
-            AsOfDate = Date(2022, 8, 31)
+            EvaluationDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -611,7 +611,7 @@ module ActualPaymentTestsExtra =
         }
 
         let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
+        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.EvaluationDate - sp.StartDate).Days) * 1<OffsetDay>
 
         let actual =
             let actualPayments =
@@ -664,7 +664,7 @@ module ActualPaymentTestsExtra =
         let title = "ActualPaymentTestExtra007"
         let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee not rolled over)"
         let sp = {
-            AsOfDate = Date(2022, 8, 31)
+            EvaluationDate = Date(2022, 8, 31)
             StartDate = Date(2022, 3, 8)
             Principal = 800_00L<Cent>
             ScheduleConfig = AutoGenerateSchedule {
@@ -711,7 +711,7 @@ module ActualPaymentTestsExtra =
         }
 
         let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.AsOfDate - sp.StartDate).Days) * 1<OffsetDay>
+        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.EvaluationDate - sp.StartDate).Days) * 1<OffsetDay>
 
         let actual =
             let actualPayments =
