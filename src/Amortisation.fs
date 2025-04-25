@@ -193,7 +193,7 @@ module Amortisation =
     </tr>
     <tr>
         <td>Required scheduled payment count: <i>{finalStats.RequiredScheduledPaymentCount}</i></td>
-        <td>Last required scheduled payment day: <i>{finalStats.LastRequiredScheduledPaymentDay}</i></td>
+        <td>Last required scheduled payment day: <i>{finalStats.LastRequiredScheduledPaymentDay |> ValueOption.map string |> ValueOption.defaultValue "n/a"}</i></td>
     </tr>
     <tr>
         <td>Final actual payment count: <i>{finalStats.FinalActualPaymentCount}</i></td>
