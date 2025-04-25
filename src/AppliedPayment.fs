@@ -246,7 +246,7 @@ module AppliedPayment =
                 // statement only
                 | SettlementDay.NoSettlement ->
                     let maxPaymentDay = appliedPaymentMap |> Map.maxKeyValue |> fst
-                    // when inspecting after the end of the schedule, just return the schedule with no applied payments added
+                    // when evaluating after the end of the schedule, just return the schedule with no applied payments added
                     if evaluationDay >= maxPaymentDay then
                         appliedPaymentMap
                     // otherwise, add an information-only entry if the payment day is not present

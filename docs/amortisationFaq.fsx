@@ -50,7 +50,7 @@ open UnitPeriod
 *)
 
 let parameters = {
-    EvaluationDate = Date(2025, 4, 24) // the date that we're inspecting the schedule
+    EvaluationDate = Date(2025, 4, 24) // the date that we're evaluating the schedule
     StartDate = Date(2025, 4, 24)
     Principal = 1000_00L<Cent>
     ScheduleConfig = AutoGenerateSchedule {
@@ -133,7 +133,7 @@ Now, let's assume that it's day 35 and no payments have been made, so the paymen
 let amortisation1 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 5, 29) // inspect the schedule on day 35
+            EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
         }
         ValueNone // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
@@ -205,7 +205,7 @@ Let's again assume that it's day 35 and no payments have been made, so the payme
 let amortisation3 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 5, 27) // inspect the schedule on day 35
+            EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
         ValueNone // no settlement quotation requested
@@ -323,7 +323,7 @@ Now, let's assume that the first two payments have been made on time, and the cu
 let amortisation4 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 7, 3) // inspect the schedule on day 70
+            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         }
         SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
         false // don't clip unrequired payments from the end of the schedule
@@ -378,7 +378,7 @@ Let's assume again that the first two payments have been made on time, and the c
 let amortisation5 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 7, 3) // inspect the schedule on day 70
+            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
         SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
@@ -424,7 +424,7 @@ refund the customer the difference between the settlement figure and the amount 
 let amortisation6 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 4, 29) // inspect the schedule on day 5
+            EvaluationDate = Date(2025, 4, 29) // evaluate the schedule on day 5
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
         ValueNone // no settlement quotation requested
@@ -482,7 +482,7 @@ customer already paid the first two payments on time, but missed the remaining t
 
 let refinanceExampleParameters =
     { parameters with
-        EvaluationDate = Date(2025, 9, 23) // inspect the schedule on day 152
+        EvaluationDate = Date(2025, 9, 23) // evaluate the schedule on day 152
         InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
     }
 let actualPayments =
@@ -642,7 +642,7 @@ Let's take our simple-interest loan, where the customer has already made the fir
 let amortisation7 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 7, 3) // inspect the schedule on day 70
+            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         }
         ValueNone // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
@@ -679,7 +679,7 @@ You can see that the single-payment write-off has no effect on the remainder of 
 let amortisation8 =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 7, 3) // inspect the schedule on day 70
+            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         }
         (SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
         false // don't clip unrequired payments from the end of the schedule
@@ -701,7 +701,7 @@ let fullWriteOffAmount = settlementFigure |> Option.defaultValue 0L<Cent>
 let amortisation8' =
     Amortisation.generate
         { parameters with
-            EvaluationDate = Date(2025, 7, 3) // inspect the schedule on day 70
+            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         }
         (SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
         false // don't clip unrequired payments from the end of the schedule

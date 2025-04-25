@@ -409,7 +409,7 @@ module Amortisation =
 
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate sp settlementDay initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
-        // get the evaluation day (the day the schedule is inspected) based on the evaluation date in the schedule parameters
+        // get the evaluation day (the day the schedule is evaluated) based on the evaluation date in the schedule parameters
         let evaluationDay = (sp.EvaluationDate - sp.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
         let initialInterestBalanceM = Cent.toDecimalCent initialStats.InitialInterestBalance
@@ -526,7 +526,7 @@ module Amortisation =
                     |> Array.sumBy _.Total, ap.AppliedCharges
             // apportion the charges
             let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
-            // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful inspection of the future schedule
+            // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful evaluation of the future schedule
             // (e.g. seeing if the schedule will be settled as agreed)
             let netEffect = if appliedPaymentDay > evaluationDay then Cent.min ap.NetEffect paymentDue else ap.NetEffect
             // simplifies any refund apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative

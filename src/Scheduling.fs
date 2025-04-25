@@ -417,7 +417,7 @@ module Scheduling =
 
    /// parameters for creating a payment schedule
     type Parameters = {
-        /// the date on which the schedule is inspected, typically today, but can be used to inspect it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
+        /// the date on which the schedule is evaluated, typically today, but can be used to evaluate it at any point (affects e.g. whether scheduled payments are deemed as not yet due)
         EvaluationDate: Date
         /// the start date of the schedule, typically the day on which the principal is advanced
         StartDate: Date
@@ -588,7 +588,7 @@ module Scheduling =
 
     ///  a schedule of payments, with statistics
     type SimpleSchedule = {
-        /// the day, expressed as an offset from the start date, on which the schedule is inspected
+        /// the day, expressed as an offset from the start date, on which the schedule is evaluated
         EvaluationDay: int<OffsetDay>
         /// the items of the schedule
         Items: SimpleItem array
@@ -973,7 +973,7 @@ module Scheduling =
         |> Array.groupBy fst
         |> Array.sortBy fst
         |> Array.mapFold(fun previousRescheduleDay (offsetDay, map) ->
-            // inspect the scheduled payment
+            // evaluate the scheduled payment
             let sp = map |> Array.map snd
             // get any original payment due on the day
             let original = sp |> Array.tryFind _.Original.IsSome |> toValueOption
