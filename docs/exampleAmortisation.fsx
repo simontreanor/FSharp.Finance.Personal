@@ -50,8 +50,8 @@ let scheduleParameters =
             Method = Interest.Method.Simple
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = {
-                TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit)
-                DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+                TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
             }
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]
