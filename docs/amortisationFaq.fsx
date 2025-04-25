@@ -106,7 +106,7 @@ schedule is zero, meaning it is fully amortised.
 let amortisation0 =
     Amortisation.generate
         parameters //the parameters defined above
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
         Map.empty // no actual payments made
 
@@ -135,7 +135,7 @@ let amortisation1 =
         { parameters with
             EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
         }
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
         Map.empty // no actual payments made
 
@@ -177,7 +177,7 @@ let amortisation2 =
         { parameters with
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
         Map.empty // no actual payments made
 
@@ -208,7 +208,7 @@ let amortisation3 =
             EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
         Map.empty // no actual payments made
 
@@ -427,7 +427,7 @@ let amortisation6 =
             EvaluationDate = Date(2025, 4, 29) // evaluate the schedule on day 5
             InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         }
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         true // clip unrequired payments from the end of the schedule
         (Map [
             5<OffsetDay>, [| ActualPayment.quickConfirmed 1050_00L<Cent> |]
@@ -538,7 +538,7 @@ let rescheduleParameters : RescheduleParameters = {
         |]
     RateOnNegativeBalance = Interest.Rate.Zero // no negative balance, so irrelevant
     PromotionalInterestRates = [||] // no promotional rates
-    SettlementDay = ValueNone //no settlement requested, just generate a statement
+    SettlementDay = SettlementDay.NoSettlement //no settlement requested, just generate a statement
 }
 let rescheduleSchedules = reschedule refinanceExampleParameters rescheduleParameters actualPayments
 
@@ -644,7 +644,7 @@ let amortisation7 =
         { parameters with
             EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         }
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -745,7 +745,7 @@ let amortisation9 =
                 }
             |]
         }
-        ValueNone // no settlement quotation requested
+        SettlementDay.NoSettlement // no settlement quotation requested
         false // don't clip unrequired payments from the end of the schedule
         Map.empty // no actual payments made
 
