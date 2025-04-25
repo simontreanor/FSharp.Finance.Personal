@@ -267,7 +267,7 @@ module ActualPaymentTestsExtra =
                 ]
             let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
             let rp : RescheduleParameters = {
-                FeeettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay'
+                FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
                 RateOnNegativeBalance = Interest.Rate.Zero
                 PromotionalInterestRates = [||]

@@ -716,7 +716,7 @@ module EdgeCaseTests =
         let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
+            FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
@@ -800,7 +800,7 @@ module EdgeCaseTests =
         let rescheduleDay = sp.AsOfDate |> OffsetDay.fromDate sp.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
+            FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
             PaymentSchedule = CustomSchedule <| Map [
                 58<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 5000L<Cent>; RescheduleDay = rescheduleDay })
             ]
