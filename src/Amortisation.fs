@@ -172,6 +172,10 @@ module Amortisation =
         FinalCostToBorrowingRatio: Percent
         /// the daily interest rate derived from interest over (principal + fee), ignoring charges 
         EffectiveInterestRate: Interest.Rate
+        /// the generated settlement figure from the schedule
+        SettlementFigure: (int<OffsetDay> * int64<Cent>) voption
+        /// the final balance status of the schedule
+        FinalBalanceStatus: BalanceStatus
     }
 
     /// final statistics resulting from the calculations
@@ -179,6 +183,10 @@ module Amortisation =
         /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
         let toHtmlTable finalStats = $"""
 <table>
+    <tr>
+        <td>Generated settlement: <i>{finalStats.SettlementFigure |> function ValueSome(d, gv) -> $"{formatCent gv} on day {d}" | ValueNone -> "<i>n/a</i>"}</i></td>
+        <td>Final balance status: <i>{finalStats.FinalBalanceStatus}</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>{finalStats.EffectiveInterestRate}</i></td>
         <td>Final cost-to-borrowing ratio: <i>{finalStats.FinalCostToBorrowingRatio}</i></td>
@@ -862,6 +870,19 @@ module Amortisation =
                         decimal interestTotal / decimal (principalTotal + feeTotal - feeRebate) / decimal finalPaymentDay
                     |> Percent.fromDecimal
                     |> Interest.Rate.Daily
+                SettlementFigure =
+                    items
+                    |> Map.tryPick(fun d si ->
+                        match si.GeneratedPayment with
+                        | GeneratedValue gv -> Some (d, gv)
+                        | _ -> None
+                    )
+                    |> toValueOption
+                FinalBalanceStatus =
+                    items
+                    |> Map.maxKeyValue
+                    |> snd
+                    |> _.BalanceStatus
             }
         }
 

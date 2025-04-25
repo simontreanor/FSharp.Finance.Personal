@@ -687,16 +687,10 @@ let amortisation8 =
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
         ]) // actual payments made on days 30 and 61, and a single-payment write-off on day 91
-// extract the settlement figure
-let settlementFigure = // get the settlement figure from the schedule
-    amortisation8.AmortisationSchedule.ScheduleItems
-    |> Map.tryPick(fun _ si ->
-        match si.GeneratedPayment with
-        | GeneratedValue v -> Some v
-        | _ -> None
-    )
+// get the generated settlement figure
+let settlementFigure = amortisation8.AmortisationSchedule.FinalStats.SettlementFigure
 // use the settlement figure as the full write-off amount
-let fullWriteOffAmount = settlementFigure |> Option.defaultValue 0L<Cent>
+let fullWriteOffAmount = settlementFigure |> Option.map snd |> Option.defaultValue 0L<Cent>
 // run the amortisation again with the full write-off payment
 let amortisation8' =
     Amortisation.generate
