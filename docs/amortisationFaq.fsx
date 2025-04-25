@@ -257,7 +257,7 @@ how many days it is outstanding:
 
 <div class="mermaid">
     graph LR
-        A["$$\text{interest} = \text{principal} \times \text{daily interest rate} \times \text{days}$$"]
+        A["$$\text{interest} = \text{principal balance} \times \text{daily interest rate} \times \text{days}$$"]
 </div>
 
 Therefore any variations will affect the interest accrued:
