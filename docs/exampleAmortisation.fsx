@@ -84,6 +84,6 @@ It is possible to format the `Items` property as an HTML table:
 
 let html = Schedule.toHtmlTable schedules.AmortisationSchedule
 
-$"""<div style="overflow-x: auto;">{html}</div>"""
+$"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)

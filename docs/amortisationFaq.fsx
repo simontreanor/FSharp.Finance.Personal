@@ -119,7 +119,7 @@ let amortisation0 =
 amortisation0
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 (*** include-it-raw ***)
 
 (**
@@ -148,7 +148,7 @@ let amortisation1 =
 amortisation1
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -190,7 +190,7 @@ let amortisation2 =
 amortisation2
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -221,7 +221,7 @@ let amortisation3 =
 amortisation3
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -308,7 +308,7 @@ As a reminder, here's the schedule prior to any actual payments being made (look
 amortisation0
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -341,7 +341,7 @@ let amortisation4 =
 amortisation4
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -363,7 +363,7 @@ balance of £815.56.
 amortisation2
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -397,7 +397,7 @@ let amortisation5 =
 amortisation5
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -442,7 +442,7 @@ let amortisation6 =
 amortisation6
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -508,7 +508,7 @@ Here is the status of the schedule on day 152 prior to any refinancing, where a 
 refinanceExampleSchedule
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -552,7 +552,7 @@ The rescheduled amortisation is as follows:
 (*** hide ***)
 rescheduleSchedules.NewSchedules.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -600,7 +600,7 @@ The old loan would be closed as per the settlement quote above. The new rolled-o
 (*** hide ***)
 rolloverSchedules.NewSchedules.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -661,7 +661,7 @@ let amortisation7 =
 amortisation7
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -720,7 +720,7 @@ let amortisation8' =
 amortisation8'
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 
@@ -764,7 +764,7 @@ let amortisation9 =
 amortisation9
 |> _.AmortisationSchedule
 |> Amortisation.Schedule.toHtmlTable
-|> fun html -> $"""<div style="overflow-x: auto;">{html}</div>"""
+|> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
 

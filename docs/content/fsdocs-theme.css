@@ -92,3 +92,17 @@ details table td {
     padding: 0.5rem;
     border-top: 1px solid #eee;
 }
+
+@media screen and (min-width: 2600px) {
+    .schedule {
+        overflow-x: visible;
+        position: relative;
+        left: -420px;
+    }
+}
+
+@media screen and (max-width: 2600px) {
+    .schedule {
+        overflow-x: auto;
+    }
+}
