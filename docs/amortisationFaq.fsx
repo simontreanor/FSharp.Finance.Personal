@@ -24,7 +24,7 @@ While a schedule is active (i.e. it has started and the principal balance is non
 actual payments made. The day of any scheduled or actual payment constitutes an event in the amortisation schedule, and simple interest is
 calculated based on the principal (+ fees) balance and the number of days since the last event.
 
-For full details, see [AmortisationCalculations](amortisation.fsx).
+For full details, see [Amortisation Calculations](amortisation.fsx).
 
 ## Basis of calculations for the following questions
 
