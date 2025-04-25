@@ -93,16 +93,20 @@ details table td {
     border-top: 1px solid #eee;
 }
 
-@media screen and (min-width: 2600px) {
-    .schedule {
-        overflow-x: visible;
-        position: relative;
-        left: -420px;
-    }
+.schedule {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: flex-start;
 }
 
-@media screen and (max-width: 2600px) {
+.schedule table {
+    margin: 0;
+}
+
+@media screen and (min-width: 2600px) {
     .schedule {
-        overflow-x: auto;
+        justify-content: center;
+        overflow-x: visible;
     }
 }
