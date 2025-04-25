@@ -18,8 +18,8 @@ module ActualPaymentTestsExtra =
     open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
+        TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+        DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
     }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
@@ -349,7 +349,7 @@ module ActualPaymentTestsExtra =
             InterestConfig = {
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily (Percent 0.12m)
-                Cap = { TotalAmount = ValueSome <| Amount.Simple 500_00L<Cent>; DailyAmount = ValueNone }
+                Cap = { TotalAmount = Amount.Simple 500_00L<Cent>; DailyAmount = Amount.Unlimited }
                 InitialGracePeriod = 7<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero

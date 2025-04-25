@@ -16,8 +16,8 @@ module ComplianceTests =
     open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
+        TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+        DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
     }
 
     let startDate1 = Date(2023, 11, 6)
@@ -159,8 +159,8 @@ module ComplianceTests =
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
-                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+                    TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                    DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
@@ -303,7 +303,7 @@ module ComplianceTests =
 
     let scheduleParameters4 =
         { scheduleParameters3 with
-            InterestConfig.Cap.DailyAmount = ValueSome <| Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+            InterestConfig.Cap.DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
         }
 
     [<Fact>]
@@ -368,7 +368,7 @@ module ComplianceTests =
 
     let scheduleParameters5 =
         { scheduleParameters3 with
-            InterestConfig.Cap.TotalAmount = ValueSome <| Amount.Percentage(Percent 100m, Restriction.NoLimit)
+            InterestConfig.Cap.TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
         }
 
     [<Fact>]
@@ -571,8 +571,8 @@ module ComplianceTests =
             Method = Interest.Method.AddOn
             StandardRate = Interest.Rate.Daily (Percent 0.798m)
             Cap = {
-                TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
-                DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
+                TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
             }
             InitialGracePeriod = 3<DurationDay>
             PromotionalRates = [||]

@@ -34,7 +34,7 @@ module InterestFirstTests =
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
-                Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
+                Cap = { TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Annual (Percent 8m)

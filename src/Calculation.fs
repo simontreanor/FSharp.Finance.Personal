@@ -231,6 +231,8 @@ module Calculation =
         | Percentage of Percentage:Percent * Restriction:Restriction
         /// a fixed fee
         | Simple of Simple:int64<Cent>
+        /// nothing
+        | Unlimited
         /// HTML formatting to display the amount in a readable format
         member a.Html =
             match a with
@@ -238,6 +240,8 @@ module Calculation =
                 $"{percent} %% {restriction}".Trim()
             | Simple simple ->
                 $"{Cent.toDecimal simple:N2}"
+            | Unlimited ->
+                "<i>n/a</i>"
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     module Amount =
@@ -249,6 +253,8 @@ module Calculation =
                 |> Restriction.calculate restriction
             | Amount.Simple simple ->
                 decimal simple
+            | Amount.Unlimited ->
+                decimal baseValue
             |> ( * ) 1m<Cent>
 
     /// the result obtained from the array solver

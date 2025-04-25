@@ -16,8 +16,8 @@ module PromotionalRatesTests =
     open UnitPeriod
 
     let interestCapExample : Interest.Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
+        TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+        DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
     }
 
     let startDate = Date(2024, 8, 23)
@@ -43,8 +43,8 @@ module PromotionalRatesTests =
                 Method = Interest.Method.Simple
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = {
-                    TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit)
-                    DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+                    TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                    DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
                 }
                 InitialGracePeriod = 0<DurationDay>
                 PromotionalRates = promotionalRates |> ValueOption.defaultValue [||]

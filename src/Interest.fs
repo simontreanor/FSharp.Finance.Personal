@@ -50,36 +50,34 @@ module Interest =
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Cap = {
         /// a cap on the total amount of interest chargeable over the entire schedule
-        TotalAmount: Amount voption
+        TotalAmount: Amount
         /// a cap on the daily amount of interest chargeable
-        DailyAmount: Amount voption
+        DailyAmount: Amount
     }
     with
         /// HTML formatting to display the cap in a readable format
         member c.Html =
-            let total = match c.TotalAmount with ValueSome a -> $"{a}" | ValueNone -> "<i>n/a</i>"
-            let daily = match c.DailyAmount with ValueSome a -> $"{a}" | ValueNone -> "<i>n/a</i>"
-            $"total {total}; daily {daily}"
+            $"total {c.TotalAmount}; daily {c.DailyAmount}"
     
     /// caps on the total interest accruable
     module Cap =
         /// no cap
         let Zero = {
-            Cap.TotalAmount = ValueNone
-            Cap.DailyAmount = ValueNone
+            Cap.TotalAmount = Amount.Unlimited
+            Cap.DailyAmount = Amount.Unlimited
         }
 
         /// if the base value plus the added value exceeds the cap total, return the difference between the cap total and the base value
         let cappedAddedValue capAmount principalBalance baseValue addedValue =
             match capAmount with
-            | ValueSome amount ->
+            | Amount.Unlimited ->
+                addedValue
+            | amount ->
                 let capTotal = Amount.total principalBalance amount |> max 0m<Cent>
                 if baseValue + addedValue > capTotal then
                     capTotal - baseValue
                 else
                     addedValue
-            | ValueNone ->
-                addedValue
 
     /// a promotional interest rate valid during the specified date range
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
@@ -179,7 +177,7 @@ module Interest =
         )
 
     /// calculates the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
-    let calculate (principalBalance: int64<Cent>) (dailyInterestCap: Amount voption) interestRounding (dailyRates: DailyRate array) =
+    let calculate (principalBalance: int64<Cent>) (dailyInterestCap: Amount) interestRounding (dailyRates: DailyRate array) =
         dailyRates
         |> Array.sumBy (fun dr ->
             let rate = dr.InterestRate |> Rate.daily |> Percent.toDecimal

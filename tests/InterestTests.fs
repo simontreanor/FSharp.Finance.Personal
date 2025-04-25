@@ -19,8 +19,8 @@ module InterestTests =
     open UnitPeriod
 
     let interestCapExample : Cap = {
-        TotalAmount = ValueSome (Amount.Percentage (Percent 100m, Restriction.NoLimit))
-        DailyAmount = ValueSome (Amount.Percentage (Percent 0.8m, Restriction.NoLimit))
+        TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+        DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
     }
 
     module RateTests =
@@ -144,7 +144,7 @@ module InterestTests =
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.876m)
-                    Cap = { interestCapExample with TotalAmount = ValueSome (Amount.Percentage (Percent 123.45m, Restriction.NoLimit)) }
+                    Cap = { interestCapExample with TotalAmount = Amount.Percentage (Percent 123.45m, Restriction.NoLimit) }
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Zero
@@ -317,7 +317,7 @@ module InterestTests =
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Annual <| Percent 13.1475m
-                    Cap = { TotalAmount = ValueSome <| Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = ValueSome <| Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
+                    Cap = { TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
                     InitialGracePeriod = 0<DurationDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Annual (Percent 8m)

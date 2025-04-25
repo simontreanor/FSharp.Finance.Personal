@@ -439,7 +439,7 @@ module Amortisation =
                 if si.PrincipalBalance <= 0L<Cent> then
                     dailyInterestRates siOffsetDay appliedPaymentDay
                     |> Array.map(fun dr -> { dr with InterestRate = sp.InterestConfig.RateOnNegativeBalance })
-                    |> Interest.calculate (si.PrincipalBalance + si.FeeBalance) ValueNone interestRounding
+                    |> Interest.calculate (si.PrincipalBalance + si.FeeBalance) Amount.Unlimited interestRounding
                 // otherwise, apply the daily interest rates as normal, applied daily caps as necessary
                 else
                     dailyInterestRates siOffsetDay appliedPaymentDay
