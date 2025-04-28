@@ -690,7 +690,7 @@ let amortisation8 =
 // get the generated settlement figure
 let settlementFigure = amortisation8.AmortisationSchedule.FinalStats.SettlementFigure
 // use the settlement figure as the full write-off amount
-let fullWriteOffAmount = settlementFigure |> Option.map snd |> Option.defaultValue 0L<Cent>
+let fullWriteOffAmount = settlementFigure |> ValueOption.map snd |> ValueOption.defaultValue 0L<Cent>
 // run the amortisation again with the full write-off payment
 let amortisation8' =
     Amortisation.generate
