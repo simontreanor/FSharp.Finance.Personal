@@ -186,7 +186,7 @@ module PromotionalRatesTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 

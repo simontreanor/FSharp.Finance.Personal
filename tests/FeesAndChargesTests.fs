@@ -111,7 +111,7 @@ module FeeAndChargesTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 109_61L<Cent>
+                SettlementFigure = 109_61L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
 
@@ -206,7 +206,7 @@ module FeeAndChargesTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 79_86L<Cent>
+                SettlementFigure = 79_86L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
 
@@ -301,7 +301,7 @@ module FeeAndChargesTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 124_49L<Cent>
+                SettlementFigure = 124_49L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
 

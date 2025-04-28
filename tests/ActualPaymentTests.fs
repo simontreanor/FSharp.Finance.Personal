@@ -57,7 +57,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -294,7 +294,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -374,7 +374,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome -280_64L<Cent>
+            SettlementFigure = -280_64L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -459,7 +459,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -542,7 +542,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -628,7 +628,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -714,7 +714,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -799,7 +799,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -884,7 +884,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 155_09L<Cent>
+            SettlementFigure = 155_09L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -971,7 +971,7 @@ module ActualPaymentTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome -67_93L<Cent>
+            SettlementFigure = -67_93L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
         
@@ -1464,6 +1464,6 @@ module ActualPaymentTests =
 
         Schedule.outputHtmlToFile folder title description sp schedules
 
-        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = ValueSome 100_11L<Cent>
+        let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> fun (_, si) -> si.BalanceStatus = OpenBalance && si.SettlementFigure = 100_11L<Cent>
         let expected = true
         actual |> should equal expected

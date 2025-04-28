@@ -57,7 +57,7 @@ module IllustrativeTests =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueSome 0L<Cent>
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
 
@@ -134,7 +134,7 @@ module IllustrativeTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 0L<Cent>
+                SettlementFigure = 0L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
@@ -215,7 +215,7 @@ module IllustrativeTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 0L<Cent>
+                SettlementFigure = 0L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
@@ -295,7 +295,7 @@ module IllustrativeTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 29L<Cent>
+                SettlementFigure = 29L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected
@@ -376,7 +376,7 @@ module IllustrativeTests =
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = ValueSome 42_39L<Cent>
+                SettlementFigure = 42_39L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
         actual |> should equal expected

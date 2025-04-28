@@ -106,7 +106,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 2000_00L<Cent>)
+        finalSettlementFigure |> should equal 2000_00L<Cent>
 
     [<Fact>]
     let InterestFirstTest004 () =
@@ -214,7 +214,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 650_64L<Cent>)
+        finalSettlementFigure |> should equal 650_64L<Cent>
 
     [<Fact>]
     let InterestFirstTest008 () =
@@ -260,7 +260,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
+        finalSettlementFigure |> should equal 0L<Cent>
 
     [<Fact>]
     let InterestFirstTest010 () =
@@ -326,7 +326,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
+        finalSettlementFigure |> should equal 0L<Cent>
 
     [<Fact>]
     let InterestFirstTest013 () =
@@ -350,7 +350,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
+        finalSettlementFigure |> should equal 0L<Cent>
 
     [<Fact>]
     let ``InterestFirstTest014`` () =
@@ -374,7 +374,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> (fun asi -> asi.InterestPortion, asi.PrincipalPortion, asi.SettlementFigure)
 
-        finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, ValueSome 0L<Cent>)
+        finalSettlementFigure |> should equal (-78L<Cent>, -12_00L<Cent>, 0L<Cent>)
 
     [<Fact>]
     let InterestFirstTest015 () =
@@ -395,7 +395,7 @@ module InterestFirstTests =
 
         let finalSettlementFigure = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal (ValueSome 0L<Cent>)
+        finalSettlementFigure |> should equal 0L<Cent>
 
     [<Fact>]
     let InterestFirstTest016 () =

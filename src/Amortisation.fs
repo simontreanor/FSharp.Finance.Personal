@@ -73,7 +73,7 @@ module Amortisation =
         /// the principal balance to be carried forward
         PrincipalBalance: int64<Cent>
         /// the settlement figure as of the current day
-        SettlementFigure: int64<Cent> voption
+        SettlementFigure: int64<Cent>
         /// the pro-rated fee as of the current day
         FeeRebateIfSettled: int64<Cent>
     }
@@ -104,7 +104,7 @@ module Amortisation =
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
             ChargesBalance = 0L<Cent>
-            SettlementFigure = ValueNone
+            SettlementFigure = 0L<Cent>
             FeeRebateIfSettled = 0L<Cent>
         }
         /// formats the schedule item as an HTML row
@@ -133,7 +133,7 @@ module Amortisation =
         <td class="ci20">{formatCent scheduleItem.FeeBalance}</td>
         <td class="ci21">{formatDecimalCent scheduleItem.InterestBalance}</td>
         <td class="ci22">{formatCent scheduleItem.ChargesBalance}</td>
-        <td class="ci23">{scheduleItem.SettlementFigure |> ValueOption.map formatCent |> ValueOption.defaultValue "&nbsp;"}</td>
+        <td class="ci23">{formatCent scheduleItem.SettlementFigure}</td>
         <td class="ci24">{formatCent scheduleItem.FeeRebateIfSettled}</td>
     </tr>"""
 
@@ -498,7 +498,7 @@ module Amortisation =
             // apportion the interest
             let interestPortionM =
                 // if a refund is made and the settlement figure is postive, the payment should be apportioned to principal rather than interest (this likely represents a goodwill gesture so should directly benefit the customer)
-                if confirmedPaymentTotal < 0L<Cent> && si.SettlementFigure.IsSome && si.SettlementFigure.Value >= 0L<Cent> then
+                if confirmedPaymentTotal < 0L<Cent> && si.SettlementFigure >= 0L<Cent> then
                     0m<Cent>
                 // otherwise, add new interest to the interest balance as normal
                 else
@@ -692,12 +692,12 @@ module Amortisation =
                 let settlementFigure =
                     match pendingPaymentTotal, ap.PaymentStatus, sp.InterestConfig.Method with
                     | pp, _, _ when pp > 0L<Cent> ->
-                        ValueNone
+                        0L<Cent>
                     | _, NotYetDue, _ 
                     | _, _, Interest.Method.AddOn ->
-                        ValueSome generatedSettlementPayment'
+                        generatedSettlementPayment'
                     | _ ->
-                        ValueSome (generatedSettlementPayment' - netEffect')
+                        generatedSettlementPayment' - netEffect'
                 // deteremine the settlement balances or carried balances
                 let balances, interestPortionL', generatedPayment =
                     if isSettlement then
@@ -705,7 +705,7 @@ module Amortisation =
                         ((0L<Cent>, 0L<Cent>, 0m<Cent>, 0L<Cent>),
                         interestPortionL',
                         match ap.GeneratedPayment with
-                        | ToBeGenerated -> GeneratedValue settlementFigure.Value
+                        | ToBeGenerated -> GeneratedValue settlementFigure
                         | gp -> gp)
                     else
                         // refine the interest portion by adding carried interest, and calculate the balances
@@ -719,7 +719,7 @@ module Amortisation =
                 let principalBal, feeBal, interestBal, chargesBal = balances
                 // ensure the settlement figure is never more than the total balances
                 let balanceTotal = principalBal + feeBal + Cent.fromDecimalCent sp.InterestConfig.Rounding interestBal + chargesBal
-                let settlementFigure' = settlementFigure |> ValueOption.map(fun sf -> (balanceTotal, sf) ||> if sf < 0L<Cent> then Cent.max else Cent.min)
+                let settlementFigure' = (balanceTotal, settlementFigure) ||> if settlementFigure < 0L<Cent> then Cent.max else Cent.min
                 // create the schedule item
                 let scheduleItem = {
                     Window = window
@@ -754,7 +754,7 @@ module Amortisation =
                     else
                         interestBalanceM - Cent.toDecimalCent interestBalanceL
                 // returns the offset day, schedule item, generated payment, and interest rounding difference (zero in this case as it is already factored into the settlement figure)
-                appliedPaymentDay, scheduleItem, (if isSettlement then settlementFigure'.Value else 0L<Cent>), interestRoundingDifferenceM
+                appliedPaymentDay, scheduleItem, (if isSettlement then settlementFigure' else 0L<Cent>), interestRoundingDifferenceM
 
             // get the relevant type of item based on the intended purpose
             let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =
@@ -791,7 +791,7 @@ module Amortisation =
                 PrincipalBalance = sp.Principal
                 FeeBalance = feeTotal
                 InterestBalance = initialInterestBalanceM
-                SettlementFigure = ValueSome <| sp.Principal + feeTotal
+                SettlementFigure = sp.Principal + feeTotal
                 FeeRebateIfSettled =
                     match sp.FeeConfig with
                     | Some fc ->
