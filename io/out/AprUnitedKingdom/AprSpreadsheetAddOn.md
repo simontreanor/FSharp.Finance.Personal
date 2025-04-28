@@ -189,15 +189,15 @@
 </table>
 <h4>Description</h4>
 <p><i>Range of APRs for different payment counts and first payment days, using the add-on interest method</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2025-04-01</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2025-04-01</td>
     </tr>
     <tr>

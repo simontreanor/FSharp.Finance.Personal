@@ -247,15 +247,15 @@
 
 <h4>Description</h4>
 <p><i>Add-on interest method with single early repayment then a quote one day later</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-07-25</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2024-07-23</td>
     </tr>
     <tr>
@@ -356,12 +356,16 @@
 <h4>Final Stats</h4>
 <table>
     <tr>
+        <td>Generated settlement: <i>7.65 on day 2</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
+    <tr>
         <td>Effective interest rate: <i>0.01109848485 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>1.47 %</i></td>
     </tr>
     <tr>
         <td>Required scheduled payment count: <i>0</i></td>
-        <td>Last required scheduled payment day: <i>ValueNone</i></td>
+        <td>Last required scheduled payment day: <i>n/a</i></td>
     </tr>
     <tr>
         <td>Final actual payment count: <i>1</i></td>

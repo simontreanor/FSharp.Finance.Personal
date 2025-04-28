@@ -193,15 +193,15 @@
 
 <h4>Description</h4>
 <p><i>Negative interest should accrue to interest balance not principal balance</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-03-07</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2023-09-02</td>
     </tr>
     <tr>
@@ -301,6 +301,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i>-91.06 on day 187</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.1260748663 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>23.58 %</i></td>

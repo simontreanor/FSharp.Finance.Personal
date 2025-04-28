@@ -301,15 +301,15 @@
 
 <h4>Description</h4>
 <p><i>Realistic example 0004ffd74fbb</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-08-09</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2023-06-07</td>
     </tr>
     <tr>
@@ -409,6 +409,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i>0.00 on day 429</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.2331002331 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>100 %</i></td>

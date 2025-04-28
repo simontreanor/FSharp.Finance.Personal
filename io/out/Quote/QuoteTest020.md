@@ -193,15 +193,15 @@
 
 <h4>Description</h4>
 <p><i>Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2022-12-20</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2022-12-19</td>
     </tr>
     <tr>
@@ -314,12 +314,16 @@
 <h4>Final Stats</h4>
 <table>
     <tr>
+        <td>Generated settlement: <i>0.00 on day 1</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
+    <tr>
         <td>Effective interest rate: <i>0.006557377049 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>0.8 %</i></td>
     </tr>
     <tr>
         <td>Required scheduled payment count: <i>0</i></td>
-        <td>Last required scheduled payment day: <i>ValueNone</i></td>
+        <td>Last required scheduled payment day: <i>n/a</i></td>
     </tr>
     <tr>
         <td>Final actual payment count: <i>1</i></td>

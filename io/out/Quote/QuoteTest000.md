@@ -517,15 +517,15 @@
 
 <h4>Description</h4>
 <p><i>Settlement falling on a scheduled payment date</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-09-28</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2024-08-02</td>
     </tr>
     <tr>
@@ -651,6 +651,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i>1,969.72 on day 57</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.0169868508 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>76.64 %</i></td>

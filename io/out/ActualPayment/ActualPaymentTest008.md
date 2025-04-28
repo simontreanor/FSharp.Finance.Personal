@@ -301,15 +301,15 @@
 
 <h4>Description</h4>
 <p><i>Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2023-03-25</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2022-11-01</td>
     </tr>
     <tr>
@@ -421,6 +421,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i><i>n/a</i></i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.3015477855 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>45.12 %</i></td>

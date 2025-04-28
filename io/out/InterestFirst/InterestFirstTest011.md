@@ -220,15 +220,15 @@
 
 <h4>Description</h4>
 <p><i>Add-on interest method with small loan and massive payment leading to a refund needed</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2025-01-19</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2024-07-23</td>
     </tr>
     <tr>
@@ -328,6 +328,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i>-925.24 on day 180</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>-0.1402222222 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>-25.2400000000 %</i></td>

@@ -132,7 +132,7 @@
         <td class="ci20">3,559.49</td>
         <td class="ci21">0.0000</td>
         <td class="ci22">0.00</td>
-        <td class="ci23">&nbsp;</td>
+        <td class="ci23">0.00</td>
         <td class="ci24">3,262.52</td>
     </tr>
     <tr style="text-align: right;">
@@ -733,15 +733,15 @@
 
 <h4>Description</h4>
 <p><i>Pending payments should only apply if not timed out</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-01-30</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2024-01-01</td>
     </tr>
     <tr>
@@ -851,6 +851,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i><i>n/a</i></i></td>
+        <td>Final balance status: <i>open</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.01654571061 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>161.81 %</i></td>

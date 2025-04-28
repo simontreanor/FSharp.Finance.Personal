@@ -87,15 +87,15 @@
 </table>
 <h4>Description</h4>
 <p><i>UK APR test amortisation schedule, first payment day 13, payment count 5</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2025-04-01</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2025-04-01</td>
     </tr>
     <tr>

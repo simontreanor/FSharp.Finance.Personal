@@ -220,15 +220,15 @@
 
 <h4>Description</h4>
 <p><i>Early repayment - 100% total interest cap - custom schedule</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2022-06-12</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2021-12-14</td>
     </tr>
     <tr>
@@ -340,6 +340,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i><i>n/a</i></i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.8635514019 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>92.4 %</i></td>

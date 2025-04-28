@@ -195,15 +195,15 @@
 <p><i>Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed third repayment and then paid before 
             fourth repayment due date (30/06/2025); this shows (in contrast to test 001) that extra interest is in fact accrued on late payment because when there is no interest balance, the principal
             balance remains higher than it would have been if the payment had been made on time</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2025-07-01</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2025-03-01</td>
     </tr>
     <tr>
@@ -303,6 +303,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i><i>n/a</i></i></td>
+        <td>Final balance status: <i>open</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.8501574156 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>102.87 %</i></td>

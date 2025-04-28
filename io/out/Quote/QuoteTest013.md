@@ -193,15 +193,15 @@
 
 <h4>Description</h4>
 <p><i>Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2023-03-15</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2022-11-01</td>
     </tr>
     <tr>
@@ -313,6 +313,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i>432.07 on day 134</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.4637164179 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>62.14 %</i></td>

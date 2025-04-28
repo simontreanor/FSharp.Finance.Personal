@@ -220,15 +220,15 @@
 
 <h4>Description</h4>
 <p><i>Quote returning nothing</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-03-12</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2022-02-02</td>
     </tr>
     <tr>
@@ -350,6 +350,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i>455.55 on day 769</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.01622600366 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>186.22 %</i></td>

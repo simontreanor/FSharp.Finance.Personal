@@ -355,15 +355,15 @@
 
 <h4>Description</h4>
 <p><i>Check that charge for late payment is not applied on scheduled payment date when payment has not yet been made</i></p>
-<p>Generated: <i>2025-04-23 using library version 2.2.4</i></p>
+<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
-        <td>As-of</td>
+        <td>Evaluation Date</td>
         <td>2024-10-01</td>
     </tr>
     <tr>
-        <td>Start</td>
+        <td>Start Date</td>
         <td>2024-08-06</td>
     </tr>
     <tr>
@@ -475,6 +475,10 @@
 
 <h4>Final Stats</h4>
 <table>
+    <tr>
+        <td>Generated settlement: <i><i>n/a</i></i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
     <tr>
         <td>Effective interest rate: <i>0.5118008658 % per day</i></td>
         <td>Final cost-to-borrowing ratio: <i>78.82 %</i></td>
