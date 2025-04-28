@@ -18,7 +18,7 @@ Generating the amortisation starts by calling:
 ```Scheduling.calculate```
 
 As we're looking at an initial schedule, we don't need all the complexity of the amortisation schedule, because we don't need to look into
-things like actual payments, late fees, rebates, etc. We just need to create a simple schedule that's going to let us calculate the payments
+things like actual payments, late fees, rebates, etc. We just need to create a basic schedule that's going to let us calculate the payments
 necessary to bring the final principal balance to zero.
 
 There is no formula to calculate this as it requires recursion - the interest due depends on the principal balance, the amount you pay affects

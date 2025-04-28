@@ -588,7 +588,7 @@ module ComplianceTests =
         let description = "Add-on-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
         let schedules = Scheduling.calculate scheduleParameters8
 
-        SimpleSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+        BasicSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
 
         let principalBalance = schedules.Items |> Array.last |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -599,7 +599,7 @@ module ComplianceTests =
         let description = "Simple-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
         let schedules = Scheduling.calculate { scheduleParameters8 with InterestConfig.Method = Interest.Method.Simple }
 
-        SimpleSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+        BasicSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
 
         let principalBalance = schedules.Items |> Array.last |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>

@@ -4,7 +4,7 @@ title: Unit-Test Outputs
 category: Output
 categoryindex: 5
 index: 1
-description: Simple schedules and amortisation schedules output by the unit tests
+description: Basic schedules and amortisation schedules output by the unit tests
 keywords: payment APR charge edge-case illustrative interest schedule promotional quote settlement unit-period config
 ---
 *)

@@ -481,7 +481,7 @@ module Scheduling =
 </table>"""
 
      /// a scheduled payment item, with running calculations of interest and principal balance
-    type SimpleItem = {
+    type BasicItem = {
         /// the day expressed as an offset from the start date
         Day: int<OffsetDay>
         /// the scheduled payment
@@ -505,7 +505,7 @@ module Scheduling =
     }
         
     /// a scheduled payment item, with running calculations of interest and principal balance
-    module SimpleItem =
+    module BasicItem =
         /// a default value with no data
         let initial =
             { 
@@ -520,19 +520,19 @@ module Scheduling =
                 TotalInterest = 0L<Cent>
                 TotalPrincipal = 0L<Cent>
             }
-        /// formats the simple item as an HTML row
-        let toHtmlRow simpleItem = $"""
+        /// formats the basic item as an HTML row
+        let toHtmlRow basicItem = $"""
     <tr style="text-align: right;">
-        <td class="ci00">{simpleItem.Day}</td>
-        <td class="ci01" style="white-space: nowrap;">{simpleItem.ScheduledPayment |> ScheduledPayment.total |> formatCent}</td>
-        <td class="ci02">{formatDecimalCent simpleItem.SimpleInterest}</td>
-        <td class="ci03">{formatCent simpleItem.InterestPortion}</td>
-        <td class="ci04">{formatCent simpleItem.PrincipalPortion}</td>
-        <td class="ci05">{formatCent simpleItem.InterestBalance}</td>
-        <td class="ci06">{formatCent simpleItem.PrincipalBalance}</td>
-        <td class="ci07">{formatDecimalCent simpleItem.TotalSimpleInterest}</td>
-        <td class="ci08">{formatCent simpleItem.TotalInterest}</td>
-        <td class="ci09">{formatCent simpleItem.TotalPrincipal}</td>
+        <td class="ci00">{basicItem.Day}</td>
+        <td class="ci01" style="white-space: nowrap;">{basicItem.ScheduledPayment |> ScheduledPayment.total |> formatCent}</td>
+        <td class="ci02">{formatDecimalCent basicItem.SimpleInterest}</td>
+        <td class="ci03">{formatCent basicItem.InterestPortion}</td>
+        <td class="ci04">{formatCent basicItem.PrincipalPortion}</td>
+        <td class="ci05">{formatCent basicItem.InterestBalance}</td>
+        <td class="ci06">{formatCent basicItem.PrincipalBalance}</td>
+        <td class="ci07">{formatDecimalCent basicItem.TotalSimpleInterest}</td>
+        <td class="ci08">{formatCent basicItem.TotalInterest}</td>
+        <td class="ci09">{formatCent basicItem.TotalPrincipal}</td>
     </tr>"""
 
     /// final statistics based on the payments being made on time and in full
@@ -558,7 +558,7 @@ module Scheduling =
         InitialCostToBorrowingRatio: Percent
     }
 
-    /// statistics resulting from the simple schedule calculations
+    /// statistics resulting from the basic schedule calculations
     module InitialStats =
         /// renders the final APR as a string, or "n/a" if not available
         let finalAprString = function
@@ -587,17 +587,17 @@ module Scheduling =
 """
 
     ///  a schedule of payments, with statistics
-    type SimpleSchedule = {
+    type BasicSchedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is evaluated
         EvaluationDay: int<OffsetDay>
         /// the items of the schedule
-        Items: SimpleItem array
+        Items: BasicItem array
         /// the statistics from the schedule
         Stats: InitialStats
     }
 
     ///  a schedule of payments, with statistics
-    module SimpleSchedule =
+    module BasicSchedule =
         /// formats the schedule items as an HTML table (stats can be rendered separately)
         let toHtmlTable schedule =
             $"""
@@ -613,10 +613,10 @@ module Scheduling =
         <th style="text-align: right;">Total simple interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
-    </thead>{schedule.Items |> Array.map SimpleItem.toHtmlRow |> String.concat ""}
+    </thead>{schedule.Items |> Array.map BasicItem.toHtmlRow |> String.concat ""}
 </table>"""
 
-        /// renders the simple schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
+        /// renders the basic schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile folder title description sp schedule =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedule
@@ -726,7 +726,7 @@ module Scheduling =
             |> fun i -> Interest.Cap.cappedAddedValue sp.InterestConfig.Cap.TotalAmount sp.Principal (Cent.toDecimalCent previousItem.TotalInterest) i
             |> Cent.fromDecimalCent sp.InterestConfig.Rounding
         let principalPortion = scheduledPaymentTotal - interestPortion
-        let simpleItem =
+        let basicItem =
             {
                 Day = day
                 ScheduledPayment = scheduledPayment
@@ -739,7 +739,7 @@ module Scheduling =
                 TotalInterest = previousItem.TotalInterest + interestPortion
                 TotalPrincipal = previousItem.TotalPrincipal + principalPortion
             }
-        simpleItem
+        basicItem
 
     // the state of the interest maximisation process, which is used to iterate over the schedule until the interest balance converges
     [<Struct>]
@@ -760,13 +760,13 @@ module Scheduling =
             let regularScheduledPayment = calculateLevelPayment paymentCount sp.PaymentConfig.Rounding sp.Principal feeTotal state.InterestBalance
             let newSchedule =
                 paymentDays
-                |> Array.scan (fun simpleItem pd ->
+                |> Array.scan (fun basicItem pd ->
                     let scheduledPayment =
                         match sp.ScheduleConfig with
                         | AutoGenerateSchedule _ -> ScheduledPayment.quick (ValueSome regularScheduledPayment) ValueNone
                         | FixedSchedules _
                         | CustomSchedule _ -> paymentMap[pd]
-                    generateItem sp Interest.Method.AddOn scheduledPayment simpleItem pd
+                    generateItem sp Interest.Method.AddOn scheduledPayment basicItem pd
                 ) { firstItem with InterestBalance = state.InterestBalance |> Cent.fromDecimalCent sp.InterestConfig.Rounding }
             let finalInterestTotal =
                 newSchedule
@@ -814,15 +814,15 @@ module Scheduling =
             |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
         let schedule =
             paymentDays
-            |> Array.fold(fun simpleItem pd ->
-                generateItem sp sp.InterestConfig.Method scheduledPayment simpleItem pd
+            |> Array.fold(fun basicItem pd ->
+                generateItem sp sp.InterestConfig.Method scheduledPayment basicItem pd
             ) firstItem
         let principalBalance = decimal schedule.PrincipalBalance
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
     /// handle any principal balance overpayment (due to rounding) on the final payment of a schedule
-    let adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule simpleItems =
-        simpleItems
+    let adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule basicItems =
+        basicItems
         |> Array.map(fun si ->
             if si.Day = finalScheduledPaymentDay && isAutoGenerateSchedule then
                 let adjustedPayment =
@@ -860,16 +860,16 @@ module Scheduling =
         let initialInterestBalance = totalAddOnInterest sp finalScheduledPaymentDay
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fee
-        let initialSimpleItem = { SimpleItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = sp.Principal + feeTotal }
+        let initialBasicItem = { BasicItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = sp.Principal + feeTotal }
         // get the appropriate tolerance steps for determining payment value
         // note: tolerance steps allow for gradual relaxation of the tolerance if no solution is found for the original tolerance
         let toleranceSteps = ToleranceSteps.forPaymentValue paymentCount
         // generate a schedule based on a map of scheduled payments
         let generateItems (payments: Map<int<OffsetDay>, ScheduledPayment>) =
             paymentDays
-            |> Array.scan(fun simpleItem pd -> generateItem sp sp.InterestConfig.Method payments[pd] simpleItem pd) initialSimpleItem
+            |> Array.scan(fun basicItem pd -> generateItem sp sp.InterestConfig.Method payments[pd] basicItem pd) initialBasicItem
         // generates a schedule based on the schedule configuration
-        let simpleItems =
+        let basicItems =
             match sp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
                 // calculate the estimated interest payable over the entire schedule
@@ -881,7 +881,7 @@ module Scheduling =
                         let dailyInterestRate = sp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
                         Cent.toDecimalCent sp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m
                 // determines the payment value and generates the schedule iteratively based on that
-                let generator = generatePaymentValue sp paymentDays initialSimpleItem
+                let generator = generatePaymentValue sp paymentDays initialBasicItem
                 let iterationLimit = 100u
                 let initialGuess = calculateLevelPayment paymentCount sp.PaymentConfig.Rounding sp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
                 match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance sp.PaymentConfig.LevelPaymentOption) toleranceSteps with
@@ -895,8 +895,8 @@ module Scheduling =
                 // the days and payment values are known so the schedule can be generated directly
                 generateItems paymentMap
         // fail if the schedule is empty
-        if Array.isEmpty simpleItems then
-            failwith "Unable to calculate simple schedule"
+        if Array.isEmpty basicItems then
+            failwith "Unable to calculate basic schedule"
         else
         // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
         // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
@@ -905,12 +905,12 @@ module Scheduling =
         let items =
             match sp.InterestConfig.Method with
             | Interest.Method.AddOn ->
-                let finalInterestTotal = simpleItems |> Array.last |> _.TotalSimpleInterest
+                let finalInterestTotal = basicItems |> Array.last |> _.TotalSimpleInterest
                 ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
-                |> Array.unfold (equaliseInterest sp paymentDays initialSimpleItem paymentCount feeTotal paymentMap)
+                |> Array.unfold (equaliseInterest sp paymentDays initialBasicItem paymentCount feeTotal paymentMap)
                 |> Array.last
             | _ ->
-                simpleItems
+                basicItems
             |> adjustFinalPayment finalScheduledPaymentDay sp.ScheduleConfig.IsAutoGenerateSchedule
         // calculate the total principal paid over the schedule
         let principalTotal = items |> Array.sumBy _.PrincipalPortion

@@ -31,7 +31,7 @@ This library is able to generate amortisation schedules based on a highly custom
 
 ## Unit-test output
 
-Many of the unit tests output simple schedules or amortisation schedules, along with the parameters used to create them and some initial and final stats. The output files are listed here:
+Many of the unit tests output basic schedules or amortisation schedules, along with the parameters used to create them and some initial and final stats. The output files are listed here:
 
 [Unit-test output](unitTestOutput.fsx)
 

@@ -83,12 +83,12 @@ module AprUnitedKingdomTests =
             paymentCounts
             |> Array.map(fun paymentCount ->
                 let sp = getScheduleParameters startDate paymentCount firstPaymentDay interestMethod applyInterestCap
-                let simpleSchedule = calculate sp
+                let basicSchedule = calculate sp
 
-                simpleSchedule |> SimpleSchedule.outputHtmlToFile folder $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp
+                basicSchedule |> BasicSchedule.outputHtmlToFile folder $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}""" $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}" sp
 
                 $"""
-        <td>{simpleSchedule.Stats.InitialApr}</td>"""
+        <td>{basicSchedule.Stats.InitialApr}</td>"""
             )
             |> String.concat ""
             |> fun s -> $"""

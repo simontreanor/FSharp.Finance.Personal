@@ -20,7 +20,7 @@ simplest method of calculating interest.
 
 ## Relevant Code
 
-The `cref:T:FSharp.Finance.Personal.Scheduling` module contains the functions that create the initial schedule. The initial schedule is a simple schedule that allows
+The `cref:T:FSharp.Finance.Personal.Scheduling` module contains the functions that create the initial schedule. The initial schedule is a basic schedule that allows
 us to calculate the interest accrued over the schedule as well as the level and final payments.
 
 Let's start by defining the parameters. Let's define a loan of £1000 advanced on 22 April 2025, paid back over 4 months starting one month after the advance date.
@@ -79,7 +79,7 @@ Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculate` function 
 
 let schedule = Scheduling.calculate parameters
 (*** hide ***)
-schedule |> SimpleSchedule.toHtmlTable
+schedule |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -94,7 +94,7 @@ To illustrate this, we can compare the add-on-interest schedule with an add-on-i
 
 let simpleInterestSchedule = Scheduling.calculate { parameters with InterestConfig.Method = Interest.Method.AddOn }
 (*** hide ***)
-simpleInterestSchedule |> SimpleSchedule.toHtmlTable
+simpleInterestSchedule |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -141,7 +141,7 @@ for this. This method runs a generator function (`cref:M:FSharp.Finance.Personal
 principal balance for a given payment value. The bisection method then iteratively narrows down the level payment value until the final principal balance is close
 to zero (usually just below zero, so the final payment can be slightly smaller). To make the iteration more efficient, we use an initial guess for the payment value,
 which is calculated based on the estimated total interest and the number of payments. (In this instance, the initial guess is actually the correct payment value,
-as the schedule is simple, but for more complex schedules, several iterations may be required.)
+as the schedule is basic, but for more complex schedules, several iterations may be required.)
 
 <br />
 <details>
@@ -149,7 +149,7 @@ as the schedule is simple, but for more complex schedules, several iterations ma
 *)
 
 // precalculations
-let firstItem = { SimpleItem.initial with PrincipalBalance = parameters.Principal }
+let firstItem = { BasicItem.initial with PrincipalBalance = parameters.Principal }
 let paymentCount = Array.length paymentDays
 let roughPayment =
     calculateLevelPayment paymentCount parameters.PaymentConfig.Rounding parameters.Principal 0L<Cent> 0m<Cent>
@@ -160,10 +160,10 @@ let scheduledPayment =
     roughPayment
     |> Cent.round parameters.PaymentConfig.Rounding
     |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
-let simpleItems =
+let basicItems =
     paymentDays
-    |> Array.scan(fun simpleItem pd ->
-        generateItem parameters parameters.InterestConfig.Method scheduledPayment simpleItem pd
+    |> Array.scan(fun basicItem pd ->
+        generateItem parameters parameters.InterestConfig.Method scheduledPayment basicItem pd
     ) firstItem
 
 (**
@@ -171,7 +171,7 @@ let simpleItems =
 *)
 
 (*** hide ***)
-{ EvaluationDay = 0<OffsetDay>; Items = simpleItems; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
+{ EvaluationDay = 0<OffsetDay>; Items = basicItems; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -183,11 +183,11 @@ The final payment is adjusted (`cref:M:FSharp.Finance.Personal.Scheduling.adjust
 
 let finalScheduledPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
 let items =
-    simpleItems
+    basicItems
     |> adjustFinalPayment finalScheduledPaymentDay parameters.ScheduleConfig.IsAutoGenerateSchedule
 
 (*** hide ***)
-{ EvaluationDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> SimpleSchedule.toHtmlTable
+{ EvaluationDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 

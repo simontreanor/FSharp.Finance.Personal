@@ -214,7 +214,7 @@ module Amortisation =
     /// results of the amortisation schedule generation
     type GenerationResult = {
         AmortisationSchedule: Schedule
-        SimpleSchedule: SimpleSchedule
+        BasicSchedule: BasicSchedule
     }
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -264,7 +264,7 @@ module Amortisation =
             let htmlDatestamp = $"""
 <p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
             let htmlFinalStats = $"""
-<h4>Initial Stats</h4>{InitialStats.toHtmlTable schedules.SimpleSchedule.Stats}"""
+<h4>Initial Stats</h4>{InitialStats.toHtmlTable schedules.BasicSchedule.Stats}"""
             let htmlAmortisationStats = $"""
 <h4>Final Stats</h4>{FinalStats.toHtmlTable schedules.AmortisationSchedule.FinalStats}"""
             let filename = $"out/{folder}/{title}.md"
@@ -889,9 +889,9 @@ module Amortisation =
     /// generates an amortisation schedule and final statistics
     let generate sp settlementDay trimEnd actualPayments =
         let evaluationDay = sp.EvaluationDate |> OffsetDay.fromDate sp.StartDate
-        let simpleSchedule = Scheduling.calculate sp
+        let basicSchedule = Scheduling.calculate sp.SchedulingParameters
         let scheduledPayments =
-            simpleSchedule.Items
+            basicSchedule.Items
             |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
             |> Array.map(fun si -> si.Day, { si.ScheduledPayment with Original = si.ScheduledPayment.Original } )
             |> Map.ofArray
@@ -899,8 +899,8 @@ module Amortisation =
         let amortisationSchedule =
             scheduledPayments
             |> applyPayments evaluationDay sp.StartDate settlementDay sp.ChargeConfig sp.PaymentConfig.Timeout actualPayments
-            |> calculate sp settlementDay simpleSchedule.Stats
+            |> calculate sp settlementDay basicSchedule.Stats
             |> if trimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
             |> calculateStats
 
-        { AmortisationSchedule = amortisationSchedule; SimpleSchedule = simpleSchedule }
+        { AmortisationSchedule = amortisationSchedule; BasicSchedule = basicSchedule }
