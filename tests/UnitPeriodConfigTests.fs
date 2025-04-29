@@ -54,7 +54,7 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest000 () =
             let title = "UnitPeriodConfigTest000"
             let description = "Irregular payment schedule does not break detect function"
-            let sp = {
+            let p = {
                     EvaluationDate = Date(2024, 3, 5)
                     StartDate = Date(2022, 5, 5)
                     Principal = 100000L<Cent>
@@ -75,7 +75,7 @@ module UnitPeriodConfigTests =
                     ChargeConfig = None
                     InterestConfig = {
                         Method = Interest.Method.Simple
-                        StandardRate = Interest.Rate.Annual (Percent 9.95m)
+                        StandardRate = Interest.Rate.Annual <| Percent 9.95m
                         Cap = Interest.Cap.Zero
                         InitialGracePeriod = 3<DurationDay>
                         PromotionalRates = [||]
@@ -105,8 +105,8 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
+                let quote = getQuote p actualPayments
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 56.513m
@@ -116,7 +116,7 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest001 () =
             let title = "UnitPeriodConfigTest001"
             let description = "Irregular payment schedule does not break APR calculation"
-            let sp = {
+            let p = {
                 EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
@@ -137,7 +137,7 @@ module UnitPeriodConfigTests =
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
-                    StandardRate = Interest.Rate.Annual (Percent 9.95m)
+                    StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
@@ -166,8 +166,8 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
+                let quote = getQuote p actualPayments
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 986.813m
@@ -178,7 +178,7 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest002 () =
             let title = "UnitPeriodConfigTest002"
             let description = "Irregular payment schedule does not break APR calculation"
-            let sp = {
+            let p = {
                 EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 1, 20)
                 Principal = 65000L<Cent>
@@ -202,7 +202,7 @@ module UnitPeriodConfigTests =
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
-                    StandardRate = Interest.Rate.Annual (Percent 9.95m)
+                    StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
@@ -253,8 +253,8 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
+                let quote = getQuote p actualPayments
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 516.758m
@@ -265,7 +265,7 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest003 () =
             let title = "UnitPeriodConfigTest003"
             let description = "Irregular payment schedule does not break APR calculation"
-            let sp = {
+            let p = {
                 EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2022, 10, 13)
                 Principal = 50000L<Cent>
@@ -289,7 +289,7 @@ module UnitPeriodConfigTests =
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
-                    StandardRate = Interest.Rate.Annual (Percent 9.95m)
+                    StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
@@ -314,8 +314,8 @@ module UnitPeriodConfigTests =
                 ]
 
             let actual =
-                let quote = getQuote SettlementDay.SettlementOnEvaluationDay sp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
+                let quote = getQuote p actualPayments
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 930.559m
@@ -356,7 +356,7 @@ module UnitPeriodConfigTests =
                     172<OffsetDay>, ScheduledPayment.quick (ValueSome 11846L<Cent>) ValueNone
                 ]
 
-            let sp = {
+            let p = {
                 EvaluationDate = startDate
                 StartDate = startDate
                 Principal = 100000L<Cent>
@@ -377,7 +377,7 @@ module UnitPeriodConfigTests =
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Simple
-                    StandardRate = Interest.Rate.Annual (Percent 9.95m)
+                    StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
                     PromotionalRates = [||]
@@ -410,7 +410,7 @@ module UnitPeriodConfigTests =
             let actual =
                 let originalFinalPaymentDay = originalScheduledPayments |> Map.maxKeyValue |> fst
                 let quoteSp =
-                    { sp with
+                    { p with
                         EvaluationDate = Date(2024, 3, 6)
                         ScheduleConfig =
                             [|
@@ -428,7 +428,7 @@ module UnitPeriodConfigTests =
                             |> Map.ofArray
                             |> CustomSchedule
                         FeeConfig =
-                            sp.FeeConfig
+                            p.FeeConfig
                             |> Option.map(fun fc ->
                                 { fc with
                                     SettlementRebate =
@@ -441,8 +441,8 @@ module UnitPeriodConfigTests =
                                 }
                             )
                     }
-                let quote = getQuote SettlementDay.SettlementOnEvaluationDay quoteSp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description sp
+                let quote = getQuote quoteSp actualPayments
+                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 699.525m

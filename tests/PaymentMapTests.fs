@@ -56,9 +56,9 @@ module PaymentMapTests =
         let startDate = Date(2024, 8, 5)
         let evaluationDate = startDate.AddDays 180
         let unitPeriodConfig = Monthly(1, 2024, 8, 15)
-        let sp = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
+        let p = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            let schedule = sp |> calculate BelowZero
+            let schedule = p |> calculate BelowZero
             let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
             let actualPayments : PaymentMap.Payment array = [|
                 { Day = 10<OffsetDay>; Amount = 250_00L<Cent> }
@@ -70,12 +70,12 @@ module PaymentMapTests =
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
-        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let dailyInterestRate = p.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                >> Cent.fromDecimalCent p.InterestConfig.InterestRounding
             )
 
         let expected = 934_35L<Cent>
@@ -88,9 +88,9 @@ module PaymentMapTests =
         let startDate = Date(2024, 8, 5)
         let evaluationDate = startDate.AddDays 180
         let unitPeriodConfig = Monthly(1, 2024, 8, 15)
-        let sp = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
+        let p = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            let schedule = sp |> calculate BelowZero
+            let schedule = p |> calculate BelowZero
             let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
             let actualPayments : PaymentMap.Payment array = [|
                 { Day = 1<OffsetDay>; Amount = 367_73L<Cent> }
@@ -105,12 +105,12 @@ module PaymentMapTests =
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
-        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let dailyInterestRate = p.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                >> Cent.fromDecimalCent p.InterestConfig.InterestRounding
             )
 
         let expected = -1003_16L<Cent>
@@ -123,9 +123,9 @@ module PaymentMapTests =
         let startDate = Date(2024, 8, 5)
         let evaluationDate = startDate.AddDays 180
         let unitPeriodConfig = Monthly(1, 2024, 8, 15)
-        let sp = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
+        let p = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            let schedule = sp |> calculate BelowZero
+            let schedule = p |> calculate BelowZero
             let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
             let actualPayments : PaymentMap.Payment array = [|
                 { Day = 18<OffsetDay>; Amount = 367_73L<Cent> }
@@ -138,12 +138,12 @@ module PaymentMapTests =
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
-        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let dailyInterestRate = p.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                >> Cent.fromDecimalCent p.InterestConfig.InterestRounding
             )
 
         let expected = 591_30L<Cent>
@@ -156,9 +156,9 @@ module PaymentMapTests =
         let startDate = Date(2024, 8, 5)
         let evaluationDate = startDate.AddDays 180
         let unitPeriodConfig = Monthly(1, 2024, 8, 15)
-        let sp = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
+        let p = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            let schedule = sp |> calculate BelowZero
+            let schedule = p |> calculate BelowZero
             let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
             let actualPayments : PaymentMap.Payment array = [|
                 { Day =  18<OffsetDay>; Amount = 367_73L<Cent> }
@@ -170,12 +170,12 @@ module PaymentMapTests =
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
-        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let dailyInterestRate = p.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                >> Cent.fromDecimalCent p.InterestConfig.InterestRounding
             )
 
         let expected = 697_21L<Cent>
@@ -188,9 +188,9 @@ module PaymentMapTests =
         let startDate = Date(2024, 8, 5)
         let evaluationDate = startDate.AddDays 180
         let unitPeriodConfig = Monthly(1, 2024, 8, 15)
-        let sp = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
+        let p = exampleParametersUk evaluationDate startDate 1000_00L<Cent> unitPeriodConfig 5 Interest.Method.AddOn
         let paymentMap =
-            let schedule = sp |> calculate BelowZero
+            let schedule = p |> calculate BelowZero
             let scheduledPayments = schedule.Items |> Array.choose(fun i -> if i.Payment.IsSome then Some ({ Day = i.Day; Amount = i.Payment.Value } : PaymentMap.Payment) else None)
             let actualPayments = Array.empty<PaymentMap.Payment>
             let pm = PaymentMap.create evaluationDate startDate scheduledPayments actualPayments
@@ -199,12 +199,12 @@ module PaymentMapTests =
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
-        let dailyInterestRate = sp.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        let dailyInterestRate = p.Interest.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
         let actual =
             paymentMap
             |> ValueOption.map
                 (Array.sumBy(fun pm -> decimal pm.Amount * dailyInterestRate * decimal pm.VarianceDays * 1m<Cent>)
-                >> Cent.fromDecimalCent sp.InterestConfig.InterestRounding
+                >> Cent.fromDecimalCent p.InterestConfig.InterestRounding
             )
 
         let expected = 1600_35L<Cent>

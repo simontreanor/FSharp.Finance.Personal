@@ -10,6 +10,7 @@ module ComplianceTests =
     let folder = "Compliance"
 
     open Amortisation
+    open AppliedPayment
     open Calculation
     open DateDay
     open Scheduling
@@ -21,8 +22,8 @@ module ComplianceTests =
     }
 
     let startDate1 = Date(2023, 11, 6)
-    let scheduleParameters1 =
-        {
+    let parameters1 : Parameters = {
+        Basic = {
             EvaluationDate = startDate1.AddDays 180
             StartDate = startDate1
             Principal = 1000_00L<Cent>
@@ -35,24 +36,34 @@ module ComplianceTests =
                 ]
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
                 Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
             }
-            FeeConfig = None
-            ChargeConfig = None
+            FeeConfig = ValueNone
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = interestCapExample
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
         }
+        Advanced = {
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
+            }
+            FeeConfig = ValueNone
+            ChargeConfig = None
+            InterestConfig = {
+                InitialGracePeriod = 3<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = Interest.Rate.Zero
+            }
+            SettlementDay = SettlementDay.NoSettlement
+            TrimEnd = false
+        }
+    }
 
     [<Fact>]
     let ComplianceTest000 () =
@@ -67,9 +78,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
+            |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -87,9 +98,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
+            |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -106,9 +117,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
+            |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -126,16 +137,16 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters1 SettlementDay.NoSettlement false
+            |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     let startDate2 = Date(2021, 12, 14)
-    let scheduleParameters2 =
-        {
+    let parameters2 : Parameters = {
+        Basic = {
             EvaluationDate = startDate2.AddDays 180
             StartDate = startDate2
             Principal = 500_00L<Cent>
@@ -148,13 +159,9 @@ module ComplianceTests =
                 ]
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
                 Rounding = NoRounding
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
             }
-            FeeConfig = None
-            ChargeConfig = None
+            FeeConfig = ValueNone
             InterestConfig = {
                 Method = Interest.Method.AddOn
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
@@ -162,13 +169,27 @@ module ComplianceTests =
                     TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
                     DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
                 }
-                InitialGracePeriod = 0<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
             }
         }
+        Advanced = {
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
+            }
+            FeeConfig = ValueNone
+            ChargeConfig = None
+            InterestConfig = {
+                InitialGracePeriod = 0<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = Interest.Rate.Zero
+            }
+            SettlementDay = SettlementDay.NoSettlement
+            TrimEnd = false
+        }
+    }
 
     [<Fact>]
     let ComplianceTest004 () =
@@ -183,9 +204,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters2 SettlementDay.NoSettlement false
+            |> amortise parameters2
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters2 schedules
+        Schedule.outputHtmlToFile folder title description parameters2 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -203,9 +224,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters2 SettlementDay.NoSettlement false
+            |> amortise parameters2
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters2 schedules
+        Schedule.outputHtmlToFile folder title description parameters2 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -223,22 +244,22 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters2 SettlementDay.NoSettlement false
+            |> amortise parameters2
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters2 schedules
+        Schedule.outputHtmlToFile folder title description parameters2 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters3 =
-        { scheduleParameters2 with
-            ScheduleConfig = AutoGenerateSchedule {
+    let parameters3 =
+        { parameters2 with
+            Basic.ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = Monthly(1, 2021, 12, 31)
                 ScheduleLength = PaymentCount 4
             }
-            Parameters.PaymentConfig.Rounding = RoundUp
-            InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 1.2m
-            InterestConfig.Cap = Interest.Cap.Zero
+            Basic.PaymentConfig.Rounding = RoundUp
+            Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 1.2m
+            Basic.InterestConfig.Cap = Interest.Cap.Zero
         }
 
     [<Fact>]
@@ -254,9 +275,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters3 SettlementDay.NoSettlement false
+            |> amortise parameters3
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -274,9 +295,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters3 SettlementDay.NoSettlement false
+            |> amortise parameters3
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -294,16 +315,16 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters3 SettlementDay.NoSettlement false
+            |> amortise parameters3
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters4 =
-        { scheduleParameters3 with
-            InterestConfig.Cap.DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+    let parameters4 =
+        { parameters3 with
+            Basic.InterestConfig.Cap.DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
         }
 
     [<Fact>]
@@ -319,9 +340,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters4 SettlementDay.NoSettlement false
+            |> amortise parameters4
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -339,9 +360,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters4 SettlementDay.NoSettlement false
+            |> amortise parameters4
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -359,16 +380,16 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters4 SettlementDay.NoSettlement false
+            |> amortise parameters4
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters5 =
-        { scheduleParameters3 with
-            InterestConfig.Cap.TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+    let parameters5 =
+        { parameters3 with
+            Basic.InterestConfig.Cap.TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
         }
 
     [<Fact>]
@@ -384,9 +405,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters5 SettlementDay.NoSettlement false
+            |> amortise parameters5
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters5 schedules
+        Schedule.outputHtmlToFile folder title description parameters5 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -404,9 +425,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters5 SettlementDay.NoSettlement false
+            |> amortise parameters5
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters5 schedules
+        Schedule.outputHtmlToFile folder title description parameters5 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal -38_00L<Cent>
@@ -424,16 +445,16 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters5 SettlementDay.NoSettlement false
+            |> amortise parameters5
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters5 schedules
+        Schedule.outputHtmlToFile folder title description parameters5 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters6 =
-        { scheduleParameters5 with
-            ScheduleConfig =
+    let parameters6 =
+        { parameters5 with
+            Basic.ScheduleConfig =
                 CustomSchedule <| Map [
                     17<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
                     48<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
@@ -455,9 +476,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters6 SettlementDay.NoSettlement false
+            |> amortise parameters6
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters6 schedules
+        Schedule.outputHtmlToFile folder title description parameters6 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -475,9 +496,9 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters6 SettlementDay.NoSettlement false
+            |> amortise parameters6
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters6 schedules
+        Schedule.outputHtmlToFile folder title description parameters6 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -495,23 +516,23 @@ module ComplianceTests =
 
         let schedules =
             actualPayments
-            |> Amortisation.generate scheduleParameters6 SettlementDay.NoSettlement false
+            |> amortise parameters6
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters6 schedules
+        Schedule.outputHtmlToFile folder title description parameters6 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters7 =
-        { scheduleParameters1 with
-            EvaluationDate = Date(2025, 4, 1)
-            StartDate = Date(2025, 4, 1)
-            Principal = 317_26L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
+    let parameters7 =
+        { parameters1 with
+            Basic.EvaluationDate = Date(2025, 4, 1)
+            Basic.StartDate = Date(2025, 4, 1)
+            Basic.Principal = 317_26L<Cent>
+            Basic.ScheduleConfig = AutoGenerateSchedule {
                 UnitPeriodConfig = Monthly(1, 2025, 4, 20)
                 ScheduleLength = PaymentCount 4
             }
-            InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
+            Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
         }
 
     [<Fact>]
@@ -519,9 +540,9 @@ module ComplianceTests =
         let title = "ComplianceTest019"
         let description = "Total repayable on interest-first loan of €317.26 with repayments starting on day 19 and total loan length 110 days"
 
-        let schedules = Amortisation.generate scheduleParameters7 SettlementDay.NoSettlement false Map.empty
+        let schedules = amortise parameters7 Map.empty
 
-        Schedule.outputHtmlToFile folder title description scheduleParameters7 schedules
+        Schedule.outputHtmlToFile folder title description parameters7 schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -530,10 +551,10 @@ module ComplianceTests =
     let ComplianceTest020 () =
         let title = "ComplianceTest020"
         let description = "Total repayable on interest-first loan of £300 with repayments starting on day 19 and total loan length 110 days"
-        let sp = { scheduleParameters7 with Principal = 300_00L<Cent> }
-        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
+        let p = { parameters7 with Basic.Principal = 300_00L<Cent> }
+        let schedules = amortise p Map.empty
 
-        Schedule.outputHtmlToFile folder title description sp schedules
+        Schedule.outputHtmlToFile folder title description p schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
@@ -542,15 +563,15 @@ module ComplianceTests =
     let ComplianceTest021 () =
         let title = "ComplianceTest021"
         let description = "Total repayable on interest-first loan of £250 with repayments starting on day 19 and total loan length 110 days"
-        let sp = { scheduleParameters7 with Principal = 250_00L<Cent> }
-        let schedules = Amortisation.generate sp SettlementDay.NoSettlement false Map.empty
+        let p = { parameters7 with Basic.Principal = 250_00L<Cent> }
+        let schedules = amortise p Map.empty
 
-        Schedule.outputHtmlToFile folder title description sp schedules
+        Schedule.outputHtmlToFile folder title description p schedules
 
         let principalBalance = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
-    let scheduleParameters8 = {
+    let basicParameters = {
         EvaluationDate = Date(2025, 4, 22)
         StartDate = Date(2025, 4, 22)
         Principal = 1000_00L<Cent>
@@ -560,13 +581,9 @@ module ComplianceTests =
         }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
-            ScheduledPaymentOption = AsScheduled
             Rounding = RoundUp
-            Minimum = DeferOrWriteOff 50L<Cent>
-            Timeout = 3<DurationDay>
         }
-        FeeConfig = None
-        ChargeConfig = None
+        FeeConfig = ValueNone
         InterestConfig = {
             Method = Interest.Method.AddOn
             StandardRate = Interest.Rate.Daily (Percent 0.798m)
@@ -574,9 +591,6 @@ module ComplianceTests =
                 TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
                 DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
             }
-            InitialGracePeriod = 3<DurationDay>
-            PromotionalRates = [||]
-            RateOnNegativeBalance = Interest.Rate.Zero
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
         }
@@ -586,20 +600,20 @@ module ComplianceTests =
     let ComplianceTest022 () =
         let title = "ComplianceTest022"
         let description = "Add-on-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
-        let schedules = Scheduling.calculate scheduleParameters8
+        let basicSchedule = calculateBasicSchedule basicParameters
 
-        BasicSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+        BasicSchedule.outputHtmlToFile folder title description basicParameters basicSchedule
 
-        let principalBalance = schedules.Items |> Array.last |> _.PrincipalBalance
+        let principalBalance = basicSchedule.Items |> Array.last |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>
 
     [<Fact>]
     let ComplianceTest023 () =
         let title = "ComplianceTest023"
         let description = "Simple-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
-        let schedules = Scheduling.calculate { scheduleParameters8 with InterestConfig.Method = Interest.Method.Simple }
+        let basicSchedule = calculateBasicSchedule { basicParameters with InterestConfig.Method = Interest.Method.Simple }
 
-        BasicSchedule.outputHtmlToFile folder title description scheduleParameters8 schedules
+        BasicSchedule.outputHtmlToFile folder title description basicParameters basicSchedule
 
-        let principalBalance = schedules.Items |> Array.last |> _.PrincipalBalance
+        let principalBalance = basicSchedule.Items |> Array.last |> _.PrincipalBalance
         principalBalance |> should equal 0L<Cent>

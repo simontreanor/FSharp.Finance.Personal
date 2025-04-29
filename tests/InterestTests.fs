@@ -12,6 +12,7 @@ module InterestTests =
     open System
 
     open Amortisation
+    open AppliedPayment
     open Calculation
     open DateDay
     open Interest
@@ -75,11 +76,8 @@ module InterestTests =
             let expected = 125_00m<Cent>
             actual |> should equal expected
 
-        [<Fact>]
-        let InterestCapTest000 () =
-            let title = "InterestCapTest000"
-            let description = "Total interest in amortised schedule does not exceed interest cap"
-            let sp = {
+        let parameters1 : Parameters = {
+            Basic = {
                 EvaluationDate = Date(2024, 4, 25)
                 StartDate = Date(2023, 2, 9)
                 Principal = 499_00L<Cent>
@@ -89,32 +87,45 @@ module InterestTests =
                 }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
-                    ScheduledPaymentOption = AsScheduled
                     Rounding = RoundUp
-                    Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
                 }
-                FeeConfig = None
-                ChargeConfig = None
+                FeeConfig = ValueNone
                 InterestConfig = {
                     Method = Method.Simple
                     StandardRate = Rate.Daily (Percent 0.8m)
                     Cap = interestCapExample
-                    InitialGracePeriod = 3<DurationDay>
-                    PromotionalRates = [||]
-                    RateOnNegativeBalance = Rate.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     Rounding = RoundDown
                 }
             }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 3<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Rate.Zero
+                }
+                SettlementDay = SettlementDay.SettlementOnEvaluationDay
+                TrimEnd = false
+            }
+        }
+
+        [<Fact>]
+        let InterestCapTest000 () =
+            let title = "InterestCapTest000"
+            let description = "Total interest in amortised schedule does not exceed interest cap"
 
             let actualPayments = Map.empty
 
-            let schedules =
-                actualPayments
-                |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
+            let schedules = amortise parameters1 actualPayments
 
-            Schedule.outputHtmlToFile folder title description sp schedules
+            Schedule.outputHtmlToFile folder title description parameters1 schedules
 
             let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
@@ -124,42 +135,17 @@ module InterestTests =
         let InterestCapTest001 () =
             let title = "InterestCapTest001"
             let description = "Total interest in amortised schedule does not exceed interest cap, using unrounded percentages"
-            let sp = {
-                EvaluationDate = Date(2024, 4, 25)
-                StartDate = Date(2023, 2, 9)
-                Principal = 499_00L<Cent>
-                ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = Monthly(1, 2023, 2, 14)
-                    ScheduleLength = PaymentCount 4
+            let p =
+                { parameters1 with
+                    Basic.InterestConfig.StandardRate = Rate.Daily (Percent 0.876m)
+                    Basic.InterestConfig.Cap = { interestCapExample with TotalAmount = Amount.Percentage (Percent 123.45m, Restriction.NoLimit) }
                 }
-                PaymentConfig = {
-                    LevelPaymentOption = LowerFinalPayment
-                    ScheduledPaymentOption = AsScheduled
-                    Rounding = RoundUp
-                    Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
-                }
-                FeeConfig = None
-                ChargeConfig = None
-                InterestConfig = {
-                    Method = Method.Simple
-                    StandardRate = Rate.Daily (Percent 0.876m)
-                    Cap = { interestCapExample with TotalAmount = Amount.Percentage (Percent 123.45m, Restriction.NoLimit) }
-                    InitialGracePeriod = 3<DurationDay>
-                    PromotionalRates = [||]
-                    RateOnNegativeBalance = Rate.Zero
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    Rounding = RoundDown
-                }
-            }
 
             let actualPayments = Map.empty
 
-            let schedules =
-                actualPayments
-                |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay false
+            let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description sp schedules
+            Schedule.outputHtmlToFile folder title description p schedules
 
             let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue |> snd |> _.InterestPortion
 
@@ -175,7 +161,7 @@ module InterestTests =
             let fromDay = 0<OffsetDay>
             let toDay = 10<OffsetDay>
             let actual = dailyRates startDate false standardRate promotionalRates fromDay toDay
-            let expected = [| 1 .. 10 |] |> Array.map(fun d -> { RateDay = d * 1<OffsetDay>; InterestRate = Rate.Annual (Percent 10m) })
+            let expected = [| 1 .. 10 |] |> Array.map(fun d -> { RateDay = d * 1<OffsetDay>; InterestRate = Rate.Annual <| Percent 10m })
             actual |> should equal expected
 
         [<Fact>]
@@ -194,15 +180,15 @@ module InterestTests =
             let startDate = Date(2024, 4, 10)
             let standardRate = Rate.Annual <| Percent 10m
             let promotionalRates = [|
-                ({ DateRange = { Start = Date(2024, 4, 10); End = Date(2024, 4, 15) }; Rate = Rate.Annual (Percent 2m) } : PromotionalRate)
+                ({ DateRange = { Start = Date(2024, 4, 10); End = Date(2024, 4, 15) }; Rate = Rate.Annual <| Percent 2m } : PromotionalRate)
             |]
             let fromDay = 0<OffsetDay>
             let toDay = 10<OffsetDay>
             let actual = dailyRates startDate false standardRate promotionalRates fromDay toDay
             let expected =
                 [|
-                    [| 1 .. 5 |] |> Array.map(fun d -> { RateDay = d * 1<OffsetDay>; InterestRate = Rate.Annual (Percent 2m) })
-                    [| 6 .. 10 |] |> Array.map(fun d -> { RateDay = d * 1<OffsetDay>; InterestRate = Rate.Annual (Percent 10m) })
+                    [| 1 .. 5 |] |> Array.map(fun d -> { RateDay = d * 1<OffsetDay>; InterestRate = Rate.Annual <| Percent 2m })
+                    [| 6 .. 10 |] |> Array.map(fun d -> { RateDay = d * 1<OffsetDay>; InterestRate = Rate.Annual <| Percent 10m })
                 |]
                 |> Array.concat
             actual |> should equal expected
@@ -299,30 +285,41 @@ module InterestTests =
             let expected = 6606_95L<Cent>
             actual |> should equal expected
 
-        let scheduleParameters =
+        let parameters2 : Parameters =
             {
-                StartDate = Date(2010, 3, 1)
-                EvaluationDate = Date(2011, 3, 1)
-                Principal = 5000_00L<Cent>
-                ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentValue = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
-                PaymentConfig = {
-                    LevelPaymentOption = LowerFinalPayment
-                    ScheduledPaymentOption = AsScheduled
-                    Rounding = RoundUp
-                    Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
+                Basic = {
+                    StartDate = Date(2010, 3, 1)
+                    EvaluationDate = Date(2011, 3, 1)
+                    Principal = 5000_00L<Cent>
+                    ScheduleConfig = FixedSchedules [| { UnitPeriodConfig = Monthly(1, 2010, 4, 1); PaymentCount = 48; PaymentValue = 134_57L<Cent>; ScheduleType = ScheduleType.Original } |]
+                    PaymentConfig = {
+                        LevelPaymentOption = LowerFinalPayment
+                        Rounding = RoundUp
+                    }
+                    FeeConfig = ValueNone
+                    InterestConfig = {
+                        Method = Method.Simple
+                        StandardRate = Rate.Annual <| Percent 13.1475m
+                        Cap = { TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
+                        AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                        Rounding = RoundDown
+                    }
                 }
-                FeeConfig = None
-                ChargeConfig = None
-                InterestConfig = {
-                    Method = Method.Simple
-                    StandardRate = Rate.Annual <| Percent 13.1475m
-                    Cap = { TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit); DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit) }
-                    InitialGracePeriod = 0<DurationDay>
-                    PromotionalRates = [||]
-                    RateOnNegativeBalance = Rate.Annual (Percent 8m)
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-                    Rounding = RoundDown
+                Advanced = {
+                    PaymentConfig = {
+                        ScheduledPaymentOption = AsScheduled
+                        Minimum = DeferOrWriteOff 50L<Cent>
+                        Timeout = 3<DurationDay>
+                    }
+                    FeeConfig = ValueNone
+                    ChargeConfig = None
+                    InterestConfig = {
+                        InitialGracePeriod = 0<DurationDay>
+                        PromotionalRates = [||]
+                        RateOnNegativeBalance = Rate.Annual <| Percent 8m
+                    }
+                    SettlementDay = SettlementDay.NoSettlement
+                    TrimEnd = true
                 }
             }
 
@@ -330,15 +327,13 @@ module InterestTests =
         let Cca2004Test006 () =
             let title = "Cca2004Test006"
             let description = "Initial statement (simple interest) matching total interest amount of £1459.36"
-            let sp = { scheduleParameters with EvaluationDate = Date(2010, 3, 1) }
+            let p = { parameters2 with Basic.EvaluationDate = Date(2010, 3, 1) }
 
             let actualPayments = Map.empty
 
-            let schedules =
-                actualPayments
-                |> Amortisation.generate sp SettlementDay.NoSettlement true
+            let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description sp schedules
+            Schedule.outputHtmlToFile folder title description p schedules
 
             let levelPayment = schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let finalPayment = schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
@@ -349,15 +344,17 @@ module InterestTests =
         let Cca2004Test007 () =
             let title = "Cca2004Test007"
             let description = "Initial statement (simple interest, autogenerated payment amounts) matching level payment of £134.57"
-            let sp = { scheduleParameters with EvaluationDate = Date(2010, 3, 1); ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2010, 4, 1); ScheduleLength = PaymentCount 48 } }
+            let p =
+                { parameters2 with
+                    Basic.EvaluationDate = Date(2010, 3, 1)
+                    Basic.ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Monthly(1, 2010, 4, 1); ScheduleLength = PaymentCount 48 }
+                }
 
             let actualPayments = Map.empty
 
-            let schedules =
-                actualPayments
-                |> Amortisation.generate sp SettlementDay.NoSettlement true
+            let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description sp schedules
+            Schedule.outputHtmlToFile folder title description p schedules
 
             let levelPayment = schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
             let finalPayment = schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment |> ScheduledPayment.total
@@ -368,7 +365,10 @@ module InterestTests =
         let Cca2004Test008 () =
             let title = "Cca2004Test008"
             let description = "CCA 2004 rebate example using library method (simple interest)"
-            let sp = scheduleParameters
+            let p =
+                { parameters2 with
+                    Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay
+                }
 
             let actualPayments =
                 Map [
@@ -386,11 +386,9 @@ module InterestTests =
                     365<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
                 ]
 
-            let schedules =
-                actualPayments
-                |> Amortisation.generate sp SettlementDay.SettlementOnEvaluationDay true
+            let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description sp schedules
+            Schedule.outputHtmlToFile folder title description p schedules
 
             let interestPortion = schedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
 

@@ -11,6 +11,7 @@ module ActualPaymentTestsExtra =
     let folder = "ActualPayment"
 
     open Amortisation
+    open AppliedPayment
     open Calculation
     open DateDay
     open Scheduling
@@ -23,17 +24,14 @@ module ActualPaymentTestsExtra =
     }
 
     /// creates an array of actual payments made on time and in full according to an array of scheduled payments
-    let allPaidOnTime (scheduleItems: SimpleItem array) =
-        scheduleItems
+    let allPaidOnTime (basicItems: BasicItem array) =
+        basicItems
         |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
         |> Array.map(fun si -> si.Day, [| ActualPayment.quickConfirmed <| ScheduledPayment.total si.ScheduledPayment |])
         |> Map.ofArray
 
-    [<Fact>]
-    let ActualPaymentTestExtra000 () =
-        let title = "ActualPaymentTestExtra000"
-        let description = "Simple schedule fully settled on time"
-        let sp = {
+    let parameters : Parameters = {
+        Basic = {
             EvaluationDate = Date(2023, 12, 1)
             StartDate = Date(2023, 7, 23)
             Principal = 800_00L<Cent>
@@ -43,15 +41,28 @@ module ActualPaymentTestsExtra =
             }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
                 Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
             }
-            FeeConfig = Some {
+            FeeConfig = ValueSome {
                 FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
                 Rounding = RoundDown
                 FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+            }
+            InterestConfig = {
+                Method = Interest.Method.Simple
+                StandardRate = Interest.Rate.Annual <| Percent 9.95m
+                Cap = Interest.Cap.Zero
+                AprMethod = Apr.CalculationMethod.UsActuarial 8
+                Rounding = RoundDown
+            }
+        }
+        Advanced = {
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
+            }
+            FeeConfig = ValueSome {
                 SettlementRebate = Fee.SettlementRebate.ProRata
             }
             ChargeConfig = Some {
@@ -69,23 +80,26 @@ module ActualPaymentTestsExtra =
                 ]
             }
             InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
                 InitialGracePeriod = 3<DurationDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
             }
+            SettlementDay = SettlementDay.NoSettlement
+            TrimEnd = false
         }
+    }
+
+    [<Fact>]
+    let ActualPaymentTestExtra000 () =
+        let title = "ActualPaymentTestExtra000"
+        let description = "Simple schedule fully settled on time"
 
         let actual =
-            let schedule = calculate sp
+            let schedule = calculateBasicSchedule parameters.Basic
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = amortise parameters actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description parameters
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 131<OffsetDay>, {
@@ -121,60 +135,23 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra001 () =
         let title = "ActualPaymentTestExtra001"
         let description = "Schedule with a payment on day 0L<Cent>, seen from a date before scheduled payments are due to start"
-        let sp = {
-            EvaluationDate = Date(2022, 3, 25)
-            StartDate = Date(2022, 3, 8)
-            Principal = 800_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
-                ScheduleLength = PaymentCount 12
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2022, 3, 25)
+                Basic.StartDate = Date(2022, 3, 8)
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                    ScheduleLength = PaymentCount 12
+                }
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
-            }
-            FeeConfig = Some {
-                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
-                Rounding = RoundDown
-                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRebate = Fee.SettlementRebate.ProRata
-            }
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.InsufficientFunds, {
-                        Value = 7_50L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
-            }
-        }
 
         let actual =
             let actualPayments =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = amortise p actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description p
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 172<OffsetDay>, {
@@ -210,62 +187,25 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra002 () =
         let title = "ActualPaymentTestExtra002"
         let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, seen from a date after the original settlement date, showing the effect of projected small payments until paid off"
-        let sp = {
-            EvaluationDate = Date(2022, 8, 31)
-            StartDate = Date(2022, 3, 8)
-            Principal = 800_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
-                ScheduleLength = PaymentCount 12
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2022, 8, 31)
+                Basic.StartDate = Date(2022, 3, 8)
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                    ScheduleLength = PaymentCount 12
+                }
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
-            }
-            FeeConfig = Some {
-                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
-                Rounding = RoundDown
-                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRebate = Fee.SettlementRebate.ProRata
-            }
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.InsufficientFunds, {
-                        Value = 7_50L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
-            }
-        }
 
-        let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.EvaluationDate - sp.StartDate).Days) * 1<OffsetDay>
+        let originalFinalPaymentDay = generatePaymentMap p.Basic.StartDate p.Basic.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (p.Basic.EvaluationDate - p.Basic.StartDate).Days) * 1<OffsetDay>
 
         let actual =
             let actualPayments =
                 Map [
                     0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |]
                 ]
-            let rescheduleDay = sp.EvaluationDate |> OffsetDay.fromDate sp.StartDate
+            let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
             let rp : RescheduleParameters = {
                 FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Rescheduled rescheduleDay } |]
@@ -273,8 +213,8 @@ module ActualPaymentTestsExtra =
                 PromotionalInterestRates = [||]
                 SettlementDay = SettlementDay.NoSettlement
             }
-            let schedules = reschedule sp rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = reschedule p rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
@@ -311,59 +251,35 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra003 () =
         let title = "ActualPaymentTestExtra003"
         let description = "never settles down"
-        let sp = {
-            EvaluationDate = Date(2026, 8, 27)
-            StartDate = Date(2023, 11, 6)
-            Principal = 800_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Weekly (8, Date(2023, 11, 23))
-                ScheduleLength = PaymentCount 19
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2026, 8, 27)
+                Basic.StartDate = Date(2023, 11, 6)
+                Basic.Principal = 800_00L<Cent>
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly (8, Date(2023, 11, 23))
+                    ScheduleLength = PaymentCount 19
+                }
+                Basic.FeeConfig = ValueSome {
+                    FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit))
+                    Rounding = RoundDown
+                    FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                }
+                Basic.InterestConfig.Method = Interest.Method.Simple
+                Basic.InterestConfig.StandardRate = Interest.Rate.Daily (Percent 0.12m)
+                Basic.InterestConfig.Cap = { TotalAmount = Amount.Simple 500_00L<Cent>; DailyAmount = Amount.Unlimited }
+                Advanced.FeeConfig = ValueSome {
+                    SettlementRebate = Fee.SettlementRebate.Zero
+                }
+                Advanced.InterestConfig.InitialGracePeriod = 7<DurationDay>
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
-            }
-            FeeConfig = Some {
-                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 164m, Restriction.NoLimit))
-                Rounding = RoundDown
-                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRebate = Fee.SettlementRebate.Zero
-            }
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.InsufficientFunds, {
-                        Value = 7_50L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Daily (Percent 0.12m)
-                Cap = { TotalAmount = Amount.Simple 500_00L<Cent>; DailyAmount = Amount.Unlimited }
-                InitialGracePeriod = 7<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
-            }
-        }
 
         let actual =
-            let schedule = Scheduling.calculate sp
+            let schedule = calculateBasicSchedule p.Basic
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = amortise p actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description p
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 1025<OffsetDay>, {
@@ -399,49 +315,41 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra004 () =
         let title = "ActualPaymentTestExtra004"
         let description = "large negative payment"
-        let sp = {
-            EvaluationDate = Date(2023, 12, 11)
-            StartDate = Date(2022, 9, 11)
-            Principal = 200_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Monthly (1, 2022, 9, 15)
-                ScheduleLength = PaymentCount 7
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2023, 12, 11)
+                Basic.StartDate = Date(2022, 9, 11)
+                Basic.Principal = 200_00L<Cent>
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Monthly (1, 2022, 9, 15)
+                    ScheduleLength = PaymentCount 7
+                }
+                Basic.FeeConfig = ValueNone
+                Basic.InterestConfig = {
+                    Method = Interest.Method.Simple
+                    StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                    Cap = interestCapExample
+                    Rounding = RoundDown
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                }
+                Advanced.FeeConfig = ValueNone
+                Advanced.ChargeConfig = Some {
+                    ChargeTypes = Map [
+                        Charge.LatePayment, {
+                            Value = 10_00L<Cent>
+                            ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                            ChargeHolidays = [||]
+                        }
+                    ]
+                }
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
-            }
-            FeeConfig = None
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Daily (Percent 0.8m)
-                Cap = interestCapExample
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                Rounding = RoundDown
-                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-            }
-        }
 
         let actual =
-            let schedule = Scheduling.calculate sp
+            let schedule = calculateBasicSchedule p.Basic
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
-            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = amortise p actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description p
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected = 185<OffsetDay>, {
@@ -477,57 +385,22 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra005 () =
         let title = "ActualPaymentTestExtra005"
         let description = "Schedule with a payment on day 0L<Cent>, seen from a date after the first unpaid scheduled payment, but within late-payment grace period"
-        let sp = {
-            EvaluationDate = Date(2022, 4, 1)
-            StartDate = Date(2022, 3, 8)
-            Principal = 800_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
-                ScheduleLength = PaymentCount 12
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2022, 4, 1)
+                Basic.StartDate = Date(2022, 3, 8)
+                Basic.Principal = 800_00L<Cent>
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                    ScheduleLength = PaymentCount 12
+                }
+                Advanced.PaymentConfig.Timeout = 7<DurationDay>
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 7<DurationDay>
-            }
-            FeeConfig = Some {
-                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
-                Rounding = RoundDown
-                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRebate = Fee.SettlementRebate.ProRata
-            }
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.InsufficientFunds, {
-                        Value = 7_50L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
-            }
-        }
 
         let actual =
             let actualPayments = Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
-            let schedules = Amortisation.generate sp SettlementDay.NoSettlement false actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = amortise p actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description p
             schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
@@ -563,55 +436,19 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra006 () =
         let title = "ActualPaymentTestExtra006"
         let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee rolled over)"
-        let sp = {
-            EvaluationDate = Date(2022, 8, 31)
-            StartDate = Date(2022, 3, 8)
-            Principal = 800_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
-                ScheduleLength = PaymentCount 12
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2022, 8, 31)
+                Basic.StartDate = Date(2022, 3, 8)
+                Basic.Principal = 800_00L<Cent>
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                    ScheduleLength = PaymentCount 12
+                }
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
-            }
-            FeeConfig = Some {
-                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
-                Rounding = RoundDown
-                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRebate = Fee.SettlementRebate.ProRata
-            }
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.InsufficientFunds, {
-                        Value = 7_50L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
-            }
-        }
 
-        let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.EvaluationDate - sp.StartDate).Days) * 1<OffsetDay>
+        let originalFinalPaymentDay = generatePaymentMap p.Basic.StartDate p.Basic.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (p.Basic.EvaluationDate - p.Basic.StartDate).Days) * 1<OffsetDay>
 
         let actual =
             let actualPayments =
@@ -620,13 +457,13 @@ module ActualPaymentTestsExtra =
                 ]
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
-                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
-                InterestConfig = sp.InterestConfig
-                PaymentConfig = sp.PaymentConfig
+                PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
+                InterestConfig = p.Basic.InterestConfig
+                PaymentConfig = p.Basic.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CarryOverAsIs
             }
-            let schedules = rollOver sp rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = rollOver p rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
@@ -663,55 +500,18 @@ module ActualPaymentTestsExtra =
     let ActualPaymentTestExtra007 () =
         let title = "ActualPaymentTestExtra007"
         let description = "Schedule with a payment on day 0L<Cent>, then all scheduled payments missed, then loan rolled over (fee not rolled over)"
-        let sp = {
-            EvaluationDate = Date(2022, 8, 31)
-            StartDate = Date(2022, 3, 8)
-            Principal = 800_00L<Cent>
-            ScheduleConfig = AutoGenerateSchedule {
-                UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
-                ScheduleLength = PaymentCount 12
+        let p =
+            { parameters with
+                Basic.EvaluationDate = Date(2022, 8, 31)
+                Basic.StartDate = Date(2022, 3, 8)
+                Basic.ScheduleConfig = AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
+                    ScheduleLength = PaymentCount 12
+                }
             }
-            PaymentConfig = {
-                LevelPaymentOption = LowerFinalPayment
-                ScheduledPaymentOption = AsScheduled
-                Rounding = RoundUp
-                Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
-            }
-            FeeConfig = Some {
-                FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 150m, Restriction.NoLimit))
-                Rounding = RoundDown
-                FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                SettlementRebate = Fee.SettlementRebate.ProRata
-            }
-            ChargeConfig = Some {
-                ChargeTypes = Map [
-                    Charge.InsufficientFunds, {
-                        Value = 7_50L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                    Charge.LatePayment, {
-                        Value = 10_00L<Cent>
-                        ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
-                        ChargeHolidays = [||]
-                    }
-                ]
-            }
-            InterestConfig = {
-                Method = Interest.Method.Simple
-                StandardRate = Interest.Rate.Annual (Percent 9.95m)
-                Cap = Interest.Cap.Zero
-                InitialGracePeriod = 3<DurationDay>
-                PromotionalRates = [||]
-                RateOnNegativeBalance = Interest.Rate.Zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
-                Rounding = RoundDown
-            }
-        }
 
-        let originalFinalPaymentDay = generatePaymentMap sp.StartDate sp.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (sp.EvaluationDate - sp.StartDate).Days) * 1<OffsetDay>
+        let originalFinalPaymentDay = generatePaymentMap p.Basic.StartDate p.Basic.ScheduleConfig |> Map.keys |> Seq.toArray |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+        let originalFinalPaymentDay' = (int originalFinalPaymentDay - int (p.Basic.EvaluationDate - p.Basic.StartDate).Days) * 1<OffsetDay>
 
         let actual =
             let actualPayments =
@@ -721,12 +521,12 @@ module ActualPaymentTestsExtra =
             let rp : RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
                 PaymentSchedule = FixedSchedules [| { UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1)); PaymentCount = 155; PaymentValue = 20_00L<Cent>; ScheduleType = ScheduleType.Original } |]
-                InterestConfig = sp.InterestConfig
-                PaymentConfig = sp.PaymentConfig
+                InterestConfig = p.Basic.InterestConfig
+                PaymentConfig = p.Basic.PaymentConfig
                 FeeHandling = Fee.FeeHandling.CapitaliseAsPrincipal
             }
-            let schedules = rollOver sp rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description sp
+            let schedules = rollOver p rp actualPayments
+            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems
             |> Map.maxKeyValue
 
