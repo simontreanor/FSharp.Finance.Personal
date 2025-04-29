@@ -1,31 +1,24 @@
 <h2>QuoteTest021</h2>
 <table>
     <thead style="vertical-align: bottom;">
-        <th style="text-align: right;">Day</th>
-        <th style="text-align: right;">Datestamp</th>
-        <th style="text-align: right;">Advances</th>
-        <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Window</th>
-        <th style="text-align: right;">Payment due</th>
-        <th style="text-align: right;">Actual payments</th>
-        <th style="text-align: right;">Generated payment</th>
-        <th style="text-align: right;">Net effect</th>
-        <th style="text-align: right;">Payment status</th>
-        <th style="text-align: right;">Balance status</th>
-        <th style="text-align: right;">Simple interest</th>
-        <th style="text-align: right;">New interest</th>
-        <th style="text-align: right;">New charges</th>
-        <th style="text-align: right;">Principal portion</th>
-        <th style="text-align: right;">Fee portion</th>
-        <th style="text-align: right;">Interest portion</th>
-        <th style="text-align: right;">Charges portion</th>
-        <th style="text-align: right;">Fee rebate</th>
-        <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Fee balance</th>
-        <th style="text-align: right;">Interest balance</th>
-        <th style="text-align: right;">Charges balance</th>
-        <th style="text-align: right;">Settlement figure</th>
-        <th style="text-align: right;">Fee rebate if&nbsp;settled</th>
+        <th class="ci00" style="text-align: right;">Day</th>
+        <th class="ci01" style="text-align: right;">Datestamp</th>
+        <th class="ci02" style="text-align: right;">Advances</th>
+        <th class="ci03" style="text-align: right;">Scheduled payment</th>
+        <th class="ci04" style="text-align: right;">Window</th>
+        <th class="ci05" style="text-align: right;">Payment due</th>
+        <th class="ci06" style="text-align: right;">Actual payments</th>
+        <th class="ci07" style="text-align: right;">Generated payment</th>
+        <th class="ci08" style="text-align: right;">Net effect</th>
+        <th class="ci09" style="text-align: right;">Payment status</th>
+        <th class="ci10" style="text-align: right;">Balance status</th>
+        <th class="ci11" style="text-align: right;">Simple interest</th>
+        <th class="ci12" style="text-align: right;">New interest</th>
+        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci14" style="text-align: right;">Interest portion</th>
+        <th class="ci15" style="text-align: right;">Principal balance</th>
+        <th class="ci16" style="text-align: right;">Interest balance</th>
+        <th class="ci17" style="text-align: right;">Settlement figure</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -41,18 +34,11 @@
         <td class="ci10">open</td>
         <td class="ci11">0.0000</td>
         <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
+        <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">0.00</td>
-        <td class="ci17">0.00</td>
-        <td class="ci18">0.00</td>
-        <td class="ci19">230.00</td>
-        <td class="ci20">0.00</td>
-        <td class="ci21">0.0000</td>
-        <td class="ci22">0.00</td>
-        <td class="ci23">230.00</td>
-        <td class="ci24">0.00</td>
+        <td class="ci15">230.00</td>
+        <td class="ci16">0.0000</td>
+        <td class="ci17">230.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">25</td>
@@ -68,18 +54,11 @@
         <td class="ci10">open</td>
         <td class="ci11">46.0000</td>
         <td class="ci12">46.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">26.54</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">46.00</td>
-        <td class="ci17">0.00</td>
-        <td class="ci18">0.00</td>
-        <td class="ci19">203.46</td>
-        <td class="ci20">0.00</td>
-        <td class="ci21">0.0000</td>
-        <td class="ci22">0.00</td>
-        <td class="ci23">203.46</td>
-        <td class="ci24">0.00</td>
+        <td class="ci13">26.54</td>
+        <td class="ci14">46.00</td>
+        <td class="ci15">203.46</td>
+        <td class="ci16">0.0000</td>
+        <td class="ci17">203.46</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">53</td>
@@ -95,18 +74,11 @@
         <td class="ci10">open</td>
         <td class="ci11">45.5750</td>
         <td class="ci12">45.5750</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">26.97</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">45.57</td>
-        <td class="ci17">0.00</td>
-        <td class="ci18">0.00</td>
-        <td class="ci19">176.49</td>
-        <td class="ci20">0.00</td>
-        <td class="ci21">0.0000</td>
-        <td class="ci22">0.00</td>
-        <td class="ci23">176.49</td>
-        <td class="ci24">0.00</td>
+        <td class="ci13">26.97</td>
+        <td class="ci14">45.57</td>
+        <td class="ci15">176.49</td>
+        <td class="ci16">0.0000</td>
+        <td class="ci17">176.49</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">78</td>
@@ -122,18 +94,11 @@
         <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">35.2980</td>
         <td class="ci12">35.2980</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">182.32</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">35.29</td>
-        <td class="ci17">0.00</td>
-        <td class="ci18">0.00</td>
-        <td class="ci19">-5.83</td>
-        <td class="ci20">0.00</td>
-        <td class="ci21">0.0000</td>
-        <td class="ci22">0.00</td>
-        <td class="ci23">-5.83</td>
-        <td class="ci24">0.00</td>
+        <td class="ci13">182.32</td>
+        <td class="ci14">35.29</td>
+        <td class="ci15">-5.83</td>
+        <td class="ci16">0.0000</td>
+        <td class="ci17">-5.83</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">84</td>
@@ -149,18 +114,11 @@
         <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">0.0000</td>
         <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
+        <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">0.00</td>
-        <td class="ci17">0.00</td>
-        <td class="ci18">0.00</td>
-        <td class="ci19">-5.83</td>
-        <td class="ci20">0.00</td>
-        <td class="ci21">0.0000</td>
-        <td class="ci22">0.00</td>
-        <td class="ci23">-5.83</td>
-        <td class="ci24">0.00</td>
+        <td class="ci15">-5.83</td>
+        <td class="ci16">0.0000</td>
+        <td class="ci17">-5.83</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">2221</td>
@@ -176,25 +134,17 @@
         <td class="ci10">closed</td>
         <td class="ci11">0.0000</td>
         <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">-5.83</td>
+        <td class="ci13">-5.83</td>
+        <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">0.00</td>
+        <td class="ci16">0.0000</td>
         <td class="ci17">0.00</td>
-        <td class="ci18">0.00</td>
-        <td class="ci19">0.00</td>
-        <td class="ci20">0.00</td>
-        <td class="ci21">0.0000</td>
-        <td class="ci22">0.00</td>
-        <td class="ci23">0.00</td>
-        <td class="ci24">0.00</td>
     </tr>
 </table>
-
 <h4>Description</h4>
 <p><i>Generated settlement figure is correct</i></p>
-<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
-<h4>Parameters</h4>
+<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<h4>Basic Parameters</h4>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -227,16 +177,7 @@
         <td>
             <table>
                 <tr>
-                    <td>scheduling: <i>as scheduled</i></td>
-                </tr>
-                <tr>
                     <td>rounding: <i>rounded up</i></td>
-                </tr>
-                <tr>
-                    <td>timeout: <i>0</i></td>
-                </tr>
-                <tr>
-                    <td>minimum: <i>no&nbsp;minimum&nbsp;payment</i></td>
                 </tr>
                 <tr>
                     <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
@@ -247,11 +188,6 @@
     <tr>
         <td>Fee options</td>
         <td>no fee
-        </td>
-    </tr>
-    <tr>
-        <td>Charge options</td>
-        <td>no charges
         </td>
     </tr>
     <tr>
@@ -267,17 +203,43 @@
                     <td>APR method: <i>UK FCA to 1 d.p.</i></td>
                 </tr>
                 <tr>
+                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<h4>Advanced Parameters</h4>
+<table>
+    <tr>
+        <td>Interest options</td>
+        <td>
+            <table>
+                <tr>
                     <td>initial grace period: <i>0 day(s)</i></td>
                     <td>rate on negative balance: <i>zero</i></td>
                 </tr>
                 <tr>
                     <td colspan="2">promotional rates: <i><i>n/a</i></i></td>
                 </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
-                </tr>
             </table>
         </td>
+    </tr>
+    <tr>
+        <td>Fee options</td>
+        <td>no fee
+        </td>
+    </tr>
+    <tr>
+        <td>Charge options</td>
+        <td>no charges
+        </td>
+    </tr>
+    <tr>
+        <td>Settlement day</td><td><i><i>on evaluation day</i></i></td>
+    </tr>
+    <tr>
+        <td>Trim unrequired payments</td><td><i>true</i></td>
     </tr>
 </table>
 <h4>Initial Stats</h4>
@@ -298,7 +260,6 @@
         <td>Total interest: <i>104.98</i></td>
     </tr>
 </table>
-
 <h4>Final Stats</h4>
 <table>
     <tr>

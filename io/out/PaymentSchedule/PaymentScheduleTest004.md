@@ -75,8 +75,8 @@
 </table>
 <h4>Description</h4>
 <p><i>Payment count must not be exceeded</i></p>
-<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
-<h4>Parameters</h4>
+<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<h4>Basic Parameters</h4>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -109,16 +109,7 @@
         <td>
             <table>
                 <tr>
-                    <td>scheduling: <i>as scheduled</i></td>
-                </tr>
-                <tr>
                     <td>rounding: <i>round using ToEven</i></td>
-                </tr>
-                <tr>
-                    <td>timeout: <i>3</i></td>
-                </tr>
-                <tr>
-                    <td>minimum: <i>defer&nbsp;or&nbsp;write&nbsp;off&nbsp;up&nbsp;to&nbsp;0.50</i></td>
                 </tr>
                 <tr>
                     <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
@@ -129,23 +120,6 @@
     <tr>
         <td>Fee options</td>
         <td>no fee
-        </td>
-    </tr>
-    <tr>
-        <td>Charge options</td>
-        <td>
-            <table>
-                <tr>
-                    <th>Type</th>
-                    <th>Charge</th>
-                    <th>Grouping</th>
-                    <th>Holidays</th>
-                </tr>
-                <tr>
-                    <td>late payment</td>
-                    <td>7.50</td><td>one charge per day</td><td><i>n/a</i></td>
-                </tr>
-            </table>
         </td>
     </tr>
     <tr>
@@ -161,14 +135,7 @@
                     <td>APR method: <i>UK FCA to 1 d.p.</i></td>
                 </tr>
                 <tr>
-                    <td>initial grace period: <i>1 day(s)</i></td>
-                    <td>rate on negative balance: <i>zero</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">promotional rates: <i><i>n/a</i></i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total <i>n/a</i>; daily <i>n/a</i></td>
+                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
                 </tr>
             </table>
         </td>

@@ -189,7 +189,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Range of APRs for different payment counts and first payment days, using the simple interest method with no interest cap</i></p>
-<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
+<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -223,16 +223,7 @@
         <td>
             <table>
                 <tr>
-                    <td>scheduling: <i>as scheduled</i></td>
-                </tr>
-                <tr>
                     <td>rounding: <i>rounded up</i></td>
-                </tr>
-                <tr>
-                    <td>timeout: <i>3</i></td>
-                </tr>
-                <tr>
-                    <td>minimum: <i>defer&nbsp;or&nbsp;write&nbsp;off&nbsp;up&nbsp;to&nbsp;0.50</i></td>
                 </tr>
                 <tr>
                     <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
@@ -243,11 +234,6 @@
     <tr>
         <td>Fee options</td>
         <td>no fee
-        </td>
-    </tr>
-    <tr>
-        <td>Charge options</td>
-        <td>no charges
         </td>
     </tr>
     <tr>
@@ -263,16 +249,42 @@
                     <td>APR method: <i>UK FCA to 1 d.p.</i></td>
                 </tr>
                 <tr>
+                    <td colspan="2">cap: <i>total <i>n/a</i>; daily <i>n/a</i></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<h4>Parameters</h4>
+<table>
+    <tr>
+        <td>Interest options</td>
+        <td>
+            <table>
+                <tr>
                     <td>initial grace period: <i>3 day(s)</i></td>
                     <td>rate on negative balance: <i>zero</i></td>
                 </tr>
                 <tr>
                     <td colspan="2">promotional rates: <i><i>n/a</i></i></td>
                 </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total <i>n/a</i>; daily <i>n/a</i></td>
-                </tr>
             </table>
         </td>
+    </tr>
+    <tr>
+        <td>Fee options</td>
+        <td>no fee
+        </td>
+    </tr>
+    <tr>
+        <td>Charge options</td>
+        <td>no charges
+        </td>
+    </tr>
+    <tr>
+        <td>Settlement day</td><td><i><i>n/a</i></i></td>
+    </tr>
+    <tr>
+        <td>Trim unrequired payments</td><td><i>false</i></td>
     </tr>
 </table>

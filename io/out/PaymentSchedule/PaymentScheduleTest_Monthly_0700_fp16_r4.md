@@ -75,8 +75,8 @@
 </table>
 <h4>Description</h4>
 <p><i>£0700 with 16 days to first payment and 4 repayments</i></p>
-<p>Generated: <i>2025-04-28 using library version 2.2.10</i></p>
-<h4>Parameters</h4>
+<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<h4>Basic Parameters</h4>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -109,16 +109,7 @@
         <td>
             <table>
                 <tr>
-                    <td>scheduling: <i>as scheduled</i></td>
-                </tr>
-                <tr>
                     <td>rounding: <i>round using AwayFromZero</i></td>
-                </tr>
-                <tr>
-                    <td>timeout: <i>3</i></td>
-                </tr>
-                <tr>
-                    <td>minimum: <i>defer&nbsp;or&nbsp;write&nbsp;off&nbsp;up&nbsp;to&nbsp;0.50</i></td>
                 </tr>
                 <tr>
                     <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
@@ -132,11 +123,6 @@
         </td>
     </tr>
     <tr>
-        <td>Charge options</td>
-        <td>no charges
-        </td>
-    </tr>
-    <tr>
         <td>Interest options</td>
         <td>
             <table>
@@ -147,13 +133,6 @@
                 <tr>
                     <td>rounding: <i>round using AwayFromZero</i></td>
                     <td>APR method: <i>UK FCA to 1 d.p.</i></td>
-                </tr>
-                <tr>
-                    <td>initial grace period: <i>3 day(s)</i></td>
-                    <td>rate on negative balance: <i>zero</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">promotional rates: <i><i>n/a</i></i></td>
                 </tr>
                 <tr>
                     <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
