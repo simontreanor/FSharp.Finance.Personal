@@ -3,6 +3,8 @@ namespace FSharp.Finance.Personal
 /// functions for settling outstanding payments
 module Quotes =
 
+    open Amortisation
+    open AppliedPayment
     open Calculation
     open DateDay
     open Scheduling
@@ -33,18 +35,17 @@ module Quotes =
         // the quote result
         QuoteResult: QuoteResult
         // a statement showing the schedule at the time the quote was generated
-        CurrentSchedules: Amortisation.GenerationResult
+        CurrentSchedules: GenerationResult
         // the revised schedule showing the settlement, if applicable
-        RevisedSchedules: Amortisation.GenerationResult
+        RevisedSchedules: GenerationResult
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
-    let getQuote settlementDay schedulingParameters (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
+    let getQuote (p: Parameters) (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
         // generate a statement showing the current state of the amortisation schedule - this will only be used in the return value in case the caller requires a comparison
-        let currentSchedules = Amortisation.generate schedulingParameters SettlementDay.NoSettlement false actualPayments
+        let currentSchedules = amortise p actualPayments
         // generate a revised statement showing a generated settlement figure on the relevant date
-        let revisedSchedules =
-            Amortisation.generate schedulingParameters settlementDay false actualPayments
+        let revisedSchedules = amortise { p with Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay; Advanced.TrimEnd = false } actualPayments
         // try to get the schedule item containing the generated value
         let si =
             revisedSchedules.AmortisationSchedule.ScheduleItems

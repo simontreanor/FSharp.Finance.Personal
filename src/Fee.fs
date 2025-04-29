@@ -71,47 +71,69 @@ module Fee =
         /// write off any outstanding fee balance
         | WriteOffFeeBalance
 
-    /// options specifying the type of fee and how it is calculated
-    type Config = {
+    /// basic options specifying the type of fee and how it is calculated
+    [<Struct>]
+    type BasicConfig = {
         /// a fee applicable to a product
         FeeType: FeeType
         /// how to round the fee
         Rounding: Rounding
         /// how to amortise the fee in relation to the principal
         FeeAmortisation: FeeAmortisation
-        /// how the fee is treated when a product is repaid early
-        SettlementRebate: SettlementRebate
     }
 
-    /// options specifying the type of fee and how it is calculated
-    module Config =
+    /// basic options specifying the type of fee and how it is calculated
+    module BasicConfig =
         /// formats the fee config as an HTML table
-        let toHtmlTable config =
-            match config with
-            | Some c ->
+        let toHtmlTable basicConfig =
+            match basicConfig with
+            | ValueSome bc ->
                 $"""
             <table>
                 <tr>
-                    <td>fee type: <i>{c.FeeType}</i></td>
-                    <td>rounding: <i>{c.Rounding}</i></td>
+                    <td>fee type: <i>{bc.FeeType}</i></td>
+                    <td>rounding: <i>{bc.Rounding}</i></td>
                 </tr>
                 <tr>
-                    <td>fee amortisation: <i>{c.FeeAmortisation}</i></td>
-                    <td>settlement rebate: <i>{c.SettlementRebate}</i></td>
+                    <td>fee amortisation: <i>{bc.FeeAmortisation}</i></td>
                 </tr>
             </table>"""
-            | None ->
+            | ValueNone ->
+                "no fee"
+
+    /// advanced options specifying the type of fee and how it is calculated
+    [<Struct>]
+    type AdvancedConfig = {
+        /// how the fee is treated when a product is repaid early
+        SettlementRebate: SettlementRebate        
+    }
+
+    /// advanced options specifying the type of fee and how it is calculated
+    module AdvancedConfig =
+        /// formats the fee config as an HTML table
+        let toHtmlTable advancedConfig =
+            match advancedConfig with
+            | ValueSome ac ->
+                $"""
+            <table>
+                <tr>
+                    <td>settlement rebate: <i>{ac.SettlementRebate}</i></td>
+                </tr>
+            </table>"""
+            | ValueNone ->
                 "no fee"
 
     /// calculates the total fee based on the fee configuration
     let total feeConfig baseValue =
-        match feeConfig with
-        | Some fc ->
+        feeConfig
+        |> ValueOption.map (fun fc ->
             match fc.FeeType with
-            | FacilitationFee amount
-            | CabOrCsoFee amount
-            | MortageFee amount
-            | CustomFee (_, amount) -> amount |> Amount.total baseValue
+            | FacilitationFee amt
+            | CabOrCsoFee amt
+            | MortageFee amt
+            | CustomFee(_, amt) ->
+                amt
+            |> Amount.total baseValue
             |> Cent.fromDecimalCent fc.Rounding
-        | None ->
-            0L<Cent>
+        )
+        |> ValueOption.defaultValue 0L<Cent>

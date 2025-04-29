@@ -114,50 +114,63 @@ module Interest =
             | Simple -> "simple"
             | AddOn -> "add-on"
 
-    /// interest options
+    /// basic interest options
     [<Struct>]
-    type Config = {
+    type BasicConfig = {
         /// the method for calculating interest
         Method: Method
         /// the standard rate of interest
         StandardRate: Rate
         /// any total or daily caps on interest
         Cap: Cap
-        /// any grace period at the start of a schedule, during which if settled no interest is payable
-        InitialGracePeriod: int<DurationDay>
-        /// any promotional or introductory offers during which a different interest rate is applicable
-        PromotionalRates: PromotionalRate array
-        /// the interest rate applicable for any period in which a refund is owing
-        RateOnNegativeBalance: Rate
         /// how to round interest
         Rounding: Rounding
         /// which APR calculation method to use
         AprMethod: Apr.CalculationMethod
     }
 
-    /// interest options
+    /// basic interest options
     module Config =
         /// formats the interest config as an HTML table
-        let toHtmlTable config =
+        let toHtmlTable basicConfig =
             $"""
             <table>
                 <tr>
-                    <td>standard rate: <i>{config.StandardRate}</i></td>
-                    <td>method: <i>{config.Method}</i></td>
+                    <td>standard rate: <i>{basicConfig.StandardRate}</i></td>
+                    <td>method: <i>{basicConfig.Method}</i></td>
                 </tr>
                 <tr>
-                    <td>rounding: <i>{config.Rounding}</i></td>
-                    <td>APR method: <i>{config.AprMethod}</i></td>
+                    <td>rounding: <i>{basicConfig.Rounding}</i></td>
+                    <td>APR method: <i>{basicConfig.AprMethod}</i></td>
                 </tr>
                 <tr>
-                    <td>initial grace period: <i>{config.InitialGracePeriod} day(s)</i></td>
-                    <td>rate on negative balance: <i>{config.RateOnNegativeBalance}</i></td>
+                    <td colspan="2">cap: <i>{basicConfig.Cap}</td>
+                </tr>
+            </table>"""
+
+    /// advanced interest options
+    [<Struct>]
+    type AdvancedConfig = {
+        /// any grace period at the start of a schedule, during which if settled no interest is payable
+        InitialGracePeriod: int<DurationDay>
+        /// any promotional or introductory offers during which a different interest rate is applicable
+        PromotionalRates: PromotionalRate array
+        /// the interest rate applicable for any period in which a refund is owing
+        RateOnNegativeBalance: Rate
+    }
+
+    /// advanced interest options
+    module AdvancedConfig =
+        /// formats the interest config as an HTML table
+        let toHtmlTable advancedConfig =
+            $"""
+            <table>
+                <tr>
+                    <td>initial grace period: <i>{advancedConfig.InitialGracePeriod} day(s)</i></td>
+                    <td>rate on negative balance: <i>{advancedConfig.RateOnNegativeBalance}</i></td>
                 </tr>
                 <tr>
-                    <td colspan="2">promotional rates: <i>{Array.toStringOrNa config.PromotionalRates}</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>{config.Cap}</td>
+                    <td colspan="2">promotional rates: <i>{Array.toStringOrNa advancedConfig.PromotionalRates}</i></td>
                 </tr>
             </table>"""
 

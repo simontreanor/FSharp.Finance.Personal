@@ -42,7 +42,7 @@ module FormattingHelper =
 
     /// a set of options specifying which fields to show/hide in the output
     type GenerationOptions = {
-        GoParameters: Scheduling.Parameters
+        GoParameters: Amortisation.Parameters
         GoQuote: bool
         GoExtra: bool
     }
@@ -52,9 +52,9 @@ module FormattingHelper =
         match generationOptions with
         | Some go ->
             [|
-                if go.GoParameters.FeeConfig.IsNone then hideFeeProperties else [||]
-                if go.GoParameters.ChargeConfig.IsNone || Map.isEmpty go.GoParameters.ChargeConfig.Value.ChargeTypes then hideChargesProperties else [||]
-                if (match go.GoParameters.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) then hideInterestProperties else [||]
+                if go.GoParameters.Basic.FeeConfig.IsNone then hideFeeProperties else [||]
+                if go.GoParameters.Advanced.ChargeConfig.IsNone || Map.isEmpty go.GoParameters.Advanced.ChargeConfig.Value.ChargeTypes then hideChargesProperties else [||]
+                if (match go.GoParameters.Basic.InterestConfig.Method with Interest.Method.AddOn -> false | _ -> true) then hideInterestProperties else [||]
                 if not go.GoQuote then hideQuoteProperties else [||]
                 if not go.GoExtra then hideExtraProperties else [||]
             |]
