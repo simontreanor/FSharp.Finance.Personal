@@ -29,6 +29,21 @@ This library is able to generate amortisation schedules based on a highly custom
 [Algorithms in depth](algorithms.md)
 
 
+## Compliance
+
+Technical documents going into detail about the calculations:
+
+[Simple-Interest Calculations](interestSimple.fsx)
+
+[Add-On-Interest Calculations](interestAddOn.fsx)
+
+[Amortisation Calculations](amortisation.fsx) (coming soon...)
+
+FAQ to highlight the amortisation calculations from a business perspective:
+
+[Amortisation FAQ](amortisationFaq.fsx)
+
+
 ## Unit-test output
 
 Many of the unit tests output basic schedules or amortisation schedules, along with the parameters used to create them and some initial and final stats. The output files are listed here:

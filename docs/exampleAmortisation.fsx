@@ -23,41 +23,53 @@ with a level payment of £456.88 and a final payment of £456.84:
 
 open FSharp.Finance.Personal
 open Amortisation
+open AppliedPayment
 open Calculation
 open DateDay
 open Scheduling
 open UnitPeriod
 
-let scheduleParameters =
+let parameters : Parameters =
     {
-        EvaluationDate = Date(2023, 4, 1)
-        StartDate = Date(2022, 11, 26)
-        Principal = 1500_00L<Cent>
-        ScheduleConfig = AutoGenerateSchedule {
-            UnitPeriodConfig = Monthly(1, 2022, 11, 31)
-            ScheduleLength = PaymentCount 5
-        }
-        PaymentConfig = {
-            LevelPaymentOption = LowerFinalPayment
-            ScheduledPaymentOption = AsScheduled
-            Rounding = RoundUp
-            Minimum = DeferOrWriteOff 50L<Cent>
-            Timeout = 3<DurationDay>
-        }
-        FeeConfig = None
-        ChargeConfig = None
-        InterestConfig = {
-            Method = Interest.Method.Simple
-            StandardRate = Interest.Rate.Daily (Percent 0.8m)
-            Cap = {
-                TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
-                DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+        Basic = {
+            EvaluationDate = Date(2023, 4, 1)
+            StartDate = Date(2022, 11, 26)
+            Principal = 1500_00L<Cent>
+            ScheduleConfig = AutoGenerateSchedule {
+                UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                ScheduleLength = PaymentCount 5
             }
-            InitialGracePeriod = 3<DurationDay>
-            PromotionalRates = [||]
-            RateOnNegativeBalance = Interest.Rate.Zero
-            Rounding = RoundDown
-            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
+                Rounding = RoundUp
+            }
+            FeeConfig = ValueNone
+            InterestConfig = {
+                Method = Interest.Method.Simple
+                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                Cap = {
+                    TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                    DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+                }
+                Rounding = RoundDown
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            }
+        }
+        Advanced = {
+            PaymentConfig = {
+                ScheduledPaymentOption = AsScheduled
+                Minimum = DeferOrWriteOff 50L<Cent>
+                Timeout = 3<DurationDay>
+            }
+            FeeConfig = ValueNone
+            ChargeConfig = None
+            InterestConfig = {
+                InitialGracePeriod = 3<DurationDay>
+                PromotionalRates = [||]
+                RateOnNegativeBalance = Interest.Rate.Zero
+            }
+            SettlementDay = SettlementDay.NoSettlement
+            TrimEnd = false
         }
     }
 
@@ -72,7 +84,7 @@ let actualPayments =
 
 let schedules =
     actualPayments
-    |> Amortisation.generate scheduleParameters SettlementDay.NoSettlement false
+    |> amortise parameters
 
 schedules.AmortisationSchedule
 
@@ -82,7 +94,7 @@ schedules.AmortisationSchedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-let html = Schedule.toHtmlTable schedules.AmortisationSchedule
+let html = Schedule.toHtmlTable parameters schedules.AmortisationSchedule
 
 $"""<div class="schedule">{html}</div>"""
 

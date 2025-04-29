@@ -26,7 +26,7 @@ open DateDay
 open Scheduling
 open UnitPeriod
 
-let scheduleParameters =
+let parameters =
     {
         EvaluationDate = Date(2024, 02, 07)
         StartDate = Date(2024, 02, 07)
@@ -37,26 +37,19 @@ let scheduleParameters =
         }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
-            ScheduledPaymentOption = AsScheduled
             Rounding = RoundUp
-            Minimum = DeferOrWriteOff 50L<Cent>
-            Timeout = 3<DurationDay>
         }
-        FeeConfig = None
-        ChargeConfig = None
+        FeeConfig = ValueNone
         InterestConfig = {
             Method = Interest.Method.Simple
-            StandardRate = Interest.Rate.Annual (Percent 6.9m)
+            StandardRate = Interest.Rate.Annual <| Percent 6.9m
             Cap = Interest.Cap.Zero
-            InitialGracePeriod = 0<DurationDay>
-            PromotionalRates = [||]
-            RateOnNegativeBalance = Interest.Rate.Zero
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
         }
     }
     
-let schedule = scheduleParameters |> calculate
+let schedule = parameters |> calculateBasicSchedule
 
 schedule
 
@@ -66,7 +59,7 @@ schedule
 It is possible to format the `Items` property as an HTML table:
 *)
 
-let html = schedule |> SimpleSchedule.toHtmlTable
+let html = schedule |> BasicSchedule.toHtmlTable
 
 $"""<div class="schedule">{html}</div>"""
 

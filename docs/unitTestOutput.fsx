@@ -15,7 +15,6 @@ keywords: payment APR charge edge-case illustrative interest schedule promotiona
 Each of the following categories contains a number of unit-test outputs along with the parameters used and some statistics.
 Click on a category to expand it.
 <br />
-<br />
 
 > Note: load any schedule table into Excel by following these steps:
 > 

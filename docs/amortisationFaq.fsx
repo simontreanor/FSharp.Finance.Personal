@@ -37,6 +37,8 @@ The examples may use either the simple-interest method or the add-on-interest me
 (*** hide ***)
 #r "nuget:FSharp.Finance.Personal"
 open FSharp.Finance.Personal
+open Amortisation
+open AppliedPayment
 open Calculation
 open DateDay
 open Scheduling
@@ -49,35 +51,46 @@ open UnitPeriod
 <div>
 *)
 
-let parameters = {
-    EvaluationDate = Date(2025, 4, 24) // the date that we're evaluating the schedule
-    StartDate = Date(2025, 4, 24)
-    Principal = 1000_00L<Cent>
-    ScheduleConfig = AutoGenerateSchedule {
-        UnitPeriodConfig = Monthly(1, 2025, 5, 24)
-        ScheduleLength = PaymentCount 4
-    }
-    PaymentConfig = {
-        LevelPaymentOption = LowerFinalPayment
-        ScheduledPaymentOption = AsScheduled
-        Rounding = RoundUp
-        Minimum = DeferOrWriteOff 50L<Cent>
-        Timeout = 3<DurationDay>
-    }
-    FeeConfig = None
-    ChargeConfig = None
-    InterestConfig = {
-        Method = Interest.Method.Simple
-        StandardRate = Interest.Rate.Daily (Percent 0.798m)
-        Cap = {
-            TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
-            DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+let parameters0 : Parameters = {
+    Basic = {
+        EvaluationDate = Date(2025, 4, 24) // the date we're evaluating the schedule
+        StartDate = Date(2025, 4, 24)
+        Principal = 1000_00L<Cent>
+        ScheduleConfig = AutoGenerateSchedule {
+            UnitPeriodConfig = Monthly(1, 2025, 5, 24)
+            ScheduleLength = PaymentCount 4
         }
-        InitialGracePeriod = 3<DurationDay>
-        PromotionalRates = [||]
-        RateOnNegativeBalance = Interest.Rate.Zero
-        Rounding = RoundDown
-        AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+        PaymentConfig = {
+            LevelPaymentOption = LowerFinalPayment
+            Rounding = RoundUp
+        }
+        FeeConfig = ValueNone
+        InterestConfig = {
+            Method = Interest.Method.Simple
+            StandardRate = Interest.Rate.Daily (Percent 0.798m)
+            Cap = {
+                TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
+                DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+            }
+            Rounding = RoundDown
+            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+        }
+    }
+    Advanced = {
+        PaymentConfig = {
+            ScheduledPaymentOption = AsScheduled
+            Minimum = DeferOrWriteOff 50L<Cent>
+            Timeout = 3<DurationDay>
+        }
+        FeeConfig = ValueNone
+        ChargeConfig = None
+        InterestConfig = {
+            InitialGracePeriod = 3<DurationDay>
+            PromotionalRates = [||]
+            RateOnNegativeBalance = Interest.Rate.Zero
+        }
+        SettlementDay = SettlementDay.NoSettlement // no settlement quotation requested
+        TrimEnd = false // don't clip unrequired payments from the end of the schedule
     }
 }
 
@@ -89,7 +102,6 @@ let parameters = {
 
 Let's take a look at the amortisation schedules to illustrate this. First we will look at the simple-interest method and then the add-on-interest method.
 
-<br />
 > Note: As a general principle, for payments that are not yet due it is assumed that they will be paid on time and in full. This is to provide for a more
 > realistic projection of the schedule. 
 
@@ -104,10 +116,8 @@ schedule is zero, meaning it is fully amortised.
 *)
 
 let amortisation0 =
-    Amortisation.generate
-        parameters //the parameters defined above
-        SettlementDay.NoSettlement // no settlement quotation requested
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters0 //the parameters defined above
         Map.empty // no actual payments made
 
 (**
@@ -118,7 +128,7 @@ let amortisation0 =
 (*** hide ***)
 amortisation0
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters0
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 (*** include-it-raw ***)
 
@@ -130,13 +140,13 @@ Now, let's assume that it's day 35 and no payments have been made, so the paymen
 <div>
 *)
 
+let parameters1 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
+    }
 let amortisation1 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
-        }
-        SettlementDay.NoSettlement // no settlement quotation requested
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters1
         Map.empty // no actual payments made
 
 (**
@@ -147,7 +157,7 @@ let amortisation1 =
 (*** hide ***)
 amortisation1
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters1
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -172,13 +182,14 @@ at the end of the schedule is zero, meaning it is fully amortised.
 <div>
 *)
 
+let parameters2 =
+    { parameters0 with
+        Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+    }
+
 let amortisation2 =
-    Amortisation.generate
-        { parameters with
-            InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
-        }
-        SettlementDay.NoSettlement // no settlement quotation requested
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters2
         Map.empty // no actual payments made
 
 (**
@@ -189,7 +200,7 @@ let amortisation2 =
 (*** hide ***)
 amortisation2
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters2
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -202,14 +213,14 @@ Let's again assume that it's day 35 and no payments have been made, so the payme
 <div>
 *)
 
+let parameters3 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
+        Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+    }
 let amortisation3 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
-            InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
-        }
-        SettlementDay.NoSettlement // no settlement quotation requested
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters3
         Map.empty // no actual payments made
 
 (**
@@ -220,7 +231,7 @@ let amortisation3 =
 (*** hide ***)
 amortisation3
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters3
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -307,7 +318,7 @@ As a reminder, here's the schedule prior to any actual payments being made (look
 (*** hide ***)
 amortisation0
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters0
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -320,13 +331,14 @@ Now, let's assume that the first two payments have been made on time, and the cu
 <div>
 *)
 
+let parameters4 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
+        Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
+    }
 let amortisation4 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-        }
-        SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters4
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -340,7 +352,7 @@ let amortisation4 =
 (*** hide ***)
 amortisation4
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters4
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -362,7 +374,7 @@ balance of £815.56.
 (*** hide ***)
 amortisation2
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters2
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -375,14 +387,15 @@ Let's assume again that the first two payments have been made on time, and the c
 <div>
 *)
 
+let parameters5 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
+        Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+        Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
+    }
 let amortisation5 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-            InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
-        }
-        SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters5
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 454_15L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 454_15L<Cent> |]
@@ -396,7 +409,7 @@ let amortisation5 =
 (*** hide ***)
 amortisation5
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters5
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -421,14 +434,15 @@ refund the customer the difference between the settlement figure and the amount 
 <div>
 *)
 
+let parameters6 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 4, 29) // evaluate the schedule on day 5
+        Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+        Advanced.TrimEnd = true // clip unrequired payments from the end of the schedule
+    }
 let amortisation6 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 4, 29) // evaluate the schedule on day 5
-            InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
-        }
-        SettlementDay.NoSettlement // no settlement quotation requested
-        true // clip unrequired payments from the end of the schedule
+    amortise
+        parameters6
         (Map [
             5<OffsetDay>, [| ActualPayment.quickConfirmed 1050_00L<Cent> |]
         ]) // single overpayment made on day 5
@@ -441,7 +455,7 @@ let amortisation6 =
 (*** hide ***)
 amortisation6
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters6
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -481,9 +495,10 @@ customer already paid the first two payments on time, but missed the remaining t
 *)
 
 let refinanceExampleParameters =
-    { parameters with
-        EvaluationDate = Date(2025, 9, 23) // evaluate the schedule on day 152
-        InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 9, 23) // evaluate the schedule on day 152
+        Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+        Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 152
     }
 let actualPayments =
     Map [
@@ -491,10 +506,8 @@ let actualPayments =
         61<OffsetDay>, [| ActualPayment.quickConfirmed 454_15L<Cent> |]
     ] // actual payments made on days 30 and 61
 let refinanceExampleSchedule =
-    Amortisation.generate
+    amortise
         refinanceExampleParameters
-        SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 152
-        false // don't clip unrequired payments from the end of the schedule
         actualPayments
 
 (**
@@ -507,7 +520,7 @@ Here is the status of the schedule on day 152 prior to any refinancing, where a 
 (*** hide ***)
 refinanceExampleSchedule
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable refinanceExampleParameters
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -551,7 +564,7 @@ The rescheduled amortisation is as follows:
 
 (*** hide ***)
 rescheduleSchedules.NewSchedules.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable refinanceExampleParameters
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -584,8 +597,8 @@ let rolloverParameters : RolloverParameters = {
             UnitPeriodConfig = Monthly(1, 2025, 10, 1) // monthly payments starting on 1 October 2025
             ScheduleLength = PaymentCount 8 // 8 payments
         }
-    InterestConfig = refinanceExampleParameters.InterestConfig // use the same interest config as the original schedule
-    PaymentConfig = refinanceExampleParameters.PaymentConfig // use the same payment config as the original schedule
+    InterestConfig = refinanceExampleParameters.Basic.InterestConfig // use the same interest config as the original schedule
+    PaymentConfig = refinanceExampleParameters.Basic.PaymentConfig // use the same payment config as the original schedule
     FeeHandling = Fee.FeeHandling.CarryOverAsIs // no fees, so irrelevant
 }
 let rolloverSchedules = rollOver refinanceExampleParameters rolloverParameters actualPayments
@@ -599,7 +612,7 @@ The old loan would be closed as per the settlement quote above. The new rolled-o
 
 (*** hide ***)
 rolloverSchedules.NewSchedules.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable refinanceExampleParameters
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -639,13 +652,13 @@ Let's take our simple-interest loan, where the customer has already made the fir
 <div>
 *)
 
+let parameters7 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
+    }
 let amortisation7 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-        }
-        SettlementDay.NoSettlement // no settlement quotation requested
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters7
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -660,7 +673,7 @@ let amortisation7 =
 (*** hide ***)
 amortisation7
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters7
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -676,13 +689,14 @@ You can see that the single-payment write-off has no effect on the remainder of 
 *)
 
 // first, run the amortisation with the existing actual payments to get the settlement figure
+let parameters8 =
+    { parameters0 with
+        Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
+        Advanced.SettlementDay = SettlementDay.SettlementOn 91<OffsetDay> // settlement quotation requested on day 91
+    }
 let amortisation8 =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-        }
-        (SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters8
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -693,12 +707,8 @@ let settlementFigure = amortisation8.AmortisationSchedule.FinalStats.SettlementF
 let fullWriteOffAmount = settlementFigure |> ValueOption.map snd |> ValueOption.defaultValue 0L<Cent>
 // run the amortisation again with the full write-off payment
 let amortisation8' =
-    Amortisation.generate
-        { parameters with
-            EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-        }
-        (SettlementDay.SettlementOn 91<OffsetDay>) // settlement quotation requested on day 91
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters8
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -713,7 +723,7 @@ let amortisation8' =
 (*** hide ***)
 amortisation8'
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters8
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)
@@ -733,20 +743,18 @@ can be used with the interest rate set to zero. This is illustrated in the examp
 <div>
 *)
 
-
-// first, run the amortisation with the existing actual payments to get the settlement figure
+let parameters9 =
+    { parameters0 with
+        Advanced.InterestConfig.PromotionalRates = [|
+            { // promotional rate to freeze interest for a month
+                DateRange = { Start = Date(2025, 6, 25); End = Date(2025, 7, 24) }
+                Rate = Interest.Rate.Zero // zero interest rate
+            }
+        |]
+    }
 let amortisation9 =
-    Amortisation.generate
-        { parameters with
-            InterestConfig.PromotionalRates = [|
-                { // promotional rate to freeze interest for a month
-                    DateRange = { Start = Date(2025, 6, 25); End = Date(2025, 7, 24) }
-                    Rate = Interest.Rate.Zero // zero interest rate
-                }
-            |]
-        }
-        SettlementDay.NoSettlement // no settlement quotation requested
-        false // don't clip unrequired payments from the end of the schedule
+    amortise
+        parameters9
         Map.empty // no actual payments made
 
 (**
@@ -757,7 +765,7 @@ let amortisation9 =
 (*** hide ***)
 amortisation9
 |> _.AmortisationSchedule
-|> Amortisation.Schedule.toHtmlTable
+|> Schedule.toHtmlTable parameters9
 |> fun html -> $"""<div class="schedule">{html}</div>"""
 
 (*** include-it-raw ***)

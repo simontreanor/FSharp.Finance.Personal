@@ -36,7 +36,7 @@ open DateDay
 open Scheduling
 open UnitPeriod
 (*** ***)
-let parameters = {
+let parameters : BasicParameters = {
     EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
     Principal = 1000_00L<Cent>
@@ -46,13 +46,9 @@ let parameters = {
     }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
-        ScheduledPaymentOption = AsScheduled
         Rounding = RoundUp
-        Minimum = DeferOrWriteOff 50L<Cent>
-        Timeout = 3<DurationDay>
     }
-    FeeConfig = None
-    ChargeConfig = None
+    FeeConfig = ValueNone
     InterestConfig = {
         Method = Interest.Method.AddOn
         StandardRate = Interest.Rate.Daily (Percent 0.798m)
@@ -60,9 +56,6 @@ let parameters = {
             TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
             DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
         }
-        InitialGracePeriod = 3<DurationDay>
-        PromotionalRates = [||]
-        RateOnNegativeBalance = Interest.Rate.Zero
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom 3
     }
@@ -71,10 +64,10 @@ let parameters = {
 (**
 </details>
 
-Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculate` function to generate the schedule:
+Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculateBasicSchedule` function to generate the schedule:
 *)
 
-let addOnInterestSchedule = Scheduling.calculate parameters
+let addOnInterestSchedule = calculateBasicSchedule parameters
 (*** hide ***)
 addOnInterestSchedule |> BasicSchedule.toHtmlTable
 
@@ -91,7 +84,9 @@ means that the interest accrued is higher than it would be if the principal was 
 To illustrate this, we can compare the add-on-interest schedule with a simple-interest schedule:
 *)
 
-let simpleInterestSchedule = Scheduling.calculate { parameters with InterestConfig.Method = Interest.Method.Simple }
+let simpleInterestSchedule =
+    calculateBasicSchedule
+        { parameters with InterestConfig.Method = Interest.Method.Simple }
 (*** hide ***)
 simpleInterestSchedule |> BasicSchedule.toHtmlTable
 
@@ -142,8 +137,12 @@ and capping this at 100% of the principal amount (as specified in the parameters
 
 *)
 
-let finalScheduledPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
-let initialInterestBalance = totalAddOnInterest parameters finalScheduledPaymentDay
+let finalScheduledPaymentDay =
+    paymentDays
+    |> Array.tryLast
+    |> Option.defaultValue 0<OffsetDay>
+let initialInterestBalance =
+    totalAddOnInterest parameters finalScheduledPaymentDay
 
 (**Result:*)
 
@@ -169,22 +168,30 @@ as the schedule is basic, but for more complex schedules, several iterations may
 *)
 
 // precalculations
-let firstItem = { BasicItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = parameters.Principal }
+let firstItem =
+    { BasicItem.initial with
+        InterestBalance = initialInterestBalance
+        PrincipalBalance = parameters.Principal
+    }
 let paymentCount = Array.length paymentDays
 let interest = Cent.toDecimalCent initialInterestBalance
+let paymentRounding = parameters.PaymentConfig.Rounding
+let principal = parameters.Principal
 let roughPayment =
-    calculateLevelPayment paymentCount parameters.PaymentConfig.Rounding parameters.Principal 0L<Cent> interest
+    calculateLevelPayment paymentCount paymentRounding principal 0L<Cent> interest
     |> Cent.toDecimalCent
     |> decimal
-// the following calculations are part of `cref:M:FSharp.Finance.Personal.Scheduling.generatePaymentValue` but modified to show the intermediate steps
+// the following calculations are part of `Scheduling.generatePaymentValue`
+// but modified to show the intermediate steps
 let scheduledPayment =
     roughPayment
     |> Cent.round parameters.PaymentConfig.Rounding
     |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
+let interestMethod = parameters.InterestConfig.Method
 let basicItems =
     paymentDays
     |> Array.scan(fun basicItem pd ->
-        generateItem parameters parameters.InterestConfig.Method scheduledPayment basicItem pd
+        generateItem parameters interestMethod scheduledPayment basicItem pd
     ) firstItem
 
 (**
@@ -216,7 +223,9 @@ let finalInterestTotal =
     |> _.TotalSimpleInterest
 let basicItems' =
     ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
-    |> Array.unfold (equaliseInterest parameters paymentDays firstItem paymentCount 0L<Cent> paymentMap)
+    |> Array.unfold
+        (equaliseInterest
+            parameters paymentDays firstItem paymentCount 0L<Cent> paymentMap)
     |> Array.last
 
 (**
@@ -234,9 +243,10 @@ let basicItems' =
 The final payment is adjusted (`cref:M:FSharp.Finance.Personal.Scheduling.adjustFinalPayment`) to ensure that the final principal balance is zero.
 *)
 
+let isAutoGenerateSchedule = parameters.ScheduleConfig.IsAutoGenerateSchedule
 let items =
     basicItems'
-    |> adjustFinalPayment finalScheduledPaymentDay parameters.ScheduleConfig.IsAutoGenerateSchedule
+    |> adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule
 
 (*** hide ***)
 { EvaluationDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable

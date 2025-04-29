@@ -40,8 +40,8 @@ pre code {
 }
 
 blockquote {
-    padding: 0 1em;
-    margin: 0 0 16px 0;
+    margin-bottom: 16px;
+    margin-left: 0;
 }
 
 table {

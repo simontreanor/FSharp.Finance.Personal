@@ -39,7 +39,7 @@ open DateDay
 open Scheduling
 open UnitPeriod
 (*** ***)
-let parameters = {
+let parameters : BasicParameters = {
     EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
     Principal = 1000_00L<Cent>
@@ -49,13 +49,9 @@ let parameters = {
     }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
-        ScheduledPaymentOption = AsScheduled
         Rounding = RoundUp
-        Minimum = DeferOrWriteOff 50L<Cent>
-        Timeout = 3<DurationDay>
     }
-    FeeConfig = None
-    ChargeConfig = None
+    FeeConfig = ValueNone
     InterestConfig = {
         Method = Interest.Method.Simple
         StandardRate = Interest.Rate.Daily (Percent 0.798m)
@@ -63,9 +59,6 @@ let parameters = {
             TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
             DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
         }
-        InitialGracePeriod = 3<DurationDay>
-        PromotionalRates = [||]
-        RateOnNegativeBalance = Interest.Rate.Zero
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom 3
     }
@@ -74,12 +67,12 @@ let parameters = {
 (**
 </details>
 
-Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculate` function to generate the schedule:
+Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculateBasicSchedule` function to generate the schedule:
 *)
 
-let schedule = Scheduling.calculate parameters
+let simpleInterestSchedule = calculateBasicSchedule parameters
 (*** hide ***)
-schedule |> BasicSchedule.toHtmlTable
+simpleInterestSchedule |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -89,12 +82,14 @@ As there is no initial interest balance, the principal starts to be paid off imm
 <br />
 <details>
 <summary>Add-on-interest comparison (click to expand)</summary>
-To illustrate this, we can compare the add-on-interest schedule with an add-on-interest schedule:
+To illustrate this, we can compare the simple-interest schedule with an add-on-interest schedule:
 *)
 
-let simpleInterestSchedule = Scheduling.calculate { parameters with InterestConfig.Method = Interest.Method.AddOn }
+let addOnInterestSchedule =
+    calculateBasicSchedule
+        { parameters with InterestConfig.Method = Interest.Method.AddOn }
 (*** hide ***)
-simpleInterestSchedule |> BasicSchedule.toHtmlTable
+addOnInterestSchedule |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -106,7 +101,7 @@ means that the interest accrued is higher than it would be if the principal was 
 
 ## Calculation Details
 
-`cref:M:FSharp.Finance.Personal.Scheduling.calculate` is the function that generates the schedule. Here is a summary of the calculation steps:
+`cref:M:FSharp.Finance.Personal.Scheduling.calculateBasicSchedule` is the function that generates the schedule. Here is a summary of the calculation steps:
 
 1. **Generate payment days**: generate the payment days based on the unit-period (e.g. monthly) and the first payment date
 2. **Solve for payment values**: use the bisection method to determine the level payments required
@@ -151,19 +146,23 @@ as the schedule is basic, but for more complex schedules, several iterations may
 // precalculations
 let firstItem = { BasicItem.initial with PrincipalBalance = parameters.Principal }
 let paymentCount = Array.length paymentDays
+let paymentRounding = parameters.PaymentConfig.Rounding
+let principal = parameters.Principal
 let roughPayment =
-    calculateLevelPayment paymentCount parameters.PaymentConfig.Rounding parameters.Principal 0L<Cent> 0m<Cent>
+    calculateLevelPayment paymentCount paymentRounding principal 0L<Cent> 0m<Cent>
     |> Cent.toDecimalCent
     |> decimal
-// the following calculations are part of `cref:M:FSharp.Finance.Personal.Scheduling.generatePaymentValue` but modified to show the intermediate steps
+// the following calculations are part of `Scheduling.generatePaymentValue`
+// but modified to show the intermediate steps
 let scheduledPayment =
     roughPayment
     |> Cent.round parameters.PaymentConfig.Rounding
     |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
+let interestMethod = parameters.InterestConfig.Method
 let basicItems =
     paymentDays
     |> Array.scan(fun basicItem pd ->
-        generateItem parameters parameters.InterestConfig.Method scheduledPayment basicItem pd
+        generateItem parameters interestMethod scheduledPayment basicItem pd
     ) firstItem
 
 (**
@@ -181,10 +180,14 @@ let basicItems =
 The final payment is adjusted (`cref:M:FSharp.Finance.Personal.Scheduling.adjustFinalPayment`) to ensure that the final principal balance is zero.
 *)
 
-let finalScheduledPaymentDay = paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+let finalScheduledPaymentDay =
+    paymentDays
+    |> Array.tryLast
+    |> Option.defaultValue 0<OffsetDay>
+let isAutoGenerateSchedule = parameters.ScheduleConfig.IsAutoGenerateSchedule
 let items =
     basicItems
-    |> adjustFinalPayment finalScheduledPaymentDay parameters.ScheduleConfig.IsAutoGenerateSchedule
+    |> adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule
 
 (*** hide ***)
 { EvaluationDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
