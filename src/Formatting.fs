@@ -10,12 +10,6 @@ module Formatting =
 
     open Calculation
 
-    /// filter out hidden fields 
-    let internal filterColumns hideProperties =
-        match hideProperties with
-        | [||] -> id
-        | columns -> Array.filter(fun (pi: PropertyInfo) -> columns |> Array.exists(( = ) pi.Name) |> not)
-
     /// writes some content to a specific file path, creating the containing directory if it does not exist
     let outputToFile filePath append content =
         let fi = FileInfo filePath
@@ -55,11 +49,10 @@ module Formatting =
         $"""<td class="ci{index.ToString "00"}">{value}</td>"""
 
     /// writes table rows from an array
-    let internal formatHtmlTableRows hideProperties propertyInfos items =
+    let internal formatHtmlTableRows (propertyInfos: PropertyInfo array) items =
         items
         |> Array.map(fun li ->
             propertyInfos
-            |> filterColumns hideProperties
             |> Array.mapi(fun i pi -> formatHtmlTableCell i (pi.GetValue li))
             |> String.concat ""
             |> fun tdd -> $"<tr>{tdd}</tr>"
@@ -67,55 +60,13 @@ module Formatting =
         |> String.concat ""
 
     /// generates a formatted HTML table from an array
-    let generateHtmlFromArray hideProperties (items: 'a array) =
+    let generateHtmlFromArray (items: 'a array) =
         let propertyInfos = typeof<'a> |> FSharpType.GetRecordFields
-        let header = propertyInfos |> filterColumns hideProperties |> fun pii -> formatHtmlTableHeader ValueNone (pii |> Array.map _.Name)
-        let rows = items |> formatHtmlTableRows hideProperties propertyInfos
+        let header = propertyInfos |> fun pii -> formatHtmlTableHeader ValueNone (pii |> Array.map _.Name)
+        let rows = items |> formatHtmlTableRows propertyInfos
         $"""
 <table>
     {header}
     {rows}
 </table>
 """
-
-    /// creates HTML files from an array
-    let outputArrayToHtml fileName append data =
-        data |> generateHtmlFromArray [||] |> outputToFile' fileName append
-    
-    /// writes table rows from a map
-    let internal formatHtmlTableRowsFromMap hideProperties propertyInfos data =
-        data
-        |> Map.map(fun itemIndex li ->
-            propertyInfos
-            |> filterColumns hideProperties
-            |> Array.mapi (fun propertyIndex pi -> formatHtmlTableCell (propertyIndex + 1) (pi.GetValue li))
-            |> Array.append [| formatHtmlTableCell 0 itemIndex |]
-            |> String.concat ""
-            |> fun tdd -> $"<tr>{tdd}</tr>"
-        )
-        |> Map.values
-        |> String.concat ""
-
-    /// generates a formatted HTML table from a map
-    let generateHtmlFromMap' hideProperties indexName (data: Map<'a, 'b>) =
-        let propertyInfos = typeof<'b> |> FSharpType.GetRecordFields
-        let header = propertyInfos |> filterColumns hideProperties |> fun pii -> formatHtmlTableHeader (ValueSome indexName) (pii |> Array.map _.Name)
-        let rows = data |> formatHtmlTableRowsFromMap hideProperties propertyInfos
-        $"""
-<table>
-    {header}
-    {rows}
-</table>
-"""
-
-    /// generates a formatted HTML table from a map with the index name "Day"
-    let generateHtmlFromMap hideProperties (data: Map<'a, 'b>) =
-        generateHtmlFromMap' hideProperties "Day" data
-
-    /// creates HTML files from a map
-    let outputMapToHtml' fileName append indexName data =
-        data |> generateHtmlFromMap' [||] indexName |> outputToFile' fileName append
-
-    /// creates HTML files from a map with the index name "Day"
-    let outputMapToHtml fileName append data =
-        outputMapToHtml' fileName append "Day" data

@@ -1893,9 +1893,9 @@ module PaymentScheduleTests =
             let schedule2 = p paymentSchedule2 |> fun p -> calculateBasicSchedule p
             let schedule3 = p paymentSchedule3 |> fun p -> calculateBasicSchedule p
 
-            let html1 = schedule1.Items |> generateHtmlFromArray [||]
-            let html2 = schedule2.Items |> generateHtmlFromArray [||]
-            let html3 = schedule3.Items |> generateHtmlFromArray [||]
+            let html1 = schedule1 |> BasicSchedule.toHtmlTable
+            let html2 = schedule2 |> BasicSchedule.toHtmlTable
+            let html3 = schedule3 |> BasicSchedule.toHtmlTable
             $"{title}<br />{description}<br />{html1}<br />{html2}<br />{html3}" |> outputToFile' $"out/{folder}/{title}.md" false
 
             schedule1 = schedule2 && schedule2 = schedule3

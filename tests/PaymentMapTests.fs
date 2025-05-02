@@ -66,7 +66,7 @@ module PaymentMapTests =
             |]
             let pm = PaymentMap.create evaluationDate startDate scheduledPayments actualPayments
             let title = "<h3>1) Basic scenario</h3>"
-            let newHtml = pm |> generateHtmlFromArray None
+            let newHtml = pm |> generateHtmlFromArray
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
@@ -101,7 +101,7 @@ module PaymentMapTests =
             |]
             let pm = PaymentMap.create evaluationDate startDate scheduledPayments actualPayments
             let title = "<h3>2) Very early exact repayments</h3>"
-            let newHtml = pm |> generateHtmlFromArray None
+            let newHtml = pm |> generateHtmlFromArray
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
@@ -134,7 +134,7 @@ module PaymentMapTests =
             |]
             let pm = PaymentMap.create evaluationDate startDate scheduledPayments actualPayments
             let title = "<h3>3) Paid off but with erratic payment timings</h3>"
-            let newHtml = pm |> generateHtmlFromArray None
+            let newHtml = pm |> generateHtmlFromArray
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
@@ -166,7 +166,7 @@ module PaymentMapTests =
             |]
             let pm = PaymentMap.create evaluationDate startDate scheduledPayments actualPayments
             let title = "<h3>4) Erratic payment timings but not paid off</h3>"
-            let newHtml = pm |> generateHtmlFromArray None
+            let newHtml = pm |> generateHtmlFromArray
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
@@ -195,7 +195,7 @@ module PaymentMapTests =
             let actualPayments = Array.empty<PaymentMap.Payment>
             let pm = PaymentMap.create evaluationDate startDate scheduledPayments actualPayments
             let title = "<h3>5) No payments at all</h3>"
-            let newHtml = pm |> generateHtmlFromArray None
+            let newHtml = pm |> generateHtmlFromArray
             $"{title}<br />{newHtml}" |> outputToFile' @$"out/{title}.md" false
             pm
 
