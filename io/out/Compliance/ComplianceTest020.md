@@ -13,10 +13,10 @@
         <th class="ci09" style="text-align: right;">Balance status</th>
         <th class="ci10" style="text-align: right;">Simple interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">Principal portion</th>
-        <th class="ci13" style="text-align: right;">Interest portion</th>
-        <th class="ci14" style="text-align: right;">Principal balance</th>
-        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci12" style="text-align: right;">Interest portion</th>
+        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci14" style="text-align: right;">Interest balance</th>
+        <th class="ci15" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -33,8 +33,8 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">300.00</td>
-        <td class="ci15">211.1100</td>
+        <td class="ci14">211.1100</td>
+        <td class="ci15">300.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">19</td>
@@ -49,10 +49,10 @@
         <td class="ci09">open</td>
         <td class="ci10">45.4860</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">0.00</td>
-        <td class="ci13">127.78</td>
-        <td class="ci14">300.00</td>
-        <td class="ci15">83.3300</td>
+        <td class="ci12">127.78</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">83.3300</td>
+        <td class="ci15">300.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">49</td>
@@ -67,10 +67,10 @@
         <td class="ci09">open</td>
         <td class="ci10">71.8200</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">44.45</td>
-        <td class="ci13">83.33</td>
-        <td class="ci14">255.55</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">83.33</td>
+        <td class="ci13">44.45</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">255.55</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">80</td>
@@ -85,10 +85,10 @@
         <td class="ci09">open</td>
         <td class="ci10">63.2180</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">127.78</td>
-        <td class="ci13">0.00</td>
-        <td class="ci14">127.77</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">127.78</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">127.77</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">110</td>
@@ -103,15 +103,15 @@
         <td class="ci09">closed</td>
         <td class="ci10">30.5881</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">127.77</td>
-        <td class="ci13">0.00</td>
-        <td class="ci14">0.00</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">127.77</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Total repayable on interest-first loan of £300 with repayments starting on day 19 and total loan length 110 days</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

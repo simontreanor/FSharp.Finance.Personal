@@ -13,10 +13,10 @@
         <th class="ci09" style="text-align: right;">Balance status</th>
         <th class="ci10" style="text-align: right;">Simple interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">Principal portion</th>
-        <th class="ci13" style="text-align: right;">Interest portion</th>
-        <th class="ci14" style="text-align: right;">Principal balance</th>
-        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci12" style="text-align: right;">Interest portion</th>
+        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci14" style="text-align: right;">Interest balance</th>
+        <th class="ci15" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -31,10 +31,10 @@
         <td class="ci09">open</td>
         <td class="ci10">0.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">97.01</td>
-        <td class="ci13">0.00</td>
-        <td class="ci14">152.99</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">97.01</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">152.99</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">5</td>
@@ -51,8 +51,8 @@
         <td class="ci11">6.1196</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">152.99</td>
-        <td class="ci15">6.1196</td>
+        <td class="ci14">6.1196</td>
+        <td class="ci15">152.99</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">20</td>
@@ -69,8 +69,8 @@
         <td class="ci11">18.3588</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">152.99</td>
-        <td class="ci15">24.4784</td>
+        <td class="ci14">24.4784</td>
+        <td class="ci15">152.99</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">49</td>
@@ -85,10 +85,10 @@
         <td class="ci09">open</td>
         <td class="ci10">35.4937</td>
         <td class="ci11">35.4937</td>
-        <td class="ci12">37.13</td>
-        <td class="ci13">59.97</td>
-        <td class="ci14">115.86</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">59.97</td>
+        <td class="ci13">37.13</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">115.86</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">80</td>
@@ -103,10 +103,10 @@
         <td class="ci09">open</td>
         <td class="ci10">28.7333</td>
         <td class="ci11">28.7333</td>
-        <td class="ci12">68.37</td>
-        <td class="ci13">28.73</td>
-        <td class="ci14">47.49</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">28.73</td>
+        <td class="ci13">68.37</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">47.49</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">110</td>
@@ -121,15 +121,15 @@
         <td class="ci09">closed</td>
         <td class="ci10">11.3976</td>
         <td class="ci11">11.3976</td>
-        <td class="ci12">47.49</td>
-        <td class="ci13">11.39</td>
-        <td class="ci14">0.00</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">11.39</td>
+        <td class="ci13">47.49</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Scheduled payment total can be less than principal when early actual payments are made but net effect is never less</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

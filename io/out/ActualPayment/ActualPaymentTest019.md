@@ -14,10 +14,10 @@
         <th class="ci10" style="text-align: right;">Balance status</th>
         <th class="ci11" style="text-align: right;">Simple interest</th>
         <th class="ci12" style="text-align: right;">New interest</th>
-        <th class="ci13" style="text-align: right;">Principal portion</th>
-        <th class="ci14" style="text-align: right;">Interest portion</th>
-        <th class="ci15" style="text-align: right;">Principal balance</th>
-        <th class="ci16" style="text-align: right;">Interest balance</th>
+        <th class="ci13" style="text-align: right;">Interest portion</th>
+        <th class="ci14" style="text-align: right;">Principal portion</th>
+        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci16" style="text-align: right;">Principal balance</th>
         <th class="ci17" style="text-align: right;">Settlement figure</th>
     </thead>
     <tr style="text-align: right;">
@@ -36,8 +36,8 @@
         <td class="ci12">0.0000</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">250.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">250.00</td>
         <td class="ci17">250.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -54,10 +54,10 @@
         <td class="ci10">open</td>
         <td class="ci11">32.0000</td>
         <td class="ci12">32.0000</td>
-        <td class="ci13">84.00</td>
-        <td class="ci14">32.00</td>
-        <td class="ci15">166.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">32.00</td>
+        <td class="ci14">84.00</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">166.00</td>
         <td class="ci17">166.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -74,10 +74,10 @@
         <td class="ci10">open</td>
         <td class="ci11">39.8400</td>
         <td class="ci12">39.8400</td>
-        <td class="ci13">76.16</td>
-        <td class="ci14">39.84</td>
-        <td class="ci15">89.84</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">39.84</td>
+        <td class="ci14">76.16</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">89.84</td>
         <td class="ci17">89.84</td>
     </tr>
     <tr style="text-align: right;">
@@ -94,10 +94,10 @@
         <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">22.2803</td>
         <td class="ci12">22.2803</td>
-        <td class="ci13">93.72</td>
-        <td class="ci14">22.28</td>
-        <td class="ci15">-3.88</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">22.28</td>
+        <td class="ci14">93.72</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">-3.88</td>
         <td class="ci17">-3.88</td>
     </tr>
     <tr style="text-align: right;">
@@ -114,10 +114,10 @@
         <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">0.0000</td>
         <td class="ci12">0.0000</td>
-        <td class="ci13">116.00</td>
-        <td class="ci14">0.00</td>
-        <td class="ci15">-119.88</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">116.00</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">-119.88</td>
         <td class="ci17">-119.88</td>
     </tr>
     <tr style="text-align: right;">
@@ -134,16 +134,16 @@
         <td class="ci10">closed</td>
         <td class="ci11">0.0000</td>
         <td class="ci12">0.0000</td>
-        <td class="ci13">-119.88</td>
-        <td class="ci14">0.00</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">-119.88</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Generated settlement figure is correct</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -14,10 +14,10 @@
         <th class="ci10" style="text-align: right;">Balance status</th>
         <th class="ci11" style="text-align: right;">Simple interest</th>
         <th class="ci12" style="text-align: right;">New interest</th>
-        <th class="ci13" style="text-align: right;">Principal portion</th>
-        <th class="ci14" style="text-align: right;">Interest portion</th>
-        <th class="ci15" style="text-align: right;">Principal balance</th>
-        <th class="ci16" style="text-align: right;">Interest balance</th>
+        <th class="ci13" style="text-align: right;">Interest portion</th>
+        <th class="ci14" style="text-align: right;">Principal portion</th>
+        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci16" style="text-align: right;">Principal balance</th>
         <th class="ci17" style="text-align: right;">Settlement figure</th>
     </thead>
     <tr style="text-align: right;">
@@ -36,8 +36,8 @@
         <td class="ci12">0.0000</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">499.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">499.00</td>
         <td class="ci17">499.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -56,8 +56,8 @@
         <td class="ci12">19.9600</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">499.00</td>
-        <td class="ci16">19.9600</td>
+        <td class="ci15">19.9600</td>
+        <td class="ci16">499.00</td>
         <td class="ci17">518.96</td>
     </tr>
     <tr style="text-align: right;">
@@ -76,8 +76,8 @@
         <td class="ci12">111.7760</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">499.00</td>
-        <td class="ci16">131.7360</td>
+        <td class="ci15">131.7360</td>
+        <td class="ci16">499.00</td>
         <td class="ci17">630.73</td>
     </tr>
     <tr style="text-align: right;">
@@ -96,8 +96,8 @@
         <td class="ci12">123.7520</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">499.00</td>
-        <td class="ci16">255.4880</td>
+        <td class="ci15">255.4880</td>
+        <td class="ci16">499.00</td>
         <td class="ci17">754.48</td>
     </tr>
     <tr style="text-align: right;">
@@ -116,8 +116,8 @@
         <td class="ci12">119.7600</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">499.00</td>
-        <td class="ci16">375.2480</td>
+        <td class="ci15">375.2480</td>
+        <td class="ci16">499.00</td>
         <td class="ci17">874.24</td>
     </tr>
     <tr style="text-align: right;">
@@ -134,16 +134,16 @@
         <td class="ci10">closed</td>
         <td class="ci11">240.7675</td>
         <td class="ci12">240.7675</td>
-        <td class="ci13">499.00</td>
-        <td class="ci14">616.01</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">616.01</td>
+        <td class="ci14">499.00</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Total interest in amortised schedule does not exceed interest cap, using unrounded percentages</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

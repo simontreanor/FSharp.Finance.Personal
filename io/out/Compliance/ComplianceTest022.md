@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Add-on-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -13,14 +13,14 @@
         <th class="ci09" style="text-align: right;">Balance status</th>
         <th class="ci10" style="text-align: right;">Simple interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">Principal portion</th>
-        <th class="ci13" style="text-align: right;">Fee portion</th>
-        <th class="ci14" style="text-align: right;">Interest portion</th>
-        <th class="ci15" style="text-align: right;">Fee rebate</th>
-        <th class="ci16" style="text-align: right;">Principal balance</th>
-        <th class="ci17" style="text-align: right;">Fee balance</th>
-        <th class="ci18" style="text-align: right;">Interest balance</th>
-        <th class="ci19" style="text-align: right;">Fee rebate if&nbsp;settled</th>
+        <th class="ci12" style="text-align: right;">Interest portion</th>
+        <th class="ci13" style="text-align: right;">Fee rebate if&nbsp;settled</th>
+        <th class="ci14" style="text-align: right;">Fee rebate</th>
+        <th class="ci15" style="text-align: right;">Fee portion</th>
+        <th class="ci16" style="text-align: right;">Principal portion</th>
+        <th class="ci17" style="text-align: right;">Interest balance</th>
+        <th class="ci18" style="text-align: right;">Fee balance</th>
+        <th class="ci19" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -36,13 +36,13 @@
         <td class="ci10">0.0000</td>
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
-        <td class="ci13">0.00</td>
+        <td class="ci13">1,158.52</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">750.00</td>
-        <td class="ci17">1,158.52</td>
-        <td class="ci18">0.0000</td>
-        <td class="ci19">1,158.52</td>
+        <td class="ci16">0.00</td>
+        <td class="ci17">0.0000</td>
+        <td class="ci18">1,158.52</td>
+        <td class="ci19">750.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">13</td>
@@ -57,14 +57,14 @@
         <td class="ci09">open</td>
         <td class="ci10">6.7635</td>
         <td class="ci11">6.7635</td>
-        <td class="ci12">322.72</td>
-        <td class="ci13">498.52</td>
-        <td class="ci14">6.76</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">427.28</td>
-        <td class="ci17">660.00</td>
-        <td class="ci18">0.0000</td>
-        <td class="ci19">1,013.71</td>
+        <td class="ci12">6.76</td>
+        <td class="ci13">1,013.71</td>
+        <td class="ci14">0.00</td>
+        <td class="ci15">498.52</td>
+        <td class="ci16">322.72</td>
+        <td class="ci17">0.0000</td>
+        <td class="ci18">660.00</td>
+        <td class="ci19">427.28</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">14</td>
@@ -80,13 +80,13 @@
         <td class="ci10">0.2964</td>
         <td class="ci11">0.2964</td>
         <td class="ci12">0.00</td>
-        <td class="ci13">0.00</td>
+        <td class="ci13">1,002.57</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">427.28</td>
-        <td class="ci17">660.00</td>
-        <td class="ci18">0.2964</td>
-        <td class="ci19">1,002.57</td>
+        <td class="ci16">0.00</td>
+        <td class="ci17">0.2964</td>
+        <td class="ci18">660.00</td>
+        <td class="ci19">427.28</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">45</td>
@@ -102,13 +102,13 @@
         <td class="ci10">9.1883</td>
         <td class="ci11">9.1883</td>
         <td class="ci12">0.00</td>
-        <td class="ci13">0.00</td>
+        <td class="ci13">657.24</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">427.28</td>
-        <td class="ci17">660.00</td>
-        <td class="ci18">9.4847</td>
-        <td class="ci19">657.24</td>
+        <td class="ci16">0.00</td>
+        <td class="ci17">9.4847</td>
+        <td class="ci18">660.00</td>
+        <td class="ci19">427.28</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">76</td>
@@ -124,13 +124,13 @@
         <td class="ci10">9.1883</td>
         <td class="ci11">9.1883</td>
         <td class="ci12">0.00</td>
-        <td class="ci13">0.00</td>
+        <td class="ci13">311.91</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">427.28</td>
-        <td class="ci17">660.00</td>
-        <td class="ci18">18.6729</td>
-        <td class="ci19">311.91</td>
+        <td class="ci16">0.00</td>
+        <td class="ci17">18.6729</td>
+        <td class="ci18">660.00</td>
+        <td class="ci19">427.28</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">104</td>
@@ -149,10 +149,10 @@
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">427.28</td>
-        <td class="ci17">660.00</td>
-        <td class="ci18">26.9720</td>
-        <td class="ci19">0.00</td>
+        <td class="ci16">0.00</td>
+        <td class="ci17">26.9720</td>
+        <td class="ci18">660.00</td>
+        <td class="ci19">427.28</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">466</td>
@@ -167,19 +167,19 @@
         <td class="ci09">closed</td>
         <td class="ci10">107.2952</td>
         <td class="ci11">107.2952</td>
-        <td class="ci12">427.28</td>
-        <td class="ci13">660.00</td>
-        <td class="ci14">134.26</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">0.00</td>
-        <td class="ci17">0.00</td>
-        <td class="ci18">0.0000</td>
+        <td class="ci12">134.26</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">0.00</td>
+        <td class="ci15">660.00</td>
+        <td class="ci16">427.28</td>
+        <td class="ci17">0.0000</td>
+        <td class="ci18">0.00</td>
         <td class="ci19">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Quote returning nothing</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -159,7 +159,7 @@
 </table>
 <h4>Description</h4>
 <p><i>$1200 with long first period</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

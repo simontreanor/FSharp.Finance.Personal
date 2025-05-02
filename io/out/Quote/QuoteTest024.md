@@ -14,10 +14,10 @@
         <th class="ci10" style="text-align: right;">Balance status</th>
         <th class="ci11" style="text-align: right;">Simple interest</th>
         <th class="ci12" style="text-align: right;">New interest</th>
-        <th class="ci13" style="text-align: right;">Principal portion</th>
-        <th class="ci14" style="text-align: right;">Interest portion</th>
-        <th class="ci15" style="text-align: right;">Principal balance</th>
-        <th class="ci16" style="text-align: right;">Interest balance</th>
+        <th class="ci13" style="text-align: right;">Interest portion</th>
+        <th class="ci14" style="text-align: right;">Principal portion</th>
+        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci16" style="text-align: right;">Principal balance</th>
         <th class="ci17" style="text-align: right;">Settlement figure</th>
     </thead>
     <tr style="text-align: right;">
@@ -36,8 +36,8 @@
         <td class="ci12">0.0000</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">250.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">250.00</td>
         <td class="ci17">250.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -54,10 +54,10 @@
         <td class="ci10">open</td>
         <td class="ci11">40.0000</td>
         <td class="ci12">40.0000</td>
-        <td class="ci13">160.00</td>
-        <td class="ci14">40.00</td>
-        <td class="ci15">90.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">40.00</td>
+        <td class="ci14">160.00</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">90.00</td>
         <td class="ci17">90.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -74,10 +74,10 @@
         <td class="ci10">refund&nbsp;due</td>
         <td class="ci11">21.6000</td>
         <td class="ci12">21.6000</td>
-        <td class="ci13">178.40</td>
-        <td class="ci14">21.60</td>
-        <td class="ci15">-88.40</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">21.60</td>
+        <td class="ci14">178.40</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">-88.40</td>
         <td class="ci17">-88.40</td>
     </tr>
     <tr style="text-align: right;">
@@ -96,8 +96,8 @@
         <td class="ci12">-0.6006</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">-88.40</td>
-        <td class="ci16">-0.6006</td>
+        <td class="ci15">-0.6006</td>
+        <td class="ci16">-88.40</td>
         <td class="ci17">-89.01</td>
     </tr>
     <tr style="text-align: right;">
@@ -116,8 +116,8 @@
         <td class="ci12">-0.5813</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.00</td>
-        <td class="ci15">-88.40</td>
-        <td class="ci16">-1.1819</td>
+        <td class="ci15">-1.1819</td>
+        <td class="ci16">-88.40</td>
         <td class="ci17">-89.59</td>
     </tr>
     <tr style="text-align: right;">
@@ -134,16 +134,16 @@
         <td class="ci10">closed</td>
         <td class="ci11">-1.4725</td>
         <td class="ci12">-1.4725</td>
-        <td class="ci13">-88.40</td>
-        <td class="ci14">-2.66</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">0.0000</td>
+        <td class="ci13">-2.66</td>
+        <td class="ci14">-88.40</td>
+        <td class="ci15">0.0000</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Negative interest should accrue to interest balance not principal balance</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -12,15 +12,15 @@
         <th class="ci08" style="text-align: right;">Net effect</th>
         <th class="ci09" style="text-align: right;">Payment status</th>
         <th class="ci10" style="text-align: right;">Balance status</th>
-        <th class="ci11" style="text-align: right;">Simple interest</th>
-        <th class="ci12" style="text-align: right;">New interest</th>
-        <th class="ci13" style="text-align: right;">New charges</th>
-        <th class="ci14" style="text-align: right;">Principal portion</th>
+        <th class="ci11" style="text-align: right;">New charges</th>
+        <th class="ci12" style="text-align: right;">Charges portion</th>
+        <th class="ci13" style="text-align: right;">Simple interest</th>
+        <th class="ci14" style="text-align: right;">New interest</th>
         <th class="ci15" style="text-align: right;">Interest portion</th>
-        <th class="ci16" style="text-align: right;">Charges portion</th>
-        <th class="ci17" style="text-align: right;">Principal balance</th>
+        <th class="ci16" style="text-align: right;">Principal portion</th>
+        <th class="ci17" style="text-align: right;">Charges balance</th>
         <th class="ci18" style="text-align: right;">Interest balance</th>
-        <th class="ci19" style="text-align: right;">Charges balance</th>
+        <th class="ci19" style="text-align: right;">Principal balance</th>
         <th class="ci20" style="text-align: right;">Settlement figure</th>
     </thead>
     <tr style="text-align: right;">
@@ -35,15 +35,15 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>none&nbsp;scheduled</i></td>
         <td class="ci10">open</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">0.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
-        <td class="ci17">1,200.00</td>
+        <td class="ci17">0.00</td>
         <td class="ci18">0.0000</td>
-        <td class="ci19">0.00</td>
+        <td class="ci19">1,200.00</td>
         <td class="ci20">1,200.00</td>
     </tr>
     <tr style="text-align: right;">
@@ -58,12 +58,12 @@
         <td class="ci08">1,200.00</td>
         <td class="ci09"><i>generated</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">1,200.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">0.00</td>
+        <td class="ci16">1,200.00</td>
         <td class="ci17">0.00</td>
         <td class="ci18">0.0000</td>
         <td class="ci19">0.00</td>
@@ -81,10 +81,10 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">0.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
@@ -104,10 +104,10 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">0.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
@@ -127,10 +127,10 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">0.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
@@ -150,10 +150,10 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">0.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
@@ -173,10 +173,10 @@
         <td class="ci08">0.00</td>
         <td class="ci09"><i>no&nbsp;longer&nbsp;required</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12">0.0000</td>
-        <td class="ci13"><i>n/a</i></td>
-        <td class="ci14">0.00</td>
+        <td class="ci11"><i>n/a</i></td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.0000</td>
+        <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
         <td class="ci16">0.00</td>
         <td class="ci17">0.00</td>
@@ -187,7 +187,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Settlement within interest grace period should not accrue interest</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

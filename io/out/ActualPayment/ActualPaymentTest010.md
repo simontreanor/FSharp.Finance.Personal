@@ -11,15 +11,15 @@
         <th class="ci07" style="text-align: right;">Net effect</th>
         <th class="ci08" style="text-align: right;">Payment status</th>
         <th class="ci09" style="text-align: right;">Balance status</th>
-        <th class="ci10" style="text-align: right;">Simple interest</th>
-        <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">New charges</th>
-        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci10" style="text-align: right;">New charges</th>
+        <th class="ci11" style="text-align: right;">Charges portion</th>
+        <th class="ci12" style="text-align: right;">Simple interest</th>
+        <th class="ci13" style="text-align: right;">New interest</th>
         <th class="ci14" style="text-align: right;">Interest portion</th>
-        <th class="ci15" style="text-align: right;">Charges portion</th>
-        <th class="ci16" style="text-align: right;">Principal balance</th>
+        <th class="ci15" style="text-align: right;">Principal portion</th>
+        <th class="ci16" style="text-align: right;">Charges balance</th>
         <th class="ci17" style="text-align: right;">Interest balance</th>
-        <th class="ci18" style="text-align: right;">Charges balance</th>
+        <th class="ci18" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -32,15 +32,15 @@
         <td class="ci07">0.00</td>
         <td class="ci08"><i>none&nbsp;scheduled</i></td>
         <td class="ci09">open</td>
-        <td class="ci10">0.0000</td>
-        <td class="ci11">0.0000</td>
-        <td class="ci12"><i>n/a</i></td>
-        <td class="ci13">0.00</td>
+        <td class="ci10"><i>n/a</i></td>
+        <td class="ci11">0.00</td>
+        <td class="ci12">0.0000</td>
+        <td class="ci13">0.0000</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">1,500.00</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.0000</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">1,500.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">14</td>
@@ -53,15 +53,15 @@
         <td class="ci07">491.53</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
-        <td class="ci10">168.0000</td>
-        <td class="ci11">168.0000</td>
-        <td class="ci12"><i>n/a</i></td>
-        <td class="ci13">323.53</td>
+        <td class="ci10"><i>n/a</i></td>
+        <td class="ci11">0.00</td>
+        <td class="ci12">168.0000</td>
+        <td class="ci13">168.0000</td>
         <td class="ci14">168.00</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">1,176.47</td>
+        <td class="ci15">323.53</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.0000</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">1,176.47</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">44</td>
@@ -74,15 +74,15 @@
         <td class="ci07">491.53</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
-        <td class="ci10">282.3528</td>
-        <td class="ci11">282.3528</td>
-        <td class="ci12"><i>n/a</i></td>
-        <td class="ci13">209.18</td>
+        <td class="ci10"><i>n/a</i></td>
+        <td class="ci11">0.00</td>
+        <td class="ci12">282.3528</td>
+        <td class="ci13">282.3528</td>
         <td class="ci14">282.35</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">967.29</td>
+        <td class="ci15">209.18</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.0000</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">967.29</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">75</td>
@@ -95,15 +95,15 @@
         <td class="ci07">400.00</td>
         <td class="ci08"><i>paid&nbsp;later&nbsp;owing</i>&nbsp;91.53</td>
         <td class="ci09">open</td>
-        <td class="ci10">239.8879</td>
-        <td class="ci11">239.8879</td>
-        <td class="ci12"><i>late&nbsp;payment</i>&nbsp;10.00</td>
-        <td class="ci13">150.12</td>
+        <td class="ci10"><i>late&nbsp;payment</i>&nbsp;10.00</td>
+        <td class="ci11">10.00</td>
+        <td class="ci12">239.8879</td>
+        <td class="ci13">239.8879</td>
         <td class="ci14">239.88</td>
-        <td class="ci15">10.00</td>
-        <td class="ci16">817.17</td>
+        <td class="ci15">150.12</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.0000</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">817.17</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">79</td>
@@ -116,15 +116,15 @@
         <td class="ci07">0.00</td>
         <td class="ci08"><i>information&nbsp;only</i></td>
         <td class="ci09">open</td>
-        <td class="ci10">26.1494</td>
-        <td class="ci11">26.1494</td>
-        <td class="ci12"><i>n/a</i></td>
-        <td class="ci13">0.00</td>
+        <td class="ci10"><i>n/a</i></td>
+        <td class="ci11">0.00</td>
+        <td class="ci12">26.1494</td>
+        <td class="ci13">26.1494</td>
         <td class="ci14">0.00</td>
         <td class="ci15">0.00</td>
-        <td class="ci16">817.17</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">26.1494</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">817.17</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">106</td>
@@ -137,15 +137,15 @@
         <td class="ci07">491.53</td>
         <td class="ci08"><i>not&nbsp;yet&nbsp;due</i></td>
         <td class="ci09">open</td>
-        <td class="ci10">176.5087</td>
-        <td class="ci11">176.5087</td>
-        <td class="ci12"><i>n/a</i></td>
-        <td class="ci13">288.88</td>
+        <td class="ci10"><i>n/a</i></td>
+        <td class="ci11">0.00</td>
+        <td class="ci12">176.5087</td>
+        <td class="ci13">176.5087</td>
         <td class="ci14">202.65</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">528.29</td>
+        <td class="ci15">288.88</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.0000</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">528.29</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">134</td>
@@ -158,20 +158,20 @@
         <td class="ci07">491.53</td>
         <td class="ci08"><i>not&nbsp;yet&nbsp;due</i></td>
         <td class="ci09">open</td>
-        <td class="ci10">118.3370</td>
-        <td class="ci11">118.3370</td>
-        <td class="ci12"><i>n/a</i></td>
-        <td class="ci13">373.20</td>
+        <td class="ci10"><i>n/a</i></td>
+        <td class="ci11">0.00</td>
+        <td class="ci12">118.3370</td>
+        <td class="ci13">118.3370</td>
         <td class="ci14">118.33</td>
-        <td class="ci15">0.00</td>
-        <td class="ci16">155.09</td>
+        <td class="ci15">373.20</td>
+        <td class="ci16">0.00</td>
         <td class="ci17">0.0000</td>
-        <td class="ci18">0.00</td>
+        <td class="ci18">155.09</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Underpayment made should show scheduled payment as underpayment after grace period has expired</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -13,10 +13,10 @@
         <th class="ci09" style="text-align: right;">Balance status</th>
         <th class="ci10" style="text-align: right;">Simple interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">Principal portion</th>
-        <th class="ci13" style="text-align: right;">Interest portion</th>
-        <th class="ci14" style="text-align: right;">Principal balance</th>
-        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci12" style="text-align: right;">Interest portion</th>
+        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci14" style="text-align: right;">Interest balance</th>
+        <th class="ci15" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -33,8 +33,8 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">1,000.00</td>
-        <td class="ci15">805.8100</td>
+        <td class="ci14">805.8100</td>
+        <td class="ci15">1,000.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">31</td>
@@ -49,10 +49,10 @@
         <td class="ci09">open</td>
         <td class="ci10">248.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">0.00</td>
-        <td class="ci13">451.46</td>
-        <td class="ci14">1,000.00</td>
-        <td class="ci15">354.3500</td>
+        <td class="ci12">451.46</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">354.3500</td>
+        <td class="ci15">1,000.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">61</td>
@@ -67,10 +67,10 @@
         <td class="ci09">open</td>
         <td class="ci10">240.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">97.11</td>
-        <td class="ci13">354.35</td>
-        <td class="ci14">902.89</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">354.35</td>
+        <td class="ci13">97.11</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">902.89</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">81</td>
@@ -85,10 +85,10 @@
         <td class="ci09">open</td>
         <td class="ci10">144.4624</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">451.46</td>
-        <td class="ci13">0.00</td>
-        <td class="ci14">451.43</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">451.46</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">451.43</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">90</td>
@@ -105,8 +105,8 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">451.43</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">451.43</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">101</td>
@@ -121,10 +121,10 @@
         <td class="ci09">closed</td>
         <td class="ci10">39.7258</td>
         <td class="ci11">-101.1188</td>
-        <td class="ci12">451.43</td>
-        <td class="ci13">-101.12</td>
-        <td class="ci14">0.00</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">-101.12</td>
+        <td class="ci13">451.43</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">120</td>
@@ -141,13 +141,13 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">0.00</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">0.00</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Repayments made early</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

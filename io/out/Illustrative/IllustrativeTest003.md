@@ -13,10 +13,10 @@
         <th class="ci09" style="text-align: right;">Balance status</th>
         <th class="ci10" style="text-align: right;">Simple interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">Principal portion</th>
-        <th class="ci13" style="text-align: right;">Interest portion</th>
-        <th class="ci14" style="text-align: right;">Principal balance</th>
-        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci12" style="text-align: right;">Interest portion</th>
+        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci14" style="text-align: right;">Interest balance</th>
+        <th class="ci15" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -33,8 +33,8 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">400.00</td>
-        <td class="ci15">325.4800</td>
+        <td class="ci14">325.4800</td>
+        <td class="ci15">400.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">30</td>
@@ -49,10 +49,10 @@
         <td class="ci09">open</td>
         <td class="ci10">96.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">0.00</td>
-        <td class="ci13">181.38</td>
-        <td class="ci14">400.00</td>
-        <td class="ci15">144.1000</td>
+        <td class="ci12">181.38</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">144.1000</td>
+        <td class="ci15">400.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">60</td>
@@ -67,10 +67,10 @@
         <td class="ci09">open</td>
         <td class="ci10">96.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">37.28</td>
-        <td class="ci13">144.10</td>
-        <td class="ci14">362.72</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">144.10</td>
+        <td class="ci13">37.28</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">362.72</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">91</td>
@@ -87,8 +87,8 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">362.72</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">362.72</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">120</td>
@@ -103,10 +103,10 @@
         <td class="ci09">open</td>
         <td class="ci10">84.1510</td>
         <td class="ci11">40.6256</td>
-        <td class="ci12">140.76</td>
-        <td class="ci13">40.62</td>
-        <td class="ci14">221.96</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">40.62</td>
+        <td class="ci13">140.76</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">221.96</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">121</td>
@@ -121,17 +121,17 @@
         <td class="ci09">open</td>
         <td class="ci10">1.7757</td>
         <td class="ci11">1.7757</td>
-        <td class="ci12">179.57</td>
-        <td class="ci13">1.77</td>
-        <td class="ci14">42.39</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">1.77</td>
+        <td class="ci13">179.57</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">42.39</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Based on borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - missed third repayment and then paid before 
             fourth repayment due date (30/06/2025); this shows (in contrast to test 001) that extra interest is in fact accrued on late payment because when there is no interest balance, the principal
             balance remains higher than it would have been if the payment had been made on time</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

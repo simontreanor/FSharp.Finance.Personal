@@ -13,10 +13,10 @@
         <th class="ci09" style="text-align: right;">Balance status</th>
         <th class="ci10" style="text-align: right;">Simple interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
-        <th class="ci12" style="text-align: right;">Principal portion</th>
-        <th class="ci13" style="text-align: right;">Interest portion</th>
-        <th class="ci14" style="text-align: right;">Principal balance</th>
-        <th class="ci15" style="text-align: right;">Interest balance</th>
+        <th class="ci12" style="text-align: right;">Interest portion</th>
+        <th class="ci13" style="text-align: right;">Principal portion</th>
+        <th class="ci14" style="text-align: right;">Interest balance</th>
+        <th class="ci15" style="text-align: right;">Principal balance</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -33,8 +33,8 @@
         <td class="ci11">0.0000</td>
         <td class="ci12">0.00</td>
         <td class="ci13">0.00</td>
-        <td class="ci14">1,000.00</td>
-        <td class="ci15">838.6300</td>
+        <td class="ci14">838.6300</td>
+        <td class="ci15">1,000.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">10</td>
@@ -49,10 +49,10 @@
         <td class="ci09">open</td>
         <td class="ci10">80.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">0.00</td>
-        <td class="ci13">367.73</td>
-        <td class="ci14">1,000.00</td>
-        <td class="ci15">470.9000</td>
+        <td class="ci12">367.73</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">470.9000</td>
+        <td class="ci15">1,000.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">41</td>
@@ -67,10 +67,10 @@
         <td class="ci09">open</td>
         <td class="ci10">248.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">0.00</td>
-        <td class="ci13">367.73</td>
-        <td class="ci14">1,000.00</td>
-        <td class="ci15">103.1700</td>
+        <td class="ci12">367.73</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">103.1700</td>
+        <td class="ci15">1,000.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">71</td>
@@ -85,10 +85,10 @@
         <td class="ci09">open</td>
         <td class="ci10">240.0000</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">264.56</td>
-        <td class="ci13">103.17</td>
-        <td class="ci14">735.44</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">103.17</td>
+        <td class="ci13">264.56</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">735.44</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">102</td>
@@ -103,10 +103,10 @@
         <td class="ci09">open</td>
         <td class="ci10">182.3891</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">367.73</td>
-        <td class="ci13">0.00</td>
-        <td class="ci14">367.71</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">367.73</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">367.71</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">132</td>
@@ -121,15 +121,15 @@
         <td class="ci09">refund&nbsp;due</td>
         <td class="ci10">88.2504</td>
         <td class="ci11">0.0000</td>
-        <td class="ci12">367.72</td>
-        <td class="ci13">0.00</td>
-        <td class="ci14">-0.01</td>
-        <td class="ci15">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">367.72</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">-0.01</td>
     </tr>
 </table>
 <h4>Description</h4>
 <p><i>Add-on interest method with normal repayments</i></p>
-<p>Generated: <i>2025-04-29 using library version 2.3.0</i></p>
+<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
