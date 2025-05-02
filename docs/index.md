@@ -37,7 +37,7 @@ Technical documents going into detail about the calculations:
 
 [Add-On-Interest Calculations](interestAddOn.fsx)
 
-[Amortisation Calculations](amortisation.fsx) (coming soon...)
+[Amortisation Flowchart](amortisation.fsx)
 
 FAQ to highlight the amortisation calculations from a business perspective:
 
