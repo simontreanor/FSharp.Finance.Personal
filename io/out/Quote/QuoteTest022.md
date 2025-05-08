@@ -164,7 +164,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.2</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

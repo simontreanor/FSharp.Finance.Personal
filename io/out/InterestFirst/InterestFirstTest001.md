@@ -129,7 +129,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Actuarial interest method</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.2</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
