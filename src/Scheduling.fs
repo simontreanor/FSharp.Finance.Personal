@@ -902,12 +902,12 @@ module Scheduling =
                         initialInterestBalance |> Cent.toDecimalCent
                     | Interest.Method.Actuarial ->
                         let dailyInterestRate = bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-                        Cent.toDecimalCent bp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m
+                        Cent.toDecimalCent bp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * Fraction.toDecimal (Fraction.Simple(2, 3))
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue bp paymentDays initialBasicItem
                 let iterationLimit = 100u
-                let initialGuess = calculateLevelPayment paymentCount bp.PaymentConfig.Rounding bp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
-                match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption) toleranceSteps with
+                let initialPaymentGuess = calculateLevelPayment paymentCount bp.PaymentConfig.Rounding bp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
+                match Array.solveBisection generator iterationLimit initialPaymentGuess (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption) toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
                         let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
                         generateItems paymentMap'

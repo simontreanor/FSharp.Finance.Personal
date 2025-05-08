@@ -22,10 +22,6 @@ us to calculate the interest accrued over the schedule as well as the level and 
 
 Let's start by defining the parameters. Let's define a loan of £1000 advanced on 22 April 2025, paid back over 4 months starting one month after the advance date.
 The loan has a daily interest rate of 0.798% and a cap of 0.8% per day as well as a cap of 100% of the principal amount. Interest is calculated using the add-on method. 
-
-<br />
-<details>
-<summary>Show/hide parameters</summary>
 *)
 
 (*** hide ***)
@@ -36,7 +32,7 @@ open DateDay
 open Scheduling
 open UnitPeriod
 (*** ***)
-let parameters : BasicParameters = {
+let bp : BasicParameters = {
     EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
     Principal = 1000_00L<Cent>
@@ -62,12 +58,10 @@ let parameters : BasicParameters = {
 }
 
 (**
-</details>
-
 Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculateBasicSchedule` function to generate the schedule:
 *)
 
-let addOnInterestSchedule = calculateBasicSchedule parameters
+let addOnInterestSchedule = calculateBasicSchedule bp
 (*** hide ***)
 addOnInterestSchedule |> BasicSchedule.toHtmlTable
 
@@ -86,7 +80,7 @@ To illustrate this, we can compare the add-on-interest schedule with an actuaria
 
 let actuarialInterestSchedule =
     calculateBasicSchedule
-        { parameters with InterestConfig.Method = Interest.Method.Actuarial }
+        { bp with InterestConfig.Method = Interest.Method.Actuarial }
 (*** hide ***)
 actuarialInterestSchedule |> BasicSchedule.toHtmlTable
 
@@ -116,7 +110,7 @@ generates the payment days. It is also possible to specify the payment days manu
 auto-generated schedule is the most common use case, and ensures respect for varying month lengths and month-end tracking dates.
 *)
 
-let paymentMap = generatePaymentMap parameters.StartDate parameters.ScheduleConfig
+let paymentMap = generatePaymentMap bp.StartDate bp.ScheduleConfig
 let paymentDays = paymentMap |> Map.keys |> Seq.toArray
 
 (**Result:*)
@@ -142,7 +136,7 @@ let finalScheduledPaymentDay =
     |> Array.tryLast
     |> Option.defaultValue 0<OffsetDay>
 let initialInterestBalance =
-    totalAddOnInterest parameters finalScheduledPaymentDay
+    totalAddOnInterest bp finalScheduledPaymentDay
 
 (**Result:*)
 
@@ -159,24 +153,19 @@ much interest is accrued, which in turn affects the payment values. We use the b
 for this. This method runs a generator function (`cref:M:FSharp.Finance.Personal.Scheduling.generatePaymentValue`) on the schedule, which calculates the final
 principal balance for a given payment value. The bisection method then iteratively narrows down the level payment value until the final principal balance is close
 to zero (usually just below zero, so the final payment can be slightly smaller). To make the iteration more efficient, we use an initial guess for the payment value,
-which is calculated based on the estimated total interest and the number of payments. (In this instance, the initial guess is actually the correct payment value,
-as the schedule is basic, but for more complex schedules, several iterations may be required.)
-
-<br />
-<details>
-<summary>Show/hide code</summary>
+which is calculated based on the estimated total interest and the number of payments.
 *)
 
 // precalculations
 let firstItem =
     { BasicItem.initial with
         InterestBalance = initialInterestBalance
-        PrincipalBalance = parameters.Principal
+        PrincipalBalance = bp.Principal
     }
 let paymentCount = Array.length paymentDays
 let interest = Cent.toDecimalCent initialInterestBalance
-let paymentRounding = parameters.PaymentConfig.Rounding
-let principal = parameters.Principal
+let paymentRounding = bp.PaymentConfig.Rounding
+let principal = bp.Principal
 let roughPayment =
     calculateLevelPayment paymentCount paymentRounding principal 0L<Cent> interest
     |> Cent.toDecimalCent
@@ -185,18 +174,14 @@ let roughPayment =
 // but modified to show the intermediate steps
 let scheduledPayment =
     roughPayment
-    |> Cent.round parameters.PaymentConfig.Rounding
+    |> Cent.round bp.PaymentConfig.Rounding
     |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
-let interestMethod = parameters.InterestConfig.Method
+let interestMethod = bp.InterestConfig.Method
 let basicItems =
     paymentDays
     |> Array.scan(fun basicItem pd ->
-        generateItem parameters interestMethod scheduledPayment basicItem pd
+        generateItem bp interestMethod scheduledPayment basicItem pd
     ) firstItem
-
-(**
-</details>
-*)
 
 (*** hide ***)
 { EvaluationDay = 0<OffsetDay>; Items = basicItems; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
@@ -206,15 +191,12 @@ let basicItems =
 (**
 ### Step 4: Iterate to equalise interest
 
-Now the schedule days and payment values are known, we iterate through the schedule until the final principal balance is zero.
+Note that the total actuarial interest is 845.07, which is less than our initial interest balance of 973.56. We have to iterate the
+schedule a number of times by adjusting the scheduled payment value until these two values are equal.
 
 This step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
 the principal balance is paid off at a difference pace than it would otherwise be; this, in turn, generates different interest, which leads to a
-different initial interest balance, so the process must be repeated until the total interest and the initial interest are equalised.
-
-<br />
-<details>
-<summary>Show/hide code</summary>
+different initial interest balance, so the process must be repeated until the total actuarial interest and the initial interest are equalised.
 *)
 
 let finalInterestTotal =
@@ -225,12 +207,8 @@ let basicItems' =
     ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
     |> Array.unfold
         (equaliseInterest
-            parameters paymentDays firstItem paymentCount 0L<Cent> paymentMap)
+            bp paymentDays firstItem paymentCount 0L<Cent> paymentMap)
     |> Array.last
-
-(**
-</details>
-*)
 
 (*** hide ***)
 { EvaluationDay = 0<OffsetDay>; Items = basicItems'; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
@@ -243,7 +221,7 @@ let basicItems' =
 The final payment is adjusted (`cref:M:FSharp.Finance.Personal.Scheduling.adjustFinalPayment`) to ensure that the final principal balance is zero.
 *)
 
-let isAutoGenerateSchedule = parameters.ScheduleConfig.IsAutoGenerateSchedule
+let isAutoGenerateSchedule = bp.ScheduleConfig.IsAutoGenerateSchedule
 let items =
     basicItems'
     |> adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule
