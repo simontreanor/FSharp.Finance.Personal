@@ -129,7 +129,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Scheduled payment total can be less than principal when early actual payments are made but net effect is never less</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.3</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.4</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -87,7 +87,7 @@
 </table>
 <h4>Description</h4>
 <p><i>EU APR test amortisation schedule, first payment day 17, payment count 5</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.3</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.4</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
