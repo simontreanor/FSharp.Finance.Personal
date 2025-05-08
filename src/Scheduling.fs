@@ -846,25 +846,25 @@ module Scheduling =
     /// handle any principal balance overpayment (due to rounding) on the final payment of a schedule
     let adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule basicItems =
         basicItems
-        |> Array.map(fun si ->
-            if si.Day = finalScheduledPaymentDay && isAutoGenerateSchedule then
+        |> Array.map(fun bi ->
+            if bi.Day = finalScheduledPaymentDay && isAutoGenerateSchedule then
                 let adjustedPayment =
-                    si.ScheduledPayment
+                    bi.ScheduledPayment
                     |> fun sp ->
-                        { si.ScheduledPayment with
-                            Original = if sp.Rescheduled.IsNone then sp.Original |> ValueOption.map(fun o -> o + si.PrincipalBalance) else sp.Original
-                            Rescheduled = if sp.Rescheduled.IsSome then sp.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else sp.Rescheduled
+                        { bi.ScheduledPayment with
+                            Original = if sp.Rescheduled.IsNone then sp.Original |> ValueOption.map(fun o -> o + bi.PrincipalBalance) else sp.Original
+                            Rescheduled = if sp.Rescheduled.IsSome then sp.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + bi.PrincipalBalance }) else sp.Rescheduled
                         }
-                let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
-                let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
-                { si with
+                let adjustedPrincipal = bi.PrincipalPortion + bi.PrincipalBalance
+                let adjustedTotalPrincipal = bi.TotalPrincipal + bi.PrincipalBalance
+                { bi with
                     ScheduledPayment = adjustedPayment
                     PrincipalPortion = adjustedPrincipal
                     PrincipalBalance = 0L<Cent>
                     TotalPrincipal = adjustedTotalPrincipal
                 }
             else
-                si
+                bi
         )
 
     /// calculates the number of days between two offset days on which interest is chargeable
