@@ -6,9 +6,11 @@ FSharp.Finance.Personal is a set of functions for calculating Annual Percentage 
 
 An Annual Percentage Rate (APR) is a standardised way of calculating the cost of a financial product by extrapolating charges, interest and fees and annualising the results. The aim is to make it easier for customers to compare the cost of different products.
 
-Calculating APRs is highly regulated. Initially this library supports two methods, the UK method devised by the Financial Conduct Authority (FCA) and the US Acturial method specified by the Consumer Financial Protection Bureau (CFPB).
+Calculating APRs is highly regulated. Initially this library supports three methods: the EU method as set out in Directive Directive 2008/48/EC, the UK method published by the Financial Conduct Authority (FCA) and the US Acturial method specified by the Consumer Financial Protection Bureau (CFPB).
 
-Of the two, the US calculation method is the more complicated, and this library attempts to comply with the regulations as closely as possible, though sometimes the implementation requires a certain interpretation of the rules. No warranty is provided for the accuracy of the results but the library has been tested against all of the single-advance examples provided by the CFPB.
+Of the three, the EU and UK methods are currently (as of 2025-05-08) identical, but the US calculation method is the more complicated, and this library attempts to comply with the regulations as closely as possible, though sometimes the implementation requires a certain interpretation of the rules. No warranty is provided for the accuracy of the results but the library has been tested against all of the single-advance examples provided by the CFPB.
+
+[EU APR calculation example](exampleAprEu.fsx)
 
 [UK APR calculation example](exampleAprUk.fsx)
 

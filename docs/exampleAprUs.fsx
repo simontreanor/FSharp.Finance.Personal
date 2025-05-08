@@ -3,7 +3,7 @@
 title: US APR Example
 category: Examples
 categoryindex: 2
-index: 2
+index: 3
 description: Example of US APR calculation
 keywords: APR US
 ---

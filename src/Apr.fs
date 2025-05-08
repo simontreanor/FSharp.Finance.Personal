@@ -11,6 +11,8 @@ module Apr =
     /// the calculation method used to determine the APR
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type CalculationMethod =
+        /// calculates the APR according to EU Directive 2008/48/EC to the stated decimal precision (note that this is two places more than the percent precision)
+        | EuropeanUnion of EuPrecision:int
         /// calculates the APR according to UK FCA rules to the stated decimal precision (note that this is two places more than the percent precision)
         | UnitedKingdom of UkPrecision:int
         /// calculates the APR according to the US CFPB actuarial method to the stated decimal precision (note that this is two places more than the percent precision)
@@ -20,6 +22,7 @@ module Apr =
         /// HTML formatting to display the calculation method in a readable format
         member cm.Html=
             match cm with
+            | EuropeanUnion precision -> $"EU to {precision - 2} d.p."
             | UnitedKingdom precision -> $"UK FCA to {precision - 2} d.p."
             | UsActuarial precision -> $"US CFPB actuarial to {precision - 2} d.p."
             | UnitedStatesRule -> "United States rule"
@@ -54,9 +57,48 @@ module Apr =
         else
             2m * interestTotal / (principal * (paymentCount + 1m)) * 100m
 
-    /// APR as in FCA [CONC App 1.2.6](https://www.handbook.fca.org.uk/handbook/CONC/App/1/2.html)
-    module UnitedKingdom =
 
+    /// calculates the APR (note that as of 2025-05-08 the EU and UK calculation methods are aligned)
+    /// 
+    /// $$\sum_{k=1}^{m} C_k (1 + X)^{-t_k} = \sum_{l=1}^{m'} D_l (1 + X)^{-s_l}$$
+    /// 
+    /// which is equivalent to
+    /// 
+    /// $$\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}$$
+    let internal calculateAprEuUk (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
+        if principal = 0L<Cent> || Array.isEmpty transfers then
+            Solution.Impossible
+        else
+            let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)
+            let paymentTotal = payments |> Array.sumBy _.Value
+            if principal = paymentTotal then
+                Solution.Found(0m, 0, 0m)
+            else
+                let paymentCount = payments |> Array.length |> decimal
+                let principalM = Cent.toDecimal principal
+                let interestTotal = Cent.toDecimal paymentTotal - principalM
+                let roughUnitPeriodRate = roughUnitPeriodRate principalM interestTotal paymentCount
+                let advanceIntervals = [| principal, 0m |]
+                let paymentIntervals =
+                    payments
+                    |> Array.map(fun t ->
+                        t.Value, decimal (t.TransferDate - startDate).Days / 365m
+                    )
+                let calc transfers unitPeriodRate =
+                    transfers
+                    |> Array.sumBy(fun (amount, years) ->
+                        let divisor = 1m + unitPeriodRate |> powm years
+                        if Double.IsNaN divisor || divisor = 0. then 0m else amount |> Cent.toDecimal |> fun a -> double a / divisor |> decimal
+                    )
+                let generator unitPeriodRate =
+                    let aa = calc advanceIntervals unitPeriodRate
+                    let pp = calc paymentIntervals unitPeriodRate
+                    let difference = Decimal.Round(pp - aa, 8)
+                    difference
+                Array.solveNewtonRaphson generator 100u roughUnitPeriodRate 1e-6m
+
+    /// APR as in EU Directive [2008/48/EC](https://eur-lex.europa.eu/eli/dir/2008/48/2023-12-30)
+    module EuropeanUnion =
         /// calculates the APR
         /// 
         /// $$\sum_{k=1}^{m} C_k (1 + X)^{-t_k} = \sum_{l=1}^{m'} D_l (1 + X)^{-s_l}$$
@@ -64,37 +106,18 @@ module Apr =
         /// which is equivalent to
         /// 
         /// $$\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}$$
-        let calculateApr (startDate: Date) (principal: int64<Cent>) (transfers: Transfer array) =
-            if principal = 0L<Cent> || Array.isEmpty transfers then
-                Solution.Impossible
-            else
-                let payments = transfers |> Array.filter(fun t -> t.TransferType = Payment)
-                let paymentTotal = payments |> Array.sumBy _.Value
-                if principal = paymentTotal then
-                    Solution.Found(0m, 0, 0m)
-                else
-                    let paymentCount = payments |> Array.length |> decimal
-                    let principalM = Cent.toDecimal principal
-                    let interestTotal = Cent.toDecimal paymentTotal - principalM
-                    let roughUnitPeriodRate = roughUnitPeriodRate principalM interestTotal paymentCount
-                    let advanceIntervals = [| principal, 0m |]
-                    let paymentIntervals =
-                        payments
-                        |> Array.map(fun t ->
-                            t.Value, decimal (t.TransferDate - startDate).Days / 365m
-                        )
-                    let calc transfers unitPeriodRate =
-                        transfers
-                        |> Array.sumBy(fun (amount, years) ->
-                            let divisor = 1m + unitPeriodRate |> powm years
-                            if Double.IsNaN divisor || divisor = 0. then 0m else amount |> Cent.toDecimal |> fun a -> double a / divisor |> decimal
-                        )
-                    let generator unitPeriodRate =
-                        let aa = calc advanceIntervals unitPeriodRate
-                        let pp = calc paymentIntervals unitPeriodRate
-                        let difference = Decimal.Round(pp - aa, 8)
-                        difference
-                    Array.solveNewtonRaphson generator 100u roughUnitPeriodRate 1e-6m
+        let calculateApr = calculateAprEuUk
+
+    /// APR as in FCA [CONC App 1.2.6](https://www.handbook.fca.org.uk/handbook/CONC/App/1/2.html)
+    module UnitedKingdom =
+        /// calculates the APR
+        /// 
+        /// $$\sum_{k=1}^{m} C_k (1 + X)^{-t_k} = \sum_{l=1}^{m'} D_l (1 + X)^{-s_l}$$
+        /// 
+        /// which is equivalent to
+        /// 
+        /// $$\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}$$
+        let calculateApr = calculateAprEuUk
 
     /// APR as in https://www.consumerfinance.gov/rules-policy/regulations/1026/j/
     module UsActuarial =
