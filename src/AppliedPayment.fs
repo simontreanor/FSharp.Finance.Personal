@@ -30,7 +30,7 @@ module AppliedPayment =
     /// a generated payment, where applicable
     module GeneratedPayment =
         /// the total value of the generated payment
-        let Total = function
+        let total = function
             | GeneratedValue gv -> gv
             | _ -> 0L<Cent>
 

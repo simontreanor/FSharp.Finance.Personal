@@ -55,6 +55,6 @@ module DateDay =
 
     /// wrapper for DateOnly support
     module DateOnly =
-        let FromDate (d:Date) =
+        let fromDate (d:Date) =
             DateOnly(d.Year, d.Month, d.Day)
 #endif

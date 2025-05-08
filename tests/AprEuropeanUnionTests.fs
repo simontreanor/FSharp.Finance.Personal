@@ -49,7 +49,7 @@ module AprEuropeanUnionTests =
                     DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
                 } : Interest.Cap
             else
-                Interest.Cap.Zero
+                Interest.Cap.zero
         {
             Basic = {
                 EvaluationDate = startDate

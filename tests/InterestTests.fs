@@ -66,7 +66,7 @@ module InterestTests =
 
         [<Fact>]
         let ``Trying to add €150 interest to a €75 cumulative interest total with no cap on a principal of €200 allows the full €150`` () =
-            let actual = Cap.cappedAddedValue Cap.Zero.TotalAmount 200_00L<Cent> 75_00m<Cent> 150_00m<Cent>
+            let actual = Cap.cappedAddedValue Cap.zero.TotalAmount 200_00L<Cent> 75_00m<Cent> 150_00m<Cent>
             let expected = 150_00m<Cent>
             actual |> should equal expected
 

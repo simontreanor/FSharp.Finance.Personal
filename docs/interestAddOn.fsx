@@ -158,7 +158,7 @@ which is calculated based on the estimated total interest and the number of paym
 
 // precalculations
 let firstItem =
-    { BasicItem.initial with
+    { BasicItem.zero with
         InterestBalance = initialInterestBalance
         PrincipalBalance = bp.Principal
     }

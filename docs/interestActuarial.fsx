@@ -187,7 +187,7 @@ let generatePaymentValue (bp: BasicParameters) paymentDays firstItem roughPaymen
     let principalBalance = decimal schedule.PrincipalBalance
     principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
-let initialBasicItem = { BasicItem.initial with PrincipalBalance = bp.Principal }
+let initialBasicItem = { BasicItem.zero with PrincipalBalance = bp.Principal }
 
 let basicItems =
     let solution =

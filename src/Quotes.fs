@@ -74,7 +74,7 @@ module Quotes =
                     // if there are no existing payments on the day, simply apportion the payment according to the schedule item
                     if existingPayments = 0L<Cent> then
                         PaymentQuote {
-                            PaymentValue = GeneratedPayment.Total si.GeneratedPayment
+                            PaymentValue = GeneratedPayment.total si.GeneratedPayment
                             Apportionment = {
                                 PrincipalPortion = si.PrincipalPortion
                                 FeePortion = si.FeePortion
@@ -90,7 +90,7 @@ module Quotes =
                         let feePortion = Cent.min si.FeePortion (Cent.max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
                         let principalPortion = Cent.max 0L<Cent> (existingPayments - feePortion - chargesPortion - interestPortion)
                         PaymentQuote {
-                            PaymentValue = GeneratedPayment.Total si.GeneratedPayment
+                            PaymentValue = GeneratedPayment.total si.GeneratedPayment
                             Apportionment = {
                                 PrincipalPortion = si.PrincipalPortion - principalPortion
                                 FeePortion = si.FeePortion - feePortion
@@ -102,8 +102,8 @@ module Quotes =
                     // if there is an existing payment on the day and the generated value is negative, because of the apportionment order, any negative balance lies with the principal only, so the generated payment only has a principal portion
                     else
                         PaymentQuote {
-                            PaymentValue = GeneratedPayment.Total si.GeneratedPayment
-                            Apportionment = { Apportionment.Zero with PrincipalPortion = GeneratedPayment.Total si.GeneratedPayment }
+                            PaymentValue = GeneratedPayment.total si.GeneratedPayment
+                            Apportionment = { Apportionment.zero with PrincipalPortion = GeneratedPayment.total si.GeneratedPayment }
                             FeeRebateIfSettled = si.FeeRebateIfSettled
                         }
                 // where there is no generated payment, inform the caller that a quote could not be generated

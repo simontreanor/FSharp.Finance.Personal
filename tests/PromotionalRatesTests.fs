@@ -147,7 +147,7 @@ module PromotionalRatesTests =
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 7.985m
-                    Cap = Interest.Cap.Zero
+                    Cap = Interest.Cap.zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
                     Rounding = RoundDown
                 }

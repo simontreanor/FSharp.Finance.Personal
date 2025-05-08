@@ -398,7 +398,7 @@ module InterestFirstTests =
     let InterestFirstTest016 () =
         let title = "InterestFirstTest016"
         let description = "Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (no cap)"
-        let p = { parameters with Basic.EvaluationDate = startDate; Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Basic.InterestConfig.Cap = Interest.Cap.Zero }
+        let p = { parameters with Basic.EvaluationDate = startDate; Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.4m; Basic.InterestConfig.Cap = Interest.Cap.zero }
 
         let actualPayments = Map.empty
 

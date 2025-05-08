@@ -37,7 +37,7 @@ module Amortisation =
     /// a breakdown of how an actual payment is apportioned to principal, fee, interest and charges
     module Apportionment =
         /// add principal, fee, interest and charges to an existing apportionment
-        let Add principal fee interest charges apportionment =
+        let add principal fee interest charges apportionment =
             { apportionment with 
                 PrincipalPortion = apportionment.PrincipalPortion + principal
                 FeePortion = apportionment.FeePortion + fee
@@ -46,7 +46,7 @@ module Amortisation =
             }
 
         /// a default value for an apportionment, with all portions set to zero
-        let Zero = {
+        let zero = {
             PrincipalPortion = 0L<Cent>
             FeePortion = 0L<Cent>
             InterestPortion = 0L<Cent>
@@ -54,7 +54,7 @@ module Amortisation =
         }
 
         /// the total value of all the portions of an apportionment
-        let Total apportionment =
+        let total apportionment =
             apportionment.PrincipalPortion + apportionment.FeePortion + apportionment.InterestPortion + apportionment.ChargesPortion 
 
     /// amortisation schedule item showing apportionment of payments to principal, fee, interest and charges
@@ -112,7 +112,7 @@ module Amortisation =
     /// amortisation schedule item showing apportionment of payments to principal, fee, interest and charges
     module ScheduleItem =
         /// a default value with no data
-        let initial = {
+        let zero = {
             OffsetDate = Unchecked.defaultof<Date>
             Advances = [||]
             ScheduledPayment = ScheduledPayment.zero
@@ -369,7 +369,7 @@ module Amortisation =
                 OffsetDay = v |> Array.head |> fst
                 PaymentDueTotal = v |> Array.sumBy (snd >> _.PaymentDue)
                 ActualPaymentTotal = v |> Array.sumBy (snd >> _.ActualPayments >> Array.sumBy ActualPayment.total)
-                GeneratedPaymentTotal = v |> Array.sumBy (snd >> _.GeneratedPayment >> GeneratedPayment.Total)
+                GeneratedPaymentTotal = v |> Array.sumBy (snd >> _.GeneratedPayment >> GeneratedPayment.total)
                 PaymentStatus = v |> Array.head |> snd |> _.PaymentStatus
             |}
         )
@@ -734,7 +734,7 @@ module Amortisation =
                         && paymentDue' = 0L<Cent>
                         && confirmedPaymentTotal = 0L<Cent>
                         && pendingPaymentTotal = 0L<Cent>
-                        && GeneratedPayment.Total ap.GeneratedPayment = 0L<Cent> ->
+                        && GeneratedPayment.total ap.GeneratedPayment = 0L<Cent> ->
                             NothingDue
                     | _ ->
                         ap.PaymentStatus
@@ -779,7 +779,7 @@ module Amortisation =
                     PaymentDue = paymentDue'
                     ActualPayments = ap.ActualPayments
                     GeneratedPayment = generatedPayment
-                    NetEffect = if isSettlement then netEffect + GeneratedPayment.Total generatedPayment else netEffect'
+                    NetEffect = if isSettlement then netEffect + GeneratedPayment.total generatedPayment else netEffect'
                     PaymentStatus = paymentStatus
                     BalanceStatus = if isSettlement then ClosedBalance else balanceStatus
                     ActuarialInterest = cappedActuarialInterestM
@@ -835,7 +835,7 @@ module Amortisation =
         ) (
             // initialise the values for the scan
             (0<OffsetDay>,
-            { ScheduleItem.initial with
+            { ScheduleItem.zero with
                 OffsetDate = p.Basic.StartDate
                 Advances = [| p.Basic.Principal |]
                 PrincipalBalance = p.Basic.Principal

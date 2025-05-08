@@ -705,7 +705,7 @@ module ActualPaymentTests =
             Basic.InterestConfig =
                 { parameters1.Basic.InterestConfig with
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
-                    Cap = Interest.Cap.Zero
+                    Cap = Interest.Cap.zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
                 }
             Advanced.FeeConfig = ValueSome {

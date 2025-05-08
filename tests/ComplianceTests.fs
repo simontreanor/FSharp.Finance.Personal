@@ -259,7 +259,7 @@ module ComplianceTests =
             }
             Basic.PaymentConfig.Rounding = RoundUp
             Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 1.2m
-            Basic.InterestConfig.Cap = Interest.Cap.Zero
+            Basic.InterestConfig.Cap = Interest.Cap.zero
         }
 
     [<Fact>]

@@ -531,7 +531,7 @@ module Scheduling =
     /// a scheduled payment item, with running calculations of interest and principal balance
     module BasicItem =
         /// a default value with no data
-        let initial =
+        let zero =
             { 
                 Day = 0<OffsetDay>
                 ScheduledPayment = ScheduledPayment.zero
@@ -883,7 +883,7 @@ module Scheduling =
         let initialInterestBalance = totalAddOnInterest bp finalScheduledPaymentDay
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fee
-        let initialBasicItem = { BasicItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = bp.Principal + feeTotal }
+        let initialBasicItem = { BasicItem.zero with InterestBalance = initialInterestBalance; PrincipalBalance = bp.Principal + feeTotal }
         // get the appropriate tolerance steps for determining payment value
         // note: tolerance steps allow for gradual relaxation of the tolerance if no solution is found for the original tolerance
         let toleranceSteps = ToleranceSteps.forPaymentValue paymentCount

@@ -45,7 +45,7 @@ module PaymentScheduleTests =
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
-                    Cap = Interest.Cap.Zero
+                    Cap = Interest.Cap.zero
                     Rounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UsActuarial 8
                 }
