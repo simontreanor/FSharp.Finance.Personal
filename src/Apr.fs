@@ -285,6 +285,8 @@ module Apr =
     /// advance date are all the same
     let calculate method advanceValue advanceDate transfers =
         match method with
+        | CalculationMethod.EuropeanUnion _ ->
+            EuropeanUnion.calculateApr advanceDate advanceValue transfers
         | CalculationMethod.UnitedKingdom _ ->
             UnitedKingdom.calculateApr advanceDate advanceValue transfers
         | CalculationMethod.UsActuarial _ ->
