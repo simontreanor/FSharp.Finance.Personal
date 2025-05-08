@@ -9,7 +9,7 @@ keywords: algorithm methodology amortisation amortization
 
 # Algorithms in Depth
 
-## Calculating the initial schedule and payments
+## Calculating the basic schedule and payments
 
 ```Amortisation.amortise```
 
@@ -17,7 +17,7 @@ Generating the amortisation starts by calling:
 
 ```Scheduling.calculateBasicSchedule```
 
-As we're looking at an initial schedule, we don't need all the complexity of the amortisation schedule, because we don't need to look into
+As we're looking at a basic schedule, we don't need all the complexity of the amortisation schedule, because we don't need to look into
 things like actual payments, late fees, rebates, etc. We just need to create a basic schedule that's going to let us calculate the payments
 necessary to bring the final principal balance to zero.
 
@@ -38,7 +38,7 @@ as many times as necessary until the final principal balance is at or just below
 
 ### Actuarial interest method
 
-For the actuarial method, once a solution is found, we have our initial payment schedule detailing the days and amounts to be paid, plus a few statistics
+For the actuarial method, once a solution is found, we have our basic payment schedule detailing the days and amounts to be paid, plus a few statistics
 based on this information.
 
 ### Add-on interest method
@@ -49,19 +49,19 @@ this has the effect of maintaining a higher principal balance for longer, and th
 to adjust the payments to compensate for this, and recursively generate the schedule until the final balance is just below zero again. This gives
 us our level payments followed by an equal or slightly lower final payment.
 
-We now have our initial payment schedule detailing the days and amounts to be paid, plus a few statistics based on this information.
+We now have our basic payment schedule detailing the days and amounts to be paid, plus a few statistics based on this information.
 
 ### Interest caps
 
-The only other consideration in generating this initial schedule is to respect any interest caps imposed, both daily and total. For this reason
+The only other consideration in generating this basic schedule is to respect any interest caps imposed, both daily and total. For this reason
 we maintain aggregate interest limits and aggregate interest amounts and compare them throughout the generation process, capping the interest where
 necessary.
 
-## Applying actual payments to the initial schedule
+## Applying actual payments to the basic schedule
 
 ```AppliedPayment.applyPayments```
 
-Here, we take our initial scheduled payments plus any actual payments made, and group them by day, and create a payment status based on the
+Here, we take our basic scheduled payments plus any actual payments made, and group them by day, and create a payment status based on the
 relative timings and amounts. It also applies late payment charges where necessary. It also marks any days for which a settlement figure will
 need to be generated, or, for statements, it inserts an entry for the evaluation day into the schedule (if it isn't already there) to enable an exact
 balance for the evaluation day to be calculated.

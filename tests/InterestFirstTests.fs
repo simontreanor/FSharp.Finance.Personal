@@ -59,7 +59,7 @@ module InterestFirstTests =
     [<Fact>]
     let InterestFirstTest000 () =
         let title = "InterestFirstTest000"
-        let description = "Actuarial interest method initial schedule"
+        let description = "Actuarial interest method basic schedule"
         let p = { parameters with Parameters.Basic.InterestConfig.Method = Interest.Method.Actuarial }
 
         let actual =
@@ -90,7 +90,7 @@ module InterestFirstTests =
     [<Fact>]
     let InterestFirstTest002 () =
         let title = "InterestFirstTest002"
-        let description = "Add-on interest method initial schedule"
+        let description = "Add-on interest method basic schedule"
         let p = parameters
 
         let actual =

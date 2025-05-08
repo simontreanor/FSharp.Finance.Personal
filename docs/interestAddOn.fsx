@@ -17,7 +17,7 @@ balance is reduced before the principal balance, and therefore the principal bal
 
 ## Relevant Code
 
-The `cref:T:FSharp.Finance.Personal.Scheduling` module contains the functions that create the initial schedule. The initial schedule is a basic schedule that allows
+The `cref:T:FSharp.Finance.Personal.Scheduling` module contains the functions that create the basic schedule. The basic schedule is a basic schedule that allows
 us to calculate the interest accrued over the schedule as well as the level and final payments.
 
 Let's start by defining the parameters. Let's define a loan of £1000 advanced on 22 April 2025, paid back over 4 months starting one month after the advance date.
