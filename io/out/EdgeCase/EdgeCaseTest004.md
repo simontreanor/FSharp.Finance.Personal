@@ -703,7 +703,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Only one insufficient funds charge per day</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.2</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.3</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

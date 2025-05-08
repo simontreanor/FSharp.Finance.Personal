@@ -147,7 +147,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Amortisation schedule, 6 payments, first payment on day 24, using the add-on interest method with no interest cap (just after APR jump)</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.2</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.3</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

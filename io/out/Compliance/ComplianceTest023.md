@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Actuarial-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes</i></p>
-<p>Generated: <i>2025-05-08 using library version 2.4.2</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.3</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
