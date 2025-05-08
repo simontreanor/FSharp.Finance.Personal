@@ -36,14 +36,14 @@ as many times as necessary until the final principal balance is at or just below
 
 > ```Array.solveNewtonRaphson``` is an alternative implementation of the solver function that is optimised for calculating APRs.
 
-### Simple (or actuarial) interest method
+### Actuarial interest method
 
-For the simple method, once a solution is found, we have our initial payment schedule detailing the days and amounts to be paid, plus a few statistics
+For the actuarial method, once a solution is found, we have our initial payment schedule detailing the days and amounts to be paid, plus a few statistics
 based on this information.
 
 ### Add-on interest method
 
-For the add-on method, we run the solver a second time, taking the total interest from the simple method and using it as the initial interest balance
+For the add-on method, we run the solver a second time, taking the total interest from the actuarial method and using it as the initial interest balance
 for the new calculation. However, with a non-zero initial interest balance, bearing in mind that payments are applied to interest balances first,
 this has the effect of maintaining a higher principal balance for longer, and therefore the final principal balance is again non-zero. So we have
 to adjust the payments to compensate for this, and recursively generate the schedule until the final balance is just below zero again. This gives

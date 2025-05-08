@@ -610,8 +610,8 @@ module ComplianceTests =
     [<Fact>]
     let ComplianceTest023 () =
         let title = "ComplianceTest023"
-        let description = "Simple-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
-        let basicSchedule = calculateBasicSchedule { basicParameters with InterestConfig.Method = Interest.Method.Simple }
+        let description = "Actuarial-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes"
+        let basicSchedule = calculateBasicSchedule { basicParameters with InterestConfig.Method = Interest.Method.Actuarial }
 
         BasicSchedule.outputHtmlToFile folder title description basicParameters basicSchedule
 

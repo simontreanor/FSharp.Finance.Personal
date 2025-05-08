@@ -154,10 +154,10 @@ module AprUnitedKingdomTests =
     let firstPaymentDays = [| 3 .. 32 |]
 
     [<Fact>] 
-    let AprSpreadsheetSimple () =
-        let title = "AprSpreadsheetSimple"
-        let description = "Range of APRs for different payment counts and first payment days, using the simple interest method"
-        let interestMethod = Interest.Method.Simple
+    let AprSpreadsheetActuarial () =
+        let title = "AprSpreadsheetActuarial"
+        let description = "Range of APRs for different payment counts and first payment days, using the actuarial interest method"
+        let interestMethod = Interest.Method.Actuarial
         let applyInterestCap = true
        
         outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
@@ -172,10 +172,10 @@ module AprUnitedKingdomTests =
         outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description
 
     [<Fact>] 
-    let AprSpreadsheetSimpleNoInterestCap () =
-        let title = "AprSpreadsheetSimpleNoInterestCap"
-        let description = "Range of APRs for different payment counts and first payment days, using the simple interest method with no interest cap"
-        let interestMethod = Interest.Method.Simple
+    let AprSpreadsheetActuarialNoInterestCap () =
+        let title = "AprSpreadsheetActuarialNoInterestCap"
+        let description = "Range of APRs for different payment counts and first payment days, using the actuarial interest method with no interest cap"
+        let interestMethod = Interest.Method.Actuarial
         let applyInterestCap = false
 
         outputHtmlToFile folder startDate paymentCounts firstPaymentDays interestMethod applyInterestCap title description

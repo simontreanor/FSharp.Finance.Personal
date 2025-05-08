@@ -15,7 +15,7 @@ description: Frequently asked questions about amortisation calculations
 
 When setting up a schedule, interest is calculated based on a simple schedule that assumes that all payments will be made on time and in full.
 
-* For simple-interest calculations, see [Simple-Interest Calculations](interestSimple.fsx)
+* For actuarial-interest calculations, see [Actuarial-Interest Calculations](interestActuarial.fsx)
 * For add-on-interest calculations, see [Add-On-Interest Calculations](interestAddOn.fsx)
 
 ### Running calculations
@@ -30,7 +30,7 @@ For a flowchart, see [Amortisation Flowchart](amortisation.fsx).
 
 The basic schedule we will use here is a loan of £1000 advanced on 24 April 2025, paid back over 4 months starting one month after the advance date.
 The loan has a daily interest rate of 0.798% and a cap of 0.8% per day as well as a cap of 100% of the principal amount.
-The examples may use either the simple-interest method or the add-on-interest method.
+The examples may use either the actuarial-interest method or the add-on-interest method.
 
 *)
 
@@ -66,7 +66,7 @@ let parameters0 : Parameters = {
         }
         FeeConfig = ValueNone
         InterestConfig = {
-            Method = Interest.Method.Simple
+            Method = Interest.Method.Actuarial
             StandardRate = Interest.Rate.Daily (Percent 0.798m)
             Cap = {
                 TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
@@ -100,12 +100,12 @@ let parameters0 : Parameters = {
 
 ## What happens if a customer were to not make their repayment on time?
 
-Let's take a look at the amortisation schedules to illustrate this. First we will look at the simple-interest method and then the add-on-interest method.
+Let's take a look at the amortisation schedules to illustrate this. First we will look at the actuarial-interest method and then the add-on-interest method.
 
 > Note: As a general principle, for payments that are not yet due it is assumed that they will be paid on time and in full. This is to provide for a more
 > realistic projection of the schedule. 
 
-### Simple Interest
+### Actuarial Interest
 
 Here's the schedule prior to any actual payments being made (looking at it from day 0). The main thing to note is that the principal balance at the end of the
 schedule is zero, meaning it is fully amortised.
@@ -174,7 +174,7 @@ Looking at the principal balance at the end of the schedule shows that this has 
 ### Add-On Interest
 
 Here's the schedule prior to any actual payments being made (looking at it from day 0). This time the interest is added up-front, with an initial interest
-balance of £815.56. The interest is paid off before the principal, so more interest is accrued in total than under the simple-interest method. The principal
+balance of £815.56. The interest is paid off before the principal, so more interest is accrued in total than under the actuarial-interest method. The principal
 at the end of the schedule is zero, meaning it is fully amortised.
 
 <details>
@@ -244,13 +244,13 @@ schedule item. The principal balance at the end of the schedule is therefore £5
 <br />
 > **Why is the final settlement amount lower for the add-on method?**
 >
-> You may well wonder, given that the add-on-interest method results in a higher amount of interest accruing than simple-interest method, why the final
+> You may well wonder, given that the add-on-interest method results in a higher amount of interest accruing than actuarial-interest method, why the final
 > settlement amount (i.e. the final principal balance) is lower for the add-on method.
 > <br /><br />
 > One interesting feature of the add-on method is that in the early days of the schedule, missed payments have no effect on the principal balance. Looking
 > at the original add-on schedule, we see that the principal balance remains at £1000 until day 30. Any extra interest is only accrued if the principal
 > balance remains outstanding at this level for longer than this. Looking at the schedule on day 35, we see that the principal balance remains at £1000
-> until day 61, meaning that extra interest is accrued, but only for 31 days out of 60 compared to the simple-interest method.
+> until day 61, meaning that extra interest is accrued, but only for 31 days out of 60 compared to the actuarial-interest method.
 
 <br />
 > **Why is the new interest only added at the very end of the schedule?**
@@ -261,7 +261,7 @@ schedule item. The principal balance at the end of the schedule is therefore £5
 
 ## How is the additional interest calculated?
 
-### Simple Interest
+### Actuarial Interest
 
 Given that the interest rate is usually fixed for the duration of the schedule, the interest accrued is purely a function of the principal balance and
 how many days it is outstanding:
@@ -280,17 +280,17 @@ Therefore any variations will affect the interest accrued:
 ### Add-On Interest
 
 Though the interest is calculated up-front and added to the schedule as an initial interest balance, adjustments will need to be made if the payment
-schedule is not adhered to. At the end of the schedule, the total simple interest (calculated as stated in the Simple Interest section above) is
+schedule is not adhered to. At the end of the schedule, the total actuarial interest (calculated as stated in the Actuarial Interest section above) is
 compared to the initial interest balance and a correction is made to the final schedule item if necessary.
 
 ## Is the additional interest calculated on the outstanding loan principal?
 
-Indirectly, yes. At the end of the schedule, the total simple interest (calculated as stated in the Simple Interest section above) is
+Indirectly, yes. At the end of the schedule, the total actuarial interest (calculated as stated in the Actuarial Interest section above) is
 compared to the initial interest balance and a correction is made to the final schedule item if necessary.
 
 ## Where is the additional interest added?
 
-For simple-interest, the interest is automatically adjusted during the schedule. For add-on interest, the adjustment is made at the end of the schedule.
+For actuarial-interest, the interest is automatically adjusted during the schedule. For add-on interest, the adjustment is made at the end of the schedule.
 
 ## When is the customer expected to pay off this additional interest?
 
@@ -308,9 +308,9 @@ Both daily and total caps can be set, and these are defined as either a simple a
 
 ## What happens when a customer settles earlier than the agreed term?
 
-First we will look at the simple-interest method and then the add-on-interest method.
+First we will look at the actuarial-interest method and then the add-on-interest method.
 
-### Simple Interest
+### Actuarial Interest
 
 As a reminder, here's the schedule prior to any actual payments being made (looking at it from day 0).
 *)
@@ -418,7 +418,7 @@ amortisation5
 The settlement quotation is £643.71, which is the sum required to pay off all outstanding balances, including any interest accrued up to that day. As this is an early
 settlement, and the interest for the full schedule was charged up-front, an interest rebate of £264.55 has been calculated. The principal balance of £908.26, minus the
 interest rebate of £264.55, leaves a final settlement payment of £643.71 to pay. This would fully amortise the schedule, and the remaining two payments on days 91 and
-122 are no longer required. In contrast to the simple-interest method, where you have to add up the unrequired payments and deduct the settlement figure to calculate the
+122 are no longer required. In contrast to the actuarial-interest method, where you have to add up the unrequired payments and deduct the settlement figure to calculate the
 saved interest, in the add-on-interest method the interest rebate is explicitly calculated.
 
 ## Is overcharged interest refunded?
@@ -623,7 +623,7 @@ rolloverSchedules.NewSchedules.AmortisationSchedule
 > 
 > * The settlement figure is £1091.70, which is greater than the original loan amount due to the capitalised interest.
 > * By comparison, the settlement figure on day 152 when rescheduling (rather than rolling over) is only £908.64, because the interest is not capitalised.
-> * On day 131 of the new loan, you can see that the simple interest hits the 100% total cap, and interest is no longer accrued from that point on.
+> * On day 131 of the new loan, you can see that the actuarial interest hits the 100% total cap, and interest is no longer accrued from that point on.
 
 
 ### What happens to the payment amounts?
@@ -643,7 +643,7 @@ how long it takes to amortise the schedule based on the payment amount.
 
 The schedule can be partially or fully paid off by using write-off payments.
 
-Let's take our simple-interest loan, where the customer has already made the first two payments on time.
+Let's take our actuarial-interest loan, where the customer has already made the first two payments on time.
 
 ### Single-payment write-off
 

@@ -43,7 +43,7 @@ module PaymentScheduleTests =
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                 }
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     Rounding = RoundDown
@@ -140,7 +140,7 @@ module PaymentScheduleTests =
                 }
                 FeeConfig = ValueNone
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Daily (Percent 0.798m)
                     Cap = interestCapExample
                     Rounding = RoundWith MidpointRounding.AwayFromZero
@@ -1762,7 +1762,7 @@ module PaymentScheduleTests =
         }
         FeeConfig = ValueNone
         InterestConfig = {
-            Method = Interest.Method.Simple
+            Method = Interest.Method.Actuarial
             StandardRate = Interest.Rate.Daily (Percent 0.8m)
             Cap = interestCapExample
             Rounding = RoundDown

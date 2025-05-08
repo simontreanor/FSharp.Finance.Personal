@@ -1,17 +1,17 @@
 (**
 ---
-title: Simple-Interest Calculations
+title: Actuarial-Interest Calculations
 category: Compliance
 categoryindex: 4
 index: 1
-description: Detailed description of simple interest calculations
+description: Detailed description of actuarial interest calculations
 ---
 
-# Simple-Interest Calculations
+# Actuarial-Interest Calculations
 
 ## Definition
 
-Simple interest is a method of calculating interest where the interest is accrued during the schedule. The initial interest balance is zero, and each time
+Actuarial interest is a method of calculating interest where the interest is accrued during the schedule. The initial interest balance is zero, and each time
 a scheduled payment is due or an actual payment is made, the interest is calculated based on the outstanding principal balance and the number of days it has
 been outstanding. Payments are applied in the order charges -> interest -> fees -> principal, but as interest is not front loaded (as in the
 [add-on interest method](interestAddOn.fsx)), this means each payment pays off the interest in full and then the principal balance is reduced. This means that
@@ -24,7 +24,7 @@ The `cref:T:FSharp.Finance.Personal.Scheduling` module contains the functions th
 us to calculate the interest accrued over the schedule as well as the level and final payments.
 
 Let's start by defining the parameters. Let's define a loan of £1000 advanced on 22 April 2025, paid back over 4 months starting one month after the advance date.
-The loan has a daily interest rate of 0.798% and a cap of 0.8% per day as well as a cap of 100% of the principal amount. Interest is calculated using the simple method. 
+The loan has a daily interest rate of 0.798% and a cap of 0.8% per day as well as a cap of 100% of the principal amount. Interest is calculated using the actuarial method. 
 
 <br />
 <details>
@@ -53,7 +53,7 @@ let parameters : BasicParameters = {
     }
     FeeConfig = ValueNone
     InterestConfig = {
-        Method = Interest.Method.Simple
+        Method = Interest.Method.Actuarial
         StandardRate = Interest.Rate.Daily (Percent 0.798m)
         Cap = {
             TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
@@ -70,9 +70,9 @@ let parameters : BasicParameters = {
 Then we call the `cref:M:FSharp.Finance.Personal.Scheduling.calculateBasicSchedule` function to generate the schedule:
 *)
 
-let simpleInterestSchedule = calculateBasicSchedule parameters
+let actuarialInterestSchedule = calculateBasicSchedule parameters
 (*** hide ***)
-simpleInterestSchedule |> BasicSchedule.toHtmlTable
+actuarialInterestSchedule |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -82,7 +82,7 @@ As there is no initial interest balance, the principal starts to be paid off imm
 <br />
 <details>
 <summary>Add-on-interest comparison (click to expand)</summary>
-To illustrate this, we can compare the simple-interest schedule with an add-on-interest schedule:
+To illustrate this, we can compare the actuarial-interest schedule with an add-on-interest schedule:
 *)
 
 let addOnInterestSchedule =

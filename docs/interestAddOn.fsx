@@ -81,14 +81,14 @@ means that the interest accrued is higher than it would be if the principal was 
 <br />
 <details>
 <summary>Basic-interest comparison (click to expand)</summary>
-To illustrate this, we can compare the add-on-interest schedule with a simple-interest schedule:
+To illustrate this, we can compare the add-on-interest schedule with an actuarial-interest schedule:
 *)
 
-let simpleInterestSchedule =
+let actuarialInterestSchedule =
     calculateBasicSchedule
-        { parameters with InterestConfig.Method = Interest.Method.Simple }
+        { parameters with InterestConfig.Method = Interest.Method.Actuarial }
 (*** hide ***)
-simpleInterestSchedule |> BasicSchedule.toHtmlTable
+actuarialInterestSchedule |> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -220,7 +220,7 @@ different initial interest balance, so the process must be repeated until the to
 let finalInterestTotal =
     basicItems
     |> Array.last
-    |> _.TotalSimpleInterest
+    |> _.TotalActuarialInterest
 let basicItems' =
     ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
     |> Array.unfold

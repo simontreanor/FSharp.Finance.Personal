@@ -38,7 +38,7 @@ module PromotionalRatesTests =
                 }
                 FeeConfig = ValueNone
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Daily <| Percent 0.8m
                     Cap = {
                         TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
@@ -145,7 +145,7 @@ module PromotionalRatesTests =
                     FeeAmortisation = Fee.FeeAmortisation.AmortiseBeforePrincipal
                 }
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 7.985m
                     Cap = Interest.Cap.Zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -193,7 +193,7 @@ module PromotionalRatesTests =
             NetEffect = 1523_25L<Cent>
             PaymentStatus = NotYetDue
             BalanceStatus = ClosedBalance
-            SimpleInterest = 10_26.07665657m<Cent>
+            ActuarialInterest = 10_26.07665657m<Cent>
             NewInterest = 10_26.07665657m<Cent>
             NewCharges = [||]
             PrincipalPortion = 1512_99L<Cent>

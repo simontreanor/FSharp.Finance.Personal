@@ -41,7 +41,7 @@ let parameters =
         }
         FeeConfig = ValueNone
         InterestConfig = {
-            Method = Interest.Method.Simple
+            Method = Interest.Method.Actuarial
             StandardRate = Interest.Rate.Annual <| Percent 6.9m
             Cap = Interest.Cap.Zero
             Rounding = RoundDown

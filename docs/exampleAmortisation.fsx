@@ -45,7 +45,7 @@ let parameters : Parameters =
             }
             FeeConfig = ValueNone
             InterestConfig = {
-                Method = Interest.Method.Simple
+                Method = Interest.Method.Actuarial
                 StandardRate = Interest.Rate.Daily (Percent 0.8m)
                 Cap = {
                     TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)

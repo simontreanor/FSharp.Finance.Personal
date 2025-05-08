@@ -74,7 +74,7 @@ module UnitPeriodConfigTests =
                     }
                     ChargeConfig = None
                     InterestConfig = {
-                        Method = Interest.Method.Simple
+                        Method = Interest.Method.Actuarial
                         StandardRate = Interest.Rate.Annual <| Percent 9.95m
                         Cap = Interest.Cap.Zero
                         InitialGracePeriod = 3<DurationDay>
@@ -136,7 +136,7 @@ module UnitPeriodConfigTests =
                 }
                 ChargeConfig = None
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
@@ -201,7 +201,7 @@ module UnitPeriodConfigTests =
                 }
                 ChargeConfig = None
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
@@ -288,7 +288,7 @@ module UnitPeriodConfigTests =
                 }
                 ChargeConfig = None
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>
@@ -376,7 +376,7 @@ module UnitPeriodConfigTests =
                 }
                 ChargeConfig = None
                 InterestConfig = {
-                    Method = Interest.Method.Simple
+                    Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.Zero
                     InitialGracePeriod = 3<DurationDay>

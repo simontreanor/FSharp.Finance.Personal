@@ -104,14 +104,14 @@ module Interest =
     /// the method used to calculate the interest
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Method =
-        /// simple interest method, where interest is based on the principal balance and the number of days outstanding
-        | Simple
+        /// actuarial interest method, where interest is based on the principal balance and the number of days outstanding
+        | Actuarial
         /// add-on interest method, where the interest accrued over the loan is added to the initial balance and the interest is paid off before the principal balance
         | AddOn
         /// HTML formatting to display the method in a readable format
         member m.Html =
             match m with
-            | Simple -> "simple"
+            | Actuarial -> "actuarial"
             | AddOn -> "add-on"
 
     /// basic interest options

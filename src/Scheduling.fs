@@ -510,8 +510,8 @@ module Scheduling =
         Day: int<OffsetDay>
         /// the scheduled payment
         ScheduledPayment: ScheduledPayment
-        /// the simple interest accrued since the previous payment
-        SimpleInterest: decimal<Cent>
+        /// the actuarial interest accrued since the previous payment
+        ActuarialInterest: decimal<Cent>
         /// the interest portion paid off by the payment
         InterestPortion: int64<Cent>
         /// the principal portion paid off by the payment
@@ -520,8 +520,8 @@ module Scheduling =
         InterestBalance: int64<Cent>
         /// the principal balance carried forward
         PrincipalBalance: int64<Cent>
-        /// the total simple interest accrued from the start date to the current date
-        TotalSimpleInterest: decimal<Cent>
+        /// the total actuarial interest accrued from the start date to the current date
+        TotalActuarialInterest: decimal<Cent>
         /// the total interest payable from the start date to the current date
         TotalInterest: int64<Cent>
         /// the total principal payable from the start date to the current date
@@ -535,12 +535,12 @@ module Scheduling =
             { 
                 Day = 0<OffsetDay>
                 ScheduledPayment = ScheduledPayment.zero
-                SimpleInterest = 0m<Cent>
+                ActuarialInterest = 0m<Cent>
                 InterestPortion = 0L<Cent>
                 PrincipalPortion = 0L<Cent>
                 InterestBalance = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
-                TotalSimpleInterest = 0m<Cent>
+                TotalActuarialInterest = 0m<Cent>
                 TotalInterest = 0L<Cent>
                 TotalPrincipal = 0L<Cent>
             }
@@ -549,12 +549,12 @@ module Scheduling =
     <tr style="text-align: right;">
         <td class="ci00">{basicItem.Day}</td>
         <td class="ci01" style="white-space: nowrap;">{basicItem.ScheduledPayment |> ScheduledPayment.total |> formatCent}</td>
-        <td class="ci02">{formatDecimalCent basicItem.SimpleInterest}</td>
+        <td class="ci02">{formatDecimalCent basicItem.ActuarialInterest}</td>
         <td class="ci03">{formatCent basicItem.InterestPortion}</td>
         <td class="ci04">{formatCent basicItem.PrincipalPortion}</td>
         <td class="ci05">{formatCent basicItem.InterestBalance}</td>
         <td class="ci06">{formatCent basicItem.PrincipalBalance}</td>
-        <td class="ci07">{formatDecimalCent basicItem.TotalSimpleInterest}</td>
+        <td class="ci07">{formatDecimalCent basicItem.TotalActuarialInterest}</td>
         <td class="ci08">{formatCent basicItem.TotalInterest}</td>
         <td class="ci09">{formatCent basicItem.TotalPrincipal}</td>
     </tr>"""
@@ -628,12 +628,12 @@ module Scheduling =
     <thead style="vertical-align: bottom;">
         <th style="text-align: right;">Day</th>
         <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Actuarial interest</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Principal portion</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total actuarial interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
     </thead>{schedule.Items |> Array.map BasicItem.toHtmlRow |> String.concat ""}
@@ -731,7 +731,7 @@ module Scheduling =
     // calculates the interest accruing on a particular day based on the interest method, payment and previous balances, taking into account any daily and total interest caps
     let calculateInterest bp interestMethod payment previousItem day =
         match interestMethod with
-        | Interest.Method.Simple ->
+        | Interest.Method.Actuarial ->
             Interest.dailyRates bp.StartDate false bp.InterestConfig.StandardRate [||] previousItem.Day day
             |> Interest.calculate previousItem.PrincipalBalance bp.InterestConfig.Cap.DailyAmount bp.InterestConfig.Rounding
         | Interest.Method.AddOn ->
@@ -741,9 +741,9 @@ module Scheduling =
     // generates a schedule item for a particular day by calculating the interest accruing and apportioning the scheduled payment to interest then principal
     let generateItem bp interestMethod scheduledPayment previousItem day =
         let scheduledPaymentTotal = ScheduledPayment.total scheduledPayment
-        let simpleInterest =
-            calculateInterest bp Interest.Method.Simple scheduledPaymentTotal previousItem day
-            |> fun i -> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal previousItem.TotalSimpleInterest i
+        let actuarialInterest =
+            calculateInterest bp Interest.Method.Actuarial scheduledPaymentTotal previousItem day
+            |> fun i -> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal previousItem.TotalActuarialInterest i
         let interestPortion =
             calculateInterest bp interestMethod scheduledPaymentTotal previousItem day
             |> fun i -> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal (Cent.toDecimalCent previousItem.TotalInterest) i
@@ -753,12 +753,12 @@ module Scheduling =
             {
                 Day = day
                 ScheduledPayment = scheduledPayment
-                SimpleInterest = simpleInterest
+                ActuarialInterest = actuarialInterest
                 InterestPortion = interestPortion
                 PrincipalPortion = principalPortion
                 InterestBalance = match interestMethod with Interest.Method.AddOn -> previousItem.InterestBalance - interestPortion | _ -> 0L<Cent>
                 PrincipalBalance = previousItem.PrincipalBalance - principalPortion
-                TotalSimpleInterest = previousItem.TotalSimpleInterest + simpleInterest
+                TotalActuarialInterest = previousItem.TotalActuarialInterest + actuarialInterest
                 TotalInterest = previousItem.TotalInterest + interestPortion
                 TotalPrincipal = previousItem.TotalPrincipal + principalPortion
             }
@@ -794,7 +794,7 @@ module Scheduling =
             let finalInterestTotal =
                 newSchedule
                 |> Array.last
-                |> _.TotalSimpleInterest
+                |> _.TotalActuarialInterest
                 |> max 0m<Cent> // interest must not go negative
                 |> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal 0m<Cent>
 
@@ -900,7 +900,7 @@ module Scheduling =
                     match bp.InterestConfig.Method with
                     | Interest.Method.AddOn ->
                         initialInterestBalance |> Cent.toDecimalCent
-                    | Interest.Method.Simple ->
+                    | Interest.Method.Actuarial ->
                         let dailyInterestRate = bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
                         Cent.toDecimalCent bp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m
                 // determines the payment value and generates the schedule iteratively based on that
@@ -928,7 +928,7 @@ module Scheduling =
         let items =
             match bp.InterestConfig.Method with
             | Interest.Method.AddOn ->
-                let finalInterestTotal = basicItems |> Array.last |> _.TotalSimpleInterest
+                let finalInterestTotal = basicItems |> Array.last |> _.TotalActuarialInterest
                 ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
                 |> Array.unfold (equaliseInterest bp paymentDays initialBasicItem paymentCount feeTotal paymentMap)
                 |> Array.last

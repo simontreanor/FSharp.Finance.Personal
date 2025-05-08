@@ -32,7 +32,7 @@ description: Detailed flowchart of amortisation calculations
             end
             o_bas_ite-->q_int_met{interest<br/>method?}
             q_int_met-->|add-on|f_cal_ini_int[[calculate initial interest]]-->f_adj_fin_pay
-            q_int_met-->|simple|f_adj_fin_pay
+            q_int_met-->|actuarial|f_adj_fin_pay
             f_adj_fin_pay[[adjust final payment]]-->o_bas_sch
             o_bas_sch[/basic schedule/]-->f_cal_apr
             f_cal_apr[[calculate APR]]-->f_cal_sta

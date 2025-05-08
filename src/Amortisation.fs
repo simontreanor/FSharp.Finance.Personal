@@ -83,8 +83,8 @@ module Amortisation =
         NewCharges: AppliedCharge array
         /// the portion of the net effect assigned to the charges
         ChargesPortion: int64<Cent>
-        /// the simple interest accruable between the previous amortisation day and the current day
-        SimpleInterest: decimal<Cent>
+        /// the actuarial interest accruable between the previous amortisation day and the current day
+        ActuarialInterest: decimal<Cent>
         /// the new interest charged between the previous amortisation day and the current day, less any initial interest
         NewInterest: decimal<Cent>
         /// the portion of the net effect assigned to the interest
@@ -123,7 +123,7 @@ module Amortisation =
             NetEffect = 0L<Cent>
             PaymentStatus = NoneScheduled
             BalanceStatus = OpenBalance
-            SimpleInterest = 0m<Cent>
+            ActuarialInterest = 0m<Cent>
             NewInterest = 0m<Cent>
             NewCharges = [||]
             PrincipalPortion = 0L<Cent>
@@ -155,7 +155,7 @@ module Amortisation =
                     yield "", $"""{scheduleItem.BalanceStatus.Html.Replace(" ", "&nbsp;")}"""
                     if p.Advanced.ChargeConfig.IsSome then yield "", $"""{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}"""
                     if p.Advanced.ChargeConfig.IsSome then yield "", $"{formatCent scheduleItem.ChargesPortion}"
-                    yield "", $"{formatDecimalCent scheduleItem.SimpleInterest}"
+                    yield "", $"{formatDecimalCent scheduleItem.ActuarialInterest}"
                     yield "", $"{formatDecimalCent scheduleItem.NewInterest}"
                     yield "", $"{formatCent scheduleItem.InterestPortion}"
                     if p.Basic.FeeConfig.IsSome then yield "", $"{formatCent scheduleItem.FeeRebateIfSettled}"
@@ -194,8 +194,8 @@ module Amortisation =
         CumulativeInterest: decimal<Cent>
         /// the total of interest portions up to the current day
         CumulativeInterestPortions: int64<Cent>
-        /// the total of simple interest accrued up to the current day
-        CumulativeSimpleInterestM: decimal<Cent>
+        /// the total of actuarial interest accrued up to the current day
+        CumulativeActuarialInterestM: decimal<Cent>
     }
 
     /// final statistics resulting from the calculations
@@ -277,7 +277,7 @@ module Amortisation =
                     yield "Balance status"
                     if p.Advanced.ChargeConfig.IsSome then yield "New charges"
                     if p.Advanced.ChargeConfig.IsSome then yield "Charges portion"
-                    yield "Simple interest"
+                    yield "Actuarial interest"
                     yield "New interest"
                     yield "Interest portion"
                     if p.Basic.FeeConfig.IsSome then yield "Fee rebate if&nbsp;settled"
@@ -491,8 +491,8 @@ module Amortisation =
             // get an array of advances
             // note: assumes single advance on day 0 (multiple advances are not currently supported), so this is based purely on the principal
             let advances = if appliedPaymentDay = 0<OffsetDay> then [| p.Basic.Principal |] else [||]
-            // calculates the simple interest that has accrued since the previous item
-            let simpleInterestM =
+            // calculates the actuarial interest that has accrued since the previous item
+            let actuarialInterestM =
                 // if the principal balance is negative, apply any rate on negative balances and disregard any daily interest caps
                 if si.PrincipalBalance <= 0L<Cent> then
                     dailyInterestRates siOffsetDay appliedPaymentDay
@@ -506,28 +506,28 @@ module Amortisation =
             let confirmedPaymentTotal =
                 ap.ActualPayments
                 |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
-            // cap the simple interest against the total interest cap
-            let cappedSimpleInterestM = Interest.Cap.cappedAddedValue p.Basic.InterestConfig.Cap.TotalAmount p.Basic.Principal a.CumulativeSimpleInterestM simpleInterestM
-            // apply the cumulative simple interest to the accumulator
+            // cap the actuarial interest against the total interest cap
+            let cappedActuarialInterestM = Interest.Cap.cappedAddedValue p.Basic.InterestConfig.Cap.TotalAmount p.Basic.Principal a.CumulativeActuarialInterestM actuarialInterestM
+            // apply the cumulative actuarial interest to the accumulator
             let accumulator =
                 { a with
-                    CumulativeSimpleInterestM = a.CumulativeSimpleInterestM + cappedSimpleInterestM
+                    CumulativeActuarialInterestM = a.CumulativeActuarialInterestM + cappedActuarialInterestM
                 }
             // calculate any new interest accrued since the previous item, according to the interest method supplied in the schedule parameters
             let newInterestM =
                 match p.Basic.InterestConfig.Method with
                 | Interest.Method.AddOn ->
                     if si.BalanceStatus <> ClosedBalance then
-                        a.CumulativeSimpleInterestM + cappedSimpleInterestM
+                        a.CumulativeActuarialInterestM + cappedActuarialInterestM
                         |> fun i ->
                             if i > initialInterestBalanceM then
                                 i - initialInterestBalanceM
                             else
                                 0m<Cent>
-                        |> min cappedSimpleInterestM
+                        |> min cappedActuarialInterestM
                     else
                         0m<Cent>
-                | Interest.Method.Simple -> simpleInterestM
+                | Interest.Method.Actuarial -> actuarialInterestM
             // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
             let calculateSettlementReduction m =
                 if appliedPaymentDay = maxAppliedPaymentDay then
@@ -589,22 +589,22 @@ module Amortisation =
             let netEffect = if appliedPaymentDay > evaluationDay then Cent.min ap.NetEffect paymentDue else ap.NetEffect
             // simplifies any refund apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative
             let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (( * ) -1L) else id
-            // get the rounded cumulative simple interest
-            let cumulativeSimpleInterestL = accumulator.CumulativeSimpleInterestM |> Cent.fromDecimalCent interestRounding
+            // get the rounded cumulative actuarial interest
+            let cumulativeActuarialInterestL = accumulator.CumulativeActuarialInterestM |> Cent.fromDecimalCent interestRounding
             // 
             let generatedSettlementPayment, interestAdjustmentM =
                 match p.Basic.InterestConfig.Method with
                 | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance ->
-                    // get a settlement figure for the add-on interest method based on the actual simple interest accrued up to now
+                    // get a settlement figure for the add-on interest method based on the actual actuarial interest accrued up to now
                     let settlement =
-                        p.Basic.Principal + cumulativeSimpleInterestL - accumulator.CumulativeActualPayments
+                        p.Basic.Principal + cumulativeActuarialInterestL - accumulator.CumulativeActualPayments
                         |> fun s -> if abs s < int64 appliedPaymentCount * 1L<Cent> then 0L<Cent> else s
-                    // determine whether an interest adjustment is required based on the difference between cumulative simple interest and the initial interest balance
+                    // determine whether an interest adjustment is required based on the difference between cumulative actuarial interest and the initial interest balance
                     let interestAdjustment =
                         if (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>) && si.BalanceStatus <> RefundDue && cappedNewInterestM = 0m<Cent> then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
-                            accumulator.CumulativeSimpleInterestM - initialInterestBalanceM
+                            accumulator.CumulativeActuarialInterestM - initialInterestBalanceM
                             |> Interest.ignoreFractionalCents 1
-                            |> Interest.Cap.cappedAddedValue p.Basic.InterestConfig.Cap.TotalAmount p.Basic.Principal accumulator.CumulativeSimpleInterestM
+                            |> Interest.Cap.cappedAddedValue p.Basic.InterestConfig.Cap.TotalAmount p.Basic.Principal accumulator.CumulativeActuarialInterestM
                         else
                             0m<Cent>
                     settlement - settlementReductionL, interestAdjustment
@@ -782,7 +782,7 @@ module Amortisation =
                     NetEffect = if isSettlement then netEffect + GeneratedPayment.Total generatedPayment else netEffect'
                     PaymentStatus = paymentStatus
                     BalanceStatus = if isSettlement then ClosedBalance else balanceStatus
-                    SimpleInterest = cappedSimpleInterestM
+                    ActuarialInterest = cappedActuarialInterestM
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
                     PrincipalPortion = if isSettlement then si.PrincipalBalance else principalPortion'
@@ -856,7 +856,7 @@ module Amortisation =
                 CumulativeFee = 0L<Cent>
                 CumulativeInterest = initialInterestBalanceM
                 CumulativeInterestPortions = 0L<Cent>
-                CumulativeSimpleInterestM = 0m<Cent>
+                CumulativeActuarialInterestM = 0m<Cent>
             }
         )
         // separate and discard the accumulator

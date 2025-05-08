@@ -33,7 +33,7 @@ This library is able to generate amortisation schedules based on a highly custom
 
 Technical documents going into detail about the calculations:
 
-[Simple-Interest Calculations](interestSimple.fsx)
+[Actuarial-Interest Calculations](interestActuarial.fsx)
 
 [Add-On-Interest Calculations](interestAddOn.fsx)
 

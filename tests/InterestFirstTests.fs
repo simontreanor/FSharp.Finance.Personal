@@ -59,8 +59,8 @@ module InterestFirstTests =
     [<Fact>]
     let InterestFirstTest000 () =
         let title = "InterestFirstTest000"
-        let description = "Simple interest method initial schedule"
-        let p = { parameters with Parameters.Basic.InterestConfig.Method = Interest.Method.Simple }
+        let description = "Actuarial interest method initial schedule"
+        let p = { parameters with Parameters.Basic.InterestConfig.Method = Interest.Method.Actuarial }
 
         let actual =
             let schedule = calculateBasicSchedule p.Basic
@@ -74,8 +74,8 @@ module InterestFirstTests =
     [<Fact>]
     let InterestFirstTest001 () =
         let title = "InterestFirstTest001"
-        let description = "Simple interest method"
-        let p = { parameters with Parameters.Basic.InterestConfig.Method = Interest.Method.Simple }
+        let description = "Actuarial interest method"
+        let p = { parameters with Parameters.Basic.InterestConfig.Method = Interest.Method.Actuarial }
 
         let actualPayments = Map.empty
 
@@ -823,7 +823,7 @@ module InterestFirstTests =
                 Basic.ScheduleConfig = FixedSchedules [|
                     { UnitPeriodConfig = Monthly(1, 2021, 2, 28); PaymentCount = 4; PaymentValue = 168_00L<Cent>; ScheduleType = ScheduleType.Original }
                 |]
-                Basic.InterestConfig.Method = Interest.Method.Simple
+                Basic.InterestConfig.Method = Interest.Method.Actuarial
             }
 
         let actualPayments =
