@@ -190,7 +190,7 @@
 <h4>Description</h4>
 <p><i>Range of APRs for different payment counts and first payment days, using the add-on interest method with no interest cap</i></p>
 <p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
-<h4>Parameters</h4>
+<h4>Basic Parameters</h4>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -255,7 +255,7 @@
         </td>
     </tr>
 </table>
-<h4>Parameters</h4>
+<h4>Advanced Parameters</h4>
 <table>
     <tr>
         <td>Interest options</td>

@@ -139,9 +139,9 @@ module AprUnitedKingdomTests =
             |> fun s -> Regex.Replace(s, "unit-period config: <i>monthly from 2025-04 on 04</i>", "unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i>")
 
         let htmlBasicParams = $"""
-<h4>Parameters</h4>{generalisedBasicParams}"""
+<h4>Basic Parameters</h4>{generalisedBasicParams}"""
         let htmlAdvancedParams = $"""
-<h4>Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
+<h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
 
         let htmlDatestamp = $"""
 <p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {libraryVersion}</i></p>"""
