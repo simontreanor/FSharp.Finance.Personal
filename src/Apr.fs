@@ -301,7 +301,14 @@ module Apr =
 
     /// converts an APR solution to a percentage, if possible
     let toPercent aprMethod aprSolution =
-        let precision = aprMethod |> function CalculationMethod.UnitedKingdom precision | CalculationMethod.UsActuarial precision -> precision | _ -> 0
+        let precision =
+            match aprMethod with
+            | CalculationMethod.EuropeanUnion precision
+            | CalculationMethod.UnitedKingdom precision
+            | CalculationMethod.UsActuarial precision ->
+                precision
+            | _ ->
+                0
         match aprSolution with
         | Solution.Found(apr, _, _)
         | Solution.IterationLimitReached(apr, _, _) ->
