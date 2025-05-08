@@ -3,12 +3,12 @@
     <thead style="vertical-align: bottom;">
         <th style="text-align: right;">Day</th>
         <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Actuarial interest</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Principal portion</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total actuarial interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
     </thead>
@@ -74,8 +74,8 @@
     </tr>
 </table>
 <h4>Description</h4>
-<p><i>Simple-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes</i></p>
-<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
+<p><i>Actuarial-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

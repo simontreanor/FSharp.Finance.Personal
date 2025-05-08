@@ -3,12 +3,12 @@
     <thead style="vertical-align: bottom;">
         <th style="text-align: right;">Day</th>
         <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Actuarial interest</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Principal portion</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total actuarial interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
     </thead>
@@ -87,7 +87,7 @@
 </table>
 <h4>Description</h4>
 <p><i>£0900 with 24 days to first payment and 5 repayments</i></p>
-<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
@@ -140,7 +140,7 @@
             <table>
                 <tr>
                     <td>standard rate: <i>0.798 % per day</i></td>
-                    <td>method: <i>simple</i></td>
+                    <td>method: <i>actuarial</i></td>
                 </tr>
                 <tr>
                     <td>rounding: <i>round using AwayFromZero</i></td>

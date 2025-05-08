@@ -11,7 +11,7 @@
         <th class="ci07" style="text-align: right;">Net effect</th>
         <th class="ci08" style="text-align: right;">Payment status</th>
         <th class="ci09" style="text-align: right;">Balance status</th>
-        <th class="ci10" style="text-align: right;">Simple interest</th>
+        <th class="ci10" style="text-align: right;">Actuarial interest</th>
         <th class="ci11" style="text-align: right;">New interest</th>
         <th class="ci12" style="text-align: right;">Interest portion</th>
         <th class="ci13" style="text-align: right;">Principal portion</th>
@@ -111,7 +111,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time</i></p>
-<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

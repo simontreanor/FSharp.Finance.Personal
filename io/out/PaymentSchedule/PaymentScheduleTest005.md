@@ -3,12 +3,12 @@ PaymentScheduleTest005<br />Calculation with three equivalent but different paym
     <thead style="vertical-align: bottom;">
         <th style="text-align: right;">Day</th>
         <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Actuarial interest</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Principal portion</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total actuarial interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
     </thead>
@@ -77,12 +77,12 @@ PaymentScheduleTest005<br />Calculation with three equivalent but different paym
     <thead style="vertical-align: bottom;">
         <th style="text-align: right;">Day</th>
         <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Actuarial interest</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Principal portion</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total actuarial interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
     </thead>
@@ -151,12 +151,12 @@ PaymentScheduleTest005<br />Calculation with three equivalent but different paym
     <thead style="vertical-align: bottom;">
         <th style="text-align: right;">Day</th>
         <th style="text-align: right;">Scheduled payment</th>
-        <th style="text-align: right;">Simple interest</th>
+        <th style="text-align: right;">Actuarial interest</th>
         <th style="text-align: right;">Interest portion</th>
         <th style="text-align: right;">Principal portion</th>
         <th style="text-align: right;">Interest balance</th>
         <th style="text-align: right;">Principal balance</th>
-        <th style="text-align: right;">Total simple interest</th>
+        <th style="text-align: right;">Total actuarial interest</th>
         <th style="text-align: right;">Total interest</th>
         <th style="text-align: right;">Total principal</th>
     </thead>

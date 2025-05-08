@@ -1,4 +1,4 @@
-<h2>AprSpreadsheetSimpleNoInterestCap</h2>
+<h2>AprSpreadsheetActuarial</h2>
 <table>
     <tr>
         <th>First payment day</th>
@@ -178,18 +178,18 @@
         <td>31</td>
         <td>1251.7 %</td>
         <td>1251.8 %</td>
-        <td>1252 %</td>
+        <td>1217.2 %</td>
     </tr>
     <tr>
         <td>32</td>
         <td>1246.3 %</td>
         <td>1246.9 %</td>
-        <td>1247.8 %</td>
+        <td>1180 %</td>
     </tr>
 </table>
 <h4>Description</h4>
-<p><i>Range of APRs for different payment counts and first payment days, using the simple interest method with no interest cap</i></p>
-<p>Generated: <i>2025-05-02 using library version 2.3.1</i></p>
+<p><i>Range of APRs for different payment counts and first payment days, using the actuarial interest method</i></p>
+<p>Generated: <i>2025-05-08 using library version 2.4.1</i></p>
 <h4>Parameters</h4>
 <table>
     <tr>
@@ -242,14 +242,14 @@
             <table>
                 <tr>
                     <td>standard rate: <i>0.798 % per day</i></td>
-                    <td>method: <i>simple</i></td>
+                    <td>method: <i>actuarial</i></td>
                 </tr>
                 <tr>
                     <td>rounding: <i>rounded down</i></td>
                     <td>APR method: <i>UK FCA to 1 d.p.</i></td>
                 </tr>
                 <tr>
-                    <td colspan="2">cap: <i>total <i>n/a</i>; daily <i>n/a</i></td>
+                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
                 </tr>
             </table>
         </td>
