@@ -3,7 +3,7 @@
 title: Amortisation Examples
 category: Examples
 categoryindex: 2
-index: 3
+index: 4
 description: Examples of amortisation
 keywords: amortisation amortization
 ---

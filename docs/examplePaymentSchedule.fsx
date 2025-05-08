@@ -3,7 +3,7 @@
 title: Payment schedule examples
 category: Examples
 categoryindex: 2
-index: 4
+index: 5
 description: Examples of payment schedules
 keywords: payment schedule unit-period
 ---
