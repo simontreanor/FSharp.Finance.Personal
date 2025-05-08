@@ -13,7 +13,6 @@ module AprUnitedKingdomTests =
     let folder = "AprUnitedKingdom"
 
     open Amortisation
-    open AppliedPayment
     open Apr
     open Calculation
     open DateDay
