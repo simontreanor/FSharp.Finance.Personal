@@ -10,60 +10,6 @@ module Amortisation =
     open Formatting
     open Scheduling
 
-    /// parameters required for amortisation
-    type AdvancedParameters = {
-        // payment options relevant to the amortisation schedule
-        PaymentConfig: Payment.AdvancedConfig
-        // interest options relevant to the amortisation schedule
-        InterestConfig: Interest.AdvancedConfig
-        // fee options relevant to the amortisation schedule
-        FeeConfig: Fee.AdvancedConfig voption
-        /// options relating to charges
-        ChargeConfig: Charge.Config option
-        /// whether and on what day to generate a settlement figure
-        SettlementDay: SettlementDay
-        /// whether to trim unrequired scheduled payments from the end of the schedule
-        TrimEnd: bool
-    }
-
-    /// parameters required for amortisation
-    module AdvancedParameters =
-        ///formats the payment config as an HTML table
-        let toHtmlTable parameters =
-            $"""
-<table>
-    <tr>
-        <td>Interest options</td>
-        <td>{Interest.AdvancedConfig.toHtmlTable parameters.InterestConfig}
-        </td>
-    </tr>
-    <tr>
-        <td>Fee options</td>
-        <td>{Fee.AdvancedConfig.toHtmlTable parameters.FeeConfig}
-        </td>
-    </tr>
-    <tr>
-        <td>Charge options</td>
-        <td>{Charge.Config.toHtmlTable parameters.ChargeConfig}
-        </td>
-    </tr>
-    <tr>
-        <td>Settlement day</td><td><i>{parameters.SettlementDay}</i></td>
-    </tr>
-    <tr>
-        <td>Trim unrequired payments</td><td><i>{parameters.TrimEnd.ToString().ToLower()}</i></td>
-    </tr>
-</table>"""
-
-    /// basic schedule generation parameters and advanced parameters for amortisation
-    [<RequireQualifiedAccess>]
-    type Parameters = {
-        /// the basic schedule generation parameters
-        Basic: BasicParameters
-        /// the basic schedule generation parameters
-        Advanced: AdvancedParameters
-    }
-
     /// the status of the balance on a given offset day
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type BalanceStatus =
@@ -392,8 +338,8 @@ module Amortisation =
             OpenBalance
 
     /// determines whether a schedule is settled within any grace period (e.g. no interest may be due if settlement is made within three days of the advance)
-    let isSettledWithinGracePeriod (p: Parameters) settlementDay =
-        match settlementDay with
+    let isSettledWithinGracePeriod (p: Parameters) =
+        match p.Advanced.SettlementDay with
         | SettlementDay.SettlementOn day ->
             int day <= int p.Advanced.InterestConfig.InitialGracePeriod
         | SettlementDay.SettlementOnEvaluationDay ->
@@ -488,39 +434,39 @@ module Amortisation =
             // payment due should never be negative
             |> Cent.max 0L<Cent>
             // apply minimum payment rules
-            |> fun p ->
+            |> fun payment ->
                 match minimumPayment with
-                | NoMinimumPayment -> p
-                | DeferOrWriteOff minimumPayment when p < minimumPayment -> 0L<Cent>
-                | ApplyMinimumPayment minimumPayment when p < minimumPayment -> p
-                | _ -> p
+                | NoMinimumPayment -> payment
+                | DeferOrWriteOff minimumPayment when payment < minimumPayment -> 0L<Cent>
+                | ApplyMinimumPayment minimumPayment when payment < minimumPayment -> payment
+                | _ -> payment
 
     /// for UK FCA-regulated agreements, calculates the fee rebate due
-    let calculateStatutoryFeeRebate p (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) initialStats appliedPaymentDay window =
+    let calculateStatutoryFeeRebate bp (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) initialStats appliedPaymentDay window =
         let originalScheduledPayments =
             appliedPayments
             |> Map.filter(fun _ ap -> ap.ScheduledPayment.Original.IsSome)
             |> Map.toArray
             |> Array.mapi(fun i (d, ap) -> {| Window = i; OffsetDay = d; OriginalScheduledPaymentValue = ap.ScheduledPayment.Original.Value |})
         let unitPeriod =
-            match p.ScheduleConfig with
+            match bp.ScheduleConfig with
             | AutoGenerateSchedule ags ->
                 UnitPeriod.Config.unitPeriod ags.UnitPeriodConfig
             | FixedSchedules _
             | CustomSchedule _ ->
-                let finalScheduledPaymentDate = initialStats.LastScheduledPaymentDay |> OffsetDay.toDate p.StartDate
-                let transactionTerm = UnitPeriod.transactionTerm p.StartDate p.StartDate finalScheduledPaymentDate p.StartDate
-                let paymentDates = originalScheduledPayments |> Array.map (_.OffsetDay >> OffsetDay.toDate p.StartDate)
-                UnitPeriod.nearest transactionTerm [| p.StartDate |] paymentDates
+                let finalScheduledPaymentDate = initialStats.LastScheduledPaymentDay |> OffsetDay.toDate bp.StartDate
+                let transactionTerm = UnitPeriod.transactionTerm bp.StartDate bp.StartDate finalScheduledPaymentDate bp.StartDate
+                let paymentDates = originalScheduledPayments |> Array.map (_.OffsetDay >> OffsetDay.toDate bp.StartDate)
+                UnitPeriod.nearest transactionTerm [| bp.StartDate |] paymentDates
         let previousScheduledPaymentDate = originalScheduledPayments |> Array.filter(fun osp -> osp.OffsetDay <= appliedPaymentDay) |> Array.last |> _.OffsetDay
         let numerator = appliedPaymentDay - previousScheduledPaymentDate |> int
         let denominator = UnitPeriod.roughLength unitPeriod
         let settlementPartPeriod = Fraction.Simple(numerator, denominator)
         let payments = originalScheduledPayments |> Array.map(fun osp -> osp.Window, osp.OriginalScheduledPaymentValue)
-        Interest.calculateRebate p.Principal payments initialStats.InitialApr window settlementPartPeriod unitPeriod p.PaymentConfig.Rounding
+        Interest.calculateRebate bp.Principal payments initialStats.InitialApr window settlementPartPeriod unitPeriod bp.PaymentConfig.Rounding
 
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
-    let internal calculate (p: Parameters) settlementDay initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
+    let internal calculate (p: Parameters) initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the evaluation day (the day the schedule is evaluated) based on the evaluation date in the schedule parameters
         let evaluationDay = (p.Basic.EvaluationDate - p.Basic.StartDate).Days * 1<OffsetDay>
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
@@ -528,7 +474,7 @@ module Amortisation =
         // calculate the total fee value for the entire schedule
         let feeTotal = Fee.total p.Basic.FeeConfig p.Basic.Principal
         // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
-        let dailyInterestRates fromDay toDay = Interest.dailyRates p.Basic.StartDate (isSettledWithinGracePeriod p settlementDay) p.Basic.InterestConfig.StandardRate p.Advanced.InterestConfig.PromotionalRates fromDay toDay
+        let dailyInterestRates fromDay toDay = Interest.dailyRates p.Basic.StartDate (isSettledWithinGracePeriod p) p.Basic.InterestConfig.StandardRate p.Advanced.InterestConfig.PromotionalRates fromDay toDay
         // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
         let interestRounding = p.Basic.InterestConfig.Rounding
         // get stats for interest rounding at the end of the schedule
@@ -862,7 +808,7 @@ module Amortisation =
 
             // get the relevant type of item based on the intended purpose
             let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =
-                match ap.GeneratedPayment, settlementDay with
+                match ap.GeneratedPayment, p.Advanced.SettlementDay with
                 | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay when evaluationDay = appliedPaymentDay ->
                     createScheduleItem true
                 | ToBeGenerated, SettlementDay.SettlementOn day when day = appliedPaymentDay ->
@@ -1002,8 +948,8 @@ module Amortisation =
 
         let amortisationSchedule =
             scheduledPayments
-            |> applyPayments evaluationDay p.Basic.StartDate p.Advanced.SettlementDay p.Advanced.ChargeConfig p.Advanced.PaymentConfig.Timeout actualPayments
-            |> calculate p p.Advanced.SettlementDay basicSchedule.Stats
+            |> applyPayments p actualPayments
+            |> calculate p basicSchedule.Stats
             |> if p.Advanced.TrimEnd then Map.filter(fun _ si -> si.PaymentStatus <> NoLongerRequired) else id
             |> calculateStats
 

@@ -184,12 +184,12 @@ module Calculation =
         let fromDecimal (m: decimal) =
             m * 100m |> Percent
         /// round a percent value to the specified number of decimal places
-        let round (places: int) (Percent p) =
-            Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places p
+        let round (places: int) (Percent percent) =
+            Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places percent
             |> Percent
         /// convert a percent value to a decimal, e.g. 50% -> 0.5
-        let toDecimal (Percent p) =
-            p / 100m
+        let toDecimal (Percent percent) =
+            percent / 100m
 
     /// the type of restriction placed on a possible value
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]

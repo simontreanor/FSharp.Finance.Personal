@@ -32,7 +32,7 @@ module Rescheduling =
         let rescheduleDays =
             scheduledPayments
             |> Array.map snd
-            |> Array.choose(fun p -> if p.Rescheduled.IsSome then Some p.Rescheduled.Value.RescheduleDay else None)
+            |> Array.choose(fun sp -> if sp.Rescheduled.IsSome then Some sp.Rescheduled.Value.RescheduleDay else None)
             |> Array.distinct
             |> Array.sort
         // return the list of scheduled payments with the original and rescheduled payments merged
@@ -42,11 +42,11 @@ module Rescheduling =
         |> Array.sortBy fst
         |> Array.mapFold(fun previousRescheduleDay (offsetDay, map) ->
             // evaluate the scheduled payment
-            let p = map |> Array.map snd
+            let scheduledPayments = map |> Array.map snd
             // get any original payment due on the day
-            let original = p |> Array.tryFind _.Original.IsSome |> toValueOption
+            let original = scheduledPayments |> Array.tryFind _.Original.IsSome |> toValueOption
             // get any rescheduled payments due on the day, ordering them so that the most recently rescheduled payments come first
-            let rescheduled = p |> Array.filter _.Rescheduled.IsSome |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay |> Array.toList
+            let rescheduled = scheduledPayments |> Array.filter _.Rescheduled.IsSome |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay |> Array.toList
             // split any rescheduled payments into latest and previous
             let latestRescheduling, previousReschedulings =
                 match rescheduled with

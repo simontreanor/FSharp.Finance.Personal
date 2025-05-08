@@ -21,8 +21,8 @@ module Interest =
         member r.Html =
             match r with
             | Zero -> "zero"
-            | Annual p -> $"{p} per year"
-            | Daily p -> $"{p} per day"
+            | Annual percent -> $"{percent} per year"
+            | Daily percent -> $"{percent} per day"
 
     module Rate =
         /// calculates the annual interest rate from the daily one
@@ -239,7 +239,7 @@ module Interest =
             let advanceMap = Map [ (1, decimal principal * 1m<Cent>) ]
             let paymentMap =
                 payments
-                |> Array.map(fun (i, p) -> i, decimal p * 1m<Cent>)
+                |> Array.map(fun (index, payment) -> index, decimal payment * 1m<Cent>)
                 |> Map.ofArray
             let aprUnitPeriodRate =
                 apr
@@ -255,7 +255,7 @@ module Interest =
             let paymentIntervalMap =
                 payments
                 |> Array.take paymentCount
-                |> Array.scan(fun state p -> fst state + 1, int settlementPeriod - int (fst p)) (0, settlementPeriod)
+                |> Array.scan(fun (index, _) (day, _) -> index + 1, settlementPeriod - day) (0, settlementPeriod)
                 |> Array.tail
                 |> Map.ofArray
             let addPartPeriodTotal (sf: decimal<Cent>) =
@@ -273,10 +273,10 @@ module Interest =
                 |> Cent.fromDecimalCent paymentRounding
             let remainingPaymentTotal =
                 payments
-                |> Array.filter (fun (i, _) -> i > settlementPeriod)
+                |> Array.filter (fun (index, _) -> index > settlementPeriod)
                 |> Array.sumBy snd
             remainingPaymentTotal - settlementFigure
 
     /// if there is less than one cent remaining, discards any fraction
-    let ignoreFractionalCents (multiplier: int) i =
-        if abs i < decimal multiplier * 1m<Cent> then 0m<Cent> else i
+    let ignoreFractionalCents (multiplier: int) value =
+        if abs value < decimal multiplier * 1m<Cent> then 0m<Cent> else value

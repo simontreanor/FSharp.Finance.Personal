@@ -102,21 +102,6 @@ module AppliedPayment =
             | NoLongerRequired -> "<i>no longer required</i>"
             | InformationOnly -> "<i>information only</i>"
 
-    /// the intended day on which to quote a settlement
-    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
-    type SettlementDay =
-        /// quote a settlement figure on the specified day
-        | SettlementOn of SettlementDay: int<OffsetDay>
-        /// quote a settlement figure on the evaluation day
-        | SettlementOnEvaluationDay
-        /// no settlement figure is required
-        | NoSettlement
-        member x.Html =
-            match x with
-            | SettlementOn day -> $"<i>on day {day}</i>"
-            | SettlementOnEvaluationDay -> $"<i>on evaluation day</i>"
-            | NoSettlement -> "<i>n/a</i>"
-
      /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     type AppliedPayment = {
         /// the amount of any scheduled payment due on the current day
@@ -134,21 +119,22 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments evaluationDay startDate settlementDay (chargeConfig: Charge.Config option) paymentTimeout (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
+    let applyPayments (parameters: Parameters) (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
         // guard against empty maps
         if Map.isEmpty scheduledPayments then
             Map.empty
         else
+            let evaluationDay = parameters.Basic.EvaluationDate |> OffsetDay.fromDate parameters.Basic.StartDate
             // check to see if any pending payments have timed out
             let actualPayments =
                 actualPayments
                 |> Map.map(fun d app ->
-                    if isTimedOut paymentTimeout evaluationDay d then
+                    if isTimedOut parameters.Advanced.PaymentConfig.Timeout evaluationDay d then
                         app
                         |> Array.map(fun ap ->
                             match ap.ActualPaymentStatus with
-                            | ActualPaymentStatus.Pending p ->
-                                { ap with ActualPaymentStatus = ActualPaymentStatus.TimedOut p }
+                            | ActualPaymentStatus.Pending payment ->
+                                { ap with ActualPaymentStatus = ActualPaymentStatus.TimedOut payment }
                             | _ ->
                                 ap
                         )
@@ -159,11 +145,11 @@ module AppliedPayment =
             let days = [| scheduledPayments |> Map.keys |> Seq.toArray; actualPayments |> Map.keys |> Seq.toArray |] |> Array.concat |> Array.distinct |> Array.sort
             // create a map of charge holidays
             let chargeHolidays =
-                match chargeConfig with
+                match parameters.Advanced.ChargeConfig with
                 | Some cc ->
                     cc.ChargeTypes
                     |> Map.map(fun ct cc ->
-                        Charge.ChargeConditions.getHolidays startDate cc.ChargeHolidays
+                        Charge.ChargeConditions.getHolidays parameters.Basic.StartDate cc.ChargeHolidays
                     )
                 | None ->
                     Map.empty
@@ -209,8 +195,8 @@ module AppliedPayment =
                             | 0L<Cent>, cpt ->
                                 cpt, ExtraPayment
                             // a payment due on or before the day
-                            | spt, cpt when cpt < spt && offsetDay <= evaluationDay && int offsetDay + int paymentTimeout >= int evaluationDay ->
-                                match settlementDay with
+                            | spt, cpt when cpt < spt && offsetDay <= evaluationDay && int offsetDay + int parameters.Advanced.PaymentConfig.Timeout >= int evaluationDay ->
+                                match parameters.Advanced.SettlementDay with
                                 // settlement requested on a future day
                                 | SettlementDay.SettlementOn day when day > offsetDay ->
                                     0L<Cent>, PaymentDue
@@ -262,7 +248,7 @@ module AppliedPayment =
                     let appliedCharges =
                         chargeTypes
                         |> Array.choose(fun ct ->
-                            match chargeConfig with
+                            match parameters.Advanced.ChargeConfig with
                             | Some cc when cc.ChargeTypes.ContainsKey ct ->
                                 let chargeConditions = cc.ChargeTypes[ct]
                                 if chargeHolidays[ct] |> Array.exists((=) offsetDay) then
@@ -279,7 +265,7 @@ module AppliedPayment =
                             if Array.isEmpty ac then
                                 [||]
                             else
-                                let chargeConditions = chargeConfig.Value.ChargeTypes[ct]
+                                let chargeConditions = parameters.Advanced.ChargeConfig.Value.ChargeTypes[ct]
                                 match chargeConditions.ChargeGrouping with
                                 | Charge.ChargeGrouping.OneChargeTypePerDay ->
                                     Array.take 1 ac
@@ -331,7 +317,7 @@ module AppliedPayment =
                     appliedPaymentMap
                     |> Map.add day newAppliedPayment
             // add or modify the applied payments depending on whether the intended purpose is a settlement or just a statement
-            match settlementDay with
+            match parameters.Advanced.SettlementDay with
                 // settlement on a specific day
                 | SettlementDay.SettlementOn day ->
                     appliedPayments day ToBeGenerated Generated

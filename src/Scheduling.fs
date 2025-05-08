@@ -62,18 +62,18 @@ module Scheduling =
     
     module ScheduledPayment =
         /// the total amount of the payment
-        let total p =
-            match p.Original, p.Rescheduled with
+        let total sp =
+            match sp.Original, sp.Rescheduled with
             | _, ValueSome r ->
                 r.Value
             | ValueSome o, ValueNone ->
                 o
             | ValueNone, ValueNone ->
                 0L<Cent>
-            |> (+) p.Adjustment
+            |> (+) sp.Adjustment
         /// whether the payment has either an original or a rescheduled value
-        let isSome p =
-            p.Original.IsSome || p.Rescheduled.IsSome
+        let isSome sp =
+            sp.Original.IsSome || sp.Rescheduled.IsSome
         /// a default value with no data
         let zero =
             {
@@ -257,17 +257,17 @@ module Scheduling =
                 </tr>{fsArray |> Array.map renderRow |> String.concat ""}
             </table>"""
             | CustomSchedule cs ->
-                let renderRow day p =
+                let renderRow (day: int<OffsetDay>) (sp: ScheduledPayment) =
                     $"""
                 <tr>
                     <td>day: <i>{day}</i></td>
-                    <td>scheduled payment: <i>{p}</i></td>
+                    <td>scheduled payment: <i>{sp}</i></td>
                 </tr>"""
                 $"""
             <table>
                 <tr>
                     <td colspan="2">config: <i>custom schedule</i></td>
-                </tr>{cs |> Map.toList |> List.map (fun (day, p) -> renderRow day p) |> String.concat ""}
+                </tr>{cs |> Map.toList |> List.map (fun (day, sp) -> renderRow day sp) |> String.concat ""}
             </table>"""
 
     /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
@@ -434,6 +434,75 @@ module Scheduling =
         </td>
     </tr>
 </table>"""
+
+    /// the intended day on which to quote a settlement
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
+    type SettlementDay =
+        /// quote a settlement figure on the specified day
+        | SettlementOn of SettlementDay: int<OffsetDay>
+        /// quote a settlement figure on the evaluation day
+        | SettlementOnEvaluationDay
+        /// no settlement figure is required
+        | NoSettlement
+        member x.Html =
+            match x with
+            | SettlementOn day -> $"<i>on day {day}</i>"
+            | SettlementOnEvaluationDay -> $"<i>on evaluation day</i>"
+            | NoSettlement -> "<i>n/a</i>"
+
+    /// parameters required for applying payments and amortisation
+    type AdvancedParameters = {
+        // payment options relevant to the amortisation schedule
+        PaymentConfig: Payment.AdvancedConfig
+        // interest options relevant to the amortisation schedule
+        InterestConfig: Interest.AdvancedConfig
+        // fee options relevant to the amortisation schedule
+        FeeConfig: Fee.AdvancedConfig voption
+        /// options relating to charges
+        ChargeConfig: Charge.Config option
+        /// whether and on what day to generate a settlement figure
+        SettlementDay: SettlementDay
+        /// whether to trim unrequired scheduled payments from the end of the schedule
+        TrimEnd: bool
+    }
+
+    /// parameters required for amortisation
+    module AdvancedParameters =
+        ///formats the payment config as an HTML table
+        let toHtmlTable parameters =
+            $"""
+<table>
+    <tr>
+        <td>Interest options</td>
+        <td>{Interest.AdvancedConfig.toHtmlTable parameters.InterestConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Fee options</td>
+        <td>{Fee.AdvancedConfig.toHtmlTable parameters.FeeConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Charge options</td>
+        <td>{Charge.Config.toHtmlTable parameters.ChargeConfig}
+        </td>
+    </tr>
+    <tr>
+        <td>Settlement day</td><td><i>{parameters.SettlementDay}</i></td>
+    </tr>
+    <tr>
+        <td>Trim unrequired payments</td><td><i>{parameters.TrimEnd.ToString().ToLower()}</i></td>
+    </tr>
+</table>"""
+
+    /// basic schedule generation parameters and advanced parameters for amortisation
+    [<RequireQualifiedAccess>]
+    type Parameters = {
+        /// the basic schedule generation parameters
+        Basic: BasicParameters
+        /// the basic schedule generation parameters
+        Advanced: AdvancedParameters
+    }
 
      /// a scheduled payment item, with running calculations of interest and principal balance
     type BasicItem = {
@@ -660,25 +729,25 @@ module Scheduling =
             
 
     // calculates the interest accruing on a particular day based on the interest method, payment and previous balances, taking into account any daily and total interest caps
-    let calculateInterest p interestMethod payment previousItem day =
+    let calculateInterest bp interestMethod payment previousItem day =
         match interestMethod with
         | Interest.Method.Simple ->
-            Interest.dailyRates p.StartDate false p.InterestConfig.StandardRate [||] previousItem.Day day
-            |> Interest.calculate previousItem.PrincipalBalance p.InterestConfig.Cap.DailyAmount p.InterestConfig.Rounding
+            Interest.dailyRates bp.StartDate false bp.InterestConfig.StandardRate [||] previousItem.Day day
+            |> Interest.calculate previousItem.PrincipalBalance bp.InterestConfig.Cap.DailyAmount bp.InterestConfig.Rounding
         | Interest.Method.AddOn ->
             Cent.toDecimalCent payment
             |> min (Cent.toDecimalCent previousItem.InterestBalance)
 
     // generates a schedule item for a particular day by calculating the interest accruing and apportioning the scheduled payment to interest then principal
-    let generateItem p interestMethod scheduledPayment previousItem day =
+    let generateItem bp interestMethod scheduledPayment previousItem day =
         let scheduledPaymentTotal = ScheduledPayment.total scheduledPayment
         let simpleInterest =
-            calculateInterest p Interest.Method.Simple scheduledPaymentTotal previousItem day
-            |> fun i -> Interest.Cap.cappedAddedValue p.InterestConfig.Cap.TotalAmount p.Principal previousItem.TotalSimpleInterest i
+            calculateInterest bp Interest.Method.Simple scheduledPaymentTotal previousItem day
+            |> fun i -> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal previousItem.TotalSimpleInterest i
         let interestPortion =
-            calculateInterest p interestMethod scheduledPaymentTotal previousItem day
-            |> fun i -> Interest.Cap.cappedAddedValue p.InterestConfig.Cap.TotalAmount p.Principal (Cent.toDecimalCent previousItem.TotalInterest) i
-            |> Cent.fromDecimalCent p.InterestConfig.Rounding
+            calculateInterest bp interestMethod scheduledPaymentTotal previousItem day
+            |> fun i -> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal (Cent.toDecimalCent previousItem.TotalInterest) i
+            |> Cent.fromDecimalCent bp.InterestConfig.Rounding
         let principalPortion = scheduledPaymentTotal - interestPortion
         let basicItem =
             {
@@ -704,35 +773,35 @@ module Scheduling =
 
     // for the add-on interest method: take the final interest total from the schedule and use it as the initial interest balance and calculate a new schedule,
     // repeating until the two figures equalise, which yields the maximum interest that can be accrued with this interest method
-    let equaliseInterest p paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: EqualiseInterestState voption) =
+    let equaliseInterest (bp: BasicParameters) paymentDays firstItem paymentCount feeTotal (paymentMap: Map<int<OffsetDay>, ScheduledPayment>) (stateOption: EqualiseInterestState voption) =
         if stateOption.IsNone then
             None
         elif Array.isEmpty paymentDays then
             None
         else
             let state = stateOption.Value
-            let regularScheduledPayment = calculateLevelPayment paymentCount p.PaymentConfig.Rounding p.Principal feeTotal state.InterestBalance
+            let regularScheduledPayment = calculateLevelPayment paymentCount bp.PaymentConfig.Rounding bp.Principal feeTotal state.InterestBalance
             let newSchedule =
                 paymentDays
                 |> Array.scan (fun basicItem pd ->
                     let scheduledPayment =
-                        match p.ScheduleConfig with
+                        match bp.ScheduleConfig with
                         | AutoGenerateSchedule _ -> ScheduledPayment.quick (ValueSome regularScheduledPayment) ValueNone
                         | FixedSchedules _
                         | CustomSchedule _ -> paymentMap[pd]
-                    generateItem p Interest.Method.AddOn scheduledPayment basicItem pd
-                ) { firstItem with InterestBalance = state.InterestBalance |> Cent.fromDecimalCent p.InterestConfig.Rounding }
+                    generateItem bp Interest.Method.AddOn scheduledPayment basicItem pd
+                ) { firstItem with InterestBalance = state.InterestBalance |> Cent.fromDecimalCent bp.InterestConfig.Rounding }
             let finalInterestTotal =
                 newSchedule
                 |> Array.last
                 |> _.TotalSimpleInterest
                 |> max 0m<Cent> // interest must not go negative
-                |> Interest.Cap.cappedAddedValue p.InterestConfig.Cap.TotalAmount p.Principal 0m<Cent>
+                |> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal 0m<Cent>
 
             let principalBalance = newSchedule |> Array.last |> _.PrincipalBalance
             let tolerance = int64 paymentCount * 1L<Cent>
             let minBalance, maxBalance =
-                match p.PaymentConfig.LevelPaymentOption with
+                match bp.PaymentConfig.LevelPaymentOption with
                     | LowerFinalPayment ->
                         -tolerance, 0L<Cent>
                     | SimilarFinalPayment ->
@@ -740,7 +809,7 @@ module Scheduling =
                     | HigherFinalPayment ->
                         0L<Cent>, tolerance
 
-            let difference = state.InterestBalance - finalInterestTotal |> Cent.fromDecimalCent p.InterestConfig.Rounding
+            let difference = state.InterestBalance - finalInterestTotal |> Cent.fromDecimalCent bp.InterestConfig.Rounding
             if difference = 0L<Cent> && principalBalance >= minBalance && principalBalance <= maxBalance || state.Iteration = 100 then
                 Some (newSchedule, ValueNone)
             else
@@ -749,27 +818,27 @@ module Scheduling =
     // calculate the initial total interest accruing over the entire schedule
     // for the add-on interest method: this is only an initial value that will need to be iterated against the schedule to determine the actual value
     // for other interest methods: the initial interest is zero as interest is accrued later
-    let totalAddOnInterest p finalPaymentDay =
-        let dailyInterestRate = p.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-        match p.InterestConfig.Method with
+    let totalAddOnInterest (bp: BasicParameters) finalPaymentDay =
+        let dailyInterestRate = bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+        match bp.InterestConfig.Method with
         | Interest.Method.AddOn ->
-            Cent.toDecimalCent p.Principal * dailyInterestRate * decimal finalPaymentDay
-            |> Interest.Cap.cappedAddedValue p.InterestConfig.Cap.TotalAmount p.Principal 0m<Cent>
-            |> Cent.fromDecimalCent p.InterestConfig.Rounding
+            Cent.toDecimalCent bp.Principal * dailyInterestRate * decimal finalPaymentDay
+            |> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal 0m<Cent>
+            |> Cent.fromDecimalCent bp.InterestConfig.Rounding
         | _ ->
             0L<Cent>
 
     // generates a payment value based on an approximation, creates a schedule based on that payment value and returns the principal balance at the end of the schedule,
     // the intention being to use this generator in an iteration by varying the payment value until the final principal balance is zero
-    let generatePaymentValue p paymentDays firstItem roughPayment =
+    let generatePaymentValue (bp: BasicParameters) paymentDays firstItem roughPayment =
         let scheduledPayment =
             roughPayment
-            |> Cent.round p.PaymentConfig.Rounding
+            |> Cent.round bp.PaymentConfig.Rounding
             |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
         let schedule =
             paymentDays
             |> Array.fold(fun basicItem pd ->
-                generateItem p p.InterestConfig.Method scheduledPayment basicItem pd
+                generateItem bp bp.InterestConfig.Method scheduledPayment basicItem pd
             ) firstItem
         let principalBalance = decimal schedule.PrincipalBalance
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
@@ -781,10 +850,10 @@ module Scheduling =
             if si.Day = finalScheduledPaymentDay && isAutoGenerateSchedule then
                 let adjustedPayment =
                     si.ScheduledPayment
-                    |> fun p ->
+                    |> fun sp ->
                         { si.ScheduledPayment with
-                            Original = if p.Rescheduled.IsNone then p.Original |> ValueOption.map(fun o -> o + si.PrincipalBalance) else p.Original
-                            Rescheduled = if p.Rescheduled.IsSome then p.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else p.Rescheduled
+                            Original = if sp.Rescheduled.IsNone then sp.Original |> ValueOption.map(fun o -> o + si.PrincipalBalance) else sp.Original
+                            Rescheduled = if sp.Rescheduled.IsSome then sp.Rescheduled |> ValueOption.map(fun r -> { r with Value = r.Value + si.PrincipalBalance }) else sp.Rescheduled
                         }
                 let adjustedPrincipal = si.PrincipalPortion + si.PrincipalBalance
                 let adjustedTotalPrincipal = si.TotalPrincipal + si.PrincipalBalance
@@ -799,9 +868,9 @@ module Scheduling =
         )
 
     /// calculates the number of days between two offset days on which interest is chargeable
-    let calculateBasicSchedule p =
+    let calculateBasicSchedule bp =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
-        let paymentMap = generatePaymentMap p.StartDate p.ScheduleConfig
+        let paymentMap = generatePaymentMap bp.StartDate bp.ScheduleConfig
         // get the payment days for use in further calculations
         let paymentDays = paymentMap |> Map.keys |> Seq.toArray
         // take the last payment day for use in further calculations
@@ -809,38 +878,38 @@ module Scheduling =
         // get the payment count for use in further calculations
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
-        let feeTotal = Fee.total p.FeeConfig p.Principal
+        let feeTotal = Fee.total bp.FeeConfig bp.Principal
         // get the initial interest balance
-        let initialInterestBalance = totalAddOnInterest p finalScheduledPaymentDay
+        let initialInterestBalance = totalAddOnInterest bp finalScheduledPaymentDay
         // create the initial item for the schedule based on the initial interest and principal
         // note: for simplicity, principal includes fee
-        let initialBasicItem = { BasicItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = p.Principal + feeTotal }
+        let initialBasicItem = { BasicItem.initial with InterestBalance = initialInterestBalance; PrincipalBalance = bp.Principal + feeTotal }
         // get the appropriate tolerance steps for determining payment value
         // note: tolerance steps allow for gradual relaxation of the tolerance if no solution is found for the original tolerance
         let toleranceSteps = ToleranceSteps.forPaymentValue paymentCount
         // generate a schedule based on a map of scheduled payments
         let generateItems (payments: Map<int<OffsetDay>, ScheduledPayment>) =
             paymentDays
-            |> Array.scan(fun basicItem pd -> generateItem p p.InterestConfig.Method payments[pd] basicItem pd) initialBasicItem
+            |> Array.scan(fun basicItem pd -> generateItem bp bp.InterestConfig.Method payments[pd] basicItem pd) initialBasicItem
         // generates a schedule based on the schedule configuration
         let basicItems =
-            match p.ScheduleConfig with
+            match bp.ScheduleConfig with
             | AutoGenerateSchedule _ ->
                 // calculate the estimated interest payable over the entire schedule
                 let estimatedInterestTotal =
-                    match p.InterestConfig.Method with
+                    match bp.InterestConfig.Method with
                     | Interest.Method.AddOn ->
                         initialInterestBalance |> Cent.toDecimalCent
                     | Interest.Method.Simple ->
-                        let dailyInterestRate = p.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
-                        Cent.toDecimalCent p.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m
+                        let dailyInterestRate = bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+                        Cent.toDecimalCent bp.Principal * dailyInterestRate * decimal finalScheduledPaymentDay * 0.5m
                 // determines the payment value and generates the schedule iteratively based on that
-                let generator = generatePaymentValue p paymentDays initialBasicItem
+                let generator = generatePaymentValue bp paymentDays initialBasicItem
                 let iterationLimit = 100u
-                let initialGuess = calculateLevelPayment paymentCount p.PaymentConfig.Rounding p.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
-                match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance p.PaymentConfig.LevelPaymentOption) toleranceSteps with
+                let initialGuess = calculateLevelPayment paymentCount bp.PaymentConfig.Rounding bp.Principal feeTotal estimatedInterestTotal |> Cent.toDecimalCent |> decimal
+                match Array.solveBisection generator iterationLimit initialGuess (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption) toleranceSteps with
                     | Solution.Found (paymentValue, _, _) ->
-                        let paymentMap' = paymentMap |> Map.map(fun _ p -> { p with Original = p.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
+                        let paymentMap' = paymentMap |> Map.map(fun _ sp -> { sp with Original = sp.Original |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal) })
                         generateItems paymentMap'
                     | _ ->
                         [||]
@@ -857,15 +926,15 @@ module Scheduling =
         // the principal balance is paid off at a different pace than it would otherwise be; this, in turn, generates different interest, which leads to a different
         // initial interest balance, so the process must be repeated until the total interest and the initial interest are equalised
         let items =
-            match p.InterestConfig.Method with
+            match bp.InterestConfig.Method with
             | Interest.Method.AddOn ->
                 let finalInterestTotal = basicItems |> Array.last |> _.TotalSimpleInterest
                 ValueSome { Iteration = 0; InterestBalance = finalInterestTotal }
-                |> Array.unfold (equaliseInterest p paymentDays initialBasicItem paymentCount feeTotal paymentMap)
+                |> Array.unfold (equaliseInterest bp paymentDays initialBasicItem paymentCount feeTotal paymentMap)
                 |> Array.last
             | _ ->
                 basicItems
-            |> adjustFinalPayment finalScheduledPaymentDay p.ScheduleConfig.IsAutoGenerateSchedule
+            |> adjustFinalPayment finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
         // calculate the total principal paid over the schedule
         let principalTotal = items |> Array.sumBy _.PrincipalPortion
         // calculate the total interest accrued over the schedule
@@ -874,19 +943,19 @@ module Scheduling =
         let aprSolution =
             items
             |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
-            |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = p.StartDate.AddDays(int si.Day); Apr.Value = ScheduledPayment.total si.ScheduledPayment })
-            |> Apr.calculate p.InterestConfig.AprMethod p.Principal p.StartDate
+            |> Array.map(fun si -> { Apr.TransferType = Apr.Payment; Apr.TransferDate = bp.StartDate.AddDays(int si.Day); Apr.Value = ScheduledPayment.total si.ScheduledPayment })
+            |> Apr.calculate bp.InterestConfig.AprMethod bp.Principal bp.StartDate
         // take the scheduled payments for use in further calculations
         let scheduledPayments = items |> Array.map _.ScheduledPayment |> Array.filter ScheduledPayment.isSome
         // determine the final payment value, which is often different from the level payment value
         let finalPayment = scheduledPayments |> Array.tryLast |> Option.map ScheduledPayment.total |> Option.defaultValue 0L<Cent>
         // return the schedule (as `Items`) plus associated information and statistics
         {
-            EvaluationDay = (p.EvaluationDate - p.StartDate).Days * 1<OffsetDay>
+            EvaluationDay = (bp.EvaluationDate - bp.StartDate).Days * 1<OffsetDay>
             Items = items
             Stats = {
                 InitialInterestBalance =
-                    match p.InterestConfig.Method with
+                    match bp.InterestConfig.Method with
                     | Interest.Method.AddOn ->
                         interestTotal
                     | _ ->
@@ -903,7 +972,7 @@ module Scheduling =
                     |> Array.sumBy ScheduledPayment.total
                 PrincipalTotal = principalTotal
                 InterestTotal = interestTotal
-                InitialApr = Apr.toPercent p.InterestConfig.AprMethod aprSolution
+                InitialApr = Apr.toPercent bp.InterestConfig.AprMethod aprSolution
                 InitialCostToBorrowingRatio =
                     if principalTotal = 0L<Cent> then
                         Percent 0m
