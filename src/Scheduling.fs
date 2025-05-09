@@ -389,12 +389,10 @@ module Scheduling =
                 <table>
                     <tr>
                         <td>scheduling: <i>{advancedConfig.ScheduledPaymentOption}</i></td>
+                        <td>timeout: <i>{advancedConfig.Timeout} days</i></td>
                     </tr>
                     <tr>
-                        <td>timeout: <i>{advancedConfig.Timeout}</i></td>
-                    </tr>
-                    <tr>
-                        <td>minimum: <i>{advancedConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></td>
+                        <td colspan="2">minimum: <i>{advancedConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></td>
                     </tr>
                 </table>"""
 
@@ -420,39 +418,39 @@ module Scheduling =
     /// parameters for creating a payment schedule
     module BasicParameters =
         /// formats the parameters as an HTML table
-        let toHtmlTable parameters =
+        let toHtmlTable bp =
             $"""
 <table>
     <tr>
         <td>Evaluation Date</td>
-        <td>%A{parameters.EvaluationDate}</td>
+        <td>%A{bp.EvaluationDate}</td>
     </tr>
     <tr>
         <td>Start Date</td>
-        <td>%A{parameters.StartDate}</td>
+        <td>%A{bp.StartDate}</td>
     </tr>
     <tr>
         <td>Principal</td>
-        <td>{formatCent parameters.Principal}</td>
+        <td>{formatCent bp.Principal}</td>
     </tr>
     <tr>
         <td>Schedule options</td>
-        <td>{ScheduleConfig.toHtmlTable parameters.ScheduleConfig}
+        <td>{ScheduleConfig.toHtmlTable bp.ScheduleConfig}
         </td>
     </tr>
     <tr>
         <td>Payment options</td>
-        <td>{Payment.BasicConfig.toHtmlTable parameters.PaymentConfig}
+        <td>{Payment.BasicConfig.toHtmlTable bp.PaymentConfig}
         </td>
     </tr>
     <tr>
         <td>Fee options</td>
-        <td>{Fee.BasicConfig.toHtmlTable parameters.FeeConfig}
+        <td>{Fee.BasicConfig.toHtmlTable bp.FeeConfig}
         </td>
     </tr>
     <tr>
         <td>Interest options</td>
-        <td>{Interest.Config.toHtmlTable parameters.InterestConfig}
+        <td>{Interest.Config.toHtmlTable bp.InterestConfig}
         </td>
     </tr>
 </table>"""
@@ -492,29 +490,34 @@ module Scheduling =
     /// parameters required for amortisation
     module AdvancedParameters =
         ///formats the payment config as an HTML table
-        let toHtmlTable parameters =
+        let toHtmlTable ap =
             $"""
 <table>
     <tr>
+        <td>Payment options</td>
+        <td>{Payment.AdvancedConfig.toHtmlTable ap.PaymentConfig}
+        </td>
+    </tr>
+    <tr>
         <td>Interest options</td>
-        <td>{Interest.AdvancedConfig.toHtmlTable parameters.InterestConfig}
+        <td>{Interest.AdvancedConfig.toHtmlTable ap.InterestConfig}
         </td>
     </tr>
     <tr>
         <td>Fee options</td>
-        <td>{Fee.AdvancedConfig.toHtmlTable parameters.FeeConfig}
+        <td>{Fee.AdvancedConfig.toHtmlTable ap.FeeConfig}
         </td>
     </tr>
     <tr>
         <td>Charge options</td>
-        <td>{Charge.Config.toHtmlTable parameters.ChargeConfig}
+        <td>{Charge.Config.toHtmlTable ap.ChargeConfig}
         </td>
     </tr>
     <tr>
-        <td>Settlement day</td><td><i>{parameters.SettlementDay}</i></td>
+        <td>Settlement day</td><td><i>{ap.SettlementDay}</i></td>
     </tr>
     <tr>
-        <td>Trim unrequired payments</td><td><i>{parameters.TrimEnd.ToString().ToLower()}</i></td>
+        <td>Trim unrequired payments</td><td><i>{ap.TrimEnd.ToString().ToLower()}</i></td>
     </tr>
 </table>"""
 

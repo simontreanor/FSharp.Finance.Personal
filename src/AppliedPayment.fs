@@ -126,6 +126,7 @@ module AppliedPayment =
         else
             let evaluationDay =
                 parameters.Basic.EvaluationDate |> OffsetDay.fromDate parameters.Basic.StartDate
+
             // check to see if any pending payments have timed out
             let actualPayments =
                 actualPayments
@@ -143,6 +144,7 @@ module AppliedPayment =
                     else
                         app
                 )
+
             // get a list of unique days on which either a scheduled payment is due or an actual payment is made
             let days =
                 [|
@@ -152,6 +154,7 @@ module AppliedPayment =
                 |> Array.concat
                 |> Array.distinct
                 |> Array.sort
+
             // create a map of charge holidays
             let chargeHolidays =
                 match parameters.Advanced.ChargeConfig with
@@ -161,6 +164,7 @@ module AppliedPayment =
                         Charge.ChargeConditions.getHolidays parameters.Basic.StartDate cc.ChargeHolidays
                     )
                 | None -> Map.empty
+
             // create a map of applied payments
             let appliedPaymentMap =
                 days
@@ -198,7 +202,6 @@ module AppliedPayment =
                                 pendingPaymentTotal + confirmedPaymentTotal, PaymentPending
                             // otherwise, calculate as normal
                             else
-
                                 match ScheduledPayment.total scheduledPayment', confirmedPaymentTotal with
                                 // no payments due or made (possibly the day is included for information only, e.g. to force calculation of balances)
                                 | 0L<Cent>, 0L<Cent> -> 0L<Cent>, NoneScheduled
@@ -234,6 +237,7 @@ module AppliedPayment =
                                 | spt, cpt when cpt > spt -> cpt, Overpayment
                                 // any other payment made
                                 | _, cpt -> cpt, PaymentMade
+
                         // calculate any charge types incurred
                         let chargeTypes =
                             actualPayments'
@@ -250,6 +254,7 @@ module AppliedPayment =
                                 | Underpayment -> [| Charge.ChargeType.LatePayment |]
                                 | _ -> [||]
                             )
+
                         // calculate the total of any charges incurred
                         let appliedCharges =
                             chargeTypes
@@ -304,6 +309,7 @@ module AppliedPayment =
                 |> fst
                 // convert the array to a map
                 |> Map.ofArray
+
             // for settlements or statements, adds a new applied payment or modifies an existing one (generated-payment and payment-status fields)
             let appliedPayments day generatedPayment paymentStatus =
                 // if the day is already in the applied payment map, add a placeholder generated payment to the day
@@ -330,6 +336,7 @@ module AppliedPayment =
                     }
 
                     appliedPaymentMap |> Map.add day newAppliedPayment
+
             // add or modify the applied payments depending on whether the intended purpose is a settlement or just a statement
             match parameters.Advanced.SettlementDay with
             // settlement on a specific day
