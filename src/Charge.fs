@@ -19,6 +19,7 @@ module Charge =
         | OneChargeTypePerSchedule
         /// all charges are applied
         | AllChargesApplied
+
         /// HTML formatting to display the charge grouping in a readable format
         member cg.Html =
             match cg with
@@ -36,6 +37,7 @@ module Charge =
         /// any period during which no charges are payable
         ChargeHolidays: DateRange array
     } with
+
         /// HTML formatting to display the charge conditions in a readable format
         member cc.Html =
             $"<td>{formatCent cc.Value}</td>"
@@ -47,8 +49,8 @@ module Charge =
         /// generates a range of offset days during which charges are not incurred
         let getHolidays startDate chargeHolidays =
             chargeHolidays
-            |> Array.collect(fun (dr: DateRange) ->
-                [| (dr.Start - startDate).Days .. (dr.End - startDate).Days |]
+            |> Array.collect (fun dr ->
+                [| (dr.DateRangeStart - startDate).Days .. (dr.DateRangeEnd - startDate).Days |]
                 |> Array.map ((*) 1<OffsetDay>)
             )
 
@@ -61,6 +63,7 @@ module Charge =
         | InsufficientFunds
         /// any other type of penalty charge
         | CustomCharge of string
+
         /// HTML formatting to display the charge type in a readable format
         member ct.Html =
             match ct with
@@ -87,6 +90,7 @@ module Charge =
                     <td>{ct}</td>
                     {cc}
                 </tr>"""
+
                 $"""
             <table>
                 <tr>

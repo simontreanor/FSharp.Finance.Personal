@@ -17,17 +17,18 @@ module Fee =
         | FacilitationFee of FacilitationFee: Amount
         /// a fee charged by a Credit Access Business (CAB) or Credit Services Organisation (CSO) assisting access to third-party financial products
         | CabOrCsoFee of CabOrCsoFee: Amount
-        /// a fee charged by a bank or building society for arranging a mortgage 
+        /// a fee charged by a bank or building society for arranging a mortgage
         | MortageFee of MortageFee: Amount
         /// any other type of product fee
         | CustomFee of FeeType: string * FeeAmount: Amount
+
         /// HTML formatting to display the fee type in a readable format
         member ft.Html =
             match ft with
             | FacilitationFee amount -> $"<i>facilitation fee</i> {amount}"
             | CabOrCsoFee amount -> $"<i>CAB/CSO fee</i> {amount}"
             | MortageFee amount -> $"<i>mortgage fee</i> {amount}"
-            | CustomFee (name, amount) -> $"<i>{name}</i> {amount}"
+            | CustomFee(name, amount) -> $"<i>{name}</i> {amount}"
 
     /// how to amortise the fee
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -36,6 +37,7 @@ module Fee =
         | AmortiseBeforePrincipal
         /// amortise any fee and principal proportionately
         | AmortiseProportionately
+
         /// HTML formatting to display the fee amortisation in a readable format
         member fa.Html =
             match fa with
@@ -53,6 +55,7 @@ module Fee =
         | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
         /// the current fee balance is rebated
         | Balance
+
         /// HTML formatting to display the settlement rebate in a readable format
         member sr.Html =
             match sr with
@@ -98,14 +101,13 @@ module Fee =
                     <td>fee amortisation: <i>{bc.FeeAmortisation}</i></td>
                 </tr>
             </table>"""
-            | ValueNone ->
-                "no fee"
+            | ValueNone -> "no fee"
 
     /// advanced options specifying the type of fee and how it is calculated
     [<Struct>]
     type AdvancedConfig = {
         /// how the fee is treated when a product is repaid early
-        SettlementRebate: SettlementRebate        
+        SettlementRebate: SettlementRebate
     }
 
     /// advanced options specifying the type of fee and how it is calculated
@@ -120,8 +122,7 @@ module Fee =
                     <td>settlement rebate: <i>{ac.SettlementRebate}</i></td>
                 </tr>
             </table>"""
-            | ValueNone ->
-                "no fee"
+            | ValueNone -> "no fee"
 
     /// calculates the total fee based on the fee configuration
     let total feeConfig baseValue =
@@ -131,8 +132,7 @@ module Fee =
             | FacilitationFee amt
             | CabOrCsoFee amt
             | MortageFee amt
-            | CustomFee(_, amt) ->
-                amt
+            | CustomFee(_, amt) -> amt
             |> Amount.total baseValue
             |> Cent.fromDecimalCent fc.Rounding
         )

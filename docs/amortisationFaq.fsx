@@ -36,6 +36,7 @@ The examples may use either the actuarial-interest method or the add-on-interest
 
 (*** hide ***)
 #r "nuget:FSharp.Finance.Personal"
+
 open FSharp.Finance.Personal
 open Amortisation
 open AppliedPayment
@@ -51,15 +52,16 @@ open UnitPeriod
 <div>
 *)
 
-let parameters0 : Parameters = {
+let parameters0: Parameters = {
     Basic = {
         EvaluationDate = Date(2025, 4, 24) // the date we're evaluating the schedule
         StartDate = Date(2025, 4, 24)
         Principal = 1000_00L<Cent>
-        ScheduleConfig = AutoGenerateSchedule {
-            UnitPeriodConfig = Monthly(1, 2025, 5, 24)
-            ScheduleLength = PaymentCount 4
-        }
+        ScheduleConfig =
+            AutoGenerateSchedule {
+                UnitPeriodConfig = Monthly(1, 2025, 5, 24)
+                ScheduleLength = PaymentCount 4
+            }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
             Rounding = RoundUp
@@ -67,10 +69,10 @@ let parameters0 : Parameters = {
         FeeConfig = ValueNone
         InterestConfig = {
             Method = Interest.Method.Actuarial
-            StandardRate = Interest.Rate.Daily (Percent 0.798m)
+            StandardRate = Interest.Rate.Daily(Percent 0.798m)
             Cap = {
-                TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
-                DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+                TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+                DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
             }
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -140,14 +142,12 @@ Now, let's assume that it's day 35 and no payments have been made, so the paymen
 <div>
 *)
 
-let parameters1 =
-    { parameters0 with
+let parameters1 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
-    }
-let amortisation1 =
-    amortise
-        parameters1
-        Map.empty // no actual payments made
+}
+
+let amortisation1 = amortise parameters1 Map.empty // no actual payments made
 
 (**
 </div>
@@ -182,15 +182,12 @@ at the end of the schedule is zero, meaning it is fully amortised.
 <div>
 *)
 
-let parameters2 =
-    { parameters0 with
+let parameters2 = {
+    parameters0 with
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
-    }
+}
 
-let amortisation2 =
-    amortise
-        parameters2
-        Map.empty // no actual payments made
+let amortisation2 = amortise parameters2 Map.empty // no actual payments made
 
 (**
 </div>
@@ -213,15 +210,13 @@ Let's again assume that it's day 35 and no payments have been made, so the payme
 <div>
 *)
 
-let parameters3 =
-    { parameters0 with
+let parameters3 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
-    }
-let amortisation3 =
-    amortise
-        parameters3
-        Map.empty // no actual payments made
+}
+
+let amortisation3 = amortise parameters3 Map.empty // no actual payments made
 
 (**
 </div>
@@ -331,11 +326,12 @@ Now, let's assume that the first two payments have been made on time, and the cu
 <div>
 *)
 
-let parameters4 =
-    { parameters0 with
+let parameters4 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
-    }
+}
+
 let amortisation4 =
     amortise
         parameters4
@@ -387,12 +383,13 @@ Let's assume again that the first two payments have been made on time, and the c
 <div>
 *)
 
-let parameters5 =
-    { parameters0 with
+let parameters5 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 70
-    }
+}
+
 let amortisation5 =
     amortise
         parameters5
@@ -434,18 +431,15 @@ refund the customer the difference between the settlement figure and the amount 
 <div>
 *)
 
-let parameters6 =
-    { parameters0 with
+let parameters6 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 4, 29) // evaluate the schedule on day 5
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         Advanced.TrimEnd = true // clip unrequired payments from the end of the schedule
-    }
+}
+
 let amortisation6 =
-    amortise
-        parameters6
-        (Map [
-            5<OffsetDay>, [| ActualPayment.quickConfirmed 1050_00L<Cent> |]
-        ]) // single overpayment made on day 5
+    amortise parameters6 (Map [ 5<OffsetDay>, [| ActualPayment.quickConfirmed 1050_00L<Cent> |] ]) // single overpayment made on day 5
 
 (**
 </div>
@@ -494,21 +488,20 @@ customer already paid the first two payments on time, but missed the remaining t
 <div>
 *)
 
-let refinanceExampleParameters =
-    { parameters0 with
+let refinanceExampleParameters = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 9, 23) // evaluate the schedule on day 152
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
         Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested on day 152
-    }
+}
+
 let actualPayments =
     Map [
         30<OffsetDay>, [| ActualPayment.quickConfirmed 454_15L<Cent> |]
         61<OffsetDay>, [| ActualPayment.quickConfirmed 454_15L<Cent> |]
     ] // actual payments made on days 30 and 61
-let refinanceExampleSchedule =
-    amortise
-        refinanceExampleParameters
-        actualPayments
+
+let refinanceExampleSchedule = amortise refinanceExampleParameters actualPayments
 
 (**
 </div>
@@ -538,7 +531,7 @@ Here, the customer has agreed to pay £50 per week from 1 October 2025.
 (*** hide ***)
 open Rescheduling
 (*** ***)
-let rescheduleParameters : RescheduleParameters = {
+let rescheduleParameters: RescheduleParameters = {
     FeeSettlementRebate = Fee.SettlementRebate.Zero // no fees, so irrelevant
     PaymentSchedule =
         FixedSchedules [|
@@ -553,7 +546,9 @@ let rescheduleParameters : RescheduleParameters = {
     PromotionalInterestRates = [||] // no promotional rates
     SettlementDay = SettlementDay.NoSettlement //no settlement requested, just generate a statement
 }
-let rescheduleSchedules = reschedule refinanceExampleParameters rescheduleParameters actualPayments
+
+let rescheduleSchedules =
+    reschedule refinanceExampleParameters rescheduleParameters actualPayments
 
 (**
 </div>
@@ -590,7 +585,8 @@ let originalFinalPaymentDay = // get the final payment day from the original sch
     |> Map.filter (fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
     |> Map.maxKeyValue
     |> fst
-let rolloverParameters : RolloverParameters = {
+
+let rolloverParameters: RolloverParameters = {
     OriginalFinalPaymentDay = originalFinalPaymentDay
     PaymentSchedule =
         AutoGenerateSchedule {
@@ -601,7 +597,9 @@ let rolloverParameters : RolloverParameters = {
     PaymentConfig = refinanceExampleParameters.Basic.PaymentConfig // use the same payment config as the original schedule
     FeeHandling = Fee.FeeHandling.CarryOverAsIs // no fees, so irrelevant
 }
-let rolloverSchedules = rollOver refinanceExampleParameters rolloverParameters actualPayments
+
+let rolloverSchedules =
+    rollOver refinanceExampleParameters rolloverParameters actualPayments
 
 (**
 </div>
@@ -652,10 +650,11 @@ Let's take our actuarial-interest loan, where the customer has already made the 
 <div>
 *)
 
-let parameters7 =
-    { parameters0 with
+let parameters7 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-    }
+}
+
 let amortisation7 =
     amortise
         parameters7
@@ -689,11 +688,12 @@ You can see that the single-payment write-off has no effect on the remainder of 
 *)
 
 // first, run the amortisation with the existing actual payments to get the settlement figure
-let parameters8 =
-    { parameters0 with
+let parameters8 = {
+    parameters0 with
         Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
         Advanced.SettlementDay = SettlementDay.SettlementOn 91<OffsetDay> // settlement quotation requested on day 91
-    }
+}
+
 let amortisation8 =
     amortise
         parameters8
@@ -702,9 +702,11 @@ let amortisation8 =
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
         ]) // actual payments made on days 30 and 61, and a single-payment write-off on day 91
 // get the generated settlement figure
-let settlementFigure = amortisation8.AmortisationSchedule.FinalStats.SettlementFigure
+let settlementFigure =
+    amortisation8.AmortisationSchedule.FinalStats.SettlementFigure
 // use the settlement figure as the full write-off amount
-let fullWriteOffAmount = settlementFigure |> ValueOption.map snd |> ValueOption.defaultValue 0L<Cent>
+let fullWriteOffAmount =
+    settlementFigure |> ValueOption.map snd |> ValueOption.defaultValue 0L<Cent>
 // run the amortisation again with the full write-off payment
 let amortisation8' =
     amortise
@@ -743,19 +745,20 @@ can be used with the interest rate set to zero. This is illustrated in the examp
 <div>
 *)
 
-let parameters9 =
-    { parameters0 with
+let parameters9 = {
+    parameters0 with
         Advanced.InterestConfig.PromotionalRates = [|
             { // promotional rate to freeze interest for a month
-                DateRange = { Start = Date(2025, 6, 25); End = Date(2025, 7, 24) }
+                DateRange = {
+                    Start = Date(2025, 6, 25)
+                    End = Date(2025, 7, 24)
+                }
                 Rate = Interest.Rate.Zero // zero interest rate
             }
         |]
-    }
-let amortisation9 =
-    amortise
-        parameters9
-        Map.empty // no actual payments made
+}
+
+let amortisation9 = amortise parameters9 Map.empty // no actual payments made
 
 (**
 </div>

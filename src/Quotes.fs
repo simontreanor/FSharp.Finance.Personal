@@ -45,12 +45,19 @@ module Quotes =
         // generate a statement showing the current state of the amortisation schedule - this will only be used in the return value in case the caller requires a comparison
         let currentSchedules = amortise p actualPayments
         // generate a revised statement showing a generated settlement figure on the relevant date
-        let revisedSchedules = amortise { p with Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay; Advanced.TrimEnd = false } actualPayments
+        let revisedSchedules =
+            amortise
+                {
+                    p with
+                        Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay
+                        Advanced.TrimEnd = false
+                }
+                actualPayments
         // try to get the schedule item containing the generated value
         let si =
             revisedSchedules.AmortisationSchedule.ScheduleItems
             |> Map.values
-            |> Seq.tryFind(fun si ->
+            |> Seq.tryFind (fun si ->
                 match si.GeneratedPayment, si.PaymentStatus with
                 | ToBeGenerated, _
                 | GeneratedValue _, _
@@ -59,15 +66,20 @@ module Quotes =
             )
             |> Option.defaultWith (fun () -> failwith "Unable to find relevant schedule item")
         // get an array of payments pending anywhere in the revised amortisation schedule
-        let pendingPayments = revisedSchedules.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy (_.ActualPayments >> Array.sumBy ActualPayment.totalPending)
+        let pendingPayments =
+            revisedSchedules.AmortisationSchedule.ScheduleItems
+            |> Map.values
+            |> Seq.sumBy (_.ActualPayments >> Array.sumBy ActualPayment.totalPending)
         // produce a quote result
         let quoteResult =
             // if there are any payments pending, inform the caller that a quote cannot be generated for this reason
-            if pendingPayments <> 0L<Cent> then 
+            if pendingPayments <> 0L<Cent> then
                 AwaitPaymentConfirmation
             else
                 // get an array of confirmed or written-off payments - these are ones that have a net effect
-                let existingPayments = si.ActualPayments |> Array.sumBy ActualPayment.totalConfirmedOrWrittenOff
+                let existingPayments =
+                    si.ActualPayments |> Array.sumBy ActualPayment.totalConfirmedOrWrittenOff
+
                 match si.GeneratedPayment with
                 // where there is a generated payment, create a quote detailing the payment
                 | GeneratedValue generatedValue ->
@@ -86,9 +98,18 @@ module Quotes =
                     // if there is an existing payment on the day and the generated value is positive, apportion the existing payment first (in the order charges->interest->fee->principal), then apportion the generated payment
                     elif generatedValue >= 0L<Cent> then
                         let chargesPortion = Cent.min si.ChargesPortion existingPayments
-                        let interestPortion = Cent.min si.InterestPortion (Cent.max 0L<Cent> (existingPayments - chargesPortion))
-                        let feePortion = Cent.min si.FeePortion (Cent.max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
-                        let principalPortion = Cent.max 0L<Cent> (existingPayments - feePortion - chargesPortion - interestPortion)
+
+                        let interestPortion =
+                            Cent.min si.InterestPortion (Cent.max 0L<Cent> (existingPayments - chargesPortion))
+
+                        let feePortion =
+                            Cent.min
+                                si.FeePortion
+                                (Cent.max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
+
+                        let principalPortion =
+                            Cent.max 0L<Cent> (existingPayments - feePortion - chargesPortion - interestPortion)
+
                         PaymentQuote {
                             PaymentValue = GeneratedPayment.total si.GeneratedPayment
                             Apportionment = {
@@ -103,12 +124,14 @@ module Quotes =
                     else
                         PaymentQuote {
                             PaymentValue = GeneratedPayment.total si.GeneratedPayment
-                            Apportionment = { Apportionment.zero with PrincipalPortion = GeneratedPayment.total si.GeneratedPayment }
+                            Apportionment = {
+                                Apportionment.zero with
+                                    PrincipalPortion = GeneratedPayment.total si.GeneratedPayment
+                            }
                             FeeRebateIfSettled = si.FeeRebateIfSettled
                         }
                 // where there is no generated payment, inform the caller that a quote could not be generated
-                | _ ->
-                    UnableToGenerateQuote
+                | _ -> UnableToGenerateQuote
         // return the quote result
         {
             QuoteResult = quoteResult

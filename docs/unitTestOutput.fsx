@@ -37,23 +37,24 @@ let descriptionPattern = Regex "<h4>Description</h4>\s*<p><i>(.+?)</i></p>"
 Path.Combine(__SOURCE_DIRECTORY__, "..", "io", "out")
 |> Directory.EnumerateDirectories
 |> Seq.sort
-|> Seq.map(fun directoryPath ->
+|> Seq.map (fun directoryPath ->
     let directoryName = Path.GetFileName directoryPath
-    let filesRows = 
+
+    let filesRows =
         directoryPath
         |> Directory.EnumerateFiles
         |> Seq.sort
-        |> Seq.map(fun filePath ->
+        |> Seq.map (fun filePath ->
             let fileName = Path.GetFileNameWithoutExtension filePath
+
             let description =
                 let m = File.ReadAllText filePath |> descriptionPattern.Match
-                if m.Success then
-                    m.Groups[1].Value
-                else
-                    "(no description)"
+                if m.Success then m.Groups[1].Value else "(no description)"
+
             $"""<tr><td><a href="content/{directoryName}/{fileName}.html" target="{fileName}">{fileName}</a></td><td>{description}</td></tr>"""
         )
         |> String.concat ""
+
     $"""<details>
         <summary>{directoryName}</summary>
         <table>

@@ -34,15 +34,27 @@ module AprActuarialTestsExtra =
     let aprUsActuarialTestData =
         IO.File.ReadAllText $"{__SOURCE_DIRECTORY__}/../tests/io/in/AprUsActuarialTestData.json"
         |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
-        |> Array.choose(fun ssi ->
+        |> Array.choose (fun ssi ->
             let startDate = ssi.StartDate |> fun d -> Date(d.Year, d.Month, d.Day)
             let principal = Cent.fromDecimal ssi.Principal
             let paymentValue = Cent.fromDecimal ssi.PaymentValue
-            let paymentDates = ssi.PaymentDates |> Array.map(fun d -> Date(d.Year, d.Month, d.Day))
-            let payments = paymentDates |> Array.map(fun d -> { TransferType = Payment; TransferDate = d; Value = paymentValue })
-            let actualApr = calculate (CalculationMethod.UsActuarial 8) principal startDate payments
+
+            let paymentDates =
+                ssi.PaymentDates |> Array.map (fun d -> Date(d.Year, d.Month, d.Day))
+
+            let payments =
+                paymentDates
+                |> Array.map (fun d -> {
+                    TransferType = Payment
+                    TransferDate = d
+                    Value = paymentValue
+                })
+
+            let actualApr =
+                calculate (CalculationMethod.UsActuarial 8) principal startDate payments
+
             match actualApr with
-            | Solution.Found (apr, _, _) ->
+            | Solution.Found(apr, _, _) ->
                 Some {
                     StartDate = startDate
                     Principal = principal
@@ -56,6 +68,6 @@ module AprActuarialTestsExtra =
         |> Util.toMemberData
 
     // [<Theory>]
-    [<MemberData(nameof(aprUsActuarialTestData))>]
+    [<MemberData(nameof (aprUsActuarialTestData))>]
     let ``Actual APRs match expected APRs under the US actuarial method`` testItem =
         testItem.ActualApr |> should equal testItem.ExpectedApr

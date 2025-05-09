@@ -26,29 +26,29 @@ open DateDay
 open Scheduling
 open UnitPeriod
 
-let parameters =
-    {
-        EvaluationDate = Date(2024, 02, 07)
-        StartDate = Date(2024, 02, 07)
-        Principal = 10000_00L<Cent>
-        ScheduleConfig = AutoGenerateSchedule {
+let parameters = {
+    EvaluationDate = Date(2024, 02, 07)
+    StartDate = Date(2024, 02, 07)
+    Principal = 10000_00L<Cent>
+    ScheduleConfig =
+        AutoGenerateSchedule {
             UnitPeriodConfig = Monthly(1, 2024, 3, 7)
             ScheduleLength = PaymentCount 36
         }
-        PaymentConfig = {
-            LevelPaymentOption = LowerFinalPayment
-            Rounding = RoundUp
-        }
-        FeeConfig = ValueNone
-        InterestConfig = {
-            Method = Interest.Method.Actuarial
-            StandardRate = Interest.Rate.Annual <| Percent 6.9m
-            Cap = Interest.Cap.Zero
-            Rounding = RoundDown
-            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
-        }
+    PaymentConfig = {
+        LevelPaymentOption = LowerFinalPayment
+        Rounding = RoundUp
     }
-    
+    FeeConfig = ValueNone
+    InterestConfig = {
+        Method = Interest.Method.Actuarial
+        StandardRate = Interest.Rate.Annual <| Percent 6.9m
+        Cap = Interest.Cap.Zero
+        Rounding = RoundDown
+        AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+    }
+}
+
 let schedule = parameters |> calculateBasicSchedule
 
 schedule

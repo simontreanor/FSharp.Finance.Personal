@@ -18,19 +18,19 @@ module AppliedPayment =
         | ToBeGenerated
         /// the generated payment value
         | GeneratedValue of int64<Cent>
+
         /// HTML formatting to display the generated payment in a readable format
         member x.Html =
             match x with
             | NoGeneratedPayment
-            | ToBeGenerated ->
-                "<i>n/a</i>"
-            | GeneratedValue gv ->
-                formatCent gv
+            | ToBeGenerated -> "<i>n/a</i>"
+            | GeneratedValue gv -> formatCent gv
 
     /// a generated payment, where applicable
     module GeneratedPayment =
         /// the total value of the generated payment
-        let total = function
+        let total =
+            function
             | GeneratedValue gv -> gv
             | _ -> 0L<Cent>
 
@@ -41,11 +41,10 @@ module AppliedPayment =
         ChargeType: Charge.ChargeType
         /// the total charge
         Total: int64<Cent>
-    }
-        with
-            /// HTML formatting to display the applied charge in a readable format
-            member ac.Html =
-                $"<i>{ac.ChargeType}</i> {formatCent ac.Total}"
+    } with
+
+        /// HTML formatting to display the applied charge in a readable format
+        member ac.Html = $"<i>{ac.ChargeType}</i> {formatCent ac.Total}"
 
     /// the status of a payment made by the customer
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -82,6 +81,7 @@ module AppliedPayment =
         | NoLongerRequired
         /// a schedule item generated to show the balances on the evaluation date
         | InformationOnly
+
         /// HTML formatting to display the payment status in a readable format
         member ps.Html =
             match ps with
@@ -102,7 +102,7 @@ module AppliedPayment =
             | NoLongerRequired -> "<i>no longer required</i>"
             | InformationOnly -> "<i>information only</i>"
 
-     /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
+    /// an actual payment made on a particular day, optionally with charges applied, with the net effect and payment status calculated
     type AppliedPayment = {
         /// the amount of any scheduled payment due on the current day
         ScheduledPayment: ScheduledPayment
@@ -119,176 +119,188 @@ module AppliedPayment =
     }
 
     /// groups payments by day, applying actual payments, adding a payment status and optionally a late payment charge if underpaid
-    let applyPayments (parameters: Parameters) (actualPayments: Map<int<OffsetDay>, ActualPayment array>) (scheduledPayments: Map<int<OffsetDay>, ScheduledPayment>) =
+    let applyPayments (parameters: Parameters) actualPayments scheduledPayments =
         // guard against empty maps
         if Map.isEmpty scheduledPayments then
             Map.empty
         else
-            let evaluationDay = parameters.Basic.EvaluationDate |> OffsetDay.fromDate parameters.Basic.StartDate
+            let evaluationDay =
+                parameters.Basic.EvaluationDate |> OffsetDay.fromDate parameters.Basic.StartDate
             // check to see if any pending payments have timed out
             let actualPayments =
                 actualPayments
-                |> Map.map(fun d app ->
+                |> Map.map (fun d app ->
                     if isTimedOut parameters.Advanced.PaymentConfig.Timeout evaluationDay d then
                         app
-                        |> Array.map(fun ap ->
+                        |> Array.map (fun ap ->
                             match ap.ActualPaymentStatus with
-                            | ActualPaymentStatus.Pending payment ->
-                                { ap with ActualPaymentStatus = ActualPaymentStatus.TimedOut payment }
-                            | _ ->
-                                ap
+                            | ActualPaymentStatus.Pending payment -> {
+                                ap with
+                                    ActualPaymentStatus = ActualPaymentStatus.TimedOut payment
+                              }
+                            | _ -> ap
                         )
                     else
                         app
                 )
             // get a list of unique days on which either a scheduled payment is due or an actual payment is made
-            let days = [| scheduledPayments |> Map.keys |> Seq.toArray; actualPayments |> Map.keys |> Seq.toArray |] |> Array.concat |> Array.distinct |> Array.sort
+            let days =
+                [|
+                    scheduledPayments |> Map.keys |> Seq.toArray
+                    actualPayments |> Map.keys |> Seq.toArray
+                |]
+                |> Array.concat
+                |> Array.distinct
+                |> Array.sort
             // create a map of charge holidays
             let chargeHolidays =
                 match parameters.Advanced.ChargeConfig with
                 | Some cc ->
                     cc.ChargeTypes
-                    |> Map.map(fun ct cc ->
+                    |> Map.map (fun ct cc ->
                         Charge.ChargeConditions.getHolidays parameters.Basic.StartDate cc.ChargeHolidays
                     )
-                | None ->
-                    Map.empty
+                | None -> Map.empty
             // create a map of applied payments
             let appliedPaymentMap =
                 days
-                |> Array.mapFold(fun aggregateAppliedCharges offsetDay ->
-                    // get any scheduled payment due on the day
-                    let scheduledPayment' =
-                        scheduledPayments
-                        |> Map.tryFind offsetDay
-                        |> Option.defaultValue ScheduledPayment.zero
-                    // get any actual payments made on the day    
-                    let actualPayments' =
-                        actualPayments
-                        |> Map.tryFind offsetDay
-                        |> Option.defaultValue [||]
-                    // of the actual payments made on the day, sum any that are confirmed or written off
-                    let confirmedPaymentTotal =
-                        actualPayments'
-                        |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Confirmed ap -> ap | ActualPaymentStatus.WriteOff ap -> ap | _ -> 0L<Cent>)
-                    // of the actual payments made on the day, sum any that are still pending
-                    let pendingPaymentTotal =
-                        actualPayments'
-                        |> Array.sumBy(fun ap -> match ap.ActualPaymentStatus with ActualPaymentStatus.Pending ap -> ap | _ -> 0L<Cent>)
-                    // calculate the net effect and payment status for the day
-                    let netEffect, paymentStatus =
-                        // if a payment is pending, this overrides any other net effect or status for the day
-                        if pendingPaymentTotal > 0L<Cent> then
-                            pendingPaymentTotal + confirmedPaymentTotal, PaymentPending
-                        // otherwise, calculate as normal
-                        else
-
-                            match ScheduledPayment.total scheduledPayment', confirmedPaymentTotal with
-                            // no payments due or made (possibly the day is included for information only, e.g. to force calculation of balances)
-                            | 0L<Cent>, 0L<Cent> ->
-                                0L<Cent>, NoneScheduled
-                            // no payment due, but a refund issued
-                            | 0L<Cent>, cpt when cpt < 0L<Cent> ->
-                                cpt, Refunded
-                            // no payment due, but a payment made
-                            | 0L<Cent>, cpt ->
-                                cpt, ExtraPayment
-                            // a payment due on or before the day
-                            | spt, cpt when cpt < spt && offsetDay <= evaluationDay && int offsetDay + int parameters.Advanced.PaymentConfig.Timeout >= int evaluationDay ->
-                                match parameters.Advanced.SettlementDay with
-                                // settlement requested on a future day
-                                | SettlementDay.SettlementOn day when day > offsetDay ->
-                                    0L<Cent>, PaymentDue
-                                | SettlementDay.SettlementOnEvaluationDay when evaluationDay > offsetDay ->
-                                    0L<Cent>, PaymentDue
-                                // settlement requested on the day, requiring a generated payment to be calculated (calculation deferred until amortisation schedule is generated)
-                                | SettlementDay.SettlementOn day when day = offsetDay ->
-                                    0L<Cent>, Generated
-                                | SettlementDay.SettlementOnEvaluationDay when evaluationDay = offsetDay ->
-                                    0L<Cent>, Generated
-                                // no settlement on day, or statement requested
-                                | _ ->
-                                    spt, PaymentDue
-                            // a payment due on a future day
-                            | spt, _ when offsetDay > evaluationDay ->
-                                spt, NotYetDue
-                            // a payment due but no payment made
-                            | spt, 0L<Cent> when spt > 0L<Cent> ->
-                                0L<Cent>, MissedPayment
-                            // a payment due but the payment made is less than what's due
-                            | spt, cpt when cpt < spt ->
-                                cpt, Underpayment
-                            // a payment due but the payment made is more than what's due
-                            | spt, cpt when cpt > spt ->
-                                cpt, Overpayment
-                            // any other payment made
-                            | _, cpt ->
-                                cpt, PaymentMade
-                    // calculate any charge types incurred
-                    let chargeTypes =
-                        actualPayments'
-                        |> Array.choose(fun ap ->
-                            // failed payments that incurred a charge
-                            match ap.ActualPaymentStatus with
-                            | ActualPaymentStatus.Failed (_, ValueSome chargeType) ->
-                                Some chargeType
-                            | _ ->
-                                None
-                        )
-                        |> Array.append(
-                            // missed payments and underpayments incur a late payment charge
-                            match paymentStatus with
-                            | MissedPayment | Underpayment ->
-                                [| Charge.ChargeType.LatePayment |]
-                            | _ ->
-                                [||]
-                        )
-                    // calculate the total of any charges incurred
-                    let appliedCharges =
-                        chargeTypes
-                        |> Array.choose(fun ct ->
-                            match parameters.Advanced.ChargeConfig with
-                            | Some cc when cc.ChargeTypes.ContainsKey ct ->
-                                let chargeConditions = cc.ChargeTypes[ct]
-                                if chargeHolidays[ct] |> Array.exists((=) offsetDay) then
-                                    None
-                                else
-                                    Some { ChargeType = ct; Total = chargeConditions.Value }
-                            | _ ->
-                                None
-                        )
-                    let groupedAppliedCharges =
-                        appliedCharges
-                        |> Array.groupBy _.ChargeType
-                        |> Array.collect(fun (ct, ac) -> 
-                            if Array.isEmpty ac then
-                                [||]
+                |> Array.mapFold
+                    (fun aggregateAppliedCharges offsetDay ->
+                        // get any scheduled payment due on the day
+                        let scheduledPayment' =
+                            scheduledPayments
+                            |> Map.tryFind offsetDay
+                            |> Option.defaultValue ScheduledPayment.zero
+                        // get any actual payments made on the day
+                        let actualPayments' =
+                            actualPayments |> Map.tryFind offsetDay |> Option.defaultValue [||]
+                        // of the actual payments made on the day, sum any that are confirmed or written off
+                        let confirmedPaymentTotal =
+                            actualPayments'
+                            |> Array.sumBy (fun ap ->
+                                match ap.ActualPaymentStatus with
+                                | ActualPaymentStatus.Confirmed ap -> ap
+                                | ActualPaymentStatus.WriteOff ap -> ap
+                                | _ -> 0L<Cent>
+                            )
+                        // of the actual payments made on the day, sum any that are still pending
+                        let pendingPaymentTotal =
+                            actualPayments'
+                            |> Array.sumBy (fun ap ->
+                                match ap.ActualPaymentStatus with
+                                | ActualPaymentStatus.Pending ap -> ap
+                                | _ -> 0L<Cent>
+                            )
+                        // calculate the net effect and payment status for the day
+                        let netEffect, paymentStatus =
+                            // if a payment is pending, this overrides any other net effect or status for the day
+                            if pendingPaymentTotal > 0L<Cent> then
+                                pendingPaymentTotal + confirmedPaymentTotal, PaymentPending
+                            // otherwise, calculate as normal
                             else
-                                let chargeConditions = parameters.Advanced.ChargeConfig.Value.ChargeTypes[ct]
-                                match chargeConditions.ChargeGrouping with
-                                | Charge.ChargeGrouping.OneChargeTypePerDay ->
-                                    Array.take 1 ac
-                                | Charge.ChargeGrouping.OneChargeTypePerSchedule ->
-                                    if aggregateAppliedCharges |> Array.exists(fun ac -> ac.ChargeType = ct) then
-                                        [||]
+
+                                match ScheduledPayment.total scheduledPayment', confirmedPaymentTotal with
+                                // no payments due or made (possibly the day is included for information only, e.g. to force calculation of balances)
+                                | 0L<Cent>, 0L<Cent> -> 0L<Cent>, NoneScheduled
+                                // no payment due, but a refund issued
+                                | 0L<Cent>, cpt when cpt < 0L<Cent> -> cpt, Refunded
+                                // no payment due, but a payment made
+                                | 0L<Cent>, cpt -> cpt, ExtraPayment
+                                // a payment due on or before the day
+                                | spt, cpt when
+                                    cpt < spt
+                                    && offsetDay <= evaluationDay
+                                    && int offsetDay + int parameters.Advanced.PaymentConfig.Timeout
+                                       >= int evaluationDay
+                                    ->
+                                    match parameters.Advanced.SettlementDay with
+                                    // settlement requested on a future day
+                                    | SettlementDay.SettlementOn day when day > offsetDay -> 0L<Cent>, PaymentDue
+                                    | SettlementDay.SettlementOnEvaluationDay when evaluationDay > offsetDay ->
+                                        0L<Cent>, PaymentDue
+                                    // settlement requested on the day, requiring a generated payment to be calculated (calculation deferred until amortisation schedule is generated)
+                                    | SettlementDay.SettlementOn day when day = offsetDay -> 0L<Cent>, Generated
+                                    | SettlementDay.SettlementOnEvaluationDay when evaluationDay = offsetDay ->
+                                        0L<Cent>, Generated
+                                    // no settlement on day, or statement requested
+                                    | _ -> spt, PaymentDue
+                                // a payment due on a future day
+                                | spt, _ when offsetDay > evaluationDay -> spt, NotYetDue
+                                // a payment due but no payment made
+                                | spt, 0L<Cent> when spt > 0L<Cent> -> 0L<Cent>, MissedPayment
+                                // a payment due but the payment made is less than what's due
+                                | spt, cpt when cpt < spt -> cpt, Underpayment
+                                // a payment due but the payment made is more than what's due
+                                | spt, cpt when cpt > spt -> cpt, Overpayment
+                                // any other payment made
+                                | _, cpt -> cpt, PaymentMade
+                        // calculate any charge types incurred
+                        let chargeTypes =
+                            actualPayments'
+                            |> Array.choose (fun ap ->
+                                // failed payments that incurred a charge
+                                match ap.ActualPaymentStatus with
+                                | ActualPaymentStatus.Failed(_, ValueSome chargeType) -> Some chargeType
+                                | _ -> None
+                            )
+                            |> Array.append (
+                                // missed payments and underpayments incur a late payment charge
+                                match paymentStatus with
+                                | MissedPayment
+                                | Underpayment -> [| Charge.ChargeType.LatePayment |]
+                                | _ -> [||]
+                            )
+                        // calculate the total of any charges incurred
+                        let appliedCharges =
+                            chargeTypes
+                            |> Array.choose (fun ct ->
+                                match parameters.Advanced.ChargeConfig with
+                                | Some cc when cc.ChargeTypes.ContainsKey ct ->
+                                    let chargeConditions = cc.ChargeTypes[ct]
+
+                                    if chargeHolidays[ct] |> Array.exists ((=) offsetDay) then
+                                        None
                                     else
-                                        Array.take 1 ac
-                                | Charge.ChargeGrouping.AllChargesApplied ->
-                                    ac
-                        )
-                    // create the applied payment
-                    let appliedPayment = {
-                        ScheduledPayment = scheduledPayment'
-                        ActualPayments = actualPayments'
-                        GeneratedPayment = NoGeneratedPayment
-                        AppliedCharges = groupedAppliedCharges
-                        NetEffect = netEffect
-                        PaymentStatus = paymentStatus
-                    }
-                    let newAggregateAppliedCharges = Array.append appliedCharges aggregateAppliedCharges
-                    // add the day to create a key-value pair for mapping
-                    (offsetDay, appliedPayment), newAggregateAppliedCharges
-                ) Array.empty<AppliedCharge>
+                                        Some {
+                                            ChargeType = ct
+                                            Total = chargeConditions.Value
+                                        }
+                                | _ -> None
+                            )
+
+                        let groupedAppliedCharges =
+                            appliedCharges
+                            |> Array.groupBy _.ChargeType
+                            |> Array.collect (fun (ct, ac) ->
+                                if Array.isEmpty ac then
+                                    [||]
+                                else
+                                    let chargeConditions = parameters.Advanced.ChargeConfig.Value.ChargeTypes[ct]
+
+                                    match chargeConditions.ChargeGrouping with
+                                    | Charge.ChargeGrouping.OneChargeTypePerDay -> Array.take 1 ac
+                                    | Charge.ChargeGrouping.OneChargeTypePerSchedule ->
+                                        if aggregateAppliedCharges |> Array.exists (fun ac -> ac.ChargeType = ct) then
+                                            [||]
+                                        else
+                                            Array.take 1 ac
+                                    | Charge.ChargeGrouping.AllChargesApplied -> ac
+                            )
+                        // create the applied payment
+                        let appliedPayment = {
+                            ScheduledPayment = scheduledPayment'
+                            ActualPayments = actualPayments'
+                            GeneratedPayment = NoGeneratedPayment
+                            AppliedCharges = groupedAppliedCharges
+                            NetEffect = netEffect
+                            PaymentStatus = paymentStatus
+                        }
+
+                        let newAggregateAppliedCharges = Array.append appliedCharges aggregateAppliedCharges
+                        // add the day to create a key-value pair for mapping
+                        (offsetDay, appliedPayment), newAggregateAppliedCharges
+                    )
+                    Array.empty<AppliedCharge>
                 |> fst
                 // convert the array to a map
                 |> Map.ofArray
@@ -297,9 +309,12 @@ module AppliedPayment =
                 // if the day is already in the applied payment map, add a placeholder generated payment to the day
                 if appliedPaymentMap |> Map.containsKey day then
                     appliedPaymentMap
-                    |> Map.map(fun d ap ->
+                    |> Map.map (fun d ap ->
                         if d = day then
-                            { ap with GeneratedPayment = generatedPayment }
+                            {
+                                ap with
+                                    GeneratedPayment = generatedPayment
+                            }
                         else
                             ap
                     )
@@ -313,22 +328,20 @@ module AppliedPayment =
                         NetEffect = 0L<Cent>
                         PaymentStatus = paymentStatus
                     }
-                    appliedPaymentMap
-                    |> Map.add day newAppliedPayment
+
+                    appliedPaymentMap |> Map.add day newAppliedPayment
             // add or modify the applied payments depending on whether the intended purpose is a settlement or just a statement
             match parameters.Advanced.SettlementDay with
-                // settlement on a specific day
-                | SettlementDay.SettlementOn day ->
-                    appliedPayments day ToBeGenerated Generated
-                // settlement on the evaluation day
-                | SettlementDay.SettlementOnEvaluationDay ->
-                    appliedPayments evaluationDay ToBeGenerated Generated
-                // statement only
-                | SettlementDay.NoSettlement ->
-                    let maxPaymentDay = appliedPaymentMap |> Map.maxKeyValue |> fst
-                    // when evaluating after the end of the schedule, just return the schedule with no applied payments added
-                    if evaluationDay >= maxPaymentDay then
-                        appliedPaymentMap
-                    // otherwise, add an information-only entry if the payment day is not present
-                    else
-                        appliedPayments evaluationDay NoGeneratedPayment InformationOnly
+            // settlement on a specific day
+            | SettlementDay.SettlementOn day -> appliedPayments day ToBeGenerated Generated
+            // settlement on the evaluation day
+            | SettlementDay.SettlementOnEvaluationDay -> appliedPayments evaluationDay ToBeGenerated Generated
+            // statement only
+            | SettlementDay.NoSettlement ->
+                let maxPaymentDay = appliedPaymentMap |> Map.maxKeyValue |> fst
+                // when evaluating after the end of the schedule, just return the schedule with no applied payments added
+                if evaluationDay >= maxPaymentDay then
+                    appliedPaymentMap
+                // otherwise, add an information-only entry if the payment day is not present
+                else
+                    appliedPayments evaluationDay NoGeneratedPayment InformationOnly

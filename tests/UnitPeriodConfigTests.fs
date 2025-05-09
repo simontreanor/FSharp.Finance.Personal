@@ -22,14 +22,16 @@ module UnitPeriodConfigTests =
         let ``Default semi-monthly function produces valid unit-period configs`` () =
             let actual =
                 [| 0 .. 365 * 5 |]
-                |> Array.choose(fun d ->
+                |> Array.choose (fun d ->
                     let config = d |> Date(2024, 2, 13).AddDays |> Config.defaultSemiMonthly
+
                     try
                         Config.constrain config |> ignore
                         None
-                    with
-                        | ex -> Some ex.Message
+                    with ex ->
+                        Some ex.Message
                 )
+
             let expected = [||]
             actual |> should equal expected
 
@@ -37,14 +39,16 @@ module UnitPeriodConfigTests =
         let ``Default monthly function produces valid unit-period configs`` () =
             let actual =
                 [| 0 .. 365 * 5 |]
-                |> Array.choose(fun d ->
+                |> Array.choose (fun d ->
                     let config = d |> Date(2024, 2, 13).AddDays |> Config.defaultMonthly 1
+
                     try
                         Config.constrain config |> ignore
                         None
-                    with
-                        | ex -> Some ex.Message
+                    with ex ->
+                        Some ex.Message
                 )
+
             let expected = [||]
             actual |> should equal expected
 
@@ -54,51 +58,101 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest000 () =
             let title = "UnitPeriodConfigTest000"
             let description = "Irregular payment schedule does not break detect function"
+
             let p = {
-                    EvaluationDate = Date(2024, 3, 5)
-                    StartDate = Date(2022, 5, 5)
-                    Principal = 100000L<Cent>
-                    ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2022, 5, 13)); ScheduleLength = PaymentCount 12 }
-                    PaymentConfig = {
-                        LevelPaymentOption = LowerFinalPayment
-                        ScheduledPaymentOption = AsScheduled
-                        Rounding = RoundUp
-                        Minimum = DeferOrWriteOff 50L<Cent>
-                        Timeout = 3<DurationDay>
+                EvaluationDate = Date(2024, 3, 5)
+                StartDate = Date(2022, 5, 5)
+                Principal = 100000L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Weekly(2, Date(2022, 5, 13))
+                        ScheduleLength = PaymentCount 12
                     }
-                    FeeConfig = Some {
-                        FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    ScheduledPaymentOption = AsScheduled
+                    Rounding = RoundUp
+                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig =
+                    Some {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 154.47m, Restriction.NoLimit))
                         Rounding = RoundDown
                         FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                         SettlementRebate = Fee.SettlementRebate.ProRata
                     }
-                    ChargeConfig = None
-                    InterestConfig = {
-                        Method = Interest.Method.Actuarial
-                        StandardRate = Interest.Rate.Annual <| Percent 9.95m
-                        Cap = Interest.Cap.Zero
-                        InitialGracePeriod = 3<DurationDay>
-                        PromotionalRates = [||]
-                        RateOnNegativeBalance = Interest.Rate.Zero
-                        AprMethod = Apr.CalculationMethod.UsActuarial 5
-                        Rounding = RoundDown
-                    }
+                ChargeConfig = None
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Annual <| Percent 9.95m
+                    Cap = Interest.Cap.Zero
+                    InitialGracePeriod = 3<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Zero
+                    AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    Rounding = RoundDown
                 }
-            
+            }
+
             let actualPayments =
                 Map [
                     8<OffsetDay>, [| ActualPayment.quickConfirmed 21700L<Cent> |]
-                    22<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
+                    22<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
                     25<OffsetDay>, [| ActualPayment.quickConfirmed 21700L<Cent> |]
-                    39<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
-                    45<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickConfirmed 21700L<Cent> |]
-                    50<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
-                    53<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
+                    39<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
+                    45<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickConfirmed 21700L<Cent>
+                    |]
+                    50<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
+                    53<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
                     56<OffsetDay>, [| ActualPayment.quickConfirmed 21700L<Cent> |]
-                    67<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
-                    73<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
-                    78<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
-                    79<OffsetDay>, [| ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone; ActualPayment.quickFailed 21700L<Cent> ValueNone |]
+                    67<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
+                    73<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
+                    78<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
+                    79<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                        ActualPayment.quickFailed 21700L<Cent> ValueNone
+                    |]
                     274<OffsetDay>, [| ActualPayment.quickFailed 26036L<Cent> ValueNone |]
                     302<OffsetDay>, [| ActualPayment.quickFailed 26036L<Cent> ValueNone |]
                     330<OffsetDay>, [| ActualPayment.quickConfirmed 21700L<Cent> |]
@@ -116,11 +170,16 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest001 () =
             let title = "UnitPeriodConfigTest001"
             let description = "Irregular payment schedule does not break APR calculation"
+
             let p = {
                 EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 4, 13)
                 Principal = 70000L<Cent>
-                ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig = Weekly(2, Date(2023, 4, 20)); ScheduleLength = PaymentCount 12 }
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Weekly(2, Date(2023, 4, 20))
+                        ScheduleLength = PaymentCount 12
+                    }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
@@ -128,12 +187,13 @@ module UnitPeriodConfigTests =
                     Minimum = DeferOrWriteOff 50L<Cent>
                     Timeout = 3<DurationDay>
                 }
-                FeeConfig = Some {
-                    FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
-                    Rounding = RoundDown
-                    FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                    SettlementRebate = Fee.SettlementRebate.ProRata
-                }
+                FeeConfig =
+                    Some {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 154.47m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
@@ -152,15 +212,32 @@ module UnitPeriodConfigTests =
                     6<OffsetDay>, [| ActualPayment.quickConfirmed 17275L<Cent> |]
                     21<OffsetDay>, [| ActualPayment.quickConfirmed 17275L<Cent> |]
                     35<OffsetDay>, [| ActualPayment.quickConfirmed 17275L<Cent> |]
-                    49<OffsetDay>, [| ActualPayment.quickFailed 17275L<Cent> ValueNone; ActualPayment.quickFailed 17275L<Cent> ValueNone |]
+                    49<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17275L<Cent> ValueNone
+                        ActualPayment.quickFailed 17275L<Cent> ValueNone
+                    |]
                     50<OffsetDay>, [| ActualPayment.quickConfirmed 17275L<Cent> |]
                     64<OffsetDay>, [| ActualPayment.quickConfirmed 17275L<Cent> |]
                     80<OffsetDay>, [| ActualPayment.quickConfirmed 17275L<Cent> |]
                     94<OffsetDay>, [| ActualPayment.quickConfirmed 17488L<Cent> |]
-                    108<OffsetDay>, [| ActualPayment.quickFailed 17488L<Cent> ValueNone; ActualPayment.quickFailed 17488L<Cent> ValueNone |]
+                    108<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17488L<Cent> ValueNone
+                        ActualPayment.quickFailed 17488L<Cent> ValueNone
+                    |]
                     109<OffsetDay>, [| ActualPayment.quickFailed 17488L<Cent> ValueNone |]
-                    111<OffsetDay>, [| ActualPayment.quickFailed 17701L<Cent> ValueNone; ActualPayment.quickFailed 17701L<Cent> ValueNone |]
-                    112<OffsetDay>, [| ActualPayment.quickFailed 17772L<Cent> ValueNone; ActualPayment.quickFailed 17772L<Cent> ValueNone; ActualPayment.quickConfirmed 17772L<Cent> |]
+                    111<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17701L<Cent> ValueNone
+                        ActualPayment.quickFailed 17701L<Cent> ValueNone
+                    |]
+                    112<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17772L<Cent> ValueNone
+                        ActualPayment.quickFailed 17772L<Cent> ValueNone
+                        ActualPayment.quickConfirmed 17772L<Cent>
+                    |]
                     122<OffsetDay>, [| ActualPayment.quickConfirmed 17488L<Cent> |]
                     128<OffsetDay>, [| ActualPayment.quickConfirmed 23521L<Cent> |]
                 ]
@@ -178,14 +255,16 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest002 () =
             let title = "UnitPeriodConfigTest002"
             let description = "Irregular payment schedule does not break APR calculation"
+
             let p = {
                 EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2023, 1, 20)
                 Principal = 65000L<Cent>
-                ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = Weekly(2, Date(2023, 2, 2))
-                    ScheduleLength = PaymentCount 11
-                }
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Weekly(2, Date(2023, 2, 2))
+                        ScheduleLength = PaymentCount 11
+                    }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
@@ -193,12 +272,13 @@ module UnitPeriodConfigTests =
                     Minimum = DeferOrWriteOff 50L<Cent>
                     Timeout = 3<DurationDay>
                 }
-                FeeConfig = Some {
-                    FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
-                    Rounding = RoundDown
-                    FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                    SettlementRebate = Fee.SettlementRebate.ProRata
-                }
+                FeeConfig =
+                    Some {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 154.47m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
@@ -214,32 +294,80 @@ module UnitPeriodConfigTests =
 
             let actualPayments =
                 Map [
-                    13<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    13<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     14<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    16<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    16<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     17<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
                     19<OffsetDay>, [| ActualPayment.quickConfirmed 17494L<Cent> |]
-                    27<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    27<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     28<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    30<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    30<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     31<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    33<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    33<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     34<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
                     36<OffsetDay>, [| ActualPayment.quickConfirmed 17494L<Cent> |]
-                    41<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    41<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     42<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    44<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    44<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     45<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    47<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    47<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     48<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    55<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickConfirmed 17494L<Cent> |]
+                    55<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickConfirmed 17494L<Cent>
+                    |]
                     56<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
-                    58<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    58<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     59<OffsetDay>, [| ActualPayment.quickConfirmed 17494L<Cent> |]
-                    69<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    69<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     70<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
                     72<OffsetDay>, [| ActualPayment.quickConfirmed 17494L<Cent> |]
-                    83<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone; ActualPayment.quickFailed 17494L<Cent> ValueNone |]
+                    83<OffsetDay>,
+                    [|
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                        ActualPayment.quickFailed 17494L<Cent> ValueNone
+                    |]
                     84<OffsetDay>, [| ActualPayment.quickFailed 17494L<Cent> ValueNone |]
                     86<OffsetDay>, [| ActualPayment.quickConfirmed 17620L<Cent> |]
                     97<OffsetDay>, [| ActualPayment.quickConfirmed 17494L<Cent> |]
@@ -265,14 +393,16 @@ module UnitPeriodConfigTests =
         let UnitPeriodConfigTest003 () =
             let title = "UnitPeriodConfigTest003"
             let description = "Irregular payment schedule does not break APR calculation"
+
             let p = {
                 EvaluationDate = Date(2024, 3, 5)
                 StartDate = Date(2022, 10, 13)
                 Principal = 50000L<Cent>
-                ScheduleConfig = AutoGenerateSchedule {
-                    UnitPeriodConfig = Weekly(2, Date(2022, 10, 28))
-                    ScheduleLength = PaymentCount 11
-                }
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Weekly(2, Date(2022, 10, 28))
+                        ScheduleLength = PaymentCount 11
+                    }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
                     ScheduledPaymentOption = AsScheduled
@@ -280,12 +410,13 @@ module UnitPeriodConfigTests =
                     Minimum = DeferOrWriteOff 50L<Cent>
                     Timeout = 3<DurationDay>
                 }
-                FeeConfig = Some {
-                    FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 154.47m, Restriction.NoLimit))
-                    Rounding = RoundDown
-                    FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                    SettlementRebate = Fee.SettlementRebate.ProRata
-                }
+                FeeConfig =
+                    Some {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 154.47m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
@@ -327,6 +458,7 @@ module UnitPeriodConfigTests =
             let title = "UnitPeriodConfigTest004"
             let description = "Checking that the fee rebate behaves correctly"
             let startDate = Date(2023, 1, 16)
+
             let originalScheduledPayments =
                 Map [
                     4<OffsetDay>, ScheduledPayment.quick (ValueSome 11859L<Cent>) ValueNone
@@ -368,12 +500,13 @@ module UnitPeriodConfigTests =
                     Minimum = DeferOrWriteOff 50L<Cent>
                     Timeout = 3<DurationDay>
                 }
-                FeeConfig = Some {
-                    FeeType = Fee.FeeType.CabOrCsoFee (Amount.Percentage (Percent 189.47m, Restriction.NoLimit))
-                    Rounding = RoundDown
-                    FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
-                    SettlementRebate = Fee.SettlementRebate.ProRata
-                }
+                FeeConfig =
+                    Some {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 189.47m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
                 ChargeConfig = None
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
@@ -409,19 +542,56 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let originalFinalPaymentDay = originalScheduledPayments |> Map.maxKeyValue |> fst
-                let quoteSp =
-                    { p with
+
+                let quoteSp = {
+                    p with
                         EvaluationDate = Date(2024, 3, 6)
                         ScheduleConfig =
                             [|
                                 Map.toArray originalScheduledPayments
                                 [|
-                                    201<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                    232<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                    262<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                    293<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                    323<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 12489L<Cent>; RescheduleDay = 198<OffsetDay> })
-                                    354<OffsetDay>, ScheduledPayment.quick ValueNone (ValueSome { Value = 79109L<Cent>; RescheduleDay = 198<OffsetDay> })
+                                    201<OffsetDay>,
+                                    ScheduledPayment.quick
+                                        ValueNone
+                                        (ValueSome {
+                                            Value = 12489L<Cent>
+                                            RescheduleDay = 198<OffsetDay>
+                                        })
+                                    232<OffsetDay>,
+                                    ScheduledPayment.quick
+                                        ValueNone
+                                        (ValueSome {
+                                            Value = 12489L<Cent>
+                                            RescheduleDay = 198<OffsetDay>
+                                        })
+                                    262<OffsetDay>,
+                                    ScheduledPayment.quick
+                                        ValueNone
+                                        (ValueSome {
+                                            Value = 12489L<Cent>
+                                            RescheduleDay = 198<OffsetDay>
+                                        })
+                                    293<OffsetDay>,
+                                    ScheduledPayment.quick
+                                        ValueNone
+                                        (ValueSome {
+                                            Value = 12489L<Cent>
+                                            RescheduleDay = 198<OffsetDay>
+                                        })
+                                    323<OffsetDay>,
+                                    ScheduledPayment.quick
+                                        ValueNone
+                                        (ValueSome {
+                                            Value = 12489L<Cent>
+                                            RescheduleDay = 198<OffsetDay>
+                                        })
+                                    354<OffsetDay>,
+                                    ScheduledPayment.quick
+                                        ValueNone
+                                        (ValueSome {
+                                            Value = 79109L<Cent>
+                                            RescheduleDay = 198<OffsetDay>
+                                        })
                                 |]
                             |]
                             |> Array.concat
@@ -429,18 +599,17 @@ module UnitPeriodConfigTests =
                             |> CustomSchedule
                         FeeConfig =
                             p.FeeConfig
-                            |> Option.map(fun fc ->
-                                { fc with
+                            |> Option.map (fun fc -> {
+                                fc with
                                     SettlementRebate =
                                         match fc.SettlementRebate with
                                         | Fee.SettlementRebate.ProRata
                                         | Fee.SettlementRebate.ProRataRescheduled _ ->
                                             Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
-                                        | _ as fsr ->
-                                            fsr
-                                }
-                            )
-                    }
+                                        | _ as fsr -> fsr
+                            })
+                }
+
                 let quote = getQuote quoteSp actualPayments
                 quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr

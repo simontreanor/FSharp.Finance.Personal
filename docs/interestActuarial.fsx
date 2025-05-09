@@ -29,20 +29,22 @@ The loan has a daily interest rate of 0.798% and a cap of 0.8% per day as well a
 
 (*** hide ***)
 #r "nuget:FSharp.Finance.Personal"
+
 open FSharp.Finance.Personal
 open Calculation
 open DateDay
 open Scheduling
 open UnitPeriod
 (*** ***)
-let bp : BasicParameters = {
+let bp: BasicParameters = {
     EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
     Principal = 1000_00L<Cent>
-    ScheduleConfig = AutoGenerateSchedule {
-        UnitPeriodConfig = Monthly(1, 2025, 5, 22)
-        ScheduleLength = PaymentCount 4
-    }
+    ScheduleConfig =
+        AutoGenerateSchedule {
+            UnitPeriodConfig = Monthly(1, 2025, 5, 22)
+            ScheduleLength = PaymentCount 4
+        }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
         Rounding = RoundUp
@@ -50,10 +52,10 @@ let bp : BasicParameters = {
     FeeConfig = ValueNone
     InterestConfig = {
         Method = Interest.Method.Actuarial
-        StandardRate = Interest.Rate.Daily (Percent 0.798m)
+        StandardRate = Interest.Rate.Daily(Percent 0.798m)
         Cap = {
-            TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
-            DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+            TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+            DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
         }
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom 3
@@ -80,8 +82,10 @@ To illustrate this, we can compare the actuarial-interest schedule with an add-o
 *)
 
 let addOnInterestSchedule =
-    calculateBasicSchedule
-        { bp with InterestConfig.Method = Interest.Method.AddOn }
+    calculateBasicSchedule {
+        bp with
+            InterestConfig.Method = Interest.Method.AddOn
+    }
 (*** hide ***)
 addOnInterestSchedule |> BasicSchedule.toHtmlTable
 
@@ -132,35 +136,29 @@ To make the iteration more efficient, we use an initial guess for the payment va
 of payments.
 *)
 
-let estimatedInterestTotal =
+let roughInterest =
     let dailyInterestRate =
-        bp.InterestConfig.StandardRate
-        |> Interest.Rate.daily
-        |> Percent.toDecimal
-    Cent.toDecimalCent bp.Principal
-        * dailyInterestRate
-        * decimal finalScheduledPaymentDay
-        * Fraction.toDecimal (Fraction.Simple(2, 3))
+        bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 
-let initialPaymentGuess =
-    calculateLevelPayment
-        paymentCount
-        bp.PaymentConfig.Rounding
-        bp.Principal
-        0L<Cent>
-        estimatedInterestTotal
+    Cent.toDecimalCent bp.Principal
+    * dailyInterestRate
+    * decimal finalScheduledPaymentDay
+    * Fraction.toDecimal (Fraction.Simple(2, 3))
+
+let roughPayment =
+    calculateLevelPayment bp.Principal 0L<Cent> roughInterest paymentCount bp.PaymentConfig.Rounding
     |> Cent.toDecimalCent
     |> decimal
 
 (*** hide ***)
-$"Estimated interest total = {estimatedInterestTotal / 100m :``N2``}"
+$"Estimated interest total = {roughInterest / 100m:``N2``}"
 
 (*** include-it-raw ***)
 
 (**<br />*)
 
 (*** hide ***)
-$"Initial payment guess = {initialPaymentGuess / 100m:``N2``}"
+$"Initial payment guess = {roughPayment / 100m:``N2``}"
 
 (*** include-it-raw ***)
 
@@ -179,43 +177,52 @@ let generatePaymentValue (bp: BasicParameters) paymentDays firstItem roughPaymen
         roughPayment
         |> Cent.round bp.PaymentConfig.Rounding
         |> fun rp -> ScheduledPayment.quick (ValueSome rp) ValueNone
+
     let schedule =
         paymentDays
-        |> Array.fold(fun basicItem pd ->
-            generateItem bp bp.InterestConfig.Method scheduledPayment basicItem pd
-        ) firstItem
+        |> Array.fold
+            (fun basicItem pd -> generateItem bp bp.InterestConfig.Method scheduledPayment basicItem pd)
+            firstItem
+
     let principalBalance = decimal schedule.PrincipalBalance
     principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
-let initialBasicItem = { BasicItem.zero with PrincipalBalance = bp.Principal }
+let initialBasicItem = {
+    BasicItem.zero with
+        PrincipalBalance = bp.Principal
+}
 
 let basicItems =
     let solution =
         Array.solveBisection
             (generatePaymentValue bp paymentDays initialBasicItem)
             100u
-            initialPaymentGuess
+            roughPayment
             (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption)
             (ToleranceSteps.forPaymentValue paymentCount)
+
     match solution with
-        | Solution.Found (paymentValue, _, _) ->
-            let paymentMap' =
-                paymentMap
-                |> Map.map(fun _ sp ->
-                    { sp with
-                        Original =
-                            sp.Original
-                            |> ValueOption.map(fun _ -> paymentValue |> Cent.fromDecimal)
-                    })
-            paymentDays
-            |> Array.scan(fun basicItem pd ->
-                generateItem bp bp.InterestConfig.Method paymentMap'[pd] basicItem pd
-            ) initialBasicItem
-        | _ ->
-            [||]
+    | Solution.Found(paymentValue, _, _) ->
+        let paymentMap' =
+            paymentMap
+            |> Map.map (fun _ sp -> {
+                sp with
+                    Original = sp.Original |> ValueOption.map (fun _ -> paymentValue |> Cent.fromDecimal)
+            })
+
+        paymentDays
+        |> Array.scan
+            (fun basicItem pd -> generateItem bp bp.InterestConfig.Method paymentMap'[pd] basicItem pd)
+            initialBasicItem
+    | _ -> [||]
 
 (*** hide ***)
-{ EvaluationDay = 0<OffsetDay>; Items = basicItems; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
+{
+    EvaluationDay = 0<OffsetDay>
+    Items = basicItems
+    Stats = (*☣*) Unchecked.defaultof<InitialStats>
+}
+|> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 
@@ -227,12 +234,15 @@ The final payment is adjusted (`cref:M:FSharp.Finance.Personal.Scheduling.adjust
 
 let items =
     basicItems
-    |> adjustFinalPayment
-        finalScheduledPaymentDay
-        bp.ScheduleConfig.IsAutoGenerateSchedule
+    |> adjustFinalPayment finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
 
 (*** hide ***)
-{ EvaluationDay = 0<OffsetDay>; Items = items; Stats = (*☣*) Unchecked.defaultof<InitialStats> } |> BasicSchedule.toHtmlTable
+{
+    EvaluationDay = 0<OffsetDay>
+    Items = items
+    Stats = (*☣*) Unchecked.defaultof<InitialStats>
+}
+|> BasicSchedule.toHtmlTable
 
 (*** include-it-raw ***)
 

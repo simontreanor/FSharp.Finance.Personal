@@ -24,22 +24,28 @@ module Calculation =
     }
 
     /// computes the quotient and remainder of two decimal values
-    let divRem (left: decimal) (right: decimal) = 
+    let divRem left right =
         left % right
-        |> fun r -> { Quotient = int(left - r); Remainder = r }
+        |> fun r -> {
+            Quotient = int (left - r)
+            Remainder = r
+        }
 
     /// rounds to the nearest number, and when a number is halfway between two others, it's rounded toward the nearest number that's towards 0L<Cent>
     let roundMidpointTowardsZero m =
         divRem m 1m
-        |> fun dr -> if dr.Remainder <= 0.5m then dr.Quotient else dr.Quotient + 1
+        |> fun dr ->
+            if dr.Remainder <= 0.5m then
+                dr.Quotient
+            else
+                dr.Quotient + 1
 
     /// raises a decimal to an int power
     let internal powi (power: int) (base': decimal) =
         decimal (Math.Pow(double base', double power))
 
     /// raises a decimal to a decimal power
-    let internal powm (power: decimal) (base': decimal) =
-        Math.Pow(double base', double power)
+    let internal powm (power: decimal) (base': decimal) = Math.Pow(double base', double power)
 
     /// the type of rounding, specifying midpoint-rounding where necessary
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -52,6 +58,7 @@ module Calculation =
         | RoundDown
         /// round up or down to the specified precision based on the given midpoint rounding rules
         | RoundWith of MidpointRounding
+
         /// HTML formatting to display the rounding in a readable format
         member r.Html =
             match r with
@@ -65,53 +72,40 @@ module Calculation =
         /// derive a rounded value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
             match rounding with
-            | NoRounding ->
-                m
-            | RoundDown ->
-                floor m
-            | RoundUp ->
-                ceil m
-            | RoundWith mpr ->
-                Math.Round(m, 0, mpr)
+            | NoRounding -> m
+            | RoundDown -> floor m
+            | RoundUp -> ceil m
+            | RoundWith mpr -> Math.Round(m, 0, mpr)
 
         /// round a value to n decimal places
-        let roundTo rounding (places: int) (m: decimal) =
+        let roundTo rounding places (m: decimal) =
             match rounding with
-            | NoRounding ->
-                m
+            | NoRounding -> m
             | RoundDown ->
                 10m
                 |> powi places
-                |> fun f ->
-                    if f = 0m then 0m else m * f
-                    |> floor
-                    |> fun m -> m / f
+                |> fun f -> (if f = 0m then 0m else m * f) |> floor |> (fun m -> m / f)
             | RoundUp ->
                 10m
                 |> powi places
-                |> fun f ->
-                    if f = 0m then 0m else m * f
-                    |> ceil
-                    |> fun m -> m / f
-            | RoundWith mpr ->
-                Math.Round(m, places, mpr)
+                |> fun f -> (if f = 0m then 0m else m * f) |> ceil |> (fun m -> m / f)
+            | RoundWith mpr -> Math.Round(m, places, mpr)
 
     /// a holiday, i.e. a period when no interest and/or charges are accrued
-    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type DateRange = {
         /// the first date of the holiday period
-        Start: Date
+        DateRangeStart: Date
         /// the last date of the holiday period
-        End: Date
-    }
-    with
+        DateRangeEnd: Date
+    } with
+
         /// HTML formatting to display the date range in a readable format
-        member dr.Html =
-            $"%A{dr.Start} to %A{dr.End}"
+        member dr.Html = $"%A{dr.DateRangeStart} to %A{dr.DateRangeEnd}"
 
     /// determines whether a pending payment has timed out
-    let isTimedOut paymentTimeout (evaluationDay: int<OffsetDay>) (paymentDay: int<OffsetDay>) =
-        (int evaluationDay - int paymentDay) * 1<DurationDay> > paymentTimeout
+    let isTimedOut paymentTimeout evaluationDay paymentDay =
+        (OffsetDay.toInt evaluationDay - OffsetDay.toInt paymentDay) * 1<DurationDay> > paymentTimeout
 
     /// a fraction
     [<RequireQualifiedAccess; Struct>]
@@ -123,11 +117,14 @@ module Calculation =
 
     /// a fraction expressed as a numerator and denominator
     module Fraction =
-        let toDecimal = function
-            | Fraction.Zero ->
-                0m
-            | Fraction.Simple (numerator, denominator) ->
-                if denominator = 0 then 0m else decimal numerator / decimal denominator
+        let toDecimal =
+            function
+            | Fraction.Zero -> 0m
+            | Fraction.Simple(numerator, denominator) ->
+                if denominator = 0 then
+                    0m
+                else
+                    decimal numerator / decimal denominator
 
     /// the base unit of a currency (cent, penny, øre etc.)
     [<Measure>]
@@ -137,40 +134,34 @@ module Calculation =
     [<RequireQualifiedAccess>]
     module Cent =
         /// max of two cent values
-        let max (c1: int64<Cent>) (c2: int64<Cent>) =
-            max (int64 c1) (int64 c2) * 1L<Cent>
+        let max (c1: int64<Cent>) (c2: int64<Cent>) = max (int64 c1) (int64 c2) * 1L<Cent>
         /// min of two cent values
-        let min (c1: int64<Cent>) (c2: int64<Cent>) =
-            min (int64 c1) (int64 c2) * 1L<Cent>
+        let min (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
+
         /// derive a rounded cent value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
-            m
-            |> Rounding.round rounding
-            |> int64
-            |> ( * ) 1L<Cent>
+            m |> Rounding.round rounding |> int64 |> (*) 1L<Cent>
+
         /// round a decimal cent value to the specified number of places
         let roundTo rounding decimalPlaces (m: decimal<Cent>) =
-            m
-            |> decimal
-            |> Rounding.roundTo rounding decimalPlaces
-            |> ( * ) 1m<Cent>
+            m |> decimal |> Rounding.roundTo rounding decimalPlaces |> (*) 1m<Cent>
+
         /// lower to the base currency unit, e.g. $12.34 -> 1234¢
         let fromDecimal (m: decimal) =
             round (RoundWith MidpointRounding.AwayFromZero) (m * 100m)
+
         /// raise to the standard currency unit, e.g. 1234¢ -> $12.34
-        let toDecimal (c: int64<Cent>) =
-            decimal c / 100m
+        let toDecimal (c: int64<Cent>) = decimal c / 100m
         /// convert a decimal cent value to an integer cent value, rounding as appropriate, e.g. 1234.5678¢ -> 1234¢ or 1235¢
-        let fromDecimalCent rounding (c: decimal<Cent>) =
-            c |> decimal |> round rounding
+        let fromDecimalCent rounding (c: decimal<Cent>) = c |> decimal |> round rounding
         /// convert an integer cent value to a decimal cent value, e.g. for precise interest calculation, 1234¢ -> 1234.0000¢
-        let toDecimalCent (c: int64<Cent>) =
-            decimal c * 1m<Cent>
+        let toDecimalCent (c: int64<Cent>) = decimal c * 1m<Cent>
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type Percent =
         | Percent of decimal
+
         /// HTML formatting to display the percentage in a readable format
         member p.Html =
             let (Percent value) = p
@@ -181,15 +172,15 @@ module Calculation =
     [<RequireQualifiedAccess>]
     module Percent =
         /// create a percent value from a decimal, e.g. 0.5 -> 50%
-        let fromDecimal (m: decimal) =
-            m * 100m |> Percent
+        let fromDecimal (m: decimal) = m * 100m |> Percent
+
         /// round a percent value to the specified number of decimal places
-        let round (places: int) (Percent percent) =
+        let round places (Percent percent) =
             Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) places percent
             |> Percent
+
         /// convert a percent value to a decimal, e.g. 50% -> 0.5
-        let toDecimal (Percent percent) =
-            percent / 100m
+        let toDecimal (Percent percent) = percent / 100m
 
     /// the type of restriction placed on a possible value
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
@@ -197,65 +188,58 @@ module Calculation =
         /// does not constrain values at all
         | NoLimit
         /// prevent values below a certain limit
-        | LowerLimit of LowerLimit:int64<Cent>
+        | LowerLimit of LowerLimit: int64<Cent>
         /// prevent values above a certain limit
-        | UpperLimit of UpperLimit:int64<Cent>
+        | UpperLimit of UpperLimit: int64<Cent>
         /// constrain values to within a range
-        | WithinRange of MinValue:int64<Cent> * MaxValue:int64<Cent>
+        | WithinRange of MinValue: int64<Cent> * MaxValue: int64<Cent>
+
         /// HTML formatting to display the restriction in a readable format
         member r.Html =
             match r with
             | NoLimit -> ""
             | LowerLimit lower -> $"min {Cent.toDecimal lower:N2}"
             | UpperLimit upper -> $"max {Cent.toDecimal upper:N2}"
-            | WithinRange (lower, upper) -> $"min {Cent.toDecimal lower:N2} max {Cent.toDecimal upper:N2}"
+            | WithinRange(lower, upper) -> $"min {Cent.toDecimal lower:N2} max {Cent.toDecimal upper:N2}"
 
     /// the type of restriction placed on a possible value
     module Restriction =
         /// calculate a permitted value based on a restriction
         let calculate restriction value =
             match restriction with
-            | Restriction.NoLimit ->
-                value
-            | Restriction.LowerLimit a ->
-                value |> max (decimal a)
-            | Restriction.UpperLimit a ->
-                value |> min (decimal a)
-            | Restriction.WithinRange (lower, upper) ->
-                value |> min (decimal upper) |> max (decimal lower)
+            | Restriction.NoLimit -> value
+            | Restriction.LowerLimit a -> value |> max (decimal a)
+            | Restriction.UpperLimit a -> value |> min (decimal a)
+            | Restriction.WithinRange(lower, upper) -> value |> min (decimal upper) |> max (decimal lower)
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Amount =
         /// a percentage of the principal, optionally restricted
-        | Percentage of Percentage:Percent * Restriction:Restriction
+        | Percentage of Percentage: Percent * Restriction: Restriction
         /// a fixed fee
-        | Simple of Simple:int64<Cent>
+        | Simple of Simple: int64<Cent>
         /// nothing
         | Unlimited
+
         /// HTML formatting to display the amount in a readable format
         member a.Html =
             match a with
-            | Percentage (Percent percent, restriction) ->
-                $"{percent} %% {restriction}".Trim()
-            | Simple simple ->
-                $"{Cent.toDecimal simple:N2}"
-            | Unlimited ->
-                "<i>n/a</i>"
+            | Percentage(Percent percent, restriction) -> $"{percent} %% {restriction}".Trim()
+            | Simple simple -> $"{Cent.toDecimal simple:N2}"
+            | Unlimited -> "<i>n/a</i>"
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     module Amount =
         /// calculates the total amount based on any restrictions
         let total (baseValue: int64<Cent>) amount =
             match amount with
-            | Amount.Percentage (percent, restriction) ->
+            | Amount.Percentage(percent, restriction) ->
                 decimal baseValue * Percent.toDecimal percent
                 |> Restriction.calculate restriction
-            | Amount.Simple simple ->
-                decimal simple
-            | Amount.Unlimited ->
-                decimal baseValue
-            |> ( * ) 1m<Cent>
+            | Amount.Simple simple -> decimal simple
+            | Amount.Unlimited -> decimal baseValue
+            |> (*) 1m<Cent>
 
     /// the result obtained from the array solver
     [<RequireQualifiedAccess; Struct>]
@@ -263,32 +247,43 @@ module Calculation =
         /// a solution could not be found due to an issue with the initial parameters
         | Impossible
         /// a solution could not be found within the iteration limit, but it returns the result of the last iteration and stats on how it was reached
-        | IterationLimitReached of PartialSolution:decimal * IterationLimit:int * MaxTolerance:decimal
+        | IterationLimitReached of PartialSolution: decimal * IterationLimit: int * MaxTolerance: decimal
         /// a solution was found, returning the solution, the number of iterations required and the final tolerance used
-        | Found of Found:decimal * Iteration:int * Tolerance:decimal
+        | Found of Found: decimal * Iteration: int * Tolerance: decimal
 
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
-    [<RequireQualifiedAccess; Struct>]
+    [<Struct>]
     type ToleranceSteps = {
         /// the initial tolerance value
-        Min: decimal
+        MinTolerance: decimal
         /// the step by which to change the tolerance value
-        Step: decimal
+        ToleranceStep: decimal
         /// the final tolerance value
-        Max: decimal
+        MaxTolerance: decimal
     }
-    
+
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     module ToleranceSteps =
         /// no tolerance steps
-        let zero =
-            { ToleranceSteps.Min = 0m; ToleranceSteps.Step = 0m; ToleranceSteps.Max = 0m }
+        let zero = {
+            ToleranceSteps.MinTolerance = 0m
+            ToleranceSteps.ToleranceStep = 0m
+            ToleranceSteps.MaxTolerance = 0m
+        }
+
         /// tolerance steps for solving for APR
-        let  forApr =
-            { ToleranceSteps.Min = 1e-6m; ToleranceSteps.Step = 1e-6m; ToleranceSteps.Max = 1e-3m }
+        let forApr = {
+            ToleranceSteps.MinTolerance = 1e-6m
+            ToleranceSteps.ToleranceStep = 1e-6m
+            ToleranceSteps.MaxTolerance = 1e-3m
+        }
+
         /// tolerance steps for solving for payment value
-        let  forPaymentValue paymentCount =
-            { ToleranceSteps.Min = 0m; ToleranceSteps.Step = decimal paymentCount; ToleranceSteps.Max = decimal <| paymentCount * 4 }
+        let forPaymentValue paymentCount = {
+            ToleranceSteps.MinTolerance = 0m
+            ToleranceSteps.ToleranceStep = decimal paymentCount
+            ToleranceSteps.MaxTolerance = decimal <| paymentCount * 4
+        }
 
     /// what range of values the solver should aim for
     [<Struct>]
@@ -305,8 +300,9 @@ module Calculation =
         /// iteratively solves for a given input using a generator function until the output hits zero or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
         /// note: the generator function should return a tuple of the result and a relevant value (as the result is converging on zero it is not a very relevant value)
-        let solveBisection (generator: decimal -> (decimal * decimal)) (iterationLimit: uint) initialGuess targetTolerance (toleranceSteps: ToleranceSteps) =
-            let initialLowerBound, initialUpperBound = initialGuess * 0.75m, initialGuess * 1.25m
+        let solveBisection generator (iterationLimit: uint) initialGuess targetTolerance toleranceSteps =
+            let initialLowerBound, initialUpperBound =
+                initialGuess * 0.75m, initialGuess * 1.25m
             // recursively iterate through possible solutions
             let rec loop iteration lowerBound upperBound tolerance =
                 // find the midpoint of the bounds
@@ -318,12 +314,9 @@ module Calculation =
                     // determine the target range
                     let lowerTolerance, upperTolerance =
                         match targetTolerance with
-                        | BelowZero ->
-                            -tolerance, 0m
-                        | AroundZero ->
-                            -tolerance, tolerance
-                        | AboveZero ->
-                            0m, tolerance
+                        | BelowZero -> -tolerance, 0m
+                        | AroundZero -> -tolerance, tolerance
+                        | AboveZero -> 0m, tolerance
                     // if the solution is within target range, return the value
                     if candidate >= lowerTolerance && candidate <= upperTolerance then
                         Solution.Found(relevantValue, iteration, tolerance)
@@ -334,18 +327,20 @@ module Calculation =
                     else //candidate < lowerTolerance
                         loop (iteration + 1) lowerBound midpoint tolerance
                 // if at the tolerance limit without a solution, return the latest value with a warning
-                elif tolerance = toleranceSteps.Max then
-                    Solution.IterationLimitReached (midpoint, iteration, tolerance)
+                elif tolerance = toleranceSteps.MaxTolerance then
+                    Solution.IterationLimitReached(midpoint, iteration, tolerance)
                 // otherwise, increment the tolerance limit and try again
                 else
-                    let newTolerance = min toleranceSteps.Max (tolerance + toleranceSteps.Step)
+                    let newTolerance =
+                        min toleranceSteps.MaxTolerance (tolerance + toleranceSteps.ToleranceStep)
+
                     let newLowerBound, newUpperBound = midpoint - newTolerance, midpoint + newTolerance
                     loop 0 newLowerBound newUpperBound newTolerance
             // start the first iteration
-            loop 0 initialLowerBound initialUpperBound toleranceSteps.Min
+            loop 0 initialLowerBound initialUpperBound toleranceSteps.MinTolerance
 
         /// use the Newton-Raphson method to find the solution (particularly suitable for calculating the APR)
-        let solveNewtonRaphson (f: decimal -> decimal) (iterationLimit: uint) (initialGuess: decimal) (tolerance: decimal) =
+        let solveNewtonRaphson f (iterationLimit: uint) initialGuess tolerance =
             // calculate the approximate derivative of the function `f`
             let derivative f x step =
                 // evaluate the function at two nearby points and compute the slope of the line connecting them
@@ -368,12 +363,14 @@ module Calculation =
                 // if the iteration limit is reached without a solution, return the latest value with a warning
                 else
                     Solution.IterationLimitReached(x, iteration, tolerance)
+
             loop initialGuess 0
 
         /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
         let toStringOrNa a =
             match a with
-            | null | [||] -> "<i>n/a</i>"
+            | null
+            | [||] -> "<i>n/a</i>"
             | _ -> a |> Array.map string |> String.concat "<br/>"
 
     /// functions for working with maps
@@ -384,13 +381,12 @@ module Calculation =
             // group by unique keys
             |> Array.groupBy fst
             // map to new key value pair with the collected array as the value
-            |> Array.map(fun (k, v) -> k, Array.collect snd v)
+            |> Array.map (fun (k, v) -> k, Array.collect snd v)
             // convert to a map
             |> Map.ofArray
 
     /// wrapper to extract APR value from solution
-    let getAprOr defaultValue = function
-        | Solution.Found(apr, _, _) ->
-            apr
-        | _ ->
-            defaultValue
+    let getAprOr defaultValue =
+        function
+        | Solution.Found(apr, _, _) -> apr
+        | _ -> defaultValue

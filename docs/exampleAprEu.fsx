@@ -30,8 +30,16 @@ let startDate = Date(2012, 10, 10)
 let principal = 500_00L<Cent>
 
 let transfers = [|
-    { TransferType = Payment; TransferDate = Date(2012, 11, 10); Value = 270_00L<Cent> }
-    { TransferType = Payment; TransferDate = Date(2012, 12, 10); Value = 270_00L<Cent> }
+    {
+        TransferType = Payment
+        TransferDate = Date(2012, 11, 10)
+        Value = 270_00L<Cent>
+    }
+    {
+        TransferType = Payment
+        TransferDate = Date(2012, 12, 10)
+        Value = 270_00L<Cent>
+    }
 |]
 
 let aprMethod = CalculationMethod.EuropeanUnion 3

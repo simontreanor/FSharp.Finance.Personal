@@ -32,7 +32,12 @@ module Rescheduling =
         let rescheduleDays =
             scheduledPayments
             |> Array.map snd
-            |> Array.choose(fun sp -> if sp.Rescheduled.IsSome then Some sp.Rescheduled.Value.RescheduleDay else None)
+            |> Array.choose (fun sp ->
+                if sp.Rescheduled.IsSome then
+                    Some sp.Rescheduled.Value.RescheduleDay
+                else
+                    None
+            )
             |> Array.distinct
             |> Array.sort
         // return the list of scheduled payments with the original and rescheduled payments merged
@@ -40,63 +45,86 @@ module Rescheduling =
         //group and sort by day
         |> Array.groupBy fst
         |> Array.sortBy fst
-        |> Array.mapFold(fun previousRescheduleDay (offsetDay, map) ->
-            // evaluate the scheduled payment
-            let scheduledPayments = map |> Array.map snd
-            // get any original payment due on the day
-            let original = scheduledPayments |> Array.tryFind _.Original.IsSome |> toValueOption
-            // get any rescheduled payments due on the day, ordering them so that the most recently rescheduled payments come first
-            let rescheduled = scheduledPayments |> Array.filter _.Rescheduled.IsSome |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay |> Array.toList
-            // split any rescheduled payments into latest and previous
-            let latestRescheduling, previousReschedulings =
-                match rescheduled with
-                | [r] -> ValueSome r, []
-                | r :: pr -> ValueSome r, pr
-                | _ -> ValueNone, []
-            // update the previous reschedule day, if any
-            let newRescheduleDay = rescheduleDays |> Array.tryFind(fun d -> offsetDay >= d) |> toValueOption |> ValueOption.orElse previousRescheduleDay
-            // create the modified scheduled payment
-            let newScheduledPayment =
-                match original, latestRescheduling with
-                // if there are any rescheduled payments, add the latest as well as the list of previously rescheduled payments on the day (also include the original if any on the day)
-                | _, ValueSome r ->
-                    Some (offsetDay, {
-                        Original = original |> ValueOption.bind _.Original
-                        Rescheduled = r.Rescheduled
-                        PreviousRescheduled = previousReschedulings |> List.rev |> List.map _.Rescheduled.Value |> List.toArray
-                        Adjustment = r.Adjustment
-                        Metadata = r.Metadata
-                    })
-                // if there is no rescheduled payment on the day, but just an original payment, include the original payment as-is
-                // note: if the original payment day is preceded by any rescheduling, then assume that this cancels the original payment, so enter this as a zero-valued rescheduled payment on the day
-                | ValueSome o, ValueNone ->
-                    Some (offsetDay, {
-                        Original = o.Original
-                        Rescheduled =
-                            newRescheduleDay
-                            |> ValueOption.bind(fun nrd ->
-                                if offsetDay >= nrd then
-                                    //overwrite original scheduled payments from start of rescheduled payments
-                                    ValueSome { Value = 0L<Cent>; RescheduleDay = nrd }
-                                else
-                                    ValueNone
-                            )
-                        PreviousRescheduled = [||]
-                        Adjustment = o.Adjustment
-                        Metadata = o.Metadata
-                    })
-                // if there are no original or rescheduled payments, ignore
-                | ValueNone, ValueNone ->
-                    None
-            newScheduledPayment, newRescheduleDay
-        ) ValueNone
+        |> Array.mapFold
+            (fun previousRescheduleDay (offsetDay, map) ->
+                // evaluate the scheduled payment
+                let scheduledPayments = map |> Array.map snd
+                // get any original payment due on the day
+                let original = scheduledPayments |> Array.tryFind _.Original.IsSome |> toValueOption
+                // get any rescheduled payments due on the day, ordering them so that the most recently rescheduled payments come first
+                let rescheduled =
+                    scheduledPayments
+                    |> Array.filter _.Rescheduled.IsSome
+                    |> Array.sortByDescending _.Rescheduled.Value.RescheduleDay
+                    |> Array.toList
+                // split any rescheduled payments into latest and previous
+                let latestRescheduling, previousReschedulings =
+                    match rescheduled with
+                    | [ r ] -> ValueSome r, []
+                    | r :: pr -> ValueSome r, pr
+                    | _ -> ValueNone, []
+                // update the previous reschedule day, if any
+                let newRescheduleDay =
+                    rescheduleDays
+                    |> Array.tryFind (fun d -> offsetDay >= d)
+                    |> toValueOption
+                    |> ValueOption.orElse previousRescheduleDay
+                // create the modified scheduled payment
+                let newScheduledPayment =
+                    match original, latestRescheduling with
+                    // if there are any rescheduled payments, add the latest as well as the list of previously rescheduled payments on the day (also include the original if any on the day)
+                    | _, ValueSome r ->
+                        Some(
+                            offsetDay,
+                            {
+                                Original = original |> ValueOption.bind _.Original
+                                Rescheduled = r.Rescheduled
+                                PreviousRescheduled =
+                                    previousReschedulings
+                                    |> List.rev
+                                    |> List.map _.Rescheduled.Value
+                                    |> List.toArray
+                                Adjustment = r.Adjustment
+                                Metadata = r.Metadata
+                            }
+                        )
+                    // if there is no rescheduled payment on the day, but just an original payment, include the original payment as-is
+                    // note: if the original payment day is preceded by any rescheduling, then assume that this cancels the original payment, so enter this as a zero-valued rescheduled payment on the day
+                    | ValueSome o, ValueNone ->
+                        Some(
+                            offsetDay,
+                            {
+                                Original = o.Original
+                                Rescheduled =
+                                    newRescheduleDay
+                                    |> ValueOption.bind (fun nrd ->
+                                        if offsetDay >= nrd then
+                                            //overwrite original scheduled payments from start of rescheduled payments
+                                            ValueSome {
+                                                Value = 0L<Cent>
+                                                RescheduleDay = nrd
+                                            }
+                                        else
+                                            ValueNone
+                                    )
+                                PreviousRescheduled = [||]
+                                Adjustment = o.Adjustment
+                                Metadata = o.Metadata
+                            }
+                        )
+                    // if there are no original or rescheduled payments, ignore
+                    | ValueNone, ValueNone -> None
+
+                newScheduledPayment, newRescheduleDay
+            )
+            ValueNone
         |> fst
         |> Array.choose id
         // convert the result to a map
         |> Map.ofArray
 
     /// take an existing schedule and reschedule the remaining payments e.g. to allow the customer more time to pay
-    let reschedule (p: Parameters) (rp: RescheduleParameters) actualPayments =
+    let reschedule p (rp: RescheduleParameters) actualPayments =
 
         // get the settlement quote
         let quote = getQuote p actualPayments
@@ -105,49 +133,72 @@ module Rescheduling =
         let newPaymentSchedule =
             match rp.PaymentSchedule with
             | AutoGenerateSchedule _ ->
-                calculateBasicSchedule { p.Basic with ScheduleConfig = rp.PaymentSchedule }
+                calculateBasicSchedule {
+                    p.Basic with
+                        ScheduleConfig = rp.PaymentSchedule
+                }
                 |> _.Items
                 |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
-                |> Array.map(fun si -> si.Day, si.ScheduledPayment)
+                |> Array.map (fun si -> si.Day, si.ScheduledPayment)
             | FixedSchedules fixedSchedules ->
                 fixedSchedules
-                |> Array.map(fun fs ->
+                |> Array.map (fun fs ->
                     let scheduledPayment =
                         match fs.ScheduleType with
                         | ScheduleType.Original -> ScheduledPayment.quick (ValueSome fs.PaymentValue) ValueNone
-                        | ScheduleType.Rescheduled rescheduleDay -> ScheduledPayment.quick ValueNone (ValueSome { Value = fs.PaymentValue; RescheduleDay = rescheduleDay })
-                    UnitPeriod.generatePaymentSchedule (UnitPeriod.PaymentCount fs.PaymentCount) UnitPeriod.Direction.Forward fs.UnitPeriodConfig
-                    |> Array.map(fun d -> OffsetDay.fromDate p.Basic.StartDate d, scheduledPayment)
+                        | ScheduleType.Rescheduled rescheduleDay ->
+                            ScheduledPayment.quick
+                                ValueNone
+                                (ValueSome {
+                                    Value = fs.PaymentValue
+                                    RescheduleDay = rescheduleDay
+                                })
+
+                    UnitPeriod.generatePaymentSchedule
+                        (UnitPeriod.PaymentCount fs.PaymentCount)
+                        UnitPeriod.Direction.Forward
+                        fs.UnitPeriodConfig
+                    |> Array.map (fun d -> OffsetDay.fromDate p.Basic.StartDate d, scheduledPayment)
                 )
                 |> Array.concat
-            | CustomSchedule payments ->
-                payments
-                |> Map.toArray
+            | CustomSchedule payments -> payments |> Map.toArray
 
         // append the new schedule to the old schedule up to the point of settlement
         let oldPaymentSchedule =
             quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-            |> Map.filter(fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
-            |> Map.map(fun _ si -> si.ScheduledPayment)
+            |> Map.filter (fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
+            |> Map.map (fun _ si -> si.ScheduledPayment)
             |> Map.toArray
 
         // configure the parameters for the new schedule
-        let pNew =
-            { p with
-                Basic.ScheduleConfig = [| oldPaymentSchedule; newPaymentSchedule |] |> Array.concat |> mergeScheduledPayments |> CustomSchedule
-                Advanced.FeeConfig = p.Advanced.FeeConfig |> ValueOption.map(fun fc -> { fc with SettlementRebate = rp.FeeSettlementRebate })
+        let pNew = {
+            p with
+                Basic.ScheduleConfig =
+                    [| oldPaymentSchedule; newPaymentSchedule |]
+                    |> Array.concat
+                    |> mergeScheduledPayments
+                    |> CustomSchedule
+                Advanced.FeeConfig =
+                    p.Advanced.FeeConfig
+                    |> ValueOption.map (fun fc -> {
+                        fc with
+                            SettlementRebate = rp.FeeSettlementRebate
+                    })
                 Advanced.InterestConfig.InitialGracePeriod = 0<DurationDay>
                 Advanced.InterestConfig.PromotionalRates = rp.PromotionalInterestRates
                 Advanced.InterestConfig.RateOnNegativeBalance = rp.RateOnNegativeBalance
                 Advanced.SettlementDay = rp.SettlementDay
                 Advanced.TrimEnd = true
-            }
+        }
 
         // create the new amortisation schedule
         let rescheduledSchedules = amortise pNew actualPayments
 
         // return the results
-        {| OldSchedules = quote.RevisedSchedules; NewSchedules = rescheduledSchedules |}
+        {|
+            OldSchedules = quote.RevisedSchedules
+            NewSchedules = rescheduledSchedules
+        |}
 
     /// parameters for creating a rolled-over schedule
     [<RequireQualifiedAccess>]
@@ -165,7 +216,7 @@ module Rescheduling =
     }
 
     /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
-    let rollOver (p: Parameters) (rp: RolloverParameters) actualPayments =
+    let rollOver p (rp: RolloverParameters) actualPayments =
 
         // get the settlement quote
         let quote = getQuote p actualPayments
@@ -173,16 +224,21 @@ module Rescheduling =
         // process the quote and extract the portions if applicable
         let principalPortion, feePortion, feeRebateIfSettled =
             match quote.QuoteResult with
-            | PaymentQuote ({ Apportionment = a } as pq) ->
+            | PaymentQuote({ Apportionment = a } as pq) ->
                 match rp.FeeHandling with
-                | Fee.FeeHandling.CapitaliseAsPrincipal -> a.PrincipalPortion + a.FeePortion + a.InterestPortion + a.ChargesPortion, 0L<Cent>, pq.FeeRebateIfSettled
-                | Fee.FeeHandling.CarryOverAsIs -> a.PrincipalPortion + a.InterestPortion + a.ChargesPortion, a.FeePortion, pq.FeeRebateIfSettled
-                | Fee.FeeHandling.WriteOffFeeBalance -> a.PrincipalPortion + a.InterestPortion + a.ChargesPortion, a.FeePortion, pq.FeeRebateIfSettled
+                | Fee.FeeHandling.CapitaliseAsPrincipal ->
+                    a.PrincipalPortion + a.FeePortion + a.InterestPortion + a.ChargesPortion,
+                    0L<Cent>,
+                    pq.FeeRebateIfSettled
+                | Fee.FeeHandling.CarryOverAsIs ->
+                    a.PrincipalPortion + a.InterestPortion + a.ChargesPortion, a.FeePortion, pq.FeeRebateIfSettled
+                | Fee.FeeHandling.WriteOffFeeBalance ->
+                    a.PrincipalPortion + a.InterestPortion + a.ChargesPortion, a.FeePortion, pq.FeeRebateIfSettled
             | _ -> failwith "Unable to obtain quote for rollover"
 
         // configure the parameters for the new schedule
-        let pNew =
-            { p with
+        let pNew = {
+            p with
                 Basic.StartDate = p.Basic.EvaluationDate
                 Basic.Principal = principalPortion
                 Basic.ScheduleConfig = rp.PaymentSchedule
@@ -190,20 +246,20 @@ module Rescheduling =
                 Basic.PaymentConfig = rp.PaymentConfig
                 Basic.FeeConfig =
                     p.Basic.FeeConfig
-                    |> ValueOption.bind(fun fc ->
+                    |> ValueOption.bind (fun fc ->
                         match rp.FeeHandling with
                         | Fee.FeeHandling.CarryOverAsIs ->
-                            { fc with
-                                FeeType = Fee.CustomFee ("Rollover Fee", Amount.Simple feePortion)
+                            {
+                                fc with
+                                    FeeType = Fee.CustomFee("Rollover Fee", Amount.Simple feePortion)
                             }
                             |> ValueSome
-                        | _ ->
-                            ValueNone
+                        | _ -> ValueNone
                     )
                 Advanced.FeeConfig =
                     p.Advanced.FeeConfig
-                    |> ValueOption.map(fun fc ->
-                        { fc with 
+                    |> ValueOption.map (fun fc -> {
+                        fc with
                             SettlementRebate =
                                 if feeRebateIfSettled = 0L<Cent> then
                                     Fee.SettlementRebate.Zero
@@ -212,16 +268,17 @@ module Rescheduling =
                                     | Fee.SettlementRebate.ProRata
                                     | Fee.SettlementRebate.ProRataRescheduled _ ->
                                         Fee.SettlementRebate.ProRataRescheduled rp.OriginalFinalPaymentDay
-                                    | _ as fsr ->
-                                        fsr
-                        }
-                    )
+                                    | _ as fsr -> fsr
+                    })
                 Advanced.SettlementDay = SettlementDay.NoSettlement
                 Advanced.TrimEnd = true
-            }
+        }
 
         // create the new amortisation schedule
         let rolledOverSchedules = amortise pNew Map.empty
 
         // return the results
-        {| OldSchedules = quote.RevisedSchedules; NewSchedules = rolledOverSchedules |}
+        {|
+            OldSchedules = quote.RevisedSchedules
+            NewSchedules = rolledOverSchedules
+        |}

@@ -11,17 +11,34 @@ module DateDay =
         val Year: int
         val Month: int
         val Day: int
-        new (year: int, month: int, day: int) = { Year = year; Month = month; Day = day }
-        with
-            static member internal FromDateTime (dt: DateTime) = Date(dt.Year, dt.Month, dt.Day)
-            member d.ToDateTime() = DateTime(d.Year, d.Month, d.Day)
-            member d.AddDays (i: int) = DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> Date.FromDateTime
-            member d.AddMonths i = DateTime(d.Year, d.Month, d.Day).AddMonths i |> Date.FromDateTime
-            member d.AddYears i = DateTime(d.Year, d.Month, d.Day).AddYears i |> Date.FromDateTime
-            member d.Html = d.ToDateTime().ToString "yyyy-MM-dd"
-            static member FromIsoString (ds: string) = Date(ds[0..3] |> Convert.ToInt32, ds[5..6] |> Convert.ToInt32, ds[8..9] |> Convert.ToInt32)
-            static member (-) (d1: Date, d2: Date) =  d1.ToDateTime() - d2.ToDateTime()
-            static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
+
+        new(year: int, month: int, day: int) =
+            {
+                Year = year
+                Month = month
+                Day = day
+            }
+
+        static member internal FromDateTime(dt: DateTime) = Date(dt.Year, dt.Month, dt.Day)
+        member d.ToDateTime() = DateTime(d.Year, d.Month, d.Day)
+
+        member d.AddDays(i: int) =
+            DateTime(d.Year, d.Month, d.Day).AddDays(float i) |> Date.FromDateTime
+
+        member d.AddMonths i =
+            DateTime(d.Year, d.Month, d.Day).AddMonths i |> Date.FromDateTime
+
+        member d.AddYears i =
+            DateTime(d.Year, d.Month, d.Day).AddYears i |> Date.FromDateTime
+
+        member d.Html = d.ToDateTime().ToString "yyyy-MM-dd"
+
+        static member FromIsoString(ds: string) =
+            Date(ds[0..3] |> Convert.ToInt32, ds[5..6] |> Convert.ToInt32, ds[8..9] |> Convert.ToInt32)
+
+        static member (-)(d1: Date, d2: Date) = d1.ToDateTime() - d2.ToDateTime()
+
+        static member DaysInMonth(year, month) = DateTime.DaysInMonth(year, month)
 
     /// the offset of a date from the start date, in days
     [<Measure>]
@@ -30,14 +47,20 @@ module DateDay =
     /// functions for converting offset days to and from dates
     [<RequireQualifiedAccess>]
     module OffsetDay =
+        /// convert an offset day to an integer
+        let toInt (offsetDay: int<OffsetDay>) = int offsetDay
+
         /// convert an offset date to an offset day based on a given start date
-        let fromDate (startDate: Date) (offsetDate: Date) = (offsetDate - startDate).Days * 1<OffsetDay>
+        let fromDate (startDate: Date) (offsetDate: Date) =
+            (offsetDate - startDate).Days * 1<OffsetDay>
+
         /// convert an offset day to an offset date based on a given start date
-        let toDate (startDate: Date) (offsetDay: int<OffsetDay>) = startDate.AddDays(int offsetDay)
+        let toDate (startDate: Date) offsetDay = startDate.AddDays(toInt offsetDay)
 
 
     /// a duration of a number of days
-    [<Measure>] type DurationDay
+    [<Measure>]
+    type DurationDay
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is
@@ -45,16 +68,15 @@ module DateDay =
     [<RequireQualifiedAccess>]
     module TrackingDay =
         /// create a date from a year, month, and tracking day
-        let toDate y m td = Date(y, m, min (Date.DaysInMonth(y, m)) td)
+        let toDate y m td =
+            Date(y, m, min (Date.DaysInMonth(y, m)) td)
 
 #if DATEONLY
     /// wrapper for DateOnly support
     type DateOnly with
-        member this.ToDate () =
-            Date(this.Year, this.Month, this.Day)
+        member this.ToDate() = Date(this.Year, this.Month, this.Day)
 
     /// wrapper for DateOnly support
     module DateOnly =
-        let fromDate (d:Date) =
-            DateOnly(d.Year, d.Month, d.Day)
+        let fromDate (d: Date) = DateOnly(d.Year, d.Month, d.Day)
 #endif

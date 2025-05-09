@@ -17,17 +17,21 @@ module SettlementTests =
     open Quotes
     open UnitPeriod
 
-    let interestCapExample : Interest.Cap = {
-        TotalAmount = Amount.Percentage (Percent 100m, Restriction.NoLimit)
-        DailyAmount = Amount.Percentage (Percent 0.8m, Restriction.NoLimit)
+    let interestCapExample: Interest.Cap = {
+        TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+        DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
     }
 
-    let parameters : Parameters = {
+    let parameters: Parameters = {
         Basic = {
             EvaluationDate = Date(2024, 3, 19)
             StartDate = Date(2023, 11, 28)
             Principal = 25000L<Cent>
-            ScheduleConfig = AutoGenerateSchedule { UnitPeriodConfig =  Monthly(1, 2023, 12, 22); ScheduleLength = PaymentCount 4 }
+            ScheduleConfig =
+                AutoGenerateSchedule {
+                    UnitPeriodConfig = Monthly(1, 2023, 12, 22)
+                    ScheduleLength = PaymentCount 4
+                }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
                 Rounding = RoundUp
@@ -35,7 +39,7 @@ module SettlementTests =
             FeeConfig = ValueNone
             InterestConfig = {
                 Method = Interest.Method.Actuarial
-                StandardRate = Interest.Rate.Daily (Percent 0.8m)
+                StandardRate = Interest.Rate.Daily(Percent 0.8m)
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
@@ -62,7 +66,9 @@ module SettlementTests =
     [<Fact>]
     let SettlementTest001 () =
         let title = "SettlementTest001"
-        let description = "Final payment due on Friday: what would I pay if I paid it today?"
+
+        let description =
+            "Final payment due on Friday: what would I pay if I paid it today?"
 
         let actualPayments =
             Map [
@@ -73,8 +79,14 @@ module SettlementTests =
 
         let actual =
             let quote = getQuote parameters actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description parameters
-            let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 112<OffsetDay>
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description parameters
+
+            let scheduledItem =
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
+                |> Map.find 112<OffsetDay>
+
             quote.QuoteResult, scheduledItem
 
         let paymentQuote =
@@ -123,11 +135,14 @@ module SettlementTests =
     [<Fact>]
     let SettlementTest002 () =
         let title = "SettlementTest002"
-        let description = "Final payment due on Friday: what would I pay if I paid it one week too late?"
-        let p =
-            { parameters with
+
+        let description =
+            "Final payment due on Friday: what would I pay if I paid it one week too late?"
+
+        let p = {
+            parameters with
                 Basic.EvaluationDate = Date(2024, 3, 29)
-            }
+        }
 
         let actualPayments =
             Map [
@@ -139,7 +154,11 @@ module SettlementTests =
         let actual =
             let quote = getQuote p actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
-            let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
+
+            let scheduledItem =
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
+                |> Map.find 122<OffsetDay>
+
             quote.QuoteResult, scheduledItem
 
         let paymentQuote =
@@ -188,11 +207,14 @@ module SettlementTests =
     [<Fact>]
     let SettlementTest003 () =
         let title = "SettlementTest003"
-        let description = "Final payment due on Friday: what if I pay £50 on Friday and the rest next week one week too late?"
-        let p =
-            { parameters with
+
+        let description =
+            "Final payment due on Friday: what if I pay £50 on Friday and the rest next week one week too late?"
+
+        let p = {
+            parameters with
                 Basic.EvaluationDate = Date(2024, 3, 29)
-            }
+        }
 
         let actualPayments =
             Map [
@@ -205,7 +227,11 @@ module SettlementTests =
         let actual =
             let quote = getQuote p actualPayments
             quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
-            let scheduledItem = quote.RevisedSchedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
+
+            let scheduledItem =
+                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
+                |> Map.find 122<OffsetDay>
+
             quote.QuoteResult, scheduledItem
 
         let paymentQuote =
