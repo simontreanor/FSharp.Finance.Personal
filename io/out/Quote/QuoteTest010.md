@@ -417,6 +417,20 @@
 <h4>Advanced Parameters</h4>
 <table>
     <tr>
+        <td>Payment options</td>
+        <td>
+                <table>
+                    <tr>
+                        <td>scheduling: <i>as scheduled</i></td>
+                        <td>timeout: <i>3 days</i></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">minimum: <i>defer&nbsp;or&nbsp;write&nbsp;off&nbsp;up&nbsp;to&nbsp;0.50</i></td>
+                    </tr>
+                </table>
+        </td>
+    </tr>
+    <tr>
         <td>Interest options</td>
         <td>
             <table>

@@ -5429,6 +5429,20 @@
 <h4>Advanced Parameters</h4>
 <table>
     <tr>
+        <td>Payment options</td>
+        <td>
+                <table>
+                    <tr>
+                        <td>scheduling: <i>as scheduled</i></td>
+                        <td>timeout: <i>3 days</i></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">minimum: <i>no&nbsp;minimum&nbsp;payment</i></td>
+                    </tr>
+                </table>
+        </td>
+    </tr>
+    <tr>
         <td>Interest options</td>
         <td>
             <table>
