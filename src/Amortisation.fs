@@ -1142,7 +1142,6 @@ module Amortisation =
 
     /// generates an amortisation schedule and final statistics
     let amortise (p: Parameters) actualPayments =
-        let evaluationDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
         let basicSchedule = calculateBasicSchedule p.Basic
 
         let scheduledPayments =
