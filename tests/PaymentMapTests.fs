@@ -23,7 +23,7 @@ module PaymentMapTests =
         Principal = principal
         PaymentSchedule = AutoGenerateSchedule {
             UnitPeriodConfig = unitPeriodConfig
-            ScheduleLength = PaymentCount paymentCount,
+            ScheduleLength = PaymentCount paymentCount
         }
         PaymentOptions = {
             ScheduledPaymentOption = AsScheduled
