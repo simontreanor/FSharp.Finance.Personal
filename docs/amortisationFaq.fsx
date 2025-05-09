@@ -35,11 +35,12 @@ The examples may use either the actuarial-interest method or the add-on-interest
 *)
 
 (*** hide ***)
-#r "nuget:FSharp.Finance.Personal"
+#r "../src/bin/Debug/netstandard2.1/FSharp.Finance.Personal.dll"
+//#r "FSharp.Finance.Personal.dll"
+
 
 open FSharp.Finance.Personal
 open Amortisation
-open AppliedPayment
 open Calculation
 open DateDay
 open Scheduling
@@ -710,7 +711,11 @@ let fullWriteOffAmount =
 // run the amortisation again with the full write-off payment
 let amortisation8' =
     amortise
-        parameters8
+        {
+            parameters8 with
+                Basic.EvaluationDate = OffsetDay.toDate parameters8.Basic.StartDate 92<OffsetDay>
+                Advanced.SettlementDay = SettlementDay.NoSettlement
+        }
         (Map [
             30<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
             61<OffsetDay>, [| ActualPayment.quickConfirmed 417_72L<Cent> |]
@@ -731,7 +736,7 @@ amortisation8'
 (*** include-it-raw ***)
 
 (**
-You can see that a settlement payment of £752.58 was determined on day 91, and this is used as the write-off amount. This amount is less than the remaining two
+A settlement payment of £752.58 was determined on day 91, and this is used as the write-off amount. This amount is less than the remaining two
 payments (£417.72 + £417.69 = £835.41) as this is effectively an early settlement and so less interest is accrued. The remaining payment on day 122 is no longer
 required as the schedule is fully amortised.
 
