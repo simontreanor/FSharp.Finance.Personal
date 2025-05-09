@@ -750,8 +750,8 @@ let parameters9 = {
         Advanced.InterestConfig.PromotionalRates = [|
             { // promotional rate to freeze interest for a month
                 DateRange = {
-                    Start = Date(2025, 6, 25)
-                    End = Date(2025, 7, 24)
+                    DateRangeStart = Date(2025, 6, 25)
+                    DateRangeEnd = Date(2025, 7, 24)
                 }
                 Rate = Interest.Rate.Zero // zero interest rate
             }
