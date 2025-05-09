@@ -153,7 +153,6 @@ module AppliedPayment =
                     )
                 | None ->
                     Map.empty
-            // create a map of scheduled payments
             // create a map of applied payments
             let appliedPaymentMap =
                 days
