@@ -198,7 +198,7 @@ module AprEuropeanUnionTests =
             $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
 
-        let generateInfoFile = "GeneratedDate.md"
+        let generateInfoFile = "GeneratedDate.html"
 
         let htmlDatestamp =
             $"""

@@ -354,7 +354,7 @@ module Amortisation =
                 $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable p.Advanced}"""
 
-            let generateInfoFile = "GeneratedDate.md"
+            let generateInfoFile = "GeneratedDate.html"
 
             let htmlDatestamp =
                 $"""

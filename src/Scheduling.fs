@@ -682,7 +682,7 @@ module Scheduling =
                 $"""
 <h4>Basic Parameters</h4>{BasicParameters.toHtmlTable bp}"""
 
-            let generateInfoFile = "GeneratedDate.md"
+            let generateInfoFile = "GeneratedDate.html"
 
             let htmlDatestamp =
                 $"""
