@@ -24,6 +24,9 @@ jobs:
       - name: Build code
         run: dotnet build -c Release
 
+      - name: Run tests
+        run: dotnet test
+
       - name: Copy test output files to static content
         run: |
           mkdir -p ./docs/content
