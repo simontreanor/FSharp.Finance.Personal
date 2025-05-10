@@ -354,9 +354,13 @@ module Amortisation =
                 $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable p.Advanced}"""
 
+            let generateInfoFile = "GeneratedDate.md"
             let htmlDatestamp =
                 $"""
-<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {libraryVersion}</i></p>"""
+<p>Generated: <i>[see details](../{generateInfoFile})</i></p>"""
+            let htmlDatestampInfo =
+                $"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
 
             let htmlFinalStats =
                 $"""
@@ -370,6 +374,11 @@ module Amortisation =
 
             $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlFinalStats}{htmlAmortisationStats}"
             |> outputToFile' filename false
+
+            try
+                $"""{htmlDatestampInfo}"""
+                |> outputToFile' $"out/{generateInfoFile}" false
+            with _ -> ()
 
     /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
     let feePercentage principal feeTotal =

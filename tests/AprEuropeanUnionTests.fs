@@ -198,14 +198,23 @@ module AprEuropeanUnionTests =
             $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
 
+        let generateInfoFile = "GeneratedDate.md"
         let htmlDatestamp =
             $"""
-<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {libraryVersion}</i></p>"""
+<p>Generated: <i>[see details](../{generateInfoFile})</i></p>"""
+        let htmlDatestampInfo =
+            $"""
+<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
 
         let filename = $"out/{folder}/{title}.md"
 
         $"{htmlTitle}{htmlTable}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}"
         |> outputToFile' filename false
+
+        try
+            $"""{htmlDatestampInfo}"""
+            |> outputToFile' $"out/{generateInfoFile}" false
+        with _ -> ()
 
     let startDate = Date(2025, 4, 1)
     let paymentCounts = [| 4..6 |]
