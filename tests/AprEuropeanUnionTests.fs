@@ -199,12 +199,14 @@ module AprEuropeanUnionTests =
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
 
         let generateInfoFile = "GeneratedDate.md"
+
         let htmlDatestamp =
             $"""
-<p>Generated: <i>[see details](../{generateInfoFile})</i></p>"""
+<p>Generated: <i><a href="../{generateInfoFile}">see details</a></i></p>"""
+
         let htmlDatestampInfo =
             $"""
-<p>Generated: <i>{DateTime.Now.ToString "yyyy-MM-dd"} using library version {Calculation.libraryVersion}</i></p>"""
+<p>Generated: <i>{DateTimeOffset.Now:``yyyy-MM-dd HH:mm:ss zzzz``} using library version {Calculation.libraryVersion}</i></p>"""
 
         let filename = $"out/{folder}/{title}.md"
 
@@ -212,9 +214,9 @@ module AprEuropeanUnionTests =
         |> outputToFile' filename false
 
         try
-            $"""{htmlDatestampInfo}"""
-            |> outputToFile' $"out/{generateInfoFile}" false
-        with _ -> ()
+            $"""{htmlDatestampInfo}""" |> outputToFile' $"out/{generateInfoFile}" false
+        with _ ->
+            ()
 
     let startDate = Date(2025, 4, 1)
     let paymentCounts = [| 4..6 |]
