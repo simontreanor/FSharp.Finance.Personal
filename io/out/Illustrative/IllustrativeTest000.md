@@ -111,7 +111,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

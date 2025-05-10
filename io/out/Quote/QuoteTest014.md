@@ -163,7 +163,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Loan is settled the day after the final schedule payment was due (and which was not made) but is within grace period so does not incur a late-payment fee</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

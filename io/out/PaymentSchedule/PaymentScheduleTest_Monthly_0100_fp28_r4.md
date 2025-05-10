@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>£0100 with 28 days to first payment and 4 repayments</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

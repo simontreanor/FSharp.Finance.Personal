@@ -147,7 +147,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Amortisation schedule, 6 payments, first payment on day 24, using the add-on interest method (just after APR jump)</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

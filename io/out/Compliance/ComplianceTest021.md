@@ -111,7 +111,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Total repayable on interest-first loan of £250 with repayments starting on day 19 and total loan length 110 days</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

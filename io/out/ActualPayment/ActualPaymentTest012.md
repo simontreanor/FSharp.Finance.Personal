@@ -129,7 +129,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Scheduled payment total can be less than principal when early actual payments are made but net effect is never less</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

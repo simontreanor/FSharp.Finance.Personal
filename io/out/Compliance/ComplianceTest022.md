@@ -75,7 +75,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Add-on-interest loan of $1000 with payments starting after one month and 4 payments in total, for documentation purposes</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

@@ -129,7 +129,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Add-on interest method with interest rate under the daily cap should have a lower initial interest balance than the cap (cap in place)</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

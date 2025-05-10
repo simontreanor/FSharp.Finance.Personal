@@ -150,7 +150,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Standard schedule with month-end payments from 4 days and paid off on time</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

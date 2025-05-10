@@ -99,7 +99,7 @@
 </table>
 <h4>Description</h4>
 <p><i>EU APR test amortisation schedule, first payment day 6, payment count 6</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

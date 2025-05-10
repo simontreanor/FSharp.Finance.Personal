@@ -143,7 +143,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Loan is settled on the same day as the last scheduled payment is due (but which has not yet been made)</i></p>
-<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
