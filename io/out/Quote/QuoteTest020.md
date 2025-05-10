@@ -143,7 +143,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Settlement quote on the same day a loan is closed has 0L<Cent> payment and 0L<Cent> principal and interest components</i></p>
-<p>Generated: <i>2025-05-09 using library version 2.4.5</i></p>
+<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

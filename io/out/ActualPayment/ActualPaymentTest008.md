@@ -234,7 +234,7 @@
 </table>
 <h4>Description</h4>
 <p><i>Made 2 payments on early repayment, then one single overpayment after the full balance is overdue, and this is then refunded (with interest due to the customer on the negative balance)</i></p>
-<p>Generated: <i>2025-05-09 using library version 2.4.5</i></p>
+<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>

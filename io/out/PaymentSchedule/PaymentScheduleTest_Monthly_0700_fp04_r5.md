@@ -87,7 +87,7 @@
 </table>
 <h4>Description</h4>
 <p><i>£0700 with 04 days to first payment and 5 repayments</i></p>
-<p>Generated: <i>2025-05-09 using library version 2.4.5</i></p>
+<p>Generated: <i><a href="../GeneratedDate.md">see details</a></i></p>
 <h4>Basic Parameters</h4>
 <table>
     <tr>
