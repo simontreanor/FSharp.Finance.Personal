@@ -1,7 +1,5 @@
 namespace FSharp.Finance.Personal.Tests
 
-open FSharp.Finance.Personal
-
 module Util =
 
     /// format an array as a list of object arrays, for feeding into a test theory

@@ -8,6 +8,7 @@
     <ProjectReference Include="..\src\FSharp.Finance.Personal.fsproj" />
   </ItemGroup>
   <ItemGroup>
+    
     <Compile Include="Util.fs" />
     <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
@@ -38,4 +39,18 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <Target Name="GenerateTimestampFile" BeforeTargets="VSTest">
+    <ItemGroup>
+      <SourceProject Include="@(ProjectReference)" Condition="'%(Filename)%(Extension)' == 'FSharp.Finance.Personal.fsproj'" />
+    </ItemGroup>
+    <MSBuild Projects="@(SourceProject)" Targets="GetLibraryVersion">
+      <Output TaskParameter="TargetOutputs" ItemName="SourceProjectOutput" />
+    </MSBuild>
+    <PropertyGroup>
+      <LibraryVersion>@(SourceProjectOutput)</LibraryVersion>
+      <Timestamp>$([System.DateTimeOffset]::Now.ToString("yyyy-MM-dd HH:mm:ss zzzz"))</Timestamp>
+      <HtmlContent>&lt;html&gt;&lt;body&gt;&lt;p&gt;Generated: &lt;i&gt;$(Timestamp)&lt;/i&gt; using library version: &lt;i&gt;$(LibraryVersion)&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</HtmlContent>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(MSBuildProjectDirectory)\..\io\out\GeneratedDate.html" Lines="$(HtmlContent)" Overwrite="true" />
+  </Target>
 </Project>

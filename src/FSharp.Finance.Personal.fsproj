@@ -3,14 +3,13 @@
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DefineConstants Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), '^net\d'))">DATEONLY</DefineConstants>
-	<PackageIcon>icon.png</PackageIcon>
+  	<PackageIcon>icon.png</PackageIcon>
+    <Version>2.4.7</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
   </PropertyGroup>
-  <ItemGroup Condition="'$(Configuration)'=='Debug'">
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="DateDay.fs" />
     <Compile Include="Calculation.fs" />
@@ -30,7 +29,6 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>FSharp.Finance.Personal</PackageId>
-    <Version>2.4.7</Version>
     <Authors>Simon Treanor</Authors>
     <PackageDescription>F# Personal Finance Library</PackageDescription>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
@@ -63,4 +61,5 @@
     <PackageProjectUrl>https://simontreanor.github.io/FSharp.Finance.Personal</PackageProjectUrl>
     <FsDocsLogoSource>content/logo.png</FsDocsLogoSource>
   </PropertyGroup>
+  <Target Name="GetLibraryVersion" Returns="$(Version)" />
 </Project>

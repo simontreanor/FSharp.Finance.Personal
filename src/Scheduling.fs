@@ -682,15 +682,9 @@ module Scheduling =
                 $"""
 <h4>Basic Parameters</h4>{BasicParameters.toHtmlTable bp}"""
 
-            let generateInfoFile = "GeneratedDate.html"
-
             let htmlDatestamp =
                 $"""
-<p>Generated: <i><a href="../{generateInfoFile}">see details</a></i></p>"""
-
-            let htmlDatestampInfo =
-                $"""
-<p>Generated: <i>{DateTimeOffset.Now:``yyyy-MM-dd HH:mm:ss zzzz``} using library version {Calculation.libraryVersion}</i></p>"""
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>"""
 
             let htmlFinalStats =
                 $"""
@@ -700,11 +694,6 @@ module Scheduling =
 
             $"""{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlFinalStats}"""
             |> outputToFile' filename false
-
-            try
-                $"""{htmlDatestampInfo}""" |> outputToFile' $"out/{generateInfoFile}" false
-            with _ ->
-                ()
 
     /// convert an option to a value option
     let toValueOption =
