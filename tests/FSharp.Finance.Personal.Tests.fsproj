@@ -49,7 +49,7 @@
     <PropertyGroup>
       <LibraryVersion>@(SourceProjectOutput)</LibraryVersion>
       <Timestamp>$([System.DateTimeOffset]::Now.ToString("yyyy-MM-dd HH:mm:ss zzzz"))</Timestamp>
-      <HtmlContent>&lt;html&gt;&lt;body&gt;&lt;p&gt;Generated: &lt;i&gt;$(Timestamp)&lt;/i&gt; using library version: &lt;i&gt;$(LibraryVersion)&lt;/i&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</HtmlContent>
+      <HtmlContent>&lt;p&gt;Generated: &lt;i&gt;$(Timestamp)&lt;/i&gt; using library version: &lt;i&gt;$(LibraryVersion)&lt;/i&gt;&lt;/p&gt;</HtmlContent>
     </PropertyGroup>
     <WriteLinesToFile File="$(MSBuildProjectDirectory)\..\io\out\GeneratedDate.html" Lines="$(HtmlContent)" Overwrite="true" />
   </Target>
