@@ -215,6 +215,7 @@ let parameters3 = {
     parameters0 with
         Basic.EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
+        Advanced.SettlementDay = SettlementDay.SettlementOn 122<OffsetDay>
 }
 
 let amortisation3 = amortise parameters3 Map.empty // no actual payments made
