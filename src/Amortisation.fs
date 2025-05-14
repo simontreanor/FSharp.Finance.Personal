@@ -179,8 +179,7 @@ module Amortisation =
                     if p.Basic.FeeConfig.IsSome then
                         yield "", $"{formatCent scheduleItem.FeeBalance}"
                     yield "", $"{formatCent scheduleItem.PrincipalBalance}"
-                    if not settlementDay.IsNoSettlement then
-                        yield "", $"{formatCent scheduleItem.SettlementFigure}"
+                    yield "", $"{formatCent scheduleItem.SettlementFigure}"
                 |]
                 |> Array.mapi (fun i (style, content) ->
                     $"""
@@ -318,8 +317,7 @@ module Amortisation =
                     if p.Basic.FeeConfig.IsSome then
                         yield "Fee balance"
                     yield "Principal balance"
-                    if not p.Advanced.SettlementDay.IsNoSettlement then
-                        yield "Settlement figure"
+                    yield "Settlement figure"
                 |]
                 |> Array.mapi (fun i fh ->
                     $"""
