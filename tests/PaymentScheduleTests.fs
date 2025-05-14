@@ -2172,9 +2172,9 @@ module PaymentScheduleTests =
                     102<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
                 ]
 
-            let schedule1 = p paymentSchedule1 |> fun p -> calculateBasicSchedule p
-            let schedule2 = p paymentSchedule2 |> fun p -> calculateBasicSchedule p
-            let schedule3 = p paymentSchedule3 |> fun p -> calculateBasicSchedule p
+            let schedule1 = p paymentSchedule1 |> fun bp -> calculateBasicSchedule bp
+            let schedule2 = p paymentSchedule2 |> fun bp -> calculateBasicSchedule bp
+            let schedule3 = p paymentSchedule3 |> fun bp -> calculateBasicSchedule bp
 
             let html1 = schedule1 |> BasicSchedule.toHtmlTable
             let html2 = schedule2 |> BasicSchedule.toHtmlTable
