@@ -344,6 +344,10 @@ module Amortisation =
 <h4>Description</h4>
 <p><i>{description}</i></p>"""
 
+            let htmlDatestamp =
+                $"""
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>"""
+
             let htmlBasicParams =
                 $"""
 <h4>Basic Parameters</h4>{BasicParameters.toHtmlTable p.Basic}"""
@@ -352,21 +356,22 @@ module Amortisation =
                 $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable p.Advanced}"""
 
-            let htmlDatestamp =
+            let originalBasicSchedule = calculateBasicSchedule p.Basic
+
+            let htmlInitialSchedule =
+                $"""<h4>Initial Schedule</h4>{BasicSchedule.toHtmlTable originalBasicSchedule}"""
+
+            let htmlInitialStats =
                 $"""
-<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>"""
+<h4>Initial Stats</h4>{InitialStats.toHtmlTable originalBasicSchedule.Stats}"""
 
             let htmlFinalStats =
-                $"""
-<h4>Initial Stats</h4>{InitialStats.toHtmlTable generationResult.BasicSchedule.Stats}"""
-
-            let htmlAmortisationStats =
                 $"""
 <h4>Final Stats</h4>{FinalStats.toHtmlTable generationResult.AmortisationSchedule.FinalStats}"""
 
             let filename = $"out/{folder}/{title}.md"
 
-            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlFinalStats}{htmlAmortisationStats}"
+            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlInitialSchedule}{htmlInitialStats}{htmlFinalStats}"
             |> outputToFile' filename false
 
     /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
