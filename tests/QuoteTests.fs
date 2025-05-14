@@ -102,7 +102,7 @@ module QuoteTests =
             let quote = getQuote parameters1 actualPayments
 
             quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description parameters1
+            |> Schedule.outputHtmlToFile folder title description parameters1 ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -178,7 +178,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -256,7 +258,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -344,7 +348,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -427,7 +433,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -506,7 +514,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -594,7 +604,7 @@ module QuoteTests =
 
         let actual =
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             schedules.AmortisationSchedule.ScheduleItems
             |> Map.values
@@ -666,7 +676,7 @@ module QuoteTests =
 
         let actual =
             let amortisationSchedule = amortise p actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile folder title description p
+            amortisationSchedule |> Schedule.outputHtmlToFile folder title description p ""
             // let quoteResult =
             //     quote
             //     |> ValueOption.map(fun q ->
@@ -709,7 +719,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -801,7 +813,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -890,7 +904,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -975,7 +991,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1052,7 +1070,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1131,7 +1151,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1210,7 +1232,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1302,7 +1326,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1382,7 +1408,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1460,7 +1488,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1543,7 +1573,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1621,7 +1653,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -1696,7 +1730,10 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1751,7 +1788,10 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1819,7 +1859,10 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1869,7 +1912,10 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1916,7 +1962,10 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1961,7 +2010,10 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =

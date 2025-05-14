@@ -15,7 +15,7 @@ module EdgeCaseTests =
     open DateDay
     open Scheduling
     open Quotes
-    open Rescheduling
+    open Refinancing
     open UnitPeriod
 
     let parameters1: Parameters = {
@@ -82,7 +82,7 @@ module EdgeCaseTests =
             let quote = getQuote parameters1 actualPayments
 
             quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description parameters1
+            |> Schedule.outputHtmlToFile folder title description parameters1 ""
 
             quote.QuoteResult
 
@@ -124,7 +124,10 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -165,7 +168,10 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -280,7 +286,10 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -416,7 +425,10 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -453,6 +465,7 @@ module EdgeCaseTests =
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
                 Rounding = RoundDown
             }
+            Advanced.FeeConfig = ValueNone
             Advanced.InterestConfig = {
                 parameters1.Advanced.InterestConfig with
                     InitialGracePeriod = 0<DurationDay>
@@ -548,7 +561,7 @@ module EdgeCaseTests =
             let quote = getQuote parameters2 actualPayments
 
             quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description parameters2
+            |> Schedule.outputHtmlToFile folder title description parameters2 ""
 
             quote.QuoteResult
 
@@ -605,7 +618,10 @@ module EdgeCaseTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -674,7 +690,8 @@ module EdgeCaseTests =
 
         let schedules = reschedule p rp actualPayments
 
-        schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+        schedules.NewSchedules
+        |> Schedule.outputHtmlToFile folder title description p (RescheduleParameters.toHtmlTable rp)
 
         let actual =
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
@@ -761,7 +778,8 @@ module EdgeCaseTests =
 
         let schedules = reschedule p rp actualPayments
 
-        schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+        schedules.NewSchedules
+        |> Schedule.outputHtmlToFile folder title description p (RescheduleParameters.toHtmlTable rp)
 
         let actual =
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
@@ -823,7 +841,7 @@ module EdgeCaseTests =
 
         let schedules = actualPayments |> amortise p
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 

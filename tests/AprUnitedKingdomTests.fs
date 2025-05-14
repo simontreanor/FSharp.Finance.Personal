@@ -302,7 +302,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = true
         let p = getParameters startDate 6 23 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
     [<Fact>]
     let Amortisation_p6_fp24_AfterAprJump () =
@@ -315,7 +315,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = true
         let p = getParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
     [<Fact>]
     let AmortisationNoInterestCap_p6_fp23_BeforeAprJump () =
@@ -328,7 +328,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = false
         let p = getParameters startDate 6 23 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
     [<Fact>]
     let AmortisationNoInterestCap_p6_fp24_AfterAprJump () =
@@ -341,4 +341,4 @@ module AprUnitedKingdomTests =
         let applyInterestCap = false
         let p = getParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules

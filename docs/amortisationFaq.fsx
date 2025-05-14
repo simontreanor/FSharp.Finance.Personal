@@ -530,7 +530,7 @@ Here, the customer has agreed to pay £50 per week from 1 October 2025.
 *)
 
 (*** hide ***)
-open Rescheduling
+open Refinancing
 (*** ***)
 let rescheduleParameters: RescheduleParameters = {
     FeeSettlementRebate = Fee.SettlementRebate.Zero // no fees, so irrelevant

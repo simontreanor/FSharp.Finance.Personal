@@ -15,7 +15,7 @@ module ActualPaymentTestsExtra =
     open Calculation
     open DateDay
     open Scheduling
-    open Rescheduling
+    open Refinancing
     open UnitPeriod
 
     let interestCapExample: Interest.Cap = {
@@ -108,7 +108,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = amortise parameters actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description parameters
+            schedules |> Schedule.outputHtmlToFile folder title description parameters ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
@@ -170,7 +170,7 @@ module ActualPaymentTestsExtra =
                 Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
 
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
@@ -257,7 +257,10 @@ module ActualPaymentTestsExtra =
             }
 
             let schedules = reschedule p rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            schedules.NewSchedules
+            |> Schedule.outputHtmlToFile folder title description p (RescheduleParameters.toHtmlTable rp)
+
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
@@ -336,7 +339,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
@@ -418,7 +421,7 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
@@ -482,7 +485,7 @@ module ActualPaymentTestsExtra =
                 Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
 
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
@@ -566,7 +569,10 @@ module ActualPaymentTestsExtra =
             }
 
             let schedules = rollOver p rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            schedules.NewSchedules
+            |> Schedule.outputHtmlToFile folder title description p (RolloverParameters.toHtmlTable rp)
+
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
@@ -651,7 +657,10 @@ module ActualPaymentTestsExtra =
             }
 
             let schedules = rollOver p rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            schedules.NewSchedules
+            |> Schedule.outputHtmlToFile folder title description p (RolloverParameters.toHtmlTable rp)
+
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =

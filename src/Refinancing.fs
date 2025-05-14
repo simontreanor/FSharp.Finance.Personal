@@ -3,11 +3,10 @@ namespace FSharp.Finance.Personal
 open Scheduling
 open Quotes
 
-/// functions for rescheduling payments after an original schedule failed to amortise
-module Rescheduling =
+/// functions for refinancing payments after an original schedule failed to amortise
+module Refinancing =
 
     open Amortisation
-    open AppliedPayment
     open Calculation
     open DateDay
 
@@ -25,6 +24,21 @@ module Rescheduling =
         /// whether and when to generate a settlement figure, otherwise just a statement will be generated
         SettlementDay: SettlementDay
     }
+
+    /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
+    module RescheduleParameters =
+
+        /// formats the parameters items as an HTML table
+        let toHtmlTable (rp: RescheduleParameters) =
+            $"""
+<table>
+    <thead><tr><th colspan="2">Reschedule Parameters</th></tr></thead>
+    <tr><td>Fee Settlement Rebate</td><td>{rp.FeeSettlementRebate}</td></tr>
+    <tr><td>Payment Schedule</td><td>{rp.PaymentSchedule}</td></tr>
+    <tr><td>Rate on Negative Balance</td><td>{rp.RateOnNegativeBalance}</td></tr>
+    <tr><td>Promotional Interest Rates</td><td>{rp.PromotionalInterestRates}</td></tr>
+    <tr><td>Settlement Day</td><td>{rp.SettlementDay}</td></tr>
+</table>"""
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
     let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
@@ -214,6 +228,21 @@ module Rescheduling =
         /// how to handle any outstanding fee balance
         FeeHandling: Fee.FeeHandling
     }
+
+    /// parameters for creating a rolled-over schedule
+    module RolloverParameters =
+
+        /// formats the parameters items as an HTML table
+        let toHtmlTable (rp: RolloverParameters) =
+            $"""
+<table>
+    <thead><tr><th colspan="2">Rollover Parameters</th></tr></thead>
+    <tr><td>Original Final Payment Day</td><td>{rp.OriginalFinalPaymentDay}</td></tr>
+    <tr><td>Payment Schedule</td><td>{rp.PaymentSchedule}</td></tr>
+    <tr><td>Interest Config</td><td>{rp.InterestConfig}</td></tr>
+    <tr><td>Payment Config</td><td>{rp.PaymentConfig}</td></tr>
+    <tr><td>Fee Handling</td><td>{rp.FeeHandling}</td></tr>
+</table>"""
 
     /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
     let rollOver p (rp: RolloverParameters) actualPayments =

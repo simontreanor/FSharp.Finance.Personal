@@ -23,8 +23,8 @@
     <Compile Include="AppliedPayment.fs" />
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />
-    <Compile Include="Rescheduling.fs" />
-    <None Include="icon.png" Pack="true" PackagePath=""/>
+    <Compile Include="Refinancing.fs" />
+    <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

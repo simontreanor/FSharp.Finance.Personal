@@ -76,7 +76,7 @@ module PromotionalRatesTests =
 
         let schedules = amortise parameters actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters schedules
+        Schedule.outputHtmlToFile folder title description parameters "" schedules
 
         let interestBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -108,7 +108,7 @@ module PromotionalRatesTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let interestBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -140,7 +140,7 @@ module PromotionalRatesTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let interestBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -228,7 +228,7 @@ module PromotionalRatesTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 

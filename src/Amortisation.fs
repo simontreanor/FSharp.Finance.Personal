@@ -335,7 +335,7 @@ module Amortisation =
 </table>"""
 
         /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
-        let outputHtmlToFile folder title description (p: Parameters) generationResult =
+        let outputHtmlToFile folder title description (p: Parameters) (extraInfo: string) generationResult =
             let htmlTitle = $"<h2>{title}</h2>"
 
             let htmlSchedule = toHtmlTable p generationResult.AmortisationSchedule
@@ -357,6 +357,13 @@ module Amortisation =
                 $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable p.Advanced}"""
 
+            let htmlExtraInfo =
+                match extraInfo with
+                | "" -> ""
+                | ei ->
+                    $"""
+<h4>Extra Info</h4>{ei}"""
+
             let originalBasicSchedule = calculateBasicSchedule p.Basic
 
             let htmlInitialSchedule =
@@ -372,7 +379,7 @@ module Amortisation =
 
             let filename = $"out/{folder}/{title}.md"
 
-            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlInitialSchedule}{htmlInitialStats}{htmlFinalStats}"
+            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}{htmlFinalStats}"
             |> outputToFile' filename false
 
     /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
@@ -1226,7 +1233,7 @@ module Amortisation =
             |> applyPayments p actualPayments
             |> calculate p basicSchedule.Stats
             |> if p.Advanced.TrimEnd then
-                   Map.filter (fun _ si -> si.PaymentStatus <> NoLongerRequired)
+                   Map.filter (fun _ si -> si.PaymentStatus <> NoLongerRequired || si.BalanceStatus = RefundDue)
                else
                    id
             |> calculateStats

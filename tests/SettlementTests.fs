@@ -81,7 +81,7 @@ module SettlementTests =
             let quote = getQuote parameters actualPayments
 
             quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description parameters
+            |> Schedule.outputHtmlToFile folder title description parameters ""
 
             let scheduledItem =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -153,7 +153,9 @@ module SettlementTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let scheduledItem =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
@@ -226,7 +228,9 @@ module SettlementTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.RevisedSchedules
+            |> Schedule.outputHtmlToFile folder title description p ""
 
             let scheduledItem =
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleItems

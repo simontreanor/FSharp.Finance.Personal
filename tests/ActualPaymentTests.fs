@@ -133,7 +133,7 @@ module ActualPaymentTests =
 
         let schedules = amortise parameters1 actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -165,7 +165,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -203,7 +203,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -241,7 +241,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -304,7 +304,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -372,7 +372,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -433,7 +433,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.find 0<OffsetDay>
 
@@ -500,7 +500,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -564,7 +564,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -631,7 +631,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -693,7 +693,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -755,7 +755,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
@@ -820,7 +820,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -902,7 +902,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -935,7 +935,7 @@ module ActualPaymentTests =
 
         let schedules = amortise parameters3 actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -960,7 +960,7 @@ module ActualPaymentTests =
 
         let schedules = amortise parameters3 actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -986,7 +986,7 @@ module ActualPaymentTests =
 
         let schedules = amortise parameters3 actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -1023,7 +1023,7 @@ module ActualPaymentTests =
 
         let schedules = amortise parameters4 actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -1053,7 +1053,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -1094,7 +1094,7 @@ module ActualPaymentTests =
 
         let schedules = actualPayments |> amortise p
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
@@ -1135,7 +1135,7 @@ module ActualPaymentTests =
 
         let schedules = amortise p actualPayments
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let actual =
             schedules.AmortisationSchedule.ScheduleItems
