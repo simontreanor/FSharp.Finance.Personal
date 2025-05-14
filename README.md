@@ -22,4 +22,4 @@ none of which are conferred by the use of this library.
 
 NuGet package: https://www.nuget.org/packages/FSharp.Finance.Personal/
 
-Documentation: https://simontreanor.github.io/FSharp.Finance.Personal/
+Documentation: https://simontreanor.dev/FSharp.Finance.Personal/
