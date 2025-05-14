@@ -337,6 +337,7 @@ module Amortisation =
         /// renders the schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile folder title description (p: Parameters) generationResult =
             let htmlTitle = $"<h2>{title}</h2>"
+
             let htmlSchedule = toHtmlTable p generationResult.AmortisationSchedule
 
             let htmlDescription =
@@ -655,6 +656,7 @@ module Amortisation =
                         m - Interest.ignoreFractionalCents appliedPaymentCount m
                     else
                         0m<Cent>
+
                 // cap the new interest against the total interest cap
                 let cappedNewInterestM, settlementReductionM =
                     let cni =
@@ -664,7 +666,8 @@ module Amortisation =
                             a.CumulativeInterest
                             newInterestM
 
-                    calculateSettlementReduction cni |> max 0m<Cent> |> (fun sr -> cni - sr, sr)
+                    let sr = calculateSettlementReduction cni |> max 0m<Cent>
+                    cni - sr, sr
 
                 // get the rounded settlement reduction
                 let settlementReductionL =
@@ -751,21 +754,26 @@ module Amortisation =
                     accumulator.CumulativeActuarialInterestM
                     |> Cent.fromDecimalCent interestRounding
 
-                //
-                let generatedSettlementPayment, interestAdjustmentM =
+                // get the basic settlement figure
+                let settlement =
+                    p.Basic.Principal + cumulativeActuarialInterestL
+                    - accumulator.CumulativeActualPayments
+                    |> fun s ->
+                        if abs s < int64 appliedPaymentCount * 1L<Cent> then
+                            0L<Cent>
+                        else
+                            s
+
+                // get a settlement figure for the add-on interest method based on the actual actuarial interest accrued up to now
+                let generatedSettlementPayment =
+                    match p.Basic.InterestConfig.Method with
+                    | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance -> settlement - settlementReductionL
+                    | _ -> 0L<Cent>
+
+                // determine whether an interest adjustment is required based on the difference between cumulative actuarial interest and the initial interest balance
+                let interestAdjustmentM =
                     match p.Basic.InterestConfig.Method with
                     | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance ->
-                        // get a settlement figure for the add-on interest method based on the actual actuarial interest accrued up to now
-                        let settlement =
-                            p.Basic.Principal + cumulativeActuarialInterestL
-                            - accumulator.CumulativeActualPayments
-                            |> fun s ->
-                                if abs s < int64 appliedPaymentCount * 1L<Cent> then
-                                    0L<Cent>
-                                else
-                                    s
-
-                        // determine whether an interest adjustment is required based on the difference between cumulative actuarial interest and the initial interest balance
                         let interestAdjustment =
                             if
                                 (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>)
@@ -781,10 +789,8 @@ module Amortisation =
                             else
                                 0m<Cent>
 
-                        settlement - settlementReductionL, interestAdjustment
-
-                    // otherwise, calculate this later (unless closed balance, as not applicable)
-                    | _ -> 0L<Cent>, 0m<Cent>
+                        interestAdjustment
+                    | _ -> 0m<Cent>
 
                 // refine the capped new interest value using any interest adjustment
                 let cappedNewInterestM' = cappedNewInterestM + interestAdjustmentM
