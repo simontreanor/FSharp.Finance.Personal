@@ -3,7 +3,6 @@ namespace FSharp.Finance.Personal
 /// functions for generating a regular payment schedule, with payment amounts, interest and APR
 module Scheduling =
 
-    open System
     open Calculation
     open DateDay
     open Formatting
