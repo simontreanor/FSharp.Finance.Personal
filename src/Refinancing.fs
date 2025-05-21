@@ -34,9 +34,9 @@ module Refinancing =
 <table>
     <thead><tr><th colspan="2">Reschedule Parameters</th></tr></thead>
     <tr><td>Fee Settlement Rebate</td><td>{rp.FeeSettlementRebate}</td></tr>
-    <tr><td>Payment Schedule</td><td>{rp.PaymentSchedule}</td></tr>
+    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtmlTable rp.PaymentSchedule}</td></tr>
     <tr><td>Rate on Negative Balance</td><td>{rp.RateOnNegativeBalance}</td></tr>
-    <tr><td>Promotional Interest Rates</td><td>{rp.PromotionalInterestRates}</td></tr>
+    <tr><td>Promotional Interest Rates</td><td>{Array.toStringOrNa rp.PromotionalInterestRates}</td></tr>
     <tr><td>Settlement Day</td><td>{rp.SettlementDay}</td></tr>
 </table>"""
 
@@ -238,7 +238,7 @@ module Refinancing =
 <table>
     <thead><tr><th colspan="2">Rollover Parameters</th></tr></thead>
     <tr><td>Original Final Payment Day</td><td>{rp.OriginalFinalPaymentDay}</td></tr>
-    <tr><td>Payment Schedule</td><td>{rp.PaymentSchedule}</td></tr>
+    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtmlTable rp.PaymentSchedule}</td></tr>
     <tr><td>Interest Config</td><td>{rp.InterestConfig}</td></tr>
     <tr><td>Payment Config</td><td>{rp.PaymentConfig}</td></tr>
     <tr><td>Fee Handling</td><td>{rp.FeeHandling}</td></tr>
