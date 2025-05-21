@@ -95,15 +95,15 @@ module Scheduling =
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type ActualPaymentStatus =
         /// a write-off payment has been applied
-        | WriteOff of WriteOff: int64<Cent>
+        | WriteOff of int64<Cent>
         /// the payment has been initiated but is not yet confirmed
-        | Pending of Pending: int64<Cent>
+        | Pending of int64<Cent>
         /// the payment had been initiated but was not confirmed within the timeout
-        | TimedOut of TimedOut: int64<Cent>
+        | TimedOut of int64<Cent>
         /// the payment has been confirmed
-        | Confirmed of Confirmed: int64<Cent>
+        | Confirmed of int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
-        | Failed of Failed: int64<Cent> * ChargeType: Charge.ChargeType voption
+        | Failed of int64<Cent> * Charge.ChargeType voption
 
         /// HTML formatting to display the actual payment status in a readable format
         member aps.Html =
@@ -333,9 +333,9 @@ module Scheduling =
         /// no minimum payment
         | NoMinimumPayment
         /// add the payment due to the next payment or close the balance if the final payment
-        | DeferOrWriteOff of DeferOrWriteOff: int64<Cent>
+        | DeferOrWriteOff of int64<Cent>
         /// take the minimum payment regardless
-        | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
+        | ApplyMinimumPayment of int64<Cent>
 
         /// HTML formatting to display the minimum payment in a readable format
         member mp.Html =

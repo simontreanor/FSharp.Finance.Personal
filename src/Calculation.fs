@@ -181,9 +181,9 @@ module Calculation =
         /// does not constrain values at all
         | NoLimit
         /// prevent values below a certain limit
-        | LowerLimit of LowerLimit: int64<Cent>
+        | LowerLimit of int64<Cent>
         /// prevent values above a certain limit
-        | UpperLimit of UpperLimit: int64<Cent>
+        | UpperLimit of int64<Cent>
         /// constrain values to within a range
         | WithinRange of MinValue: int64<Cent> * MaxValue: int64<Cent>
 
@@ -209,9 +209,9 @@ module Calculation =
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type Amount =
         /// a percentage of the principal, optionally restricted
-        | Percentage of Percentage: Percent * Restriction: Restriction
+        | Percentage of Percent * Restriction
         /// a fixed fee
-        | Simple of Simple: int64<Cent>
+        | Simple of int64<Cent>
         /// nothing
         | Unlimited
 
@@ -242,7 +242,7 @@ module Calculation =
         /// a solution could not be found within the iteration limit, but it returns the result of the last iteration and stats on how it was reached
         | IterationLimitReached of PartialSolution: decimal * IterationLimit: int * MaxTolerance: decimal
         /// a solution was found, returning the solution, the number of iterations required and the final tolerance used
-        | Found of Found: decimal * Iteration: int * Tolerance: decimal
+        | Found of decimal * Iteration: int * Tolerance: decimal
 
     /// lower and upper bounds, as well as a step value, for tolerance when using the solver
     [<Struct>]

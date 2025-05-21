@@ -14,9 +14,9 @@ module Interest =
         /// a zero rate
         | Zero
         /// the annual interest rate, or the daily interest rate multiplied by 365
-        | Annual of Annual: Percent
+        | Annual of Percent
         /// the daily interest rate, or the annual interest rate divided by 365
-        | Daily of Daily: Percent
+        | Daily of Percent
 
         /// HTML formatting to display the rate in a readable format
         member r.Html =
