@@ -646,6 +646,7 @@ module EdgeCaseTests =
 
         let p = {
             parameters2 with
+                Basic.EvaluationDate = Date(2024, 4, 30)
                 Basic.StartDate = Date(2024, 2, 2)
                 Basic.Principal = 25000L<Cent>
                 Basic.ScheduleConfig =
@@ -665,13 +666,10 @@ module EdgeCaseTests =
                 |]
             ]
 
-        let originalFinalPaymentDay =
-            ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
-
-        let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
+        let rescheduleDay = Date(2024, 3, 12) |> OffsetDay.fromDate p.Basic.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
+            FeeSettlementRebate = Fee.SettlementRebate.Zero
             PaymentSchedule =
                 CustomSchedule
                 <| Map [
@@ -685,7 +683,7 @@ module EdgeCaseTests =
                 ]
             RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
             PromotionalInterestRates = [||]
-            SettlementDay = SettlementDay.SettlementOn 88<OffsetDay>
+            SettlementDay = SettlementDay.SettlementOnEvaluationDay
         }
 
         let schedules = reschedule p rp actualPayments
@@ -699,22 +697,23 @@ module EdgeCaseTests =
         let expected =
             88<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 4, 30)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = GeneratedValue 83_74L<Cent>
-                NetEffect = 83_74L<Cent>
+                GeneratedPayment = GeneratedValue 138_65L<Cent>
+                NetEffect = 138_65L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                ActuarialInterest = 4_32.256m<Cent>
-                NewInterest = 4_32.256m<Cent>
+                ActuarialInterest = 5_63.072m<Cent>
+                NewInterest = 5_63.072m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 67_54L<Cent>
+                PrincipalPortion = 87_98L<Cent>
                 FeePortion = 0L<Cent>
-                InterestPortion = 16_20L<Cent>
+                InterestPortion = 50_67L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
@@ -734,6 +733,7 @@ module EdgeCaseTests =
 
         let p = {
             parameters2 with
+                Basic.EvaluationDate = Date(2024, 4, 30)
                 Basic.StartDate = Date(2024, 2, 2)
                 Basic.Principal = 25000L<Cent>
                 Basic.ScheduleConfig =
@@ -753,13 +753,10 @@ module EdgeCaseTests =
                 |]
             ]
 
-        let originalFinalPaymentDay =
-            ((Date(2024, 5, 22) - Date(2024, 2, 2)).Days) * 1<OffsetDay>
-
-        let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
+        let rescheduleDay = Date(2024, 3, 12) |> OffsetDay.fromDate p.Basic.StartDate
 
         let (rp: RescheduleParameters) = {
-            FeeSettlementRebate = Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay
+            FeeSettlementRebate = Fee.SettlementRebate.Zero
             PaymentSchedule =
                 CustomSchedule
                 <| Map [
@@ -773,7 +770,7 @@ module EdgeCaseTests =
                 ]
             RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
             PromotionalInterestRates = [||]
-            SettlementDay = SettlementDay.SettlementOn 88<OffsetDay>
+            SettlementDay = SettlementDay.SettlementOnEvaluationDay
         }
 
         let schedules = reschedule p rp actualPayments
@@ -787,22 +784,23 @@ module EdgeCaseTests =
         let expected =
             88<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 4, 30)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = GeneratedValue 10_19L<Cent>
-                NetEffect = 10_19L<Cent>
+                GeneratedPayment = GeneratedValue 68_68L<Cent>
+                NetEffect = 68_68L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                ActuarialInterest = 52.608m<Cent>
-                NewInterest = 52.608m<Cent>
+                ActuarialInterest = 278.912m<Cent>
+                NewInterest = 278.912m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 8_22L<Cent>
+                PrincipalPortion = 43_58L<Cent>
                 FeePortion = 0L<Cent>
-                InterestPortion = 1_97L<Cent>
+                InterestPortion = 25_10L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
@@ -846,20 +844,21 @@ module EdgeCaseTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            97<OffsetDay>,
+            336<OffsetDay>,
             {
-                OffsetDate = Date(2023, 8, 10)
+                OffsetDayType = OffsetDayType.EvaluationDay
+                OffsetDate = Date(2024, 4, 5)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 87_67L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.zero
                 Window = 4
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 0L<Cent>
-                PaymentStatus = NoLongerRequired
+                PaymentStatus = InformationOnly
                 BalanceStatus = RefundDue
-                ActuarialInterest = -8.79210959m<Cent>
-                NewInterest = -8.79210959m<Cent>
+                ActuarialInterest = -67.78432877m<Cent>
+                NewInterest = -67.78432877m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 0L<Cent>
                 FeePortion = 0L<Cent>
@@ -868,9 +867,9 @@ module EdgeCaseTests =
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = -12_94L<Cent>
                 FeeBalance = 0L<Cent>
-                InterestBalance = -21.55484933m<Cent>
+                InterestBalance = -89.3391781m<Cent>
                 ChargesBalance = 0L<Cent>
-                SettlementFigure = -13_16L<Cent>
+                SettlementFigure = -13_84L<Cent>
                 FeeRebateIfSettled = 0L<Cent>
             }
 

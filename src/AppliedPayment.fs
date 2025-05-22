@@ -218,11 +218,9 @@ module AppliedPayment =
                                     ->
                                     match parameters.Advanced.SettlementDay with
                                     // settlement requested on a future day
-                                    | SettlementDay.SettlementOn day when day > offsetDay -> 0L<Cent>, PaymentDue
                                     | SettlementDay.SettlementOnEvaluationDay when evaluationDay > offsetDay ->
                                         0L<Cent>, PaymentDue
                                     // settlement requested on the day, requiring a generated payment to be calculated (calculation deferred until amortisation schedule is generated)
-                                    | SettlementDay.SettlementOn day when day = offsetDay -> 0L<Cent>, Generated
                                     | SettlementDay.SettlementOnEvaluationDay when evaluationDay = offsetDay ->
                                         0L<Cent>, Generated
                                     // no settlement on day, or statement requested
@@ -339,16 +337,7 @@ module AppliedPayment =
 
             // add or modify the applied payments depending on whether the intended purpose is a settlement or just a statement
             match parameters.Advanced.SettlementDay with
-            // settlement on a specific day
-            | SettlementDay.SettlementOn day -> appliedPayments day ToBeGenerated Generated
             // settlement on the evaluation day
             | SettlementDay.SettlementOnEvaluationDay -> appliedPayments evaluationDay ToBeGenerated Generated
             // statement only
-            | SettlementDay.NoSettlement ->
-                let maxPaymentDay = appliedPaymentMap |> Map.maxKeyValue |> fst
-                // when evaluating after the end of the schedule, just return the schedule with no applied payments added
-                if evaluationDay >= maxPaymentDay then
-                    appliedPaymentMap
-                // otherwise, add an information-only entry if the payment day is not present
-                else
-                    appliedPayments evaluationDay NoGeneratedPayment InformationOnly
+            | SettlementDay.NoSettlement -> appliedPayments evaluationDay NoGeneratedPayment InformationOnly

@@ -114,6 +114,7 @@ module ActualPaymentTestsExtra =
         let expected =
             131<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 12, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 407_64L<Cent>) ValueNone
@@ -176,6 +177,7 @@ module ActualPaymentTestsExtra =
         let expected =
             172<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2022, 8, 27)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 170_90L<Cent>) ValueNone
@@ -245,7 +247,7 @@ module ActualPaymentTestsExtra =
                 PaymentSchedule =
                     FixedSchedules [|
                         {
-                            UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1))
+                            UnitPeriodConfig = Weekly(2, Date(2022, 9, 1))
                             PaymentCount = 155
                             PaymentValue = 20_00L<Cent>
                             ScheduleType = ScheduleType.Rescheduled rescheduleDay
@@ -266,6 +268,7 @@ module ActualPaymentTestsExtra =
         let expected =
             1969<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
                 Advances = [||]
                 ScheduledPayment =
@@ -345,6 +348,7 @@ module ActualPaymentTestsExtra =
         let expected =
             1025<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2026, 8, 27)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 137_36L<Cent>) ValueNone
@@ -425,29 +429,25 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            185<OffsetDay>,
+            456<OffsetDay>,
             {
-                OffsetDate = Date(2023, 3, 15)
+                OffsetDayType = OffsetDayType.EvaluationDay
+                OffsetDate = Date(2023, 12, 11)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 51_53L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.zero
                 Window = 7
-                PaymentDue = 51_53L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 51_53L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 51_53L<Cent>
-                PaymentStatus = PaymentMade
+                NetEffect = 0L<Cent>
+                PaymentStatus = InformationOnly
                 BalanceStatus = ClosedBalance
-                ActuarialInterest = 9_43.040m<Cent>
-                NewInterest = 9_43.040m<Cent>
+                ActuarialInterest = 0m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 42_10L<Cent>
+                PrincipalPortion = 0L<Cent>
                 FeePortion = 0L<Cent>
-                InterestPortion = 9_43L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
@@ -489,6 +489,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
+            OffsetDayType = OffsetDayType.OffsetDay
             OffsetDate = Date(2022, 7, 30)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.quick (ValueSome 171_02L<Cent>) ValueNone
@@ -578,6 +579,7 @@ module ActualPaymentTestsExtra =
         let expected =
             1793<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
@@ -666,6 +668,7 @@ module ActualPaymentTestsExtra =
         let expected =
             1793<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone

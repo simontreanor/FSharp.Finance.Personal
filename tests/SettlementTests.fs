@@ -104,6 +104,7 @@ module SettlementTests =
         let expected =
             paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 3, 19)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -178,6 +179,7 @@ module SettlementTests =
         let expected =
             paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -253,6 +255,7 @@ module SettlementTests =
         let expected =
             paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero

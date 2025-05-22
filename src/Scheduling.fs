@@ -47,7 +47,7 @@ module Scheduling =
 
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r when r.Value = 0L<Cent> ->
-                $"""<i><s>original</i> {formatCent o}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
+                $"""<i><s>original</i> {formatCent o}</s>{if previous = "" then " cancelled" else $"&nbsp;{previous}"}"""
             | ValueSome o, ValueSome r -> $"<s><i>o</i> {formatCent o}</s>&nbsp;{previous}<i>r</i> {formatCent r.Value}"
             | ValueSome o, ValueNone -> $"<i>original</i> {formatCent o}"
             | ValueNone, ValueSome r ->
@@ -457,8 +457,6 @@ module Scheduling =
     /// the intended day on which to quote a settlement
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type SettlementDay =
-        /// quote a settlement figure on the specified day
-        | SettlementOn of SettlementDay: int<OffsetDay>
         /// quote a settlement figure on the evaluation day
         | SettlementOnEvaluationDay
         /// no settlement figure is required
@@ -466,7 +464,6 @@ module Scheduling =
 
         member x.Html =
             match x with
-            | SettlementOn day -> $"<i>on day {day}</i>"
             | SettlementOnEvaluationDay -> $"<i>on evaluation day</i>"
             | NoSettlement -> "<i>n/a</i>"
 

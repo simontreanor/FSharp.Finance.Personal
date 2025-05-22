@@ -84,7 +84,7 @@ module PromotionalRatesTests =
             |> snd
             |> _.InterestBalance
 
-        interestBalance |> should equal 323_20m<Cent>
+        interestBalance |> should equal 400_00m<Cent>
 
     [<Fact>]
     let PromotionalRatesTest001 () =
@@ -116,7 +116,7 @@ module PromotionalRatesTests =
             |> snd
             |> _.InterestBalance
 
-        interestBalance |> should equal 224_00m<Cent>
+        interestBalance |> should equal 400_00m<Cent>
 
     [<Fact>]
     let PromotionalRatesTest002 () =
@@ -148,7 +148,7 @@ module PromotionalRatesTests =
             |> snd
             |> _.InterestBalance
 
-        interestBalance |> should equal 317_24.36164383m<Cent>
+        interestBalance |> should equal 400_00m<Cent>
 
     [<Fact>]
     let PromotionalRatesTest004 () =
@@ -235,6 +235,7 @@ module PromotionalRatesTests =
         let expected =
             7305<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2044, 4, 11)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 1525_12L<Cent>) ValueNone

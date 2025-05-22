@@ -25,7 +25,7 @@ module FeeAndChargesTests =
 
         let parameters: Parameters = {
             Basic = {
-                EvaluationDate = Date(2023, 4, 1)
+                EvaluationDate = Date(2023, 3, 31)
                 StartDate = Date(2022, 11, 26)
                 Principal = 1500_00L<Cent>
                 ScheduleConfig =
@@ -117,6 +117,7 @@ module FeeAndChargesTests =
             let expected =
                 125<OffsetDay>,
                 {
+                    OffsetDayType = OffsetDayType.EvaluationDay
                     OffsetDate = Date(2023, 3, 31)
                     Advances = [||]
                     ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
@@ -201,6 +202,7 @@ module FeeAndChargesTests =
             let expected =
                 125<OffsetDay>,
                 {
+                    OffsetDayType = OffsetDayType.EvaluationDay
                     OffsetDate = Date(2023, 3, 31)
                     Advances = [||]
                     ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
@@ -285,6 +287,7 @@ module FeeAndChargesTests =
             let expected =
                 125<OffsetDay>,
                 {
+                    OffsetDayType = OffsetDayType.EvaluationDay
                     OffsetDate = Date(2023, 3, 31)
                     Advances = [||]
                     ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone

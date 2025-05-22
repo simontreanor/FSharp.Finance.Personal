@@ -691,8 +691,8 @@ You can see that the single-payment write-off has no effect on the remainder of 
 // first, run the amortisation with the existing actual payments to get the settlement figure
 let parameters8 = {
     parameters0 with
-        Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-        Advanced.SettlementDay = SettlementDay.SettlementOn 91<OffsetDay> // settlement quotation requested on day 91
+        Basic.EvaluationDate = Date(2025, 7, 24) // evaluate the schedule on day 91
+        Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested
 }
 
 let amortisation8 =

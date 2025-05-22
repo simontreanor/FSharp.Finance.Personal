@@ -125,6 +125,7 @@ module QuoteTests =
         let expected =
             paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 323_15L<Cent>) ValueNone
@@ -202,6 +203,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -282,6 +284,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -372,6 +375,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -457,6 +461,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -538,6 +543,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -614,6 +620,7 @@ module QuoteTests =
             )
 
         let expected = {
+            OffsetDayType = OffsetDayType.OffsetDay
             OffsetDate = startDate.AddDays 71
             Advances = [||]
             ScheduledPayment = ScheduledPayment.quick (ValueSome 323_15L<Cent>) ValueNone
@@ -743,6 +750,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 181
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -837,6 +845,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 388
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -928,6 +937,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 72
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1015,6 +1025,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 30
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 165_90L<Cent>) ValueNone
@@ -1094,6 +1105,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 14)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1175,6 +1187,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
@@ -1256,6 +1269,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 16)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1350,6 +1364,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 19)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1432,6 +1447,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 14)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1512,6 +1528,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
@@ -1597,6 +1614,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 16)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1677,6 +1695,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 2, 5)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero

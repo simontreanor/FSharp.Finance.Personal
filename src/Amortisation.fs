@@ -3,12 +3,28 @@ namespace FSharp.Finance.Personal
 /// calculating the principal balance over time, taking into account the effects of charges, interest and fee
 module Amortisation =
 
-    open System
     open AppliedPayment
     open Calculation
     open DateDay
     open Formatting
     open Scheduling
+
+    /// the day of the amortisation schedule, which can be a normal day, evaluation day or settlement day
+    [<Struct>]
+    type OffsetDayType =
+        | OffsetDay
+        | EvaluationDay
+        | SettlementDay
+
+    /// the day of the amortisation schedule, which can be a normal day, evaluation day or settlement day
+    [<Struct>]
+    module OffsetDayType =
+        /// HTML formatting to display the amortisation day in a readable format
+        let toHtml (offsetDay: int<OffsetDay>) offsetDayType =
+            match offsetDayType with
+            | OffsetDay -> $"{offsetDay}"
+            | EvaluationDay -> $"&#x2605;&nbsp;<b>{offsetDay}</b>"
+            | SettlementDay -> $"&#x2713;&nbsp;<b>{offsetDay}</b>"
 
     /// the status of the balance on a given offset day
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -63,6 +79,8 @@ module Amortisation =
 
     /// amortisation schedule item showing apportionment of payments to principal, fee, interest and charges
     type ScheduleItem = {
+        /// the offset day type
+        OffsetDayType: OffsetDayType
         /// the date of amortisation
         OffsetDate: Date
         /// any advance made on the current day, typically the principal on day 0 for a single-advance transaction
@@ -117,6 +135,7 @@ module Amortisation =
     module ScheduleItem =
         /// a default value with no data
         let zero = {
+            OffsetDayType = OffsetDay
             OffsetDate = Unchecked.defaultof<Date>
             Advances = [||]
             ScheduledPayment = ScheduledPayment.zero
@@ -147,7 +166,7 @@ module Amortisation =
         let toHtmlRow (p: Parameters) settlementDay offsetDay scheduleItem =
             let fields =
                 [|
-                    yield "", $"{OffsetDay.toInt offsetDay}"
+                    yield "", $"{OffsetDayType.toHtml offsetDay scheduleItem.OffsetDayType}"
                     yield " style=\"white-space: nowrap;\"", $"%A{scheduleItem.OffsetDate}"
                     yield "", $"{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOrNa}"
                     yield " style=\"white-space: nowrap;\"", $"{scheduleItem.ScheduledPayment}"
@@ -340,6 +359,8 @@ module Amortisation =
 
             let htmlSchedule = toHtmlTable p generationResult.AmortisationSchedule
 
+            let htmlKey = "<p>Key: &#x2605; = evaluation day; &#x2713; = settlement day</p>"
+
             let htmlDescription =
                 $"""
 <h4>Description</h4>
@@ -379,7 +400,7 @@ module Amortisation =
 
             let filename = $"out/{folder}/{title}.md"
 
-            $"{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}{htmlFinalStats}"
+            $"{htmlTitle}{htmlSchedule}{htmlKey}{htmlFinalStats}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}"
             |> outputToFile' filename false
 
     /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
@@ -398,7 +419,6 @@ module Amortisation =
     /// determines whether a schedule is settled within any grace period (e.g. no interest may be due if settlement is made within three days of the advance)
     let isSettledWithinGracePeriod (p: Parameters) =
         match p.Advanced.SettlementDay with
-        | SettlementDay.SettlementOn day -> int day <= int p.Advanced.InterestConfig.InitialGracePeriod
         | SettlementDay.SettlementOnEvaluationDay ->
             int <| OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
             <= int p.Advanced.InterestConfig.InitialGracePeriod
@@ -415,9 +435,8 @@ module Amortisation =
 
     /// modifies missed payments or underpayments to reflect whether they are paid later in full or part or not at all within the payment window
     /// note: this is useful for credit reporting so as not to penalise those who pay late rather than not at all
-    let markMissedPaymentsAsLate (schedule: Map<int<OffsetDay>, ScheduleItem>) =
+    let markMissedPaymentsAsLate (schedule: (int<OffsetDay> * ScheduleItem) array) =
         schedule
-        |> Map.toArray
         |> Array.groupBy (snd >> _.Window)
         |> Array.map snd
         |> Array.filter (Array.isEmpty >> not)
@@ -438,9 +457,10 @@ module Amortisation =
         |> Map.ofArray
         |> fun m ->
             if m |> Map.isEmpty then
-                schedule
+                Map.ofArray schedule
             else
                 schedule
+                |> Map.ofArray
                 |> Map.map (fun d si ->
                     match m |> Map.tryFind d with
                     | Some cps -> { si with PaymentStatus = cps }
@@ -954,10 +974,12 @@ module Amortisation =
                     // refine the payment status based on the balance status and whether this is a settlement
                     let paymentStatus =
                         match si.BalanceStatus, isSettlement with
+                        | ClosedBalance, _ when ap.PaymentStatus.IsInformationOnly -> InformationOnly
                         | ClosedBalance, _ -> NoLongerRequired
                         | _, true -> Generated
                         | RefundDue, _ when netEffect' < 0L<Cent> -> Refunded
                         | RefundDue, _ when netEffect' > 0L<Cent> -> Overpayment
+                        | RefundDue, _ when ap.PaymentStatus.IsInformationOnly -> InformationOnly
                         | RefundDue, _ -> NoLongerRequired
                         | _ when
                             ap.PaymentStatus <> InformationOnly
@@ -1012,12 +1034,19 @@ module Amortisation =
                         (balanceTotal, settlementFigure)
                         ||> if settlementFigure < 0L<Cent> then Cent.max else Cent.min
 
+                    //determine the type of offset day
+                    let offsetDayType =
+                        if isSettlement then SettlementDay
+                        elif appliedPaymentDay = evaluationDay then EvaluationDay
+                        else OffsetDay
+
                     // create the schedule item
                     let scheduleItem = {
-                        Window = window
+                        OffsetDayType = offsetDayType
                         OffsetDate = offsetDate
                         Advances = advances
                         ScheduledPayment = scheduledPayment
+                        Window = window
                         PaymentDue = paymentDue'
                         ActualPayments = ap.ActualPayments
                         GeneratedPayment = generatedPayment
@@ -1078,12 +1107,9 @@ module Amortisation =
                     match ap.GeneratedPayment, p.Advanced.SettlementDay with
                     | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay when evaluationDay = appliedPaymentDay ->
                         createScheduleItem true
-                    | ToBeGenerated, SettlementDay.SettlementOn day when day = appliedPaymentDay ->
-                        createScheduleItem true
                     | GeneratedValue gv, _ -> failwith $"Unexpected value: <i>{gv}</i>"
                     | NoGeneratedPayment, _
                     | ToBeGenerated, SettlementDay.NoSettlement
-                    | ToBeGenerated, SettlementDay.SettlementOn _
                     | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay -> createScheduleItem false
 
                 // refine the accumulator values
@@ -1140,8 +1166,6 @@ module Amortisation =
                 a |> Array.tail
             else
                 a
-        // convert back to a map
-        |> Map.ofArray
         // post-process missed payments or underpayments
         |> markMissedPaymentsAsLate
 

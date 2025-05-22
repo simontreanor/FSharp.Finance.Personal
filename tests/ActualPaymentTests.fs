@@ -38,6 +38,7 @@ module ActualPaymentTests =
     let quickExpectedFinalItem date offsetDay paymentValue interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
+            OffsetDayType = OffsetDayType.EvaluationDay
             OffsetDate = date
             Advances = [||]
             ScheduledPayment = ScheduledPayment.quick (ValueSome paymentValue) ValueNone
@@ -71,7 +72,7 @@ module ActualPaymentTests =
 
     let parameters1: Parameters = {
         Basic = {
-            EvaluationDate = Date(2023, 4, 1)
+            EvaluationDate = Date(2023, 3, 31)
             StartDate = Date(2022, 11, 26)
             Principal = 1500_00L<Cent>
             ScheduleConfig =
@@ -189,7 +190,7 @@ module ActualPaymentTests =
 
         let p = {
             parameters1 with
-                Basic.EvaluationDate = Date(2023, 3, 16)
+                Basic.EvaluationDate = Date(2023, 3, 15)
                 Basic.StartDate = Date(2022, 11, 1)
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
@@ -227,7 +228,7 @@ module ActualPaymentTests =
 
         let p = {
             parameters1 with
-                Basic.EvaluationDate = Date(2023, 3, 22)
+                Basic.EvaluationDate = Date(2023, 3, 21)
                 Basic.StartDate = Date(2022, 11, 1)
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
@@ -248,6 +249,7 @@ module ActualPaymentTests =
         let expected =
             140<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 3, 21)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -290,7 +292,7 @@ module ActualPaymentTests =
 
         let p = {
             parameters1 with
-                Basic.EvaluationDate = Date(2023, 3, 22)
+                Basic.EvaluationDate = Date(2023, 3, 21)
                 Basic.StartDate = Date(2022, 11, 1)
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
@@ -311,6 +313,7 @@ module ActualPaymentTests =
         let expected =
             140<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 3, 21)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -353,7 +356,7 @@ module ActualPaymentTests =
 
         let p = {
             parameters1 with
-                Basic.EvaluationDate = Date(2023, 3, 25)
+                Basic.EvaluationDate = Date(2023, 3, 24)
                 Basic.StartDate = Date(2022, 11, 1)
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
@@ -379,6 +382,7 @@ module ActualPaymentTests =
         let expected =
             143<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 3, 24)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -438,6 +442,7 @@ module ActualPaymentTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.find 0<OffsetDay>
 
         let expected = {
+            OffsetDayType = OffsetDayType.EvaluationDay
             OffsetDate = Date(2022, 11, 1)
             Advances = [| 1500_00L<Cent> |]
             ScheduledPayment = ScheduledPayment.zero
@@ -507,6 +512,7 @@ module ActualPaymentTests =
         let expected =
             154<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = startDate.AddDays 154
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 243_66L<Cent>) ValueNone
@@ -544,7 +550,7 @@ module ActualPaymentTests =
 
         let p = {
             parameters1 with
-                Basic.EvaluationDate = Date(2023, 3, 25)
+                Basic.EvaluationDate = Date(2023, 3, 24)
                 Basic.StartDate = Date(2022, 11, 1)
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
@@ -571,6 +577,7 @@ module ActualPaymentTests =
         let expected =
             143<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 3, 24)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -638,6 +645,7 @@ module ActualPaymentTests =
         let expected =
             134<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
@@ -700,6 +708,7 @@ module ActualPaymentTests =
         let expected =
             134<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
@@ -760,29 +769,25 @@ module ActualPaymentTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            134<OffsetDay>,
+            4109<OffsetDay>,
             {
-                OffsetDate = Date(2023, 3, 15)
+                OffsetDayType = OffsetDayType.EvaluationDay
+                OffsetDate = Date(2034, 1, 31)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
+                ScheduledPayment = ScheduledPayment.zero
                 Window = 5
-                PaymentDue = 432_07L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 500_00L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 500_00L<Cent>
-                PaymentStatus = Overpayment
+                NetEffect = 0L<Cent>
+                PaymentStatus = InformationOnly
                 BalanceStatus = RefundDue
-                ActuarialInterest = 79_07.200m<Cent>
-                NewInterest = 79_07.200m<Cent>
+                ActuarialInterest = 0m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 420_93L<Cent>
+                PrincipalPortion = 0L<Cent>
                 FeePortion = 0L<Cent>
-                InterestPortion = 79_07L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = -67_93L<Cent>

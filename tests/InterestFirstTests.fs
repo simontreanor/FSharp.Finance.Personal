@@ -273,7 +273,7 @@ module InterestFirstTests =
             |> snd
             |> _.SettlementFigure
 
-        finalSettlementFigure |> should equal 650_64L<Cent>
+        finalSettlementFigure |> should equal 810_18L<Cent>
 
     [<Fact>]
     let InterestFirstTest008 () =
