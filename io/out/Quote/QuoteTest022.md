@@ -139,7 +139,7 @@
         <td class="ci20">3.32</td>
     </tr>
     <tr style="text-align: right;">
-        <td class="ci00">2221</td>
+        <td class="ci00">&#x2713;&nbsp;<b>2221</b></td>
         <td class="ci01" style="white-space: nowrap;">2024-03-04</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
@@ -161,7 +161,27 @@
         <td class="ci19">0.00</td>
         <td class="ci20">0.00</td>
     </tr>
+</table><p>Key: &#x2605; = evaluation day; &#x2713; = settlement day</p>
+<h4>Final Stats</h4>
+<table>
+    <tr>
+        <td>Generated settlement: <i>57.51 on day 2221</i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
+    <tr>
+        <td>Effective interest rate: <i>0.0357653231 % per day</i></td>
+        <td>Final cost-to-borrowing ratio: <i>82.7 %</i></td>
+    </tr>
+    <tr>
+        <td>Required scheduled payment count: <i>3</i></td>
+        <td>Last required scheduled payment day: <i>84</i></td>
+    </tr>
+    <tr>
+        <td>Final actual payment count: <i>5</i></td>
+        <td>Last actual payment day: <i>78</i></td>
+    </tr>
 </table>
+
 <h4>Description</h4>
 <p><i>Generated settlement figure is correct when an insufficient funds penalty is charged for a failed payment</i></p>
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
@@ -288,6 +308,68 @@
     <tr>
         <td>Trim unrequired payments</td><td><i>true</i></td>
     </tr>
+</table><h4>Initial Schedule</h4>
+<table>
+    <thead style="vertical-align: bottom;">
+        <th style="text-align: right;">Day</th>
+        <th style="text-align: right;">Scheduled payment</th>
+        <th style="text-align: right;">Actuarial interest</th>
+        <th style="text-align: right;">Interest portion</th>
+        <th style="text-align: right;">Principal portion</th>
+        <th style="text-align: right;">Interest balance</th>
+        <th style="text-align: right;">Principal balance</th>
+        <th style="text-align: right;">Total actuarial interest</th>
+        <th style="text-align: right;">Total interest</th>
+        <th style="text-align: right;">Total principal</th>
+    </thead>
+    <tr style="text-align: right;">
+        <td class="ci00">0</td>
+        <td class="ci01" style="white-space: nowrap;">0.00</td>
+        <td class="ci02">0.0000</td>
+        <td class="ci03">0.00</td>
+        <td class="ci04">0.00</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">230.00</td>
+        <td class="ci07">0.0000</td>
+        <td class="ci08">0.00</td>
+        <td class="ci09">0.00</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">25</td>
+        <td class="ci01" style="white-space: nowrap;">111.67</td>
+        <td class="ci02">46.0000</td>
+        <td class="ci03">46.00</td>
+        <td class="ci04">65.67</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">164.33</td>
+        <td class="ci07">46.0000</td>
+        <td class="ci08">46.00</td>
+        <td class="ci09">65.67</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">53</td>
+        <td class="ci01" style="white-space: nowrap;">111.67</td>
+        <td class="ci02">36.8099</td>
+        <td class="ci03">36.80</td>
+        <td class="ci04">74.87</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">89.46</td>
+        <td class="ci07">82.8099</td>
+        <td class="ci08">82.80</td>
+        <td class="ci09">140.54</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">84</td>
+        <td class="ci01" style="white-space: nowrap;">111.64</td>
+        <td class="ci02">22.1861</td>
+        <td class="ci03">22.18</td>
+        <td class="ci04">89.46</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">0.00</td>
+        <td class="ci07">104.9960</td>
+        <td class="ci08">104.98</td>
+        <td class="ci09">230.00</td>
+    </tr>
 </table>
 <h4>Initial Stats</h4>
 <table>
@@ -305,24 +387,5 @@
         <td>Total scheduled payments: <i>334.98</i></td>
         <td>Total principal: <i>230.00</i></td>
         <td>Total interest: <i>104.98</i></td>
-    </tr>
-</table>
-<h4>Final Stats</h4>
-<table>
-    <tr>
-        <td>Generated settlement: <i>57.51 on day 2221</i></td>
-        <td>Final balance status: <i>closed</i></td>
-    </tr>
-    <tr>
-        <td>Effective interest rate: <i>0.0357653231 % per day</i></td>
-        <td>Final cost-to-borrowing ratio: <i>82.7 %</i></td>
-    </tr>
-    <tr>
-        <td>Required scheduled payment count: <i>3</i></td>
-        <td>Last required scheduled payment day: <i>84</i></td>
-    </tr>
-    <tr>
-        <td>Final actual payment count: <i>5</i></td>
-        <td>Last actual payment day: <i>78</i></td>
     </tr>
 </table>

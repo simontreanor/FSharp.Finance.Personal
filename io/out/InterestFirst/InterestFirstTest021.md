@@ -17,6 +17,7 @@
         <th class="ci13" style="text-align: right;">Principal portion</th>
         <th class="ci14" style="text-align: right;">Interest balance</th>
         <th class="ci15" style="text-align: right;">Principal balance</th>
+        <th class="ci16" style="text-align: right;">Settlement figure</th>
     </thead>
     <tr style="text-align: right;">
         <td class="ci00">0</td>
@@ -35,6 +36,7 @@
         <td class="ci13">0.00</td>
         <td class="ci14">69.6100</td>
         <td class="ci15">100.00</td>
+        <td class="ci16">100.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">20</td>
@@ -53,6 +55,7 @@
         <td class="ci13">100.00</td>
         <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">48</td>
@@ -71,6 +74,7 @@
         <td class="ci13">0.00</td>
         <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">79</td>
@@ -89,6 +93,7 @@
         <td class="ci13">0.00</td>
         <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
     </tr>
     <tr style="text-align: right;">
         <td class="ci00">109</td>
@@ -107,8 +112,48 @@
         <td class="ci13">0.00</td>
         <td class="ci14">0.0000</td>
         <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">&#x2605;&nbsp;<b>612</b></td>
+        <td class="ci01" style="white-space: nowrap;">2024-09-17</td>
+        <td class="ci02"><i>n/a</i></td>
+        <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
+        <td class="ci04">4</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06"><i>n/a</i></td>
+        <td class="ci07">0.00</td>
+        <td class="ci08"><i>information&nbsp;only</i></td>
+        <td class="ci09">closed</td>
+        <td class="ci10">0.0000</td>
+        <td class="ci11">0.0000</td>
+        <td class="ci12">0.00</td>
+        <td class="ci13">0.00</td>
+        <td class="ci14">0.0000</td>
+        <td class="ci15">0.00</td>
+        <td class="ci16">0.00</td>
+    </tr>
+</table><p>Key: &#x2605; = evaluation day; &#x2713; = settlement day</p>
+<h4>Final Stats</h4>
+<table>
+    <tr>
+        <td>Generated settlement: <i><i>n/a</i></i></td>
+        <td>Final balance status: <i>closed</i></td>
+    </tr>
+    <tr>
+        <td>Effective interest rate: <i>0.02614379085 % per day</i></td>
+        <td>Final cost-to-borrowing ratio: <i>16 %</i></td>
+    </tr>
+    <tr>
+        <td>Required scheduled payment count: <i>1</i></td>
+        <td>Last required scheduled payment day: <i>20</i></td>
+    </tr>
+    <tr>
+        <td>Final actual payment count: <i>1</i></td>
+        <td>Last actual payment day: <i>20</i></td>
     </tr>
 </table>
+
 <h4>Description</h4>
 <p><i>Realistic test 6045bd123363</i></p>
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
@@ -233,6 +278,80 @@
     <tr>
         <td>Trim unrequired payments</td><td><i>false</i></td>
     </tr>
+</table><h4>Initial Schedule</h4>
+<table>
+    <thead style="vertical-align: bottom;">
+        <th style="text-align: right;">Day</th>
+        <th style="text-align: right;">Scheduled payment</th>
+        <th style="text-align: right;">Actuarial interest</th>
+        <th style="text-align: right;">Interest portion</th>
+        <th style="text-align: right;">Principal portion</th>
+        <th style="text-align: right;">Interest balance</th>
+        <th style="text-align: right;">Principal balance</th>
+        <th style="text-align: right;">Total actuarial interest</th>
+        <th style="text-align: right;">Total interest</th>
+        <th style="text-align: right;">Total principal</th>
+    </thead>
+    <tr style="text-align: right;">
+        <td class="ci00">0</td>
+        <td class="ci01" style="white-space: nowrap;">0.00</td>
+        <td class="ci02">0.0000</td>
+        <td class="ci03">0.00</td>
+        <td class="ci04">0.00</td>
+        <td class="ci05">69.61</td>
+        <td class="ci06">100.00</td>
+        <td class="ci07">0.0000</td>
+        <td class="ci08">0.00</td>
+        <td class="ci09">0.00</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">20</td>
+        <td class="ci01" style="white-space: nowrap;">42.40</td>
+        <td class="ci02">16.0000</td>
+        <td class="ci03">42.40</td>
+        <td class="ci04">0.00</td>
+        <td class="ci05">27.21</td>
+        <td class="ci06">100.00</td>
+        <td class="ci07">16.0000</td>
+        <td class="ci08">42.40</td>
+        <td class="ci09">0.00</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">48</td>
+        <td class="ci01" style="white-space: nowrap;">42.40</td>
+        <td class="ci02">22.4000</td>
+        <td class="ci03">27.21</td>
+        <td class="ci04">15.19</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">84.81</td>
+        <td class="ci07">38.4000</td>
+        <td class="ci08">69.61</td>
+        <td class="ci09">15.19</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">79</td>
+        <td class="ci01" style="white-space: nowrap;">42.40</td>
+        <td class="ci02">21.0329</td>
+        <td class="ci03">0.00</td>
+        <td class="ci04">42.40</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">42.41</td>
+        <td class="ci07">59.4329</td>
+        <td class="ci08">69.61</td>
+        <td class="ci09">57.59</td>
+    </tr>
+    <tr style="text-align: right;">
+        <td class="ci00">109</td>
+        <td class="ci01" style="white-space: nowrap;">42.40</td>
+        <td class="ci02">10.1784</td>
+        <td class="ci03">0.00</td>
+        <td class="ci04">42.40</td>
+        <td class="ci05">0.00</td>
+        <td class="ci06">0.01</td>
+        <td class="ci07">69.6113</td>
+        <td class="ci08">69.61</td>
+        <td class="ci09">99.99</td>
+    </tr>
 </table>
 <h4>Initial Stats</h4>
 <table>
@@ -250,24 +369,5 @@
         <td>Total scheduled payments: <i>169.60</i></td>
         <td>Total principal: <i>99.99</i></td>
         <td>Total interest: <i>69.61</i></td>
-    </tr>
-</table>
-<h4>Final Stats</h4>
-<table>
-    <tr>
-        <td>Generated settlement: <i><i>n/a</i></i></td>
-        <td>Final balance status: <i>closed</i></td>
-    </tr>
-    <tr>
-        <td>Effective interest rate: <i>0.1467889908 % per day</i></td>
-        <td>Final cost-to-borrowing ratio: <i>16 %</i></td>
-    </tr>
-    <tr>
-        <td>Required scheduled payment count: <i>1</i></td>
-        <td>Last required scheduled payment day: <i>20</i></td>
-    </tr>
-    <tr>
-        <td>Final actual payment count: <i>1</i></td>
-        <td>Last actual payment day: <i>20</i></td>
     </tr>
 </table>
