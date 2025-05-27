@@ -8,8 +8,8 @@
     <ProjectReference Include="..\src\FSharp.Finance.Personal.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    
     <Compile Include="Util.fs" />
+    <Compile Include="Amortisation2Tests.fs" />
     <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
     <Compile Include="AprEuropeanUnionTests.fs" />
