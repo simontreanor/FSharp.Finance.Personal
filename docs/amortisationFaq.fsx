@@ -213,7 +213,7 @@ Let's again assume that it's day 35 and no payments have been made, so the payme
 
 let parameters3 = {
     parameters0 with
-        Basic.EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
+        Basic.EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
 }
 
