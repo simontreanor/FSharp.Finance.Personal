@@ -101,12 +101,11 @@ module QuoteTests =
         let actual =
             let quote = getQuote parameters1 actualPayments
 
-            quote.RevisedSchedules
+            quote.Schedules
             |> Schedule.outputHtmlToFile folder title description parameters1 ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 57<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 57<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -180,12 +179,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 60<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -261,12 +258,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 60<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -352,12 +347,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 3<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 3<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -438,12 +431,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 4<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 4<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -520,12 +511,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 60<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -727,12 +716,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 181<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 181<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -822,12 +809,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 388<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 388<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -914,12 +899,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 72<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 72<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1002,12 +985,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 30<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 30<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1082,12 +1063,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 133<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1164,12 +1143,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 134<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1246,12 +1223,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 135<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1341,12 +1316,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 138<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 138<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1424,12 +1397,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 133<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1505,12 +1476,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 134<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1591,12 +1560,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 135<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1672,12 +1639,10 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 461<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 461<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1750,8 +1715,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -1808,8 +1772,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -1879,8 +1842,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -1932,8 +1894,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -1982,8 +1943,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -2030,8 +1990,7 @@ module QuoteTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 

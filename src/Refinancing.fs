@@ -179,7 +179,7 @@ module Refinancing =
 
         // append the new schedule to the old schedule up to the point of settlement
         let oldPaymentSchedule =
-            quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
+            quote.Schedules.AmortisationSchedule.ScheduleItems
             |> Map.filter (fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
             |> Map.map (fun _ si -> si.ScheduledPayment)
             |> Map.toArray
@@ -210,7 +210,7 @@ module Refinancing =
 
         // return the results
         {|
-            OldSchedules = quote.RevisedSchedules
+            OldSchedules = quote.Schedules
             NewSchedules = rescheduledSchedules
         |}
 
@@ -308,6 +308,6 @@ module Refinancing =
 
         // return the results
         {|
-            OldSchedules = quote.RevisedSchedules
+            OldSchedules = quote.Schedules
             NewSchedules = rolledOverSchedules
         |}

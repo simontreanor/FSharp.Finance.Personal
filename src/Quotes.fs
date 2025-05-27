@@ -34,18 +34,14 @@ module Quotes =
     type Quote = {
         // the quote result
         QuoteResult: QuoteResult
-        // a statement showing the schedule at the time the quote was generated
-        CurrentSchedules: GenerationResult
         // the revised schedule showing the settlement, if applicable
-        RevisedSchedules: GenerationResult
+        Schedules: GenerationResult
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
     let getQuote (p: Parameters) (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
-        // generate a statement showing the current state of the amortisation schedule - this will only be used in the return value in case the caller requires a comparison
-        let currentSchedules = amortise p actualPayments
         // generate a revised statement showing a generated settlement figure on the relevant date
-        let revisedSchedules =
+        let schedules =
             amortise
                 {
                     p with
@@ -55,7 +51,7 @@ module Quotes =
                 actualPayments
         // try to get the schedule item containing the generated value
         let si =
-            revisedSchedules.AmortisationSchedule.ScheduleItems
+            schedules.AmortisationSchedule.ScheduleItems
             |> Map.values
             |> Seq.tryFind (fun si ->
                 match si.GeneratedPayment, si.PaymentStatus with
@@ -67,7 +63,7 @@ module Quotes =
             |> Option.defaultWith (fun () -> failwith "Unable to find relevant schedule item")
         // get an array of payments pending anywhere in the revised amortisation schedule
         let pendingPayments =
-            revisedSchedules.AmortisationSchedule.ScheduleItems
+            schedules.AmortisationSchedule.ScheduleItems
             |> Map.values
             |> Seq.sumBy (_.ActualPayments >> Array.sumBy ActualPayment.totalPending)
         // produce a quote result
@@ -135,6 +131,5 @@ module Quotes =
         // return the quote result
         {
             QuoteResult = quoteResult
-            CurrentSchedules = currentSchedules
-            RevisedSchedules = revisedSchedules
+            Schedules = schedules
         }

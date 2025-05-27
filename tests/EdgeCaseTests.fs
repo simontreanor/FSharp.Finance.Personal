@@ -81,7 +81,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote parameters1 actualPayments
 
-            quote.RevisedSchedules
+            quote.Schedules
             |> Schedule.outputHtmlToFile folder title description parameters1 ""
 
             quote.QuoteResult
@@ -125,8 +125,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -169,8 +168,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -287,8 +285,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -426,8 +423,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
@@ -560,7 +556,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote parameters2 actualPayments
 
-            quote.RevisedSchedules
+            quote.Schedules
             |> Schedule.outputHtmlToFile folder title description parameters2 ""
 
             quote.QuoteResult
@@ -619,8 +615,7 @@ module EdgeCaseTests =
         let actual =
             let quote = getQuote p actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description p ""
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             quote.QuoteResult
 
