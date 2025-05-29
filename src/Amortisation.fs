@@ -603,18 +603,18 @@ module Amortisation =
 
         // generate the amortisation schedule
         |> Array.scan
-            (fun ((siOffsetDay, si), a) (appliedPaymentDay, ap) ->
+            (fun ((previousDay, previous), a) (currentDay, current) ->
                 // determine the window and increment every time a new scheduled payment is due
                 let window =
-                    if ScheduledPayment.isSome ap.ScheduledPayment then
-                        si.Window + 1
+                    if ScheduledPayment.isSome current.ScheduledPayment then
+                        previous.Window + 1
                     else
-                        si.Window
+                        previous.Window
 
                 // get an array of advances
                 // note: assumes single advance on day 0 (multiple advances are not currently supported), so this is based purely on the principal
                 let advances =
-                    if appliedPaymentDay = 0<OffsetDay> then
+                    if currentDay = 0<OffsetDay> then
                         [| p.Basic.Principal |]
                     else
                         [||]
@@ -622,24 +622,27 @@ module Amortisation =
                 // calculates the actuarial interest that has accrued since the previous item
                 let actuarialInterestM =
                     // if the principal balance is negative, apply any rate on negative balances and disregard any daily interest caps
-                    if si.PrincipalBalance <= 0L<Cent> then
-                        dailyInterestRates siOffsetDay appliedPaymentDay
+                    if previous.PrincipalBalance <= 0L<Cent> then
+                        dailyInterestRates previousDay currentDay
                         |> Array.map (fun dr -> {
                             dr with
                                 InterestRate = p.Advanced.InterestConfig.RateOnNegativeBalance
                         })
-                        |> Interest.calculate (si.PrincipalBalance + si.FeeBalance) Amount.Unlimited interestRounding
+                        |> Interest.calculate
+                            (previous.PrincipalBalance + previous.FeeBalance)
+                            Amount.Unlimited
+                            interestRounding
                     // otherwise, apply the daily interest rates as normal, applied daily caps as necessary
                     else
-                        dailyInterestRates siOffsetDay appliedPaymentDay
+                        dailyInterestRates previousDay currentDay
                         |> Interest.calculate
-                            (si.PrincipalBalance + si.FeeBalance)
+                            (previous.PrincipalBalance + previous.FeeBalance)
                             p.Basic.InterestConfig.Cap.DailyAmount
                             interestRounding
 
                 // of the actual payments made on the day, sum any that are confirmed or written off
                 let confirmedPaymentTotal =
-                    ap.ActualPayments
+                    current.ActualPayments
                     |> Array.sumBy (fun ap ->
                         match ap.ActualPaymentStatus with
                         | ActualPaymentStatus.Confirmed ap -> ap
@@ -665,7 +668,7 @@ module Amortisation =
                 let newInterestM =
                     match p.Basic.InterestConfig.Method with
                     | Interest.Method.AddOn ->
-                        if si.BalanceStatus <> ClosedBalance then
+                        if previous.BalanceStatus <> ClosedBalance then
                             a.CumulativeActuarialInterestM + cappedActuarialInterestM
                             |> fun i ->
                                 if i > initialInterestBalanceM then
@@ -679,7 +682,7 @@ module Amortisation =
 
                 // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
                 let calculateSettlementReduction m =
-                    if appliedPaymentDay = maxAppliedPaymentDay then
+                    if currentDay = maxAppliedPaymentDay then
                         m - Interest.ignoreFractionalCents appliedPaymentCount m
                     else
                         0m<Cent>
@@ -702,7 +705,7 @@ module Amortisation =
 
                 // of the actual payments made on the day, sum any that are still pending
                 let pendingPaymentTotal =
-                    ap.ActualPayments
+                    current.ActualPayments
                     |> Array.sumBy (fun ap ->
                         match ap.ActualPaymentStatus with
                         | ActualPaymentStatus.Pending ap -> ap
@@ -712,11 +715,11 @@ module Amortisation =
                 // apportion the interest
                 let interestPortionM =
                     // if a refund is made and the settlement figure is postive, the payment should be apportioned to principal rather than interest (this likely represents a goodwill gesture so should directly benefit the customer)
-                    if confirmedPaymentTotal < 0L<Cent> && si.SettlementFigure >= 0L<Cent> then
+                    if confirmedPaymentTotal < 0L<Cent> && previous.SettlementFigure >= 0L<Cent> then
                         0m<Cent>
                     // otherwise, add new interest to the interest balance as normal
                     else
-                        cappedNewInterestM + si.InterestBalance
+                        cappedNewInterestM + previous.InterestBalance
 
                 // get the rounded interest portion
                 let interestPortionL = interestPortionM |> Cent.fromDecimalCent interestRounding
@@ -725,7 +728,7 @@ module Amortisation =
                 let accumulator = {
                     accumulator with
                         CumulativeScheduledPayments =
-                            a.CumulativeScheduledPayments + ScheduledPayment.total ap.ScheduledPayment
+                            a.CumulativeScheduledPayments + ScheduledPayment.total current.ScheduledPayment
                         CumulativeActualPayments =
                             a.CumulativeActualPayments + confirmedPaymentTotal + pendingPaymentTotal
                         CumulativeInterest = a.CumulativeInterest + cappedNewInterestM
@@ -740,18 +743,18 @@ module Amortisation =
                 // get the payment due
                 let paymentDue =
                     calculatePaymentDue
-                        si
-                        ap.ScheduledPayment.Original
-                        ap.ScheduledPayment.Rescheduled
+                        previous
+                        current.ScheduledPayment.Original
+                        current.ScheduledPayment.Rescheduled
                         extraPaymentsBalance
                         interestPortionL
                         p.Advanced.PaymentConfig.Minimum
 
                 // determine the total of any underpayment
                 let underpaymentTotal =
-                    match ap.PaymentStatus with
+                    match current.PaymentStatus with
                     | MissedPayment -> paymentDue
-                    | Underpayment -> paymentDue - ap.NetEffect
+                    | Underpayment -> paymentDue - current.NetEffect
                     | _ -> 0L<Cent>
 
                 // determine the total and details of any charges incurred
@@ -759,18 +762,18 @@ module Amortisation =
                     if paymentDue = 0L<Cent> then
                         0L<Cent>, [||]
                     else
-                        ap.AppliedCharges |> Array.sumBy _.Total, ap.AppliedCharges
+                        current.AppliedCharges |> Array.sumBy _.Total, current.AppliedCharges
 
                 // apportion the charges
-                let chargesPortion = newChargesTotal + si.ChargesBalance |> max 0L<Cent>
+                let chargesPortion = newChargesTotal + previous.ChargesBalance |> max 0L<Cent>
 
                 // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful evaluation of the future schedule
                 // (e.g. seeing if the schedule will be settled as agreed)
                 let netEffect =
-                    if appliedPaymentDay > evaluationDay then
-                        min ap.NetEffect paymentDue
+                    if currentDay > evaluationDay then
+                        min current.NetEffect paymentDue
                     else
-                        ap.NetEffect
+                        current.NetEffect
 
                 // simplifies any refund apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative
                 let sign: int64<Cent> -> int64<Cent> =
@@ -794,17 +797,18 @@ module Amortisation =
                 // get a settlement figure for the add-on interest method based on the actual actuarial interest accrued up to now
                 let generatedSettlementPayment =
                     match p.Basic.InterestConfig.Method with
-                    | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance -> settlement - settlementReductionL
+                    | Interest.Method.AddOn when previous.BalanceStatus <> ClosedBalance ->
+                        settlement - settlementReductionL
                     | _ -> 0L<Cent>
 
                 // determine whether an interest adjustment is required based on the difference between cumulative actuarial interest and the initial interest balance
                 let interestAdjustmentM =
                     match p.Basic.InterestConfig.Method with
-                    | Interest.Method.AddOn when si.BalanceStatus <> ClosedBalance ->
+                    | Interest.Method.AddOn when previous.BalanceStatus <> ClosedBalance ->
                         let interestAdjustment =
                             if
-                                (ap.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>)
-                                && si.BalanceStatus <> RefundDue
+                                (current.GeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>)
+                                && previous.BalanceStatus <> RefundDue
                                 && cappedNewInterestM = 0m<Cent>
                             then // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
                                 accumulator.CumulativeActuarialInterestM - initialInterestBalanceM
@@ -847,7 +851,7 @@ module Amortisation =
 
                 // refine the scheduled payment with any adjustment
                 let scheduledPayment = {
-                    ap.ScheduledPayment with
+                    current.ScheduledPayment with
                         Adjustment = scheduledPaymentAdjustment
                 }
 
@@ -856,7 +860,7 @@ module Amortisation =
                     match p.Basic.FeeConfig with
                     | ValueSome feeConfig ->
                         match feeConfig.FeeAmortisation with
-                        | Fee.FeeAmortisation.AmortiseBeforePrincipal -> min si.FeeBalance assignable
+                        | Fee.FeeAmortisation.AmortiseBeforePrincipal -> min previous.FeeBalance assignable
                         | Fee.FeeAmortisation.AmortiseProportionately ->
                             feePercentage p.Basic.Principal feeTotal
                             |> Percent.toDecimal
@@ -867,7 +871,7 @@ module Amortisation =
                                     decimal assignable * m / (1m + m)
                                     |> Cent.round RoundUp
                                     |> max 0L<Cent>
-                                    |> min si.FeeBalance
+                                    |> min previous.FeeBalance
                     | ValueNone -> 0L<Cent>
 
                 // determine the value of any fee rebate in the event of settlement, depending on settings
@@ -884,9 +888,9 @@ module Amortisation =
                                 |> Array.tryLast
                                 |> Option.defaultValue 0<OffsetDay>
 
-                            calculateFee feeTotal appliedPaymentDay originalFinalPaymentDay
+                            calculateFee feeTotal currentDay originalFinalPaymentDay
                         | Fee.SettlementRebate.ProRataRescheduled originalFinalPaymentDay ->
-                            calculateFee feeTotal appliedPaymentDay originalFinalPaymentDay
+                            calculateFee feeTotal currentDay originalFinalPaymentDay
                         | Fee.SettlementRebate.Balance -> a.CumulativeFee
                         | Fee.SettlementRebate.Zero -> 0L<Cent>
                     | ValueNone -> 0L<Cent>
@@ -896,31 +900,26 @@ module Amortisation =
                     match p.Basic.InterestConfig.Method with
                     | Interest.Method.AddOn -> generatedSettlementPayment
                     | _ ->
-                        si.PrincipalBalance + si.FeeBalance - feeRebateIfSettled
+                        previous.PrincipalBalance + previous.FeeBalance - feeRebateIfSettled
                         + interestPortionL'
                         + chargesPortion
 
                 // refine the fee portion and rebate if a rebate is actually applied on the day, i.e. if the net effect covers the settlement figure
                 let feePortion', feeRebate =
                     if
-                        ap.GeneratedPayment.IsToBeGenerated
+                        current.GeneratedPayment.IsToBeGenerated
                         || feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect
                     then
                         let feeRebate' =
                             match p.Basic.InterestConfig.AprMethod with
                             | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
                                 // if the statutory rebate is higher than the fee rebate calculated above, use the higher figure
-                                calculateStatutoryFeeRebate
-                                    p.Basic
-                                    appliedPayments
-                                    initialStats
-                                    appliedPaymentDay
-                                    window
+                                calculateStatutoryFeeRebate p.Basic appliedPayments initialStats currentDay window
                                 |> max feeRebateIfSettled
                                 |> min feeTotal
                             | _ -> feeRebateIfSettled
 
-                        max 0L<Cent> (si.FeeBalance - feeRebate'), feeRebate'
+                        max 0L<Cent> (previous.FeeBalance - feeRebate'), feeRebate'
                     else
                         sign feePortion, 0L<Cent>
 
@@ -928,12 +927,12 @@ module Amortisation =
                 let principalPortion = max 0L<Cent> (assignable - feePortion')
 
                 // calculate the principal balance
-                let principalBalance = si.PrincipalBalance - sign principalPortion
+                let principalBalance = previous.PrincipalBalance - sign principalPortion
 
                 // if any future payment creates a negative principal balance, adjust these figures accordingly
                 let paymentDue', netEffect', principalPortion', principalBalance' =
                     if
-                        ap.PaymentStatus = NotYetDue
+                        current.PaymentStatus = NotYetDue
                         && feeRebate > 0L<Cent>
                         && principalBalance < 0L<Cent>
                     then
@@ -956,14 +955,14 @@ module Amortisation =
                         0L<Cent>, 0L<Cent>
 
                 // get the date equivalent of the offset day for further calculation
-                let offsetDate = p.Basic.StartDate.AddDays(int appliedPaymentDay)
+                let offsetDate = p.Basic.StartDate.AddDays(int currentDay)
 
                 // determine the principal balance
                 let balanceStatus = getBalanceStatus principalBalance'
 
                 // calculate the interest balance as a decimal
                 let interestBalanceM =
-                    si.InterestBalance + cappedNewInterestM'
+                    previous.InterestBalance + cappedNewInterestM'
                     - Cent.toDecimalCent (interestPortionL' - carriedInterestL)
 
                 // get the rounded interest balance
@@ -973,27 +972,27 @@ module Amortisation =
                 let createScheduleItem isSettlement =
                     // refine the payment status based on the balance status and whether this is a settlement
                     let paymentStatus =
-                        match si.BalanceStatus, isSettlement with
-                        | ClosedBalance, _ when ap.PaymentStatus.IsInformationOnly -> InformationOnly
+                        match previous.BalanceStatus, isSettlement with
+                        | ClosedBalance, _ when current.PaymentStatus.IsInformationOnly -> InformationOnly
                         | ClosedBalance, _ -> NoLongerRequired
                         | _, true -> Generated
                         | RefundDue, _ when netEffect' < 0L<Cent> -> Refunded
                         | RefundDue, _ when netEffect' > 0L<Cent> -> Overpayment
-                        | RefundDue, _ when ap.PaymentStatus.IsInformationOnly -> InformationOnly
+                        | RefundDue, _ when current.PaymentStatus.IsInformationOnly -> InformationOnly
                         | RefundDue, _ -> NoLongerRequired
                         | _ when
-                            ap.PaymentStatus <> InformationOnly
+                            current.PaymentStatus <> InformationOnly
                             && paymentDue' = 0L<Cent>
                             && confirmedPaymentTotal = 0L<Cent>
                             && pendingPaymentTotal = 0L<Cent>
-                            && GeneratedPayment.total ap.GeneratedPayment = 0L<Cent>
+                            && GeneratedPayment.total current.GeneratedPayment = 0L<Cent>
                             ->
                             NothingDue
-                        | _ -> ap.PaymentStatus
+                        | _ -> current.PaymentStatus
 
                     // refine the settlement figure if necessary by subtracting any payment made on the same day, or nullifying it if there are payments pending (settlement cannot be made in this case)
                     let settlementFigure =
-                        match pendingPaymentTotal, ap.PaymentStatus, p.Basic.InterestConfig.Method with
+                        match pendingPaymentTotal, current.PaymentStatus, p.Basic.InterestConfig.Method with
                         | pp, _, _ when pp > 0L<Cent> -> 0L<Cent>
                         | _, NotYetDue, _
                         | _, _, Interest.Method.AddOn -> generatedSettlementPayment'
@@ -1005,20 +1004,20 @@ module Amortisation =
                             // convert the generated payment placeholder with an actual settlement figure
                             (0L<Cent>, 0L<Cent>, 0m<Cent>, 0L<Cent>),
                             interestPortionL',
-                            match ap.GeneratedPayment with
+                            match current.GeneratedPayment with
                             | ToBeGenerated -> GeneratedValue settlementFigure
                             | gp -> gp
                         else
                             // refine the interest portion by adding carried interest, and calculate the balances
-                            let feeBalance = si.FeeBalance - feePortion' - feeRebate
+                            let feeBalance = previous.FeeBalance - feePortion' - feeRebate
                             let interestBalance = interestBalanceM |> Interest.ignoreFractionalCents 1
 
                             let chargesBalance =
-                                si.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
+                                previous.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
 
                             (principalBalance', feeBalance, interestBalance, chargesBalance),
                             interestPortionL' - carriedInterestL,
-                            ap.GeneratedPayment
+                            current.GeneratedPayment
 
                     // assign the separate balances
                     let principalBal, feeBal, interestBal, chargesBal = balances
@@ -1037,7 +1036,7 @@ module Amortisation =
                     //determine the type of offset day
                     let offsetDayType =
                         if isSettlement then SettlementDay
-                        elif appliedPaymentDay = evaluationDay then EvaluationDay
+                        elif currentDay = evaluationDay then EvaluationDay
                         else OffsetDay
 
                     // create the schedule item
@@ -1048,7 +1047,7 @@ module Amortisation =
                         ScheduledPayment = scheduledPayment
                         Window = window
                         PaymentDue = paymentDue'
-                        ActualPayments = ap.ActualPayments
+                        ActualPayments = current.ActualPayments
                         GeneratedPayment = generatedPayment
                         NetEffect =
                             if isSettlement then
@@ -1062,12 +1061,12 @@ module Amortisation =
                         NewCharges = incurredCharges
                         PrincipalPortion =
                             if isSettlement then
-                                si.PrincipalBalance
+                                previous.PrincipalBalance
                             else
                                 principalPortion'
                         FeePortion =
                             if isSettlement then
-                                si.FeeBalance - feeRebate
+                                previous.FeeBalance - feeRebate
                             else
                                 feePortion'
                         InterestPortion = interestPortionL'
@@ -1097,15 +1096,15 @@ module Amortisation =
                             interestBalanceM - Cent.toDecimalCent interestBalanceL
 
                     // returns the offset day, schedule item, generated payment, and interest rounding difference (zero in this case as it is already factored into the settlement figure)
-                    appliedPaymentDay,
+                    currentDay,
                     scheduleItem,
                     (if isSettlement then settlementFigure' else 0L<Cent>),
                     interestRoundingDifferenceM
 
                 // get the relevant type of item based on the intended purpose
                 let offsetDay, scheduleItem, generatedPayment, interestRoundingDifferenceM =
-                    match ap.GeneratedPayment, p.Advanced.SettlementDay with
-                    | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay when evaluationDay = appliedPaymentDay ->
+                    match current.GeneratedPayment, p.Advanced.SettlementDay with
+                    | ToBeGenerated, SettlementDay.SettlementOnEvaluationDay when evaluationDay = currentDay ->
                         createScheduleItem true
                     | GeneratedValue gv, _ -> failwith $"Unexpected value: <i>{gv}</i>"
                     | NoGeneratedPayment, _
