@@ -567,6 +567,40 @@ module Amortisation =
             unitPeriod
             bp.PaymentConfig.Rounding
 
+    // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
+    let getDailyInterestRates (p: Parameters) fromDay toDay =
+        Interest.dailyRates
+            p.Basic.StartDate
+            (isSettledWithinGracePeriod p)
+            p.Basic.InterestConfig.StandardRate
+            p.Advanced.InterestConfig.PromotionalRates
+            fromDay
+            toDay
+
+    /// calculates actuarial interest between two days
+    let calculateActuarialInterest
+        (p: Parameters)
+        (previous: ScheduleItem)
+        (previousDay: int<OffsetDay>)
+        (currentDay: int<OffsetDay>)
+        (interestRounding: Rounding)
+        =
+        let dailyInterestRates = getDailyInterestRates p previousDay currentDay
+
+        if previous.PrincipalBalance <= 0L<Cent> then
+            dailyInterestRates
+            |> Array.map (fun dr -> {
+                dr with
+                    InterestRate = p.Advanced.InterestConfig.RateOnNegativeBalance
+            })
+            |> Interest.calculate (previous.PrincipalBalance + previous.FeeBalance) Amount.Unlimited interestRounding
+        else
+            dailyInterestRates
+            |> Interest.calculate
+                (previous.PrincipalBalance + previous.FeeBalance)
+                p.Basic.InterestConfig.Cap.DailyAmount
+                interestRounding
+
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate (p: Parameters) initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
         // get the evaluation day (the day the schedule is evaluated) based on the evaluation date in the schedule parameters
@@ -577,16 +611,6 @@ module Amortisation =
 
         // calculate the total fee value for the entire schedule
         let feeTotal = Fee.total p.Basic.FeeConfig p.Basic.Principal
-
-        // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
-        let dailyInterestRates fromDay toDay =
-            Interest.dailyRates
-                p.Basic.StartDate
-                (isSettledWithinGracePeriod p)
-                p.Basic.InterestConfig.StandardRate
-                p.Advanced.InterestConfig.PromotionalRates
-                fromDay
-                toDay
 
         // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
         let interestRounding = p.Basic.InterestConfig.Rounding
@@ -621,24 +645,7 @@ module Amortisation =
 
                 // calculates the actuarial interest that has accrued since the previous item
                 let actuarialInterestM =
-                    // if the principal balance is negative, apply any rate on negative balances and disregard any daily interest caps
-                    if previous.PrincipalBalance <= 0L<Cent> then
-                        dailyInterestRates previousDay currentDay
-                        |> Array.map (fun dr -> {
-                            dr with
-                                InterestRate = p.Advanced.InterestConfig.RateOnNegativeBalance
-                        })
-                        |> Interest.calculate
-                            (previous.PrincipalBalance + previous.FeeBalance)
-                            Amount.Unlimited
-                            interestRounding
-                    // otherwise, apply the daily interest rates as normal, applied daily caps as necessary
-                    else
-                        dailyInterestRates previousDay currentDay
-                        |> Interest.calculate
-                            (previous.PrincipalBalance + previous.FeeBalance)
-                            p.Basic.InterestConfig.Cap.DailyAmount
-                            interestRounding
+                    calculateActuarialInterest p previous previousDay currentDay interestRounding
 
                 // of the actual payments made on the day, sum any that are confirmed or written off
                 let confirmedPaymentTotal =
