@@ -477,7 +477,7 @@ module Amortisation =
             decimal feeTotal * (decimal originalFinalPaymentDay - decimal appliedPaymentDay)
             / decimal originalFinalPaymentDay
             |> Cent.round RoundUp
-            |> Cent.max 0L<Cent>
+            |> max 0L<Cent>
 
     /// determines any payment due on the day
     let calculatePaymentDue si originalPayment rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
@@ -498,9 +498,9 @@ module Amortisation =
             // if there are no original or rescheduled payments on the day, there is nothing due to pay
             | ValueNone, ValueNone -> 0L<Cent>
             // payment due should never exceed settlement figure
-            |> Cent.min (si.PrincipalBalance + si.FeeBalance + interestPortionL)
+            |> min (si.PrincipalBalance + si.FeeBalance + interestPortionL)
             // payment due should never be negative
-            |> Cent.max 0L<Cent>
+            |> max 0L<Cent>
             // apply minimum payment rules
             |> fun payment ->
                 match minimumPayment with
@@ -762,13 +762,13 @@ module Amortisation =
                         ap.AppliedCharges |> Array.sumBy _.Total, ap.AppliedCharges
 
                 // apportion the charges
-                let chargesPortion = newChargesTotal + si.ChargesBalance |> Cent.max 0L<Cent>
+                let chargesPortion = newChargesTotal + si.ChargesBalance |> max 0L<Cent>
 
                 // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful evaluation of the future schedule
                 // (e.g. seeing if the schedule will be settled as agreed)
                 let netEffect =
                     if appliedPaymentDay > evaluationDay then
-                        Cent.min ap.NetEffect paymentDue
+                        min ap.NetEffect paymentDue
                     else
                         ap.NetEffect
 
@@ -856,7 +856,7 @@ module Amortisation =
                     match p.Basic.FeeConfig with
                     | ValueSome feeConfig ->
                         match feeConfig.FeeAmortisation with
-                        | Fee.FeeAmortisation.AmortiseBeforePrincipal -> Cent.min si.FeeBalance assignable
+                        | Fee.FeeAmortisation.AmortiseBeforePrincipal -> min si.FeeBalance assignable
                         | Fee.FeeAmortisation.AmortiseProportionately ->
                             feePercentage p.Basic.Principal feeTotal
                             |> Percent.toDecimal
@@ -866,8 +866,8 @@ module Amortisation =
                                 else
                                     decimal assignable * m / (1m + m)
                                     |> Cent.round RoundUp
-                                    |> Cent.max 0L<Cent>
-                                    |> Cent.min si.FeeBalance
+                                    |> max 0L<Cent>
+                                    |> min si.FeeBalance
                     | ValueNone -> 0L<Cent>
 
                 // determine the value of any fee rebate in the event of settlement, depending on settings
@@ -916,16 +916,16 @@ module Amortisation =
                                     initialStats
                                     appliedPaymentDay
                                     window
-                                |> Cent.max feeRebateIfSettled
-                                |> Cent.min feeTotal
+                                |> max feeRebateIfSettled
+                                |> min feeTotal
                             | _ -> feeRebateIfSettled
 
-                        Cent.max 0L<Cent> (si.FeeBalance - feeRebate'), feeRebate'
+                        max 0L<Cent> (si.FeeBalance - feeRebate'), feeRebate'
                     else
                         sign feePortion, 0L<Cent>
 
                 // apportion the principal
-                let principalPortion = Cent.max 0L<Cent> (assignable - feePortion')
+                let principalPortion = max 0L<Cent> (assignable - feePortion')
 
                 // calculate the principal balance
                 let principalBalance = si.PrincipalBalance - sign principalPortion
@@ -1032,7 +1032,7 @@ module Amortisation =
 
                     let settlementFigure' =
                         (balanceTotal, settlementFigure)
-                        ||> if settlementFigure < 0L<Cent> then Cent.max else Cent.min
+                        ||> if settlementFigure < 0L<Cent> then max else min
 
                     //determine the type of offset day
                     let offsetDayType =

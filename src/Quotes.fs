@@ -93,18 +93,16 @@ module Quotes =
                         }
                     // if there is an existing payment on the day and the generated value is positive, apportion the existing payment first (in the order charges->interest->fee->principal), then apportion the generated payment
                     elif generatedValue >= 0L<Cent> then
-                        let chargesPortion = Cent.min si.ChargesPortion existingPayments
+                        let chargesPortion = min si.ChargesPortion existingPayments
 
                         let interestPortion =
-                            Cent.min si.InterestPortion (Cent.max 0L<Cent> (existingPayments - chargesPortion))
+                            min si.InterestPortion (max 0L<Cent> (existingPayments - chargesPortion))
 
                         let feePortion =
-                            Cent.min
-                                si.FeePortion
-                                (Cent.max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
+                            min si.FeePortion (max 0L<Cent> (existingPayments - chargesPortion - interestPortion))
 
                         let principalPortion =
-                            Cent.max 0L<Cent> (existingPayments - feePortion - chargesPortion - interestPortion)
+                            max 0L<Cent> (existingPayments - feePortion - chargesPortion - interestPortion)
 
                         PaymentQuote {
                             PaymentValue = GeneratedPayment.total si.GeneratedPayment

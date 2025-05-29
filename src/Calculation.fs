@@ -126,11 +126,6 @@ module Calculation =
     /// utility functions for base currency unit values
     [<RequireQualifiedAccess>]
     module Cent =
-        /// max of two cent values
-        let max (c1: int64<Cent>) (c2: int64<Cent>) = max (int64 c1) (int64 c2) * 1L<Cent>
-        /// min of two cent values
-        let min (c1: int64<Cent>) (c2: int64<Cent>) = min (int64 c1) (int64 c2) * 1L<Cent>
-
         /// derive a rounded cent value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
             m |> Rounding.round rounding |> int64 |> (*) 1L<Cent>
