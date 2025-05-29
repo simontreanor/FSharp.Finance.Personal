@@ -68,91 +68,97 @@ let actualPayments =
     ]
 
 // Test the Actor Model implementation
-let testActorModel() =
+let testActorModel () =
     async {
         printfn "Testing Actor Model Amortisation Implementation..."
-        
+
         // Use the synchronous API for this example
         let result = amortiseSync parameters actualPayments
-        
+
         printfn "Amortisation calculation completed using Actor Model approach!"
         printfn "Schedule items count: %d" (result.AmortisationSchedule.ScheduleItems.Count)
         printfn "Final balance status: %A" result.AmortisationSchedule.FinalStats.FinalBalanceStatus
-        
+
         return result
     }
 
 // Example of creating individual actors for testing
-let testIndividualActors() =
+let testIndividualActors () =
     async {
         printfn "\nTesting Individual Actors..."
-        
+
         // Create actor instances
         let principalState = createPrincipalState 1500_00L<Cent>
         let principalActor = createEnhancedPrincipalActor principalState
-        
-        let interestState = createInterestState()
+
+        let interestState = createInterestState ()
         let interestActor = createEnhancedInterestActor interestState parameters
-        
+
         let feeState = createFeeState 0L<Cent>
         let feeActor = createEnhancedFeeActor feeState parameters
-        
-        let chargesState = createChargesState()
+
+        let chargesState = createChargesState ()
         let chargesActor = createEnhancedChargesActor chargesState
-        
+
         // Test principal payment
         principalActor.Post(ApplyPrincipalPayment(100_00L<Cent>, 30<OffsetDay>))
-        
+
         // Test interest accrual
         interestActor.Post(AccrueInterest(30, 0.008m, 1500_00L<Cent>))
-        
+
         // Test interest payment
         interestActor.Post(ApplyInterestPayment(50_00L<Cent>))
-        
+
         printfn "Individual actor tests completed!"
-        
+
         return ()
     }
 
 // Demonstration of reactive features
-let testReactiveFeatures() =
+let testReactiveFeatures () =
     async {
         printfn "\nTesting Reactive Features..."
-        
+
         // Create state change observable
         let stateChangeEvent = new Event<ActorStateChange<PrincipalState>>()
         let stateChangeObservable = stateChangeEvent.Publish
-        
+
         // Subscribe to state changes
         stateChangeObservable.Add(fun change ->
             printfn "Actor %s state changed at %A" change.ActorId change.Timestamp
             printfn "  Old balance: %A" change.OldState.Balance
             printfn "  New balance: %A" change.NewState.Balance
         )
-        
+
         // Create observable actor
         let initialState = createPrincipalState 1000_00L<Cent>
-        let observableActor = createObservableActor initialState "PrincipalActor" stateChangeEvent
-        
+
+        let observableActor =
+            createObservableActor initialState "PrincipalActor" stateChangeEvent
+
         // Trigger state changes
-        let newState = { initialState with Balance = 900_00L<Cent> }
+        let newState = {
+            initialState with
+                Balance = 900_00L<Cent>
+        }
+
         observableActor.Post(UpdateState newState)
-        
+
         // Allow time for processing
         do! Async.Sleep(100)
-        
+
         printfn "Reactive features test completed!"
-        
+
         return ()
     }
 
 // Main execution
-let runTests() =
+let runTests () =
     async {
-        do! testActorModel() |> Async.Ignore
-        do! testIndividualActors()
-        do! testReactiveFeatures()
-        
+        do! testActorModel () |> Async.Ignore
+        do! testIndividualActors ()
+        do! testReactiveFeatures ()
+
         printfn "\nAll Actor Model tests completed successfully!"
         printfn "\nKey features of the Actor Model implementation:"
         printfn "1. Separate actors for Principal, Interest, Fees, and Charges"
