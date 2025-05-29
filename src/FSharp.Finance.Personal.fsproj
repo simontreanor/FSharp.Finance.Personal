@@ -21,7 +21,8 @@
     <Compile Include="Interest.fs" />
     <Compile Include="Scheduling.fs" />
     <Compile Include="AppliedPayment.fs" />
-    <Compile Include="Amortisation.fs" /><Compile Include="Amortisation2.fs" />
+    <Compile Include="Amortisation.fs" />
+    <Compile Include="Amortisation4.fs" />
     <Compile Include="Quotes.fs" />
     <Compile Include="Refinancing.fs" />
     <None Include="icon.png" Pack="true" PackagePath="" />
