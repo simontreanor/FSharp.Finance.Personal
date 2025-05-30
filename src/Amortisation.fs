@@ -694,6 +694,39 @@ module Amortisation =
             | Fee.SettlementRebate.Zero -> 0L<Cent>
         | ValueNone -> 0L<Cent>
 
+    let createInitialScheduleItem startDate principal fee interest (advancedFeeConfig: Fee.AdvancedConfig voption) = {
+        ScheduleItem.zero with
+            OffsetDate = startDate
+            Advances = [| principal |]
+            PrincipalBalance = principal
+            FeeBalance = fee
+            InterestBalance = interest
+            SettlementFigure = principal + fee
+            FeeRebateIfSettled =
+                match advancedFeeConfig with
+                | ValueSome fc ->
+                    match fc.SettlementRebate with
+                    | Fee.SettlementRebate.Zero -> 0L<Cent>
+                    | _ -> fee
+                | ValueNone -> 0L<Cent>
+    }
+
+    let createInitialTotals interest = {
+        CumulativeScheduledPayments = 0L<Cent>
+        CumulativeActualPayments = 0L<Cent>
+        CumulativeGeneratedPayments = 0L<Cent>
+        CumulativeFee = 0L<Cent>
+        CumulativeInterest = interest
+        CumulativeInterestPortions = 0L<Cent>
+        CumulativeActuarialInterestM = 0m<Cent>
+    }
+
+    // removes duplicated initial offset day
+    let deduplicateDay0 (a: (int<OffsetDay> * ScheduleItem) array) =
+        if a |> Array.filter (fun (day, _) -> day = 0<OffsetDay>) |> Array.length = 2 then
+            a |> Array.tail
+        else
+            a
 
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate (p: Parameters) initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
@@ -1168,44 +1201,18 @@ module Amortisation =
             (
             // initialise the values for the scan
             (0<OffsetDay>,
-             {
-                 ScheduleItem.zero with
-                     OffsetDate = p.Basic.StartDate
-                     Advances = [| p.Basic.Principal |]
-                     PrincipalBalance = p.Basic.Principal
-                     FeeBalance = feeTotal
-                     InterestBalance = initialInterestBalanceM
-                     SettlementFigure = p.Basic.Principal + feeTotal
-                     FeeRebateIfSettled =
-                         match p.Advanced.FeeConfig with
-                         | ValueSome fc ->
-                             match fc.SettlementRebate with
-                             | Fee.SettlementRebate.Zero -> 0L<Cent>
-                             | _ -> feeTotal
-                         | ValueNone -> 0L<Cent>
-             }),
-            {
-                CumulativeScheduledPayments = 0L<Cent>
-                CumulativeActualPayments = 0L<Cent>
-                CumulativeGeneratedPayments = 0L<Cent>
-                CumulativeFee = 0L<Cent>
-                CumulativeInterest = initialInterestBalanceM
-                CumulativeInterestPortions = 0L<Cent>
-                CumulativeActuarialInterestM = 0m<Cent>
-            })
+             createInitialScheduleItem
+                 p.Basic.StartDate
+                 p.Basic.Principal
+                 feeTotal
+                 initialInterestBalanceM
+                 p.Advanced.FeeConfig),
+            createInitialTotals initialInterestBalanceM)
         // separate and discard the accumulator
         |> Array.unzip
         |> fst
         // handle duplicated initial offset day
-        |> fun a ->
-            if
-                a
-                |> Array.filter (fun (siOffsetDay, _) -> siOffsetDay = 0<OffsetDay>)
-                |> Array.length = 2
-            then
-                a |> Array.tail
-            else
-                a
+        |> deduplicateDay0
         // post-process missed payments or underpayments
         |> markMissedPaymentsAsLate
 
