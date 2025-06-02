@@ -696,3 +696,103 @@ module ActualPaymentTestsExtra =
             }
 
         actual |> should equal expected
+
+    [<Fact>]
+    let ActualPaymentTestExtra008 () =
+        let title = "ActualPaymentTestExtra008"
+
+        let description =
+            "Over-refund should not lead to large final interest adjustment; 6045bd12550f"
+
+        let parameters: Parameters = {
+            Basic = {
+                EvaluationDate = Date(2025, 6, 2)
+                StartDate = Date(2023, 11, 7)
+                Principal = 150_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2023, 11, 24)
+                        ScheduleLength = PaymentCount 4
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.AddOn
+                    StandardRate = Interest.Rate.Daily <| Percent 0.8m
+                    Cap = {
+                        TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+                        DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+                    }
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    Rounding = RoundDown
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 0<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
+                }
+                SettlementDay = SettlementDay.SettlementOnEvaluationDay
+                TrimEnd = false
+            }
+        }
+
+        let actual =
+            let actualPayments =
+                Map [
+                    17<OffsetDay>, [| ActualPayment.quickConfirmed 70_20L<Cent> |]
+                    47<OffsetDay>, [| ActualPayment.quickConfirmed 70_20L<Cent> |]
+                    56<OffsetDay>, [| ActualPayment.quickConfirmed 76_80L<Cent> |]
+                    338<OffsetDay>,
+                    [|
+                        ActualPayment.quickConfirmed -2_82L<Cent>
+                        ActualPayment.quickConfirmed -0_03L<Cent>
+                    |]
+                ]
+
+            let schedules = amortise parameters actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description parameters ""
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected =
+            573<OffsetDay>,
+            {
+                OffsetDayType = OffsetDayType.SettlementDay
+                OffsetDate = Date(2025, 6, 2)
+                Advances = [||]
+                ScheduledPayment = ScheduledPayment.zero
+                Window = 4
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = GeneratedValue 0L<Cent>
+                NetEffect = 0L<Cent>
+                PaymentStatus = Generated
+                BalanceStatus = ClosedBalance
+                ActuarialInterest = 3.76m<Cent>
+                NewInterest = 0m<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 2L<Cent>
+                FeePortion = 0L<Cent>
+                InterestPortion = 0L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeeRebate = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
+                ChargesBalance = 0L<Cent>
+                SettlementFigure = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
+            }
+
+        actual |> should equal expected

@@ -631,8 +631,10 @@ module Amortisation =
         cumulativeActuarialInterestM
         initialInterestBalanceM
         (basicParameters: BasicParameters)
+        fractionForgiven
         =
         match basicParameters.InterestConfig.Method with
+        | Interest.Method.AddOn when fractionForgiven -> 0m<Cent>
         | Interest.Method.AddOn when
             previousBalanceStatus <> ClosedBalance
             && (currentGeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>)
@@ -640,7 +642,7 @@ module Amortisation =
             && cappedNewInterestM = 0m<Cent>  // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
             ->
             cumulativeActuarialInterestM - initialInterestBalanceM
-            |> Interest.ignoreFractionalCents 1
+            |> Interest.ignoreFractionalCents 1u
             |> Interest.Cap.cappedAddedValue
                 basicParameters.InterestConfig.Cap.TotalAmount
                 basicParameters.Principal
@@ -744,7 +746,7 @@ module Amortisation =
 
         // get stats for interest rounding at the end of the schedule
         let maxAppliedPaymentDay = appliedPayments |> Map.keys |> Seq.max
-        let appliedPaymentCount = appliedPayments |> Map.count
+        let appliedPaymentCount = appliedPayments |> Map.count |> uint
 
         // generate the amortisation schedule
         let generator ((previousDay, previous), totals) (currentDay, current: AppliedPayment) =
@@ -792,12 +794,20 @@ module Amortisation =
             // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
             let calculateSettlementReduction m =
                 if currentDay = maxAppliedPaymentDay then
-                    m - Interest.ignoreFractionalCents appliedPaymentCount m
+                    let ignored = Interest.ignoreFractionalCents appliedPaymentCount m
+
+                    {|
+                        Reduction = m - ignored |> max 0m<Cent>
+                        FractionForgiven = ignored = 0m<Cent>
+                    |}
                 else
-                    0m<Cent>
+                    {|
+                        Reduction = 0m<Cent>
+                        FractionForgiven = false
+                    |}
 
             // cap the new interest against the total interest cap
-            let cappedNewInterestM, settlementReductionM =
+            let cappedNewInterestM, settlementReductionM, fractionForgiven =
                 let cni =
                     Interest.Cap.cappedAddedValue
                         p.Basic.InterestConfig.Cap.TotalAmount
@@ -805,8 +815,8 @@ module Amortisation =
                         totals.CumulativeInterest
                         newInterestM
 
-                let sr = calculateSettlementReduction cni |> max 0m<Cent>
-                cni - sr, sr
+                let sr = calculateSettlementReduction cni
+                cni - sr.Reduction, sr.Reduction, sr.FractionForgiven
 
             // get the rounded settlement reduction
             let settlementReductionL =
@@ -916,6 +926,7 @@ module Amortisation =
                     totals'.CumulativeActuarialInterestM
                     initialInterestBalanceM
                     p.Basic
+                    fractionForgiven
 
             // refine the capped new interest value using any interest adjustment
             let cappedNewInterestM' = cappedNewInterestM + interestAdjustmentM
@@ -1078,7 +1089,7 @@ module Amortisation =
                     else
                         // refine the interest portion by adding carried interest, and calculate the balances
                         let feeBalance = previous.FeeBalance - feePortion' - feeRebate
-                        let interestBalance = interestBalanceM |> Interest.ignoreFractionalCents 1
+                        let interestBalance = interestBalanceM |> Interest.ignoreFractionalCents 1u
 
                         let chargesBalance =
                             previous.ChargesBalance + newChargesTotal - chargesPortion + carriedCharges
