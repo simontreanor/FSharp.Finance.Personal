@@ -8,6 +8,17 @@
 
 ---
 
+## [2.5.2] - 2025-06-02
+
+### Fixed
+
+- Fixed an issue with amortisation where new interest was applied even though a small principal balance had been forgiven. Essentially any principal balance
+with a cent value of less than the number of scheduled payments is forgiven and the balance closed. This is to avoid situations where there was an intent to
+settle a balance but the payment was very slightly less than the settlement figure, e.g. due to small rounding errors in manual settlement or refund
+calculations. Over time, this could lead to disproportionate amounts of interest being charged. With the principal balance being forgiven, there was no need
+to calculate and apply any new interest, and this has now been rectified. Relevant unit test:
+[ActualPaymentTestExtra008](https://simontreanor.dev/FSharp.Finance.Personal/content/ActualPayment/ActualPaymentTestExtra008.html).
+
 ## [2.5.1] - 2025-05-27
 
 ### Migration Guide
