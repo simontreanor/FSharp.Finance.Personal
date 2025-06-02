@@ -794,11 +794,11 @@ module Amortisation =
             // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
             let calculateSettlementReduction m =
                 if currentDay = maxAppliedPaymentDay then
-                    let ignored = Interest.ignoreFractionalCents appliedPaymentCount m
+                    let valueMinusForgiven = Interest.ignoreFractionalCents appliedPaymentCount m
 
                     {|
-                        Reduction = m - ignored |> max 0m<Cent>
-                        FractionForgiven = ignored = 0m<Cent>
+                        Reduction = m - valueMinusForgiven |> max 0m<Cent>
+                        FractionForgiven = valueMinusForgiven = 0m<Cent>
                     |}
                 else
                     {|
