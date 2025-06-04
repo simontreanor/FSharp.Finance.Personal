@@ -748,14 +748,52 @@ module Amortisation =
         let maxAppliedPaymentDay = appliedPayments |> Map.keys |> Seq.max
         let appliedPaymentCount = appliedPayments |> Map.count |> uint
 
+        // get the unit period and project it over the schedule to determine the amortisation windows
+        let unitPeriodMap =
+            match p.Basic.ScheduleConfig with
+            | AutoGenerateSchedule ags ->
+                let paymentSchedule =
+                    UnitPeriod.generatePaymentSchedule
+                        (UnitPeriod.ScheduleLength.MaxDuration(
+                            p.Basic.StartDate,
+                            int maxAppliedPaymentDay * 1<DurationDay>
+                        ))
+                        UnitPeriod.Direction.Forward
+                        ags.UnitPeriodConfig
+                    |> Array.insertAt 0 p.Basic.StartDate
+                    |> Array.indexed
+
+                let dayToUnitPeriodMap =
+                    [| 0 .. int maxAppliedPaymentDay |]
+                    |> Array.map (fun day ->
+                        let day = day * 1<OffsetDay>
+                        let date = OffsetDay.toDate p.Basic.StartDate day
+
+                        let unitPeriodIndex =
+                            paymentSchedule
+                            |> Array.filter (fun (_, paymentDate) -> paymentDate <= date)
+                            |> Array.tryLast
+                            |> Option.map fst
+                            |> Option.defaultValue 0
+
+                        day, unitPeriodIndex
+                    )
+                    |> Map.ofArray
+
+                Some dayToUnitPeriodMap
+            | _ -> None
+
         // generate the amortisation schedule
         let generator ((previousDay, previous), totals) (currentDay, current: AppliedPayment) =
             // determine the window and increment every time a new scheduled payment is due
             let window =
-                if ScheduledPayment.isSome current.ScheduledPayment then
-                    previous.Window + 1
-                else
-                    previous.Window
+                match unitPeriodMap with
+                | Some upm -> upm |> Map.find currentDay
+                | None ->
+                    if ScheduledPayment.isSome current.ScheduledPayment then
+                        previous.Window + 1
+                    else
+                        previous.Window
 
             // get an array of advances
             // note: assumes single advance on day 0 (multiple advances are not currently supported), so this is based purely on the principal
