@@ -758,7 +758,7 @@ module Scheduling =
         | AutoGenerateSchedule rs ->
             match rs.ScheduleLength with
             | PaymentCount 0
-            | MaxDuration 0<DurationDay> -> Map.empty
+            | MaxDuration(_, 0<DurationDay>) -> Map.empty
             | _ ->
                 let unitPeriodConfigStartDate = Config.startDate rs.UnitPeriodConfig
 

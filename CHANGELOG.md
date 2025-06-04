@@ -8,6 +8,16 @@
 
 ---
 
+## [2.5.3] - 2025-06-04
+
+### Fixed
+
+- When using a maximum duration rather than a payment count to generate a payment schedule based on a
+unit-period config, it was using approximations of the number of payments within a particular timeframe
+rather than calculating precisely. This now calculates precisely.
+
+---
+
 ## [2.5.2] - 2025-06-02
 
 ### Fixed
