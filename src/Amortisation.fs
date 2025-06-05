@@ -35,6 +35,8 @@ module Amortisation =
         | OpenBalance
         /// due to an overpayment or a refund of charges, a refund is due
         | RefundDue
+        /// a refund was made but this left a positive principal balance, meaning the customer has been over-refunded
+        | OverRefunded
 
         /// HTML formatting to display the balance status in a readable format
         member bs.Html =
@@ -42,6 +44,7 @@ module Amortisation =
             | ClosedBalance -> "closed"
             | OpenBalance -> "open"
             | RefundDue -> "refund due"
+            | OverRefunded -> "over-refunded"
 
     /// a breakdown of how an actual payment is apportioned to principal, fee, interest and charges
     type Apportionment = {
@@ -430,10 +433,15 @@ module Amortisation =
             decimal feeTotal / decimal principal |> Percent.fromDecimal
 
     /// gets the balance status based on the principal balance
-    let getBalanceStatus principalBalance =
-        if principalBalance = 0L<Cent> then ClosedBalance
-        elif principalBalance < 0L<Cent> then RefundDue
-        else OpenBalance
+    let getBalanceStatus principalBalance previousBalanceStatus =
+        if principalBalance = 0L<Cent> then
+            ClosedBalance
+        elif principalBalance < 0L<Cent> then
+            RefundDue
+        elif principalBalance > 0L<Cent> && previousBalanceStatus = RefundDue then
+            OverRefunded
+        else
+            OpenBalance
 
     /// determines whether a schedule is settled within any grace period (e.g. no interest may be due if settlement is made within three days of the advance)
     let isSettledWithinGracePeriod (p: Parameters) =
@@ -500,8 +508,8 @@ module Amortisation =
 
     /// determines any payment due on the day
     let calculatePaymentDue si originalPayment rescheduledPayment extraPaymentsBalance interestPortionL minimumPayment =
-        // if the balance is closed or a refund is due, no payment is due
-        if si.BalanceStatus = ClosedBalance || si.BalanceStatus = RefundDue then
+        // if the balance is not open, no payment is due
+        if si.BalanceStatus <> OpenBalance then
             0L<Cent>
         // otherwise, calculate the payment due based on scheduled payments and various balances
         else
@@ -606,7 +614,9 @@ module Amortisation =
         =
         let dailyInterestRates = getDailyInterestRates p previousDay currentDay
 
-        if previous.PrincipalBalance <= 0L<Cent> then
+        if previous.BalanceStatus = OverRefunded then
+            0m<Cent>
+        elif previous.PrincipalBalance <= 0L<Cent> then
             dailyInterestRates
             |> Array.map (fun dr -> {
                 dr with
@@ -629,10 +639,11 @@ module Amortisation =
         initialInterestBalanceM
         actuarialInterestM //this can be higher than the capped actuarial interest because it can include an adjustment that sucks in all the lost interest from rounding
         =
-        match interestMethod with
-        | Interest.Method.Actuarial -> actuarialInterestM
-        | Interest.Method.AddOn when previousBalanceStatus = ClosedBalance -> 0m<Cent>
-        | Interest.Method.AddOn ->
+        match previousBalanceStatus, interestMethod with
+        | _, Interest.Method.Actuarial -> actuarialInterestM
+        | ClosedBalance, _
+        | OverRefunded, _ -> 0m<Cent>
+        | _ ->
             cumulativeActuarialInterestM + cappedActuarialInterestM
             |> fun i ->
                 if i > initialInterestBalanceM then
@@ -642,20 +653,16 @@ module Amortisation =
             |> min cappedActuarialInterestM
 
     /// ignores small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
-    let calculateFinalInterestReduction currentDay maxAppliedPaymentDay appliedPaymentCount interestM =
-        if currentDay = maxAppliedPaymentDay then
-            let valueMinusForgiven =
-                Interest.ignoreFractionalCents appliedPaymentCount interestM
-
-            {|
-                Reduction = interestM - valueMinusForgiven |> max 0m<Cent>
-                InterestForgiven = valueMinusForgiven = 0m<Cent>
-            |}
+    let calculateFinalInterestReduction
+        (currentDay: int<OffsetDay>)
+        maxAppliedPaymentDay
+        appliedPaymentCount
+        interestM
+        =
+        if interestM > 0m<Cent> && currentDay = maxAppliedPaymentDay then
+            interestM - Interest.ignoreFractionalCents appliedPaymentCount interestM
         else
-            {|
-                Reduction = 0m<Cent>
-                InterestForgiven = false
-            |}
+            0m<Cent>
 
     /// calculates any new interest accrued since the previous item, according to the interest method supplied in the schedule parameters
     let calculateInterestAdjustment
@@ -666,14 +673,13 @@ module Amortisation =
         cumulativeActuarialInterestM
         initialInterestBalanceM
         (basicParameters: BasicParameters)
-        interestForgiven
         =
         match basicParameters.InterestConfig.Method with
-        | Interest.Method.AddOn when interestForgiven -> 0m<Cent>
         | Interest.Method.AddOn when
             previousBalanceStatus <> ClosedBalance
             && (currentGeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>)
             && previousBalanceStatus <> RefundDue
+            && previousBalanceStatus <> OverRefunded
             && cappedNewInterestM = 0m<Cent>  // cappedNewInterest check here avoids adding an interest adjustment twice (one for generated payment, one for final payment)
             ->
             cumulativeActuarialInterestM - initialInterestBalanceM
@@ -855,7 +861,7 @@ module Amortisation =
                     initialInterestBalanceM
                     actuarialInterestM
 
-            let cappedNewInterestM, finalInterestReductionM, interestForgiven =
+            let cappedNewInterestM, finalInterestReductionM =
                 let cni =
                     Interest.Cap.cappedAddedValue
                         p.Basic.InterestConfig.Cap.TotalAmount
@@ -863,10 +869,10 @@ module Amortisation =
                         totals.CumulativeInterest
                         newInterestM
 
-                let sr =
+                let fir =
                     calculateFinalInterestReduction currentDay maxAppliedPaymentDay appliedPaymentCount cni
 
-                cni - sr.Reduction, sr.Reduction, sr.InterestForgiven
+                cni - fir, fir
 
             let finalInterestReductionL =
                 finalInterestReductionM |> Cent.fromDecimalCent interestRounding
@@ -951,7 +957,6 @@ module Amortisation =
                     totals'.CumulativeActuarialInterestM
                     initialInterestBalanceM
                     p.Basic
-                    interestForgiven
 
             // refine the capped new interest value using any interest adjustment
             let cappedNewInterestM' = cappedNewInterestM + interestAdjustmentM
@@ -1060,7 +1065,7 @@ module Amortisation =
             let offsetDate = p.Basic.StartDate.AddDays(int currentDay)
 
             // determine the principal balance
-            let balanceStatus = getBalanceStatus principalBalance'
+            let balanceStatus = getBalanceStatus principalBalance' previous.BalanceStatus
 
             // calculate the interest balance as a decimal
             let interestBalanceM =
@@ -1074,17 +1079,15 @@ module Amortisation =
             let createScheduleItem isSettlement =
                 // refine the payment status based on the balance status and whether this is a settlement
                 let paymentStatus =
-                    match previous.BalanceStatus, isSettlement with
-                    | ClosedBalance, _ when current.PaymentStatus.IsInformationOnly -> InformationOnly
-                    | ClosedBalance, _ -> NoLongerRequired
-                    | _, true -> Generated
-                    | RefundDue, _ when netEffect' < 0L<Cent> -> Refunded
-                    | RefundDue, _ when netEffect' > 0L<Cent> -> Overpayment
-                    | RefundDue, _ when current.PaymentStatus.IsInformationOnly -> InformationOnly
-                    | RefundDue, _ -> NoLongerRequired
+                    match current.PaymentStatus, previous.BalanceStatus, isSettlement with
+                    | InformationOnly, _, _ -> InformationOnly
+                    | _, ClosedBalance, _ -> NoLongerRequired
+                    | _, _, true -> Generated
+                    | _, RefundDue, _ when netEffect' < 0L<Cent> -> Refunded
+                    | _, RefundDue, _ when netEffect' > 0L<Cent> -> Overpayment
+                    | _, RefundDue, _ -> NoLongerRequired
                     | _ when
-                        current.PaymentStatus <> InformationOnly
-                        && paymentDue' = 0L<Cent>
+                        paymentDue' = 0L<Cent>
                         && madePaymentTotal = 0L<Cent>
                         && pendingPaymentTotal = 0L<Cent>
                         && GeneratedPayment.total current.GeneratedPayment = 0L<Cent>
@@ -1094,10 +1097,16 @@ module Amortisation =
 
                 // refine the settlement figure if necessary by subtracting any payment made on the same day, or nullifying it if there are payments pending (settlement cannot be made in this case)
                 let settlementFigure =
-                    match pendingPaymentTotal, current.PaymentStatus, p.Basic.InterestConfig.Method with
-                    | pp, _, _ when pp > 0L<Cent> -> 0L<Cent>
-                    | _, NotYetDue, _
-                    | _, _, Interest.Method.AddOn -> generatedSettlementPayment'
+                    match
+                        previous.BalanceStatus,
+                        pendingPaymentTotal,
+                        current.PaymentStatus,
+                        p.Basic.InterestConfig.Method
+                    with
+                    | OverRefunded, _, _, _ -> previous.PrincipalBalance
+                    | _, pp, _, _ when pp > 0L<Cent> -> 0L<Cent>
+                    | _, _, NotYetDue, _
+                    | _, _, _, Interest.Method.AddOn -> generatedSettlementPayment'
                     | _ -> generatedSettlementPayment' - netEffect'
 
                 // deteremine the settlement balances or carried balances
@@ -1336,7 +1345,7 @@ module Amortisation =
             |> applyPayments p actualPayments
             |> calculate p basicSchedule.Stats
             |> if p.Advanced.TrimEnd then
-                   Map.filter (fun _ si -> si.PaymentStatus <> NoLongerRequired || si.BalanceStatus = RefundDue)
+                   Map.filter (fun _ si -> si.PaymentStatus <> NoLongerRequired)
                else
                    id
             |> calculateStats

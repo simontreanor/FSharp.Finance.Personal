@@ -131,7 +131,7 @@
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">-57.05</td>
         <td class="ci09"><i>refunded</i></td>
-        <td class="ci10">open</td>
+        <td class="ci10">over-refunded</td>
         <td class="ci11">-3.1740</td>
         <td class="ci12">-3.1740</td>
         <td class="ci13">-3.18</td>
@@ -148,11 +148,11 @@
         <td class="ci04">21</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>n/a</i></td>
-        <td class="ci07">1.92</td>
-        <td class="ci08">1.92</td>
+        <td class="ci07">0.63</td>
+        <td class="ci08">0.63</td>
         <td class="ci09"><i>generated</i></td>
         <td class="ci10">closed</td>
-        <td class="ci11">1.2852</td>
+        <td class="ci11">0.0000</td>
         <td class="ci12">0.0000</td>
         <td class="ci13">0.00</td>
         <td class="ci14">0.63</td>
@@ -164,7 +164,7 @@
 <h4>Final Stats</h4>
 <table>
     <tr>
-        <td>Generated settlement: <i>1.92 on day 643</i></td>
+        <td>Generated settlement: <i>0.63 on day 643</i></td>
         <td>Final balance status: <i>closed</i></td>
     </tr>
     <tr>

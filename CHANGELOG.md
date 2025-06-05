@@ -8,6 +8,17 @@
 
 ---
 
+## [2.5.5] - 2025-06-05
+
+### Fixed
+
+- Reverting some of the changes made in 2.5.2, which sought to eliminate discrepancies caused by small amounts of interest at the end of a schedule.
+The problem was misidentified as being due to interest/principal forgiveness whereas it was actually caused by unusual edge case of having over-refunded
+the customer. A solution has now been implemented by introducing a new balance status `OverRefunded` to describe precisely this scenario and prevent any
+interest being accrued from this point on in a schedule, as the resulting positive balance is not the fault of the customer.
+
+---
+
 ## [2.5.4] - 2025-06-04
 
 ### Fixed

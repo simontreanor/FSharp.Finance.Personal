@@ -775,11 +775,11 @@ module ActualPaymentTestsExtra =
                 Window = 19
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = GeneratedValue 0L<Cent>
-                NetEffect = 0L<Cent>
+                GeneratedPayment = GeneratedValue 2L<Cent>
+                NetEffect = 2L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                ActuarialInterest = 3.76m<Cent>
+                ActuarialInterest = 0m<Cent>
                 NewInterest = 0m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 2L<Cent>
@@ -867,7 +867,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            573<OffsetDay>,
+            643<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2025, 6, 2)
@@ -876,16 +876,16 @@ module ActualPaymentTestsExtra =
                 Window = 21
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
-                GeneratedPayment = GeneratedValue 1_91L<Cent>
-                NetEffect = 1_91L<Cent>
+                GeneratedPayment = GeneratedValue 63L<Cent>
+                NetEffect = 63L<Cent>
                 PaymentStatus = Generated
                 BalanceStatus = ClosedBalance
-                ActuarialInterest = 1_28.52m<Cent>
-                NewInterest = 1_28m<Cent>
+                ActuarialInterest = 0m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
                 PrincipalPortion = 63L<Cent>
                 FeePortion = 0L<Cent>
-                InterestPortion = 1_28L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
