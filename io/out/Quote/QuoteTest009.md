@@ -322,7 +322,7 @@
         <td class="ci06"><i>n/a</i></td>
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">0.00</td>
-        <td class="ci09"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
+        <td class="ci09"><i>missed&nbsp;payment</i></td>
         <td class="ci10">open</td>
         <td class="ci11">4.4944</td>
         <td class="ci12">4.4944</td>
@@ -341,7 +341,7 @@
         <td class="ci01" style="white-space: nowrap;">2023-12-21</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">11</td>
+        <td class="ci04">27</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>n/a</i></td>
         <td class="ci07">1,261.73</td>

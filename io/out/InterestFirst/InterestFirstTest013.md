@@ -123,7 +123,7 @@
         <td class="ci05">77.63</td>
         <td class="ci06"><i>n/a</i></td>
         <td class="ci07">0.00</td>
-        <td class="ci08"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
+        <td class="ci08"><i>missed&nbsp;payment</i></td>
         <td class="ci09">open</td>
         <td class="ci10">49.6000</td>
         <td class="ci11">41.4500</td>
@@ -138,7 +138,7 @@
         <td class="ci01" style="white-space: nowrap;">2023-10-13</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">4</td>
+        <td class="ci04">5</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>confirmed</i>&nbsp;126.00</td>
         <td class="ci07">126.00</td>
@@ -157,7 +157,7 @@
         <td class="ci01" style="white-space: nowrap;">2023-10-17</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">4</td>
+        <td class="ci04">5</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>confirmed</i>&nbsp;98.00</td>
         <td class="ci07">98.00</td>
@@ -176,7 +176,7 @@
         <td class="ci01" style="white-space: nowrap;">2023-10-18</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">4</td>
+        <td class="ci04">5</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>confirmed</i>&nbsp;88.00</td>
         <td class="ci07">88.00</td>
@@ -195,7 +195,7 @@
         <td class="ci01" style="white-space: nowrap;">2024-08-09</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">4</td>
+        <td class="ci04">14</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>n/a</i></td>
         <td class="ci07">0.00</td>

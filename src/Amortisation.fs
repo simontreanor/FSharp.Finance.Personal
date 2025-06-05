@@ -403,6 +403,25 @@ module Amortisation =
             $"{htmlTitle}{htmlSchedule}{htmlKey}{htmlFinalStats}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}"
             |> outputToFile' filename false
 
+    /// gets the window for the current day based on either the unit-period map or the previous window
+    let getWindow unitPeriodMap currentDay currentScheduledPayment previousWindow =
+        match unitPeriodMap with
+        | Some upm ->
+            // use the unit-period map to determine the window for the current day
+            upm |> Map.find currentDay
+        | None ->
+            // determine the window and increment every time a new scheduled payment is due
+            if ScheduledPayment.isSome currentScheduledPayment then
+                previousWindow + 1
+            else
+                previousWindow
+
+    /// gets an array of advances
+    ///
+    /// note: assumes single advance on day 0 (multiple advances are not currently supported), so this is based purely on the principal
+    let getAdvances currentDay principal =
+        if currentDay = 0<OffsetDay> then [| principal |] else [||]
+
     /// calculates the fee total as a percentage of the principal, for further calculation (weighting payments made when apportioning to fee and principal)
     let feePercentage principal feeTotal =
         if principal = 0L<Cent> then
@@ -622,6 +641,22 @@ module Amortisation =
                     0m<Cent>
             |> min cappedActuarialInterestM
 
+    /// ignores small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
+    let calculateFinalInterestReduction currentDay maxAppliedPaymentDay appliedPaymentCount interestM =
+        if currentDay = maxAppliedPaymentDay then
+            let valueMinusForgiven =
+                Interest.ignoreFractionalCents appliedPaymentCount interestM
+
+            {|
+                Reduction = interestM - valueMinusForgiven |> max 0m<Cent>
+                InterestForgiven = valueMinusForgiven = 0m<Cent>
+            |}
+        else
+            {|
+                Reduction = 0m<Cent>
+                InterestForgiven = false
+            |}
+
     /// calculates any new interest accrued since the previous item, according to the interest method supplied in the schedule parameters
     let calculateInterestAdjustment
         previousBalanceStatus
@@ -631,10 +666,10 @@ module Amortisation =
         cumulativeActuarialInterestM
         initialInterestBalanceM
         (basicParameters: BasicParameters)
-        fractionForgiven
+        interestForgiven
         =
         match basicParameters.InterestConfig.Method with
-        | Interest.Method.AddOn when fractionForgiven -> 0m<Cent>
+        | Interest.Method.AddOn when interestForgiven -> 0m<Cent>
         | Interest.Method.AddOn when
             previousBalanceStatus <> ClosedBalance
             && (currentGeneratedPayment = ToBeGenerated || settlement <= 0L<Cent>)
@@ -648,6 +683,15 @@ module Amortisation =
                 basicParameters.Principal
                 cumulativeActuarialInterestM
         | _ -> 0m<Cent>
+
+    /// apportions the interest
+    let apportionInterest madePaymentTotal previousSettlementFigure cappedNewInterestM previousInterestBalance =
+        // if a refund is made and the settlement figure is postive, the payment should be apportioned to principal rather than interest (this likely represents a goodwill gesture so should directly benefit the customer)
+        if madePaymentTotal < 0L<Cent> && previousSettlementFigure >= 0L<Cent> then
+            0m<Cent>
+        // otherwise, add new interest to the interest balance as normal
+        else
+            cappedNewInterestM + previousInterestBalance
 
     /// apportions the fee
     let apportionFee (basicFeeConfig: Fee.BasicConfig voption) previousFeeBalance assignable principal feeTotal =
@@ -730,88 +774,71 @@ module Amortisation =
         else
             a
 
+    /// get the unit period and project it over the schedule to determine the amortisation windows
+    let mapUnitPeriods scheduleConfig startDate maxAppliedPaymentDay =
+        match scheduleConfig with
+        | AutoGenerateSchedule ags ->
+            let paymentSchedule =
+                UnitPeriod.generatePaymentSchedule
+                    (UnitPeriod.ScheduleLength.MaxDuration(startDate, int maxAppliedPaymentDay * 1<DurationDay>))
+                    UnitPeriod.Direction.Forward
+                    ags.UnitPeriodConfig
+                |> Array.insertAt 0 startDate
+                |> Array.indexed
+
+            let dayToUnitPeriodMap =
+                [| 0 .. int maxAppliedPaymentDay |]
+                |> Array.map (fun day ->
+                    let day = day * 1<OffsetDay>
+                    let date = OffsetDay.toDate startDate day
+
+                    let unitPeriodIndex =
+                        paymentSchedule
+                        |> Array.filter (fun (_, paymentDate) -> paymentDate <= date)
+                        |> Array.tryLast
+                        |> Option.map fst
+                        |> Option.defaultValue 0
+
+                    day, unitPeriodIndex
+                )
+                |> Map.ofArray
+
+            Some dayToUnitPeriodMap
+        | _ -> None
+
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate (p: Parameters) initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
-        // get the evaluation day (the day the schedule is evaluated) based on the evaluation date in the schedule parameters
+
         let evaluationDay = (p.Basic.EvaluationDate - p.Basic.StartDate).Days * 1<OffsetDay>
 
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
         let initialInterestBalanceM = Cent.toDecimalCent initialStats.InitialInterestBalance
 
-        // calculate the total fee value for the entire schedule
         let feeTotal = Fee.total p.Basic.FeeConfig p.Basic.Principal
 
-        // get the interest rounding method from the schedule parameters (usually it is advisable to round interest down to avoid exceeding caps)
         let interestRounding = p.Basic.InterestConfig.Rounding
 
         // get stats for interest rounding at the end of the schedule
         let maxAppliedPaymentDay = appliedPayments |> Map.keys |> Seq.max
         let appliedPaymentCount = appliedPayments |> Map.count |> uint
 
-        // get the unit period and project it over the schedule to determine the amortisation windows
         let unitPeriodMap =
-            match p.Basic.ScheduleConfig with
-            | AutoGenerateSchedule ags ->
-                let paymentSchedule =
-                    UnitPeriod.generatePaymentSchedule
-                        (UnitPeriod.ScheduleLength.MaxDuration(
-                            p.Basic.StartDate,
-                            int maxAppliedPaymentDay * 1<DurationDay>
-                        ))
-                        UnitPeriod.Direction.Forward
-                        ags.UnitPeriodConfig
-                    |> Array.insertAt 0 p.Basic.StartDate
-                    |> Array.indexed
+            mapUnitPeriods p.Basic.ScheduleConfig p.Basic.StartDate maxAppliedPaymentDay
 
-                let dayToUnitPeriodMap =
-                    [| 0 .. int maxAppliedPaymentDay |]
-                    |> Array.map (fun day ->
-                        let day = day * 1<OffsetDay>
-                        let date = OffsetDay.toDate p.Basic.StartDate day
-
-                        let unitPeriodIndex =
-                            paymentSchedule
-                            |> Array.filter (fun (_, paymentDate) -> paymentDate <= date)
-                            |> Array.tryLast
-                            |> Option.map fst
-                            |> Option.defaultValue 0
-
-                        day, unitPeriodIndex
-                    )
-                    |> Map.ofArray
-
-                Some dayToUnitPeriodMap
-            | _ -> None
-
-        // generate the amortisation schedule
+        /// generates the amortisation schedule
         let generator ((previousDay, previous), totals) (currentDay, current: AppliedPayment) =
-            // determine the window and increment every time a new scheduled payment is due
+
             let window =
-                match unitPeriodMap with
-                | Some upm -> upm |> Map.find currentDay
-                | None ->
-                    if ScheduledPayment.isSome current.ScheduledPayment then
-                        previous.Window + 1
-                    else
-                        previous.Window
+                getWindow unitPeriodMap currentDay current.ScheduledPayment previous.Window
 
-            // get an array of advances
-            // note: assumes single advance on day 0 (multiple advances are not currently supported), so this is based purely on the principal
-            let advances =
-                if currentDay = 0<OffsetDay> then
-                    [| p.Basic.Principal |]
-                else
-                    [||]
+            let advances = getAdvances currentDay p.Basic.Principal
 
-            // calculates the actuarial interest that has accrued since the previous item
             let actuarialInterestM =
                 calculateActuarialInterest p previous previousDay currentDay interestRounding
 
-            // of the actual payments made on the day, sum any that are confirmed or written off
-            let confirmedPaymentTotal =
+            let madePaymentTotal =
                 current.ActualPayments |> Array.sumBy ActualPayment.totalConfirmedOrWrittenOff
 
-            // cap the actuarial interest against the total interest cap
             let cappedActuarialInterestM =
                 Interest.Cap.cappedAddedValue
                     p.Basic.InterestConfig.Cap.TotalAmount
@@ -819,7 +846,6 @@ module Amortisation =
                     totals.CumulativeActuarialInterestM
                     actuarialInterestM
 
-            // calculate any new interest accrued since the previous item, according to the interest method supplied in the schedule parameters
             let newInterestM =
                 calculateNewInterest
                     p.Basic.InterestConfig.Method
@@ -829,23 +855,7 @@ module Amortisation =
                     initialInterestBalanceM
                     actuarialInterestM
 
-            // ignore small amounts of interest that have accumulated by the last day of the schedule, with the allowance being proportional to the length of the schedule
-            let calculateSettlementReduction m =
-                if currentDay = maxAppliedPaymentDay then
-                    let valueMinusForgiven = Interest.ignoreFractionalCents appliedPaymentCount m
-
-                    {|
-                        Reduction = m - valueMinusForgiven |> max 0m<Cent>
-                        FractionForgiven = valueMinusForgiven = 0m<Cent>
-                    |}
-                else
-                    {|
-                        Reduction = 0m<Cent>
-                        FractionForgiven = false
-                    |}
-
-            // cap the new interest against the total interest cap
-            let cappedNewInterestM, settlementReductionM, fractionForgiven =
+            let cappedNewInterestM, finalInterestReductionM, interestForgiven =
                 let cni =
                     Interest.Cap.cappedAddedValue
                         p.Basic.InterestConfig.Cap.TotalAmount
@@ -853,48 +863,37 @@ module Amortisation =
                         totals.CumulativeInterest
                         newInterestM
 
-                let sr = calculateSettlementReduction cni
-                cni - sr.Reduction, sr.Reduction, sr.FractionForgiven
+                let sr =
+                    calculateFinalInterestReduction currentDay maxAppliedPaymentDay appliedPaymentCount cni
 
-            // get the rounded settlement reduction
-            let settlementReductionL =
-                settlementReductionM |> Cent.fromDecimalCent interestRounding
+                cni - sr.Reduction, sr.Reduction, sr.InterestForgiven
 
-            // of the actual payments made on the day, sum any that are still pending
+            let finalInterestReductionL =
+                finalInterestReductionM |> Cent.fromDecimalCent interestRounding
+
             let pendingPaymentTotal =
                 current.ActualPayments |> Array.sumBy ActualPayment.totalPending
 
-            // apportion the interest
             let interestPortionM =
-                // if a refund is made and the settlement figure is postive, the payment should be apportioned to principal rather than interest (this likely represents a goodwill gesture so should directly benefit the customer)
-                if confirmedPaymentTotal < 0L<Cent> && previous.SettlementFigure >= 0L<Cent> then
-                    0m<Cent>
-                // otherwise, add new interest to the interest balance as normal
-                else
-                    cappedNewInterestM + previous.InterestBalance
+                apportionInterest madePaymentTotal previous.SettlementFigure cappedNewInterestM previous.InterestBalance
 
-            // get the rounded interest portion
             let interestPortionL = interestPortionM |> Cent.fromDecimalCent interestRounding
 
-            // update the accumulator
             let totals' = {
                 totals with
                     CumulativeActuarialInterestM = totals.CumulativeActuarialInterestM + cappedActuarialInterestM
                     CumulativeScheduledPayments =
                         totals.CumulativeScheduledPayments
                         + ScheduledPayment.total current.ScheduledPayment
-                    CumulativeActualPayments =
-                        totals.CumulativeActualPayments + confirmedPaymentTotal + pendingPaymentTotal
+                    CumulativeActualPayments = totals.CumulativeActualPayments + madePaymentTotal + pendingPaymentTotal
                     CumulativeInterest = totals.CumulativeInterest + cappedNewInterestM
             }
 
-            // keep track of any excess payments made to offset against future payments due
             let extraPaymentsBalance =
                 totals.CumulativeActualPayments
                 - totals.CumulativeScheduledPayments
                 - totals.CumulativeGeneratedPayments
 
-            // get the payment due
             let paymentDue =
                 calculatePaymentDue
                     previous
@@ -904,21 +903,12 @@ module Amortisation =
                     interestPortionL
                     p.Advanced.PaymentConfig.Minimum
 
-            // determine the total of any underpayment
-            let underpaymentTotal =
-                match current.PaymentStatus with
-                | MissedPayment -> paymentDue
-                | Underpayment -> paymentDue - current.NetEffect
-                | _ -> 0L<Cent>
-
-            // determine the total and details of any charges incurred
             let newChargesTotal, incurredCharges =
                 if paymentDue = 0L<Cent> then
                     0L<Cent>, [||]
                 else
                     current.AppliedCharges |> Array.sumBy _.Total, current.AppliedCharges
 
-            // apportion the charges
             let chargesPortion = newChargesTotal + previous.ChargesBalance |> max 0L<Cent>
 
             // for future days, assume that the payment will be made in full and on schedule, yielding a full net effect and allowing meaningful evaluation of the future schedule
@@ -930,28 +920,25 @@ module Amortisation =
                     current.NetEffect
 
             // simplifies any refund apportionment by modifying the sign of certain values depending on whether the net effect is positive or negative
-            let sign: int64<Cent> -> int64<Cent> =
-                if netEffect < 0L<Cent> then ((*) -1L) else id
+            let sign: int64<Cent> -> int64<Cent> = if netEffect < 0L<Cent> then (*) -1L else id
 
-            // get the rounded cumulative actuarial interest
             let cumulativeActuarialInterestL =
                 totals'.CumulativeActuarialInterestM |> Cent.fromDecimalCent interestRounding
 
-            // get the basic settlement figure
-            let settlement =
+            let settlement, principalForgiven =
                 p.Basic.Principal + cumulativeActuarialInterestL
                 - totals'.CumulativeActualPayments
                 |> fun s ->
                     if abs s < int64 appliedPaymentCount * 1L<Cent> then
-                        0L<Cent>
+                        0L<Cent>, s
                     else
-                        s
+                        s, 0L<Cent>
 
             // get a settlement figure for the add-on interest method based on the actual actuarial interest accrued up to now
             let generatedSettlementPayment =
                 match p.Basic.InterestConfig.Method with
                 | Interest.Method.AddOn when previous.BalanceStatus <> ClosedBalance ->
-                    settlement - settlementReductionL
+                    settlement - finalInterestReductionL
                 | _ -> 0L<Cent>
 
             // determine whether an interest adjustment is required based on the difference between cumulative actuarial interest and the initial interest balance
@@ -964,7 +951,7 @@ module Amortisation =
                     totals'.CumulativeActuarialInterestM
                     initialInterestBalanceM
                     p.Basic
-                    fractionForgiven
+                    interestForgiven
 
             // refine the capped new interest value using any interest adjustment
             let cappedNewInterestM' = cappedNewInterestM + interestAdjustmentM
@@ -992,17 +979,15 @@ module Amortisation =
                     | AsScheduled -> sign netEffect - sign chargesPortion - sign interestPortionL', 0L<Cent>
                     | AddChargesAndInterest -> sign netEffect, sign chargesPortion - sign interestPortionL'
 
-            // refine the scheduled payment with any adjustment
             let scheduledPayment = {
                 current.ScheduledPayment with
                     Adjustment = scheduledPaymentAdjustment
             }
 
-            // apportion the fee
+
             let feePortion =
                 apportionFee p.Basic.FeeConfig previous.FeeBalance assignable p.Basic.Principal feeTotal
 
-            // determine the value of any fee rebate in the event of settlement, depending on settings
             let feeRebateIfSettled =
                 calculateFeeRebate
                     p.Advanced.FeeConfig
@@ -1100,7 +1085,7 @@ module Amortisation =
                     | _ when
                         current.PaymentStatus <> InformationOnly
                         && paymentDue' = 0L<Cent>
-                        && confirmedPaymentTotal = 0L<Cent>
+                        && madePaymentTotal = 0L<Cent>
                         && pendingPaymentTotal = 0L<Cent>
                         && GeneratedPayment.total current.GeneratedPayment = 0L<Cent>
                         ->

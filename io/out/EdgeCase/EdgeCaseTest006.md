@@ -195,7 +195,7 @@
         <td class="ci01" style="white-space: nowrap;">2024-03-12</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">6</td>
+        <td class="ci04">27</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>n/a</i></td>
         <td class="ci07">-76.80</td>

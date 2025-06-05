@@ -1086,7 +1086,7 @@
         <td class="ci01" style="white-space: nowrap;">2022-10-24</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">24</td>
+        <td class="ci04">25</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>confirmed</i>&nbsp;278.38</td>
         <td class="ci07">278.38</td>
@@ -1109,7 +1109,7 @@
         <td class="ci01" style="white-space: nowrap;">2022-11-01</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">24</td>
+        <td class="ci04">26</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>confirmed</i>&nbsp;278.33</td>
         <td class="ci07">278.33</td>
@@ -1132,7 +1132,7 @@
         <td class="ci01" style="white-space: nowrap;">2024-02-13</td>
         <td class="ci02"><i>n/a</i></td>
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
-        <td class="ci04">24</td>
+        <td class="ci04">93</td>
         <td class="ci05">0.00</td>
         <td class="ci06"><i>n/a</i></td>
         <td class="ci07">0.00</td>
