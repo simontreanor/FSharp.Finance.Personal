@@ -27,9 +27,9 @@ module IllustrativeTests =
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
             last
-            |> Array.map (fun d -> (d * 1<OffsetDay>), [| ActualPayment.quickConfirmed finalPayment |])
+            |> Array.map (fun d -> (d * 1<OffsetDay>), Map [ 0, ActualPayment.quickConfirmed finalPayment ])
             rest
-            |> Array.map (fun d -> (d * 1<OffsetDay>), [| ActualPayment.quickConfirmed levelPayment |])
+            |> Array.map (fun d -> (d * 1<OffsetDay>), Map [ 0, ActualPayment.quickConfirmed levelPayment ])
         |]
         |> Array.concat
         |> Array.rev
@@ -44,12 +44,15 @@ module IllustrativeTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome paymentValue) ValueNone
             Window = window
             PaymentDue = paymentValue
-            ActualPayments = [|
-                {
-                    ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue
-                    Metadata = Map.empty
-                }
-            |]
+            ActualPayments =
+                Map [
+                    0,
+                    {
+                        ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue
+                        Metadata = Map.empty
+                        ScheduledPayments = Map.empty
+                    }
+                ]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
@@ -142,12 +145,15 @@ module IllustrativeTests =
                 }
                 Window = 4
                 PaymentDue = 181_34L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -203,12 +209,15 @@ module IllustrativeTests =
                 }
                 Window = 4
                 PaymentDue = 181_34L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -263,12 +272,15 @@ module IllustrativeTests =
                 }
                 Window = 4
                 PaymentDue = 181_34L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -324,12 +336,15 @@ module IllustrativeTests =
                 }
                 Window = 4
                 PaymentDue = 181_34L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade

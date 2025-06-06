@@ -59,7 +59,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 323.15</td>
         <td class="ci04">1</td>
         <td class="ci05">323.15</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;323.15</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;323.15;&nbsp;15:&nbsp;32315;&nbsp;<i>n/a</i></td>
         <td class="ci07">323.15</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
@@ -85,7 +85,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 323.15</td>
         <td class="ci04">2</td>
         <td class="ci05">323.15</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;323.15</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;323.15;&nbsp;29:&nbsp;32315;&nbsp;<i>n/a</i></td>
         <td class="ci07">323.15</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>

@@ -27,9 +27,9 @@ module ActualPaymentTests =
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
             last
-            |> Array.map (fun d -> (d * 1<OffsetDay>), [| ActualPayment.quickConfirmed finalPayment |])
+            |> Array.map (fun d -> (d * 1<OffsetDay>), Map [ 0, ActualPayment.quickConfirmed finalPayment ])
             rest
-            |> Array.map (fun d -> (d * 1<OffsetDay>), [| ActualPayment.quickConfirmed levelPayment |])
+            |> Array.map (fun d -> (d * 1<OffsetDay>), Map [ 0, ActualPayment.quickConfirmed levelPayment ])
         |]
         |> Array.concat
         |> Array.rev
@@ -44,12 +44,15 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.quick (ValueSome paymentValue) ValueNone
             Window = 5
             PaymentDue = paymentValue
-            ActualPayments = [|
-                {
-                    ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue
-                    Metadata = Map.empty
-                }
-            |]
+            ActualPayments =
+                Map [
+                    0,
+                    {
+                        ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue
+                        Metadata = Map.empty
+                        ScheduledPayments = Map.empty
+                    }
+                ]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
@@ -255,12 +258,15 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 5
                 PaymentDue = 0L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1193_95L<Cent>
                 PaymentStatus = ExtraPayment
@@ -319,12 +325,15 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 5
                 PaymentDue = 0L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1474_59L<Cent>
                 PaymentStatus = ExtraPayment
@@ -367,10 +376,10 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                2<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                4<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                140<OffsetDay>, [| ActualPayment.quickConfirmed (491_53L<Cent> * 3L) |]
-                143<OffsetDay>, [| ActualPayment.quickConfirmed -280_64L<Cent> |]
+                2<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                140<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed (491_53L<Cent> * 3L) ]
+                143<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed -280_64L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -388,12 +397,15 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 5
                 PaymentDue = 0L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = -280_64L<Cent>
                 PaymentStatus = Refunded
@@ -433,7 +445,7 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 1500_00L<Cent> |] ]
+            Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1500_00L<Cent> ] ]
 
         let schedules = amortise p actualPayments
 
@@ -448,12 +460,15 @@ module ActualPaymentTests =
             ScheduledPayment = ScheduledPayment.zero
             Window = 0
             PaymentDue = 0L<Cent>
-            ActualPayments = [|
-                {
-                    ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>
-                    Metadata = Map.empty
-                }
-            |]
+            ActualPayments =
+                Map [
+                    0,
+                    {
+                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>
+                        Metadata = Map.empty
+                        ScheduledPayments = Map.empty
+                    }
+                ]
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 1500_00L<Cent>
             PaymentStatus = ExtraPayment
@@ -498,9 +513,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.quickConfirmed 243_86L<Cent> |]
-                28<OffsetDay>, [| ActualPayment.quickConfirmed 243_86L<Cent> |]
-                42<OffsetDay>, [| ActualPayment.quickConfirmed 243_86L<Cent> |]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 243_86L<Cent> ]
+                28<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 243_86L<Cent> ]
+                42<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 243_86L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -518,7 +533,7 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 243_66L<Cent>) ValueNone
                 Window = 11
                 PaymentDue = 243_66L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 243_66L<Cent>
                 PaymentStatus = NotYetDue
@@ -562,10 +577,10 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                2<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                4<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                140<OffsetDay>, [| ActualPayment.quickConfirmed (491_53L<Cent> * 3L) |]
-                143<OffsetDay>, [| ActualPayment.quickConfirmed -280_83L<Cent> |]
+                2<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                140<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed (491_53L<Cent> * 3L) ]
+                143<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed -280_83L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -583,12 +598,15 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 5
                 PaymentDue = 0L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = -280_83L<Cent>
                 PaymentStatus = Refunded
@@ -631,9 +649,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                44<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                75<OffsetDay>, [| ActualPayment.quickConfirmed 400_00L<Cent> |]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 400_00L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -651,7 +669,7 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 491_53L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 491_53L<Cent>
                 PaymentStatus = NotYetDue
@@ -694,9 +712,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                44<OffsetDay>, [| ActualPayment.quickConfirmed 491_53L<Cent> |]
-                75<OffsetDay>, [| ActualPayment.quickConfirmed 400_00L<Cent> |]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 491_53L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 400_00L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -714,7 +732,7 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 491_53L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 491_53L<Cent>
                 PaymentStatus = NotYetDue
@@ -755,11 +773,11 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                14<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
-                44<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
-                75<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
-                106<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
-                134<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                134<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -777,7 +795,7 @@ module ActualPaymentTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 135
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 0L<Cent>
                 PaymentStatus = InformationOnly
@@ -821,7 +839,7 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 97_01L<Cent> |] ]
+            Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 97_01L<Cent> ] ]
 
         let schedules = amortise p actualPayments
 
@@ -879,30 +897,30 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                23<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                31<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                38<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                42<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                58<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                67<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                73<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                79<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                86<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                93<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |]
-                100<OffsetDay>, [| ActualPayment.quickConfirmed 276_37L<Cent> |]
-                107<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                115<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                122<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                129<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                137<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                143<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                149<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                156<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                166<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                171<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                177<OffsetDay>, [| ActualPayment.quickConfirmed 278_38L<Cent> |]
-                185<OffsetDay>, [| ActualPayment.quickConfirmed 278_33L<Cent> |]
+                13<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                23<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                38<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                42<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                58<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                67<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                73<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                79<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                93<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ]
+                100<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 276_37L<Cent> ]
+                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                115<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                129<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                137<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                143<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                149<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                156<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                166<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                171<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                177<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_38L<Cent> ]
+                185<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 278_33L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -936,7 +954,7 @@ module ActualPaymentTests =
         let description = "Large overpayment should not result in runaway fee rebates"
 
         let actualPayments =
-            Map [ 13<OffsetDay>, [| ActualPayment.quickConfirmed 5000_00L<Cent> |] ]
+            Map [ 13<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5000_00L<Cent> ] ]
 
         let schedules = amortise parameters3 actualPayments
 
@@ -959,8 +977,8 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.quickConfirmed 5000_00L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                13<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5000_00L<Cent> ]
+                20<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let schedules = amortise parameters3 actualPayments
@@ -984,9 +1002,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.quickConfirmed 5000_00L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
-                27<OffsetDay>, [| ActualPayment.quickConfirmed 500_00L<Cent> |]
+                13<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5000_00L<Cent> ]
+                20<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                27<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let schedules = amortise parameters3 actualPayments
@@ -1021,9 +1039,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.quickConfirmed 271_89L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
-                27<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
+                13<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_89L<Cent> ]
+                20<OffsetDay>, Map [ 0, ActualPayment.quickPending 271_89L<Cent> ]
+                27<OffsetDay>, Map [ 0, ActualPayment.quickPending 271_89L<Cent> ]
             ]
 
         let schedules = amortise parameters4 actualPayments
@@ -1051,9 +1069,9 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                13<OffsetDay>, [| ActualPayment.quickConfirmed 271_89L<Cent> |]
-                20<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
-                27<OffsetDay>, [| ActualPayment.quickPending 271_89L<Cent> |]
+                13<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_89L<Cent> ]
+                20<OffsetDay>, Map [ 0, ActualPayment.quickPending 271_89L<Cent> ]
+                27<OffsetDay>, Map [ 0, ActualPayment.quickPending 271_89L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -1091,10 +1109,10 @@ module ActualPaymentTests =
 
         let actualPayments =
             Map [
-                16<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
-                46<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
-                77<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
-                107<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |]
+                16<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 116_00L<Cent> ]
+                46<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 116_00L<Cent> ]
+                77<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 116_00L<Cent> ]
+                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 116_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise p
@@ -1136,7 +1154,7 @@ module ActualPaymentTests =
         }
 
         let actualPayments =
-            Map [ 28<OffsetDay>, [| ActualPayment.quickConfirmed 35_48L<Cent> |] ]
+            Map [ 28<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 35_48L<Cent> ] ]
 
         let schedules = amortise p actualPayments
 

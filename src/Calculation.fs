@@ -363,15 +363,21 @@ module Calculation =
 
     /// functions for working with maps
     module Map =
-        /// creates a map from an array of key-value tuples with array values
-        let ofArrayWithMerge (array: ('a * 'b array) array) =
+        /// creates a map from an array of key-value tuples where values are index-value pairs to be merged into a map
+        let merge (array: ('a * ('b * 'c) array) array) =
             array
             // group by unique keys
             |> Array.groupBy fst
             // map to new key value pair with the collected array as the value
-            |> Array.map (fun (k, v) -> k, Array.collect snd v)
+            |> Array.map (fun (k, v) -> k, Array.collect snd v |> Map.ofArray)
             // convert to a map
             |> Map.ofArray
+
+        /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
+        let toStringOrNa a =
+            match a with
+            | m when Map.isEmpty m -> "<i>n/a</i>"
+            | _ -> a |> Map.map (fun k v -> $"{k}: {v}") |> Map.values |> String.concat "<br/>"
 
     /// wrapper to extract APR value from solution
     let getAprOr defaultValue =

@@ -45,7 +45,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 87.68</td>
         <td class="ci04">1</td>
         <td class="ci05">87.68</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;111.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;111.00;&nbsp;5:&nbsp;8768<br/>36:&nbsp;2332;&nbsp;<i>n/a</i></td>
         <td class="ci07">111.00</td>
         <td class="ci08"><i>overpayment</i></td>
         <td class="ci09">open</td>
@@ -64,7 +64,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">1</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;181.01</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;181.01;&nbsp;36:&nbsp;6436<br/>66:&nbsp;8768<br/>97:&nbsp;2897;&nbsp;<i>n/a</i></td>
         <td class="ci07">181.01</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">refund&nbsp;due</td>

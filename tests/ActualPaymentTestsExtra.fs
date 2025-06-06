@@ -28,7 +28,10 @@ module ActualPaymentTestsExtra =
         basicItems
         |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
         |> Array.map (fun si ->
-            si.Day, [| ActualPayment.quickConfirmed <| ScheduledPayment.total si.ScheduledPayment |]
+            si.Day,
+            Map [
+                0, ActualPayment.quickConfirmed <| ScheduledPayment.total si.ScheduledPayment
+            ]
         )
         |> Map.ofArray
 
@@ -120,12 +123,15 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 407_64L<Cent>) ValueNone
                 Window = 5
                 PaymentDue = 407_64L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 407_64L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 407_64L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 407_64L<Cent>
                 PaymentStatus = PaymentMade
@@ -168,7 +174,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
+                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let schedules = amortise p actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description p ""
@@ -183,7 +189,7 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 170_90L<Cent>) ValueNone
                 Window = 12
                 PaymentDue = 170_04L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 170_04L<Cent>
                 PaymentStatus = NotYetDue
@@ -238,7 +244,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
+                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
 
@@ -280,7 +286,7 @@ module ActualPaymentTestsExtra =
                         })
                 Window = 141
                 PaymentDue = 9_80L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 9_80L<Cent>
                 PaymentStatus = NotYetDue
@@ -354,12 +360,15 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 137_36L<Cent>) ValueNone
                 Window = 19
                 PaymentDue = 137_36L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 137_36L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ActualPayments =
+                    Map [
+                        0,
+                        {
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 137_36L<Cent>
+                            Metadata = Map.empty
+                            ScheduledPayments = Map.empty
+                        }
+                    ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 137_36L<Cent>
                 PaymentStatus = PaymentMade
@@ -437,7 +446,7 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 15
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 0L<Cent>
                 PaymentStatus = InformationOnly
@@ -482,7 +491,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
+                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let schedules = amortise p actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description p ""
@@ -495,7 +504,7 @@ module ActualPaymentTestsExtra =
             ScheduledPayment = ScheduledPayment.quick (ValueSome 171_02L<Cent>) ValueNone
             Window = 10
             PaymentDue = 142_40L<Cent>
-            ActualPayments = [||]
+            ActualPayments = Map.empty
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 142_40L<Cent>
             PaymentStatus = NotYetDue
@@ -551,7 +560,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
+                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let rp: RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -585,7 +594,7 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
                 Window = 129
                 PaymentDue = 18_71L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 18_71L<Cent>
                 PaymentStatus = NotYetDue
@@ -640,7 +649,7 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
+                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let rp: RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -674,7 +683,7 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
                 Window = 129
                 PaymentDue = 18_71L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 18_71L<Cent>
                 PaymentStatus = NotYetDue
@@ -751,14 +760,14 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    17<OffsetDay>, [| ActualPayment.quickConfirmed 70_20L<Cent> |]
-                    47<OffsetDay>, [| ActualPayment.quickConfirmed 70_20L<Cent> |]
-                    56<OffsetDay>, [| ActualPayment.quickConfirmed 76_80L<Cent> |]
+                    17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 70_20L<Cent> ]
+                    47<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 70_20L<Cent> ]
+                    56<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 76_80L<Cent> ]
                     338<OffsetDay>,
-                    [|
-                        ActualPayment.quickConfirmed -2_82L<Cent>
-                        ActualPayment.quickConfirmed -0_03L<Cent>
-                    |]
+                    Map [
+                        0, ActualPayment.quickConfirmed -2_82L<Cent>
+                        1, ActualPayment.quickConfirmed -0_03L<Cent>
+                    ]
                 ]
 
             let schedules = amortise parameters actualPayments
@@ -774,7 +783,7 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 19
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = GeneratedValue 2L<Cent>
                 NetEffect = 2L<Cent>
                 PaymentStatus = Generated
@@ -851,15 +860,15 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    25<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
-                    55<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
-                    86<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
-                    116<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
+                    25<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    116<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
                     388<OffsetDay>,
-                    [|
-                        ActualPayment.quickConfirmed -0_63L<Cent>
-                        ActualPayment.quickConfirmed -56_42L<Cent>
-                    |]
+                    Map [
+                        0, ActualPayment.quickConfirmed -0_63L<Cent>
+                        1, ActualPayment.quickConfirmed -56_42L<Cent>
+                    ]
                 ]
 
             let schedules = amortise parameters actualPayments
@@ -875,7 +884,7 @@ module ActualPaymentTestsExtra =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 21
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = GeneratedValue 63L<Cent>
                 NetEffect = 63L<Cent>
                 PaymentStatus = Generated

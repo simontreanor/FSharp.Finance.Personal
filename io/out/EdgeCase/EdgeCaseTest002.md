@@ -53,7 +53,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">0</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;828.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;828.00;&nbsp;14:&nbsp;34350<br/>45:&nbsp;34350<br/>76:&nbsp;14100;&nbsp;<i>n/a</i></td>
         <td class="ci07">828.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>

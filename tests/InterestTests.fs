@@ -496,18 +496,18 @@ module InterestTests =
 
             let actualPayments =
                 Map [
-                    31<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    61<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    92<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    122<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    153<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    184<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    214<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    245<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    275<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    306<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    337<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
-                    365<OffsetDay>, [| ActualPayment.quickConfirmed 134_57L<Cent> |]
+                    31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    92<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    153<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    184<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    214<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    245<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    275<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    306<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    337<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    365<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments

@@ -153,8 +153,8 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                10<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |] //normal
-                17<OffsetDay>, [| ActualPayment.quickConfirmed 271_37L<Cent> |] //all
+                10<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ] //normal
+                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 271_37L<Cent> ] //all
             ]
 
         let schedules = amortise p actualPayments
@@ -176,11 +176,11 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                1<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                2<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                3<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                4<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                5<OffsetDay>, [| ActualPayment.quickConfirmed 367_72L<Cent> |]
+                1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                2<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                3<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                5<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_72L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -218,9 +218,9 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                18<OffsetDay>, [| ActualPayment.quickConfirmed 294_91L<Cent> |]
-                35<OffsetDay>, [| ActualPayment.quickConfirmed 294_91L<Cent> |]
-                168<OffsetDay>, [| ActualPayment.quickConfirmed 810_18L<Cent> |]
+                18<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 294_91L<Cent> ]
+                35<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 294_91L<Cent> ]
+                168<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 810_18L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -259,8 +259,8 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                18<OffsetDay>, [| ActualPayment.quickConfirmed 294_91L<Cent> |]
-                35<OffsetDay>, [| ActualPayment.quickConfirmed 294_91L<Cent> |]
+                18<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 294_91L<Cent> ]
+                35<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 294_91L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -283,11 +283,11 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                10<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                41<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                71<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                102<OffsetDay>, [| ActualPayment.quickConfirmed 367_73L<Cent> |]
-                132<OffsetDay>, [| ActualPayment.quickConfirmed 367_72L<Cent> |]
+                10<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                41<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                71<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                102<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_73L<Cent> ]
+                132<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 367_72L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -312,7 +312,7 @@ module InterestFirstTests =
         }
 
         let actualPayments =
-            Map [ 1<OffsetDay>, [| ActualPayment.quickConfirmed 1007_00L<Cent> |] ]
+            Map [ 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1007_00L<Cent> ] ]
 
         let schedules = amortise p actualPayments
 
@@ -339,7 +339,7 @@ module InterestFirstTests =
         }
 
         let actualPayments =
-            Map [ 1<OffsetDay>, [| ActualPayment.quickConfirmed 1007_00L<Cent> |] ]
+            Map [ 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1007_00L<Cent> ] ]
 
         let schedules =
             actualPayments
@@ -371,7 +371,7 @@ module InterestFirstTests =
         }
 
         let actualPayments =
-            Map [ 10<OffsetDay>, [| ActualPayment.quickConfirmed 1000_00L<Cent> |] ]
+            Map [ 10<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1000_00L<Cent> ] ]
 
         let schedules =
             actualPayments
@@ -409,15 +409,15 @@ module InterestFirstTests =
         let actualPayments =
             Map [
                 Date(2022, 4, 10) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 198_40L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 198_40L<Cent> ]
                 Date(2022, 5, 14) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 198_40L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 198_40L<Cent> ]
                 Date(2022, 6, 10) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 198_40L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 198_40L<Cent> ]
                 Date(2022, 6, 17) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 198_40L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 198_40L<Cent> ]
                 Date(2022, 7, 15) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 204_80L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 204_80L<Cent> ]
             ]
 
         let schedules =
@@ -457,13 +457,13 @@ module InterestFirstTests =
         let actualPayments =
             Map [
                 Date(2023, 7, 16) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 88_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 88_00L<Cent> ]
                 Date(2023, 10, 13) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 126_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 126_00L<Cent> ]
                 Date(2023, 10, 17) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 98_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 98_00L<Cent> ]
                 Date(2023, 10, 18) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 88_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 88_00L<Cent> ]
             ]
 
         let schedules =
@@ -503,13 +503,13 @@ module InterestFirstTests =
         let actualPayments =
             Map [
                 Date(2023, 7, 16) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 88_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 88_00L<Cent> ]
                 Date(2023, 10, 13) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 126_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 126_00L<Cent> ]
                 Date(2023, 10, 17) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 98_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 98_00L<Cent> ]
                 Date(2023, 10, 18) |> OffsetDay.fromDate p.Basic.StartDate,
-                [| ActualPayment.quickConfirmed 100_00L<Cent> |]
+                Map [ 0, ActualPayment.quickConfirmed 100_00L<Cent> ]
             ]
 
         let schedules =
@@ -544,10 +544,10 @@ module InterestFirstTests =
         let actualPayments =
             Map [
                 1<OffsetDay>,
-                [|
-                    ActualPayment.quickConfirmed 1007_00L<Cent>
-                    ActualPayment.quickConfirmed 2_00L<Cent>
-                |]
+                Map [
+                    091612, ActualPayment.quickConfirmed 1007_00L<Cent>
+                    093146, ActualPayment.quickConfirmed 2_00L<Cent>
+                ]
             ]
 
         let schedules =
@@ -1018,128 +1018,128 @@ module InterestFirstTests =
 
         let actualPayments =
             [|
-                14<OffsetDay>, [| ActualPayment.quickFailed 33004L<Cent> ValueNone |]
-                14<OffsetDay>, [| ActualPayment.quickFailed 33004L<Cent> ValueNone |]
-                14<OffsetDay>, [| ActualPayment.quickFailed 33004L<Cent> ValueNone |]
-                42<OffsetDay>, [| ActualPayment.quickFailed 20000L<Cent> ValueNone |]
-                42<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
-                56<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                56<OffsetDay>, [| ActualPayment.quickConfirmed 5000L<Cent> |]
-                86<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                86<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                86<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                89<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                89<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                89<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                92<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                92<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                92<OffsetDay>, [| ActualPayment.quickFailed 5000L<Cent> ValueNone |]
-                119<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                119<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                119<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                122<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                122<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                122<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                125<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                125<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                125<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                126<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                126<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                126<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                129<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                129<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                129<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                132<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                132<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                132<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                132<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                133<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                133<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                133<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                136<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                136<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                136<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                139<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                139<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                139<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                140<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                140<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                140<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                143<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                143<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                143<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                146<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                146<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                146<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                147<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                147<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                147<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                150<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                150<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                150<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                153<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                153<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                153<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                154<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                154<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                154<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                161<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                161<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                161<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                164<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                168<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                168<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                168<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                171<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                171<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                171<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                174<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                174<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                174<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                175<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                175<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                175<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                182<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                182<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                182<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                189<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                189<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                196<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                196<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                196<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                199<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                199<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                199<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                202<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                202<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                202<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                203<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                203<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                203<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                206<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                206<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                206<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                210<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                217<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                217<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                224<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                231<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                238<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                245<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                252<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                259<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                266<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                273<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                280<OffsetDay>, [| ActualPayment.quickFailed 3500L<Cent> ValueNone |]
-                280<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                287<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                294<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                301<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                308<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                314<OffsetDay>, [| ActualPayment.quickConfirmed 25000L<Cent> |]
-                315<OffsetDay>, [| ActualPayment.quickConfirmed 1L<Cent> |]
+                14<OffsetDay>, [| 0, ActualPayment.quickFailed 33004L<Cent> ValueNone |]
+                14<OffsetDay>, [| 1, ActualPayment.quickFailed 33004L<Cent> ValueNone |]
+                14<OffsetDay>, [| 2, ActualPayment.quickFailed 33004L<Cent> ValueNone |]
+                42<OffsetDay>, [| 0, ActualPayment.quickFailed 20000L<Cent> ValueNone |]
+                42<OffsetDay>, [| 1, ActualPayment.quickConfirmed 20000L<Cent> |]
+                56<OffsetDay>, [| 0, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                56<OffsetDay>, [| 1, ActualPayment.quickConfirmed 5000L<Cent> |]
+                86<OffsetDay>, [| 0, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                86<OffsetDay>, [| 1, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                86<OffsetDay>, [| 2, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                89<OffsetDay>, [| 0, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                89<OffsetDay>, [| 1, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                89<OffsetDay>, [| 2, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                92<OffsetDay>, [| 0, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                92<OffsetDay>, [| 1, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                92<OffsetDay>, [| 2, ActualPayment.quickFailed 5000L<Cent> ValueNone |]
+                119<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                119<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                119<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                122<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                122<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                122<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                125<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                125<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                125<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                126<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                126<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                126<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                129<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                129<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                129<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                132<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                132<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                132<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                132<OffsetDay>, [| 3, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                133<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                133<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                133<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                136<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                136<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                136<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                139<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                139<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                139<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                140<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                140<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                140<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                143<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                143<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                143<OffsetDay>, [| 2, ActualPayment.quickConfirmed 3500L<Cent> |]
+                146<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                146<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                146<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                147<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                147<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                147<OffsetDay>, [| 2, ActualPayment.quickConfirmed 3500L<Cent> |]
+                150<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                150<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                150<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                153<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                153<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                153<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                154<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                154<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                154<OffsetDay>, [| 2, ActualPayment.quickConfirmed 3500L<Cent> |]
+                161<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                161<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                161<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                164<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                168<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                168<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                168<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                171<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                171<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                171<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                174<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                174<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                174<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                175<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                175<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                175<OffsetDay>, [| 2, ActualPayment.quickConfirmed 3500L<Cent> |]
+                182<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                182<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                182<OffsetDay>, [| 2, ActualPayment.quickConfirmed 3500L<Cent> |]
+                189<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                189<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                196<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                196<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                196<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                199<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                199<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                199<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                202<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                202<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                202<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                203<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                203<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                203<OffsetDay>, [| 2, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                206<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                206<OffsetDay>, [| 1, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                206<OffsetDay>, [| 2, ActualPayment.quickConfirmed 3500L<Cent> |]
+                210<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                217<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                217<OffsetDay>, [| 1, ActualPayment.quickConfirmed 3500L<Cent> |]
+                224<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                231<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                238<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                245<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                252<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                259<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                266<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                273<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                280<OffsetDay>, [| 0, ActualPayment.quickFailed 3500L<Cent> ValueNone |]
+                280<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                287<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                294<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                301<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                308<OffsetDay>, [| 0, ActualPayment.quickConfirmed 3500L<Cent> |]
+                314<OffsetDay>, [| 0, ActualPayment.quickConfirmed 25000L<Cent> |]
+                315<OffsetDay>, [| 0, ActualPayment.quickConfirmed 1L<Cent> |]
             |]
-            |> Map.ofArrayWithMerge
+            |> Map.merge
 
         let schedules = amortise p actualPayments
 
@@ -1175,46 +1175,46 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                42<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
-                56<OffsetDay>, [| ActualPayment.quickConfirmed 5000L<Cent> |]
-                133<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
+                42<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
+                56<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5000L<Cent> ]
+                133<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
                 143<OffsetDay>,
-                [|
-                    ActualPayment.quickConfirmed 3500L<Cent>
-                    ActualPayment.quickConfirmed 3500L<Cent>
-                |]
-                147<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
+                Map [
+                    0, ActualPayment.quickConfirmed 3500L<Cent>
+                    1, ActualPayment.quickConfirmed 3500L<Cent>
+                ]
+                147<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
                 154<OffsetDay>,
-                [|
-                    ActualPayment.quickConfirmed 3500L<Cent>
-                    ActualPayment.quickConfirmed 3500L<Cent>
-                |]
-                164<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
+                Map [
+                    0, ActualPayment.quickConfirmed 3500L<Cent>
+                    1, ActualPayment.quickConfirmed 3500L<Cent>
+                ]
+                164<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
                 175<OffsetDay>,
-                [|
-                    ActualPayment.quickConfirmed 3500L<Cent>
-                    ActualPayment.quickConfirmed 3500L<Cent>
-                |]
-                182<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                189<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                203<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                206<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                210<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                217<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                224<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                231<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                238<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                245<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                252<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                259<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                266<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                273<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                280<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                287<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                294<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                301<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                308<OffsetDay>, [| ActualPayment.quickConfirmed 3500L<Cent> |]
-                314<OffsetDay>, [| ActualPayment.quickConfirmed 25000L<Cent> |]
+                Map [
+                    0, ActualPayment.quickConfirmed 3500L<Cent>
+                    1, ActualPayment.quickConfirmed 3500L<Cent>
+                ]
+                182<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                189<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                203<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                206<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                210<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                217<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                224<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                231<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                238<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                245<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                252<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                259<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                266<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                273<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                280<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                287<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                294<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                301<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                308<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 3500L<Cent> ]
+                314<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25000L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -1250,8 +1250,7 @@ module InterestFirstTests =
         }
 
         let actualPayments =
-            [| 20<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |] |]
-            |> Map.ofArray
+            Map [ 20<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 116_00L<Cent> ] ]
 
         let schedules = amortise p actualPayments
 
@@ -1286,7 +1285,7 @@ module InterestFirstTests =
         }
 
         let actualPayments =
-            Map [ 20<OffsetDay>, [| ActualPayment.quickConfirmed 116_00L<Cent> |] ]
+            Map [ 20<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 116_00L<Cent> ] ]
 
         let schedules = amortise p actualPayments
 
@@ -1328,23 +1327,23 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                34<OffsetDay>, [| ActualPayment.quickFailed 5560L<Cent> ValueNone |]
-                35<OffsetDay>, [| ActualPayment.quickConfirmed 5571L<Cent> |]
-                60<OffsetDay>, [| ActualPayment.quickConfirmed 5560L<Cent> |]
-                90<OffsetDay>, [| ActualPayment.quickConfirmed 5560L<Cent> |]
-                119<OffsetDay>, [| ActualPayment.quickConfirmed 5560L<Cent> |]
-                152<OffsetDay>, [| ActualPayment.quickConfirmed 5560L<Cent> |]
+                34<OffsetDay>, Map [ 0, ActualPayment.quickFailed 5560L<Cent> ValueNone ]
+                35<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5571L<Cent> ]
+                60<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5560L<Cent> ]
+                90<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5560L<Cent> ]
+                119<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5560L<Cent> ]
+                152<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 5560L<Cent> ]
                 214<OffsetDay>,
-                [|
-                    ActualPayment.quickConfirmed 5857L<Cent>
-                    ActualPayment.quickConfirmed 5560L<Cent>
-                |]
+                Map [
+                    0, ActualPayment.quickConfirmed 5857L<Cent>
+                    1, ActualPayment.quickConfirmed 5560L<Cent>
+                ]
                 273<OffsetDay>,
-                [|
-                    ActualPayment.quickConfirmed 5835L<Cent>
-                    ActualPayment.quickConfirmed 5560L<Cent>
-                |]
-                305<OffsetDay>, [| ActualPayment.quickConfirmed 16678L<Cent> |]
+                Map [
+                    0, ActualPayment.quickConfirmed 5835L<Cent>
+                    1, ActualPayment.quickConfirmed 5560L<Cent>
+                ]
+                305<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 16678L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -1381,35 +1380,35 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                32<OffsetDay>, [| ActualPayment.quickConfirmed 50000L<Cent> |]
-                63<OffsetDay>, [| ActualPayment.quickConfirmed 50000L<Cent> |]
+                32<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 50000L<Cent> ]
+                63<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 50000L<Cent> ]
                 148<OffsetDay>,
-                [|
-                    ActualPayment.quickFailed 20000L<Cent> ValueNone
-                    ActualPayment.quickConfirmed 20000L<Cent>
-                |]
-                181<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
-                209<OffsetDay>, [| ActualPayment.quickFailed 20000L<Cent> ValueNone |]
-                212<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
+                Map [
+                    0, ActualPayment.quickFailed 20000L<Cent> ValueNone
+                    1, ActualPayment.quickConfirmed 20000L<Cent>
+                ]
+                181<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
+                209<OffsetDay>, Map [ 0, ActualPayment.quickFailed 20000L<Cent> ValueNone ]
+                212<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
                 242<OffsetDay>,
-                [|
-                    ActualPayment.quickFailed 20000L<Cent> ValueNone
-                    ActualPayment.quickConfirmed 20000L<Cent>
-                |]
-                273<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
-                304<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
+                Map [
+                    0, ActualPayment.quickFailed 20000L<Cent> ValueNone
+                    1, ActualPayment.quickConfirmed 20000L<Cent>
+                ]
+                273<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
+                304<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
                 334<OffsetDay>,
-                [|
-                    ActualPayment.quickFailed 20000L<Cent> ValueNone
-                    ActualPayment.quickConfirmed 20000L<Cent>
-                |]
-                365<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
-                395<OffsetDay>, [| ActualPayment.quickConfirmed 20000L<Cent> |]
+                Map [
+                    0, ActualPayment.quickFailed 20000L<Cent> ValueNone
+                    1, ActualPayment.quickConfirmed 20000L<Cent>
+                ]
+                365<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
+                395<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 20000L<Cent> ]
                 426<OffsetDay>,
-                [|
-                    ActualPayment.quickFailed 20000L<Cent> ValueNone
-                    ActualPayment.quickConfirmed 20000L<Cent>
-                |]
+                Map [
+                    0, ActualPayment.quickFailed 20000L<Cent> ValueNone
+                    1, ActualPayment.quickConfirmed 20000L<Cent>
+                ]
             ]
 
         let schedules = amortise p actualPayments
@@ -1447,45 +1446,45 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                26<OffsetDay>, [| ActualPayment.quickConfirmed 16800L<Cent> |]
-                85<OffsetDay>, [| ActualPayment.quickConfirmed 8400L<Cent> |]
-                189<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                220<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                251<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                281<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                317<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                402<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                422<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                430<OffsetDay>, [| ActualPayment.quickConfirmed 706L<Cent> |]
-                462<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                506<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                531<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                562<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                583<OffsetDay>, [| ActualPayment.quickConfirmed 689L<Cent> |]
-                615<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                646<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                689<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                715<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                741<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                750<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                771<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                799<OffsetDay>, [| ActualPayment.quickConfirmed 921L<Cent> |]
-                855<OffsetDay>, [| ActualPayment.quickConfirmed 921L<Cent> |]
-                856<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                895<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                924<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                954<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                988<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                1039<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1073<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1106<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1141<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1169<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1192<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1224<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
-                1253<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
-                1290<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
-                1316<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
+                26<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 16800L<Cent> ]
+                85<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 8400L<Cent> ]
+                189<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                220<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                251<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                281<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                317<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                402<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                422<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                430<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 706L<Cent> ]
+                462<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                506<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                531<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                562<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                583<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 689L<Cent> ]
+                615<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                646<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                689<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                715<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                741<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                750<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                771<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                799<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 921L<Cent> ]
+                855<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 921L<Cent> ]
+                856<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                895<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                924<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                954<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                988<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                1039<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1073<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1141<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1169<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1192<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1224<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
+                1253<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
+                1290<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
+                1316<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments
@@ -1522,45 +1521,45 @@ module InterestFirstTests =
 
         let actualPayments =
             Map [
-                26<OffsetDay>, [| ActualPayment.quickConfirmed 16800L<Cent> |]
-                85<OffsetDay>, [| ActualPayment.quickConfirmed 8400L<Cent> |]
-                189<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                220<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                251<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                281<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                317<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                402<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                422<OffsetDay>, [| ActualPayment.quickConfirmed 546L<Cent> |]
-                430<OffsetDay>, [| ActualPayment.quickConfirmed 706L<Cent> |]
-                462<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                506<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                531<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                562<OffsetDay>, [| ActualPayment.quickConfirmed 598L<Cent> |]
-                583<OffsetDay>, [| ActualPayment.quickConfirmed 689L<Cent> |]
-                615<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                646<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                689<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                715<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                741<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                750<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                771<OffsetDay>, [| ActualPayment.quickConfirmed 869L<Cent> |]
-                799<OffsetDay>, [| ActualPayment.quickConfirmed 921L<Cent> |]
-                855<OffsetDay>, [| ActualPayment.quickConfirmed 921L<Cent> |]
-                856<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                895<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                924<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                954<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                988<OffsetDay>, [| ActualPayment.quickConfirmed 862L<Cent> |]
-                1039<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1073<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1106<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1141<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1169<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1192<OffsetDay>, [| ActualPayment.quickConfirmed 883L<Cent> |]
-                1224<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
-                1253<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
-                1290<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
-                1316<OffsetDay>, [| ActualPayment.quickConfirmed 911L<Cent> |]
+                26<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 16800L<Cent> ]
+                85<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 8400L<Cent> ]
+                189<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                220<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                251<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                281<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                317<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                402<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                422<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 546L<Cent> ]
+                430<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 706L<Cent> ]
+                462<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                506<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                531<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                562<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 598L<Cent> ]
+                583<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 689L<Cent> ]
+                615<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                646<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                689<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                715<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                741<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                750<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                771<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 869L<Cent> ]
+                799<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 921L<Cent> ]
+                855<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 921L<Cent> ]
+                856<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                895<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                924<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                954<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                988<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 862L<Cent> ]
+                1039<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1073<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1141<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1169<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1192<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 883L<Cent> ]
+                1224<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
+                1253<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
+                1290<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
+                1316<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 911L<Cent> ]
             ]
 
         let schedules = amortise p actualPayments

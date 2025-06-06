@@ -131,19 +131,22 @@ module Scheduling =
     type ActualPayment = {
         /// the status of the payment
         ActualPaymentStatus: ActualPaymentStatus
+        /// a map of the scheduled payments and amounts covered by this payment
+        ScheduledPayments: Map<int<OffsetDay>, int64<Cent>>
         /// any extra info such as references
         Metadata: Map<string, obj>
     } with
 
         /// HTML formatting to display the actual payment in a readable format
-        member ap.Html = $"{ap.ActualPaymentStatus}"
+        member ap.Html =
+            $"{ap.ActualPaymentStatus}; {ap.ScheduledPayments |> Map.toStringOrNa}; {ap.Metadata |> Map.toStringOrNa}"
 
     /// an actual payment made by the customer, optionally including metadata such as bank references etc.
     module ActualPayment =
         /// the total amount of the payment
         let total = _.ActualPaymentStatus >> ActualPaymentStatus.total
 
-        let totalConfirmedOrWrittenOff =
+        let totalMade =
             _.ActualPaymentStatus
             >> function
                 | ActualPaymentStatus.Confirmed ap -> ap
@@ -159,24 +162,28 @@ module Scheduling =
         /// a quick convenient method to create a confirmed actual payment
         let quickConfirmed amount = {
             ActualPaymentStatus = ActualPaymentStatus.Confirmed amount
+            ScheduledPayments = Map.empty
             Metadata = Map.empty
         }
 
         /// a quick convenient method to create a pending actual payment
         let quickPending amount = {
             ActualPaymentStatus = ActualPaymentStatus.Pending amount
+            ScheduledPayments = Map.empty
             Metadata = Map.empty
         }
 
         /// a quick convenient method to create a failed actual payment along with any applicable penalty charges
         let quickFailed amount charges = {
             ActualPaymentStatus = ActualPaymentStatus.Failed(amount, charges)
+            ScheduledPayments = Map.empty
             Metadata = Map.empty
         }
 
         /// a quick convenient method to create a written off actual payment
         let quickWriteOff amount = {
             ActualPaymentStatus = ActualPaymentStatus.WriteOff amount
+            ScheduledPayments = Map.empty
             Metadata = Map.empty
         }
 

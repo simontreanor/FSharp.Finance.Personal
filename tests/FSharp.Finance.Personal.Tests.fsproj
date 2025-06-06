@@ -26,7 +26,6 @@
     <Compile Include="PromotionalRatesTests.fs" />
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
-    <!-- <Compile Include="UnitPeriodConfigTests.fs" /> -->
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="9.0.201" />

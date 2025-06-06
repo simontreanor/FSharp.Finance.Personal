@@ -53,7 +53,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 111.67</td>
         <td class="ci04">1</td>
         <td class="ci05">111.67</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;72.54</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;72.54;&nbsp;25:&nbsp;7254;&nbsp;<i>n/a</i></td>
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">72.54</td>
         <td class="ci09"><i>paid&nbsp;later&nbsp;owing</i>&nbsp;39.13</td>
@@ -76,7 +76,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 111.67</td>
         <td class="ci04">2</td>
         <td class="ci05">111.67</td>
-        <td class="ci06">72.54&nbsp;<i>failed&nbsp;(insufficient&nbsp;funds)</i><br/><i>confirmed</i>&nbsp;72.54</td>
+        <td class="ci06">0:&nbsp;72.54&nbsp;<i>failed&nbsp;(insufficient&nbsp;funds)</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;<i>confirmed</i>&nbsp;72.54;&nbsp;25:&nbsp;3913<br/>53:&nbsp;3341;&nbsp;<i>n/a</i></td>
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">72.54</td>
         <td class="ci09"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
@@ -99,7 +99,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">2</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;72.54<br/><i>confirmed</i>&nbsp;145.07</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;72.54;&nbsp;53:&nbsp;7254;&nbsp;<i>n/a</i><br/>1:&nbsp;<i>confirmed</i>&nbsp;145.07;&nbsp;53:&nbsp;572<br/>84:&nbsp;2771;&nbsp;<i>n/a</i></td>
         <td class="ci07"><i>n/a</i></td>
         <td class="ci08">217.61</td>
         <td class="ci09"><i>extra&nbsp;payment</i></td>

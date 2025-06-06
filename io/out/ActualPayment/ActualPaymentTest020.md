@@ -64,7 +64,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">1</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;35.48</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;35.48;&nbsp;7:&nbsp;3548;&nbsp;<i>n/a</i></td>
         <td class="ci07">35.48</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>

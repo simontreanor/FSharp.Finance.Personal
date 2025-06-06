@@ -45,7 +45,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 439.29</td>
         <td class="ci04">1</td>
         <td class="ci05">439.29</td>
-        <td class="ci06">500.00&nbsp;<i>failed</i><br/>500.00&nbsp;<i>failed</i></td>
+        <td class="ci06">700:&nbsp;500.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>800:&nbsp;500.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
         <td class="ci09">open</td>
@@ -64,7 +64,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">1</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">500.00&nbsp;<i>failed</i><br/>500.00&nbsp;<i>failed</i><br/><i>confirmed</i>&nbsp;500.00</td>
+        <td class="ci06">700:&nbsp;500.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>800:&nbsp;500.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1514:&nbsp;<i>confirmed</i>&nbsp;500.00;&nbsp;12:&nbsp;43929<br/>43:&nbsp;6071;&nbsp;<i>n/a</i></td>
         <td class="ci07">500.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -83,7 +83,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 439.29</td>
         <td class="ci04">2</td>
         <td class="ci05">378.58</td>
-        <td class="ci06">500.00&nbsp;<i>failed</i><br/>500.00&nbsp;<i>failed</i></td>
+        <td class="ci06">700:&nbsp;500.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>800:&nbsp;500.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
         <td class="ci09">open</td>
@@ -102,7 +102,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">2</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;1,540.00</td>
+        <td class="ci06">1958:&nbsp;<i>confirmed</i>&nbsp;1,540.00;&nbsp;43:&nbsp;37858<br/>71:&nbsp;43929<br/>102:&nbsp;43929<br/>132:&nbsp;28284;&nbsp;<i>n/a</i></td>
         <td class="ci07">1,540.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">refund&nbsp;due</td>

@@ -75,11 +75,11 @@ let parameters: Parameters = {
 
 let actualPayments =
     Map [
-        4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-        35<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-        66<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-        94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-        125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+        4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        35<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        66<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
     ]
 
 let schedules = actualPayments |> amortise parameters

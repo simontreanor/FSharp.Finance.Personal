@@ -59,7 +59,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 407.67</td>
         <td class="ci04">1</td>
         <td class="ci05">407.67</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;407.67</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;407.67;&nbsp;9:&nbsp;40767;&nbsp;<i>n/a</i></td>
         <td class="ci07">407.67</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
@@ -85,7 +85,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 407.67</td>
         <td class="ci04">2</td>
         <td class="ci05">407.67</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;407.67</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;407.67;&nbsp;40:&nbsp;40767;&nbsp;<i>n/a</i></td>
         <td class="ci07">407.67</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
@@ -111,7 +111,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 407.67</td>
         <td class="ci04">3</td>
         <td class="ci05">407.67</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;407.67</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;407.67;&nbsp;70:&nbsp;40767;&nbsp;<i>n/a</i></td>
         <td class="ci07">407.67</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
@@ -137,7 +137,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 407.67</td>
         <td class="ci04">4</td>
         <td class="ci05">407.67</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;407.67</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;407.67;&nbsp;101:&nbsp;40767;&nbsp;<i>n/a</i></td>
         <td class="ci07">407.67</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">open</td>
@@ -163,7 +163,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 407.64</td>
         <td class="ci04">5</td>
         <td class="ci05">407.64</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;407.64</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;407.64;&nbsp;131:&nbsp;40764;&nbsp;<i>n/a</i></td>
         <td class="ci07">407.64</td>
         <td class="ci08"><i>payment&nbsp;made</i></td>
         <td class="ci09">closed</td>

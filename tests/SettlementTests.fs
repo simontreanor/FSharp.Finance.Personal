@@ -72,9 +72,9 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                55<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                86<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
+                24<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
             ]
 
         let actual =
@@ -109,7 +109,7 @@ module SettlementTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 3
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = GeneratedValue 98_52L<Cent>
                 NetEffect = 98_52L<Cent>
                 PaymentStatus = Generated
@@ -146,9 +146,9 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                55<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                86<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
+                24<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
             ]
 
         let actual =
@@ -182,7 +182,7 @@ module SettlementTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 4
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = GeneratedValue 105_04L<Cent>
                 NetEffect = 105_04L<Cent>
                 PaymentStatus = Generated
@@ -219,10 +219,10 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                55<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                86<OffsetDay>, [| ActualPayment.quickConfirmed 100_53L<Cent> |]
-                115<OffsetDay>, [| ActualPayment.quickConfirmed 50_00L<Cent> |]
+                24<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                115<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 50_00L<Cent> ]
             ]
 
         let actual =
@@ -256,7 +256,7 @@ module SettlementTests =
                 ScheduledPayment = ScheduledPayment.zero
                 Window = 4
                 PaymentDue = 0L<Cent>
-                ActualPayments = [||]
+                ActualPayments = Map.empty
                 GeneratedPayment = GeneratedValue 53_30L<Cent>
                 NetEffect = 53_30L<Cent>
                 PaymentStatus = Generated

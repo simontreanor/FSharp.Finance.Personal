@@ -45,7 +45,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 36.78</td>
         <td class="ci04">1</td>
         <td class="ci05">36.78</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;1,000.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;1,000.00;&nbsp;10:&nbsp;3678<br/>41:&nbsp;3678<br/>71:&nbsp;3678<br/>102:&nbsp;3678<br/>132:&nbsp;81615;&nbsp;<i>n/a</i></td>
         <td class="ci07">1,000.00</td>
         <td class="ci08"><i>overpayment</i></td>
         <td class="ci09">refund&nbsp;due</td>

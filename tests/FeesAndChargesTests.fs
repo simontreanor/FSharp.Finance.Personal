@@ -88,24 +88,24 @@ module FeeAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
                     35<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
                     36<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
-                    40<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
+                    40<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
                     66<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
-                    70<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
-                    94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-                    125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                        1, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
+                    70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
                 ]
 
             let schedules = amortise parameters actualPayments
@@ -123,12 +123,15 @@ module FeeAndChargesTests =
                     ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                     Window = 5
                     PaymentDue = 456_84L<Cent>
-                    ActualPayments = [|
-                        {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
-                            Metadata = Map.empty
-                        }
-                    |]
+                    ActualPayments =
+                        Map [
+                            0,
+                            {
+                                ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
+                                Metadata = Map.empty
+                                ScheduledPayments = Map.empty
+                            }
+                        ]
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade
@@ -173,24 +176,24 @@ module FeeAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
                     35<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
                     36<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
-                    40<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
+                    40<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
                     66<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
-                    70<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
-                    94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-                    125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                        1, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
+                    70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments
@@ -208,12 +211,15 @@ module FeeAndChargesTests =
                     ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                     Window = 5
                     PaymentDue = 456_84L<Cent>
-                    ActualPayments = [|
-                        {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
-                            Metadata = Map.empty
-                        }
-                    |]
+                    ActualPayments =
+                        Map [
+                            0,
+                            {
+                                ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
+                                Metadata = Map.empty
+                                ScheduledPayments = Map.empty
+                            }
+                        ]
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade
@@ -258,24 +264,24 @@ module FeeAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
                     35<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
                     36<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
-                    40<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
+                    40<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
                     66<OffsetDay>,
-                    [|
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                        ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
-                    |]
-                    70<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
-                    94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
-                    125<OffsetDay>, [| ActualPayment.quickConfirmed 456_84L<Cent> |]
+                    Map [
+                        0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                        1, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                    ]
+                    70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments
@@ -293,12 +299,15 @@ module FeeAndChargesTests =
                     ScheduledPayment = ScheduledPayment.quick (ValueSome 456_84L<Cent>) ValueNone
                     Window = 5
                     PaymentDue = 456_84L<Cent>
-                    ActualPayments = [|
-                        {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
-                            Metadata = Map.empty
-                        }
-                    |]
+                    ActualPayments =
+                        Map [
+                            0,
+                            {
+                                ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
+                                Metadata = Map.empty
+                                ScheduledPayments = Map.empty
+                            }
+                        ]
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade

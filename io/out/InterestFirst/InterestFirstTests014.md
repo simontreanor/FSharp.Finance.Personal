@@ -83,7 +83,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">2</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;88.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;88.00;&nbsp;3:&nbsp;7764<br/>33:&nbsp;1036;&nbsp;<i>n/a</i></td>
         <td class="ci07">88.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -140,7 +140,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">5</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;126.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;126.00;&nbsp;33:&nbsp;6728<br/>64:&nbsp;5872;&nbsp;<i>n/a</i></td>
         <td class="ci07">126.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -159,7 +159,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">5</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;98.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;98.00;&nbsp;64:&nbsp;1892<br/>95:&nbsp;145;&nbsp;<i>n/a</i></td>
         <td class="ci07">98.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -178,7 +178,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">5</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;100.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;100.00;&nbsp;95:&nbsp;10000;&nbsp;<i>n/a</i></td>
         <td class="ci07">100.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">refund&nbsp;due</td>

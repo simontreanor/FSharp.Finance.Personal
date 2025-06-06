@@ -53,7 +53,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 225.00</td>
         <td class="ci04">1</td>
         <td class="ci05">225.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>missed&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -76,7 +76,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">1</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -99,7 +99,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">1</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -122,7 +122,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 225.00</td>
         <td class="ci04">2</td>
         <td class="ci05">225.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>missed&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -145,7 +145,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">2</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -168,7 +168,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">2</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -191,7 +191,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 225.00</td>
         <td class="ci04">3</td>
         <td class="ci05">225.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
         <td class="ci09">open</td>
@@ -214,7 +214,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">3</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;225.00<br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;225.00;&nbsp;8:&nbsp;22500;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">225.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -237,7 +237,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">3</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -260,7 +260,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 225.00</td>
         <td class="ci04">4</td>
         <td class="ci05">225.00</td>
-        <td class="ci06">225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
         <td class="ci09">open</td>
@@ -283,7 +283,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">4</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">237.00&nbsp;<i>failed</i><br/>237.00&nbsp;<i>failed</i><br/>237.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;237.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;237.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;237.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -306,7 +306,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">4</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;249.00<br/>225.00&nbsp;<i>failed</i><br/>225.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;249.00;&nbsp;39:&nbsp;22500<br/>69:&nbsp;2400;&nbsp;<i>n/a</i><br/>1:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;225.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">249.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -329,7 +329,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 250.00</td>
         <td class="ci04">5</td>
         <td class="ci05">250.00</td>
-        <td class="ci06">250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>missed&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -352,7 +352,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">5</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -375,7 +375,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">5</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -398,7 +398,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>original</i> 276.00</td>
         <td class="ci04">6</td>
         <td class="ci05">276.00</td>
-        <td class="ci06">250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>3:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>paid&nbsp;later&nbsp;in&nbsp;full</i></td>
         <td class="ci09">open</td>
@@ -421,7 +421,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -444,7 +444,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i><br/>250.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;250.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -467,7 +467,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">175.00&nbsp;<i>failed</i><br/>175.00&nbsp;<i>failed</i><br/>175.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;175.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;175.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;175.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -490,7 +490,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;175.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;175.00;&nbsp;69:&nbsp;17500;&nbsp;<i>n/a</i></td>
         <td class="ci07">175.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -513,7 +513,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;175.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;175.00;&nbsp;69:&nbsp;2600<br/>100:&nbsp;14900;&nbsp;<i>n/a</i></td>
         <td class="ci07">175.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>
@@ -536,7 +536,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>3:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -559,7 +559,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -582,7 +582,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06">176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i><br/>176.00&nbsp;<i>failed</i></td>
+        <td class="ci06">0:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>1:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i><br/>2:&nbsp;176.00&nbsp;<i>failed</i>;&nbsp;<i>n/a</i>;&nbsp;<i>n/a</i></td>
         <td class="ci07">0.00</td>
         <td class="ci08"><i>nothing&nbsp;due</i></td>
         <td class="ci09">open</td>
@@ -605,7 +605,7 @@
         <td class="ci03" style="white-space: nowrap;"><i>n/a<i></td>
         <td class="ci04">6</td>
         <td class="ci05">0.00</td>
-        <td class="ci06"><i>confirmed</i>&nbsp;176.00</td>
+        <td class="ci06">0:&nbsp;<i>confirmed</i>&nbsp;176.00;&nbsp;100:&nbsp;7600<br/>214:&nbsp;10000;&nbsp;<i>n/a</i></td>
         <td class="ci07">176.00</td>
         <td class="ci08"><i>extra&nbsp;payment</i></td>
         <td class="ci09">open</td>

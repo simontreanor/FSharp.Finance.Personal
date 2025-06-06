@@ -39,7 +39,7 @@ module Quotes =
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
-    let getQuote (p: Parameters) (actualPayments: Map<int<OffsetDay>, ActualPayment array>) =
+    let getQuote (p: Parameters) (actualPayments: Map<int<OffsetDay>, Map<int, ActualPayment>>) =
         // generate a revised statement showing a generated settlement figure on the relevant date
         let schedules =
             amortise
@@ -65,7 +65,7 @@ module Quotes =
         let pendingPayments =
             schedules.AmortisationSchedule.ScheduleItems
             |> Map.values
-            |> Seq.sumBy (_.ActualPayments >> Array.sumBy ActualPayment.totalPending)
+            |> Seq.sumBy (_.ActualPayments >> Map.values >> Seq.sumBy ActualPayment.totalPending)
         // produce a quote result
         let quoteResult =
             // if there are any payments pending, inform the caller that a quote cannot be generated for this reason
@@ -74,7 +74,7 @@ module Quotes =
             else
                 // get an array of confirmed or written-off payments - these are ones that have a net effect
                 let existingPayments =
-                    si.ActualPayments |> Array.sumBy ActualPayment.totalConfirmedOrWrittenOff
+                    si.ActualPayments |> Map.values |> Seq.sumBy ActualPayment.totalMade
 
                 match si.GeneratedPayment with
                 // where there is a generated payment, create a quote detailing the payment
