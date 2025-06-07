@@ -354,11 +354,16 @@ module AppliedPayment =
             let mapScheduledPayments appliedPayments =
                 let scheduledPaymentList =
                     scheduledPayments
-                    |> Map.toList
-                    |> List.map (fun (d, sp) -> {
-                        spDay = d
-                        spTotal = ScheduledPayment.total sp
-                    })
+                    |> Map.fold
+                        (fun acc d sp ->
+                            {
+                                spDay = d
+                                spTotal = ScheduledPayment.total sp
+                            }
+                            :: acc
+                        )
+                        []
+                    |> List.rev
 
                 let actualPaymentList =
                     actualPayments
@@ -415,7 +420,7 @@ module AppliedPayment =
                         ],
                         spp
 
-                let result =
+                let processedPayments =
                     actualPaymentList
                     |> List.mapFold
                         (fun spp ap ->
@@ -424,6 +429,9 @@ module AppliedPayment =
                         )
                         scheduledPaymentList
                     |> fst
+
+                let paymentMappings =
+                    processedPayments
                     |> List.map (fun ap ->
                         (ap.apDay, ap.apIndex), ap.spp |> List.map (fun sp -> sp.spDay, sp.spTotal) |> Map.ofList
                     )
@@ -436,7 +444,8 @@ module AppliedPayment =
                             ap.ActualPayments
                             |> Map.map (fun i actp -> {
                                 actp with
-                                    ScheduledPayments = result[d, i]
+                                    ScheduledPayments =
+                                        Map.tryFind (d, i) paymentMappings |> Option.defaultValue Map.empty
                             })
                 })
 
