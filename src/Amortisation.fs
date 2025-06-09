@@ -169,14 +169,16 @@ module Amortisation =
         }
 
         let private formatActualPayments =
-            Map.toSeq
-            >> Seq.map (fun (index: int, actualPayment) -> $"<b>{index}</b>", $"{actualPayment}")
-            >> Map.ofSeq
+            Map.map (fun (index: int) actualPayment -> $"<b>{index}</b>&nbsp;{actualPayment}")
+            >> Map.values
+            >> String.concat "<br/>"
+            >> _.Replace(" ", "&nbsp;")
 
         let private formatPaidBy =
-            Map.toSeq
-            >> Seq.map (fun ((day: int<OffsetDay>, index: int), amount) -> $"<b>{day}#{index}</b>", formatCent amount)
-            >> Map.ofSeq
+            Map.map (fun (day: int<OffsetDay>, index: int) amount -> $"<b>{day}#{index}</b>&nbsp;{formatCent amount}")
+            >> Map.values
+            >> String.concat "<br/>"
+            >> _.Replace(" ", "&nbsp;")
 
         /// formats the schedule item as an HTML row
         let toHtmlRow (p: Parameters) settlementDay offsetDay scheduleItem =
@@ -188,18 +190,8 @@ module Amortisation =
                     yield " style=\"white-space: nowrap;\"", $"{scheduleItem.ScheduledPayment}"
                     yield "", $"{scheduleItem.Window}"
                     yield "", $"{formatCent scheduleItem.PaymentDue}"
-                    yield
-                        "",
-                        $"""{scheduleItem.ActualPayments
-                             |> formatActualPayments
-                             |> Map.toStringOrNa
-                             |> _.Replace(" ", "&nbsp;")}"""
-                    yield
-                        "",
-                        $"""{scheduleItem.PaidBy
-                             |> formatPaidBy
-                             |> Map.toStringOrNa
-                             |> _.Replace(" ", "&nbsp;")}"""
+                    yield "", $"""{formatActualPayments scheduleItem.ActualPayments}"""
+                    yield "", $"""{formatPaidBy scheduleItem.PaidBy}"""
                     if settlementDay <> SettlementDay.NoSettlement then
                         yield "", $"{scheduleItem.GeneratedPayment}"
                     yield "", $"{formatCent scheduleItem.NetEffect}"
