@@ -377,7 +377,7 @@ module Calculation =
         let toStringOrNa a =
             match a with
             | m when Map.isEmpty m -> "<i>n/a</i>"
-            | _ -> a |> Map.map (fun k v -> $"{k}: {v}") |> Map.values |> String.concat "<br/>"
+            | _ -> a |> Map.map (fun k v -> $"{k} {v}") |> Map.values |> String.concat "<br/>"
 
     /// wrapper to extract APR value from solution
     let getAprOr defaultValue =

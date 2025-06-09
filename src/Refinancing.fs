@@ -202,7 +202,7 @@ module Refinancing =
                 Advanced.InterestConfig.PromotionalRates = rp.PromotionalInterestRates
                 Advanced.InterestConfig.RateOnNegativeBalance = rp.RateOnNegativeBalance
                 Advanced.SettlementDay = rp.SettlementDay
-                Advanced.TrimEnd = true
+                Advanced.TrimEnd = false // trimming the end of the schedule hides original payments, which we want to keep visible
         }
 
         // create the new amortisation schedule
@@ -300,7 +300,6 @@ module Refinancing =
                                     | _ as fsr -> fsr
                     })
                 Advanced.SettlementDay = SettlementDay.NoSettlement
-                Advanced.TrimEnd = true
         }
 
         // create the new amortisation schedule

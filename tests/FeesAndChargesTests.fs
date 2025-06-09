@@ -129,9 +129,10 @@ module FeeAndChargesTests =
                             {
                                 ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
                                 Metadata = Map.empty
-                                ScheduledPayments = Map.empty
+                            // // ScheduledPayments = Map.empty
                             }
                         ]
+                    PaidBy = Map.empty
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade
@@ -217,9 +218,10 @@ module FeeAndChargesTests =
                             {
                                 ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
                                 Metadata = Map.empty
-                                ScheduledPayments = Map.empty
+                            // // ScheduledPayments = Map.empty
                             }
                         ]
+                    PaidBy = Map.empty
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade
@@ -305,9 +307,10 @@ module FeeAndChargesTests =
                             {
                                 ActualPaymentStatus = ActualPaymentStatus.Confirmed 456_84L<Cent>
                                 Metadata = Map.empty
-                                ScheduledPayments = Map.empty
+                            // // ScheduledPayments = Map.empty
                             }
                         ]
+                    PaidBy = Map.empty
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade

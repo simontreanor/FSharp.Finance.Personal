@@ -242,6 +242,7 @@ module PromotionalRatesTests =
                 Window = 240
                 PaymentDue = 1523_25L<Cent>
                 ActualPayments = Map.empty
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1523_25L<Cent>
                 PaymentStatus = NotYetDue

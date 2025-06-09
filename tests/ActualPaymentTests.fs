@@ -50,9 +50,10 @@ module ActualPaymentTests =
                     {
                         ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue
                         Metadata = Map.empty
-                        ScheduledPayments = Map.empty
+                    // // ScheduledPayments = Map.empty
                     }
                 ]
+            PaidBy = Map.empty
             GeneratedPayment = NoGeneratedPayment
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
@@ -264,9 +265,10 @@ module ActualPaymentTests =
                         {
                             ActualPaymentStatus = ActualPaymentStatus.Confirmed 1193_95L<Cent>
                             Metadata = Map.empty
-                            ScheduledPayments = Map.empty
+                        // // ScheduledPayments = Map.empty
                         }
                     ]
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1193_95L<Cent>
                 PaymentStatus = ExtraPayment
@@ -331,9 +333,10 @@ module ActualPaymentTests =
                         {
                             ActualPaymentStatus = ActualPaymentStatus.Confirmed 1474_59L<Cent>
                             Metadata = Map.empty
-                            ScheduledPayments = Map.empty
+                        // // ScheduledPayments = Map.empty
                         }
                     ]
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 1474_59L<Cent>
                 PaymentStatus = ExtraPayment
@@ -403,9 +406,10 @@ module ActualPaymentTests =
                         {
                             ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_64L<Cent>
                             Metadata = Map.empty
-                            ScheduledPayments = Map.empty
+                        // // ScheduledPayments = Map.empty
                         }
                     ]
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = -280_64L<Cent>
                 PaymentStatus = Refunded
@@ -466,9 +470,10 @@ module ActualPaymentTests =
                     {
                         ActualPaymentStatus = ActualPaymentStatus.Confirmed 1500_00L<Cent>
                         Metadata = Map.empty
-                        ScheduledPayments = Map.empty
+                    // // ScheduledPayments = Map.empty
                     }
                 ]
+            PaidBy = Map.empty
             GeneratedPayment = NoGeneratedPayment
             NetEffect = 1500_00L<Cent>
             PaymentStatus = ExtraPayment
@@ -534,6 +539,7 @@ module ActualPaymentTests =
                 Window = 11
                 PaymentDue = 243_66L<Cent>
                 ActualPayments = Map.empty
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 243_66L<Cent>
                 PaymentStatus = NotYetDue
@@ -604,9 +610,10 @@ module ActualPaymentTests =
                         {
                             ActualPaymentStatus = ActualPaymentStatus.Confirmed -280_83L<Cent>
                             Metadata = Map.empty
-                            ScheduledPayments = Map.empty
+                        // // ScheduledPayments = Map.empty
                         }
                     ]
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = -280_83L<Cent>
                 PaymentStatus = Refunded
@@ -670,6 +677,7 @@ module ActualPaymentTests =
                 Window = 5
                 PaymentDue = 491_53L<Cent>
                 ActualPayments = Map.empty
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 491_53L<Cent>
                 PaymentStatus = NotYetDue
@@ -733,6 +741,7 @@ module ActualPaymentTests =
                 Window = 5
                 PaymentDue = 491_53L<Cent>
                 ActualPayments = Map.empty
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 491_53L<Cent>
                 PaymentStatus = NotYetDue
@@ -796,6 +805,7 @@ module ActualPaymentTests =
                 Window = 135
                 PaymentDue = 0L<Cent>
                 ActualPayments = Map.empty
+                PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 0L<Cent>
                 PaymentStatus = InformationOnly
