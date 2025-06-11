@@ -43,14 +43,15 @@ module FeeAndChargesTests =
                     StandardRate = Interest.Rate.Daily(Percent 0.8m)
                     Cap = interestCapExample
                     Rounding = RoundDown
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                 }
             }
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
+                    Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig =
@@ -72,7 +73,7 @@ module FeeAndChargesTests =
                             ]
                     }
                 InterestConfig = {
-                    InitialGracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3u<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                 }
@@ -88,24 +89,24 @@ module FeeAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    35<OffsetDay>,
+                    4u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    35u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    36<OffsetDay>,
+                    36u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    40<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    66<OffsetDay>,
+                    40u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    66u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                         1, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
-                    94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    70u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    94u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    125u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
                 ]
 
             let schedules = amortise parameters actualPayments
@@ -115,7 +116,7 @@ module FeeAndChargesTests =
             let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
             let expected =
-                125<OffsetDay>,
+                125u<OffsetDay>,
                 {
                     OffsetDayType = OffsetDayType.EvaluationDay
                     OffsetDate = Date(2023, 3, 31)
@@ -177,24 +178,24 @@ module FeeAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    35<OffsetDay>,
+                    4u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    35u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    36<OffsetDay>,
+                    36u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    40<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    66<OffsetDay>,
+                    40u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    66u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                         1, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
-                    94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    70u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    94u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    125u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments
@@ -204,7 +205,7 @@ module FeeAndChargesTests =
             let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
             let expected =
-                125<OffsetDay>,
+                125u<OffsetDay>,
                 {
                     OffsetDayType = OffsetDayType.EvaluationDay
                     OffsetDate = Date(2023, 3, 31)
@@ -266,24 +267,24 @@ module FeeAndChargesTests =
 
             let actualPayments =
                 Map [
-                    4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    35<OffsetDay>,
+                    4u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    35u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    36<OffsetDay>,
+                    36u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    40<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    66<OffsetDay>,
+                    40u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    66u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                         1, ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
                     ]
-                    70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
-                    94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-                    125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    70u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+                    94u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+                    125u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments
@@ -293,7 +294,7 @@ module FeeAndChargesTests =
             let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
             let expected =
-                125<OffsetDay>,
+                125u<OffsetDay>,
                 {
                     OffsetDayType = OffsetDayType.EvaluationDay
                     OffsetDate = Date(2023, 3, 31)

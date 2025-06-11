@@ -52,7 +52,7 @@ module Fee =
         /// for original (non-rescheduled) amortisations: fee is rebated proportionately based on the current final payment day
         | ProRata
         /// for rescheduled amortisations: fee is rebated proportionately based on the original final payment day
-        | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
+        | ProRataRescheduled of OriginalFinalPaymentDay: uint<OffsetDay>
         /// the current fee balance is rebated
         | Balance
 
@@ -88,19 +88,15 @@ module Fee =
     /// basic options specifying the type of fee and how it is calculated
     module BasicConfig =
         /// formats the fee config as an HTML table
-        let toHtmlTable basicConfig =
+        let toHtml basicConfig =
             match basicConfig with
             | ValueSome bc ->
                 $"""
-            <table>
-                <tr>
-                    <td>fee type: <i>{bc.FeeType}</i></td>
-                    <td>rounding: <i>{bc.Rounding}</i></td>
-                </tr>
-                <tr>
-                    <td>fee amortisation: <i>{bc.FeeAmortisation}</i></td>
-                </tr>
-            </table>"""
+            <div>
+                <div>fee type: <i>{bc.FeeType}</i></div>
+                <div>rounding: <i>{bc.Rounding}</i></div>
+                <div>fee amortisation: <i>{bc.FeeAmortisation}</i></div>
+            </div>"""
             | ValueNone -> "no fee"
 
     /// advanced options specifying the type of fee and how it is calculated

@@ -50,8 +50,10 @@ module Charge =
         let getHolidays startDate chargeHolidays =
             chargeHolidays
             |> Array.collect (fun dr ->
-                [| (dr.DateRangeStart - startDate).Days .. (dr.DateRangeEnd - startDate).Days |]
-                |> Array.map ((*) 1<OffsetDay>)
+                [|
+                    uint (dr.DateRangeStart - startDate).Days .. uint (dr.DateRangeEnd - startDate).Days
+                |]
+                |> Array.map ((*) 1u<OffsetDay>)
             )
 
     /// the type and conditions of any charge

@@ -95,19 +95,20 @@ module AprEuropeanUnionTests =
                     StandardRate = Interest.Rate.Daily(Percent 0.798m)
                     Cap = interestCap
                     Rounding = RoundDown
-                    AprMethod = CalculationMethod.EuropeanUnion 3
+                    AprMethod = CalculationMethod.EuropeanUnion
+                    AprPrecision = 3u
                 }
             }
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
+                    Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3u<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                 }

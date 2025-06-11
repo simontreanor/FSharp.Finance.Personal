@@ -16,7 +16,7 @@ module UnitPeriod =
         /// the last date of the transaction
         End: Date
         /// the length of the transaction in days
-        Duration: int<DurationDay>
+        Duration: uint<OffsetDay>
     }
 
     /// calculate the transaction term based on specific events
@@ -41,7 +41,7 @@ module UnitPeriod =
         {
             Start = beginDate
             End = endDate
-            Duration = (endDate - beginDate).Days * 1<DurationDay>
+            Duration = OffsetDay.fromDate beginDate endDate
         }
 
     /// interval between payments
@@ -270,7 +270,7 @@ module UnitPeriod =
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduleLength =
         | PaymentCount of Payments: int
-        | MaxDuration of StartDate: Date * Days: int<DurationDay>
+        | MaxDuration of StartDate: Date * Days: uint<OffsetDay>
 
         member sl.Html =
             match sl with
@@ -337,7 +337,7 @@ module UnitPeriod =
                 | Direction.Forward ->
                     Array.unfold
                         (fun i ->
-                            let nextDate = firstPaymentDate.AddDays(i * 7 * multiple)
+                            let nextDate = firstPaymentDate.AddDays +(i * 7 * multiple)
 
                             if nextDate <= startDate.AddDays +(int duration) then
                                 Some(nextDate, i + 1)
@@ -424,16 +424,16 @@ module UnitPeriod =
             | PaymentCount c ->
                 match direction with
                 | Direction.Forward ->
-                    Array.init c (fun i -> firstPaymentDate.AddMonths(i * multiple) |> adjustMonthEnd trackingDay)
+                    Array.init c (fun i -> firstPaymentDate.AddMonths +(i * multiple) |> adjustMonthEnd trackingDay)
                 | Direction.Reverse ->
-                    Array.init c (fun i -> firstPaymentDate.AddMonths(-i * multiple) |> adjustMonthEnd trackingDay)
+                    Array.init c (fun i -> firstPaymentDate.AddMonths -(i * multiple) |> adjustMonthEnd trackingDay)
             | MaxDuration(startDate, duration) ->
                 match direction with
                 | Direction.Forward ->
                     Array.unfold
                         (fun count ->
                             let nextDate =
-                                firstPaymentDate.AddMonths(count * multiple) |> adjustMonthEnd trackingDay
+                                firstPaymentDate.AddMonths +(count * multiple) |> adjustMonthEnd trackingDay
 
                             if nextDate <= startDate.AddDays +(int duration) then
                                 Some(nextDate, count + 1)
@@ -445,7 +445,7 @@ module UnitPeriod =
                     Array.unfold
                         (fun count ->
                             let nextDate =
-                                firstPaymentDate.AddMonths(-count * multiple) |> adjustMonthEnd trackingDay
+                                firstPaymentDate.AddMonths -(count * multiple) |> adjustMonthEnd trackingDay
 
                             if nextDate <= startDate.AddDays -(int duration) then
                                 Some(nextDate, count - 1)

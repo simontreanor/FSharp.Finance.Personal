@@ -14,7 +14,7 @@ module Scheduling =
         /// the original payment amount
         Value: int64<Cent>
         /// the day on which the rescheduled payment was created
-        RescheduleDay: int<OffsetDay>
+        RescheduleDay: uint<OffsetDay>
     } with
 
         member x.Html = formatCent x.Value
@@ -132,7 +132,7 @@ module Scheduling =
         /// the status of the payment
         ActualPaymentStatus: ActualPaymentStatus
         // // /// a map of the scheduled payments and amounts covered by this payment
-        // // ScheduledPayments: Map<int<OffsetDay>, int64<Cent>>
+        // // ScheduledPayments: Map<uint<OffsetDay>, int64<Cent>>
         /// any extra info such as references
         Metadata: Map<string, obj>
     } with
@@ -209,7 +209,7 @@ module Scheduling =
         /// an original schedule
         | Original
         /// a new schedule created after the original schedule, indicating the day it was created
-        | Rescheduled of RescheduleDay: int<OffsetDay>
+        | Rescheduled of RescheduleDay: uint<OffsetDay>
 
         /// HTML formatting to display the schedule type in a readable format
         member st.Html =
@@ -231,7 +231,7 @@ module Scheduling =
     }
 
     /// type alias to represent a scheduled payment indexed by offset day
-    type internal PaymentMap = Map<int<OffsetDay>, ScheduledPayment>
+    type internal PaymentMap = Map<uint<OffsetDay>, ScheduledPayment>
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     [<Struct>]
@@ -245,61 +245,66 @@ module Scheduling =
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     module ScheduleConfig =
+
+        /// verifies the schedule config
+        let verify scheduleConfig = [|
+            match scheduleConfig with
+            | AutoGenerateSchedule {
+                                       ScheduleLength = PaymentCount paymentCount
+                                   } ->
+                if paymentCount < 1 then
+                    yield Error "Schedule length must be at least 1"
+            | FixedSchedules fsArray ->
+                if Array.isEmpty fsArray then
+                    yield Error "Fixed schedules cannot be empty"
+                elif fsArray |> Array.exists (fun fs -> fs.PaymentCount < 1) then
+                    yield Error "Payment count must be at least 1"
+            | CustomSchedule cs ->
+                if Map.isEmpty cs then
+                    yield Error "Custom schedule cannot be empty"
+            | _ -> ()
+        |]
+
         /// formats the schedule config as an HTML table
-        let toHtmlTable scheduleConfig =
+        let toHtml scheduleConfig =
             match scheduleConfig with
             | AutoGenerateSchedule ags ->
                 $"""
-            <table>
-                <tr>
-                    <td>config: <i>auto-generate schedule</i></td>
-                    <td>schedule length: <i>{ags.ScheduleLength}</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>
-                </tr>
-            </table>"""
+            <div>
+                <div>config: <i>auto-generate schedule</i></div>
+                <div>schedule length: <i>{ags.ScheduleLength}</i></div>
+                <div style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></div>
+            </div>"""
             | FixedSchedules fsArray ->
                 let renderRow (fs: FixedSchedule) =
                     $"""
-                <tr>
-                    <td>
-                        <table>
-                            <tr>
-                                <td style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></td>
-                                <td>payment count: <i>{fs.PaymentCount}</i></td>
-                            </tr>
-                            <tr>
-                                <td>payment value: <i>{formatCent fs.PaymentValue}</i></td>
-                                <td>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>"""
+                <div>
+                    <div style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></div>
+                    <div>payment count: <i>{fs.PaymentCount}</i></div>
+                    <div>payment value: <i>{formatCent fs.PaymentValue}</i></div>
+                    <div>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></div>
+                </div>"""
 
                 $"""
-            <table>
-                <tr>
-                    <td colspan="2">config: <i>fixed schedules</i></td>
-                </tr>{fsArray |> Array.map renderRow |> String.concat ""}
-            </table>"""
+            <div>
+                <div>config: <i>fixed schedules</i></div>
+                {fsArray |> Array.map renderRow |> String.concat ""}
+            </div>"""
             | CustomSchedule cs ->
                 let renderRow day (sp: ScheduledPayment) =
                     $"""
-                <tr>
-                    <td>day: <i>{OffsetDay.toInt day}</i></td>
-                    <td>scheduled payment: <i>{sp}</i></td>
-                </tr>"""
+                <div>day: <i>{day}</i></div>
+                <div>scheduled payment: <i>{sp}</i></div>
+                """
 
                 $"""
-            <table>
-                <tr>
-                    <td colspan="2">config: <i>custom schedule</i></td>
-                </tr>{cs
-                      |> Map.toList
-                      |> List.map (fun (day, sp) -> renderRow day sp)
-                      |> String.concat ""}
-            </table>"""
+            <div>
+                <div colspan="2">config: <i>custom schedule</i></div>
+                {cs
+                 |> Map.toList
+                 |> List.map (fun (day, sp) -> renderRow day sp)
+                 |> String.concat ""}
+            </div>"""
 
     /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -372,16 +377,12 @@ module Scheduling =
         /// basic payment options
         module BasicConfig =
             ///formats the payment config as an HTML table
-            let toHtmlTable basicConfig =
+            let toHtml basicConfig =
                 $"""
-            <table>
-                <tr>
-                    <td>rounding: <i>{basicConfig.Rounding}</i></td>
-                </tr>
-                <tr>
-                    <td>level-payment option: <i>{basicConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></td>
-                </tr>
-            </table>"""
+            <div>
+                <div>rounding: <i>{basicConfig.Rounding}</i></div>
+                <div>level-payment option: <i>{basicConfig.LevelPaymentOption.Html.Replace(" ", "&nbsp;")}</i></div>
+            </div>"""
 
         /// advanced payment options
         [<Struct>]
@@ -391,7 +392,7 @@ module Scheduling =
             /// the minimum payment that can be taken and how to handle it
             Minimum: MinimumPayment
             /// the duration after which a pending payment is considered a missed payment and charges are applied
-            Timeout: int<DurationDay>
+            Timeout: uint<OffsetDay>
         }
 
         /// advanced payment options
@@ -430,6 +431,16 @@ module Scheduling =
 
     /// parameters for creating a payment schedule
     module BasicParameters =
+
+        /// verifies the basic parameters
+        let verify bp = [|
+            if bp.EvaluationDate < bp.StartDate then
+                yield Error "Evaluation date must be on or after the start date"
+            if bp.Principal <= 0L<Cent> then
+                yield Error "Principal must be greater than zero"
+            yield! ScheduleConfig.verify bp.ScheduleConfig
+        |]
+
         /// formats the parameters as an HTML table
         let toHtmlTable bp =
             $"""
@@ -448,22 +459,22 @@ module Scheduling =
     </tr>
     <tr>
         <td>Schedule options</td>
-        <td>{ScheduleConfig.toHtmlTable bp.ScheduleConfig}
+        <td>{ScheduleConfig.toHtml bp.ScheduleConfig}
         </td>
     </tr>
     <tr>
         <td>Payment options</td>
-        <td>{Payment.BasicConfig.toHtmlTable bp.PaymentConfig}
+        <td>{Payment.BasicConfig.toHtml bp.PaymentConfig}
         </td>
     </tr>
     <tr>
         <td>Fee options</td>
-        <td>{Fee.BasicConfig.toHtmlTable bp.FeeConfig}
+        <td>{Fee.BasicConfig.toHtml bp.FeeConfig}
         </td>
     </tr>
     <tr>
         <td>Interest options</td>
-        <td>{Interest.Config.toHtmlTable bp.InterestConfig}
+        <td>{Interest.Config.toHtml bp.InterestConfig}
         </td>
     </tr>
 </table>"""
@@ -543,7 +554,7 @@ module Scheduling =
     /// a scheduled payment item, with running calculations of interest and principal balance
     type BasicItem = {
         /// the day expressed as an offset from the start date
-        Day: int<OffsetDay>
+        Day: uint<OffsetDay>
         /// the scheduled payment
         ScheduledPayment: ScheduledPayment
         /// the actuarial interest accrued since the previous payment
@@ -568,7 +579,7 @@ module Scheduling =
     module BasicItem =
         /// a default value with no data
         let zero = {
-            Day = 0<OffsetDay>
+            Day = 0u<OffsetDay>
             ScheduledPayment = ScheduledPayment.zero
             ActuarialInterest = 0m<Cent>
             InterestPortion = 0L<Cent>
@@ -602,7 +613,7 @@ module Scheduling =
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
-        LastScheduledPaymentDay: int<OffsetDay>
+        LastScheduledPaymentDay: uint<OffsetDay>
         /// the amount of all the payments except the final one
         LevelPayment: int64<Cent>
         /// the amount of the final payment
@@ -651,7 +662,7 @@ module Scheduling =
     ///  a schedule of payments, with statistics
     type BasicSchedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is evaluated
-        EvaluationDay: int<OffsetDay>
+        EvaluationDay: uint<OffsetDay>
         /// the items of the schedule
         Items: BasicItem array
         /// the statistics from the schedule
@@ -772,7 +783,7 @@ module Scheduling =
         | AutoGenerateSchedule rs ->
             match rs.ScheduleLength with
             | PaymentCount 0
-            | MaxDuration(_, 0<DurationDay>) -> Map.empty
+            | MaxDuration(_, 0u<OffsetDay>) -> Map.empty
             | _ ->
                 let unitPeriodConfigStartDate = Config.startDate rs.UnitPeriodConfig
 
@@ -1003,7 +1014,7 @@ module Scheduling =
         let paymentDays = paymentMap |> Map.keys |> Seq.toArray
         // take the last payment day for use in further calculations
         let finalScheduledPaymentDay =
-            paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
+            paymentDays |> Array.tryLast |> Option.defaultValue 0u<OffsetDay>
         // get the payment count for use in further calculations
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
@@ -1119,7 +1130,7 @@ module Scheduling =
                 |> Option.defaultValue 0L<Cent>
             // return the schedule (as `Items`) plus associated information and statistics
             {
-                EvaluationDay = (bp.EvaluationDate - bp.StartDate).Days * 1<OffsetDay>
+                EvaluationDay = OffsetDay.fromDate bp.StartDate bp.EvaluationDate
                 Items = items
                 Stats = {
                     InitialInterestBalance =
@@ -1140,7 +1151,7 @@ module Scheduling =
                     ScheduledPaymentTotal = scheduledPayments |> Array.sumBy ScheduledPayment.total
                     PrincipalTotal = principalTotal
                     InterestTotal = interestTotal
-                    InitialApr = Apr.toPercent bp.InterestConfig.AprMethod aprSolution
+                    InitialApr = Apr.toPercent bp.InterestConfig.AprPrecision aprSolution
                     InitialCostToBorrowingRatio =
                         if principalTotal = 0L<Cent> then
                             Percent 0m

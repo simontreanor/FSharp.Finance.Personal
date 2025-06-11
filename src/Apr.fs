@@ -11,22 +11,19 @@ module Apr =
     /// the calculation method used to determine the APR
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type CalculationMethod =
-        /// calculates the APR according to EU Directive 2008/48/EC to the stated decimal precision (note that this is two places more than the percent precision)
-        | EuropeanUnion of EuPrecision: int
-        /// calculates the APR according to UK FCA rules to the stated decimal precision (note that this is two places more than the percent precision)
-        | UnitedKingdom of UkPrecision: int
-        /// calculates the APR according to the US CFPB actuarial method to the stated decimal precision (note that this is two places more than the percent precision)
-        | UsActuarial of UsPrecision: int
-        /// calculates the APR according to the United States rule (not yet implemented)
-        | UnitedStatesRule
+        /// calculates the APR according to EU Directive 2008/48/EC
+        | EuropeanUnion
+        /// calculates the APR according to UK FCA rules
+        | UnitedKingdom
+        /// calculates the APR according to the US CFPB actuarial method
+        | UsActuarial
 
         /// HTML formatting to display the calculation method in a readable format
         member cm.Html =
             match cm with
-            | EuropeanUnion precision -> $"EU to {precision - 2} d.p."
-            | UnitedKingdom precision -> $"UK FCA to {precision - 2} d.p."
-            | UsActuarial precision -> $"US CFPB actuarial to {precision - 2} d.p."
-            | UnitedStatesRule -> "United States rule"
+            | EuropeanUnion -> $"EU"
+            | UnitedKingdom -> $"UK FCA"
+            | UsActuarial -> $"US CFPB actuarial"
 
     /// basic calculation to determine the APR
     let annualPercentageRate unitPeriodRate unitPeriodsPerYear = unitPeriodRate * unitPeriodsPerYear
@@ -363,9 +360,9 @@ module Apr =
     /// advance date are all the same
     let calculate method advanceValue advanceDate transfers =
         match method with
-        | CalculationMethod.EuropeanUnion _ -> EuropeanUnion.calculateApr advanceDate advanceValue transfers
-        | CalculationMethod.UnitedKingdom _ -> UnitedKingdom.calculateApr advanceDate advanceValue transfers
-        | CalculationMethod.UsActuarial _ ->
+        | CalculationMethod.EuropeanUnion -> EuropeanUnion.calculateApr advanceDate advanceValue transfers
+        | CalculationMethod.UnitedKingdom -> UnitedKingdom.calculateApr advanceDate advanceValue transfers
+        | CalculationMethod.UsActuarial ->
             let advances = [|
                 {
                     TransferType = Advance
@@ -385,20 +382,12 @@ module Apr =
             else
                 transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
-        | CalculationMethod.UnitedStatesRule -> failwith "Not yet implemented"
 
     /// converts an APR solution to a percentage, if possible
-    let toPercent aprMethod aprSolution =
-        let precision =
-            match aprMethod with
-            | CalculationMethod.EuropeanUnion precision
-            | CalculationMethod.UnitedKingdom precision
-            | CalculationMethod.UsActuarial precision -> precision
-            | _ -> 0
-
+    let toPercent (precision: uint) aprSolution =
         match aprSolution with
         | Solution.Found(apr, _, _)
-        | Solution.IterationLimitReached(apr, _, _) -> Decimal.Round(apr, precision) |> Percent.fromDecimal
+        | Solution.IterationLimitReached(apr, _, _) -> Decimal.Round(apr, int precision) |> Percent.fromDecimal
         | _ -> Percent 0m
 
     /// calculates the APR rate for the specified unit-period as per UK regulation

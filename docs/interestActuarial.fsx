@@ -58,7 +58,8 @@ let bp: BasicParameters = {
             DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
         }
         Rounding = RoundDown
-        AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+        AprMethod = Apr.CalculationMethod.UnitedKingdom
+        AprPrecision = 3u
     }
 }
 
@@ -218,7 +219,7 @@ let basicItems =
 
 (*** hide ***)
 {
-    EvaluationDay = 0<OffsetDay>
+    EvaluationDay = 0u<OffsetDay>
     Items = basicItems
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }
@@ -238,7 +239,7 @@ let items =
 
 (*** hide ***)
 {
-    EvaluationDay = 0<OffsetDay>
+    EvaluationDay = 0u<OffsetDay>
     Items = items
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }

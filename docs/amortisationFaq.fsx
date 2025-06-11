@@ -76,19 +76,20 @@ let parameters0: Parameters = {
                 DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
             }
             Rounding = RoundDown
-            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            AprMethod = Apr.CalculationMethod.UnitedKingdom
+            AprPrecision = 3u
         }
     }
     Advanced = {
         PaymentConfig = {
             ScheduledPaymentOption = AsScheduled
             Minimum = DeferOrWriteOff 50L<Cent>
-            Timeout = 3<DurationDay>
+            Timeout = 3u<OffsetDay>
         }
         FeeConfig = ValueNone
         ChargeConfig = None
         InterestConfig = {
-            InitialGracePeriod = 3<DurationDay>
+            InitialGracePeriod = 3u<OffsetDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero
         }
@@ -337,8 +338,8 @@ let amortisation4 =
     amortise
         parameters4
         (Map [
-            30<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
         ]) // actual payments made on days 30 and 61
 
 (**
@@ -395,8 +396,8 @@ let amortisation5 =
     amortise
         parameters5
         (Map [
-            30<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
-            61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
+            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
+            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
         ]) // actual payments made on days 30 and 61
 
 (**
@@ -440,7 +441,7 @@ let parameters6 = {
 }
 
 let amortisation6 =
-    amortise parameters6 (Map [ 5<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1050_00L<Cent> ] ]) // single overpayment made on day 5
+    amortise parameters6 (Map [ 5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1050_00L<Cent> ] ]) // single overpayment made on day 5
 
 (**
 </div>
@@ -498,8 +499,8 @@ let refinanceExampleParameters = {
 
 let actualPayments =
     Map [
-        30<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
-        61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
+        30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
+        61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
     ] // actual payments made on days 30 and 61
 
 let refinanceExampleSchedule = amortise refinanceExampleParameters actualPayments
@@ -540,7 +541,7 @@ let rescheduleParameters: RescheduleParameters = {
                 UnitPeriodConfig = Weekly(1, Date(2025, 10, 1)) // weekly payments starting on 1 October 2025
                 PaymentCount = 100 // more than enough payments to cover the schedule (this will be automatically curtailed)
                 PaymentValue = 50_00L<Cent> // £50 per week
-                ScheduleType = ScheduleType.Rescheduled 152<OffsetDay> // indicate that rescheduling was requested on day 152
+                ScheduleType = ScheduleType.Rescheduled 152u<OffsetDay> // indicate that rescheduling was requested on day 152
             }
         |]
     RateOnNegativeBalance = Interest.Rate.Zero // no negative balance, so irrelevant
@@ -660,9 +661,9 @@ let amortisation7 =
     amortise
         parameters7
         (Map [
-            30<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            91<OffsetDay>, Map [ 0, ActualPayment.quickWriteOff 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            91u<OffsetDay>, Map [ 0, ActualPayment.quickWriteOff 417_72L<Cent> ]
         ]) // actual payments made on days 30 and 61, and a single-payment write-off on day 91
 
 (**
@@ -699,8 +700,8 @@ let amortisation8 =
     amortise
         parameters8
         (Map [
-            30<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
         ]) // actual payments made on days 30 and 61, and a single-payment write-off on day 91
 // get the generated settlement figure
 let settlementFigure =
@@ -713,13 +714,13 @@ let amortisation8' =
     amortise
         {
             parameters8 with
-                Basic.EvaluationDate = OffsetDay.toDate parameters8.Basic.StartDate 92<OffsetDay>
+                Basic.EvaluationDate = OffsetDay.toDate parameters8.Basic.StartDate 92u<OffsetDay>
                 Advanced.SettlementDay = SettlementDay.NoSettlement
         }
         (Map [
-            30<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            91<OffsetDay>, [| ActualPayment.quickWriteOff fullWriteOffAmount |]
+            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            91u<OffsetDay>, [| ActualPayment.quickWriteOff fullWriteOffAmount |]
         ]) // actual payments made on days 30 and 61, and a full write-off on day 91
 
 (**

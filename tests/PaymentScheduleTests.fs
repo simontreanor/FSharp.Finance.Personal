@@ -50,25 +50,26 @@ module PaymentScheduleTests =
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.zero
                     Rounding = RoundDown
-                    AprMethod = Apr.CalculationMethod.UsActuarial 8
+                    AprMethod = Apr.CalculationMethod.UsActuarial
+                    AprPrecision = 8u
                 }
             }
 
         [<Fact>]
         let PaymentScheduleTest_Biweekly_1200_fp08_r11 () =
             let title = "PaymentScheduleTest_Biweekly_1200_fp08_r11"
-            let p = biweeklyParameters 1200_00L<Cent> 8<DurationDay>
+            let p = biweeklyParameters 1200_00L<Cent> 8u<OffsetDay>
             let actual = calculateBasicSchedule p
 
             actual
             |> BasicSchedule.outputHtmlToFile folder title "$1200 with short first period" p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 148<OffsetDay>
+                    LastScheduledPaymentDay = 148u<OffsetDay>
                     LevelPayment = 322_53L<Cent>
                     FinalPayment = 322_53L<Cent>
                     ScheduledPaymentTotal = 3547_83L<Cent>
@@ -85,16 +86,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Biweekly_1200_fp14_r11 () =
             let title = "PaymentScheduleTest_Biweekly_1200_fp14_r11"
             let description = "$1200 with first period equal to unit-period length"
-            let p = biweeklyParameters 1200_00L<Cent> 14<DurationDay>
+            let p = biweeklyParameters 1200_00L<Cent> 14u<OffsetDay>
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 154<OffsetDay>
+                    LastScheduledPaymentDay = 154u<OffsetDay>
                     LevelPayment = 323_06L<Cent>
                     FinalPayment = 323_03L<Cent>
                     ScheduledPaymentTotal = 3553_63L<Cent>
@@ -111,16 +112,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Biweekly_1200_fp15_r11 () =
             let title = "PaymentScheduleTest_Biweekly_1200_fp15_r11"
             let description = "$1200 with long first period"
-            let p = biweeklyParameters 1200_00L<Cent> 15<DurationDay>
+            let p = biweeklyParameters 1200_00L<Cent> 15u<OffsetDay>
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 155<OffsetDay>
+                    LastScheduledPaymentDay = 155u<OffsetDay>
                     LevelPayment = 323_15L<Cent>
                     FinalPayment = 323_10L<Cent>
                     ScheduledPaymentTotal = 3554_60L<Cent>
@@ -158,7 +159,8 @@ module PaymentScheduleTests =
                     StandardRate = Interest.Rate.Daily(Percent 0.798m)
                     Cap = interestCapExample
                     Rounding = RoundWith MidpointRounding.AwayFromZero
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                 }
             }
 
@@ -166,16 +168,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp04_r5 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp04_r5"
             let description = "£0100 with 04 days to first payment and 5 repayments"
-            let p = monthlyParameters 100_00L<Cent> 4<DurationDay> 5
+            let p = monthlyParameters 100_00L<Cent> 4u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 126<OffsetDay>
+                    LastScheduledPaymentDay = 126u<OffsetDay>
                     LevelPayment = 30_49L<Cent>
                     FinalPayment = 30_46L<Cent>
                     ScheduledPaymentTotal = 152_42L<Cent>
@@ -193,16 +195,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp08_r5 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp08_r5"
             let description = "£0100 with 08 days to first payment and 5 repayments"
-            let p = monthlyParameters 100_00L<Cent> 8<DurationDay> 5
+            let p = monthlyParameters 100_00L<Cent> 8u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 130<OffsetDay>
+                    LastScheduledPaymentDay = 130u<OffsetDay>
                     LevelPayment = 31_43L<Cent>
                     FinalPayment = 31_42L<Cent>
                     ScheduledPaymentTotal = 157_14L<Cent>
@@ -222,7 +224,7 @@ module PaymentScheduleTests =
             let description = "£0100 with 12 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 100_00L<Cent> 12<DurationDay> 4 with
+                monthlyParameters 100_00L<Cent> 12u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = HigherFinalPayment
             }
 
@@ -230,11 +232,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 103<OffsetDay>
+                    LastScheduledPaymentDay = 103u<OffsetDay>
                     LevelPayment = 36_94L<Cent>
                     FinalPayment = 36_95L<Cent>
                     ScheduledPaymentTotal = 147_77L<Cent>
@@ -252,16 +254,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp16_r4 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp16_r4"
             let description = "£0100 with 16 days to first payment and 4 repayments"
-            let p = monthlyParameters 100_00L<Cent> 16<DurationDay> 4
+            let p = monthlyParameters 100_00L<Cent> 16u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 107<OffsetDay>
+                    LastScheduledPaymentDay = 107u<OffsetDay>
                     LevelPayment = 38_02L<Cent>
                     FinalPayment = 38_00L<Cent>
                     ScheduledPaymentTotal = 152_06L<Cent>
@@ -281,7 +283,7 @@ module PaymentScheduleTests =
             let description = "£0100 with 20 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 100_00L<Cent> 20<DurationDay> 4 with
+                monthlyParameters 100_00L<Cent> 20u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -289,11 +291,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 111<OffsetDay>
+                    LastScheduledPaymentDay = 111u<OffsetDay>
                     LevelPayment = 39_09L<Cent>
                     FinalPayment = 39_11L<Cent>
                     ScheduledPaymentTotal = 156_38L<Cent>
@@ -311,16 +313,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp24_r4 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp24_r4"
             let description = "£0100 with 24 days to first payment and 4 repayments"
-            let p = monthlyParameters 100_00L<Cent> 24<DurationDay> 4
+            let p = monthlyParameters 100_00L<Cent> 24u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 115<OffsetDay>
+                    LastScheduledPaymentDay = 115u<OffsetDay>
                     LevelPayment = 40_06L<Cent>
                     FinalPayment = 40_04L<Cent>
                     ScheduledPaymentTotal = 160_22L<Cent>
@@ -338,16 +340,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0100_fp28_r4 () =
             let title = "PaymentScheduleTest_Monthly_0100_fp28_r4"
             let description = "£0100 with 28 days to first payment and 4 repayments"
-            let p = monthlyParameters 100_00L<Cent> 28<DurationDay> 4
+            let p = monthlyParameters 100_00L<Cent> 28u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 119<OffsetDay>
+                    LastScheduledPaymentDay = 119u<OffsetDay>
                     LevelPayment = 41_13L<Cent>
                     FinalPayment = 41_11L<Cent>
                     ScheduledPaymentTotal = 164_50L<Cent>
@@ -367,7 +369,7 @@ module PaymentScheduleTests =
             let description = "£0100 with 32 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 100_00L<Cent> 32<DurationDay> 4 with
+                monthlyParameters 100_00L<Cent> 32u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = HigherFinalPayment
             }
 
@@ -375,11 +377,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 123<OffsetDay>
+                    LastScheduledPaymentDay = 123u<OffsetDay>
                     LevelPayment = 42_20L<Cent>
                     FinalPayment = 42_22L<Cent>
                     ScheduledPaymentTotal = 168_82L<Cent>
@@ -399,7 +401,7 @@ module PaymentScheduleTests =
             let description = "£0300 with 04 days to first payment and 5 repayments"
 
             let p = {
-                monthlyParameters 300_00L<Cent> 4<DurationDay> 5 with
+                monthlyParameters 300_00L<Cent> 4u<OffsetDay> 5 with
                     PaymentConfig.LevelPaymentOption = HigherFinalPayment
             }
 
@@ -407,11 +409,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 126<OffsetDay>
+                    LastScheduledPaymentDay = 126u<OffsetDay>
                     LevelPayment = 91_46L<Cent>
                     FinalPayment = 91_50L<Cent>
                     ScheduledPaymentTotal = 457_34L<Cent>
@@ -431,7 +433,7 @@ module PaymentScheduleTests =
             let description = "£0300 with 08 days to first payment and 5 repayments"
 
             let p = {
-                monthlyParameters 300_00L<Cent> 8<DurationDay> 5 with
+                monthlyParameters 300_00L<Cent> 8u<OffsetDay> 5 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -439,11 +441,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 130<OffsetDay>
+                    LastScheduledPaymentDay = 130u<OffsetDay>
                     LevelPayment = 94_29L<Cent>
                     FinalPayment = 94_31L<Cent>
                     ScheduledPaymentTotal = 471_47L<Cent>
@@ -463,7 +465,7 @@ module PaymentScheduleTests =
             let description = "£0300 with 12 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 300_00L<Cent> 12<DurationDay> 4 with
+                monthlyParameters 300_00L<Cent> 12u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -471,11 +473,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 103<OffsetDay>
+                    LastScheduledPaymentDay = 103u<OffsetDay>
                     LevelPayment = 110_82L<Cent>
                     FinalPayment = 110_84L<Cent>
                     ScheduledPaymentTotal = 443_30L<Cent>
@@ -493,16 +495,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp16_r4 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp16_r4"
             let description = "£0300 with 16 days to first payment and 4 repayments"
-            let p = monthlyParameters 300_00L<Cent> 16<DurationDay> 4
+            let p = monthlyParameters 300_00L<Cent> 16u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 107<OffsetDay>
+                    LastScheduledPaymentDay = 107u<OffsetDay>
                     LevelPayment = 114_05L<Cent>
                     FinalPayment = 114_03L<Cent>
                     ScheduledPaymentTotal = 456_18L<Cent>
@@ -520,16 +522,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp20_r4 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp20_r4"
             let description = "£0300 with 20 days to first payment and 4 repayments"
-            let p = monthlyParameters 300_00L<Cent> 20<DurationDay> 4
+            let p = monthlyParameters 300_00L<Cent> 20u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 111<OffsetDay>
+                    LastScheduledPaymentDay = 111u<OffsetDay>
                     LevelPayment = 117_28L<Cent>
                     FinalPayment = 117_28L<Cent>
                     ScheduledPaymentTotal = 469_12L<Cent>
@@ -547,16 +549,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp24_r4 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp24_r4"
             let description = "£0300 with 24 days to first payment and 4 repayments"
-            let p = monthlyParameters 300_00L<Cent> 24<DurationDay> 4
+            let p = monthlyParameters 300_00L<Cent> 24u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 115<OffsetDay>
+                    LastScheduledPaymentDay = 115u<OffsetDay>
                     LevelPayment = 120_17L<Cent>
                     FinalPayment = 120_17L<Cent>
                     ScheduledPaymentTotal = 480_68L<Cent>
@@ -574,16 +576,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp28_r4 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp28_r4"
             let description = "£0300 with 28 days to first payment and 4 repayments"
-            let p = monthlyParameters 300_00L<Cent> 28<DurationDay> 4
+            let p = monthlyParameters 300_00L<Cent> 28u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 119<OffsetDay>
+                    LastScheduledPaymentDay = 119u<OffsetDay>
                     LevelPayment = 123_39L<Cent>
                     FinalPayment = 123_38L<Cent>
                     ScheduledPaymentTotal = 493_55L<Cent>
@@ -601,16 +603,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0300_fp32_r4 () =
             let title = "PaymentScheduleTest_Monthly_0300_fp32_r4"
             let description = "£0300 with 32 days to first payment and 4 repayments"
-            let p = monthlyParameters 300_00L<Cent> 32<DurationDay> 4
+            let p = monthlyParameters 300_00L<Cent> 32u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 123<OffsetDay>
+                    LastScheduledPaymentDay = 123u<OffsetDay>
                     LevelPayment = 126_61L<Cent>
                     FinalPayment = 126_61L<Cent>
                     ScheduledPaymentTotal = 506_44L<Cent>
@@ -628,16 +630,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp04_r5 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp04_r5"
             let description = "£0500 with 04 days to first payment and 5 repayments"
-            let p = monthlyParameters 500_00L<Cent> 4<DurationDay> 5
+            let p = monthlyParameters 500_00L<Cent> 4u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 126<OffsetDay>
+                    LastScheduledPaymentDay = 126u<OffsetDay>
                     LevelPayment = 152_44L<Cent>
                     FinalPayment = 152_43L<Cent>
                     ScheduledPaymentTotal = 762_19L<Cent>
@@ -655,16 +657,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp08_r5 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp08_r5"
             let description = "£0500 with 08 days to first payment and 5 repayments"
-            let p = monthlyParameters 500_00L<Cent> 8<DurationDay> 5
+            let p = monthlyParameters 500_00L<Cent> 8u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 130<OffsetDay>
+                    LastScheduledPaymentDay = 130u<OffsetDay>
                     LevelPayment = 157_16L<Cent>
                     FinalPayment = 157_12L<Cent>
                     ScheduledPaymentTotal = 785_76L<Cent>
@@ -684,7 +686,7 @@ module PaymentScheduleTests =
             let description = "£0500 with 12 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 500_00L<Cent> 12<DurationDay> 4 with
+                monthlyParameters 500_00L<Cent> 12u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -692,11 +694,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 103<OffsetDay>
+                    LastScheduledPaymentDay = 103u<OffsetDay>
                     LevelPayment = 184_70L<Cent>
                     FinalPayment = 184_71L<Cent>
                     ScheduledPaymentTotal = 738_81L<Cent>
@@ -716,7 +718,7 @@ module PaymentScheduleTests =
             let description = "£0500 with 16 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 500_00L<Cent> 16<DurationDay> 4 with
+                monthlyParameters 500_00L<Cent> 16u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = HigherFinalPayment
             }
 
@@ -724,11 +726,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 107<OffsetDay>
+                    LastScheduledPaymentDay = 107u<OffsetDay>
                     LevelPayment = 190_08L<Cent>
                     FinalPayment = 190_09L<Cent>
                     ScheduledPaymentTotal = 760_33L<Cent>
@@ -746,16 +748,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp20_r4 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp20_r4"
             let description = "£0500 with 20 days to first payment and 4 repayments"
-            let p = monthlyParameters 500_00L<Cent> 20<DurationDay> 4
+            let p = monthlyParameters 500_00L<Cent> 20u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 111<OffsetDay>
+                    LastScheduledPaymentDay = 111u<OffsetDay>
                     LevelPayment = 195_47L<Cent>
                     FinalPayment = 195_44L<Cent>
                     ScheduledPaymentTotal = 781_85L<Cent>
@@ -773,16 +775,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp24_r4 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp24_r4"
             let description = "£0500 with 24 days to first payment and 4 repayments"
-            let p = monthlyParameters 500_00L<Cent> 24<DurationDay> 4
+            let p = monthlyParameters 500_00L<Cent> 24u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 115<OffsetDay>
+                    LastScheduledPaymentDay = 115u<OffsetDay>
                     LevelPayment = 200_28L<Cent>
                     FinalPayment = 200_28L<Cent>
                     ScheduledPaymentTotal = 801_12L<Cent>
@@ -800,16 +802,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0500_fp28_r4 () =
             let title = "PaymentScheduleTest_Monthly_0500_fp28_r4"
             let description = "£0500 with 28 days to first payment and 4 repayments"
-            let p = monthlyParameters 500_00L<Cent> 28<DurationDay> 4
+            let p = monthlyParameters 500_00L<Cent> 28u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 119<OffsetDay>
+                    LastScheduledPaymentDay = 119u<OffsetDay>
                     LevelPayment = 205_65L<Cent>
                     FinalPayment = 205_63L<Cent>
                     ScheduledPaymentTotal = 822_58L<Cent>
@@ -829,7 +831,7 @@ module PaymentScheduleTests =
             let description = "£0500 with 32 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 500_00L<Cent> 32<DurationDay> 4 with
+                monthlyParameters 500_00L<Cent> 32u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -837,11 +839,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 123<OffsetDay>
+                    LastScheduledPaymentDay = 123u<OffsetDay>
                     LevelPayment = 211_01L<Cent>
                     FinalPayment = 211_03L<Cent>
                     ScheduledPaymentTotal = 844_06L<Cent>
@@ -859,16 +861,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp04_r5 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp04_r5"
             let description = "£0700 with 04 days to first payment and 5 repayments"
-            let p = monthlyParameters 700_00L<Cent> 4<DurationDay> 5
+            let p = monthlyParameters 700_00L<Cent> 4u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 126<OffsetDay>
+                    LastScheduledPaymentDay = 126u<OffsetDay>
                     LevelPayment = 213_42L<Cent>
                     FinalPayment = 213_39L<Cent>
                     ScheduledPaymentTotal = 1067_07L<Cent>
@@ -886,16 +888,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp08_r5 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp08_r5"
             let description = "£0700 with 08 days to first payment and 5 repayments"
-            let p = monthlyParameters 700_00L<Cent> 8<DurationDay> 5
+            let p = monthlyParameters 700_00L<Cent> 8u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 130<OffsetDay>
+                    LastScheduledPaymentDay = 130u<OffsetDay>
                     LevelPayment = 220_02L<Cent>
                     FinalPayment = 219_99L<Cent>
                     ScheduledPaymentTotal = 1100_07L<Cent>
@@ -913,16 +915,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp12_r4 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp12_r4"
             let description = "£0700 with 12 days to first payment and 4 repayments"
-            let p = monthlyParameters 700_00L<Cent> 12<DurationDay> 4
+            let p = monthlyParameters 700_00L<Cent> 12u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 103<OffsetDay>
+                    LastScheduledPaymentDay = 103u<OffsetDay>
                     LevelPayment = 258_59L<Cent>
                     FinalPayment = 258_55L<Cent>
                     ScheduledPaymentTotal = 1034_32L<Cent>
@@ -940,16 +942,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp16_r4 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp16_r4"
             let description = "£0700 with 16 days to first payment and 4 repayments"
-            let p = monthlyParameters 700_00L<Cent> 16<DurationDay> 4
+            let p = monthlyParameters 700_00L<Cent> 16u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 107<OffsetDay>
+                    LastScheduledPaymentDay = 107u<OffsetDay>
                     LevelPayment = 266_12L<Cent>
                     FinalPayment = 266_10L<Cent>
                     ScheduledPaymentTotal = 1064_46L<Cent>
@@ -967,16 +969,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp20_r4 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp20_r4"
             let description = "£0700 with 20 days to first payment and 4 repayments"
-            let p = monthlyParameters 700_00L<Cent> 20<DurationDay> 4
+            let p = monthlyParameters 700_00L<Cent> 20u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 111<OffsetDay>
+                    LastScheduledPaymentDay = 111u<OffsetDay>
                     LevelPayment = 273_65L<Cent>
                     FinalPayment = 273_65L<Cent>
                     ScheduledPaymentTotal = 1094_60L<Cent>
@@ -996,7 +998,7 @@ module PaymentScheduleTests =
             let description = "£0700 with 24 days to first payment and 4 repayments"
 
             let p = {
-                monthlyParameters 700_00L<Cent> 24<DurationDay> 4 with
+                monthlyParameters 700_00L<Cent> 24u<OffsetDay> 4 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1004,11 +1006,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 115<OffsetDay>
+                    LastScheduledPaymentDay = 115u<OffsetDay>
                     LevelPayment = 280_39L<Cent>
                     FinalPayment = 280_41L<Cent>
                     ScheduledPaymentTotal = 1121_58L<Cent>
@@ -1026,16 +1028,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp28_r4 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp28_r4"
             let description = "£0700 with 28 days to first payment and 4 repayments"
-            let p = monthlyParameters 700_00L<Cent> 28<DurationDay> 4
+            let p = monthlyParameters 700_00L<Cent> 28u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 119<OffsetDay>
+                    LastScheduledPaymentDay = 119u<OffsetDay>
                     LevelPayment = 287_91L<Cent>
                     FinalPayment = 287_90L<Cent>
                     ScheduledPaymentTotal = 1151_63L<Cent>
@@ -1053,16 +1055,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0700_fp32_r4 () =
             let title = "PaymentScheduleTest_Monthly_0700_fp32_r4"
             let description = "£0700 with 32 days to first payment and 4 repayments"
-            let p = monthlyParameters 700_00L<Cent> 32<DurationDay> 4
+            let p = monthlyParameters 700_00L<Cent> 32u<OffsetDay> 4
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 123<OffsetDay>
+                    LastScheduledPaymentDay = 123u<OffsetDay>
                     LevelPayment = 295_42L<Cent>
                     FinalPayment = 295_39L<Cent>
                     ScheduledPaymentTotal = 1181_65L<Cent>
@@ -1080,16 +1082,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp04_r6 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp04_r6"
             let description = "£0900 with 04 days to first payment and 6 repayments"
-            let p = monthlyParameters 900_00L<Cent> 4<DurationDay> 6
+            let p = monthlyParameters 900_00L<Cent> 4u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 156<OffsetDay>
+                    LastScheduledPaymentDay = 156u<OffsetDay>
                     LevelPayment = 249_51L<Cent>
                     FinalPayment = 249_48L<Cent>
                     ScheduledPaymentTotal = 1497_03L<Cent>
@@ -1109,7 +1111,7 @@ module PaymentScheduleTests =
             let description = "£0900 with 08 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 900_00L<Cent> 8<DurationDay> 6 with
+                monthlyParameters 900_00L<Cent> 8u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = HigherFinalPayment
             }
 
@@ -1117,11 +1119,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 160<OffsetDay>
+                    LastScheduledPaymentDay = 160u<OffsetDay>
                     LevelPayment = 257_22L<Cent>
                     FinalPayment = 257_29L<Cent>
                     ScheduledPaymentTotal = 1543_39L<Cent>
@@ -1141,7 +1143,7 @@ module PaymentScheduleTests =
             let description = "£0900 with 12 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 900_00L<Cent> 12<DurationDay> 6 with
+                monthlyParameters 900_00L<Cent> 12u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1149,11 +1151,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 164<OffsetDay>
+                    LastScheduledPaymentDay = 164u<OffsetDay>
                     LevelPayment = 264_94L<Cent>
                     FinalPayment = 264_95L<Cent>
                     ScheduledPaymentTotal = 1589_65L<Cent>
@@ -1171,16 +1173,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp16_r6 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp16_r6"
             let description = "£0900 with 16 days to first payment and 6 repayments"
-            let p = monthlyParameters 900_00L<Cent> 16<DurationDay> 6
+            let p = monthlyParameters 900_00L<Cent> 16u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 168<OffsetDay>
+                    LastScheduledPaymentDay = 168u<OffsetDay>
                     LevelPayment = 272_66L<Cent>
                     FinalPayment = 272_64L<Cent>
                     ScheduledPaymentTotal = 1635_94L<Cent>
@@ -1200,7 +1202,7 @@ module PaymentScheduleTests =
             let description = "£0900 with 20 days to first payment and 5 repayments"
 
             let p = {
-                monthlyParameters 900_00L<Cent> 20<DurationDay> 5 with
+                monthlyParameters 900_00L<Cent> 20u<OffsetDay> 5 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1208,11 +1210,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 142<OffsetDay>
+                    LastScheduledPaymentDay = 142u<OffsetDay>
                     LevelPayment = 308_34L<Cent>
                     FinalPayment = 308_35L<Cent>
                     ScheduledPaymentTotal = 1541_71L<Cent>
@@ -1232,7 +1234,7 @@ module PaymentScheduleTests =
             let description = "£0900 with 24 days to first payment and 5 repayments"
 
             let p = {
-                monthlyParameters 900_00L<Cent> 24<DurationDay> 5 with
+                monthlyParameters 900_00L<Cent> 24u<OffsetDay> 5 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1240,11 +1242,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 145<OffsetDay>
+                    LastScheduledPaymentDay = 145u<OffsetDay>
                     LevelPayment = 315_80L<Cent>
                     FinalPayment = 315_81L<Cent>
                     ScheduledPaymentTotal = 1579_01L<Cent>
@@ -1262,16 +1264,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp28_r5 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp28_r5"
             let description = "£0900 with 28 days to first payment and 5 repayments"
-            let p = monthlyParameters 900_00L<Cent> 28<DurationDay> 5
+            let p = monthlyParameters 900_00L<Cent> 28u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 149<OffsetDay>
+                    LastScheduledPaymentDay = 149u<OffsetDay>
                     LevelPayment = 324_26L<Cent>
                     FinalPayment = 324_26L<Cent>
                     ScheduledPaymentTotal = 1621_30L<Cent>
@@ -1289,16 +1291,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_0900_fp32_r5 () =
             let title = "PaymentScheduleTest_Monthly_0900_fp32_r5"
             let description = "£0900 with 32 days to first payment and 5 repayments"
-            let p = monthlyParameters 900_00L<Cent> 32<DurationDay> 5
+            let p = monthlyParameters 900_00L<Cent> 32u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 153<OffsetDay>
+                    LastScheduledPaymentDay = 153u<OffsetDay>
                     LevelPayment = 332_72L<Cent>
                     FinalPayment = 332_72L<Cent>
                     ScheduledPaymentTotal = 1663_60L<Cent>
@@ -1316,16 +1318,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp04_r6 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp04_r6"
             let description = "£1100 with 04 days to first payment and 6 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 4<DurationDay> 6
+            let p = monthlyParameters 1100_00L<Cent> 4u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 156<OffsetDay>
+                    LastScheduledPaymentDay = 156u<OffsetDay>
                     LevelPayment = 304_95L<Cent>
                     FinalPayment = 304_94L<Cent>
                     ScheduledPaymentTotal = 1829_69L<Cent>
@@ -1343,16 +1345,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp08_r6 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp08_r6"
             let description = "£1100 with 08 days to first payment and 6 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 8<DurationDay> 6
+            let p = monthlyParameters 1100_00L<Cent> 8u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 160<OffsetDay>
+                    LastScheduledPaymentDay = 160u<OffsetDay>
                     LevelPayment = 314_39L<Cent>
                     FinalPayment = 314_34L<Cent>
                     ScheduledPaymentTotal = 1886_29L<Cent>
@@ -1370,16 +1372,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp12_r6 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp12_r6"
             let description = "£1100 with 12 days to first payment and 6 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 12<DurationDay> 6
+            let p = monthlyParameters 1100_00L<Cent> 12u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 164<OffsetDay>
+                    LastScheduledPaymentDay = 164u<OffsetDay>
                     LevelPayment = 323_82L<Cent>
                     FinalPayment = 323_79L<Cent>
                     ScheduledPaymentTotal = 1942_89L<Cent>
@@ -1397,16 +1399,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp16_r6 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp16_r6"
             let description = "£1100 with 16 days to first payment and 6 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 16<DurationDay> 6
+            let p = monthlyParameters 1100_00L<Cent> 16u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 168<OffsetDay>
+                    LastScheduledPaymentDay = 168u<OffsetDay>
                     LevelPayment = 333_25L<Cent>
                     FinalPayment = 333_24L<Cent>
                     ScheduledPaymentTotal = 1999_49L<Cent>
@@ -1424,16 +1426,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp20_r5 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp20_r5"
             let description = "£1100 with 20 days to first payment and 5 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 20<DurationDay> 5
+            let p = monthlyParameters 1100_00L<Cent> 20u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 142<OffsetDay>
+                    LastScheduledPaymentDay = 142u<OffsetDay>
                     LevelPayment = 376_87L<Cent>
                     FinalPayment = 376_82L<Cent>
                     ScheduledPaymentTotal = 1884_30L<Cent>
@@ -1451,16 +1453,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp24_r5 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp24_r5"
             let description = "£1100 with 24 days to first payment and 5 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 24<DurationDay> 5
+            let p = monthlyParameters 1100_00L<Cent> 24u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 145<OffsetDay>
+                    LastScheduledPaymentDay = 145u<OffsetDay>
                     LevelPayment = 385_98L<Cent>
                     FinalPayment = 385_97L<Cent>
                     ScheduledPaymentTotal = 1929_89L<Cent>
@@ -1478,16 +1480,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp28_r5 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp28_r5"
             let description = "£1100 with 28 days to first payment and 5 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 28<DurationDay> 5
+            let p = monthlyParameters 1100_00L<Cent> 28u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 149<OffsetDay>
+                    LastScheduledPaymentDay = 149u<OffsetDay>
                     LevelPayment = 396_32L<Cent>
                     FinalPayment = 396_30L<Cent>
                     ScheduledPaymentTotal = 1981_58L<Cent>
@@ -1505,16 +1507,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1100_fp32_r5 () =
             let title = "PaymentScheduleTest_Monthly_1100_fp32_r5"
             let description = "£1100 with 32 days to first payment and 5 repayments"
-            let p = monthlyParameters 1100_00L<Cent> 32<DurationDay> 5
+            let p = monthlyParameters 1100_00L<Cent> 32u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 153<OffsetDay>
+                    LastScheduledPaymentDay = 153u<OffsetDay>
                     LevelPayment = 406_66L<Cent>
                     FinalPayment = 406_66L<Cent>
                     ScheduledPaymentTotal = 2033_30L<Cent>
@@ -1532,16 +1534,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp04_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp04_r6"
             let description = "£1300 with 04 days to first payment and 6 repayments"
-            let p = monthlyParameters 1300_00L<Cent> 4<DurationDay> 6
+            let p = monthlyParameters 1300_00L<Cent> 4u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 156<OffsetDay>
+                    LastScheduledPaymentDay = 156u<OffsetDay>
                     LevelPayment = 360_40L<Cent>
                     FinalPayment = 360_37L<Cent>
                     ScheduledPaymentTotal = 2162_37L<Cent>
@@ -1561,7 +1563,7 @@ module PaymentScheduleTests =
             let description = "£1300 with 08 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1300_00L<Cent> 8<DurationDay> 6 with
+                monthlyParameters 1300_00L<Cent> 8u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1569,11 +1571,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 160<OffsetDay>
+                    LastScheduledPaymentDay = 160u<OffsetDay>
                     LevelPayment = 371_55L<Cent>
                     FinalPayment = 371_49L<Cent>
                     ScheduledPaymentTotal = 2229_24L<Cent>
@@ -1593,7 +1595,7 @@ module PaymentScheduleTests =
             let description = "£1300 with 12 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1300_00L<Cent> 12<DurationDay> 6 with
+                monthlyParameters 1300_00L<Cent> 12u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1601,11 +1603,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 164<OffsetDay>
+                    LastScheduledPaymentDay = 164u<OffsetDay>
                     LevelPayment = 382_69L<Cent>
                     FinalPayment = 382_74L<Cent>
                     ScheduledPaymentTotal = 2296_19L<Cent>
@@ -1625,7 +1627,7 @@ module PaymentScheduleTests =
             let description = "£1300 with 16 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1300_00L<Cent> 16<DurationDay> 6 with
+                monthlyParameters 1300_00L<Cent> 16u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1633,11 +1635,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 168<OffsetDay>
+                    LastScheduledPaymentDay = 168u<OffsetDay>
                     LevelPayment = 393_84L<Cent>
                     FinalPayment = 393_86L<Cent>
                     ScheduledPaymentTotal = 2363_06L<Cent>
@@ -1655,16 +1657,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp20_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp20_r6"
             let description = "£1300 with 20 days to first payment and 6 repayments"
-            let p = monthlyParameters 1300_00L<Cent> 20<DurationDay> 6
+            let p = monthlyParameters 1300_00L<Cent> 20u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 172<OffsetDay>
+                    LastScheduledPaymentDay = 172u<OffsetDay>
                     LevelPayment = 404_99L<Cent>
                     FinalPayment = 404_97L<Cent>
                     ScheduledPaymentTotal = 2429_92L<Cent>
@@ -1682,16 +1684,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp24_r6 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp24_r6"
             let description = "£1300 with 24 days to first payment and 6 repayments"
-            let p = monthlyParameters 1300_00L<Cent> 24<DurationDay> 6
+            let p = monthlyParameters 1300_00L<Cent> 24u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 176<OffsetDay>
+                    LastScheduledPaymentDay = 176u<OffsetDay>
                     LevelPayment = 414_91L<Cent>
                     FinalPayment = 414_90L<Cent>
                     ScheduledPaymentTotal = 2489_45L<Cent>
@@ -1711,7 +1713,7 @@ module PaymentScheduleTests =
             let description = "£1300 with 28 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1300_00L<Cent> 28<DurationDay> 6 with
+                monthlyParameters 1300_00L<Cent> 28u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1719,11 +1721,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 180<OffsetDay>
+                    LastScheduledPaymentDay = 180u<OffsetDay>
                     LevelPayment = 426_02L<Cent>
                     FinalPayment = 426_04L<Cent>
                     ScheduledPaymentTotal = 2556_14L<Cent>
@@ -1741,16 +1743,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1300_fp32_r5 () =
             let title = "PaymentScheduleTest_Monthly_1300_fp32_r5"
             let description = "£1300 with 32 days to first payment and 5 repayments"
-            let p = monthlyParameters 1300_00L<Cent> 32<DurationDay> 5
+            let p = monthlyParameters 1300_00L<Cent> 32u<OffsetDay> 5
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 153<OffsetDay>
+                    LastScheduledPaymentDay = 153u<OffsetDay>
                     LevelPayment = 480_60L<Cent>
                     FinalPayment = 480_58L<Cent>
                     ScheduledPaymentTotal = 2402_98L<Cent>
@@ -1770,7 +1772,7 @@ module PaymentScheduleTests =
             let description = "£1500 with 04 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1500_00L<Cent> 4<DurationDay> 6 with
+                monthlyParameters 1500_00L<Cent> 4u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1778,11 +1780,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 156<OffsetDay>
+                    LastScheduledPaymentDay = 156u<OffsetDay>
                     LevelPayment = 415_84L<Cent>
                     FinalPayment = 415_86L<Cent>
                     ScheduledPaymentTotal = 2495_06L<Cent>
@@ -1800,16 +1802,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp08_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp08_r6"
             let description = "£1500 with 08 days to first payment and 6 repayments"
-            let p = monthlyParameters 1500_00L<Cent> 8<DurationDay> 6
+            let p = monthlyParameters 1500_00L<Cent> 8u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 160<OffsetDay>
+                    LastScheduledPaymentDay = 160u<OffsetDay>
                     LevelPayment = 428_71L<Cent>
                     FinalPayment = 428_65L<Cent>
                     ScheduledPaymentTotal = 2572_20L<Cent>
@@ -1827,16 +1829,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp12_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp12_r6"
             let description = "£1500 with 12 days to first payment and 6 repayments"
-            let p = monthlyParameters 1500_00L<Cent> 12<DurationDay> 6
+            let p = monthlyParameters 1500_00L<Cent> 12u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 164<OffsetDay>
+                    LastScheduledPaymentDay = 164u<OffsetDay>
                     LevelPayment = 441_57L<Cent>
                     FinalPayment = 441_57L<Cent>
                     ScheduledPaymentTotal = 2649_42L<Cent>
@@ -1856,7 +1858,7 @@ module PaymentScheduleTests =
             let description = "£1500 with 16 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1500_00L<Cent> 16<DurationDay> 6 with
+                monthlyParameters 1500_00L<Cent> 16u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1864,11 +1866,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 168<OffsetDay>
+                    LastScheduledPaymentDay = 168u<OffsetDay>
                     LevelPayment = 454_43L<Cent>
                     FinalPayment = 454_45L<Cent>
                     ScheduledPaymentTotal = 2726_60L<Cent>
@@ -1888,7 +1890,7 @@ module PaymentScheduleTests =
             let description = "£1500 with 20 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1500_00L<Cent> 20<DurationDay> 6 with
+                monthlyParameters 1500_00L<Cent> 20u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = HigherFinalPayment
             }
 
@@ -1896,11 +1898,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 172<OffsetDay>
+                    LastScheduledPaymentDay = 172u<OffsetDay>
                     LevelPayment = 467_29L<Cent>
                     FinalPayment = 467_33L<Cent>
                     ScheduledPaymentTotal = 2803_78L<Cent>
@@ -1920,7 +1922,7 @@ module PaymentScheduleTests =
             let description = "£1500 with 24 days to first payment and 6 repayments"
 
             let p = {
-                monthlyParameters 1500_00L<Cent> 24<DurationDay> 6 with
+                monthlyParameters 1500_00L<Cent> 24u<OffsetDay> 6 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1928,11 +1930,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 176<OffsetDay>
+                    LastScheduledPaymentDay = 176u<OffsetDay>
                     LevelPayment = 478_74L<Cent>
                     FinalPayment = 478_76L<Cent>
                     ScheduledPaymentTotal = 2872_46L<Cent>
@@ -1950,16 +1952,16 @@ module PaymentScheduleTests =
         let PaymentScheduleTest_Monthly_1500_fp28_r6 () =
             let title = "PaymentScheduleTest_Monthly_1500_fp28_r6"
             let description = "£1500 with 28 days to first payment and 6 repayments"
-            let p = monthlyParameters 1500_00L<Cent> 28<DurationDay> 6
+            let p = monthlyParameters 1500_00L<Cent> 28u<OffsetDay> 6
             let actual = calculateBasicSchedule p
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 180<OffsetDay>
+                    LastScheduledPaymentDay = 180u<OffsetDay>
                     LevelPayment = 491_57L<Cent>
                     FinalPayment = 491_52L<Cent>
                     ScheduledPaymentTotal = 2949_37L<Cent>
@@ -1979,7 +1981,7 @@ module PaymentScheduleTests =
             let description = "£1500 with 32 days to first payment and 5 repayments"
 
             let p = {
-                monthlyParameters 1500_00L<Cent> 32<DurationDay> 5 with
+                monthlyParameters 1500_00L<Cent> 32u<OffsetDay> 5 with
                     PaymentConfig.LevelPaymentOption = SimilarFinalPayment
             }
 
@@ -1987,11 +1989,11 @@ module PaymentScheduleTests =
             actual |> BasicSchedule.outputHtmlToFile folder title description p
 
             let expected = {
-                EvaluationDay = 0<OffsetDay>
+                EvaluationDay = 0u<OffsetDay>
                 Items = actual.Items
                 Stats = {
                     InitialInterestBalance = 0L<Cent>
-                    LastScheduledPaymentDay = 153<OffsetDay>
+                    LastScheduledPaymentDay = 153u<OffsetDay>
                     LevelPayment = 554_53L<Cent>
                     FinalPayment = 554_57L<Cent>
                     ScheduledPaymentTotal = 2772_69L<Cent>
@@ -2023,7 +2025,8 @@ module PaymentScheduleTests =
             StandardRate = Interest.Rate.Daily(Percent 0.8m)
             Cap = interestCapExample
             Rounding = RoundDown
-            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            AprMethod = Apr.CalculationMethod.UnitedKingdom
+            AprPrecision = 3u
         }
     }
 
@@ -2058,7 +2061,7 @@ module PaymentScheduleTests =
                 ScheduleConfig =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 8)
-                        ScheduleLength = MaxDuration(startDate, 183<DurationDay>)
+                        ScheduleLength = MaxDuration(startDate, 183u<OffsetDay>)
                     }
         }
 
@@ -2086,7 +2089,7 @@ module PaymentScheduleTests =
                 ScheduleConfig =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 18)
-                        ScheduleLength = MaxDuration(startDate, 184<DurationDay>)
+                        ScheduleLength = MaxDuration(startDate, 184u<OffsetDay>)
                     }
         }
 
@@ -2170,10 +2173,10 @@ module PaymentScheduleTests =
             let paymentSchedule3 =
                 CustomSchedule
                 <| Map [
-                    10<OffsetDay>, ScheduledPayment.quick (ValueSome 36_48L<Cent>) ValueNone
-                    41<OffsetDay>, ScheduledPayment.quick (ValueSome 36_48L<Cent>) ValueNone
-                    72<OffsetDay>, ScheduledPayment.quick (ValueSome 36_48L<Cent>) ValueNone
-                    102<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
+                    10u<OffsetDay>, ScheduledPayment.quick (ValueSome 36_48L<Cent>) ValueNone
+                    41u<OffsetDay>, ScheduledPayment.quick (ValueSome 36_48L<Cent>) ValueNone
+                    72u<OffsetDay>, ScheduledPayment.quick (ValueSome 36_48L<Cent>) ValueNone
+                    102u<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
                 ]
 
             let schedule1 = p paymentSchedule1 |> fun bp -> calculateBasicSchedule bp

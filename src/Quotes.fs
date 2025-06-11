@@ -39,7 +39,7 @@ module Quotes =
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
-    let getQuote (p: Parameters) (actualPayments: Map<int<OffsetDay>, Map<int, ActualPayment>>) =
+    let getQuote (p: Parameters) (actualPayments: Map<uint<OffsetDay>, Map<int, ActualPayment>>) =
         // generate a revised statement showing a generated settlement figure on the relevant date
         let schedules =
             amortise

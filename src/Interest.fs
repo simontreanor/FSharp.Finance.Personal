@@ -30,21 +30,21 @@ module Interest =
         let annual =
             function
             | Rate.Zero -> Percent 0m
-            | Rate.Annual(Percent air) -> air |> Percent
-            | Rate.Daily(Percent dir) -> dir * 365m |> Percent
+            | Rate.Annual air -> air
+            | Rate.Daily dir -> dir |> Percent.map ((*) 365m)
 
         /// calculates the daily interest rate from the annual one
         let daily =
             function
             | Rate.Zero -> Percent 0m
-            | Rate.Annual(Percent air) -> air / 365m |> Percent
-            | Rate.Daily(Percent dir) -> dir |> Percent
+            | Rate.Annual air -> air |> Percent.map ((*) (1m / 365m))
+            | Rate.Daily dir -> dir
 
     /// the daily interest rate
     [<Struct>]
     type DailyRate = {
         /// the day expressed as an offset from the start date
-        RateDay: int<OffsetDay>
+        RateDay: uint<OffsetDay>
         /// the interest rate applicable on the given day
         InterestRate: Rate
     }
@@ -100,7 +100,7 @@ module Interest =
                 [|
                     (pr.DateRange.DateRangeStart - startDate).Days .. (pr.DateRange.DateRangeEnd - startDate).Days
                 |]
-                |> Array.map (fun d -> d, pr.Rate)
+                |> Array.map (fun d -> uint d * 1u<OffsetDay>, pr.Rate)
             )
             |> Map.ofArray
 
@@ -131,32 +131,29 @@ module Interest =
         Rounding: Rounding
         /// which APR calculation method to use
         AprMethod: Apr.CalculationMethod
+        /// which APR decimal-place precision (note that this is two places more than the percent precision)
+        AprPrecision: uint
     }
 
     /// basic interest options
     module Config =
         /// formats the interest config as an HTML table
-        let toHtmlTable basicConfig =
+        let toHtml basicConfig =
             $"""
-            <table>
-                <tr>
-                    <td>standard rate: <i>{basicConfig.StandardRate}</i></td>
-                    <td>method: <i>{basicConfig.Method}</i></td>
-                </tr>
-                <tr>
-                    <td>rounding: <i>{basicConfig.Rounding}</i></td>
-                    <td>APR method: <i>{basicConfig.AprMethod}</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>{basicConfig.Cap}</td>
-                </tr>
-            </table>"""
+            <div>
+                <div>standard rate: <i>{basicConfig.StandardRate}</i></div>
+                <div>method: <i>{basicConfig.Method}</i></div>
+                <div>rounding: <i>{basicConfig.Rounding}</i></div>
+                <div>APR method: <i>{basicConfig.AprMethod}</i></div>
+                <div>APR precision: <i>{basicConfig.AprPrecision - 2u} d.p.</i></div>
+                <div>cap: <i>{basicConfig.Cap}</div>
+            </div>"""
 
     /// advanced interest options
     [<Struct>]
     type AdvancedConfig = {
         /// any grace period at the start of a schedule, during which if settled no interest is payable
-        InitialGracePeriod: int<DurationDay>
+        InitialGracePeriod: uint<OffsetDay>
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalRates: PromotionalRate array
         /// the interest rate applicable for any period in which a refund is owing
@@ -179,12 +176,19 @@ module Interest =
             </table>"""
 
     /// calculates the interest chargeable on a range of days
-    let dailyRates startDate isSettledWithinGracePeriod standardRate promotionalRates fromDay toDay =
+    let dailyRates
+        startDate
+        isSettledWithinGracePeriod
+        standardRate
+        promotionalRates
+        (fromDay: uint<OffsetDay>)
+        (toDay: uint<OffsetDay>)
+        =
         let promoRates = promotionalRates |> PromotionalRate.toMap startDate
 
-        [| OffsetDay.toInt fromDay + 1 .. OffsetDay.toInt toDay |]
+        [| uint fromDay + 1u .. uint toDay |]
         |> Array.map (fun d ->
-            let offsetDay = d * 1<OffsetDay>
+            let offsetDay = d * 1u<OffsetDay>
 
             if isSettledWithinGracePeriod then
                 {
@@ -192,7 +196,7 @@ module Interest =
                     InterestRate = Rate.Zero
                 }
             else
-                match promoRates |> Map.tryFind d with
+                match promoRates |> Map.tryFind offsetDay with
                 | Some rate -> {
                     RateDay = offsetDay
                     InterestRate = rate

@@ -46,19 +46,20 @@ module PromotionalRatesTests =
                     DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                 }
                 Rounding = RoundDown
-                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                AprMethod = Apr.CalculationMethod.UnitedKingdom
+                AprPrecision = 3u
             }
         }
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
+                Timeout = 3u<OffsetDay>
             }
             FeeConfig = ValueNone
             ChargeConfig = None
             InterestConfig = {
-                InitialGracePeriod = 0<DurationDay>
+                InitialGracePeriod = 0u<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -191,7 +192,8 @@ module PromotionalRatesTests =
                     Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Annual <| Percent 7.985m
                     Cap = Interest.Cap.zero
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                     Rounding = RoundDown
                 }
             }
@@ -199,7 +201,7 @@ module PromotionalRatesTests =
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = NoMinimumPayment
-                    Timeout = 3<DurationDay>
+                    Timeout = 3u<OffsetDay>
                 }
                 FeeConfig =
                     ValueSome {
@@ -207,7 +209,7 @@ module PromotionalRatesTests =
                     }
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3u<OffsetDay>
                     PromotionalRates = [|
                         {
                             DateRange = {
@@ -233,7 +235,7 @@ module PromotionalRatesTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            7305<OffsetDay>,
+            7305u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2044, 4, 11)

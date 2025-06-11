@@ -50,8 +50,7 @@ module AprActuarialTestsExtra =
                     Value = paymentValue
                 })
 
-            let actualApr =
-                calculate (CalculationMethod.UsActuarial 8) principal startDate payments
+            let actualApr = calculate CalculationMethod.UsActuarial principal startDate payments
 
             match actualApr with
             | Solution.Found(apr, _, _) ->

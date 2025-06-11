@@ -34,14 +34,14 @@ module Refinancing =
 <table>
     <thead><tr><th colspan="2">Reschedule Parameters</th></tr></thead>
     <tr><td>Fee Settlement Rebate</td><td>{rp.FeeSettlementRebate}</td></tr>
-    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtmlTable rp.PaymentSchedule}</td></tr>
+    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td></tr>
     <tr><td>Rate on Negative Balance</td><td>{rp.RateOnNegativeBalance}</td></tr>
     <tr><td>Promotional Interest Rates</td><td>{Array.toStringOrNa rp.PromotionalInterestRates}</td></tr>
     <tr><td>Settlement Day</td><td>{rp.SettlementDay}</td></tr>
 </table>"""
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
-    let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
+    let mergeScheduledPayments (scheduledPayments: (uint<OffsetDay> * ScheduledPayment) array) =
         // get a sorted array of all days on which payments are rescheduled
         let rescheduleDays =
             scheduledPayments
@@ -198,7 +198,7 @@ module Refinancing =
                         fc with
                             SettlementRebate = rp.FeeSettlementRebate
                     })
-                Advanced.InterestConfig.InitialGracePeriod = 0<DurationDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
                 Advanced.InterestConfig.PromotionalRates = rp.PromotionalInterestRates
                 Advanced.InterestConfig.RateOnNegativeBalance = rp.RateOnNegativeBalance
                 Advanced.SettlementDay = rp.SettlementDay
@@ -218,7 +218,7 @@ module Refinancing =
     [<RequireQualifiedAccess>]
     type RolloverParameters = {
         /// the final payment day of the original schedule
-        OriginalFinalPaymentDay: int<OffsetDay>
+        OriginalFinalPaymentDay: uint<OffsetDay>
         /// the scheduled payments or the parameters for generating them
         PaymentSchedule: ScheduleConfig
         /// options relating to interest
@@ -238,7 +238,7 @@ module Refinancing =
 <table>
     <thead><tr><th colspan="2">Rollover Parameters</th></tr></thead>
     <tr><td>Original Final Payment Day</td><td>{rp.OriginalFinalPaymentDay}</td></tr>
-    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtmlTable rp.PaymentSchedule}</td></tr>
+    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td></tr>
     <tr><td>Interest Config</td><td>{rp.InterestConfig}</td></tr>
     <tr><td>Payment Config</td><td>{rp.PaymentConfig}</td></tr>
     <tr><td>Fee Handling</td><td>{rp.FeeHandling}</td></tr>

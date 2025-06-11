@@ -45,7 +45,8 @@ let parameters = {
         StandardRate = Interest.Rate.Annual <| Percent 6.9m
         Cap = Interest.Cap.zero
         Rounding = RoundDown
-        AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+        AprMethod = Apr.CalculationMethod.UnitedKingdom
+        AprPrecision = 3u
     }
 }
 

@@ -97,8 +97,8 @@ module Calculation =
         member dr.Html = $"%A{dr.DateRangeStart} to %A{dr.DateRangeEnd}"
 
     /// determines whether a pending payment has timed out
-    let isTimedOut paymentTimeout evaluationDay paymentDay =
-        (OffsetDay.toInt evaluationDay - OffsetDay.toInt paymentDay) * 1<DurationDay> > paymentTimeout
+    let isTimedOut (paymentTimeout: uint<OffsetDay>) evaluationDay paymentDay =
+        evaluationDay - paymentDay > paymentTimeout
 
     /// a fraction
     [<RequireQualifiedAccess; Struct>]
@@ -169,6 +169,9 @@ module Calculation =
 
         /// convert a percent value to a decimal, e.g. 50% -> 0.5
         let toDecimal (Percent percent) = percent / 100m
+
+        /// applies a function to the underlying decimal value and wraps the result back in Percent
+        let map f (Percent percent) = Percent(f percent)
 
     /// the type of restriction placed on a possible value
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]

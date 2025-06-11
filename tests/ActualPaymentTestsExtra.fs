@@ -59,7 +59,8 @@ module ActualPaymentTestsExtra =
                 Method = Interest.Method.Actuarial
                 StandardRate = Interest.Rate.Annual <| Percent 9.95m
                 Cap = Interest.Cap.zero
-                AprMethod = Apr.CalculationMethod.UsActuarial 8
+                AprMethod = Apr.CalculationMethod.UsActuarial
+                AprPrecision = 8u
                 Rounding = RoundDown
             }
         }
@@ -67,7 +68,7 @@ module ActualPaymentTestsExtra =
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
+                Timeout = 3u<OffsetDay>
             }
             FeeConfig =
                 ValueSome {
@@ -92,7 +93,7 @@ module ActualPaymentTestsExtra =
                         ]
                 }
             InterestConfig = {
-                InitialGracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3u<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -115,7 +116,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            131<OffsetDay>,
+            131u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 12, 1)
@@ -175,14 +176,14 @@ module ActualPaymentTestsExtra =
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
+                Map [ 0u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let schedules = amortise p actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            172<OffsetDay>,
+            172u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2022, 8, 27)
@@ -237,16 +238,15 @@ module ActualPaymentTestsExtra =
             |> Map.keys
             |> Seq.toArray
             |> Array.tryLast
-            |> Option.defaultValue 0<OffsetDay>
+            |> Option.defaultValue 0u<OffsetDay>
 
         let originalFinalPaymentDay' =
-            (int originalFinalPaymentDay
-             - int (p.Basic.EvaluationDate - p.Basic.StartDate).Days)
-            * 1<OffsetDay>
+            originalFinalPaymentDay
+            - OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
+                Map [ 0u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
 
@@ -274,7 +274,7 @@ module ActualPaymentTestsExtra =
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            1969<OffsetDay>,
+            1969u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
@@ -284,7 +284,7 @@ module ActualPaymentTestsExtra =
                         ValueNone
                         (ValueSome {
                             Value = 20_00L<Cent>
-                            RescheduleDay = 176<OffsetDay>
+                            RescheduleDay = 176u<OffsetDay>
                         })
                 Window = 141
                 PaymentDue = 9_80L<Cent>
@@ -343,7 +343,7 @@ module ActualPaymentTestsExtra =
                     ValueSome {
                         SettlementRebate = Fee.SettlementRebate.Zero
                     }
-                Advanced.InterestConfig.InitialGracePeriod = 7<DurationDay>
+                Advanced.InterestConfig.InitialGracePeriod = 7u<OffsetDay>
         }
 
         let actual =
@@ -355,7 +355,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            1025<OffsetDay>,
+            1025u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2026, 8, 27)
@@ -416,7 +416,8 @@ module ActualPaymentTestsExtra =
                     StandardRate = Interest.Rate.Daily(Percent 0.8m)
                     Cap = interestCapExample
                     Rounding = RoundDown
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                 }
                 Advanced.FeeConfig = ValueNone
                 Advanced.ChargeConfig =
@@ -442,7 +443,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            456<OffsetDay>,
+            456u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 12, 11)
@@ -491,16 +492,16 @@ module ActualPaymentTestsExtra =
                         UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
                         ScheduleLength = PaymentCount 12
                     }
-                Advanced.PaymentConfig.Timeout = 7<DurationDay>
+                Advanced.PaymentConfig.Timeout = 7u<OffsetDay>
         }
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
+                Map [ 0u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let schedules = amortise p actualPayments
             schedules |> Schedule.outputHtmlToFile folder title description p ""
-            schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
+            schedules.AmortisationSchedule.ScheduleItems |> Map.find 144u<OffsetDay>
 
         let expected = {
             OffsetDayType = OffsetDayType.OffsetDay
@@ -557,16 +558,15 @@ module ActualPaymentTestsExtra =
             |> Map.keys
             |> Seq.toArray
             |> Array.tryLast
-            |> Option.defaultValue 0<OffsetDay>
+            |> Option.defaultValue 0u<OffsetDay>
 
         let originalFinalPaymentDay' =
-            (int originalFinalPaymentDay
-             - int (p.Basic.EvaluationDate - p.Basic.StartDate).Days)
-            * 1<OffsetDay>
+            originalFinalPaymentDay
+            - OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
+                Map [ 0u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let rp: RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -592,7 +592,7 @@ module ActualPaymentTestsExtra =
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            1793<OffsetDay>,
+            1793u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
@@ -647,16 +647,15 @@ module ActualPaymentTestsExtra =
             |> Map.keys
             |> Seq.toArray
             |> Array.tryLast
-            |> Option.defaultValue 0<OffsetDay>
+            |> Option.defaultValue 0u<OffsetDay>
 
         let originalFinalPaymentDay' =
-            (int originalFinalPaymentDay
-             - int (p.Basic.EvaluationDate - p.Basic.StartDate).Days)
-            * 1<OffsetDay>
+            originalFinalPaymentDay
+            - OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
 
         let actual =
             let actualPayments =
-                Map [ 0<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
+                Map [ 0u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 166_60L<Cent> ] ]
 
             let rp: RolloverParameters = {
                 OriginalFinalPaymentDay = originalFinalPaymentDay'
@@ -682,7 +681,7 @@ module ActualPaymentTestsExtra =
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            1793<OffsetDay>,
+            1793u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
@@ -743,7 +742,8 @@ module ActualPaymentTestsExtra =
                         TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
                         DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                     }
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                     Rounding = RoundDown
                 }
             }
@@ -751,12 +751,12 @@ module ActualPaymentTestsExtra =
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = NoMinimumPayment
-                    Timeout = 0<DurationDay>
+                    Timeout = 0u<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 0<DurationDay>
+                    InitialGracePeriod = 0u<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
                 }
@@ -768,10 +768,10 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 70_20L<Cent> ]
-                    47<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 70_20L<Cent> ]
-                    56<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 76_80L<Cent> ]
-                    338<OffsetDay>,
+                    17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 70_20L<Cent> ]
+                    47u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 70_20L<Cent> ]
+                    56u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 76_80L<Cent> ]
+                    338u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickConfirmed -2_82L<Cent>
                         1, ActualPayment.quickConfirmed -0_03L<Cent>
@@ -783,7 +783,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            573<OffsetDay>,
+            573u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2025, 6, 2)
@@ -845,19 +845,20 @@ module ActualPaymentTestsExtra =
                         DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                     }
                     Rounding = RoundDown
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                 }
             }
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = NoMinimumPayment
-                    Timeout = 0<DurationDay>
+                    Timeout = 0u<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 0<DurationDay>
+                    InitialGracePeriod = 0u<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
                 }
@@ -869,11 +870,11 @@ module ActualPaymentTestsExtra =
         let actual =
             let actualPayments =
                 Map [
-                    25<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
-                    55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
-                    86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
-                    116<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
-                    388<OffsetDay>,
+                    25u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    116u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 120_50L<Cent> ]
+                    388u<OffsetDay>,
                     Map [
                         0, ActualPayment.quickConfirmed -0_63L<Cent>
                         1, ActualPayment.quickConfirmed -56_42L<Cent>
@@ -885,7 +886,7 @@ module ActualPaymentTestsExtra =
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            643<OffsetDay>,
+            643u<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2025, 6, 2)

@@ -31,10 +31,10 @@ module ComplianceTests =
             ScheduleConfig =
                 CustomSchedule
                 <| Map [
-                    31<OffsetDay>, ScheduledPayment.quick (ValueSome 451_46L<Cent>) ValueNone
-                    61<OffsetDay>, ScheduledPayment.quick (ValueSome 451_46L<Cent>) ValueNone
-                    90<OffsetDay>, ScheduledPayment.quick (ValueSome 451_46L<Cent>) ValueNone
-                    120<OffsetDay>, ScheduledPayment.quick (ValueSome 451_43L<Cent>) ValueNone
+                    31u<OffsetDay>, ScheduledPayment.quick (ValueSome 451_46L<Cent>) ValueNone
+                    61u<OffsetDay>, ScheduledPayment.quick (ValueSome 451_46L<Cent>) ValueNone
+                    90u<OffsetDay>, ScheduledPayment.quick (ValueSome 451_46L<Cent>) ValueNone
+                    120u<OffsetDay>, ScheduledPayment.quick (ValueSome 451_43L<Cent>) ValueNone
                 ]
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -46,19 +46,20 @@ module ComplianceTests =
                 StandardRate = Interest.Rate.Daily <| Percent 0.8m
                 Cap = interestCapExample
                 Rounding = RoundDown
-                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                AprMethod = Apr.CalculationMethod.UnitedKingdom
+                AprPrecision = 3u
             }
         }
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
+                Timeout = 3u<OffsetDay>
             }
             FeeConfig = ValueNone
             ChargeConfig = None
             InterestConfig = {
-                InitialGracePeriod = 3<DurationDay>
+                InitialGracePeriod = 3u<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -74,10 +75,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                90<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                120<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_43L<Cent> ]
+                31u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                90u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                120u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_43L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters1
@@ -99,10 +100,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                81<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                101<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 350_31L<Cent> ]
+                31u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                81u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                101u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 350_31L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters1
@@ -124,9 +125,9 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                90<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 794_55L<Cent> ]
+                31u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                90u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 794_55L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters1
@@ -148,10 +149,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                95<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
-                130<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 505_60L<Cent> ]
+                31u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                95u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 451_46L<Cent> ]
+                130u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 505_60L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters1
@@ -176,10 +177,10 @@ module ComplianceTests =
             ScheduleConfig =
                 CustomSchedule
                 <| Map [
-                    17<OffsetDay>, ScheduledPayment.quick (ValueSome 209_45L<Cent>) ValueNone
-                    48<OffsetDay>, ScheduledPayment.quick (ValueSome 209_45L<Cent>) ValueNone
-                    76<OffsetDay>, ScheduledPayment.quick (ValueSome 209_45L<Cent>) ValueNone
-                    107<OffsetDay>, ScheduledPayment.quick (ValueSome 209_40L<Cent>) ValueNone
+                    17u<OffsetDay>, ScheduledPayment.quick (ValueSome 209_45L<Cent>) ValueNone
+                    48u<OffsetDay>, ScheduledPayment.quick (ValueSome 209_45L<Cent>) ValueNone
+                    76u<OffsetDay>, ScheduledPayment.quick (ValueSome 209_45L<Cent>) ValueNone
+                    107u<OffsetDay>, ScheduledPayment.quick (ValueSome 209_40L<Cent>) ValueNone
                 ]
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -194,19 +195,20 @@ module ComplianceTests =
                     DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                 }
                 Rounding = RoundDown
-                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                AprMethod = Apr.CalculationMethod.UnitedKingdom
+                AprPrecision = 3u
             }
         }
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3<DurationDay>
+                Timeout = 3u<OffsetDay>
             }
             FeeConfig = ValueNone
             ChargeConfig = None
             InterestConfig = {
-                InitialGracePeriod = 0<DurationDay>
+                InitialGracePeriod = 0u<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -222,10 +224,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_40L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                107u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_40L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters2
@@ -247,10 +249,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                63<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                91<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 160_81L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                63u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                91u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 160_81L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters2
@@ -272,10 +274,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 234_52L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 234_52L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters2
@@ -309,10 +311,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_48L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                107u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_48L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters3
@@ -334,10 +336,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                63<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                91<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 175_99L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                63u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                91u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 175_99L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters3
@@ -359,10 +361,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
-                122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 310_90L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 263_51L<Cent> ]
+                122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 310_90L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters3
@@ -389,10 +391,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_42L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                107u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_42L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters4
@@ -414,10 +416,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                63<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                91<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 160_82L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                63u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                91u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 160_82L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters4
@@ -439,10 +441,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
-                122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 234_54L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 209_45L<Cent> ]
+                122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 234_54L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters4
@@ -471,10 +473,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                107u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters5
@@ -498,10 +500,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                63<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                91<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                63u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                91u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters5
@@ -525,10 +527,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters5
@@ -548,10 +550,10 @@ module ComplianceTests =
             Basic.ScheduleConfig =
                 CustomSchedule
                 <| Map [
-                    17<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
-                    48<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
-                    76<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
-                    107<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
+                    17u<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
+                    48u<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
+                    76u<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
+                    107u<OffsetDay>, ScheduledPayment.quick (ValueSome 250_00L<Cent>) ValueNone
                 ]
     }
 
@@ -564,10 +566,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                107<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                107u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters6
@@ -589,10 +591,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                63<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                91<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 212_00L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                63u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                91u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 212_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters6
@@ -614,10 +616,10 @@ module ComplianceTests =
 
         let actualPayments =
             Map [
-                17<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                48<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                76<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
-                122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                17u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                48u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                76u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
+                122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 250_00L<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise parameters6
@@ -734,7 +736,8 @@ module ComplianceTests =
                 DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
             }
             Rounding = RoundDown
-            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            AprMethod = Apr.CalculationMethod.UnitedKingdom
+            AprPrecision = 3u
         }
     }
 

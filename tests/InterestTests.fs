@@ -103,7 +103,8 @@ module InterestTests =
                     Method = Method.Actuarial
                     StandardRate = Rate.Daily(Percent 0.8m)
                     Cap = interestCapExample
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                     Rounding = RoundDown
                 }
             }
@@ -111,12 +112,12 @@ module InterestTests =
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
+                    Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 3<DurationDay>
+                    InitialGracePeriod = 3u<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Zero
                 }
@@ -183,14 +184,14 @@ module InterestTests =
             let startDate = Date(2024, 4, 10)
             let standardRate = Rate.Annual <| Percent 10m
             let promotionalRates = [||]
-            let fromDay = 0<OffsetDay>
-            let toDay = 10<OffsetDay>
+            let fromDay = 0u<OffsetDay>
+            let toDay = 10u<OffsetDay>
             let actual = dailyRates startDate false standardRate promotionalRates fromDay toDay
 
             let expected =
-                [| 1..10 |]
+                [| 1u .. 10u |]
                 |> Array.map (fun d -> {
-                    RateDay = d * 1<OffsetDay>
+                    RateDay = d * 1u<OffsetDay>
                     InterestRate = Rate.Annual <| Percent 10m
                 })
 
@@ -201,14 +202,14 @@ module InterestTests =
             let startDate = Date(2024, 4, 10)
             let standardRate = Rate.Annual <| Percent 10m
             let promotionalRates = [||]
-            let fromDay = 0<OffsetDay>
-            let toDay = 10<OffsetDay>
+            let fromDay = 0u<OffsetDay>
+            let toDay = 10u<OffsetDay>
             let actual = dailyRates startDate true standardRate promotionalRates fromDay toDay
 
             let expected =
-                [| 1..10 |]
+                [| 1u .. 10u |]
                 |> Array.map (fun d -> {
-                    RateDay = d * 1<OffsetDay>
+                    RateDay = d * 1u<OffsetDay>
                     InterestRate = Rate.Zero
                 })
 
@@ -230,20 +231,20 @@ module InterestTests =
                 : PromotionalRate)
             |]
 
-            let fromDay = 0<OffsetDay>
-            let toDay = 10<OffsetDay>
+            let fromDay = 0u<OffsetDay>
+            let toDay = 10u<OffsetDay>
             let actual = dailyRates startDate false standardRate promotionalRates fromDay toDay
 
             let expected =
                 [|
-                    [| 1..5 |]
+                    [| 1u .. 5u |]
                     |> Array.map (fun d -> {
-                        RateDay = d * 1<OffsetDay>
+                        RateDay = d * 1u<OffsetDay>
                         InterestRate = Rate.Annual <| Percent 2m
                     })
-                    [| 6..10 |]
+                    [| 6u .. 10u |]
                     |> Array.map (fun d -> {
-                        RateDay = d * 1<OffsetDay>
+                        RateDay = d * 1u<OffsetDay>
                         InterestRate = Rate.Annual <| Percent 10m
                     })
                 |]
@@ -387,7 +388,8 @@ module InterestTests =
                         TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
                         DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                     }
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom
+                    AprPrecision = 3u
                     Rounding = RoundDown
                 }
             }
@@ -395,12 +397,12 @@ module InterestTests =
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3<DurationDay>
+                    Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 0<DurationDay>
+                    InitialGracePeriod = 0u<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Rate.Annual <| Percent 8m
                 }
@@ -428,11 +430,11 @@ module InterestTests =
             Schedule.outputHtmlToFile folder title description p "" schedules
 
             let levelPayment =
-                schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment
+                schedules.AmortisationSchedule.ScheduleItems[1433u<OffsetDay>].ScheduledPayment
                 |> ScheduledPayment.total
 
             let finalPayment =
-                schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment
+                schedules.AmortisationSchedule.ScheduleItems[1461u<OffsetDay>].ScheduledPayment
                 |> ScheduledPayment.total
 
             let interestPortion =
@@ -467,11 +469,11 @@ module InterestTests =
             Schedule.outputHtmlToFile folder title description p "" schedules
 
             let levelPayment =
-                schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment
+                schedules.AmortisationSchedule.ScheduleItems[1433u<OffsetDay>].ScheduledPayment
                 |> ScheduledPayment.total
 
             let finalPayment =
-                schedules.AmortisationSchedule.ScheduleItems[1461<OffsetDay>].ScheduledPayment
+                schedules.AmortisationSchedule.ScheduleItems[1461u<OffsetDay>].ScheduledPayment
                 |> ScheduledPayment.total
 
             let interestPortion =
@@ -496,18 +498,18 @@ module InterestTests =
 
             let actualPayments =
                 Map [
-                    31<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    61<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    92<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    122<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    153<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    184<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    214<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    245<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    275<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    306<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    337<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    365<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    31u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    92u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    153u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    184u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    214u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    245u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    275u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    306u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    337u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    365u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments
