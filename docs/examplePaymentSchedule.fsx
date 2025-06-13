@@ -29,11 +29,11 @@ open UnitPeriod
 let parameters = {
     EvaluationDate = Date(2024, 02, 07)
     StartDate = Date(2024, 02, 07)
-    Principal = 10000_00L<Cent>
+    Principal = 10000_00uL<Cent>
     ScheduleConfig =
         AutoGenerateSchedule {
-            UnitPeriodConfig = Monthly(1, 2024, 3, 7)
-            ScheduleLength = PaymentCount 36
+            UnitPeriodConfig = Monthly(1u, 2024, 3, 7)
+            ScheduleLength = PaymentCount 36u
         }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment

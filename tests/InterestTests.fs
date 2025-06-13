@@ -88,11 +88,11 @@ module InterestTests =
             Basic = {
                 EvaluationDate = Date(2024, 4, 25)
                 StartDate = Date(2023, 2, 9)
-                Principal = 499_00L<Cent>
+                Principal = 499_00uL<Cent>
                 ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Monthly(1, 2023, 2, 14)
-                        ScheduleLength = PaymentCount 4
+                        UnitPeriodConfig = Monthly(1u, 2023, 2, 14)
+                        ScheduleLength = PaymentCount 4u
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -111,7 +111,7 @@ module InterestTests =
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
-                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Minimum = DeferOrWriteOff 50uL<Cent>
                     Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
@@ -258,12 +258,12 @@ module InterestTests =
         let Cca2004Test000 () =
             let title = "Cca2004Test000"
             let description = "UK rebate example 1"
-            let principal = 5000_00L<Cent>
-            let payments = [| 1..48 |] |> Array.map (fun i -> i, 134_57L<Cent>)
+            let principal = 5000_00uL<Cent>
+            let payments = [| 1u .. 48u |] |> Array.map (fun i -> i, 134_57uL<Cent>)
             let apr = Percent 14m
-            let settlementPeriod = 12
+            let settlementPeriod = 12u
             let settlementPartPeriod = Fraction.Zero
-            let unitPeriod = Month 1
+            let unitPeriod = Month 1u
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
 
             let actual =
@@ -276,12 +276,12 @@ module InterestTests =
         let Cca2004Test001 () =
             let title = "Cca2004Test001"
             let description = "UK rebate example 1a"
-            let principal = 5000_00L<Cent>
-            let payments = [| 1..48 |] |> Array.map (fun i -> i, 134_57L<Cent>)
+            let principal = 5000_00uL<Cent>
+            let payments = [| 1u .. 48u |] |> Array.map (fun i -> i, 134_57uL<Cent>)
             let apr = Percent 14m
-            let settlementPeriod = 12
-            let settlementPartPeriod = Fraction.Simple(28, 30)
-            let unitPeriod = Month 1
+            let settlementPeriod = 12u
+            let settlementPartPeriod = Fraction.Simple(28u, 30u)
+            let unitPeriod = Month 1u
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
 
             let actual =
@@ -294,12 +294,12 @@ module InterestTests =
         let Cca2004Test002 () =
             let title = "Cca2004Test002"
             let description = "UK rebate example 1b"
-            let principal = 5000_00L<Cent>
-            let payments = [| 1..48 |] |> Array.map (fun i -> i, 134_57L<Cent>)
+            let principal = 5000_00uL<Cent>
+            let payments = [| 1u .. 48u |] |> Array.map (fun i -> i, 134_57uL<Cent>)
             let apr = Percent 14m
-            let settlementPeriod = 12
-            let settlementPartPeriod = Fraction.Simple(28, 31)
-            let unitPeriod = Month 1
+            let settlementPeriod = 12u
+            let settlementPartPeriod = Fraction.Simple(28u, 31u)
+            let unitPeriod = Month 1u
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
 
             let actual =
@@ -312,12 +312,12 @@ module InterestTests =
         let ``Cca2004Test003`` () =
             let title = "Cca2004Test003"
             let description = "UK rebate example 1c"
-            let principal = 5000_00L<Cent>
-            let payments = [| 1..48 |] |> Array.map (fun i -> i, 134_57L<Cent>)
+            let principal = 5000_00uL<Cent>
+            let payments = [| 1u .. 48u |] |> Array.map (fun i -> i, 134_57uL<Cent>)
             let apr = Percent 14m
-            let settlementPeriod = 13
-            let settlementPartPeriod = Fraction.Simple(28, 30)
-            let unitPeriod = Month 1
+            let settlementPeriod = 13u
+            let settlementPartPeriod = Fraction.Simple(28u, 30u)
+            let unitPeriod = Month 1u
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
 
             let actual =
@@ -330,12 +330,12 @@ module InterestTests =
         let Cca2004Test004 () =
             let title = "Cca2004Test004"
             let description = "UK rebate example 2"
-            let principal = 10000_00L<Cent>
-            let payments = [| 1..180 |] |> Array.map (fun i -> i, 139_51L<Cent>)
+            let principal = 10000_00uL<Cent>
+            let payments = [| 1u .. 180u |] |> Array.map (fun i -> i, 139_51uL<Cent>)
             let apr = Percent 16m
-            let settlementPeriod = 73
+            let settlementPeriod = 73u
             let settlementPartPeriod = Fraction.Zero
-            let unitPeriod = Month 1
+            let unitPeriod = Month 1u
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
 
             let actual =
@@ -348,12 +348,12 @@ module InterestTests =
         let Cca2004Test005 () =
             let title = "Cca2004Test005"
             let description = "UK rebate example 2a"
-            let principal = 10000_00L<Cent>
-            let payments = [| 1..180 |] |> Array.map (fun i -> i, 139_51L<Cent>)
+            let principal = 10000_00uL<Cent>
+            let payments = [| 1u .. 180u |] |> Array.map (fun i -> i, 139_51uL<Cent>)
             let apr = Percent 16m
-            let settlementPeriod = 73
-            let settlementPartPeriod = Fraction.Simple(28, 30)
-            let unitPeriod = Month 1
+            let settlementPeriod = 73u
+            let settlementPartPeriod = Fraction.Simple(28u, 30u)
+            let unitPeriod = Month 1u
             let paymentRounding = RoundWith MidpointRounding.AwayFromZero
 
             let actual =
@@ -366,13 +366,13 @@ module InterestTests =
             Basic = {
                 StartDate = Date(2010, 3, 1)
                 EvaluationDate = Date(2011, 3, 1)
-                Principal = 5000_00L<Cent>
+                Principal = 5000_00uL<Cent>
                 ScheduleConfig =
                     FixedSchedules [|
                         {
-                            UnitPeriodConfig = Monthly(1, 2010, 4, 1)
-                            PaymentCount = 48
-                            PaymentValue = 134_57L<Cent>
+                            UnitPeriodConfig = Monthly(1u, 2010, 4, 1)
+                            PaymentCount = 48u
+                            PaymentValue = 134_57uL<Cent>
                             ScheduleType = ScheduleType.Original
                         }
                     |]
@@ -396,7 +396,7 @@ module InterestTests =
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
-                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Minimum = DeferOrWriteOff 50uL<Cent>
                     Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
@@ -441,6 +441,7 @@ module InterestTests =
                 schedules.AmortisationSchedule.ScheduleItems
                 |> Map.values
                 |> Seq.sumBy _.InterestPortion
+                |> Cent.portionToTransfer
 
             [ levelPayment; finalPayment; interestPortion ]
             |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
@@ -457,8 +458,8 @@ module InterestTests =
                     Basic.EvaluationDate = Date(2010, 3, 1)
                     Basic.ScheduleConfig =
                         AutoGenerateSchedule {
-                            UnitPeriodConfig = Monthly(1, 2010, 4, 1)
-                            ScheduleLength = PaymentCount 48
+                            UnitPeriodConfig = Monthly(1u, 2010, 4, 1)
+                            ScheduleLength = PaymentCount 48u
                         }
             }
 
@@ -480,6 +481,7 @@ module InterestTests =
                 schedules.AmortisationSchedule.ScheduleItems
                 |> Map.values
                 |> Seq.sumBy _.InterestPortion
+                |> Cent.portionToTransfer
 
             [ levelPayment; finalPayment; interestPortion ]
             |> should equal [ 134_57L<Cent>; 134_57L<Cent>; 1459_36L<Cent> ]
@@ -498,18 +500,18 @@ module InterestTests =
 
             let actualPayments =
                 Map [
-                    31u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    92u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    122u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    153u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    184u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    214u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    245u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    275u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    306u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    337u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
-                    365u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 134_57L<Cent> ]
+                    31u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    92u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    122u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    153u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    184u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    214u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    245u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    275u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    306u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    337u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
+                    365u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 134_57uL<Cent> ]
                 ]
 
             let schedules = amortise p actualPayments

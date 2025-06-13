@@ -70,11 +70,11 @@ module Interest =
         }
 
         /// if the base value plus the added value exceeds the cap total, return the difference between the cap total and the base value
-        let cappedAddedValue capAmount principalBalance baseValue addedValue =
+        let cappedAddedValue capAmount balance baseValue addedValue =
             match capAmount with
             | Amount.Unlimited -> addedValue
             | amount ->
-                let capTotal = Amount.total principalBalance amount |> max 0m<Cent>
+                let capTotal = Amount.total balance amount |> max 0m<Cent>
 
                 if baseValue + addedValue > capTotal then
                     capTotal - baseValue
@@ -208,7 +208,7 @@ module Interest =
         )
 
     /// calculates the interest accrued on a balance at a particular interest rate over a number of days, optionally capped by a daily amount
-    let calculate (principalBalance: int64<Cent>) dailyInterestCap interestRounding dailyRates =
+    let calculate (principalBalance: Cent.Signed) dailyInterestCap interestRounding dailyRates =
         dailyRates
         |> Array.sumBy (fun dr ->
             let rate = dr.InterestRate |> Rate.daily |> Percent.toDecimal
@@ -218,10 +218,10 @@ module Interest =
         |> Cent.roundTo interestRounding 8
 
     /// type alias to represent an indexed transfer
-    type internal TransferMap = Map<int, decimal<Cent>>
+    type internal TransferMap = Map<uint, decimal<Cent>>
 
     /// type alias to represent an indexed interval
-    type internal IntervalMap = Map<int, int>
+    type internal IntervalMap = Map<uint, uint>
 
     /// calculates the settlement figure based on Consumer Credit (Early Settlement) Regulations 2004 regulation 4(1):
     ///
@@ -241,33 +241,41 @@ module Interest =
     /// $b_j$ = the time between the jth repayment of credit and the settlement date, expressed in periods, and
     /// $\sum$ represents the sum of all the terms indicated.
     let ``CCA 2004 regulation 4(1) formula`` (A: TransferMap) (B: TransferMap) r m n (a: IntervalMap) (b: IntervalMap) =
-        if A.Count < m || B.Count < n || a.Count < m || b.Count < n then
+        if A.Count < int m || B.Count < int n || a.Count < int m || b.Count < int n then
             0m<Cent>
         else
             let round = Cent.roundTo (RoundWith MidpointRounding.AwayFromZero) 2
 
             let sum1 =
-                [ 1..m ]
-                |> List.sumBy (fun i -> A[i] * (1m + r |> powi a[i] |> decimal) |> round)
+                [ 1u .. m ]
+                |> List.sumBy (fun i -> A[i] * (1m + r |> pow a[i] |> decimal) |> round)
 
             let sum2 =
-                [ 1..n ]
-                |> List.sumBy (fun j -> B[j] * (1m + r |> powi b[j] |> decimal) |> round)
+                [ 1u .. n ]
+                |> List.sumBy (fun j -> B[j] * (1m + r |> pow b[j] |> decimal) |> round)
 
             sum1 - sum2
 
     /// calculates the amount of rebate due following an early settlement
     ///
     /// note: the APR is the initial APR as determined at the start of the agreement
-    let calculateRebate principal payments apr settlementPeriod settlementPartPeriod unitPeriod paymentRounding =
+    let calculateRebate
+        (advance: Cent.Unsigned)
+        (payments: (uint * Cent.Unsigned) array)
+        apr
+        settlementPeriod
+        settlementPartPeriod
+        unitPeriod
+        paymentRounding
+        : Cent.Signed =
         if payments |> Array.isEmpty then
             0L<Cent>
         else
-            let advanceMap = Map [ (1, Cent.toDecimalCent principal) ]
+            let advanceMap = Map [ (1u, Cent.toDecimalCent advance) ]
 
             let paymentMap =
                 payments
-                |> Array.map (fun (index, payment) -> index, decimal payment * 1m<Cent>)
+                |> Array.map (fun (index, payment) -> index, Cent.transferToPrecisionCent payment)
                 |> Map.ofArray
 
             let aprUnitPeriodRate =
@@ -276,21 +284,21 @@ module Interest =
                 |> Percent.toDecimal
                 |> Rounding.roundTo (RoundWith MidpointRounding.AwayFromZero) 6
 
-            let advanceCount = 1
-            let paymentCount = payments |> Array.length |> min settlementPeriod
-            let advanceIntervalMap = Map [ (1, settlementPeriod) ]
+            let advanceCount = 1u
+            let paymentCount = payments |> Array.length |> uint |> min settlementPeriod
+            let advanceIntervalMap = Map [ (1u, settlementPeriod) ]
 
             let paymentIntervalMap =
                 payments
-                |> Array.take paymentCount
-                |> Array.scan (fun (index, _) (day, _) -> index + 1, settlementPeriod - day) (0, settlementPeriod)
+                |> Array.take (int paymentCount)
+                |> Array.scan (fun (index, _) (day, _) -> index + 1u, settlementPeriod - day) (0u, settlementPeriod)
                 |> Array.tail
                 |> Map.ofArray
 
             let addPartPeriodTotal (sf: decimal<Cent>) =
                 sf
                 * (1m + aprUnitPeriodRate
-                   |> powm (Fraction.toDecimal settlementPartPeriod)
+                   |> pow (Fraction.toDecimal settlementPartPeriod)
                    |> decimal)
 
             let wholePeriodTotal =
@@ -304,14 +312,16 @@ module Interest =
                     paymentIntervalMap
 
             let settlementFigure =
-                wholePeriodTotal |> addPartPeriodTotal |> Cent.fromDecimalCent paymentRounding
+                wholePeriodTotal
+                |> addPartPeriodTotal
+                |> Cent.precisionToPortion paymentRounding
 
             let remainingPaymentTotal =
                 payments
                 |> Array.filter (fun (index, _) -> index > settlementPeriod)
                 |> Array.sumBy snd
 
-            remainingPaymentTotal - settlementFigure
+            Cent.transferToPortion remainingPaymentTotal - settlementFigure
 
     /// if there is less than one cent remaining, discards any fraction
     let ignoreFractionalCents (multiplier: uint) value =

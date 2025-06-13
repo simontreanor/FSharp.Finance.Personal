@@ -33,11 +33,11 @@ module Refinancing =
             $"""
 <table>
     <thead><tr><th colspan="2">Reschedule Parameters</th></tr></thead>
-    <tr><td>Fee Settlement Rebate</td><td>{rp.FeeSettlementRebate}</td></tr>
-    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td></tr>
-    <tr><td>Rate on Negative Balance</td><td>{rp.RateOnNegativeBalance}</td></tr>
-    <tr><td>Promotional Interest Rates</td><td>{Array.toStringOrNa rp.PromotionalInterestRates}</td></tr>
-    <tr><td>Settlement Day</td><td>{rp.SettlementDay}</td></tr>
+    <tr><td>Fee settlement rebate</td><td>{rp.FeeSettlementRebate}</td></tr>
+    <tr><td>Payment schedule</td><td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td></tr>
+    <tr><td>Rate on negative balance</td><td>{rp.RateOnNegativeBalance}</td></tr>
+    <tr><td>Promotional interest rates</td><td>{Array.toStringOrNa rp.PromotionalInterestRates}</td></tr>
+    <tr><td>Settlement day</td><td>{rp.SettlementDay}</td></tr>
 </table>"""
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
@@ -115,7 +115,7 @@ module Refinancing =
                                         if offsetDay >= nrd then
                                             //overwrite original scheduled payments from start of rescheduled payments
                                             ValueSome {
-                                                Value = 0L<Cent>
+                                                Value = 0uL<Cent>
                                                 RescheduleDay = nrd
                                             }
                                         else
@@ -269,7 +269,7 @@ module Refinancing =
         let pNew = {
             p with
                 Basic.StartDate = p.Basic.EvaluationDate
-                Basic.Principal = principalPortion
+                Basic.Principal = Cent.portionToTransfer principalPortion
                 Basic.ScheduleConfig = rp.PaymentSchedule
                 Basic.InterestConfig = rp.InterestConfig
                 Basic.PaymentConfig = rp.PaymentConfig
@@ -290,7 +290,7 @@ module Refinancing =
                     |> ValueOption.map (fun fc -> {
                         fc with
                             SettlementRebate =
-                                if feeRebateIfSettled = 0L<Cent> then
+                                if feeRebateIfSettled = 0uL<Cent> then
                                     Fee.SettlementRebate.Zero
                                 else
                                     match fc.SettlementRebate with

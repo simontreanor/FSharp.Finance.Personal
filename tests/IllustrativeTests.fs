@@ -27,9 +27,9 @@ module IllustrativeTests =
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
             last
-            |> Array.map (fun d -> d * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed finalPayment ])
+            |> Array.map (fun d -> d * 1u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed finalPayment ])
             rest
-            |> Array.map (fun d -> d * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed levelPayment ])
+            |> Array.map (fun d -> d * 1u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed levelPayment ])
         |]
         |> Array.concat
         |> Array.rev
@@ -46,7 +46,7 @@ module IllustrativeTests =
             PaymentDue = paymentValue
             ActualPayments =
                 Map [
-                    0,
+                    0u,
                     {
                         ActualPaymentStatus = ActualPaymentStatus.Confirmed paymentValue
                         Metadata = Map.empty
@@ -55,7 +55,7 @@ module IllustrativeTests =
                 ]
             PaidBy = Map.empty
             GeneratedPayment = NoGeneratedPayment
-            NetEffect = paymentValue
+            NetEffect = Cent.transferToPortion paymentValue
             PaymentStatus = PaymentMade
             BalanceStatus = ClosedBalance
             ActuarialInterest = interestAdjustment
@@ -65,24 +65,24 @@ module IllustrativeTests =
             FeePortion = 0L<Cent>
             InterestPortion = interestPortion
             ChargesPortion = 0L<Cent>
-            FeeRebate = 0L<Cent>
+            FeeRebate = 0uL<Cent>
             PrincipalBalance = 0L<Cent>
             FeeBalance = 0L<Cent>
             InterestBalance = 0m<Cent>
-            ChargesBalance = 0L<Cent>
+            ChargesBalance = 0uL<Cent>
             SettlementFigure = 0L<Cent>
-            FeeRebateIfSettled = 0L<Cent>
+            FeeRebateIfSettled = 0uL<Cent>
         }
 
     let parameters: Parameters = {
         Basic = {
             EvaluationDate = Date(2025, 6, 30)
             StartDate = Date(2025, 3, 1)
-            Principal = 400_00L<Cent>
+            Principal = 400_00uL<Cent>
             ScheduleConfig =
                 AutoGenerateSchedule {
-                    UnitPeriodConfig = Monthly(1, 2025, 3, 31)
-                    ScheduleLength = PaymentCount 4
+                    UnitPeriodConfig = Monthly(1u, 2025, 3, 31)
+                    ScheduleLength = PaymentCount 4u
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -101,7 +101,7 @@ module IllustrativeTests =
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
-                Minimum = DeferOrWriteOff 50L<Cent>
+                Minimum = DeferOrWriteOff 50uL<Cent>
                 Timeout = 3u<OffsetDay>
             }
             FeeConfig = ValueNone
@@ -124,7 +124,7 @@ module IllustrativeTests =
             "Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time"
 
         let actualPayments =
-            quickActualPayments [| 30u; 60u; 91u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 30u; 60u; 91u; 121u |] 181_38uL<Cent> 181_34uL<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -139,19 +139,19 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome 181_34L<Cent>
+                    Original = ValueSome 181_34uL<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
-                Window = 4
-                PaymentDue = 181_34L<Cent>
+                Window = 4u
+                PaymentDue = 181_34uL<Cent>
                 ActualPayments =
                     Map [
-                        0,
+                        0u,
                         {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34uL<Cent>
                             Metadata = Map.empty
                         // // ScheduledPayments = Map.empty
                         }
@@ -168,13 +168,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -189,7 +189,7 @@ module IllustrativeTests =
             positive interest balance"""
 
         let actualPayments =
-            quickActualPayments [| 59u; 60u; 91u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 59u; 60u; 91u; 121u |] 181_38uL<Cent> 181_34uL<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -204,19 +204,19 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome 181_34L<Cent>
+                    Original = ValueSome 181_34uL<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
-                Window = 4
-                PaymentDue = 181_34L<Cent>
+                Window = 4u
+                PaymentDue = 181_34uL<Cent>
                 ActualPayments =
                     Map [
-                        0,
+                        0u,
                         {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34uL<Cent>
                             Metadata = Map.empty
                         // // ScheduledPayments = Map.empty
                         }
@@ -233,13 +233,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -253,7 +253,7 @@ module IllustrativeTests =
             - missed first repayment and did not pay before second repayment due date (30/04/2025); this shows a final open balance due the extra day's interest"""
 
         let actualPayments =
-            quickActualPayments [| 60u; 61u; 91u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 60u; 61u; 91u; 121u |] 181_38uL<Cent> 181_34uL<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -268,19 +268,19 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome 181_34L<Cent>
+                    Original = ValueSome 181_34uL<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
-                Window = 4
-                PaymentDue = 181_34L<Cent>
+                Window = 4u
+                PaymentDue = 181_34uL<Cent>
                 ActualPayments =
                     Map [
-                        0,
+                        0u,
                         {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34uL<Cent>
                             Metadata = Map.empty
                         // // ScheduledPayments = Map.empty
                         }
@@ -297,13 +297,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 29L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 29L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 29L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -318,7 +318,7 @@ module IllustrativeTests =
             balance remains higher than it would have been if the payment had been made on time"""
 
         let actualPayments =
-            quickActualPayments [| 30u; 60u; 120u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 30u; 60u; 120u; 121u |] 181_38uL<Cent> 181_34uL<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -333,19 +333,19 @@ module IllustrativeTests =
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
-                    Original = ValueSome 181_34L<Cent>
+                    Original = ValueSome 181_34uL<Cent>
                     Rescheduled = ValueNone
                     PreviousRescheduled = [||]
                     Adjustment = 0L<Cent>
                     Metadata = Map.empty
                 }
-                Window = 4
-                PaymentDue = 181_34L<Cent>
+                Window = 4u
+                PaymentDue = 181_34uL<Cent>
                 ActualPayments =
                     Map [
-                        0,
+                        0u,
                         {
-                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34L<Cent>
+                            ActualPaymentStatus = ActualPaymentStatus.Confirmed 181_34uL<Cent>
                             Metadata = Map.empty
                         // // ScheduledPayments = Map.empty
                         }
@@ -362,13 +362,13 @@ module IllustrativeTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 1_77L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 42_39L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 42_39L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected

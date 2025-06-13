@@ -27,11 +27,11 @@ module PromotionalRatesTests =
         Basic = {
             EvaluationDate = startDate.AddDays 180
             StartDate = startDate
-            Principal = 400_00L<Cent>
+            Principal = 400_00uL<Cent>
             ScheduleConfig =
                 AutoGenerateSchedule {
-                    UnitPeriodConfig = Monthly(1, 2024, 9, 2)
-                    ScheduleLength = PaymentCount 4
+                    UnitPeriodConfig = Monthly(1u, 2024, 9, 2)
+                    ScheduleLength = PaymentCount 4u
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -53,7 +53,7 @@ module PromotionalRatesTests =
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
-                Minimum = DeferOrWriteOff 50L<Cent>
+                Minimum = DeferOrWriteOff 50uL<Cent>
                 Timeout = 3u<OffsetDay>
             }
             FeeConfig = ValueNone
@@ -162,19 +162,19 @@ module PromotionalRatesTests =
             Basic = {
                 EvaluationDate = Date(2024, 4, 11)
                 StartDate = Date(2024, 4, 11)
-                Principal = 192_000_00L<Cent>
+                Principal = 192_000_00uL<Cent>
                 ScheduleConfig =
                     FixedSchedules [|
                         {
-                            UnitPeriodConfig = Monthly(1, 2024, 5, 11)
-                            PaymentCount = 60
-                            PaymentValue = 1225_86L<Cent>
+                            UnitPeriodConfig = Monthly(1u, 2024, 5, 11)
+                            PaymentCount = 60u
+                            PaymentValue = 1225_86uL<Cent>
                             ScheduleType = ScheduleType.Original
                         }
                         {
-                            UnitPeriodConfig = Monthly(1, 2029, 5, 11)
-                            PaymentCount = 180
-                            PaymentValue = 1525_12L<Cent>
+                            UnitPeriodConfig = Monthly(1u, 2029, 5, 11)
+                            PaymentCount = 180u
+                            PaymentValue = 1525_12uL<Cent>
                             ScheduleType = ScheduleType.Original
                         }
                     |]
@@ -240,9 +240,9 @@ module PromotionalRatesTests =
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2044, 4, 11)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 1525_12L<Cent>) ValueNone
-                Window = 240
-                PaymentDue = 1523_25L<Cent>
+                ScheduledPayment = ScheduledPayment.quick (ValueSome 1525_12uL<Cent>) ValueNone
+                Window = 240u
+                PaymentDue = 1523_25uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
@@ -256,13 +256,13 @@ module PromotionalRatesTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 10_26L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected

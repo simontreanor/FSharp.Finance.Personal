@@ -31,7 +31,7 @@ module Charge =
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ChargeConditions = {
         /// the amount of the charge
-        Value: int64<Cent>
+        Value: Cent.Unsigned
         /// whether to group charges by type per day
         ChargeGrouping: ChargeGrouping
         /// any period during which no charges are payable
@@ -40,7 +40,7 @@ module Charge =
 
         /// HTML formatting to display the charge conditions in a readable format
         member cc.Html =
-            $"<td>{formatCent cc.Value}</td>"
+            $"<td>{cc.Value:N2}</td>"
             + $"<td>{cc.ChargeGrouping}</td>"
             + $"<td>{Array.toStringOrNa cc.ChargeHolidays}</td>"
 

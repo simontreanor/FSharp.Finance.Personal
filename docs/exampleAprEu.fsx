@@ -33,12 +33,12 @@ let transfers = [|
     {
         TransferType = Payment
         TransferDate = Date(2012, 11, 10)
-        Value = 270_00L<Cent>
+        Value = 270_00uL<Cent>
     }
     {
         TransferType = Payment
         TransferDate = Date(2012, 12, 10)
-        Value = 270_00L<Cent>
+        Value = 270_00uL<Cent>
     }
 |]
 

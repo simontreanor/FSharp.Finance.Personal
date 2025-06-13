@@ -33,11 +33,11 @@ let parameters: Parameters = {
     Basic = {
         EvaluationDate = Date(2023, 4, 1)
         StartDate = Date(2022, 11, 26)
-        Principal = 1500_00L<Cent>
+        Principal = 1500_00uL<Cent>
         ScheduleConfig =
             AutoGenerateSchedule {
-                UnitPeriodConfig = Monthly(1, 2022, 11, 31)
-                ScheduleLength = PaymentCount 5
+                UnitPeriodConfig = Monthly(1u, 2022, 11, 31)
+                ScheduleLength = PaymentCount 5u
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -59,7 +59,7 @@ let parameters: Parameters = {
     Advanced = {
         PaymentConfig = {
             ScheduledPaymentOption = AsScheduled
-            Minimum = DeferOrWriteOff 50L<Cent>
+            Minimum = DeferOrWriteOff 50uL<Cent>
             Timeout = 3u<OffsetDay>
         }
         FeeConfig = ValueNone
@@ -76,11 +76,11 @@ let parameters: Parameters = {
 
 let actualPayments =
     Map [
-        4u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        35u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        66u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        94u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        125u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+        4u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 456_88uL<Cent> ]
+        35u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 456_88uL<Cent> ]
+        66u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 456_88uL<Cent> ]
+        94u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 456_88uL<Cent> ]
+        125u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 456_84uL<Cent> ]
     ]
 
 let schedules = actualPayments |> amortise parameters

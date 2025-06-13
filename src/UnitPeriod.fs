@@ -50,42 +50,44 @@ module UnitPeriod =
         /// a day
         | Day
         /// a week or a multiple of weeks
-        | Week of WeekMultiple: int
+        | Week of WeekMultiple: Count
         /// half a month
         | SemiMonth
         /// a month or a multiple of months
-        | Month of MonthMultiple: int
+        | Month of MonthMultiple: Count
 
         /// HTML formatting to display the unit period in a readable format
         member up.Html =
             match up with
             | Day -> "day"
-            | Week multiple when multiple = 1 -> "week"
+            | Week multiple when multiple = 1u -> "week"
             | Week multiple -> $"{multiple}-week"
             | SemiMonth -> "semi-month"
-            | Month multiple when multiple = 1 -> "month"
+            | Month multiple when multiple = 1u -> "month"
             | Month multiple -> $"{multiple}-month"
 
     /// all unit-periods, excluding unlikely ones (opinionated!)
     let all =
         [|
-            [| 1, Day |]
-            // [| 1 .. 52 |] |> Array.map(fun i -> i * 7, Week i)
-            [| 1; 2; 4 |] |> Array.map (fun i -> i * 7, Week i)
-            [| 15, SemiMonth |]
-            // [| 1 .. 12 |] |> Array.map(fun i -> i * 30, Month i)
-            [| 1; 2; 3; 6; 12 |] |> Array.map (fun i -> i * 30, Month i)
+            [| 1u, Day |]
+            // [| 1u .. 52u |] |> Array.map(fun i -> i * 7, Week i)
+            [| 1u; 2u; 4u |] |> Array.map (fun i -> i * 7u, Week i)
+            [| 15u, SemiMonth |]
+            // [| 1u .. 12u |] |> Array.map(fun i -> i * 30, Month i)
+            [| 1u; 2u; 3u; 6u; 12u |] |> Array.map (fun i -> i * 30u, Month i)
         |]
         |> Array.concat
         |> Array.sortBy fst
 
     /// coerce a length to the nearest unit-period
-    let internal normalise length =
-        all |> Array.minBy (fun (days, _) -> abs (days - length))
+    let internal normalise (length: Count) =
+        all |> Array.minBy (fun (days, _) -> abs (int days - int length))
 
     /// lengths that occur more than once
-    let commonLengths (lengths: int array) =
-        lengths |> Array.countBy id |> Array.filter (fun (_, count) -> count > 1)
+    let commonLengths (lengths: uint array) =
+        lengths
+        |> Array.countBy id
+        |> Array.choose (fun (i, count) -> if count > 1 then Some(i, uint count) else None)
 
     /// find the nearest unit-period according to the transaction term and transfer dates
     let nearest term advanceDates paymentDates =
@@ -95,7 +97,7 @@ module UnitPeriod =
             |> Array.sort
             |> Array.distinct
             |> Array.windowed 2
-            |> Array.map ((fun a -> (a[1] - a[0]).Days) >> normalise >> fst)
+            |> Array.map ((fun a -> uint (a[1] - a[0]).Days) >> normalise >> fst)
 
         let commonPeriodLengths =
             if Array.isEmpty periodLengths then
@@ -109,7 +111,7 @@ module UnitPeriod =
             |> Array.sortBy snd
             |> Array.averageBy (snd >> decimal)
             |> roundMidpointTowardsZero
-            |> int
+            |> uint
         else
             commonPeriodLengths |> Array.sortBy snd |> Array.maxBy snd |> fst
         |> normalise
@@ -119,18 +121,18 @@ module UnitPeriod =
     let numberPerYear =
         function
         | Day -> 365m
-        | Week multiple when multiple > 0 -> 52m / decimal multiple
+        | Week multiple when multiple > 0u -> 52m / decimal multiple
         | SemiMonth -> 24m
-        | Month multiple when multiple > 0 -> 12m / decimal multiple
+        | Month multiple when multiple > 0u -> 12m / decimal multiple
         | _ -> 0m
 
     /// approximate length of unit period in days, used e.g. as the denominator in unit-period fractions
     let roughLength unitPeriod =
         match unitPeriod with
-        | Day -> 1
-        | Week multiple -> 7 * multiple
-        | SemiMonth -> 15
-        | Month multiple -> 30 * multiple
+        | Day -> 1u
+        | Week multiple -> 7u * multiple
+        | SemiMonth -> 15u
+        | Month multiple -> 30u * multiple
 
     /// unit period combined with a start date and multiple where appropriate
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -138,11 +140,11 @@ module UnitPeriod =
         /// daily starting on the given date
         | Daily of StartDate: Date
         /// (multi-)weekly: every n weeks starting on the given date
-        | Weekly of WeekMultiple: int * WeekStartDate: Date
+        | Weekly of WeekMultiple: Count * WeekStartDate: Date
         /// semi-monthly: twice a month starting on the date given by year, month and day 1, with the other day given by day 2
         | SemiMonthly of smYear: int * smMonth: int * Day1: int * Day2: int
         /// (multi-)monthly: every n months starting on the date given by year, month and day, which tracks month-end (see config)
-        | Monthly of MonthMultiple: int * Year: int * Month: int * Day: int
+        | Monthly of MonthMultiple: Count * Year: int * Month: int * Day: int
 
         /// HTML formatting to display the unit-period config in a readable format
         member upc.Html =
@@ -151,13 +153,12 @@ module UnitPeriod =
 
             match upc with
             | Daily sd -> $"daily from %A{sd}"
-            | Weekly(multiple, wsd) when multiple = 1 -> $"weekly from %A{wsd}"
+            | Weekly(multiple, wsd) when multiple = 1u -> $"weekly from %A{wsd}"
             | Weekly(multiple, wsd) -> $"{multiple}-weekly from %A{wsd}"
             | SemiMonthly(y, m, td1, td2) ->
-                $"""semi-monthly from {y}-{m.ToString "00"} on {formatMonthEnd td1} and {formatMonthEnd td2}"""
-            | Monthly(multiple, y, m, d) when multiple = 1 ->
-                $"""monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
-            | Monthly(multiple, y, m, d) -> $"""{multiple}-monthly from {y}-{m.ToString "00"} on {formatMonthEnd d}"""
+                $"""semi-monthly from {y}-{m:``00``} on {formatMonthEnd td1} and {formatMonthEnd td2}"""
+            | Monthly(multiple, y, m, d) when multiple = 1u -> $"""monthly from {y}-{m:``00``} on {formatMonthEnd d}"""
+            | Monthly(multiple, y, m, d) -> $"""{multiple}-monthly from {y}-{m:``00``} on {formatMonthEnd d}"""
 
     /// functions for creating and handling unit-period configs
     module Config =
@@ -269,7 +270,7 @@ module UnitPeriod =
     /// defines the length of a payment schedule, either by the number of payments or by the maximum duration
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduleLength =
-        | PaymentCount of Payments: int
+        | PaymentCount of Payments: Count
         | MaxDuration of StartDate: Date * Days: uint<OffsetDay>
 
         member sl.Html =
@@ -293,24 +294,24 @@ module UnitPeriod =
             else
                 date
 
-        let initCount = 0
+        let initCount = 0u
 
         match unitPeriodConfig |> Config.constrain with
         | Daily firstPaymentDate ->
             match scheduleLength with
             | PaymentCount count ->
                 match direction with
-                | Direction.Forward -> Array.init count (fun i -> firstPaymentDate.AddDays i)
-                | Direction.Reverse -> Array.init count (fun i -> firstPaymentDate.AddDays -i)
+                | Direction.Forward -> Array.init (int count) (fun i -> firstPaymentDate.AddDays i)
+                | Direction.Reverse -> Array.init (int count) (fun i -> firstPaymentDate.AddDays -i)
             | MaxDuration(startDate, duration) ->
                 match direction with
                 | Direction.Forward ->
                     Array.unfold
                         (fun count ->
-                            let nextDate = firstPaymentDate.AddDays count
+                            let nextDate = firstPaymentDate.AddDays +(int count)
 
                             if nextDate <= startDate.AddDays +(int duration) then
-                                Some(nextDate, count + 1)
+                                Some(nextDate, count + 1u)
                             else
                                 None
                         )
@@ -318,10 +319,10 @@ module UnitPeriod =
                 | Direction.Reverse ->
                     Array.unfold
                         (fun count ->
-                            let nextDate = firstPaymentDate.AddDays -count
+                            let nextDate = firstPaymentDate.AddDays -(int count)
 
                             if nextDate <= startDate.AddDays -(int duration) then
-                                Some(nextDate, count - 1)
+                                Some(nextDate, count - 1u)
                             else
                                 None
                         )
@@ -330,17 +331,19 @@ module UnitPeriod =
             match scheduleLength with
             | PaymentCount count ->
                 match direction with
-                | Direction.Forward -> Array.init count (fun i -> firstPaymentDate.AddDays(i * 7 * multiple))
-                | Direction.Reverse -> Array.init count (fun i -> firstPaymentDate.AddDays -(i * 7 * multiple))
+                | Direction.Forward ->
+                    Array.init (int count) (fun i -> firstPaymentDate.AddDays +(i * 7 * int multiple))
+                | Direction.Reverse ->
+                    Array.init (int count) (fun i -> firstPaymentDate.AddDays -(i * 7 * int multiple))
             | MaxDuration(startDate, duration) ->
                 match direction with
                 | Direction.Forward ->
                     Array.unfold
                         (fun i ->
-                            let nextDate = firstPaymentDate.AddDays +(i * 7 * multiple)
+                            let nextDate = firstPaymentDate.AddDays +(int i * 7 * int multiple)
 
                             if nextDate <= startDate.AddDays +(int duration) then
-                                Some(nextDate, i + 1)
+                                Some(nextDate, i + 1u)
                             else
                                 None
                         )
@@ -348,10 +351,10 @@ module UnitPeriod =
                 | Direction.Reverse ->
                     Array.unfold
                         (fun i ->
-                            let nextDate = firstPaymentDate.AddDays -(i * 7 * multiple)
+                            let nextDate = firstPaymentDate.AddDays -(int i * 7 * int multiple)
 
                             if nextDate <= startDate.AddDays -(int duration) then
-                                Some(nextDate, i - 1)
+                                Some(nextDate, i - 1u)
                             else
                                 None
                         )
@@ -369,8 +372,8 @@ module UnitPeriod =
             match scheduleLength with
             | PaymentCount count ->
                 match direction with
-                | Direction.Forward -> [| 0 .. (count - 1) |]
-                | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |]
+                | Direction.Forward -> [| 0 .. (int count - 1) |]
+                | Direction.Reverse -> [| 0 .. -1 .. -(int count - 1) |]
                 |> Array.collect (fun c -> [|
                     firstPaymentDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
 
@@ -378,16 +381,16 @@ module UnitPeriod =
                     |> fun d -> TrackingDay.toDate d.Year d.Month td2
                     |> adjustMonthEnd monthEndTrackingDay
                 |])
-                |> Array.take count
+                |> Array.take (int count)
 
             | MaxDuration(startDate, duration) ->
                 Array.unfold
                     (fun count ->
                         let nextDate1 =
-                            firstPaymentDate.AddMonths count |> adjustMonthEnd monthEndTrackingDay
+                            firstPaymentDate.AddMonths(int count) |> adjustMonthEnd monthEndTrackingDay
 
                         let nextDate2 =
-                            firstPaymentDate.AddMonths(count + offset)
+                            firstPaymentDate.AddMonths(int count + offset)
                             |> fun d -> TrackingDay.toDate d.Year d.Month td2
                             |> adjustMonthEnd monthEndTrackingDay
 
@@ -402,7 +405,7 @@ module UnitPeriod =
                                     yield nextDate2
                             |]
 
-                            if output.Length > 0 then Some(output, count + 1) else None
+                            if output.Length > 0 then Some(output, count + 1u) else None
                         | Direction.Reverse ->
                             let finalPaymentDate = startDate.AddDays -(int duration)
 
@@ -413,7 +416,7 @@ module UnitPeriod =
                                     yield nextDate2
                             |]
 
-                            if output.Length > 0 then Some(output, count - 1) else None
+                            if output.Length > 0 then Some(output, count - 1u) else None
                     )
                     initCount
                 |> Array.collect id
@@ -421,22 +424,27 @@ module UnitPeriod =
             let firstPaymentDate = TrackingDay.toDate year month trackingDay
 
             match scheduleLength with
-            | PaymentCount c ->
+            | PaymentCount count ->
                 match direction with
                 | Direction.Forward ->
-                    Array.init c (fun i -> firstPaymentDate.AddMonths +(i * multiple) |> adjustMonthEnd trackingDay)
+                    Array.init
+                        (int count)
+                        (fun i -> firstPaymentDate.AddMonths +(int i * int multiple) |> adjustMonthEnd trackingDay)
                 | Direction.Reverse ->
-                    Array.init c (fun i -> firstPaymentDate.AddMonths -(i * multiple) |> adjustMonthEnd trackingDay)
+                    Array.init
+                        (int count)
+                        (fun i -> firstPaymentDate.AddMonths -(int i * int multiple) |> adjustMonthEnd trackingDay)
             | MaxDuration(startDate, duration) ->
                 match direction with
                 | Direction.Forward ->
                     Array.unfold
                         (fun count ->
                             let nextDate =
-                                firstPaymentDate.AddMonths +(count * multiple) |> adjustMonthEnd trackingDay
+                                firstPaymentDate.AddMonths +(int count * int multiple)
+                                |> adjustMonthEnd trackingDay
 
                             if nextDate <= startDate.AddDays +(int duration) then
-                                Some(nextDate, count + 1)
+                                Some(nextDate, count + 1u)
                             else
                                 None
                         )
@@ -445,10 +453,11 @@ module UnitPeriod =
                     Array.unfold
                         (fun count ->
                             let nextDate =
-                                firstPaymentDate.AddMonths -(count * multiple) |> adjustMonthEnd trackingDay
+                                firstPaymentDate.AddMonths -(int count * int multiple)
+                                |> adjustMonthEnd trackingDay
 
                             if nextDate <= startDate.AddDays -(int duration) then
-                                Some(nextDate, count - 1)
+                                Some(nextDate, count - 1u)
                             else
                                 None
                         )

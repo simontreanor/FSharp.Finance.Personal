@@ -45,14 +45,13 @@ module Formatting =
 
         $"<thead>{thh}</thead>"
 
-    let internal formatCent = Cent.toDecimal >> _.ToString("N2")
     let internal formatDecimalCent (m: decimal<Cent>) = decimal m / 100m |> _.ToString("N4")
     let internal formatDecimal m = m / 100m |> _.ToString("N4")
     let internal formatInt64 l = decimal l / 100m |> _.ToString("N2")
 
     /// writes a table cell, formatting the value for legibility (optimised for amortisation schedules)
     let internal formatHtmlTableCell (index: int) value =
-        $"""<td class="ci{index.ToString "00"}">{value}</td>"""
+        $"""<td class="ci{index:``00``}">{value}</td>"""
 
     /// writes table rows from an array
     let internal formatHtmlTableRows (propertyInfos: PropertyInfo array) items =

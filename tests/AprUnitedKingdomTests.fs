@@ -24,11 +24,11 @@ module AprUnitedKingdomTests =
 
         [<Fact>]
         let ``APR calculation 1 payment 0L<Cent>`` () =
-            UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [|
+            UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00uL<Cent> [|
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 10, 10)
-                    Value = 500_00L<Cent>
+                    Value = 500_00uL<Cent>
                 }
             |]
             |> getAprOr -1m
@@ -36,11 +36,11 @@ module AprUnitedKingdomTests =
 
         [<Fact>]
         let ``APR calculation 1 payment`` () =
-            UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [|
+            UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00uL<Cent> [|
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 10, 15)
-                    Value = 510_00L<Cent>
+                    Value = 510_00uL<Cent>
                 }
             |]
             |> getAprOr 0m
@@ -48,23 +48,29 @@ module AprUnitedKingdomTests =
 
         [<Fact>]
         let ``APR calculation 2 payments`` () =
-            UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [|
+            UnitedKingdom.calculateApr (Date(2012, 10, 10)) 500_00uL<Cent> [|
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 11, 10)
-                    Value = 270_00L<Cent>
+                    Value = 270_00uL<Cent>
                 }
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 12, 10)
-                    Value = 270_00L<Cent>
+                    Value = 270_00uL<Cent>
                 }
             |]
             |> getAprOr 0m
             |> should (equalWithin 0.001) (Percent 84.63m |> Percent.toDecimal)
 
-    let getParameters (startDate: Date) paymentCount firstPaymentDay interestMethod applyInterestCap : Parameters =
-        let firstPaymentDate = startDate.AddDays firstPaymentDay
+    let getParameters
+        (startDate: Date)
+        paymentCount
+        (firstPaymentDay: uint)
+        interestMethod
+        applyInterestCap
+        : Parameters =
+        let firstPaymentDate = startDate.AddDays(int firstPaymentDay)
 
         let interestCap =
             if applyInterestCap then
@@ -80,10 +86,10 @@ module AprUnitedKingdomTests =
             Basic = {
                 EvaluationDate = startDate
                 StartDate = startDate
-                Principal = 317_26L<Cent>
+                Principal = 317_26uL<Cent>
                 ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Config.defaultMonthly 1 firstPaymentDate
+                        UnitPeriodConfig = Config.defaultMonthly 1u firstPaymentDate
                         ScheduleLength = PaymentCount paymentCount
                     }
                 PaymentConfig = {
@@ -103,7 +109,7 @@ module AprUnitedKingdomTests =
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
-                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Minimum = DeferOrWriteOff 50uL<Cent>
                     Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
@@ -139,7 +145,7 @@ module AprUnitedKingdomTests =
                 basicSchedule
                 |> BasicSchedule.outputHtmlToFile
                     folder
-                    $"""AprUkTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}"""
+                    $"""AprUkTest_fp{firstPaymentDay:``00``}_pc{paymentCount}"""
                     $"UK APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}"
                     p.Basic
 
@@ -179,7 +185,7 @@ module AprUnitedKingdomTests =
 <p><i>{description}</i></p>"""
 
         let parameters =
-            getParameters (Date(2025, 4, 1)) 4 3 interestMethod applyInterestCap
+            getParameters (Date(2025, 4, 1)) 4u 3u interestMethod applyInterestCap
 
         let generalisedBasicParams =
             BasicParameters.toHtmlTable parameters.Basic
@@ -209,8 +215,8 @@ module AprUnitedKingdomTests =
         |> outputToFile' filename false
 
     let startDate = Date(2025, 4, 1)
-    let paymentCounts = [| 4..6 |]
-    let firstPaymentDays = [| 3..32 |]
+    let paymentCounts = [| 4u .. 6u |]
+    let firstPaymentDays = [| 3u .. 32u |]
 
     [<Fact>]
     let AprSpreadsheetActuarial () =
@@ -301,7 +307,7 @@ module AprUnitedKingdomTests =
 
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
-        let p = getParameters startDate 6 23 interestMethod applyInterestCap
+        let p = getParameters startDate 6u 23u interestMethod applyInterestCap
         let schedules = amortise p Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
@@ -314,7 +320,7 @@ module AprUnitedKingdomTests =
 
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = true
-        let p = getParameters startDate 6 24 interestMethod applyInterestCap
+        let p = getParameters startDate 6u 24u interestMethod applyInterestCap
         let schedules = amortise p Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
@@ -327,7 +333,7 @@ module AprUnitedKingdomTests =
 
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
-        let p = getParameters startDate 6 23 interestMethod applyInterestCap
+        let p = getParameters startDate 6u 23u interestMethod applyInterestCap
         let schedules = amortise p Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
@@ -340,6 +346,6 @@ module AprUnitedKingdomTests =
 
         let interestMethod = Interest.Method.AddOn
         let applyInterestCap = false
-        let p = getParameters startDate 6 24 interestMethod applyInterestCap
+        let p = getParameters startDate 6u 24u interestMethod applyInterestCap
         let schedules = amortise p Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules

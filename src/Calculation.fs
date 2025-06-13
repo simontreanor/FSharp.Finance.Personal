@@ -1,6 +1,7 @@
 namespace FSharp.Finance.Personal
 
 open System
+open System.Runtime.CompilerServices
 
 /// convenience functions and options to help with calculations
 module Calculation =
@@ -33,12 +34,9 @@ module Calculation =
             else
                 dr.Quotient + 1
 
-    /// raises a decimal to an int power
-    let internal powi (power: int) (base': decimal) =
+    /// raises a decimal to a power and returns a decimal
+    let inline internal pow power base' =
         decimal (Math.Pow(double base', double power))
-
-    /// raises a decimal to a decimal power
-    let internal powm (power: decimal) (base': decimal) = Math.Pow(double base', double power)
 
     /// the type of rounding, specifying midpoint-rounding where necessary
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -76,11 +74,11 @@ module Calculation =
             | NoRounding -> m
             | RoundDown ->
                 10m
-                |> powi places
+                |> pow places
                 |> fun f -> (if f = 0m then 0m else m * f) |> floor |> (fun m -> m / f)
             | RoundUp ->
                 10m
-                |> powi places
+                |> pow places
                 |> fun f -> (if f = 0m then 0m else m * f) |> ceil |> (fun m -> m / f)
             | RoundWith mpr -> Math.Round(m, places, mpr)
 
@@ -106,7 +104,7 @@ module Calculation =
         /// no fraction
         | Zero
         /// a simple fraction expressed as a numerator and denominator
-        | Simple of Numerator: int * Denominator: int
+        | Simple of Numerator: uint * Denominator: uint
 
     /// a fraction expressed as a numerator and denominator
     module Fraction =
@@ -114,10 +112,14 @@ module Calculation =
             function
             | Fraction.Zero -> 0m
             | Fraction.Simple(numerator, denominator) ->
-                if denominator = 0 then
+                if denominator = 0u then
                     0m
                 else
                     decimal numerator / decimal denominator
+
+    type Count = uint
+
+    type Index = uint
 
     /// the base unit of a currency (cent, penny, øre etc.)
     [<Measure>]
@@ -126,24 +128,59 @@ module Calculation =
     /// utility functions for base currency unit values
     [<RequireQualifiedAccess>]
     module Cent =
+
+        /// an advance or payment
+        type Unsigned = uint64<Cent>
+
+        /// a portion that can be positive (owed) or negative (overpaid/refund due)
+        type Signed = int64<Cent>
+
+        /// a fractional cent value, used for precise interest calculations
+        type PrecisionCent = decimal<Cent>
+
+        let displayUnsigned (u: Unsigned) = $"{decimal u / 100m:N2}"
+
+        let displaySigned (s: Signed) = $"{decimal s / 100m:N2}"
+
+        let displayPrecisionCent (pc: PrecisionCent) = $"{decimal pc / 100m:N4}"
+
         /// derive a rounded cent value from a decimal according to the specified rounding method
         let round rounding (m: decimal) =
             m |> Rounding.round rounding |> int64 |> (*) 1L<Cent>
+
+        let uround rounding (m: decimal) =
+            m |> Rounding.round rounding |> uint64 |> (*) 1uL<Cent>
 
         /// round a decimal cent value to the specified number of places
         let roundTo rounding decimalPlaces (m: decimal<Cent>) =
             m |> decimal |> Rounding.roundTo rounding decimalPlaces |> (*) 1m<Cent>
 
-        /// lower to the base currency unit, e.g. $12.34 -> 1234¢
-        let fromDecimal (m: decimal) =
-            round (RoundWith MidpointRounding.AwayFromZero) (m * 100m)
+        /// raise to the standard currency unit, e.g. 1234¢ -> $12.34
+        let toDecimal c = decimal c / 100m
+
+        /// convert an integer cent value to a decimal cent value, e.g. for precise interest calculation, 1234¢ -> 1234.0000¢
+        let inline toDecimalCent c = decimal c * 1m<Cent>
 
         /// raise to the standard currency unit, e.g. 1234¢ -> $12.34
-        let toDecimal (c: int64<Cent>) = decimal c / 100m
-        /// convert a decimal cent value to an integer cent value, rounding as appropriate, e.g. 1234.5678¢ -> 1234¢ or 1235¢
-        let fromDecimalCent rounding (c: decimal<Cent>) = c |> decimal |> round rounding
-        /// convert an integer cent value to a decimal cent value, e.g. for precise interest calculation, 1234¢ -> 1234.0000¢
-        let toDecimalCent (c: int64<Cent>) = decimal c * 1m<Cent>
+        let inline portionToDecimal (p: Signed) : decimal = decimal p / 100m
+
+        let inline portionToTransfer (p: Signed) : Unsigned = uint64 p * 1uL<Cent>
+
+        /// raise to the standard currency unit, e.g. 1234¢ -> $12.34
+        let inline transferToDecimal (t: Unsigned) : decimal = decimal t / 100m
+
+        let inline transferToPortion (t: Unsigned) : Signed = int64 t * 1L<Cent>
+
+        let inline transferToPrecisionCent (t: Unsigned) : PrecisionCent = decimal t * 1m<Cent>
+
+        /// lower to the base currency unit, e.g. $12.34 -> 1234¢
+        let decimalToTransfer rounding (m: decimal) : Unsigned = m * 100m |> uround rounding
+
+        let precisionToTransfer rounding (p: PrecisionCent) : Unsigned = p |> decimal |> uround rounding
+
+        let precisionToPortion rounding (p: PrecisionCent) : Signed = p |> decimal |> round rounding
+
+        let inline toUnsigned (c: int64<Cent>) = uint64 c * 1uL<Cent>
 
     /// a percentage, e.g. 42%, as opposed to its decimal representation 0.42m
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -179,19 +216,19 @@ module Calculation =
         /// does not constrain values at all
         | NoLimit
         /// prevent values below a certain limit
-        | LowerLimit of int64<Cent>
+        | LowerLimit of Cent.Signed
         /// prevent values above a certain limit
-        | UpperLimit of int64<Cent>
+        | UpperLimit of Cent.Signed
         /// constrain values to within a range
-        | WithinRange of MinValue: int64<Cent> * MaxValue: int64<Cent>
+        | WithinRange of MinValue: Cent.Signed * MaxValue: Cent.Signed
 
         /// HTML formatting to display the restriction in a readable format
         member r.Html =
             match r with
             | NoLimit -> ""
-            | LowerLimit lower -> $"min {Cent.toDecimal lower:N2}"
-            | UpperLimit upper -> $"max {Cent.toDecimal upper:N2}"
-            | WithinRange(lower, upper) -> $"min {Cent.toDecimal lower:N2} max {Cent.toDecimal upper:N2}"
+            | LowerLimit lower -> $"min {Cent.portionToDecimal lower:N2}"
+            | UpperLimit upper -> $"max {Cent.portionToDecimal upper:N2}"
+            | WithinRange(lower, upper) -> $"min {Cent.portionToDecimal lower:N2} max {Cent.portionToDecimal upper:N2}"
 
     /// the type of restriction placed on a possible value
     module Restriction =
@@ -209,7 +246,7 @@ module Calculation =
         /// a percentage of the principal, optionally restricted
         | Percentage of Percent * Restriction
         /// a fixed fee
-        | Simple of int64<Cent>
+        | Simple of Cent.Signed
         /// nothing
         | Unlimited
 
@@ -217,13 +254,16 @@ module Calculation =
         member a.Html =
             match a with
             | Percentage(Percent percent, restriction) -> $"{percent} %% {restriction}".Trim()
-            | Simple simple -> $"{Cent.toDecimal simple:N2}"
+            | Simple simple -> $"{Cent.portionToDecimal simple:N2}"
             | Unlimited -> "<i>n/a</i>"
 
     /// an amount specified either as a simple amount or as a percentage of another amount, optionally restricted to lower and/or upper limits
     module Amount =
         /// calculates the total amount based on any restrictions
-        let total (baseValue: int64<Cent>) amount =
+        let inline total
+            (baseValue: ^T when ^T: (static member op_Explicit: ^T -> decimal))
+            amount
+            : Cent.PrecisionCent =
             match amount with
             | Amount.Percentage(percent, restriction) ->
                 decimal baseValue * Percent.toDecimal percent

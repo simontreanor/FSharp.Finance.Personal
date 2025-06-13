@@ -39,11 +39,11 @@ open UnitPeriod
 let bp: BasicParameters = {
     EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
-    Principal = 1000_00L<Cent>
+    Principal = 1000_00uL<Cent>
     ScheduleConfig =
         AutoGenerateSchedule {
-            UnitPeriodConfig = Monthly(1, 2025, 5, 22)
-            ScheduleLength = PaymentCount 4
+            UnitPeriodConfig = Monthly(1u, 2025, 5, 22)
+            ScheduleLength = PaymentCount 4u
         }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
@@ -186,7 +186,7 @@ let generatePaymentValue (bp: BasicParameters) paymentDays firstItem roughPaymen
             firstItem
 
     let principalBalance = decimal schedule.PrincipalBalance
-    principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
+    principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.transferToDecimal
 
 let initialBasicItem = {
     BasicItem.zero with
@@ -208,7 +208,9 @@ let basicItems =
             paymentMap
             |> Map.map (fun _ sp -> {
                 sp with
-                    Original = sp.Original |> ValueOption.map (fun _ -> paymentValue |> Cent.fromDecimal)
+                    Original =
+                        sp.Original
+                        |> ValueOption.map (fun _ -> paymentValue |> Cent.decimalToTransfer NoRounding)
             })
 
         paymentDays

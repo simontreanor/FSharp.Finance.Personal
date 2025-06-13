@@ -54,7 +54,7 @@ module Fee =
         /// for rescheduled amortisations: fee is rebated proportionately based on the original final payment day
         | ProRataRescheduled of OriginalFinalPaymentDay: uint<OffsetDay>
         /// the current fee balance is rebated
-        | Balance
+        | FeeBalance
 
         /// HTML formatting to display the settlement rebate in a readable format
         member sr.Html =
@@ -62,7 +62,7 @@ module Fee =
             | Zero -> "no rebate"
             | ProRata -> "pro-rata rebate"
             | ProRataRescheduled day -> $"pro rata rebate (based on day {day})"
-            | Balance -> "balance rebate"
+            | FeeBalance -> "fee balance rebate"
 
     /// how to handle any fee when rescheduling or rolling over
     [<Struct>]
@@ -121,7 +121,7 @@ module Fee =
             | ValueNone -> "no fee"
 
     /// calculates the total fee based on the fee configuration
-    let total feeConfig baseValue =
+    let total feeConfig (principal: Cent.Unsigned) =
         feeConfig
         |> ValueOption.map (fun fc ->
             match fc.FeeType with
@@ -129,7 +129,7 @@ module Fee =
             | CabOrCsoFee amt
             | MortageFee amt
             | CustomFee(_, amt) -> amt
-            |> Amount.total baseValue
-            |> Cent.fromDecimalCent fc.Rounding
+            |> Amount.total principal
+            |> Cent.precisionToTransfer fc.Rounding
         )
-        |> ValueOption.defaultValue 0L<Cent>
+        |> ValueOption.defaultValue 0uL<Cent>

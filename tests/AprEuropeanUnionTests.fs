@@ -23,11 +23,11 @@ module AprEuropeanUnionTests =
 
         [<Fact>]
         let ``APR calculation 1 payment 0L<Cent>`` () =
-            EuropeanUnion.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [|
+            EuropeanUnion.calculateApr (Date(2012, 10, 10)) 500_00uL<Cent> [|
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 10, 10)
-                    Value = 500_00L<Cent>
+                    Value = 500_00uL<Cent>
                 }
             |]
             |> getAprOr -1m
@@ -35,11 +35,11 @@ module AprEuropeanUnionTests =
 
         [<Fact>]
         let ``APR calculation 1 payment`` () =
-            EuropeanUnion.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [|
+            EuropeanUnion.calculateApr (Date(2012, 10, 10)) 500_00uL<Cent> [|
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 10, 15)
-                    Value = 510_00L<Cent>
+                    Value = 510_00uL<Cent>
                 }
             |]
             |> getAprOr 0m
@@ -47,23 +47,29 @@ module AprEuropeanUnionTests =
 
         [<Fact>]
         let ``APR calculation 2 payments`` () =
-            EuropeanUnion.calculateApr (Date(2012, 10, 10)) 500_00L<Cent> [|
+            EuropeanUnion.calculateApr (Date(2012, 10, 10)) 500_00uL<Cent> [|
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 11, 10)
-                    Value = 270_00L<Cent>
+                    Value = 270_00uL<Cent>
                 }
                 {
                     TransferType = Payment
                     TransferDate = Date(2012, 12, 10)
-                    Value = 270_00L<Cent>
+                    Value = 270_00uL<Cent>
                 }
             |]
             |> getAprOr 0m
             |> should (equalWithin 0.001) (Percent 84.63m |> Percent.toDecimal)
 
-    let getParameters (startDate: Date) paymentCount firstPaymentDay interestMethod applyInterestCap : Parameters =
-        let firstPaymentDate = startDate.AddDays firstPaymentDay
+    let getParameters
+        (startDate: Date)
+        paymentCount
+        (firstPaymentDay: uint)
+        interestMethod
+        applyInterestCap
+        : Parameters =
+        let firstPaymentDate = startDate.AddDays(int firstPaymentDay)
 
         let interestCap =
             if applyInterestCap then
@@ -79,10 +85,10 @@ module AprEuropeanUnionTests =
             Basic = {
                 EvaluationDate = startDate
                 StartDate = startDate
-                Principal = 317_26L<Cent>
+                Principal = 317_26uL<Cent>
                 ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Config.defaultMonthly 1 firstPaymentDate
+                        UnitPeriodConfig = Config.defaultMonthly 1u firstPaymentDate
                         ScheduleLength = PaymentCount paymentCount
                     }
                 PaymentConfig = {
@@ -102,7 +108,7 @@ module AprEuropeanUnionTests =
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
-                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Minimum = DeferOrWriteOff 50uL<Cent>
                     Timeout = 3u<OffsetDay>
                 }
                 FeeConfig = ValueNone
@@ -138,7 +144,7 @@ module AprEuropeanUnionTests =
                 basicSchedule
                 |> BasicSchedule.outputHtmlToFile
                     folder
-                    $"""AprEuTest_fp{firstPaymentDay.ToString "00"}_pc{paymentCount}"""
+                    $"AprEuTest_fp{firstPaymentDay:``00``}_pc{paymentCount}"
                     $"EU APR test amortisation schedule, first payment day {firstPaymentDay}, payment count {paymentCount}"
                     p.Basic
 
@@ -178,7 +184,7 @@ module AprEuropeanUnionTests =
 <p><i>{description}</i></p>"""
 
         let parameters =
-            getParameters (Date(2025, 4, 1)) 4 3 interestMethod applyInterestCap
+            getParameters (Date(2025, 4, 1)) 4u 3u interestMethod applyInterestCap
 
         let generalisedBasicParams =
             BasicParameters.toHtmlTable parameters.Basic
@@ -208,8 +214,8 @@ module AprEuropeanUnionTests =
         |> outputToFile' filename false
 
     let startDate = Date(2025, 4, 1)
-    let paymentCounts = [| 4..6 |]
-    let firstPaymentDays = [| 3..32 |]
+    let paymentCounts = [| 4u .. 6u |]
+    let firstPaymentDays = [| 3u .. 32u |]
 
     [<Fact>]
     let AprSpreadsheetActuarial () =

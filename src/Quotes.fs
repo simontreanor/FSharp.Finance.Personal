@@ -12,11 +12,11 @@ module Quotes =
     /// a quote containing information on the payment required to settle
     type PaymentQuote = {
         // the value of the payment
-        PaymentValue: int64<Cent>
+        PaymentValue: Cent.Signed
         // how the payment is apportioned to charges, interest, fee, and principal
         Apportionment: Apportionment
         // the value of any fee rebate that would be due if settled
-        FeeRebateIfSettled: int64<Cent>
+        FeeRebateIfSettled: Cent.Unsigned
     }
 
     /// the result of a quote with a breakdown of constituent amounts where relevant
@@ -39,7 +39,7 @@ module Quotes =
     }
 
     /// calculates a revised schedule showing the generated payment for the given quote type
-    let getQuote (p: Parameters) (actualPayments: Map<uint<OffsetDay>, Map<int, ActualPayment>>) =
+    let getQuote (p: Parameters) (actualPayments: Map<uint<OffsetDay>, Map<Index, ActualPayment>>) =
         // generate a revised statement showing a generated settlement figure on the relevant date
         let schedules =
             amortise

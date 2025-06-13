@@ -24,8 +24,8 @@ module AprActuarialTestsExtra =
 
     type AprUsActuarialTestItem = {
         StartDate: Date
-        Principal: int64<Cent>
-        PaymentValue: int64<Cent>
+        Principal: Cent.Unsigned
+        PaymentValue: Cent.Unsigned
         PaymentDates: Date array
         ExpectedApr: Percent
         ActualApr: Percent
@@ -36,8 +36,8 @@ module AprActuarialTestsExtra =
         |> JsonSerializer.Deserialize<AprUsActuarialTestItemDto array>
         |> Array.choose (fun ssi ->
             let startDate = ssi.StartDate |> fun d -> Date(d.Year, d.Month, d.Day)
-            let principal = Cent.fromDecimal ssi.Principal
-            let paymentValue = Cent.fromDecimal ssi.PaymentValue
+            let principal = Cent.decimalToTransfer NoRounding ssi.Principal
+            let paymentValue = Cent.decimalToTransfer NoRounding ssi.PaymentValue
 
             let paymentDates =
                 ssi.PaymentDates |> Array.map (fun d -> Date(d.Year, d.Month, d.Day))

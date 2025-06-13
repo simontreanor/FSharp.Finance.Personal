@@ -22,14 +22,14 @@ module EdgeCaseTests =
         Basic = {
             EvaluationDate = Date(2024, 3, 12)
             StartDate = Date(2023, 2, 9)
-            Principal = 30000L<Cent>
+            Principal = 30000uL<Cent>
             ScheduleConfig =
                 CustomSchedule
                 <| Map [
-                    15u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40L<Cent>) ValueNone
-                    43u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40L<Cent>) ValueNone
-                    74u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40L<Cent>) ValueNone
-                    104u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40L<Cent>) ValueNone
+                    15u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40uL<Cent>) ValueNone
+                    43u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40uL<Cent>) ValueNone
+                    74u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40uL<Cent>) ValueNone
+                    104u<OffsetDay>, ScheduledPayment.quick (ValueSome 137_40uL<Cent>) ValueNone
                 ]
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -53,7 +53,7 @@ module EdgeCaseTests =
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
-                Minimum = DeferOrWriteOff 50L<Cent>
+                Minimum = DeferOrWriteOff 50uL<Cent>
                 Timeout = 3u<OffsetDay>
             }
             FeeConfig =
@@ -77,7 +77,7 @@ module EdgeCaseTests =
         let description = "Quote returning nothing"
 
         let actualPayments =
-            Map [ 5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 31200L<Cent> ] ]
+            Map [ 5u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 31200uL<Cent> ] ]
 
         let actual =
             let quote = getQuote parameters1 actualPayments
@@ -96,7 +96,7 @@ module EdgeCaseTests =
                     InterestPortion = 48_34L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -109,19 +109,19 @@ module EdgeCaseTests =
         let p = {
             parameters1 with
                 Basic.StartDate = Date(2022, 2, 2)
-                Basic.Principal = 25000L<Cent>
+                Basic.Principal = 25000uL<Cent>
                 Basic.ScheduleConfig =
                     CustomSchedule
                     <| Map [
-                        16u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500L<Cent>) ValueNone
-                        44u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500L<Cent>) ValueNone
-                        75u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500L<Cent>) ValueNone
-                        105u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500L<Cent>) ValueNone
+                        16u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500uL<Cent>) ValueNone
+                        44u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500uL<Cent>) ValueNone
+                        75u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500uL<Cent>) ValueNone
+                        105u<OffsetDay>, ScheduledPayment.quick (ValueSome 11500uL<Cent>) ValueNone
                     ]
         }
 
         let actualPayments =
-            Map [ 5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 26000L<Cent> ] ]
+            Map [ 5u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 26000uL<Cent> ] ]
 
         let actual =
             let quote = getQuote p actualPayments
@@ -139,7 +139,7 @@ module EdgeCaseTests =
                     InterestPortion = 78_52L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -152,19 +152,19 @@ module EdgeCaseTests =
         let p = {
             parameters1 with
                 Basic.StartDate = Date(2022, 12, 2)
-                Basic.Principal = 75000L<Cent>
+                Basic.Principal = 75000uL<Cent>
                 Basic.ScheduleConfig =
                     CustomSchedule
                     <| Map [
-                        14u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350L<Cent>) ValueNone
-                        45u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350L<Cent>) ValueNone
-                        76u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350L<Cent>) ValueNone
-                        104u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350L<Cent>) ValueNone
+                        14u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350uL<Cent>) ValueNone
+                        45u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350uL<Cent>) ValueNone
+                        76u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350uL<Cent>) ValueNone
+                        104u<OffsetDay>, ScheduledPayment.quick (ValueSome 34350uL<Cent>) ValueNone
                     ]
         }
 
         let actualPayments =
-            Map [ 13u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 82800L<Cent> ] ]
+            Map [ 13u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 82800uL<Cent> ] ]
 
         let actual =
             let quote = getQuote p actualPayments
@@ -182,7 +182,7 @@ module EdgeCaseTests =
                     InterestPortion = 134_26L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -195,92 +195,92 @@ module EdgeCaseTests =
         let p = {
             parameters1 with
                 Basic.StartDate = Date(2020, 10, 8)
-                Basic.Principal = 50000L<Cent>
+                Basic.Principal = 50000uL<Cent>
                 Basic.ScheduleConfig =
                     CustomSchedule
                     <| Map [
-                        8u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        39u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        69u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        100u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        214u<OffsetDay>, ScheduledPayment.quick (ValueSome 25000L<Cent>) ValueNone
-                        245u<OffsetDay>, ScheduledPayment.quick (ValueSome 27600L<Cent>) ValueNone
+                        8u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        39u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        69u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        100u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        214u<OffsetDay>, ScheduledPayment.quick (ValueSome 25000uL<Cent>) ValueNone
+                        245u<OffsetDay>, ScheduledPayment.quick (ValueSome 27600uL<Cent>) ValueNone
                     ]
         }
 
         let actualPayments =
             Map.merge [|
-                8u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                8u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                8u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                11u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                11u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                11u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                14u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                14u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                14u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                39u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                39u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                39u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                42u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                42u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                42u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                45u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                45u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                45u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                69u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                69u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                69u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                72u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 22500L<Cent> |]
-                72u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                72u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                75u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                75u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                75u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                100u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                100u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                100u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                103u<OffsetDay>, [| 0, ActualPayment.quickFailed 23700L<Cent> ValueNone |]
-                103u<OffsetDay>, [| 1, ActualPayment.quickFailed 23700L<Cent> ValueNone |]
-                103u<OffsetDay>, [| 2, ActualPayment.quickFailed 23700L<Cent> ValueNone |]
-                106u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 24900L<Cent> |]
-                106u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                106u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                214u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                214u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                214u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                217u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                217u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                217u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                220u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                220u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                220u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 3, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                248u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                248u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                248u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                251u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                251u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                251u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                379u<OffsetDay>, [| 0, ActualPayment.quickFailed 17500L<Cent> ValueNone |]
-                379u<OffsetDay>, [| 1, ActualPayment.quickFailed 17500L<Cent> ValueNone |]
-                379u<OffsetDay>, [| 2, ActualPayment.quickFailed 17500L<Cent> ValueNone |]
-                380u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17500L<Cent> |]
-                407u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17500L<Cent> |]
-                435u<OffsetDay>, [| 0, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                435u<OffsetDay>, [| 1, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                435u<OffsetDay>, [| 2, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                435u<OffsetDay>, [| 3, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                438u<OffsetDay>, [| 0, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                438u<OffsetDay>, [| 1, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                438u<OffsetDay>, [| 2, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                441u<OffsetDay>, [| 0, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                441u<OffsetDay>, [| 1, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                441u<OffsetDay>, [| 2, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                475u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17600L<Cent> |]
+                8u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                8u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                8u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                11u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                11u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                11u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                14u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                14u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                14u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                39u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                39u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                39u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                42u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                42u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                42u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                45u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                45u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                45u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                69u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                69u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                69u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                72u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 22500uL<Cent> |]
+                72u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                72u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                75u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                75u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                75u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                100u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                100u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                100u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                103u<OffsetDay>, [| 0u, ActualPayment.quickFailed 23700uL<Cent> ValueNone |]
+                103u<OffsetDay>, [| 1u, ActualPayment.quickFailed 23700uL<Cent> ValueNone |]
+                103u<OffsetDay>, [| 2u, ActualPayment.quickFailed 23700uL<Cent> ValueNone |]
+                106u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 24900uL<Cent> |]
+                106u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                106u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                214u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                214u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                214u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                217u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                217u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                217u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                220u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                220u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                220u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 3u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                248u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                248u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                248u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                251u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                251u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                251u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                379u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17500uL<Cent> ValueNone |]
+                379u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17500uL<Cent> ValueNone |]
+                379u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17500uL<Cent> ValueNone |]
+                380u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17500uL<Cent> |]
+                407u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17500uL<Cent> |]
+                435u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                435u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                435u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                435u<OffsetDay>, [| 3u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                438u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                438u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                438u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                441u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                441u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                441u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                475u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17600uL<Cent> |]
             |]
 
         let actual =
@@ -299,7 +299,7 @@ module EdgeCaseTests =
                     InterestPortion = 81_43L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -312,16 +312,16 @@ module EdgeCaseTests =
         let p = {
             parameters1 with
                 Basic.StartDate = Date(2020, 10, 8)
-                Basic.Principal = 50000L<Cent>
+                Basic.Principal = 50000uL<Cent>
                 Basic.ScheduleConfig =
                     CustomSchedule
                     <| Map [
-                        8u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        39u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        69u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        100u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500L<Cent>) ValueNone
-                        214u<OffsetDay>, ScheduledPayment.quick (ValueSome 25000L<Cent>) ValueNone
-                        245u<OffsetDay>, ScheduledPayment.quick (ValueSome 27600L<Cent>) ValueNone
+                        8u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        39u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        69u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        100u<OffsetDay>, ScheduledPayment.quick (ValueSome 22500uL<Cent>) ValueNone
+                        214u<OffsetDay>, ScheduledPayment.quick (ValueSome 25000uL<Cent>) ValueNone
+                        245u<OffsetDay>, ScheduledPayment.quick (ValueSome 27600uL<Cent>) ValueNone
                     ]
                 Advanced.ChargeConfig =
                     Some {
@@ -329,7 +329,7 @@ module EdgeCaseTests =
                             Map [
                                 Charge.InsufficientFunds,
                                 {
-                                    Value = 10_00L<Cent>
+                                    Value = 10_00uL<Cent>
                                     ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
                                     ChargeHolidays = [||]
                                 }
@@ -341,84 +341,84 @@ module EdgeCaseTests =
             Map.merge [|
                 8u<OffsetDay>,
                 [|
-                    0, ActualPayment.quickFailed 22500L<Cent> (ValueSome Charge.InsufficientFunds)
+                    0u, ActualPayment.quickFailed 22500uL<Cent> (ValueSome Charge.InsufficientFunds)
                 |]
                 8u<OffsetDay>,
                 [|
-                    1, ActualPayment.quickFailed 22500L<Cent> (ValueSome Charge.InsufficientFunds)
+                    1u, ActualPayment.quickFailed 22500uL<Cent> (ValueSome Charge.InsufficientFunds)
                 |]
                 8u<OffsetDay>,
                 [|
-                    2, ActualPayment.quickFailed 22500L<Cent> (ValueSome Charge.InsufficientFunds)
+                    2u, ActualPayment.quickFailed 22500uL<Cent> (ValueSome Charge.InsufficientFunds)
                 |]
-                11u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                11u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                11u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                14u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                14u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                14u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                39u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                39u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                39u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                42u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                42u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                42u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                45u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                45u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                45u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                69u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                69u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                69u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                72u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 22500L<Cent> |]
-                72u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                72u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                75u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                75u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                75u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                100u<OffsetDay>, [| 0, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                100u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                100u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                103u<OffsetDay>, [| 0, ActualPayment.quickFailed 23700L<Cent> ValueNone |]
-                103u<OffsetDay>, [| 1, ActualPayment.quickFailed 23700L<Cent> ValueNone |]
-                103u<OffsetDay>, [| 2, ActualPayment.quickFailed 23700L<Cent> ValueNone |]
-                106u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 24900L<Cent> |]
-                106u<OffsetDay>, [| 1, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                106u<OffsetDay>, [| 2, ActualPayment.quickFailed 22500L<Cent> ValueNone |]
-                214u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                214u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                214u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                217u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                217u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                217u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                220u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                220u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                220u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                245u<OffsetDay>, [| 3, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                248u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                248u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                248u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                251u<OffsetDay>, [| 0, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                251u<OffsetDay>, [| 1, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                251u<OffsetDay>, [| 2, ActualPayment.quickFailed 25000L<Cent> ValueNone |]
-                379u<OffsetDay>, [| 0, ActualPayment.quickFailed 17500L<Cent> ValueNone |]
-                379u<OffsetDay>, [| 1, ActualPayment.quickFailed 17500L<Cent> ValueNone |]
-                379u<OffsetDay>, [| 2, ActualPayment.quickFailed 17500L<Cent> ValueNone |]
-                380u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17500L<Cent> |]
-                407u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17500L<Cent> |]
-                435u<OffsetDay>, [| 0, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                435u<OffsetDay>, [| 1, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                435u<OffsetDay>, [| 2, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                435u<OffsetDay>, [| 3, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                438u<OffsetDay>, [| 0, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                438u<OffsetDay>, [| 1, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                438u<OffsetDay>, [| 2, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                441u<OffsetDay>, [| 0, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                441u<OffsetDay>, [| 1, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                441u<OffsetDay>, [| 2, ActualPayment.quickFailed 17600L<Cent> ValueNone |]
-                475u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17600L<Cent> |]
+                11u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                11u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                11u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                14u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                14u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                14u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                39u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                39u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                39u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                42u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                42u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                42u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                45u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                45u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                45u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                69u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                69u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                69u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                72u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 22500uL<Cent> |]
+                72u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                72u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                75u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                75u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                75u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                100u<OffsetDay>, [| 0u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                100u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                100u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                103u<OffsetDay>, [| 0u, ActualPayment.quickFailed 23700uL<Cent> ValueNone |]
+                103u<OffsetDay>, [| 1u, ActualPayment.quickFailed 23700uL<Cent> ValueNone |]
+                103u<OffsetDay>, [| 2u, ActualPayment.quickFailed 23700uL<Cent> ValueNone |]
+                106u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 24900uL<Cent> |]
+                106u<OffsetDay>, [| 1u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                106u<OffsetDay>, [| 2u, ActualPayment.quickFailed 22500uL<Cent> ValueNone |]
+                214u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                214u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                214u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                217u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                217u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                217u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                220u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                220u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                220u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                245u<OffsetDay>, [| 3u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                248u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                248u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                248u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                251u<OffsetDay>, [| 0u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                251u<OffsetDay>, [| 1u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                251u<OffsetDay>, [| 2u, ActualPayment.quickFailed 25000uL<Cent> ValueNone |]
+                379u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17500uL<Cent> ValueNone |]
+                379u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17500uL<Cent> ValueNone |]
+                379u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17500uL<Cent> ValueNone |]
+                380u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17500uL<Cent> |]
+                407u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17500uL<Cent> |]
+                435u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                435u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                435u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                435u<OffsetDay>, [| 3u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                438u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                438u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                438u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                441u<OffsetDay>, [| 0u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                441u<OffsetDay>, [| 1u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                441u<OffsetDay>, [| 2u, ActualPayment.quickFailed 17600uL<Cent> ValueNone |]
+                475u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17600uL<Cent> |]
             |]
 
         let actual =
@@ -437,7 +437,7 @@ module EdgeCaseTests =
                     InterestPortion = 83_79L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -445,11 +445,11 @@ module EdgeCaseTests =
     let parameters2 = {
         parameters1 with
             Basic.StartDate = Date(2022, 6, 22)
-            Basic.Principal = 500_00L<Cent>
+            Basic.Principal = 500_00uL<Cent>
             Basic.ScheduleConfig =
                 AutoGenerateSchedule {
-                    UnitPeriodConfig = Monthly(1, 2022, 7, 15)
-                    ScheduleLength = PaymentCount 6
+                    UnitPeriodConfig = Monthly(1u, 2022, 7, 15)
+                    ScheduleLength = PaymentCount 6u
                 }
             Basic.FeeConfig = ValueNone
             Basic.InterestConfig = {
@@ -477,82 +477,82 @@ module EdgeCaseTests =
 
         let actualPayments =
             Map.merge [|
-                23u<OffsetDay>, [| 0, ActualPayment.quickFailed 166_67L<Cent> ValueNone |]
-                23u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                23u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                26u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                26u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                26u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                29u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                29u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                29u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                54u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                54u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                54u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                57u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                57u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                57u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                60u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                60u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                60u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                85u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                85u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                85u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                88u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                88u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                88u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                91u<OffsetDay>, [| 0, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                91u<OffsetDay>, [| 1, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                91u<OffsetDay>, [| 2, ActualPayment.quickFailed 66_67L<Cent> ValueNone |]
-                135u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 83_33L<Cent> |]
-                165u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 83_33L<Cent> |]
-                196u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                196u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                196u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                199u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                199u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                199u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                202u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                202u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                202u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                227u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                227u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                227u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                230u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                230u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                230u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                233u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                233u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                233u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                255u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                255u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                255u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                258u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                258u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                258u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                261u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                261u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                261u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                286u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                286u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                286u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                289u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                289u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                289u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                292u<OffsetDay>, [| 0, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                292u<OffsetDay>, [| 1, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                292u<OffsetDay>, [| 2, ActualPayment.quickFailed 83_33L<Cent> ValueNone |]
-                322u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17_58L<Cent> |]
-                353u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17_58L<Cent> |]
-                384u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17_58L<Cent> |]
-                408u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17_58L<Cent> |]
-                449u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17_58L<Cent> |]
-                476u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 17_58L<Cent> |]
-                499u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 15_74L<Cent> |]
-                531u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 15_74L<Cent> |]
-                574u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 15_74L<Cent> |]
-                595u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 15_74L<Cent> |]
-                629u<OffsetDay>, [| 0, ActualPayment.quickConfirmed 15_74L<Cent> |]
+                23u<OffsetDay>, [| 0u, ActualPayment.quickFailed 166_67uL<Cent> ValueNone |]
+                23u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                23u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                26u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                26u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                26u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                29u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                29u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                29u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                54u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                54u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                54u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                57u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                57u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                57u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                60u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                60u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                60u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                85u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                85u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                85u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                88u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                88u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                88u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                91u<OffsetDay>, [| 0u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                91u<OffsetDay>, [| 1u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                91u<OffsetDay>, [| 2u, ActualPayment.quickFailed 66_67uL<Cent> ValueNone |]
+                135u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 83_33uL<Cent> |]
+                165u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 83_33uL<Cent> |]
+                196u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                196u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                196u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                199u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                199u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                199u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                202u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                202u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                202u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                227u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                227u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                227u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                230u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                230u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                230u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                233u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                233u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                233u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                255u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                255u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                255u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                258u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                258u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                258u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                261u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                261u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                261u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                286u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                286u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                286u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                289u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                289u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                289u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                292u<OffsetDay>, [| 0u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                292u<OffsetDay>, [| 1u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                292u<OffsetDay>, [| 2u, ActualPayment.quickFailed 83_33uL<Cent> ValueNone |]
+                322u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17_58uL<Cent> |]
+                353u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17_58uL<Cent> |]
+                384u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17_58uL<Cent> |]
+                408u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17_58uL<Cent> |]
+                449u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17_58uL<Cent> |]
+                476u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 17_58uL<Cent> |]
+                499u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 15_74uL<Cent> |]
+                531u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 15_74uL<Cent> |]
+                574u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 15_74uL<Cent> |]
+                595u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 15_74uL<Cent> |]
+                629u<OffsetDay>, [| 0u, ActualPayment.quickConfirmed 15_74uL<Cent> |]
             |]
 
         let actual =
@@ -572,7 +572,7 @@ module EdgeCaseTests =
                     InterestPortion = 149_16L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -585,11 +585,11 @@ module EdgeCaseTests =
         let p = {
             parameters2 with
                 Basic.StartDate = Date(2021, 12, 26)
-                Basic.Principal = 150000L<Cent>
+                Basic.Principal = 150000uL<Cent>
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Monthly(1, 2022, 1, 7)
-                        ScheduleLength = PaymentCount 6
+                        UnitPeriodConfig = Monthly(1u, 2022, 1, 7)
+                        ScheduleLength = PaymentCount 6u
                     }
         }
 
@@ -597,21 +597,21 @@ module EdgeCaseTests =
             Map [
                 12u<OffsetDay>,
                 Map [
-                    0700, ActualPayment.quickFailed 500_00L<Cent> ValueNone
-                    0800, ActualPayment.quickFailed 500_00L<Cent> ValueNone
+                    0700u, ActualPayment.quickFailed 500_00uL<Cent> ValueNone
+                    0800u, ActualPayment.quickFailed 500_00uL<Cent> ValueNone
                 ]
                 15u<OffsetDay>,
                 Map [
-                    0700, ActualPayment.quickFailed 500_00L<Cent> ValueNone
-                    0800, ActualPayment.quickFailed 500_00L<Cent> ValueNone
-                    1514, ActualPayment.quickConfirmed 500_00L<Cent>
+                    0700u, ActualPayment.quickFailed 500_00uL<Cent> ValueNone
+                    0800u, ActualPayment.quickFailed 500_00uL<Cent> ValueNone
+                    1514u, ActualPayment.quickConfirmed 500_00uL<Cent>
                 ]
                 43u<OffsetDay>,
                 Map [
-                    0700, ActualPayment.quickFailed 500_00L<Cent> ValueNone
-                    0800, ActualPayment.quickFailed 500_00L<Cent> ValueNone
+                    0700u, ActualPayment.quickFailed 500_00uL<Cent> ValueNone
+                    0800u, ActualPayment.quickFailed 500_00uL<Cent> ValueNone
                 ]
-                45u<OffsetDay>, Map [ 1958, ActualPayment.quickConfirmed 1540_00L<Cent> ]
+                45u<OffsetDay>, Map [ 1958u, ActualPayment.quickConfirmed 1540_00uL<Cent> ]
             ]
 
         let actual =
@@ -630,7 +630,7 @@ module EdgeCaseTests =
                     InterestPortion = 0L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -645,21 +645,21 @@ module EdgeCaseTests =
             parameters2 with
                 Basic.EvaluationDate = Date(2024, 4, 30)
                 Basic.StartDate = Date(2024, 2, 2)
-                Basic.Principal = 25000L<Cent>
+                Basic.Principal = 25000uL<Cent>
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Monthly(1, 2024, 2, 22)
-                        ScheduleLength = PaymentCount 4
+                        UnitPeriodConfig = Monthly(1u, 2024, 2, 22)
+                        ScheduleLength = PaymentCount 4u
                     }
         }
 
         let actualPayments =
             Map [
-                6u<OffsetDay>, Map [ 070000, ActualPayment.quickFailed 2_00L<Cent> ValueNone ]
+                6u<OffsetDay>, Map [ 070000u, ActualPayment.quickFailed 2_00uL<Cent> ValueNone ]
                 16u<OffsetDay>,
                 Map [
-                    083013, ActualPayment.quickConfirmed 97_01L<Cent>
-                    083014, ActualPayment.quickConfirmed 97_01L<Cent>
+                    083013u, ActualPayment.quickConfirmed 97_01uL<Cent>
+                    083014u, ActualPayment.quickConfirmed 97_01uL<Cent>
                 ]
             ]
 
@@ -674,7 +674,7 @@ module EdgeCaseTests =
                     ScheduledPayment.quick
                         ValueNone
                         (ValueSome {
-                            Value = 5000L<Cent>
+                            Value = 5000uL<Cent>
                             RescheduleDay = rescheduleDay
                         })
                 ]
@@ -698,8 +698,8 @@ module EdgeCaseTests =
                 OffsetDate = Date(2024, 4, 30)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 4
-                PaymentDue = 0L<Cent>
+                Window = 4u
+                PaymentDue = 0uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = GeneratedValue 138_65L<Cent>
@@ -713,13 +713,13 @@ module EdgeCaseTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 50_67L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -733,21 +733,21 @@ module EdgeCaseTests =
             parameters2 with
                 Basic.EvaluationDate = Date(2024, 4, 30)
                 Basic.StartDate = Date(2024, 2, 2)
-                Basic.Principal = 25000L<Cent>
+                Basic.Principal = 25000uL<Cent>
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Monthly(1, 2024, 2, 22)
-                        ScheduleLength = PaymentCount 4
+                        UnitPeriodConfig = Monthly(1u, 2024, 2, 22)
+                        ScheduleLength = PaymentCount 4u
                     }
         }
 
         let actualPayments =
             Map [
-                6u<OffsetDay>, Map [ 070000, ActualPayment.quickWriteOff 42_00L<Cent> ]
+                6u<OffsetDay>, Map [ 070000u, ActualPayment.quickWrittenOff 42_00uL<Cent> ]
                 16u<OffsetDay>,
                 Map [
-                    083013, ActualPayment.quickConfirmed 97_01L<Cent>
-                    083014, ActualPayment.quickConfirmed 97_01L<Cent>
+                    083013u, ActualPayment.quickConfirmed 97_01uL<Cent>
+                    083014u, ActualPayment.quickConfirmed 97_01uL<Cent>
                 ]
             ]
 
@@ -762,7 +762,7 @@ module EdgeCaseTests =
                     ScheduledPayment.quick
                         ValueNone
                         (ValueSome {
-                            Value = 5000L<Cent>
+                            Value = 5000uL<Cent>
                             RescheduleDay = rescheduleDay
                         })
                 ]
@@ -786,8 +786,8 @@ module EdgeCaseTests =
                 OffsetDate = Date(2024, 4, 30)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 4
-                PaymentDue = 0L<Cent>
+                Window = 4u
+                PaymentDue = 0uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = GeneratedValue 68_68L<Cent>
@@ -801,13 +801,13 @@ module EdgeCaseTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 25_10L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -821,19 +821,19 @@ module EdgeCaseTests =
             parameters2 with
                 Basic.EvaluationDate = Date(2024, 4, 5)
                 Basic.StartDate = Date(2023, 5, 5)
-                Basic.Principal = 25000L<Cent>
+                Basic.Principal = 25000uL<Cent>
                 Basic.ScheduleConfig =
                     AutoGenerateSchedule {
-                        UnitPeriodConfig = Monthly(1, 2023, 5, 10)
-                        ScheduleLength = PaymentCount 4
+                        UnitPeriodConfig = Monthly(1u, 2023, 5, 10)
+                        ScheduleLength = PaymentCount 4u
                     }
                 Advanced.InterestConfig.RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
         }
 
         let actualPayments =
             Map [
-                5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 111_00L<Cent> ]
-                21u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 181_01L<Cent> ]
+                5u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 111_00uL<Cent> ]
+                21u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 181_01uL<Cent> ]
             ]
 
         let schedules = actualPayments |> amortise p
@@ -849,8 +849,8 @@ module EdgeCaseTests =
                 OffsetDate = Date(2024, 4, 5)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 11
-                PaymentDue = 0L<Cent>
+                Window = 11u
+                PaymentDue = 0uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = NoGeneratedPayment
@@ -864,13 +864,13 @@ module EdgeCaseTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = -12_94L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = -89.3391781m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = -13_84L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected

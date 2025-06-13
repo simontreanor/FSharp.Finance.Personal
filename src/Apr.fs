@@ -44,7 +44,7 @@ module Apr =
         /// the date of the transfer
         TransferDate: Date
         /// the amount of the transfer
-        Value: int64<Cent>
+        Value: Cent.Unsigned
     }
 
     /// an approximation of the unit-period equivalent of the APR
@@ -62,8 +62,8 @@ module Apr =
     /// which is equivalent to
     ///
     /// $$\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}$$
-    let internal calculateAprEuUk (startDate: Date) (principal: int64<Cent>) transfers =
-        if principal = 0L<Cent> || Array.isEmpty transfers then
+    let internal calculateAprEuUk (startDate: Date) (principal: Cent.Unsigned) transfers =
+        if principal = 0uL<Cent> || Array.isEmpty transfers then
             Solution.Impossible
         else
             let payments = transfers |> Array.filter (fun t -> t.TransferType = Payment)
@@ -73,8 +73,8 @@ module Apr =
                 Solution.Found(0m, 0, 0m)
             else
                 let paymentCount = payments |> Array.length |> decimal
-                let principalM = Cent.toDecimal principal
-                let interestTotal = Cent.toDecimal paymentTotal - principalM
+                let principalM = Cent.transferToDecimal principal
+                let interestTotal = Cent.transferToDecimal paymentTotal - principalM
                 let roughUnitPeriodRate = roughUnitPeriodRate principalM interestTotal paymentCount
                 let advanceIntervals = [| principal, 0m |]
 
@@ -85,12 +85,12 @@ module Apr =
                 let calc transfers unitPeriodRate =
                     transfers
                     |> Array.sumBy (fun (amount, years) ->
-                        let divisor = 1m + unitPeriodRate |> powm years
+                        let divisor = 1m + unitPeriodRate |> pow years
 
-                        if Double.IsNaN divisor || divisor = 0. then
+                        if divisor = 0m then
                             0m
                         else
-                            amount |> Cent.toDecimal |> (fun a -> double a / divisor |> decimal)
+                            amount |> Cent.transferToDecimal |> (fun a -> a / divisor |> decimal)
                     )
 
                 let generator unitPeriodRate =
@@ -164,28 +164,30 @@ module Apr =
         ///
         /// > (B) The remaining number of days divided by 365 if the remaining interval is not equal to a whole number of months.
         let monthlyUnitPeriods multiple termStart transfers =
-            let multiple = Math.Max(1, multiple)
+            let multiple = Math.Max(1u, multiple)
             let transferDates = transfers |> Array.map _.TransferDate
-            let transferCount = transfers |> Array.length
-            let scheduleLength = UnitPeriod.PaymentCount <| (transferCount + 1) * multiple
+            let transferCount = transfers |> Array.length |> uint
+            let scheduleLength = UnitPeriod.PaymentCount <| (transferCount + 1u) * multiple
 
             let unitPeriod =
                 transferDates
-                |> UnitPeriod.detect UnitPeriod.Direction.Reverse (UnitPeriod.Month 1)
+                |> UnitPeriod.detect UnitPeriod.Direction.Reverse (UnitPeriod.Month 1u)
 
             let schedule =
                 UnitPeriod.generatePaymentSchedule scheduleLength UnitPeriod.Direction.Reverse unitPeriod
                 |> Array.filter (fun d -> d >= termStart)
+                |> Array.mapi (fun i d -> uint i, d)
+                |> Map.ofArray
 
-            let scheduleCount = schedule |> Array.length
-            let lastWholeMonthBackIndex = 0
-            let lastWholeUnitPeriodBackIndex = (scheduleCount - 1) % multiple
+            let scheduleCount = schedule |> Map.count |> uint
+            let lastWholeMonthBackIndex = 0u
+            let lastWholeUnitPeriodBackIndex = (scheduleCount - 1u) % multiple
 
             let offset =
-                scheduleCount - 1 - (transferCount - 1) * multiple
-                |> fun i -> Decimal.Floor(decimal i / decimal multiple) |> int
+                scheduleCount - 1u - (transferCount - 1u) * multiple
+                |> fun i -> Decimal.Floor(decimal i / decimal multiple) |> uint
 
-            [| 0 .. (transferCount - 1) |]
+            [| 0u .. (transferCount - 1u) |]
             |> Array.map (fun i ->
                 let wholeUnitPeriods = i + offset
 
@@ -195,16 +197,16 @@ module Apr =
                 let remainingDays = decimal (schedule[lastWholeMonthBackIndex] - termStart).Days
 
                 let remainder =
-                    if multiple < 12 then
+                    if multiple < 12u then
                         (remainingMonthDays + remainingDays) / (30m * decimal multiple)
                     elif remainingDays = 0m then
                         decimal (lastWholeUnitPeriodBackIndex - lastWholeMonthBackIndex) / 12m
                     else
                         decimal (schedule[lastWholeUnitPeriodBackIndex] - termStart).Days / 365m
 
-                transfers[i],
+                transfers[int i],
                 {
-                    Quotient = wholeUnitPeriods
+                    Quotient = int wholeUnitPeriods
                     Remainder = remainder
                 }
             )
@@ -215,8 +217,8 @@ module Apr =
         /// [...]. If the unit-period is a semimonth, the number of unit-periods per year shall be 24. [...]
         let semiMonthlyUnitPeriods termStart transfers =
             let transferDates = transfers |> Array.map _.TransferDate
-            let transferCount = transfers |> Array.length
-            let scheduleLength = UnitPeriod.PaymentCount <| transferCount + 2
+            let transferCount = transfers |> Array.length |> uint
+            let scheduleLength = UnitPeriod.PaymentCount <| transferCount + 2u
 
             let frequency =
                 transferDates
@@ -225,22 +227,24 @@ module Apr =
             let schedule =
                 UnitPeriod.generatePaymentSchedule scheduleLength UnitPeriod.Direction.Reverse frequency
                 |> Array.filter (fun d -> d >= termStart)
+                |> Array.mapi (fun i d -> uint i, d)
+                |> Map.ofArray
 
-            let scheduleCount = schedule |> Array.length
+            let scheduleCount = schedule |> Map.count |> uint
             let offset = scheduleCount - transferCount
 
-            [| 0 .. (transferCount - 1) |]
+            [| 0u .. (transferCount - 1u) |]
             |> Array.map (fun i ->
-                let lastWholeMonthBackIndex = Math.Max(0, (i + offset) % 2)
+                let lastWholeMonthBackIndex = Math.Max(0u, (i + offset) % 2u)
                 let wholeUnitPeriods = i + offset - lastWholeMonthBackIndex
 
                 let fractional =
                     decimal (schedule[lastWholeMonthBackIndex] - termStart).Days / 15m
                     |> fun d -> divRem d 1m
 
-                transfers[i],
+                transfers[int i],
                 {
-                    Quotient = wholeUnitPeriods + fractional.Quotient
+                    Quotient = int wholeUnitPeriods + fractional.Quotient
                     Remainder = fractional.Remainder
                 }
             )
@@ -250,7 +254,7 @@ module Apr =
         /// per unit-period. [...] If the unit-period is a week or a multiple of a week, the number of unit-periods per year shall be
         /// 52 divided by the number of weeks per unit-period.
         let weeklyUnitPeriods multiple termStart transfers =
-            let multiple = Math.Max(1, multiple)
+            let multiple = Math.Max(1u, multiple)
             let transferDates = transfers |> Array.map _.TransferDate
 
             let dr =
@@ -267,18 +271,6 @@ module Apr =
                 }
             )
 
-        /// (b)(5)(vi) In a single advance, single payment transaction in which the term is less than a year and is equal
-        /// to a whole number of months, the number of unit-periods in the term shall be 1, and the number of
-        /// unit-periods per year shall be 12 divided by the number of months in the term or 365 divided by the
-        /// number of days in the term.
-        ///
-        /// (b)(5)(vii) In a single advance, single payment transaction in which the term is less than a year and is not
-        /// equal to a whole number of months, the number of unit-periods in the term shall be 1, and the number of
-        /// unit-periods per year shall be 365 divided by the number of days in the term.
-        let singleUnitPeriod _ transfers =
-            let transfer = transfers |> Array.exactlyOne
-            [| transfer, { Quotient = 1; Remainder = 0m } |]
-
         /// map an array of transfers to an array of whole and fractional unit periods
         let mapUnitPeriods unitPeriod =
             match unitPeriod with
@@ -292,12 +284,12 @@ module Apr =
             if Array.isEmpty advances || Array.isEmpty payments then
                 Solution.Impossible
             else
-                let advanceTotal = advances |> Array.sumBy (_.Value >> Cent.toDecimal)
+                let advanceTotal = advances |> Array.sumBy (_.Value >> Cent.transferToDecimal)
 
                 if advanceTotal = 0m then
                     Solution.Impossible
                 else
-                    let paymentTotal = payments |> Array.sumBy (_.Value >> Cent.toDecimal)
+                    let paymentTotal = payments |> Array.sumBy (_.Value >> Cent.transferToDecimal)
 
                     if advanceTotal = paymentTotal then
                         Solution.Found(0m, 0, 0m)
@@ -333,12 +325,15 @@ module Apr =
 
                             let calc transfers unitPeriodRate =
                                 transfers
-                                |> Array.sumBy (fun (amount, remainder, quotient) ->
+                                |> Array.sumBy (fun (transfer, remainder, quotient) ->
                                     try // high quotients will yield oversize decimals but high divisors will yield a zero result anyway
                                         let divisor =
-                                            (1m + remainder * unitPeriodRate) * (1m + unitPeriodRate |> powi quotient)
+                                            (1m + remainder * unitPeriodRate) * (1m + unitPeriodRate |> pow quotient)
 
-                                        if divisor = 0m then 0m else Cent.toDecimal amount / divisor
+                                        if divisor = 0m then
+                                            0m
+                                        else
+                                            Cent.transferToDecimal transfer / divisor
                                     with _ ->
                                         0m
                                 )
@@ -358,16 +353,16 @@ module Apr =
 
     /// calculates the APR to a given precision for a single-advance transaction where the consummation date, first finance-charge earned date and
     /// advance date are all the same
-    let calculate method advanceValue advanceDate transfers =
+    let calculate method advance advanceDate transfers =
         match method with
-        | CalculationMethod.EuropeanUnion -> EuropeanUnion.calculateApr advanceDate advanceValue transfers
-        | CalculationMethod.UnitedKingdom -> UnitedKingdom.calculateApr advanceDate advanceValue transfers
+        | CalculationMethod.EuropeanUnion -> EuropeanUnion.calculateApr advanceDate advance transfers
+        | CalculationMethod.UnitedKingdom -> UnitedKingdom.calculateApr advanceDate advance transfers
         | CalculationMethod.UsActuarial ->
             let advances = [|
                 {
                     TransferType = Advance
                     TransferDate = advanceDate
-                    Value = advanceValue
+                    Value = advance
                 }
             |]
 
@@ -376,7 +371,7 @@ module Apr =
                     {
                         TransferType = Payment
                         TransferDate = advanceDate.AddYears 1
-                        Value = 0L<Cent>
+                        Value = 0uL<Cent>
                     }
                 |]
             else
@@ -395,6 +390,6 @@ module Apr =
         apr
         |> Percent.toDecimal
         |> fun m ->
-            (((1m + m) |> powm (1m / UnitPeriod.numberPerYear unitPeriod) |> decimal) - 1m)
+            (((1m + m) |> pow (1m / UnitPeriod.numberPerYear unitPeriod) |> decimal) - 1m)
             * 100m
         |> Percent

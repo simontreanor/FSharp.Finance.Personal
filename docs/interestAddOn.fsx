@@ -36,11 +36,11 @@ open UnitPeriod
 let bp: BasicParameters = {
     EvaluationDate = Date(2025, 4, 22)
     StartDate = Date(2025, 4, 22)
-    Principal = 1000_00L<Cent>
+    Principal = 1000_00uL<Cent>
     ScheduleConfig =
         AutoGenerateSchedule {
-            UnitPeriodConfig = Monthly(1, 2025, 5, 22)
-            ScheduleLength = PaymentCount 4
+            UnitPeriodConfig = Monthly(1u, 2025, 5, 22)
+            ScheduleLength = PaymentCount 4u
         }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
@@ -144,7 +144,7 @@ let initialInterestBalance = totalAddOnInterest bp finalScheduledPaymentDay
 (**Result:*)
 
 (*** hide ***)
-initialInterestBalance |> Cent.toDecimal |> (fun m -> $"{m:N2}")
+initialInterestBalance |> Cent.transferToDecimal |> (fun m -> $"{m:N2}")
 
 (*** include-it-raw ***)
 

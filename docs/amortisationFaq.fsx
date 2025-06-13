@@ -57,11 +57,11 @@ let parameters0: Parameters = {
     Basic = {
         EvaluationDate = Date(2025, 4, 24) // the date we're evaluating the schedule
         StartDate = Date(2025, 4, 24)
-        Principal = 1000_00L<Cent>
+        Principal = 1000_00uL<Cent>
         ScheduleConfig =
             AutoGenerateSchedule {
-                UnitPeriodConfig = Monthly(1, 2025, 5, 24)
-                ScheduleLength = PaymentCount 4
+                UnitPeriodConfig = Monthly(1u, 2025, 5, 24)
+                ScheduleLength = PaymentCount 4u
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -83,7 +83,7 @@ let parameters0: Parameters = {
     Advanced = {
         PaymentConfig = {
             ScheduledPaymentOption = AsScheduled
-            Minimum = DeferOrWriteOff 50L<Cent>
+            Minimum = DeferOrWriteOff 50uL<Cent>
             Timeout = 3u<OffsetDay>
         }
         FeeConfig = ValueNone
@@ -338,8 +338,8 @@ let amortisation4 =
     amortise
         parameters4
         (Map [
-            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
+            61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
         ]) // actual payments made on days 30 and 61
 
 (**
@@ -396,8 +396,8 @@ let amortisation5 =
     amortise
         parameters5
         (Map [
-            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
-            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
+            30u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 454_15uL<Cent> ]
+            61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 454_15uL<Cent> ]
         ]) // actual payments made on days 30 and 61
 
 (**
@@ -441,7 +441,7 @@ let parameters6 = {
 }
 
 let amortisation6 =
-    amortise parameters6 (Map [ 5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 1050_00L<Cent> ] ]) // single overpayment made on day 5
+    amortise parameters6 (Map [ 5u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 1050_00uL<Cent> ] ]) // single overpayment made on day 5
 
 (**
 </div>
@@ -499,8 +499,8 @@ let refinanceExampleParameters = {
 
 let actualPayments =
     Map [
-        30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
-        61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 454_15L<Cent> ]
+        30u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 454_15uL<Cent> ]
+        61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 454_15uL<Cent> ]
     ] // actual payments made on days 30 and 61
 
 let refinanceExampleSchedule = amortise refinanceExampleParameters actualPayments
@@ -538,7 +538,7 @@ let rescheduleParameters: RescheduleParameters = {
     PaymentSchedule =
         FixedSchedules [|
             {
-                UnitPeriodConfig = Weekly(1, Date(2025, 10, 1)) // weekly payments starting on 1 October 2025
+                UnitPeriodConfig = Weekly(1u, Date(2025, 10, 1)) // weekly payments starting on 1 October 2025
                 PaymentCount = 100 // more than enough payments to cover the schedule (this will be automatically curtailed)
                 PaymentValue = 50_00L<Cent> // £50 per week
                 ScheduleType = ScheduleType.Rescheduled 152u<OffsetDay> // indicate that rescheduling was requested on day 152
@@ -592,8 +592,8 @@ let rolloverParameters: RolloverParameters = {
     OriginalFinalPaymentDay = originalFinalPaymentDay
     PaymentSchedule =
         AutoGenerateSchedule {
-            UnitPeriodConfig = Monthly(1, 2025, 10, 1) // monthly payments starting on 1 October 2025
-            ScheduleLength = PaymentCount 8 // 8 payments
+            UnitPeriodConfig = Monthly(1u, 2025, 10, 1) // monthly payments starting on 1 October 2025
+            ScheduleLength = PaymentCount 8u // 8 payments
         }
     InterestConfig = refinanceExampleParameters.Basic.InterestConfig // use the same interest config as the original schedule
     PaymentConfig = refinanceExampleParameters.Basic.PaymentConfig // use the same payment config as the original schedule
@@ -661,9 +661,9 @@ let amortisation7 =
     amortise
         parameters7
         (Map [
-            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            91u<OffsetDay>, Map [ 0, ActualPayment.quickWriteOff 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
+            61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
+            91u<OffsetDay>, Map [ 0u, ActualPayment.quickWriteOff 417_72uL<Cent> ]
         ]) // actual payments made on days 30 and 61, and a single-payment write-off on day 91
 
 (**
@@ -700,8 +700,8 @@ let amortisation8 =
     amortise
         parameters8
         (Map [
-            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
+            61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
         ]) // actual payments made on days 30 and 61, and a single-payment write-off on day 91
 // get the generated settlement figure
 let settlementFigure =
@@ -718,8 +718,8 @@ let amortisation8' =
                 Advanced.SettlementDay = SettlementDay.NoSettlement
         }
         (Map [
-            30u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
-            61u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 417_72L<Cent> ]
+            30u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
+            61u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 417_72uL<Cent> ]
             91u<OffsetDay>, [| ActualPayment.quickWriteOff fullWriteOffAmount |]
         ]) // actual payments made on days 30 and 61, and a full write-off on day 91
 

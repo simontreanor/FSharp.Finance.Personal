@@ -26,11 +26,11 @@ module SettlementTests =
         Basic = {
             EvaluationDate = Date(2024, 3, 19)
             StartDate = Date(2023, 11, 28)
-            Principal = 25000L<Cent>
+            Principal = 25000uL<Cent>
             ScheduleConfig =
                 AutoGenerateSchedule {
-                    UnitPeriodConfig = Monthly(1, 2023, 12, 22)
-                    ScheduleLength = PaymentCount 4
+                    UnitPeriodConfig = Monthly(1u, 2023, 12, 22)
+                    ScheduleLength = PaymentCount 4u
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -73,9 +73,9 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                24u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                55u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                86u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
             ]
 
         let actual =
@@ -98,7 +98,7 @@ module SettlementTests =
                     InterestPortion = 16_96L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         let expected =
@@ -108,8 +108,8 @@ module SettlementTests =
                 OffsetDate = Date(2024, 3, 19)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 3
-                PaymentDue = 0L<Cent>
+                Window = 3u
+                PaymentDue = 0uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = GeneratedValue 98_52L<Cent>
@@ -123,13 +123,13 @@ module SettlementTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 16_96L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -148,9 +148,9 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                24u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                55u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                86u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
             ]
 
         let actual =
@@ -172,7 +172,7 @@ module SettlementTests =
                     InterestPortion = 23_48L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         let expected =
@@ -182,8 +182,8 @@ module SettlementTests =
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 4
-                PaymentDue = 0L<Cent>
+                Window = 4u
+                PaymentDue = 0uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = GeneratedValue 105_04L<Cent>
@@ -197,13 +197,13 @@ module SettlementTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 23_48L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
@@ -222,10 +222,10 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                115u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 50_00L<Cent> ]
+                24u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                55u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                86u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 100_53uL<Cent> ]
+                115u<OffsetDay>, Map [ 0u, ActualPayment.quickConfirmed 50_00uL<Cent> ]
             ]
 
         let actual =
@@ -247,7 +247,7 @@ module SettlementTests =
                     InterestPortion = 2_82L<Cent>
                     ChargesPortion = 0L<Cent>
                 }
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         let expected =
@@ -257,8 +257,8 @@ module SettlementTests =
                 OffsetDate = Date(2024, 3, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 4
-                PaymentDue = 0L<Cent>
+                Window = 4u
+                PaymentDue = 0uL<Cent>
                 ActualPayments = Map.empty
                 PaidBy = Map.empty
                 GeneratedPayment = GeneratedValue 53_30L<Cent>
@@ -272,13 +272,13 @@ module SettlementTests =
                 FeePortion = 0L<Cent>
                 InterestPortion = 2_82L<Cent>
                 ChargesPortion = 0L<Cent>
-                FeeRebate = 0L<Cent>
+                FeeRebate = 0uL<Cent>
                 PrincipalBalance = 0L<Cent>
                 FeeBalance = 0L<Cent>
                 InterestBalance = 0m<Cent>
-                ChargesBalance = 0L<Cent>
+                ChargesBalance = 0uL<Cent>
                 SettlementFigure = 0L<Cent>
-                FeeRebateIfSettled = 0L<Cent>
+                FeeRebateIfSettled = 0uL<Cent>
             }
 
         actual |> should equal expected
