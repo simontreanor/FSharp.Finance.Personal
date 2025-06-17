@@ -193,11 +193,11 @@ module AprUnitedKingdomTests =
 
         let htmlBasicParams =
             $"""
-<h4>Basic Parameters</h4>{generalisedBasicParams}"""
+<fieldset><legend>Basic Parameters</legend>{generalisedBasicParams}</fieldset>"""
 
         let htmlAdvancedParams =
             $"""
-<h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
+<fieldset><legend>Advanced Parameters</legend>{AdvancedParameters.toHtmlTable parameters.Advanced}</fieldset>"""
 
         let htmlDatestamp =
             $"""

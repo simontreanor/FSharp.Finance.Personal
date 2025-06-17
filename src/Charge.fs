@@ -40,9 +40,9 @@ module Charge =
 
         /// HTML formatting to display the charge conditions in a readable format
         member cc.Html =
-            $"<td>{formatCent cc.Value}</td>"
-            + $"<td>{cc.ChargeGrouping}</td>"
-            + $"<td>{Array.toStringOrNa cc.ChargeHolidays}</td>"
+            $"<div>charge: {formatCent cc.Value}</div>"
+            + $"<div>grouping: {cc.ChargeGrouping}</div>"
+            + $"""<div>charge holidays: {Array.toStringOr "n/a" cc.ChargeHolidays}</div>"""
 
     /// the conditions under which charges are applied
     module ChargeConditions =
@@ -81,24 +81,15 @@ module Charge =
 
     /// options specifying the types of charges, their amounts, and any restrictions on these
     module Config =
-        /// formats the charge config as an HTML table
-        let toHtmlTable (config: Config option) =
+        /// formats the charge config as HTML
+        let toHtml (config: Config option) =
             if config.IsNone || config.Value.ChargeTypes.IsEmpty then
                 "no charges"
             else
                 let renderRow ct cc =
                     $"""
-                <tr>
-                    <td>{ct}</td>
-                    {cc}
-                </tr>"""
+                <fieldset><legend>charge type: {ct}</legend><div>{cc}</div></fieldset>"""
 
                 $"""
-            <table>
-                <tr>
-                    <th>Type</th>
-                    <th>Charge</th>
-                    <th>Grouping</th>
-                    <th>Holidays</th>
-                </tr>{config.Value.ChargeTypes |> Map.map renderRow |> Map.values |> String.concat ""}
-            </table>"""
+            <div>{config.Value.ChargeTypes |> Map.map renderRow |> Map.values |> String.concat ""}
+            </div>"""

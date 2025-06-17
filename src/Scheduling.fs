@@ -50,11 +50,7 @@ module Scheduling =
                 $"""<i><s>original</i> {formatCent o}</s>{if previous = "" then " cancelled" else $"&nbsp;{previous}"}"""
             | ValueSome o, ValueSome r -> $"<s><i>o</i> {formatCent o}</s>&nbsp;{previous}<i>r</i> {formatCent r.Value}"
             | ValueSome o, ValueNone -> $"<i>original</i> {formatCent o}"
-            | ValueNone, ValueSome r ->
-                $"""{if previous = "" then
-                         "<i>rescheduled</i>&nbsp;"
-                     else
-                         previous}{formatCent r.Value}"""
+            | ValueNone, ValueSome r -> $"""{previous} <i>rescheduled</i>&nbsp;{formatCent r.Value}"""
             | ValueNone, ValueNone -> "<i>n/a<i>"
             |> fun s ->
                 match x.Adjustment with
@@ -142,9 +138,9 @@ module Scheduling =
             [
                 yield $"{ap.ActualPaymentStatus}"
                 // // if not <| Map.isEmpty ap.ScheduledPayments then
-                // //     yield $"{ap.ScheduledPayments |> Map.toStringOrNa}"
+                // //     yield $"""{ap.ScheduledPayments |> Map.toStringOr "n/a"}"""
                 if not <| Map.isEmpty ap.Metadata then
-                    yield $"{ap.Metadata |> Map.toStringOrNa}"
+                    yield $"""{ap.Metadata |> Map.toStringOr "n/a"}"""
             ]
             |> String.concat "; "
 
@@ -265,46 +261,46 @@ module Scheduling =
             | _ -> ()
         |]
 
-        /// formats the schedule config as an HTML table
+        /// formats the schedule config as HTML
         let toHtml scheduleConfig =
             match scheduleConfig with
             | AutoGenerateSchedule ags ->
                 $"""
-            <div>
-                <div>config: <i>auto-generate schedule</i></div>
+            <fieldset>
+                <legend>config: <i>auto-generate schedule</i></legend>
                 <div>schedule length: <i>{ags.ScheduleLength}</i></div>
-                <div style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></div>
-            </div>"""
+                <div>unit-period config: <i>{ags.UnitPeriodConfig}</i></div>
+            </fieldset>"""
             | FixedSchedules fsArray ->
                 let renderRow (fs: FixedSchedule) =
                     $"""
-                <div>
-                    <div style="white-space: nowrap;">unit-period config: <i>{fs.UnitPeriodConfig}</i></div>
+                <fieldset>
+                    <legend>unit-period config: <i>{fs.UnitPeriodConfig}</i></legend>
                     <div>payment count: <i>{fs.PaymentCount}</i></div>
                     <div>payment value: <i>{formatCent fs.PaymentValue}</i></div>
                     <div>schedule type: <i>{fs.ScheduleType.Html.Replace(" ", "&nbsp;")}</i></div>
-                </div>"""
+                </fieldset>"""
 
                 $"""
-            <div>
-                <div>config: <i>fixed schedules</i></div>
-                {fsArray |> Array.map renderRow |> String.concat ""}
-            </div>"""
+            <fieldset>
+                <legend>config: <i>fixed schedules</i></legend>{fsArray |> Array.map renderRow |> String.concat ""}
+            </fieldset>"""
             | CustomSchedule cs ->
                 let renderRow day (sp: ScheduledPayment) =
                     $"""
-                <div>day: <i>{day}</i></div>
-                <div>scheduled payment: <i>{sp}</i></div>
-                """
+                <div>day {day}: <i>{sp}</i></div>"""
+
+                let schedule =
+                    cs
+                    |> Map.toList
+                    |> List.map (fun (day, sp) -> renderRow day sp)
+                    |> String.concat ""
 
                 $"""
-            <div>
-                <div colspan="2">config: <i>custom schedule</i></div>
-                {cs
-                 |> Map.toList
-                 |> List.map (fun (day, sp) -> renderRow day sp)
-                 |> String.concat ""}
-            </div>"""
+            <fieldset>
+                <legend>config: <i>custom schedule</i></legend>
+                <div style="column-count: 2;">{schedule}</div>
+            </fieldset>"""
 
     /// when calculating the level payments, whether the final payment should be lower or higher than the level payment
     [<Struct; StructuredFormatDisplay("{Html}")>]
@@ -376,7 +372,7 @@ module Scheduling =
 
         /// basic payment options
         module BasicConfig =
-            ///formats the payment config as an HTML table
+            ///formats the payment config as HTML
             let toHtml basicConfig =
                 $"""
             <div>
@@ -397,18 +393,14 @@ module Scheduling =
 
         /// advanced payment options
         module AdvancedConfig =
-            ///formats the payment config as an HTML table
-            let toHtmlTable advancedConfig =
+            ///formats the payment config as HTML
+            let toHtml advancedConfig =
                 $"""
-                <table>
-                    <tr>
-                        <td>scheduling: <i>{advancedConfig.ScheduledPaymentOption}</i></td>
-                        <td>timeout: <i>{advancedConfig.Timeout} days</i></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">minimum: <i>{advancedConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></td>
-                    </tr>
-                </table>"""
+                <div>
+                    <div>scheduling: <i>{advancedConfig.ScheduledPaymentOption}</i></div>
+                    <div>timeout: <i>{advancedConfig.Timeout} days</i></div>
+                    <div>minimum: <i>{advancedConfig.Minimum.Html.Replace(" ", "&nbsp;")}</i></div>
+                </div>"""
 
     /// parameters for creating a payment schedule
     [<Struct>]
@@ -510,28 +502,28 @@ module Scheduling =
 
     /// parameters required for amortisation
     module AdvancedParameters =
-        ///formats the payment config as an HTML table
+        ///formats the advanced parameters as an HTML table
         let toHtmlTable ap =
             $"""
 <table>
     <tr>
         <td>Payment options</td>
-        <td>{Payment.AdvancedConfig.toHtmlTable ap.PaymentConfig}
+        <td>{Payment.AdvancedConfig.toHtml ap.PaymentConfig}
         </td>
     </tr>
     <tr>
         <td>Interest options</td>
-        <td>{Interest.AdvancedConfig.toHtmlTable ap.InterestConfig}
+        <td>{Interest.AdvancedConfig.toHtml ap.InterestConfig}
         </td>
     </tr>
     <tr>
         <td>Fee options</td>
-        <td>{Fee.AdvancedConfig.toHtmlTable ap.FeeConfig}
+        <td>{Fee.AdvancedConfig.toHtml ap.FeeConfig}
         </td>
     </tr>
     <tr>
         <td>Charge options</td>
-        <td>{Charge.Config.toHtmlTable ap.ChargeConfig}
+        <td>{Charge.Config.toHtml ap.ChargeConfig}
         </td>
     </tr>
     <tr>
@@ -638,26 +630,20 @@ module Scheduling =
             | Solution.Found _, ValueSome percent -> $"{percent}"
             | _ -> "<i>n/a</i>"
 
-        /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
-        let toHtmlTable initialStats =
+        /// formats the schedule stats as HTML (excluding the items, which are rendered separately)
+        let toHtml initialStats =
             $"""
-<table>
-    <tr>
-        <td>Initial interest balance: <i>{formatCent initialStats.InitialInterestBalance}</i></td>
-        <td>Initial cost-to-borrowing ratio: <i>{initialStats.InitialCostToBorrowingRatio}</i></td>
-        <td>Initial APR: <i>{initialStats.InitialApr}</i></td>
-    </tr>
-    <tr>
-        <td>Level payment: <i>{formatCent initialStats.LevelPayment}</i></td>
-        <td>Final payment: <i>{formatCent initialStats.FinalPayment}</i></td>
-        <td>Last scheduled payment day: <i>{initialStats.LastScheduledPaymentDay}</i></td>
-    </tr>
-    <tr>
-        <td>Total scheduled payments: <i>{formatCent initialStats.ScheduledPaymentTotal}</i></td>
-        <td>Total principal: <i>{formatCent initialStats.PrincipalTotal}</i></td>
-        <td>Total interest: <i>{formatCent initialStats.InterestTotal}</i></td>
-    </tr>
-</table>"""
+<div>
+    <div>Initial interest balance: <i>{formatCent initialStats.InitialInterestBalance}</i></div>
+    <div>Initial cost-to-borrowing ratio: <i>{initialStats.InitialCostToBorrowingRatio}</i></div>
+    <div>Initial APR: <i>{initialStats.InitialApr}</i></div>
+    <div>Level payment: <i>{formatCent initialStats.LevelPayment}</i></div>
+    <div>Final payment: <i>{formatCent initialStats.FinalPayment}</i></div>
+    <div>Last scheduled payment day: <i>{initialStats.LastScheduledPaymentDay}</i></div>
+    <div>Total scheduled payments: <i>{formatCent initialStats.ScheduledPaymentTotal}</i></div>
+    <div>Total principal: <i>{formatCent initialStats.PrincipalTotal}</i></div>
+    <div>Total interest: <i>{formatCent initialStats.InterestTotal}</i></div>
+</div>"""
 
     ///  a schedule of payments, with statistics
     type BasicSchedule = {
@@ -689,7 +675,7 @@ module Scheduling =
     </thead>{schedule.Items |> Array.map BasicItem.toHtmlRow |> String.concat ""}
 </table>"""
 
-        /// renders the basic schedule as an HTML table within a markup file, which can both be previewed in VS Code and imported as XML into Excel
+        /// renders the basic schedule as HTML within a markup file, which can both be previewed in VS Code and imported as XML into Excel
         let outputHtmlToFile folder title description bp schedule =
             let htmlTitle = $"<h2>{title}</h2>"
             let htmlSchedule = toHtmlTable schedule
@@ -701,7 +687,7 @@ module Scheduling =
 
             let htmlParams =
                 $"""
-<h4>Basic Parameters</h4>{BasicParameters.toHtmlTable bp}"""
+<fieldset><legend>Basic Parameters</legend>{BasicParameters.toHtmlTable bp}</fieldset>"""
 
             let htmlDatestamp =
                 $"""
@@ -709,7 +695,7 @@ module Scheduling =
 
             let htmlFinalStats =
                 $"""
-<h4>Initial Stats</h4>{InitialStats.toHtmlTable schedule.Stats}"""
+<fieldset><legend>Initial Stats</legend>{InitialStats.toHtml schedule.Stats}</fieldset>"""
 
             let filename = $"out/{folder}/{title}.md"
 

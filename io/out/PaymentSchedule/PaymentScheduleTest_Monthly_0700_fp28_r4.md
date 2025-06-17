@@ -76,7 +76,7 @@
 <h4>Description</h4>
 <p><i>£0700 with 28 days to first payment and 4 repayments</i></p>
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
-<h4>Basic Parameters</h4>
+<fieldset><legend>Basic Parameters</legend>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -93,28 +93,20 @@
     <tr>
         <td>Schedule options</td>
         <td>
-            <table>
-                <tr>
-                    <td>config: <i>auto-generate schedule</i></td>
-                    <td>schedule length: <i><i>payment count</i> 4</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>monthly from 2024-01 on 04</i></td>
-                </tr>
-            </table>
+            <fieldset>
+                <legend>config: <i>auto-generate schedule</i></legend>
+                <div>schedule length: <i><i>payment count</i> 4</i></div>
+                <div>unit-period config: <i>monthly from 2024-01 on 04</i></div>
+            </fieldset>
         </td>
     </tr>
     <tr>
         <td>Payment options</td>
         <td>
-            <table>
-                <tr>
-                    <td>rounding: <i>round using AwayFromZero</i></td>
-                </tr>
-                <tr>
-                    <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
-                </tr>
-            </table>
+            <div>
+                <div>rounding: <i>round using AwayFromZero</i></div>
+                <div>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></div>
+            </div>
         </td>
     </tr>
     <tr>
@@ -125,37 +117,26 @@
     <tr>
         <td>Interest options</td>
         <td>
-            <table>
-                <tr>
-                    <td>standard rate: <i>0.798 % per day</i></td>
-                    <td>method: <i>actuarial</i></td>
-                </tr>
-                <tr>
-                    <td>rounding: <i>round using AwayFromZero</i></td>
-                    <td>APR method: <i>UK FCA to 1 d.p.</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
-                </tr>
-            </table>
+            <div>
+                <div>standard rate: <i>0.798 % per day</i></div>
+                <div>method: <i>actuarial</i></div>
+                <div>rounding: <i>round using AwayFromZero</i></div>
+                <div>APR method: <i>UK FCA</i></div>
+                <div>APR precision: <i>1 d.p.</i></div>
+                <div>cap: <i>total 100 %; daily 0.8 %</div>
+            </div>
         </td>
     </tr>
-</table>
-<h4>Initial Stats</h4>
-<table>
-    <tr>
-        <td>Initial interest balance: <i>0.00</i></td>
-        <td>Initial cost-to-borrowing ratio: <i>64.52 %</i></td>
-        <td>Initial APR: <i>1269.4 %</i></td>
-    </tr>
-    <tr>
-        <td>Level payment: <i>287.91</i></td>
-        <td>Final payment: <i>287.90</i></td>
-        <td>Last scheduled payment day: <i>119</i></td>
-    </tr>
-    <tr>
-        <td>Total scheduled payments: <i>1,151.63</i></td>
-        <td>Total principal: <i>700.00</i></td>
-        <td>Total interest: <i>451.63</i></td>
-    </tr>
-</table>
+</table></fieldset>
+<fieldset><legend>Initial Stats</legend>
+<div>
+    <div>Initial interest balance: <i>0.00</i></div>
+    <div>Initial cost-to-borrowing ratio: <i>64.52 %</i></div>
+    <div>Initial APR: <i>1269.4 %</i></div>
+    <div>Level payment: <i>287.91</i></div>
+    <div>Final payment: <i>287.90</i></div>
+    <div>Last scheduled payment day: <i>119</i></div>
+    <div>Total scheduled payments: <i>1,151.63</i></div>
+    <div>Total principal: <i>700.00</i></div>
+    <div>Total interest: <i>451.63</i></div>
+</div></fieldset>

@@ -179,23 +179,23 @@ module Amortisation =
                 [|
                     yield "", $"{OffsetDayType.toHtml offsetDay scheduleItem.OffsetDayType}"
                     yield " style=\"white-space: nowrap;\"", $"%A{scheduleItem.OffsetDate}"
-                    yield "", $"{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOrNa}"
+                    yield "", $"""{scheduleItem.Advances |> Array.map formatCent |> Array.toStringOr "n/a"}"""
                     yield " style=\"white-space: nowrap;\"", $"{scheduleItem.ScheduledPayment}"
                     yield "", $"{scheduleItem.Window}"
                     yield "", $"{formatCent scheduleItem.PaymentDue}"
                     yield
                         "",
                         $"""{scheduleItem.ActualPayments
-                             |> Map.mapOrNa formatActualPayments
+                             |> Map.mapOr "n/a" formatActualPayments
                              |> _.Replace(" ", "&nbsp;")}"""
-                    yield "", $"""{scheduleItem.PaidBy |> Map.mapOrNa formatPaidBy |> _.Replace(" ", "&nbsp;")}"""
+                    yield "", $"""{scheduleItem.PaidBy |> Map.mapOr "n/a" formatPaidBy |> _.Replace(" ", "&nbsp;")}"""
                     if settlementDay <> SettlementDay.NoSettlement then
                         yield "", $"{scheduleItem.GeneratedPayment}"
                     yield "", $"{formatCent scheduleItem.NetEffect}"
                     yield "", $"""{scheduleItem.PaymentStatus.Html.Replace(" ", "&nbsp;")}"""
                     yield "", $"""{scheduleItem.BalanceStatus.Html.Replace(" ", "&nbsp;")}"""
                     if p.Advanced.ChargeConfig.IsSome then
-                        yield "", $"""{Array.toStringOrNa scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}"""
+                        yield "", $"""{Array.toStringOr "n/a" scheduleItem.NewCharges |> _.Replace(" ", "&nbsp;")}"""
                     if p.Advanced.ChargeConfig.IsSome then
                         yield "", $"{formatCent scheduleItem.ChargesPortion}"
                     yield "", $"{formatDecimalCent scheduleItem.ActuarialInterest}"
@@ -269,34 +269,26 @@ module Amortisation =
 
     /// final statistics resulting from the calculations
     module FinalStats =
-        /// formats the schedule stats as an HTML table (excluding the items, which are rendered separately)
-        let toHtmlTable finalStats =
+        /// formats the schedule stats as HTML (excluding the items, which are rendered separately)
+        let toHtml finalStats =
             $"""
-<table>
-    <tr>
-        <td>Generated settlement: <i>{finalStats.SettlementFigure
-                                      |> function
-                                          | ValueSome(d, gv) -> $"{formatCent gv} on day {d}"
-                                          | ValueNone -> "<i>n/a</i>"}</i></td>
-        <td>Final balance status: <i>{finalStats.FinalBalanceStatus}</i></td>
-    </tr>
-    <tr>
-        <td>Effective interest rate: <i>{finalStats.EffectiveInterestRate}</i></td>
-        <td>Final cost-to-borrowing ratio: <i>{finalStats.FinalCostToBorrowingRatio}</i></td>
-    </tr>
-    <tr>
-        <td>Required scheduled payment count: <i>{finalStats.RequiredScheduledPaymentCount}</i></td>
-        <td>Last required scheduled payment day: <i>{finalStats.LastRequiredScheduledPaymentDay
-                                                     |> ValueOption.map string
-                                                     |> ValueOption.defaultValue "n/a"}</i></td>
-    </tr>
-    <tr>
-        <td>Final actual payment count: <i>{finalStats.FinalActualPaymentCount}</i></td>
-        <td>Last actual payment day: <i>{finalStats.LastActualPaymentDay
-                                         |> ValueOption.map string
-                                         |> ValueOption.defaultValue "n/a"}</i></td>
-    </tr>
-</table>
+<div>
+    <div>Generated settlement: <i>{finalStats.SettlementFigure
+                                   |> function
+                                       | ValueSome(d, gv) -> $"{formatCent gv} on day {d}"
+                                       | ValueNone -> "<i>n/a</i>"}</i></div>
+    <div>Final balance status: <i>{finalStats.FinalBalanceStatus}</i></div>
+    <div>Effective interest rate: <i>{finalStats.EffectiveInterestRate}</i></div>
+    <div>Final cost-to-borrowing ratio: <i>{finalStats.FinalCostToBorrowingRatio}</i></div>
+    <div>Required scheduled payment count: <i>{finalStats.RequiredScheduledPaymentCount}</i></div>
+    <div>Last required scheduled payment day: <i>{finalStats.LastRequiredScheduledPaymentDay
+                                                  |> ValueOption.map string
+                                                  |> ValueOption.defaultValue "n/a"}</i></div>
+    <div>Final actual payment count: <i>{finalStats.FinalActualPaymentCount}</i></div>
+    <div>Last actual payment day: <i>{finalStats.LastActualPaymentDay
+                                      |> ValueOption.map string
+                                      |> ValueOption.defaultValue "n/a"}</i></div>
+</div>
 """
 
     /// a schedule showing the amortisation, itemising the effects of payments and calculating balances for each item, and producing some final statistics resulting from the calculations
@@ -387,37 +379,50 @@ module Amortisation =
                 $"""
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>"""
 
+            let fieldsetStyle = "style=\"flex: 1; display: flex; flex-direction: column;\""
+
             let htmlBasicParams =
                 $"""
-<h4>Basic Parameters</h4>{BasicParameters.toHtmlTable p.Basic}"""
+<fieldset {fieldsetStyle}><legend>Basic Parameters</legend>{BasicParameters.toHtmlTable p.Basic}</fieldset>"""
 
             let htmlAdvancedParams =
                 $"""
-<h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable p.Advanced}"""
+<fieldset {fieldsetStyle}><legend>Advanced Parameters</legend>{AdvancedParameters.toHtmlTable p.Advanced}</fieldset>"""
 
             let htmlExtraInfo =
                 match extraInfo with
                 | "" -> ""
                 | ei ->
                     $"""
-<h4>Extra Info</h4>{ei}"""
+<fieldset {fieldsetStyle}><legend>Extra Info</legend>{ei}</fieldset>"""
 
             let originalBasicSchedule = calculateBasicSchedule p.Basic
 
             let htmlInitialSchedule =
-                $"""<h4>Initial Schedule</h4>{BasicSchedule.toHtmlTable originalBasicSchedule}"""
+                $"""<fieldset><legend>Initial Schedule</legend>{BasicSchedule.toHtmlTable originalBasicSchedule}</fieldset>"""
 
             let htmlInitialStats =
                 $"""
-<h4>Initial Stats</h4>{InitialStats.toHtmlTable originalBasicSchedule.Stats}"""
+<fieldset {fieldsetStyle}><legend>Initial Stats</legend>{InitialStats.toHtml originalBasicSchedule.Stats}</fieldset>"""
 
             let htmlFinalStats =
                 $"""
-<h4>Final Stats</h4>{FinalStats.toHtmlTable generationResult.AmortisationSchedule.FinalStats}"""
+<fieldset {fieldsetStyle}><legend>Final Stats</legend>{FinalStats.toHtml generationResult.AmortisationSchedule.FinalStats}</fieldset>"""
 
             let filename = $"out/{folder}/{title}.md"
 
-            $"{htmlTitle}{htmlSchedule}{htmlKey}{htmlFinalStats}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}"
+            $"""{htmlTitle}{htmlSchedule}{htmlKey}{htmlDescription}{htmlDatestamp}
+<div style="display:flex;">
+{htmlBasicParams}
+{htmlAdvancedParams}
+</div>
+<div style="display:flex;">
+{htmlExtraInfo}
+{htmlInitialStats}
+{htmlFinalStats}
+</div>
+{htmlInitialSchedule}
+"""
             |> outputToFile' filename false
 
     /// gets the window for the current day based on either the unit-period map or the previous window

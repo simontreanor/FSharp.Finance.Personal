@@ -28,17 +28,28 @@ module Refinancing =
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
     module RescheduleParameters =
 
-        /// formats the parameters items as an HTML table
+        /// formats the parameters items as HTML
         let toHtmlTable (rp: RescheduleParameters) =
+            let promotionalInterestRates =
+                if rp.PromotionalInterestRates |> Array.isEmpty then
+                    "n/a"
+                else
+                    let rates =
+                        rp.PromotionalInterestRates
+                        |> Array.map (fun pr -> $"<div>{pr.Html}</div>")
+                        |> String.concat ""
+
+                    $"""<fieldset><legend>promotional interest rates</legend>{rates}"""
+
             $"""
-<table>
-    <thead><tr><th colspan="2">Reschedule Parameters</th></tr></thead>
-    <tr><td>Fee Settlement Rebate</td><td>{rp.FeeSettlementRebate}</td></tr>
-    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td></tr>
-    <tr><td>Rate on Negative Balance</td><td>{rp.RateOnNegativeBalance}</td></tr>
-    <tr><td>Promotional Interest Rates</td><td>{Array.toStringOrNa rp.PromotionalInterestRates}</td></tr>
-    <tr><td>Settlement Day</td><td>{rp.SettlementDay}</td></tr>
-</table>"""
+<fieldset>
+    <legend>Reschedule Parameters</legend>
+    <div>Fee settlement rebate: {rp.FeeSettlementRebate}</div>
+    <div>Payment schedule: {ScheduleConfig.toHtml rp.PaymentSchedule}</div>
+    <div>Rate on negative balance: {rp.RateOnNegativeBalance}</div>
+    <div>Promotional interest rates: {promotionalInterestRates}</div>
+    <div>Settlement day: {rp.SettlementDay}</div>
+</fieldset>"""
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
     let mergeScheduledPayments (scheduledPayments: (uint<OffsetDay> * ScheduledPayment) array) =
@@ -232,17 +243,17 @@ module Refinancing =
     /// parameters for creating a rolled-over schedule
     module RolloverParameters =
 
-        /// formats the parameters items as an HTML table
+        /// formats the parameters items as HTML
         let toHtmlTable (rp: RolloverParameters) =
             $"""
-<table>
-    <thead><tr><th colspan="2">Rollover Parameters</th></tr></thead>
-    <tr><td>Original Final Payment Day</td><td>{rp.OriginalFinalPaymentDay}</td></tr>
-    <tr><td>Payment Schedule</td><td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td></tr>
-    <tr><td>Interest Config</td><td>{rp.InterestConfig}</td></tr>
-    <tr><td>Payment Config</td><td>{rp.PaymentConfig}</td></tr>
-    <tr><td>Fee Handling</td><td>{rp.FeeHandling}</td></tr>
-</table>"""
+<fieldset>
+    <legend>Rollover Parameters</legend>
+    <div>Original final payment day: {rp.OriginalFinalPaymentDay}</div>
+    <div>Payment schedule: {ScheduleConfig.toHtml rp.PaymentSchedule}</div>
+    <div>Interest config: {rp.InterestConfig}</div>
+    <div>Payment config: {rp.PaymentConfig}</div>
+    <div>Fee handling: {rp.FeeHandling}</div>
+</fieldset>"""
 
     /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
     let rollOver p (rp: RolloverParameters) actualPayments =

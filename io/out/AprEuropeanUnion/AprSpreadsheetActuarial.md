@@ -190,7 +190,7 @@
 <h4>Description</h4>
 <p><i>Range of APRs for different payment counts and first payment days, using the actuarial interest method</i></p>
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
-<h4>Basic Parameters</h4>
+<fieldset><legend>Basic Parameters</legend>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -207,28 +207,20 @@
     <tr>
         <td>Schedule options</td>
         <td>
-            <table>
-                <tr>
-                    <td>config: <i>auto-generate schedule</i></td>
-                    <td>schedule length: <i><i>payment count</i> 4</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i></td>
-                </tr>
-            </table>
+            <fieldset>
+                <legend>config: <i>auto-generate schedule</i></legend>
+                <div>schedule length: <i><i>payment count</i> 4</i></div>
+                <div>unit-period config: <i>monthly from {2025-04 on 04} to {2025-05 on 02}</i></div>
+            </fieldset>
         </td>
     </tr>
     <tr>
         <td>Payment options</td>
         <td>
-            <table>
-                <tr>
-                    <td>rounding: <i>rounded up</i></td>
-                </tr>
-                <tr>
-                    <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
-                </tr>
-            </table>
+            <div>
+                <div>rounding: <i>rounded up</i></div>
+                <div>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></div>
+            </div>
         </td>
     </tr>
     <tr>
@@ -239,50 +231,37 @@
     <tr>
         <td>Interest options</td>
         <td>
-            <table>
-                <tr>
-                    <td>standard rate: <i>0.798 % per day</i></td>
-                    <td>method: <i>actuarial</i></td>
-                </tr>
-                <tr>
-                    <td>rounding: <i>rounded down</i></td>
-                    <td>APR method: <i>EU to 1 d.p.</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
-                </tr>
-            </table>
+            <div>
+                <div>standard rate: <i>0.798 % per day</i></div>
+                <div>method: <i>actuarial</i></div>
+                <div>rounding: <i>rounded down</i></div>
+                <div>APR method: <i>EU</i></div>
+                <div>APR precision: <i>1 d.p.</i></div>
+                <div>cap: <i>total 100 %; daily 0.8 %</div>
+            </div>
         </td>
     </tr>
-</table>
-<h4>Advanced Parameters</h4>
+</table></fieldset>
+<fieldset><legend>Advanced Parameters</legend>
 <table>
     <tr>
         <td>Payment options</td>
         <td>
-                <table>
-                    <tr>
-                        <td>scheduling: <i>as scheduled</i></td>
-                        <td>timeout: <i>3 days</i></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">minimum: <i>defer&nbsp;or&nbsp;write&nbsp;off&nbsp;up&nbsp;to&nbsp;0.50</i></td>
-                    </tr>
-                </table>
+                <div>
+                    <div>scheduling: <i>as scheduled</i></div>
+                    <div>timeout: <i>3 days</i></div>
+                    <div>minimum: <i>defer&nbsp;or&nbsp;write&nbsp;off&nbsp;up&nbsp;to&nbsp;0.50</i></div>
+                </div>
         </td>
     </tr>
     <tr>
         <td>Interest options</td>
         <td>
-            <table>
-                <tr>
-                    <td>initial grace period: <i>3 day(s)</i></td>
-                    <td>rate on negative balance: <i>zero</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">promotional rates: <i><i>n/a</i></i></td>
-                </tr>
-            </table>
+            <div>
+                <div>initial grace period: <i>3 day(s)</i></div>
+                <div>rate on negative balance: <i>zero</i></div>
+                <div>no promotional rates</div>
+            </div>
         </td>
     </tr>
     <tr>
@@ -301,4 +280,4 @@
     <tr>
         <td>Trim unrequired payments</td><td><i>false</i></td>
     </tr>
-</table>
+</table></fieldset>

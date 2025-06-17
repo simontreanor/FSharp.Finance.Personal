@@ -100,7 +100,7 @@
 <h4>Description</h4>
 <p><i>EU APR test amortisation schedule, first payment day 19, payment count 6</i></p>
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
-<h4>Basic Parameters</h4>
+<fieldset><legend>Basic Parameters</legend>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -117,28 +117,20 @@
     <tr>
         <td>Schedule options</td>
         <td>
-            <table>
-                <tr>
-                    <td>config: <i>auto-generate schedule</i></td>
-                    <td>schedule length: <i><i>payment count</i> 6</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>monthly from 2025-04 on 20</i></td>
-                </tr>
-            </table>
+            <fieldset>
+                <legend>config: <i>auto-generate schedule</i></legend>
+                <div>schedule length: <i><i>payment count</i> 6</i></div>
+                <div>unit-period config: <i>monthly from 2025-04 on 20</i></div>
+            </fieldset>
         </td>
     </tr>
     <tr>
         <td>Payment options</td>
         <td>
-            <table>
-                <tr>
-                    <td>rounding: <i>rounded up</i></td>
-                </tr>
-                <tr>
-                    <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
-                </tr>
-            </table>
+            <div>
+                <div>rounding: <i>rounded up</i></div>
+                <div>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></div>
+            </div>
         </td>
     </tr>
     <tr>
@@ -149,37 +141,26 @@
     <tr>
         <td>Interest options</td>
         <td>
-            <table>
-                <tr>
-                    <td>standard rate: <i>0.798 % per day</i></td>
-                    <td>method: <i>actuarial</i></td>
-                </tr>
-                <tr>
-                    <td>rounding: <i>rounded down</i></td>
-                    <td>APR method: <i>EU to 1 d.p.</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total 100 %; daily 0.8 %</td>
-                </tr>
-            </table>
+            <div>
+                <div>standard rate: <i>0.798 % per day</i></div>
+                <div>method: <i>actuarial</i></div>
+                <div>rounding: <i>rounded down</i></div>
+                <div>APR method: <i>EU</i></div>
+                <div>APR precision: <i>1 d.p.</i></div>
+                <div>cap: <i>total 100 %; daily 0.8 %</div>
+            </div>
         </td>
     </tr>
-</table>
-<h4>Initial Stats</h4>
-<table>
-    <tr>
-        <td>Initial interest balance: <i>0.00</i></td>
-        <td>Initial cost-to-borrowing ratio: <i>85.26 %</i></td>
-        <td>Initial APR: <i>1292 %</i></td>
-    </tr>
-    <tr>
-        <td>Level payment: <i>97.97</i></td>
-        <td>Final payment: <i>97.91</i></td>
-        <td>Last scheduled payment day: <i>172</i></td>
-    </tr>
-    <tr>
-        <td>Total scheduled payments: <i>587.76</i></td>
-        <td>Total principal: <i>317.26</i></td>
-        <td>Total interest: <i>270.50</i></td>
-    </tr>
-</table>
+</table></fieldset>
+<fieldset><legend>Initial Stats</legend>
+<div>
+    <div>Initial interest balance: <i>0.00</i></div>
+    <div>Initial cost-to-borrowing ratio: <i>85.26 %</i></div>
+    <div>Initial APR: <i>1292 %</i></div>
+    <div>Level payment: <i>97.97</i></div>
+    <div>Final payment: <i>97.91</i></div>
+    <div>Last scheduled payment day: <i>172</i></div>
+    <div>Total scheduled payments: <i>587.76</i></div>
+    <div>Total principal: <i>317.26</i></div>
+    <div>Total interest: <i>270.50</i></div>
+</div></fieldset>

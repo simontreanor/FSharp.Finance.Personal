@@ -358,11 +358,18 @@ module Calculation =
             loop initialGuess 0
 
         /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
-        let toStringOrNa a =
-            match a with
+        let toStringOr defaultString array =
+            match array with
             | null
-            | [||] -> "<i>n/a</i>"
-            | _ -> a |> Array.map string |> String.concat "<br/>"
+            | [||] -> $"<i>{defaultString}</i>"
+            | _ -> array |> Array.map string |> String.concat "<br/>"
+
+        /// concatenates the members of an array into a delimited string or a default string if the array is empty or null
+        let mapOr defaultString f array =
+            match array with
+            | null
+            | [||] -> $"<i>{defaultString}</i>"
+            | _ -> array |> Array.map f |> String.concat "<br/>"
 
     /// functions for working with maps
     module Map =
@@ -376,17 +383,17 @@ module Calculation =
             // convert to a map
             |> Map.ofArray
 
-        /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
-        let toStringOrNa a =
-            match a with
-            | m when Map.isEmpty m -> "<i>n/a</i>"
-            | _ -> a |> Map.map (fun k v -> $"{k} {v}") |> Map.values |> String.concat "<br/>"
+        /// concatenates the values of a map into a delimited string or a default string if the map is empty
+        let toStringOr defaultString map =
+            match map with
+            | m when Map.isEmpty m -> $"<i>{defaultString}</i>"
+            | _ -> map |> Map.map (fun k v -> $"{k} {v}") |> Map.values |> String.concat "<br/>"
 
-        /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
-        let mapOrNa f a =
-            match a with
-            | m when Map.isEmpty m -> "<i>n/a</i>"
-            | _ -> a |> Map.map f |> Map.values |> String.concat "<br/>"
+        /// concatenates the values of a map into a delimited string or a default string if the map is empty
+        let mapOr defaultString f map =
+            match map with
+            | m when Map.isEmpty m -> $"<i>{defaultString}</i>"
+            | _ -> map |> Map.map f |> Map.values |> String.concat "<br/>"
 
     /// wrapper to extract APR value from solution
     let getAprOr defaultValue =

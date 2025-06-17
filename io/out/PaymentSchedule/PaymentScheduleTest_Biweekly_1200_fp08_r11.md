@@ -160,7 +160,7 @@
 <h4>Description</h4>
 <p><i>$1200 with short first period</i></p>
 <p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>
-<h4>Basic Parameters</h4>
+<fieldset><legend>Basic Parameters</legend>
 <table>
     <tr>
         <td>Evaluation Date</td>
@@ -177,78 +177,55 @@
     <tr>
         <td>Schedule options</td>
         <td>
-            <table>
-                <tr>
-                    <td>config: <i>auto-generate schedule</i></td>
-                    <td>schedule length: <i><i>payment count</i> 11</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="white-space: nowrap;">unit-period config: <i>2-weekly from 2023-11-23</i></td>
-                </tr>
-            </table>
+            <fieldset>
+                <legend>config: <i>auto-generate schedule</i></legend>
+                <div>schedule length: <i><i>payment count</i> 11</i></div>
+                <div>unit-period config: <i>2-weekly from 2023-11-23</i></div>
+            </fieldset>
         </td>
     </tr>
     <tr>
         <td>Payment options</td>
         <td>
-            <table>
-                <tr>
-                    <td>rounding: <i>rounded up</i></td>
-                </tr>
-                <tr>
-                    <td>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></td>
-                </tr>
-            </table>
+            <div>
+                <div>rounding: <i>rounded up</i></div>
+                <div>level-payment option: <i>lower&nbsp;final&nbsp;payment</i></div>
+            </div>
         </td>
     </tr>
     <tr>
         <td>Fee options</td>
         <td>
-            <table>
-                <tr>
-                    <td>fee type: <i><i>facilitation fee</i> 189.47 %</i></td>
-                    <td>rounding: <i>rounded down</i></td>
-                </tr>
-                <tr>
-                    <td>fee amortisation: <i>amortise proportionately</i></td>
-                </tr>
-            </table>
+            <div>
+                <div>fee type: <i><i>facilitation fee</i> 189.47 %</i></div>
+                <div>rounding: <i>rounded down</i></div>
+                <div>fee amortisation: <i>amortise proportionately</i></div>
+            </div>
         </td>
     </tr>
     <tr>
         <td>Interest options</td>
         <td>
-            <table>
-                <tr>
-                    <td>standard rate: <i>9.95 % per year</i></td>
-                    <td>method: <i>actuarial</i></td>
-                </tr>
-                <tr>
-                    <td>rounding: <i>rounded down</i></td>
-                    <td>APR method: <i>US CFPB actuarial to 6 d.p.</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">cap: <i>total <i>n/a</i>; daily <i>n/a</i></td>
-                </tr>
-            </table>
+            <div>
+                <div>standard rate: <i>9.95 % per year</i></div>
+                <div>method: <i>actuarial</i></div>
+                <div>rounding: <i>rounded down</i></div>
+                <div>APR method: <i>US CFPB actuarial</i></div>
+                <div>APR precision: <i>6 d.p.</i></div>
+                <div>cap: <i>total <i>n/a</i>; daily <i>n/a</i></div>
+            </div>
         </td>
     </tr>
-</table>
-<h4>Initial Stats</h4>
-<table>
-    <tr>
-        <td>Initial interest balance: <i>0.00</i></td>
-        <td>Initial cost-to-borrowing ratio: <i>67.59 %</i></td>
-        <td>Initial APR: <i>717.412507 %</i></td>
-    </tr>
-    <tr>
-        <td>Level payment: <i>322.53</i></td>
-        <td>Final payment: <i>322.53</i></td>
-        <td>Last scheduled payment day: <i>148</i></td>
-    </tr>
-    <tr>
-        <td>Total scheduled payments: <i>3,547.83</i></td>
-        <td>Total principal: <i>3,473.64</i></td>
-        <td>Total interest: <i>74.19</i></td>
-    </tr>
-</table>
+</table></fieldset>
+<fieldset><legend>Initial Stats</legend>
+<div>
+    <div>Initial interest balance: <i>0.00</i></div>
+    <div>Initial cost-to-borrowing ratio: <i>67.59 %</i></div>
+    <div>Initial APR: <i>717.412507 %</i></div>
+    <div>Level payment: <i>322.53</i></div>
+    <div>Final payment: <i>322.53</i></div>
+    <div>Last scheduled payment day: <i>148</i></div>
+    <div>Total scheduled payments: <i>3,547.83</i></div>
+    <div>Total principal: <i>3,473.64</i></div>
+    <div>Total interest: <i>74.19</i></div>
+</div></fieldset>

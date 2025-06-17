@@ -87,7 +87,7 @@ module Fee =
 
     /// basic options specifying the type of fee and how it is calculated
     module BasicConfig =
-        /// formats the fee config as an HTML table
+        /// formats the fee config as HTML
         let toHtml basicConfig =
             match basicConfig with
             | ValueSome bc ->
@@ -108,16 +108,14 @@ module Fee =
 
     /// advanced options specifying the type of fee and how it is calculated
     module AdvancedConfig =
-        /// formats the fee config as an HTML table
-        let toHtmlTable advancedConfig =
+        /// formats the fee config as HTML
+        let toHtml advancedConfig =
             match advancedConfig with
             | ValueSome ac ->
                 $"""
-            <table>
-                <tr>
-                    <td>settlement rebate: <i>{ac.SettlementRebate}</i></td>
-                </tr>
-            </table>"""
+            <div>
+                <div>settlement rebate: <i>{ac.SettlementRebate}</i></div>
+            </div>"""
             | ValueNone -> "no fee"
 
     /// calculates the total fee based on the fee configuration

@@ -137,7 +137,7 @@ module Interest =
 
     /// basic interest options
     module Config =
-        /// formats the interest config as an HTML table
+        /// formats the interest config as HTML
         let toHtml basicConfig =
             $"""
             <div>
@@ -162,18 +162,25 @@ module Interest =
 
     /// advanced interest options
     module AdvancedConfig =
-        /// formats the interest config as an HTML table
-        let toHtmlTable advancedConfig =
+        /// formats the interest config as HTML
+        let toHtml advancedConfig =
+            let promotionalRates =
+                if advancedConfig.PromotionalRates |> Array.isEmpty then
+                    "no promotional rates"
+                else
+                    let rates =
+                        advancedConfig.PromotionalRates
+                        |> Array.map (fun pr -> $"<div>{pr.Html}</div>")
+                        |> String.concat ""
+
+                    $"""<fieldset><legend>promotional rates</legend>{rates}"""
+
             $"""
-            <table>
-                <tr>
-                    <td>initial grace period: <i>{advancedConfig.InitialGracePeriod} day(s)</i></td>
-                    <td>rate on negative balance: <i>{advancedConfig.RateOnNegativeBalance}</i></td>
-                </tr>
-                <tr>
-                    <td colspan="2">promotional rates: <i>{Array.toStringOrNa advancedConfig.PromotionalRates}</i></td>
-                </tr>
-            </table>"""
+            <div>
+                <div>initial grace period: <i>{advancedConfig.InitialGracePeriod} day(s)</i></div>
+                <div>rate on negative balance: <i>{advancedConfig.RateOnNegativeBalance}</i></div>
+                <div>{promotionalRates}</div>
+            </div>"""
 
     /// calculates the interest chargeable on a range of days
     let dailyRates
