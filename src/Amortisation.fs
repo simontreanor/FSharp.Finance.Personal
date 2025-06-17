@@ -168,17 +168,10 @@ module Amortisation =
             FeeRebateIfSettled = 0L<Cent>
         }
 
-        let private formatActualPayments =
-            Map.map (fun (index: int) actualPayment -> $"<b>{index}</b>&nbsp;{actualPayment}")
-            >> Map.values
-            >> String.concat "<br/>"
-            >> _.Replace(" ", "&nbsp;")
+        let private formatActualPayments (index: int) actualPayment = $"<b>{index}</b>&nbsp;{actualPayment}"
 
-        let private formatPaidBy =
-            Map.map (fun (day: uint<OffsetDay>, index: int) amount -> $"<b>{day}#{index}</b>&nbsp;{formatCent amount}")
-            >> Map.values
-            >> String.concat "<br/>"
-            >> _.Replace(" ", "&nbsp;")
+        let private formatPaidBy (day: uint<OffsetDay>, index: int) amount =
+            $"<b>{day}#{index}</b>&nbsp;{formatCent amount}"
 
         /// formats the schedule item as an HTML row
         let toHtmlRow (p: Parameters) settlementDay offsetDay scheduleItem =
@@ -190,8 +183,12 @@ module Amortisation =
                     yield " style=\"white-space: nowrap;\"", $"{scheduleItem.ScheduledPayment}"
                     yield "", $"{scheduleItem.Window}"
                     yield "", $"{formatCent scheduleItem.PaymentDue}"
-                    yield "", $"""{formatActualPayments scheduleItem.ActualPayments}"""
-                    yield "", $"""{formatPaidBy scheduleItem.PaidBy}"""
+                    yield
+                        "",
+                        $"""{scheduleItem.ActualPayments
+                             |> Map.mapOrNa formatActualPayments
+                             |> _.Replace(" ", "&nbsp;")}"""
+                    yield "", $"""{scheduleItem.PaidBy |> Map.mapOrNa formatPaidBy |> _.Replace(" ", "&nbsp;")}"""
                     if settlementDay <> SettlementDay.NoSettlement then
                         yield "", $"{scheduleItem.GeneratedPayment}"
                     yield "", $"{formatCent scheduleItem.NetEffect}"

@@ -133,7 +133,7 @@ module ActualPaymentTestsExtra =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map.empty
+                PaidBy = Map [ (131u<OffsetDay>, 0), 407_64L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 407_64L<Cent>
                 PaymentStatus = PaymentMade
@@ -372,7 +372,7 @@ module ActualPaymentTestsExtra =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map.empty
+                PaidBy = Map [ (1025u<OffsetDay>, 0), 137_36L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 137_36L<Cent>
                 PaymentStatus = PaymentMade
@@ -662,7 +662,7 @@ module ActualPaymentTestsExtra =
                 PaymentSchedule =
                     FixedSchedules [|
                         {
-                            UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1))
+                            UnitPeriodConfig = Weekly(2, Date(2022, 9, 1))
                             PaymentCount = 155
                             PaymentValue = 20_00L<Cent>
                             ScheduleType = ScheduleType.Original

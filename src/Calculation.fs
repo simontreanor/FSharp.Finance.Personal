@@ -382,6 +382,12 @@ module Calculation =
             | m when Map.isEmpty m -> "<i>n/a</i>"
             | _ -> a |> Map.map (fun k v -> $"{k} {v}") |> Map.values |> String.concat "<br/>"
 
+        /// concatenates the members of an array into a delimited string or "n/a" if the array is empty or null
+        let mapOrNa f a =
+            match a with
+            | m when Map.isEmpty m -> "<i>n/a</i>"
+            | _ -> a |> Map.map f |> Map.values |> String.concat "<br/>"
+
     /// wrapper to extract APR value from solution
     let getAprOr defaultValue =
         function

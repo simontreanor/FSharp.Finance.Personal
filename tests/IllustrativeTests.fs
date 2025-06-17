@@ -156,7 +156,7 @@ module IllustrativeTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map.empty
+                PaidBy = Map [ (121u<OffsetDay>, 0), 181_34L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -285,7 +285,7 @@ module IllustrativeTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map.empty
+                PaidBy = Map [ (121u<OffsetDay>, 0), 181_34L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -350,7 +350,7 @@ module IllustrativeTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map.empty
+                PaidBy = Map [ (121u<OffsetDay>, 0), 181_34L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade

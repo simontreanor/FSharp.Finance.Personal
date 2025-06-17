@@ -1197,7 +1197,7 @@ module QuoteTests =
                 Window = 5
                 PaymentDue = 432_07L<Cent>
                 ActualPayments = Map.empty
-                PaidBy = Map.empty
+                PaidBy = Map [ (106u<OffsetDay>, 0), 33_88L<Cent> ]
                 GeneratedPayment = GeneratedValue 432_07L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
@@ -1542,7 +1542,7 @@ module QuoteTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map.empty
+                PaidBy = Map [ (106u<OffsetDay>, 0), 33_88L<Cent>; (134u<OffsetDay>, 0), 42_35L<Cent> ]
                 GeneratedPayment = GeneratedValue -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated

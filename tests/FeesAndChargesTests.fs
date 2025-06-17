@@ -133,7 +133,7 @@ module FeeAndChargesTests =
                             // // ScheduledPayments = Map.empty
                             }
                         ]
-                    PaidBy = Map.empty
+                    PaidBy = Map [ (125u<OffsetDay>, 0), 456_80L<Cent> ]
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade
@@ -222,7 +222,7 @@ module FeeAndChargesTests =
                             // // ScheduledPayments = Map.empty
                             }
                         ]
-                    PaidBy = Map.empty
+                    PaidBy = Map [ (125u<OffsetDay>, 0), 45680L<Cent> ]
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade
@@ -311,7 +311,7 @@ module FeeAndChargesTests =
                             // // ScheduledPayments = Map.empty
                             }
                         ]
-                    PaidBy = Map.empty
+                    PaidBy = Map [ (125u<OffsetDay>, 0), 456_80L<Cent> ]
                     GeneratedPayment = NoGeneratedPayment
                     NetEffect = 456_84L<Cent>
                     PaymentStatus = PaymentMade

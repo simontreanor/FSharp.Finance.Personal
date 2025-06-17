@@ -35,7 +35,7 @@ module ActualPaymentTests =
         |> Array.rev
         |> Map.ofArray
 
-    let quickExpectedFinalItem date offsetDay paymentValue interestAdjustment interestPortion principalPortion =
+    let quickExpectedFinalItem date offsetDay paymentValue paidBy interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
             OffsetDayType = OffsetDayType.EvaluationDay
@@ -53,7 +53,7 @@ module ActualPaymentTests =
                     // // ScheduledPayments = Map.empty
                     }
                 ]
-            PaidBy = Map.empty
+            PaidBy = paidBy
             GeneratedPayment = NoGeneratedPayment
             NetEffect = paymentValue
             PaymentStatus = PaymentMade
@@ -148,6 +148,7 @@ module ActualPaymentTests =
                 (Date(2023, 3, 31))
                 125u<OffsetDay>
                 456_84L<Cent>
+                (Map [ (125u<OffsetDay>, 0), 456_84L<Cent> ])
                 90_78.288m<Cent>
                 90_78L<Cent>
                 366_06L<Cent>
@@ -180,6 +181,7 @@ module ActualPaymentTests =
                 (Date(2023, 3, 31))
                 153u<OffsetDay>
                 556_00L<Cent>
+                (Map [ (153u<OffsetDay>, 0), 556_00L<Cent> ])
                 110_48.896m<Cent>
                 110_48L<Cent>
                 445_52L<Cent>
@@ -218,6 +220,7 @@ module ActualPaymentTests =
                 (Date(2023, 3, 15))
                 134u<OffsetDay>
                 491_53L<Cent>
+                (Map [ (134u<OffsetDay>, 0), 491_53L<Cent> ])
                 89_95.392m<Cent>
                 89_95L<Cent>
                 401_58L<Cent>
