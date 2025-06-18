@@ -21,15 +21,15 @@ module IllustrativeTests =
         DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
     }
 
-    let quickActualPayments (days: uint array) levelPayment finalPayment =
+    let quickActualPayments (days: int array) levelPayment finalPayment =
         days
         |> Array.rev
         |> Array.splitAt 1
         |> fun (last, rest) -> [|
             last
-            |> Array.map (fun d -> d * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed finalPayment ])
+            |> Array.map (fun d -> d * 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed finalPayment ])
             rest
-            |> Array.map (fun d -> d * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed levelPayment ])
+            |> Array.map (fun d -> d * 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed levelPayment ])
         |]
         |> Array.concat
         |> Array.rev
@@ -95,19 +95,19 @@ module IllustrativeTests =
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom
-                AprPrecision = 3u
+                AprPrecision = 3
             }
         }
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3u<OffsetDay>
+                Timeout = 3<OffsetDay>
             }
             FeeConfig = ValueNone
             ChargeConfig = None
             InterestConfig = {
-                InitialGracePeriod = 3u<OffsetDay>
+                InitialGracePeriod = 3<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -124,7 +124,7 @@ module IllustrativeTests =
             "Borrowing £400 over 4 months with the loan being taken on 01/03/2025 and the first repayment date/day being 31/03/2025 (30 days) - all paid on time"
 
         let actualPayments =
-            quickActualPayments [| 30u; 60u; 91u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 30; 60; 91; 121 |] 181_38L<Cent> 181_34L<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -133,7 +133,7 @@ module IllustrativeTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            121u<OffsetDay>,
+            121<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
@@ -156,7 +156,7 @@ module IllustrativeTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map [ (121u<OffsetDay>, 0), 181_34L<Cent> ]
+                PaidBy = Map [ (121<OffsetDay>, 0), 181_34L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -189,7 +189,7 @@ module IllustrativeTests =
             positive interest balance"""
 
         let actualPayments =
-            quickActualPayments [| 59u; 60u; 91u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 59; 60; 91; 121 |] 181_38L<Cent> 181_34L<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -198,7 +198,7 @@ module IllustrativeTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            121u<OffsetDay>,
+            121<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
@@ -253,7 +253,7 @@ module IllustrativeTests =
             - missed first repayment and did not pay before second repayment due date (30/04/2025); this shows a final open balance due the extra day's interest"""
 
         let actualPayments =
-            quickActualPayments [| 60u; 61u; 91u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 60; 61; 91; 121 |] 181_38L<Cent> 181_34L<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -262,7 +262,7 @@ module IllustrativeTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            121u<OffsetDay>,
+            121<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
@@ -285,7 +285,7 @@ module IllustrativeTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map [ (121u<OffsetDay>, 0), 181_34L<Cent> ]
+                PaidBy = Map [ (121<OffsetDay>, 0), 181_34L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade
@@ -318,7 +318,7 @@ module IllustrativeTests =
             balance remains higher than it would have been if the payment had been made on time"""
 
         let actualPayments =
-            quickActualPayments [| 30u; 60u; 120u; 121u |] 181_38L<Cent> 181_34L<Cent>
+            quickActualPayments [| 30; 60; 120; 121 |] 181_38L<Cent> 181_34L<Cent>
 
         let schedules = amortise parameters actualPayments
 
@@ -327,7 +327,7 @@ module IllustrativeTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            121u<OffsetDay>,
+            121<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
@@ -350,7 +350,7 @@ module IllustrativeTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map [ (121u<OffsetDay>, 0), 181_34L<Cent> ]
+                PaidBy = Map [ (121<OffsetDay>, 0), 181_34L<Cent> ]
                 GeneratedPayment = NoGeneratedPayment
                 NetEffect = 181_34L<Cent>
                 PaymentStatus = PaymentMade

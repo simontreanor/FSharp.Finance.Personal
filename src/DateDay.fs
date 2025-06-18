@@ -49,10 +49,10 @@ module DateDay =
     module OffsetDay =
         /// convert an offset date to an offset day based on a given start date
         let fromDate (startDate: Date) (offsetDate: Date) =
-            uint (offsetDate - startDate).Days * 1u<OffsetDay>
+            int (offsetDate - startDate).Days * 1<OffsetDay>
 
         /// convert an offset day to an offset date based on a given start date
-        let toDate (startDate: Date) (offsetDay: uint<OffsetDay>) = startDate.AddDays(int offsetDay)
+        let toDate (startDate: Date) (offsetDay: int<OffsetDay>) = startDate.AddDays(int offsetDay)
 
     /// day of month, bug: specifying 29, 30, or 31 means the dates will track the specific day of the month where
     /// possible, otherwise the day will be the last day of the month; so 31 will track the month end; also note that it is

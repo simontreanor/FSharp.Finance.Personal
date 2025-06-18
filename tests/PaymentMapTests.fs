@@ -36,17 +36,17 @@ module PaymentMapTests =
                 Total = Amount.Percentage(Percent 100m, Restriction.NoLimit)
                 Daily = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
             }
-            InitialGracePeriod = 0u<OffsetDay>
+            InitialGracePeriod = 0<OffsetDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom
-            AprPrecision = 3u
+            AprPrecision = 3
             AprPrecision = Apr.Precision 3
             InterestRounding = RoundDown
             MinimumPayment = DeferOrWriteOff 50L<Cent>
-            PaymentTimeout = 3u<OffsetDay>
+            PaymentTimeout = 3<OffsetDay>
         }
     }
 
@@ -81,11 +81,11 @@ module PaymentMapTests =
 
             let actualPayments: PaymentMap.Payment array = [|
                 {
-                    Day = 10u<OffsetDay>
+                    Day = 10<OffsetDay>
                     Amount = 250_00L<Cent>
                 }
                 {
-                    Day = 17u<OffsetDay>
+                    Day = 17<OffsetDay>
                     Amount = 250_00L<Cent>
                 }
             |]
@@ -140,23 +140,23 @@ module PaymentMapTests =
 
             let actualPayments: PaymentMap.Payment array = [|
                 {
-                    Day = 1u<OffsetDay>
+                    Day = 1<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 2u<OffsetDay>
+                    Day = 2<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 3u<OffsetDay>
+                    Day = 3<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 4u<OffsetDay>
+                    Day = 4<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 5u<OffsetDay>
+                    Day = 5<OffsetDay>
                     Amount = 367_72L<Cent>
                 }
             |]
@@ -211,15 +211,15 @@ module PaymentMapTests =
 
             let actualPayments: PaymentMap.Payment array = [|
                 {
-                    Day = 18u<OffsetDay>
+                    Day = 18<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 35u<OffsetDay>
+                    Day = 35<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 168u<OffsetDay>
+                    Day = 168<OffsetDay>
                     Amount = 1103_18L<Cent>
                 }
             |]
@@ -274,11 +274,11 @@ module PaymentMapTests =
 
             let actualPayments: PaymentMap.Payment array = [|
                 {
-                    Day = 18u<OffsetDay>
+                    Day = 18<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
                 {
-                    Day = 35u<OffsetDay>
+                    Day = 35<OffsetDay>
                     Amount = 367_73L<Cent>
                 }
             |]

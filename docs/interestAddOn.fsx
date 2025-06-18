@@ -56,7 +56,7 @@ let bp: BasicParameters = {
         }
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom
-        AprPrecision = 3u
+        AprPrecision = 3
     }
 }
 
@@ -137,7 +137,7 @@ and capping this at 100% of the principal amount (as specified in the parameters
 *)
 
 let finalScheduledPaymentDay =
-    paymentDays |> Array.tryLast |> Option.defaultValue 0u<OffsetDay>
+    paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
 
 let initialInterestBalance = totalAddOnInterest bp finalScheduledPaymentDay
 
@@ -190,7 +190,7 @@ let basicItems =
 
 (*** hide ***)
 {
-    EvaluationDay = 0u<OffsetDay>
+    EvaluationDay = 0<OffsetDay>
     Items = basicItems
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }
@@ -221,7 +221,7 @@ let basicItems' =
 
 (*** hide ***)
 {
-    EvaluationDay = 0u<OffsetDay>
+    EvaluationDay = 0<OffsetDay>
     Items = basicItems'
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }
@@ -243,7 +243,7 @@ let items =
 
 (*** hide ***)
 {
-    EvaluationDay = 0u<OffsetDay>
+    EvaluationDay = 0<OffsetDay>
     Items = items
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }

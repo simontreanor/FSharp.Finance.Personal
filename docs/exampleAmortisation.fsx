@@ -53,19 +53,19 @@ let parameters: Parameters = {
             }
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom
-            AprPrecision = 3u
+            AprPrecision = 3
         }
     }
     Advanced = {
         PaymentConfig = {
             ScheduledPaymentOption = AsScheduled
             Minimum = DeferOrWriteOff 50L<Cent>
-            Timeout = 3u<OffsetDay>
+            Timeout = 3<OffsetDay>
         }
         FeeConfig = ValueNone
         ChargeConfig = None
         InterestConfig = {
-            InitialGracePeriod = 3u<OffsetDay>
+            InitialGracePeriod = 3<OffsetDay>
             PromotionalRates = [||]
             RateOnNegativeBalance = Interest.Rate.Zero
         }
@@ -76,11 +76,11 @@ let parameters: Parameters = {
 
 let actualPayments =
     Map [
-        4u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        35u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        66u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        94u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
-        125u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
+        4<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        35<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        66<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        94<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_88L<Cent> ]
+        125<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 456_84L<Cent> ]
     ]
 
 let schedules = actualPayments |> amortise parameters

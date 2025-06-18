@@ -47,19 +47,19 @@ module PromotionalRatesTests =
                 }
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom
-                AprPrecision = 3u
+                AprPrecision = 3
             }
         }
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3u<OffsetDay>
+                Timeout = 3<OffsetDay>
             }
             FeeConfig = ValueNone
             ChargeConfig = None
             InterestConfig = {
-                InitialGracePeriod = 0u<OffsetDay>
+                InitialGracePeriod = 0<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -193,7 +193,7 @@ module PromotionalRatesTests =
                     StandardRate = Interest.Rate.Annual <| Percent 7.985m
                     Cap = Interest.Cap.zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom
-                    AprPrecision = 3u
+                    AprPrecision = 3
                     Rounding = RoundDown
                 }
             }
@@ -201,7 +201,7 @@ module PromotionalRatesTests =
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = NoMinimumPayment
-                    Timeout = 3u<OffsetDay>
+                    Timeout = 3<OffsetDay>
                 }
                 FeeConfig =
                     ValueSome {
@@ -209,7 +209,7 @@ module PromotionalRatesTests =
                     }
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 3u<OffsetDay>
+                    InitialGracePeriod = 3<OffsetDay>
                     PromotionalRates = [|
                         {
                             DateRange = {
@@ -235,7 +235,7 @@ module PromotionalRatesTests =
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            7305u<OffsetDay>,
+            7305<OffsetDay>,
             {
                 OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2044, 4, 11)

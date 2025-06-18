@@ -51,9 +51,9 @@ module Charge =
             chargeHolidays
             |> Array.collect (fun dr ->
                 [|
-                    uint (dr.DateRangeStart - startDate).Days .. uint (dr.DateRangeEnd - startDate).Days
+                    int (dr.DateRangeStart - startDate).Days .. int (dr.DateRangeEnd - startDate).Days
                 |]
-                |> Array.map ((*) 1u<OffsetDay>)
+                |> Array.map ((*) 1<OffsetDay>)
             )
 
     /// the type and conditions of any charge

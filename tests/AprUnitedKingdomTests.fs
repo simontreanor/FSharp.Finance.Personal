@@ -97,19 +97,19 @@ module AprUnitedKingdomTests =
                     Cap = interestCap
                     Rounding = RoundDown
                     AprMethod = CalculationMethod.UnitedKingdom
-                    AprPrecision = 3u
+                    AprPrecision = 3
                 }
             }
             Advanced = {
                 PaymentConfig = {
                     ScheduledPaymentOption = AsScheduled
                     Minimum = DeferOrWriteOff 50L<Cent>
-                    Timeout = 3u<OffsetDay>
+                    Timeout = 3<OffsetDay>
                 }
                 FeeConfig = ValueNone
                 ChargeConfig = None
                 InterestConfig = {
-                    InitialGracePeriod = 3u<OffsetDay>
+                    InitialGracePeriod = 3<OffsetDay>
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                 }

@@ -47,7 +47,7 @@ module QuoteTests =
                 StandardRate = Interest.Rate.Annual <| Percent 9.95m
                 Cap = Interest.Cap.zero
                 AprMethod = Apr.CalculationMethod.UsActuarial
-                AprPrecision = 8u
+                AprPrecision = 8
                 Rounding = RoundDown
             }
         }
@@ -55,7 +55,7 @@ module QuoteTests =
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
                 Minimum = DeferOrWriteOff 50L<Cent>
-                Timeout = 3u<OffsetDay>
+                Timeout = 3<OffsetDay>
             }
             FeeConfig =
                 ValueSome {
@@ -80,7 +80,7 @@ module QuoteTests =
                         ]
                 }
             InterestConfig = {
-                InitialGracePeriod = 3u<OffsetDay>
+                InitialGracePeriod = 3<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -95,8 +95,8 @@ module QuoteTests =
         let description = "Settlement falling on a scheduled payment date"
 
         let actualPayments =
-            [| 18u .. 7u .. 53u |]
-            |> Array.map (fun i -> i * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
+            [| 18..7..53 |]
+            |> Array.map (fun i -> i * 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
             |> Map.ofArray
 
         let actual =
@@ -106,7 +106,7 @@ module QuoteTests =
             |> Schedule.outputHtmlToFile folder title description parameters1 ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 57u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 57<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -174,8 +174,8 @@ module QuoteTests =
         }
 
         let actualPayments =
-            [| 18u .. 7u .. 53u |]
-            |> Array.map (fun i -> i * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
+            [| 18..7..53 |]
+            |> Array.map (fun i -> i * 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
             |> Map.ofArray
 
         let actual =
@@ -184,7 +184,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -254,8 +254,8 @@ module QuoteTests =
         }
 
         let actualPayments =
-            [| 18u .. 7u .. 60u |]
-            |> Array.map (fun i -> i * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
+            [| 18..7..60 |]
+            |> Array.map (fun i -> i * 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
             |> Map.ofArray
 
         let actual =
@@ -264,7 +264,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -346,7 +346,7 @@ module QuoteTests =
                     DailyAmount = Amount.Unlimited
                 }
                 Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UnitedKingdom
-                Basic.InterestConfig.AprPrecision = 3u
+                Basic.InterestConfig.AprPrecision = 3
                 Advanced.FeeConfig = ValueNone
         }
 
@@ -358,7 +358,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 3u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 3<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -432,7 +432,7 @@ module QuoteTests =
                     DailyAmount = Amount.Unlimited
                 }
                 Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UnitedKingdom
-                Basic.InterestConfig.AprPrecision = 3u
+                Basic.InterestConfig.AprPrecision = 3
                 Advanced.FeeConfig = ValueNone
         }
 
@@ -444,7 +444,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 4u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 4<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -515,8 +515,8 @@ module QuoteTests =
         }
 
         let actualPayments =
-            [| 18u .. 7u .. 53u |]
-            |> Array.map (fun i -> i * 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
+            [| 18..7..53 |]
+            |> Array.map (fun i -> i * 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 25_00L<Cent> ])
             |> Map.ofArray
 
         let actual =
@@ -525,7 +525,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -597,9 +597,9 @@ module QuoteTests =
         }
 
         let actualPayments =
-            [| 15u .. 14u .. 29u |]
+            [| 15..14..29 |]
             |> Array.map (fun i ->
-                i * 1u<OffsetDay>,
+                i * 1<OffsetDay>,
                 Map [
                     0,
                     {
@@ -673,9 +673,9 @@ module QuoteTests =
         }
 
         let actualPayments =
-            [| 15u .. 14u .. 29u |]
+            [| 15..14..29 |]
             |> Array.map (fun i ->
-                i * 1u<OffsetDay>,
+                i * 1<OffsetDay>,
                 Map [
                     0,
                     {
@@ -725,7 +725,7 @@ module QuoteTests =
                         FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     }
                 Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UsActuarial
-                Basic.InterestConfig.AprPrecision = 5u
+                Basic.InterestConfig.AprPrecision = 5
                 Advanced.ChargeConfig = None
         }
 
@@ -737,7 +737,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 181u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 181<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -808,22 +808,22 @@ module QuoteTests =
                         FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     }
                 Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UsActuarial
-                Basic.InterestConfig.AprPrecision = 5u
+                Basic.InterestConfig.AprPrecision = 5
                 Advanced.ChargeConfig = None
         }
 
         let actualPayments =
             Map [
-                70u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
-                84u<OffsetDay>,
+                70<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
+                84<OffsetDay>,
                 Map [
                     0, ActualPayment.quickConfirmed 272_84L<Cent>
                     1, ActualPayment.quickConfirmed 272_84L<Cent>
                 ]
-                85u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
-                98u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
-                112u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
-                126u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
+                85<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
+                98<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
+                112<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
+                126<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 272_84L<Cent> ]
             ]
 
         let actual =
@@ -832,7 +832,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 388u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 388<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -906,16 +906,16 @@ module QuoteTests =
                         FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
                     }
                 Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UsActuarial
-                Basic.InterestConfig.AprPrecision = 5u
+                Basic.InterestConfig.AprPrecision = 5
                 Advanced.ChargeConfig = None
         }
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
-                28u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
-                42u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
-                56u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
+                28<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
+                42<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
+                56<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 279_01L<Cent> ]
             ]
 
         let actual =
@@ -924,7 +924,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 72u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 72<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -978,7 +978,7 @@ module QuoteTests =
             Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.8m
             Basic.InterestConfig.Cap = interestCapExample
             Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UnitedKingdom
-            Basic.InterestConfig.AprPrecision = 3u
+            Basic.InterestConfig.AprPrecision = 3
             Advanced.FeeConfig = ValueNone
             Advanced.ChargeConfig = None
             Advanced.InterestConfig.RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
@@ -1001,7 +1001,7 @@ module QuoteTests =
                         ScheduleLength = PaymentCount 4
                     }
                 Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
-                Advanced.InterestConfig.InitialGracePeriod = 1u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 1<OffsetDay>
         }
 
         let actualPayments = Map.empty
@@ -1012,7 +1012,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 30u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 30<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1079,10 +1079,10 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1091,7 +1091,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1160,10 +1160,10 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1172,7 +1172,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1197,7 +1197,7 @@ module QuoteTests =
                 Window = 5
                 PaymentDue = 432_07L<Cent>
                 ActualPayments = Map.empty
-                PaidBy = Map [ (106u<OffsetDay>, 0), 33_88L<Cent> ]
+                PaidBy = Map [ (106<OffsetDay>, 0), 33_88L<Cent> ]
                 GeneratedPayment = GeneratedValue 432_07L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
@@ -1241,10 +1241,10 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1253,7 +1253,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1335,10 +1335,10 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1347,7 +1347,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 138u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 138<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1416,11 +1416,11 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                134u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                134<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1429,7 +1429,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1496,11 +1496,11 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                134u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                134<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1509,7 +1509,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1542,7 +1542,7 @@ module QuoteTests =
                         // // ScheduledPayments = Map.empty
                         }
                     ]
-                PaidBy = Map [ (106u<OffsetDay>, 0), 33_88L<Cent>; (134u<OffsetDay>, 0), 42_35L<Cent> ]
+                PaidBy = Map [ (106<OffsetDay>, 0), 33_88L<Cent>; (134<OffsetDay>, 0), 42_35L<Cent> ]
                 GeneratedPayment = GeneratedValue -67_93L<Cent>
                 NetEffect = 432_07L<Cent>
                 PaymentStatus = Generated
@@ -1584,11 +1584,11 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                134u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                134<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1597,7 +1597,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1664,11 +1664,11 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                14u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                44u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                75u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                106u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
-                134u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                14<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                44<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                75<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                106<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
+                134<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 500_00L<Cent> ]
             ]
 
         let actual =
@@ -1677,7 +1677,7 @@ module QuoteTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 461u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 461<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1742,11 +1742,11 @@ module QuoteTests =
                         UnitPeriodConfig = Monthly(1, 2023, 1, 20)
                         ScheduleLength = PaymentCount 4
                     }
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
         }
 
         let actualPayments =
-            Map [ 1u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 252_00L<Cent> ] ]
+            Map [ 1<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 252_00L<Cent> ] ]
 
         let actual =
             let quote = getQuote p actualPayments
@@ -1784,21 +1784,21 @@ module QuoteTests =
                         UnitPeriodConfig = Monthly(1, 2018, 2, 28)
                         ScheduleLength = PaymentCount 3
                     }
-                Advanced.PaymentConfig.Timeout = 0u<OffsetDay>
+                Advanced.PaymentConfig.Timeout = 0<OffsetDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
                 Advanced.InterestConfig.RateOnNegativeBalance = Interest.Rate.Zero
         }
 
         let actualPayments =
             Map [
-                25u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 72_54L<Cent> ]
-                53u<OffsetDay>,
+                25<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 72_54L<Cent> ]
+                53<OffsetDay>,
                 Map [
                     0, ActualPayment.quickFailed 72_54L<Cent> ValueNone
                     1, ActualPayment.quickConfirmed 72_54L<Cent>
                 ]
-                78u<OffsetDay>,
+                78<OffsetDay>,
                 Map [
                     0, ActualPayment.quickConfirmed 72_54L<Cent>
                     1, ActualPayment.quickConfirmed 145_07L<Cent>
@@ -1843,7 +1843,7 @@ module QuoteTests =
                         UnitPeriodConfig = Monthly(1, 2018, 2, 28)
                         ScheduleLength = PaymentCount 3
                     }
-                Advanced.PaymentConfig.Timeout = 0u<OffsetDay>
+                Advanced.PaymentConfig.Timeout = 0<OffsetDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
                 Advanced.ChargeConfig =
                     Some {
@@ -1857,18 +1857,18 @@ module QuoteTests =
                                 }
                             ]
                     }
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
         }
 
         let actualPayments =
             Map [
-                25u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 72_54L<Cent> ]
-                53u<OffsetDay>,
+                25<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 72_54L<Cent> ]
+                53<OffsetDay>,
                 Map [
                     0, ActualPayment.quickFailed 72_54L<Cent> (ValueSome Charge.InsufficientFunds)
                     1, ActualPayment.quickConfirmed 72_54L<Cent>
                 ]
-                78u<OffsetDay>,
+                78<OffsetDay>,
                 Map [
                     0, ActualPayment.quickConfirmed 72_54L<Cent>
                     1, ActualPayment.quickConfirmed 145_07L<Cent>
@@ -1911,16 +1911,16 @@ module QuoteTests =
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
                     }
-                Advanced.PaymentConfig.Timeout = 0u<OffsetDay>
+                Advanced.PaymentConfig.Timeout = 0<OffsetDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
         }
 
         let actualPayments =
             Map [
-                5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed -5_10L<Cent> ]
-                6u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 2_00L<Cent> ]
-                16u<OffsetDay>,
+                5<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed -5_10L<Cent> ]
+                6<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 2_00L<Cent> ]
+                16<OffsetDay>,
                 Map [
                     0, ActualPayment.quickConfirmed 97_01L<Cent>
                     1, ActualPayment.quickConfirmed 97_01L<Cent>
@@ -1965,15 +1965,15 @@ module QuoteTests =
                         UnitPeriodConfig = Monthly(1, 2023, 9, 22)
                         ScheduleLength = PaymentCount 4
                     }
-                Advanced.PaymentConfig.Timeout = 0u<OffsetDay>
+                Advanced.PaymentConfig.Timeout = 0<OffsetDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
         }
 
         let actualPayments =
             Map [
-                20u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 200_00L<Cent> ]
-                50u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 200_00L<Cent> ]
+                20<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 200_00L<Cent> ]
+                50<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 200_00L<Cent> ]
             ]
 
         let actual =
@@ -2012,15 +2012,15 @@ module QuoteTests =
                         UnitPeriodConfig = Monthly(1, 2023, 5, 10)
                         ScheduleLength = PaymentCount 4
                     }
-                Advanced.PaymentConfig.Timeout = 0u<OffsetDay>
+                Advanced.PaymentConfig.Timeout = 0<OffsetDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
         }
 
         let actualPayments =
             Map [
-                5u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 111_00L<Cent> ]
-                21u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 181_01L<Cent> ]
+                5<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 111_00L<Cent> ]
+                21<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 181_01L<Cent> ]
             ]
 
         let actual =

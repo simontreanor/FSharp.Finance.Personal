@@ -44,7 +44,7 @@ module Interest =
     [<Struct>]
     type DailyRate = {
         /// the day expressed as an offset from the start date
-        RateDay: uint<OffsetDay>
+        RateDay: int<OffsetDay>
         /// the interest rate applicable on the given day
         InterestRate: Rate
     }
@@ -100,7 +100,7 @@ module Interest =
                 [|
                     (pr.DateRange.DateRangeStart - startDate).Days .. (pr.DateRange.DateRangeEnd - startDate).Days
                 |]
-                |> Array.map (fun d -> uint d * 1u<OffsetDay>, pr.Rate)
+                |> Array.map (fun d -> int d * 1<OffsetDay>, pr.Rate)
             )
             |> Map.ofArray
 
@@ -132,7 +132,7 @@ module Interest =
         /// which APR calculation method to use
         AprMethod: Apr.CalculationMethod
         /// which APR decimal-place precision (note that this is two places more than the percent precision)
-        AprPrecision: uint
+        AprPrecision: int
     }
 
     /// basic interest options
@@ -145,7 +145,7 @@ module Interest =
                 <div>method: <i>{basicConfig.Method}</i></div>
                 <div>rounding: <i>{basicConfig.Rounding}</i></div>
                 <div>APR method: <i>{basicConfig.AprMethod}</i></div>
-                <div>APR precision: <i>{basicConfig.AprPrecision - 2u} d.p.</i></div>
+                <div>APR precision: <i>{basicConfig.AprPrecision - 2} d.p.</i></div>
                 <div>cap: <i>{basicConfig.Cap}</div>
             </div>"""
 
@@ -153,7 +153,7 @@ module Interest =
     [<Struct>]
     type AdvancedConfig = {
         /// any grace period at the start of a schedule, during which if settled no interest is payable
-        InitialGracePeriod: uint<OffsetDay>
+        InitialGracePeriod: int<OffsetDay>
         /// any promotional or introductory offers during which a different interest rate is applicable
         PromotionalRates: PromotionalRate array
         /// the interest rate applicable for any period in which a refund is owing
@@ -188,14 +188,14 @@ module Interest =
         isSettledWithinGracePeriod
         standardRate
         promotionalRates
-        (fromDay: uint<OffsetDay>)
-        (toDay: uint<OffsetDay>)
+        (fromDay: int<OffsetDay>)
+        (toDay: int<OffsetDay>)
         =
         let promoRates = promotionalRates |> PromotionalRate.toMap startDate
 
-        [| uint fromDay + 1u .. uint toDay |]
+        [| int fromDay + 1 .. int toDay |]
         |> Array.map (fun d ->
-            let offsetDay = d * 1u<OffsetDay>
+            let offsetDay = d * 1<OffsetDay>
 
             if isSettledWithinGracePeriod then
                 {
@@ -321,7 +321,7 @@ module Interest =
             remainingPaymentTotal - settlementFigure
 
     /// if there is less than one cent remaining, discards any fraction
-    let ignoreFractionalCents (multiplier: uint) value =
+    let ignoreFractionalCents (multiplier: int) value =
         if abs value < decimal multiplier * 1m<Cent> then
             0m<Cent>
         else

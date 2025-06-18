@@ -14,7 +14,7 @@ module Scheduling =
         /// the original payment amount
         Value: int64<Cent>
         /// the day on which the rescheduled payment was created
-        RescheduleDay: uint<OffsetDay>
+        RescheduleDay: int<OffsetDay>
     } with
 
         member x.Html = formatCent x.Value
@@ -128,7 +128,7 @@ module Scheduling =
         /// the status of the payment
         ActualPaymentStatus: ActualPaymentStatus
         // // /// a map of the scheduled payments and amounts covered by this payment
-        // // ScheduledPayments: Map<uint<OffsetDay>, int64<Cent>>
+        // // ScheduledPayments: Map<int<OffsetDay>, int64<Cent>>
         /// any extra info such as references
         Metadata: Map<string, obj>
     } with
@@ -205,7 +205,7 @@ module Scheduling =
         /// an original schedule
         | Original
         /// a new schedule created after the original schedule, indicating the day it was created
-        | Rescheduled of RescheduleDay: uint<OffsetDay>
+        | Rescheduled of RescheduleDay: int<OffsetDay>
 
         /// HTML formatting to display the schedule type in a readable format
         member st.Html =
@@ -227,7 +227,7 @@ module Scheduling =
     }
 
     /// type alias to represent a scheduled payment indexed by offset day
-    type internal PaymentMap = Map<uint<OffsetDay>, ScheduledPayment>
+    type internal PaymentMap = Map<int<OffsetDay>, ScheduledPayment>
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     [<Struct>]
@@ -388,7 +388,7 @@ module Scheduling =
             /// the minimum payment that can be taken and how to handle it
             Minimum: MinimumPayment
             /// the duration after which a pending payment is considered a missed payment and charges are applied
-            Timeout: uint<OffsetDay>
+            Timeout: int<OffsetDay>
         }
 
         /// advanced payment options
@@ -546,7 +546,7 @@ module Scheduling =
     /// a scheduled payment item, with running calculations of interest and principal balance
     type BasicItem = {
         /// the day expressed as an offset from the start date
-        Day: uint<OffsetDay>
+        Day: int<OffsetDay>
         /// the scheduled payment
         ScheduledPayment: ScheduledPayment
         /// the actuarial interest accrued since the previous payment
@@ -571,7 +571,7 @@ module Scheduling =
     module BasicItem =
         /// a default value with no data
         let zero = {
-            Day = 0u<OffsetDay>
+            Day = 0<OffsetDay>
             ScheduledPayment = ScheduledPayment.zero
             ActuarialInterest = 0m<Cent>
             InterestPortion = 0L<Cent>
@@ -605,7 +605,7 @@ module Scheduling =
         /// the initial interest balance when using the add-on interest method
         InitialInterestBalance: int64<Cent>
         /// the final day of the schedule, expressed as an offset from the start date
-        LastScheduledPaymentDay: uint<OffsetDay>
+        LastScheduledPaymentDay: int<OffsetDay>
         /// the amount of all the payments except the final one
         LevelPayment: int64<Cent>
         /// the amount of the final payment
@@ -648,7 +648,7 @@ module Scheduling =
     ///  a schedule of payments, with statistics
     type BasicSchedule = {
         /// the day, expressed as an offset from the start date, on which the schedule is evaluated
-        EvaluationDay: uint<OffsetDay>
+        EvaluationDay: int<OffsetDay>
         /// the items of the schedule
         Items: BasicItem array
         /// the statistics from the schedule
@@ -769,7 +769,7 @@ module Scheduling =
         | AutoGenerateSchedule rs ->
             match rs.ScheduleLength with
             | PaymentCount 0
-            | MaxDuration(_, 0u<OffsetDay>) -> Map.empty
+            | MaxDuration(_, 0<OffsetDay>) -> Map.empty
             | _ ->
                 let unitPeriodConfigStartDate = Config.startDate rs.UnitPeriodConfig
 
@@ -1000,7 +1000,7 @@ module Scheduling =
         let paymentDays = paymentMap |> Map.keys |> Seq.toArray
         // take the last payment day for use in further calculations
         let finalScheduledPaymentDay =
-            paymentDays |> Array.tryLast |> Option.defaultValue 0u<OffsetDay>
+            paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         // get the payment count for use in further calculations
         let paymentCount = paymentDays |> Array.length
         // calculate the total fee value for the entire schedule
@@ -1041,7 +1041,7 @@ module Scheduling =
                         * Fraction.toDecimal (Fraction.Simple(2, 3))
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue bp paymentDays initialBasicItem
-                let iterationLimit = 100u
+                let iterationLimit = 100
 
                 let roughPayment =
                     calculateLevelPayment bp.Principal feeTotal roughInterest paymentCount bp.PaymentConfig.Rounding

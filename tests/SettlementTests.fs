@@ -43,19 +43,19 @@ module SettlementTests =
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom
-                AprPrecision = 3u
+                AprPrecision = 3
             }
         }
         Advanced = {
             PaymentConfig = {
                 ScheduledPaymentOption = AsScheduled
-                Timeout = 0u<OffsetDay>
+                Timeout = 0<OffsetDay>
                 Minimum = NoMinimumPayment
             }
             FeeConfig = ValueNone
             ChargeConfig = None
             InterestConfig = {
-                InitialGracePeriod = 0u<OffsetDay>
+                InitialGracePeriod = 0<OffsetDay>
                 PromotionalRates = [||]
                 RateOnNegativeBalance = Interest.Rate.Zero
             }
@@ -73,9 +73,9 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                24<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
             ]
 
         let actual =
@@ -85,7 +85,7 @@ module SettlementTests =
             |> Schedule.outputHtmlToFile folder title description parameters ""
 
             let scheduledItem =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 112u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 112<OffsetDay>
 
             quote.QuoteResult, scheduledItem
 
@@ -148,9 +148,9 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                24<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
             ]
 
         let actual =
@@ -159,7 +159,7 @@ module SettlementTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let scheduledItem =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 122u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
 
             quote.QuoteResult, scheduledItem
 
@@ -222,10 +222,10 @@ module SettlementTests =
 
         let actualPayments =
             Map [
-                24u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                55u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                86u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
-                115u<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 50_00L<Cent> ]
+                24<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                55<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                86<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 100_53L<Cent> ]
+                115<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 50_00L<Cent> ]
             ]
 
         let actual =
@@ -234,7 +234,7 @@ module SettlementTests =
             quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let scheduledItem =
-                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 122u<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 122<OffsetDay>
 
             quote.QuoteResult, scheduledItem
 

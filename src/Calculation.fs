@@ -97,7 +97,7 @@ module Calculation =
         member dr.Html = $"%A{dr.DateRangeStart} to %A{dr.DateRangeEnd}"
 
     /// determines whether a pending payment has timed out
-    let isTimedOut (paymentTimeout: uint<OffsetDay>) evaluationDay paymentDay =
+    let isTimedOut (paymentTimeout: int<OffsetDay>) evaluationDay paymentDay =
         evaluationDay - paymentDay > paymentTimeout
 
     /// a fraction
@@ -291,7 +291,7 @@ module Calculation =
         /// iteratively solves for a given input using a generator function until the output hits zero or within a set tolerance,
         /// optionally relaxing the tolerance until a solution is found
         /// note: the generator function should return a tuple of the result and a relevant value (as the result is converging on zero it is not a very relevant value)
-        let solveBisection generator (iterationLimit: uint) initialGuess targetTolerance toleranceSteps =
+        let solveBisection generator (iterationLimit: int) initialGuess targetTolerance toleranceSteps =
             let initialLowerBound, initialUpperBound =
                 initialGuess * 0.75m, initialGuess * 1.25m
             // recursively iterate through possible solutions
@@ -331,7 +331,7 @@ module Calculation =
             loop 0 initialLowerBound initialUpperBound toleranceSteps.MinTolerance
 
         /// use the Newton-Raphson method to find the solution (particularly suitable for calculating the APR)
-        let solveNewtonRaphson f (iterationLimit: uint) initialGuess tolerance =
+        let solveNewtonRaphson f (iterationLimit: int) initialGuess tolerance =
             // calculate the approximate derivative of the function `f`
             let derivative f x step =
                 // evaluate the function at two nearby points and compute the slope of the line connecting them

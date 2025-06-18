@@ -16,7 +16,7 @@ module UnitPeriod =
         /// the last date of the transaction
         End: Date
         /// the length of the transaction in days
-        Duration: uint<OffsetDay>
+        Duration: int<OffsetDay>
     }
 
     /// calculate the transaction term based on specific events
@@ -270,7 +270,7 @@ module UnitPeriod =
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduleLength =
         | PaymentCount of Payments: int
-        | MaxDuration of StartDate: Date * Days: uint<OffsetDay>
+        | MaxDuration of StartDate: Date * Days: int<OffsetDay>
 
         member sl.Html =
             match sl with

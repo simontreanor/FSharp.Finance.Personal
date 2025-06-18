@@ -46,7 +46,7 @@ let parameters = {
         Cap = Interest.Cap.zero
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom
-        AprPrecision = 3u
+        AprPrecision = 3
     }
 }
 

@@ -52,7 +52,7 @@ module Refinancing =
 </fieldset>"""
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
-    let mergeScheduledPayments (scheduledPayments: (uint<OffsetDay> * ScheduledPayment) array) =
+    let mergeScheduledPayments (scheduledPayments: (int<OffsetDay> * ScheduledPayment) array) =
         // get a sorted array of all days on which payments are rescheduled
         let rescheduleDays =
             scheduledPayments
@@ -209,7 +209,7 @@ module Refinancing =
                         fc with
                             SettlementRebate = rp.FeeSettlementRebate
                     })
-                Advanced.InterestConfig.InitialGracePeriod = 0u<OffsetDay>
+                Advanced.InterestConfig.InitialGracePeriod = 0<OffsetDay>
                 Advanced.InterestConfig.PromotionalRates = rp.PromotionalInterestRates
                 Advanced.InterestConfig.RateOnNegativeBalance = rp.RateOnNegativeBalance
                 Advanced.SettlementDay = rp.SettlementDay
@@ -229,7 +229,7 @@ module Refinancing =
     [<RequireQualifiedAccess>]
     type RolloverParameters = {
         /// the final payment day of the original schedule
-        OriginalFinalPaymentDay: uint<OffsetDay>
+        OriginalFinalPaymentDay: int<OffsetDay>
         /// the scheduled payments or the parameters for generating them
         PaymentSchedule: ScheduleConfig
         /// options relating to interest

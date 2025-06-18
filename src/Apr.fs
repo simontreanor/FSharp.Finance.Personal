@@ -99,7 +99,7 @@ module Apr =
                     let difference = Decimal.Round(pp - aa, 8)
                     difference
 
-                Array.solveNewtonRaphson generator 100u roughUnitPeriodRate 1e-6m
+                Array.solveNewtonRaphson generator 100 roughUnitPeriodRate 1e-6m
 
     /// APR as in EU Directive [2008/48/EC](https://eur-lex.europa.eu/eli/dir/2008/48/2023-12-30)
     module EuropeanUnion =
@@ -349,7 +349,7 @@ module Apr =
                                 let difference = Decimal.Round(pp - aa, 10)
                                 difference
 
-                            Array.solveNewtonRaphson generator 100u roughUnitPeriodRate 1e-6m
+                            Array.solveNewtonRaphson generator 100 roughUnitPeriodRate 1e-6m
 
                         match unitPeriodRate with
                         | Solution.Found(upr, iteration, tolerance) ->
@@ -384,7 +384,7 @@ module Apr =
             |> UsActuarial.generalEquation advanceDate advanceDate advances
 
     /// converts an APR solution to a percentage, if possible
-    let toPercent (precision: uint) aprSolution =
+    let toPercent (precision: int) aprSolution =
         match aprSolution with
         | Solution.Found(apr, _, _)
         | Solution.IterationLimitReached(apr, _, _) -> Decimal.Round(apr, int precision) |> Percent.fromDecimal

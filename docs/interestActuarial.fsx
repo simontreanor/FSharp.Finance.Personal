@@ -59,7 +59,7 @@ let bp: BasicParameters = {
         }
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom
-        AprPrecision = 3u
+        AprPrecision = 3
     }
 }
 
@@ -197,7 +197,7 @@ let basicItems =
     let solution =
         Array.solveBisection
             (generatePaymentValue bp paymentDays initialBasicItem)
-            100u
+            100
             roughPayment
             (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption)
             (ToleranceSteps.forPaymentValue paymentCount)
@@ -219,7 +219,7 @@ let basicItems =
 
 (*** hide ***)
 {
-    EvaluationDay = 0u<OffsetDay>
+    EvaluationDay = 0<OffsetDay>
     Items = basicItems
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }
@@ -239,7 +239,7 @@ let items =
 
 (*** hide ***)
 {
-    EvaluationDay = 0u<OffsetDay>
+    EvaluationDay = 0<OffsetDay>
     Items = items
     Stats = (*☣*) Unchecked.defaultof<InitialStats>
 }

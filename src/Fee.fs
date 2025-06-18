@@ -52,7 +52,7 @@ module Fee =
         /// for original (non-rescheduled) amortisations: fee is rebated proportionately based on the current final payment day
         | ProRata
         /// for rescheduled amortisations: fee is rebated proportionately based on the original final payment day
-        | ProRataRescheduled of OriginalFinalPaymentDay: uint<OffsetDay>
+        | ProRataRescheduled of OriginalFinalPaymentDay: int<OffsetDay>
         /// the current fee balance is rebated
         | Balance
 

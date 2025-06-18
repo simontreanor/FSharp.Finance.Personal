@@ -4355,7 +4355,7 @@
 <fieldset style="flex: 1; display: flex; flex-direction: column;"><legend>Extra Info</legend>
 <fieldset>
     <legend>Rollover Parameters</legend>
-    <div>Original final payment day: 4294967292</div>
+    <div>Original final payment day: -4</div>
     <div>Payment schedule: 
             <fieldset>
                 <legend>config: <i>fixed schedules</i></legend>
@@ -4371,7 +4371,7 @@
   Cap = total <i>n/a</i>; daily <i>n/a</i>
   Rounding = rounded down
   AprMethod = US CFPB actuarial
-  AprPrecision = 8u }</div>
+  AprPrecision = 8 }</div>
     <div>Payment config: { LevelPaymentOption = lower final payment
   Rounding = rounded up}</div>
     <div>Fee handling: CarryOverAsIs</div>
