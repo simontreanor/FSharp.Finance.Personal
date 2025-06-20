@@ -65,7 +65,7 @@ module Fee =
             | Balance -> "balance rebate"
 
     /// how to handle any fee when rescheduling or rolling over
-    [<Struct>]
+    [<Struct; StructuredFormatDisplay("{Html}")>]
     type FeeHandling =
         /// move any outstanding fee balance to the principal balance
         | CapitaliseAsPrincipal
@@ -73,6 +73,13 @@ module Fee =
         | CarryOverAsIs
         /// write off any outstanding fee balance
         | WriteOffFeeBalance
+
+        /// HTML formatting to display the fee handling in a readable format
+        member fh.Html =
+            match fh with
+            | CapitaliseAsPrincipal -> "capitalise as principal"
+            | CarryOverAsIs -> "carry over as is"
+            | WriteOffFeeBalance -> "write off fee balance"
 
     /// basic options specifying the type of fee and how it is calculated
     [<Struct>]

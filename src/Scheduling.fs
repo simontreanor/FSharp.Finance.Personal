@@ -227,7 +227,7 @@ module Scheduling =
     }
 
     /// type alias to represent a scheduled payment indexed by offset day
-    type internal PaymentMap = Map<int<OffsetDay>, ScheduledPayment>
+    type PaymentMap = Map<int<OffsetDay>, ScheduledPayment>
 
     /// whether a payment plan is generated according to a regular schedule or is an irregular array of payments
     [<Struct>]
@@ -466,7 +466,7 @@ module Scheduling =
     </tr>
     <tr>
         <td>Interest options</td>
-        <td>{Interest.Config.toHtml bp.InterestConfig}
+        <td>{Interest.BasicConfig.toHtml bp.InterestConfig}
         </td>
     </tr>
 </table>"""

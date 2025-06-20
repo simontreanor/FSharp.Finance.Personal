@@ -136,7 +136,7 @@ module Interest =
     }
 
     /// basic interest options
-    module Config =
+    module BasicConfig =
         /// formats the interest config as HTML
         let toHtml basicConfig =
             $"""

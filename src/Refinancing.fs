@@ -44,11 +44,28 @@ module Refinancing =
             $"""
 <fieldset>
     <legend>Reschedule Parameters</legend>
-    <div>Fee settlement rebate: {rp.FeeSettlementRebate}</div>
-    <div>Payment schedule: {ScheduleConfig.toHtml rp.PaymentSchedule}</div>
-    <div>Rate on negative balance: {rp.RateOnNegativeBalance}</div>
-    <div>Promotional interest rates: {promotionalInterestRates}</div>
-    <div>Settlement day: {rp.SettlementDay}</div>
+    <table>
+        <tr>
+            <td>Fee settlement rebate</td>
+            <td>{rp.FeeSettlementRebate}</td>
+        </tr>
+        <tr>
+            <td>Payment schedule</td>
+            <td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td>
+        </tr>
+        <tr>
+            <td>Rate on negative balance</td>
+            <td>{rp.RateOnNegativeBalance}</td>
+        </tr>
+        <tr>
+            <td>Promotional interest rates</td>
+            <td>{promotionalInterestRates}</td>
+        </tr>
+        <tr>
+            <td>Settlement day</td>
+            <td>{rp.SettlementDay}</td>
+        </tr>
+    </table>
 </fieldset>"""
 
     /// merges scheduled payments, determining the currently valid original and rescheduled payments, and preserving a record of any previous payments that have been superseded
@@ -248,11 +265,28 @@ module Refinancing =
             $"""
 <fieldset>
     <legend>Rollover Parameters</legend>
-    <div>Original final payment day: {rp.OriginalFinalPaymentDay}</div>
-    <div>Payment schedule: {ScheduleConfig.toHtml rp.PaymentSchedule}</div>
-    <div>Interest config: {rp.InterestConfig}</div>
-    <div>Payment config: {rp.PaymentConfig}</div>
-    <div>Fee handling: {rp.FeeHandling}</div>
+    <table>
+        <tr>
+            <td>Original final day</td>
+            <td>{rp.OriginalFinalPaymentDay}</td>
+        </tr>
+        <tr>
+            <td>Payment schedule</td>
+            <td>{ScheduleConfig.toHtml rp.PaymentSchedule}</td>
+        </tr>
+        <tr>
+            <td>Interest config</td>
+            <td>{Interest.BasicConfig.toHtml rp.InterestConfig}</td>
+        </tr>
+        <tr>
+            <td>Payment config</td>
+            <td>{Payment.BasicConfig.toHtml rp.PaymentConfig}</td>
+        </tr>
+        <tr>
+            <td>Fee handling</td>
+            <td>{rp.FeeHandling}</td>
+        </tr>
+    </table>
 </fieldset>"""
 
     /// take an existing schedule and settle it, then use the result to create a new schedule to pay it off under different terms
@@ -311,6 +345,7 @@ module Refinancing =
                                     | _ as fsr -> fsr
                     })
                 Advanced.SettlementDay = SettlementDay.NoSettlement
+                Advanced.TrimEnd = true
         }
 
         // create the new amortisation schedule

@@ -4706,8 +4706,14 @@
 <fieldset style="flex: 1; display: flex; flex-direction: column;"><legend>Extra Info</legend>
 <fieldset>
     <legend>Reschedule Parameters</legend>
-    <div>Fee settlement rebate: pro rata rebate (based on day -4)</div>
-    <div>Payment schedule: 
+    <table>
+        <tr>
+            <td>Fee settlement rebate</td>
+            <td>pro rata rebate (based on day -4)</td>
+        </tr>
+        <tr>
+            <td>Payment schedule</td>
+            <td>
             <fieldset>
                 <legend>config: <i>fixed schedules</i></legend>
                 <fieldset>
@@ -4716,10 +4722,21 @@
                     <div>payment value: <i>20.00</i></div>
                     <div>schedule type: <i>rescheduled&nbsp;on&nbsp;day&nbsp;176</i></div>
                 </fieldset>
-            </fieldset></div>
-    <div>Rate on negative balance: zero</div>
-    <div>Promotional interest rates: n/a</div>
-    <div>Settlement day: <i>n/a</i></div>
+            </fieldset></td>
+        </tr>
+        <tr>
+            <td>Rate on negative balance</td>
+            <td>zero</td>
+        </tr>
+        <tr>
+            <td>Promotional interest rates</td>
+            <td>n/a</td>
+        </tr>
+        <tr>
+            <td>Settlement day</td>
+            <td><i>n/a</i></td>
+        </tr>
+    </table>
 </fieldset></fieldset>
 
 <fieldset style="flex: 1; display: flex; flex-direction: column;"><legend>Initial Stats</legend>

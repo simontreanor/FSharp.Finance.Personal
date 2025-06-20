@@ -304,16 +304,33 @@
 <fieldset style="flex: 1; display: flex; flex-direction: column;"><legend>Extra Info</legend>
 <fieldset>
     <legend>Reschedule Parameters</legend>
-    <div>Fee settlement rebate: no rebate</div>
-    <div>Payment schedule: 
+    <table>
+        <tr>
+            <td>Fee settlement rebate</td>
+            <td>no rebate</td>
+        </tr>
+        <tr>
+            <td>Payment schedule</td>
+            <td>
             <fieldset>
                 <legend>config: <i>custom schedule</i></legend>
                 <div style="column-count: 2;">
                 <div>day 58: <i> <i>rescheduled</i>&nbsp;50.00</i></div></div>
-            </fieldset></div>
-    <div>Rate on negative balance: 8 % per year</div>
-    <div>Promotional interest rates: n/a</div>
-    <div>Settlement day: <i>on evaluation day</i></div>
+            </fieldset></td>
+        </tr>
+        <tr>
+            <td>Rate on negative balance</td>
+            <td>8 % per year</td>
+        </tr>
+        <tr>
+            <td>Promotional interest rates</td>
+            <td>n/a</td>
+        </tr>
+        <tr>
+            <td>Settlement day</td>
+            <td><i>on evaluation day</i></td>
+        </tr>
+    </table>
 </fieldset></fieldset>
 
 <fieldset style="flex: 1; display: flex; flex-direction: column;"><legend>Initial Stats</legend>
