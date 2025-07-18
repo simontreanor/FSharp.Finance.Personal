@@ -156,7 +156,7 @@ module Refinancing =
                 |> Array.map (fun si -> si.Day, si.ScheduledPayment)
             | FixedSchedules fixedSchedules ->
                 fixedSchedules
-                |> Array.map (fun fs ->
+                |> Array.collect (fun fs ->
                     let scheduledPayment =
                         match fs.ScheduleType with
                         | ScheduleType.Original -> ScheduledPayment.quick (ValueSome fs.PaymentValue) ValueNone
@@ -174,7 +174,6 @@ module Refinancing =
                         fs.UnitPeriodConfig
                     |> Array.map (fun d -> OffsetDay.fromDate p.Basic.StartDate d, scheduledPayment)
                 )
-                |> Array.concat
             | CustomSchedule payments -> payments |> Map.toArray
 
         // append the new schedule to the old schedule up to the point of settlement
