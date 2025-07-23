@@ -411,7 +411,12 @@ module Amortisation =
         match unitPeriodMap with
         | Some upm ->
             // use the unit-period map to determine the window for the current day
-            upm |> Map.find currentDay
+            upm 
+            |> Map.tryFind currentDay 
+            |> Option.defaultValue (
+                if ScheduledPayment.isSome currentScheduledPayment then 
+                    previousWindow + 1 
+                else previousWindow )
         | None ->
             // determine the window and increment every time a new scheduled payment is due
             if ScheduledPayment.isSome currentScheduledPayment then
