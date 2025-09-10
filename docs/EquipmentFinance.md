@@ -36,6 +36,11 @@ src/EquipmentFinance/
 └── Lease.fs                       # Equipment lease analysis
 ```
 
+## Depreciation Common Module
+
+- `Depreciation.straightLine cost salvage life`
+- `Depreciation.decliningBalance cost salvage life rateFactor switchToStraightLine`
+
 ## US MACRS Depreciation
 
 ### Asset Classes Supported
