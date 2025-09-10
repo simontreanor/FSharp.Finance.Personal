@@ -24,9 +24,9 @@ module XirrTests =
             DateTime(2024, 1, 31), -1030m  // Repayment after 30 days (outflow from borrower)
         ]
         let result = Xirr.xirr cashflows
-        // Expected around 36% annually for this 3% monthly rate
+        // Expected around 43% annually for this 3% monthly rate over 30 days
         result |> should be (greaterThan 0.30m)
-        result |> should be (lessThan 0.40m)
+        result |> should be (lessThan 0.50m)
 
     [<Fact>]
     let ``XIRR_mixed_sign_validation should fail for single sign cashflows`` () =
@@ -42,8 +42,13 @@ module XirrTests =
         let positiveResult = Xirr.tryXirr positiveCashflows
         let negativeResult = Xirr.tryXirr negativeCashflows
         
-        positiveResult |> should be (ofCase <@ Result<decimal, string>.Error @>)
-        negativeResult |> should be (ofCase <@ Result<decimal, string>.Error @>)
+        match positiveResult with
+        | Error _ -> () // Expected
+        | Ok _ -> failwith "Expected Error for all positive cashflows"
+        
+        match negativeResult with
+        | Error _ -> () // Expected
+        | Ok _ -> failwith "Expected Error for all negative cashflows"
 
     [<Fact>]
     let ``XIRR_guess_consistency should produce similar results for xirr and xirrG with 0.1`` () =
@@ -84,10 +89,9 @@ module XirrTests =
         ]
         
         let result = Xirr.tryXirr cashflows
-        result |> should be (ofCase <@ Result<decimal, string>.Ok @>)
         
         match result with
         | Ok rate -> 
             rate |> should be (greaterThan 0.05m)
             rate |> should be (lessThan 0.15m)
-        | Error _ -> failwith "Expected Ok result"
+        | Error msg -> failwith $"Expected Ok result but got Error: {msg}"
