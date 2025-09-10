@@ -38,6 +38,7 @@ module IllustrativeTests =
     let quickExpectedFinalItem date offsetDay paymentValue window interestAdjustment interestPortion principalPortion =
         offsetDay,
         {
+            OffsetDayType = OffsetDayType.EvaluationDay
             OffsetDate = date
             Advances = [||]
             ScheduledPayment = ScheduledPayment.quick (ValueSome paymentValue) ValueNone
@@ -71,7 +72,7 @@ module IllustrativeTests =
 
     let parameters: Parameters = {
         Basic = {
-            EvaluationDate = Date(2025, 7, 1)
+            EvaluationDate = Date(2025, 6, 30)
             StartDate = Date(2025, 3, 1)
             Principal = 400_00L<Cent>
             ScheduleConfig =
@@ -122,13 +123,14 @@ module IllustrativeTests =
 
         let schedules = amortise parameters actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters schedules
+        Schedule.outputHtmlToFile folder title description parameters "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             121<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
@@ -182,13 +184,14 @@ module IllustrativeTests =
 
         let schedules = amortise parameters actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters schedules
+        Schedule.outputHtmlToFile folder title description parameters "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             121<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
@@ -241,13 +244,14 @@ module IllustrativeTests =
 
         let schedules = amortise parameters actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters schedules
+        Schedule.outputHtmlToFile folder title description parameters "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             121<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
@@ -301,13 +305,14 @@ module IllustrativeTests =
 
         let schedules = amortise parameters actualPayments
 
-        Schedule.outputHtmlToFile folder title description parameters schedules
+        Schedule.outputHtmlToFile folder title description parameters "" schedules
 
         let actual = schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             121<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2025, 6, 30)
                 Advances = [||]
                 ScheduledPayment = {
