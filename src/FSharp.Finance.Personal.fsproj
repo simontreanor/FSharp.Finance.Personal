@@ -25,14 +25,18 @@
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />
     <Compile Include="Rescheduling.fs" />
+    <Compile Include="DomainExtensions.fs" />
+    <Compile Include="CashflowModel.fs" />
+    <Compile Include="TradeCredit.fs" />
+    <Compile Include="InvoiceFactoring.fs" />
     <None Include="icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>FSharp.Finance.Personal</PackageId>
-    <Version>2.4.7</Version>
+    <Version>2.4.8</Version>
     <Authors>Simon Treanor</Authors>
-    <PackageDescription>F# Personal Finance Library</PackageDescription>
+    <PackageDescription>F# Personal Finance Library with optional B2B analytical extensions</PackageDescription>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadMeFile>README.md</PackageReadMeFile>
@@ -47,6 +51,12 @@
       <Visible>True</Visible>
     </None>
     <None Include="../README.md">
+      <Pack>true</Pack>
+      <PackagePath>
+      </PackagePath>
+      <Visible>True</Visible>
+    </None>
+    <None Include="../docs/exampleTradeCreditAndFactoring.fsx">
       <Pack>true</Pack>
       <PackagePath>
       </PackagePath>

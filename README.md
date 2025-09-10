@@ -20,6 +20,26 @@ If you have any suggestions or corrections, please feel free to comment or creat
 For commercial use the user might need an operating license and to fulfil various statutory and regulatory requirements,
 none of which are conferred by the use of this library.
 
+## Business (B2B) Analytical Extensions (New)
+
+The library now includes optional B2B analytical extensions for business-to-business finance scenarios:
+
+### Trade Credit Analysis
+- **Early-payment discount calculations**: Analyze terms like "2/10 net 30" to determine the implied annual cost of not taking discounts
+- **Simple and compounded rate calculations**: Understand the true cost of extending payment terms
+- **Standard terms support**: Built-in support for common trade credit arrangements
+
+### Invoice Factoring
+- **Parameter construction**: Build amortization parameters for factoring arrangements
+- **Advance calculations**: Model invoice advances with customizable rates and fees
+- **Integration ready**: Factoring parameters work with the core amortization engine
+
+### Product Classification
+- **Metadata support**: Classify financial products for organizational and analytical purposes
+- **Future-ready cashflow modeling**: Extensible types for advanced cashflow analysis
+
+**Important**: These B2B extensions are for analytical purposes only and do NOT determine regulatory status. They complement the core personal finance calculations while providing specialized business analytical capabilities.
+
 NuGet package: https://www.nuget.org/packages/FSharp.Finance.Personal/
 
 Documentation: https://simontreanor.github.io/FSharp.Finance.Personal/
