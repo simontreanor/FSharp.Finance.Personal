@@ -5,14 +5,16 @@ open FSharp.Finance.Personal
 open FSharp.Finance.Personal.SalaryAdvance
 open FSharp.Finance.Personal.DateDay
 open FSharp.Finance.Personal.Calculation
+open Xunit
 
 /// Tests for the SalaryAdvance module to validate requirements
 module SalaryAdvanceTests =
 
     /// Test that the RepaymentMode discriminated union is properly defined
+    [<Fact>]
     let testRepaymentModeDefinition () =
         // Test LumpOnFirstPayroll
-        let mode1 = LumpOnFirstPayroll
+        let mode1 = RepaymentMode.LumpOnFirstPayroll
         assert (mode1.Html = "lump sum on first payroll")
         
         // Test EvenlyProrated  
@@ -26,6 +28,7 @@ module SalaryAdvanceTests =
         printfn "✓ RepaymentMode DU correctly defined with all required cases"
 
     /// Test schedule construction functionality
+    [<Fact>]
     let testScheduleConstruction () =
         let advanceDate = Date(2024, 1, 15)
         let payrollDates = [| Date(2024, 1, 31); Date(2024, 2, 15) |]
@@ -56,6 +59,7 @@ module SalaryAdvanceTests =
         printfn "✓ Schedule construction works for EvenlyProrated"
 
     /// Test fee handling functionality
+    [<Fact>]
     let testFeeHandling () =
         let advanceDate = Date(2024, 1, 15)
         let payrollDates = [| Date(2024, 1, 31) |]
@@ -84,6 +88,7 @@ module SalaryAdvanceTests =
         printfn "✓ Fee handling works with PercentageFee"
 
     /// Test exportable cashflows functionality
+    [<Fact>]
     let testExportableCashflows () =
         let advanceDate = Date(2024, 1, 15)
         let payrollDates = [| Date(2024, 1, 31) |]
@@ -112,6 +117,7 @@ module SalaryAdvanceTests =
         printfn "✓ Exportable cashflows work correctly for analytical use"
 
     /// Test validation functionality
+    [<Fact>]
     let testValidation () =
         let advanceDate = Date(2024, 1, 15)
         let payrollDates = [| Date(2024, 1, 31) |]
@@ -134,6 +140,7 @@ module SalaryAdvanceTests =
         printfn "✓ Validation functionality works correctly"
 
     /// Test summary calculations
+    [<Fact>]
     let testSummaryCalculations () =
         let advanceDate = Date(2024, 1, 15)
         let payrollDates = [| Date(2024, 1, 31) |]
@@ -155,17 +162,3 @@ module SalaryAdvanceTests =
         
         printfn "✓ Summary calculations work correctly"
 
-    /// Run all tests
-    let runAllTests () =
-        printfn "Running SalaryAdvance module tests..."
-        testRepaymentModeDefinition ()
-        testScheduleConstruction ()
-        testFeeHandling ()
-        testExportableCashflows ()
-        testValidation ()
-        testSummaryCalculations ()
-        printfn "✅ All SalaryAdvance tests passed!"
-
-// Export test runner for external use
-module TestRunner = 
-    let run () = SalaryAdvanceTests.runAllTests ()

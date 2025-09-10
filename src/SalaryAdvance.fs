@@ -1,7 +1,6 @@
-namespace FSharp.Finance.Personal.SalaryAdvance
+namespace FSharp.Finance.Personal
 
 open System
-open FSharp.Finance.Personal
 open FSharp.Finance.Personal.Calculation
 open FSharp.Finance.Personal.DateDay
 open FSharp.Finance.Personal.Formatting
@@ -88,8 +87,8 @@ module SalaryAdvance =
         | NoFee -> 0L<Cent>
         | FlatFee amount -> amount
         | PercentageFee pct -> 
-            decimal advanceAmount * pct / 100m
-            |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+            let dcnt = (decimal advanceAmount * pct / 100m) * 1m<Cent>
+            Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero) dcnt
 
     /// creates a repayment schedule based on the configuration
     let createSchedule (config: ScheduleConfig) : ScheduleItem array =
@@ -112,7 +111,7 @@ module SalaryAdvance =
             let payrollCount = config.PayrollDates.Length
             if payrollCount = 0 then [||]
             else
-                let basePayment = totalAmount / (int64 payrollCount * 1L<Cent>)
+                let basePayment = totalAmount / (int64 payrollCount)
                 let remainder = totalAmount % (int64 payrollCount * 1L<Cent>)
                 
                 config.PayrollDates
@@ -123,7 +122,7 @@ module SalaryAdvance =
                         else basePayment
                     
                     let remainingPayments = payrollCount - i - 1
-                    let remainingBalance = (int64 remainingPayments * 1L<Cent>) * basePayment
+                    let remainingBalance = (int64 remainingPayments) * basePayment
                     
                     {
                         PaymentDate = payrollDate
