@@ -51,7 +51,7 @@ module XirrTests =
         | Ok _ -> failwith "Expected Error for all negative cashflows"
 
     [<Fact>]
-    let ``XIRR_guess_consistency should produce similar results for xirr and xirrG with 0.1`` () =
+    let ``XIRR_guess_consistency should produce similar results`` () =
         let cashflows = [
             DateTime(2024, 1, 1), -10000m
             DateTime(2024, 6, 1), 5000m
