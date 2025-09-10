@@ -25,7 +25,8 @@
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />
     <Compile Include="Rescheduling.fs" />
-    <None Include="icon.png" Pack="true" PackagePath=""/>
+    <Compile Include="Xirr.fs" />
+    <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -55,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="9.0.201" />
+    <PackageReference Include="ExcelFinancialFunctions" Version="3.2.0" />
   </ItemGroup>
   <PropertyGroup>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
