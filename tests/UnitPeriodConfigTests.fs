@@ -160,7 +160,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote p actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+                quote.RevisedSchedules
+                |> Schedule.outputHtmlToFile folder title description p ""
+
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 56.513m
@@ -244,7 +247,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote p actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+                quote.RevisedSchedules
+                |> Schedule.outputHtmlToFile folder title description p ""
+
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 986.813m
@@ -382,7 +388,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote p actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+                quote.RevisedSchedules
+                |> Schedule.outputHtmlToFile folder title description p ""
+
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 516.758m
@@ -446,7 +455,10 @@ module UnitPeriodConfigTests =
 
             let actual =
                 let quote = getQuote p actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+                quote.RevisedSchedules
+                |> Schedule.outputHtmlToFile folder title description p ""
+
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 930.559m
@@ -611,7 +623,10 @@ module UnitPeriodConfigTests =
                 }
 
                 let quote = getQuote quoteSp actualPayments
-                quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+                quote.RevisedSchedules
+                |> Schedule.outputHtmlToFile folder title description p ""
+
                 quote.RevisedSchedules.AmortisationSchedule.ScheduleStats.FinalApr
 
             let expected = Percent 699.525m

@@ -185,7 +185,7 @@ module Apr =
             let lastWholeUnitPeriodBackIndex = (scheduleCount - 1) % multiple
 
             let offset =
-                (scheduleCount - 1) - ((transferCount - 1) * multiple)
+                scheduleCount - 1 - (transferCount - 1) * multiple
                 |> fun i -> Decimal.Floor(decimal i / decimal multiple) |> int
 
             [| 0 .. (transferCount - 1) |]
@@ -339,8 +339,7 @@ module Apr =
                                 |> Array.sumBy (fun (amount, remainder, quotient) ->
                                     try // high quotients will yield oversize decimals but high divisors will yield a zero result anyway
                                         let divisor =
-                                            (1m + (remainder * unitPeriodRate))
-                                            * ((1m + unitPeriodRate) |> powi quotient)
+                                            (1m + remainder * unitPeriodRate) * (1m + unitPeriodRate |> powi quotient)
 
                                         if divisor = 0m then 0m else Cent.toDecimal amount / divisor
                                     with _ ->

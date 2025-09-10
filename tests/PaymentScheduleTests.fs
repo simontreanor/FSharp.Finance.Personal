@@ -2048,15 +2048,17 @@ module PaymentScheduleTests =
         let title = "PaymentScheduleTest002"
         let description = "Term must not exceed maximum duration"
 
+        let startDate = Date(2024, 5, 8)
+
         let p = {
             parameters with
                 EvaluationDate = Date(2024, 5, 8)
-                StartDate = Date(2024, 5, 8)
+                StartDate = startDate
                 Principal = 1000_00L<Cent>
                 ScheduleConfig =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 8)
-                        ScheduleLength = MaxDuration 183<DurationDay>
+                        ScheduleLength = MaxDuration(startDate, 183<DurationDay>)
                     }
         }
 
@@ -2074,15 +2076,17 @@ module PaymentScheduleTests =
         let title = "PaymentScheduleTest003"
         let description = "Term must not exceed maximum duration"
 
+        let startDate = Date(2024, 5, 8)
+
         let p = {
             parameters with
                 EvaluationDate = Date(2024, 5, 8)
-                StartDate = Date(2024, 5, 8)
+                StartDate = startDate
                 Principal = 1000_00L<Cent>
                 ScheduleConfig =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 18)
-                        ScheduleLength = MaxDuration 184<DurationDay>
+                        ScheduleLength = MaxDuration(startDate, 184<DurationDay>)
                     }
         }
 
@@ -2172,9 +2176,9 @@ module PaymentScheduleTests =
                     102<OffsetDay>, ScheduledPayment.quick (ValueSome 36_44L<Cent>) ValueNone
                 ]
 
-            let schedule1 = p paymentSchedule1 |> fun p -> calculateBasicSchedule p
-            let schedule2 = p paymentSchedule2 |> fun p -> calculateBasicSchedule p
-            let schedule3 = p paymentSchedule3 |> fun p -> calculateBasicSchedule p
+            let schedule1 = p paymentSchedule1 |> fun bp -> calculateBasicSchedule bp
+            let schedule2 = p paymentSchedule2 |> fun bp -> calculateBasicSchedule bp
+            let schedule3 = p paymentSchedule3 |> fun bp -> calculateBasicSchedule bp
 
             let html1 = schedule1 |> BasicSchedule.toHtmlTable
             let html2 = schedule2 |> BasicSchedule.toHtmlTable

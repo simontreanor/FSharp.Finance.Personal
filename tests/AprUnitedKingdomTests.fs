@@ -198,25 +198,14 @@ module AprUnitedKingdomTests =
             $"""
 <h4>Advanced Parameters</h4>{AdvancedParameters.toHtmlTable parameters.Advanced}"""
 
-        let generateInfoFile = "GeneratedDate.html"
-
         let htmlDatestamp =
             $"""
-<p>Generated: <i><a href="../{generateInfoFile}">see details</a></i></p>"""
-
-        let htmlDatestampInfo =
-            $"""
-<p>Generated: <i>{DateTimeOffset.Now:``yyyy-MM-dd HH:mm:ss zzzz``} using library version {Calculation.libraryVersion}</i></p>"""
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>"""
 
         let filename = $"out/{folder}/{title}.md"
 
         $"{htmlTitle}{htmlTable}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}"
         |> outputToFile' filename false
-
-        try
-            $"""{htmlDatestampInfo}""" |> outputToFile' $"out/{generateInfoFile}" false
-        with _ ->
-            ()
 
     let startDate = Date(2025, 4, 1)
     let paymentCounts = [| 4..6 |]
@@ -313,7 +302,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = true
         let p = getParameters startDate 6 23 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
     [<Fact>]
     let Amortisation_p6_fp24_AfterAprJump () =
@@ -326,7 +315,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = true
         let p = getParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
     [<Fact>]
     let AmortisationNoInterestCap_p6_fp23_BeforeAprJump () =
@@ -339,7 +328,7 @@ module AprUnitedKingdomTests =
         let applyInterestCap = false
         let p = getParameters startDate 6 23 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
 
     [<Fact>]
     let AmortisationNoInterestCap_p6_fp24_AfterAprJump () =
@@ -352,4 +341,4 @@ module AprUnitedKingdomTests =
         let applyInterestCap = false
         let p = getParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
-        Amortisation.Schedule.outputHtmlToFile folder title description p schedules
+        Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules

@@ -136,7 +136,7 @@ module InterestTests =
 
             let schedules = amortise parameters1 actualPayments
 
-            Schedule.outputHtmlToFile folder title description parameters1 schedules
+            Schedule.outputHtmlToFile folder title description parameters1 "" schedules
 
             let interestPortion =
                 schedules.AmortisationSchedule.ScheduleItems
@@ -166,7 +166,7 @@ module InterestTests =
 
             let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description p schedules
+            Schedule.outputHtmlToFile folder title description p "" schedules
 
             let interestPortion =
                 schedules.AmortisationSchedule.ScheduleItems
@@ -425,7 +425,7 @@ module InterestTests =
 
             let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description p schedules
+            Schedule.outputHtmlToFile folder title description p "" schedules
 
             let levelPayment =
                 schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment
@@ -464,7 +464,7 @@ module InterestTests =
 
             let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description p schedules
+            Schedule.outputHtmlToFile folder title description p "" schedules
 
             let levelPayment =
                 schedules.AmortisationSchedule.ScheduleItems[1433<OffsetDay>].ScheduledPayment
@@ -512,7 +512,7 @@ module InterestTests =
 
             let schedules = amortise p actualPayments
 
-            Schedule.outputHtmlToFile folder title description p schedules
+            Schedule.outputHtmlToFile folder title description p "" schedules
 
             let interestPortion =
                 schedules.AmortisationSchedule.ScheduleItems

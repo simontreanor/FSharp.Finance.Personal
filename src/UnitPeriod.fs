@@ -270,22 +270,12 @@ module UnitPeriod =
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type ScheduleLength =
         | PaymentCount of Payments: int
-        | MaxDuration of Days: int<DurationDay>
+        | MaxDuration of StartDate: Date * Days: int<DurationDay>
 
         member sl.Html =
             match sl with
             | PaymentCount payments -> $"<i>payment count</i> {payments}"
-            | MaxDuration days -> $"<i>max duration</i> {days}"
-
-    /// generates a suggested number of payments to constrain the loan within a certain duration
-    let maxPaymentCount (maxDuration: int<DurationDay>) (config: Config) =
-        match config with
-        | Daily _ -> float maxDuration
-        | Weekly(multiple, _) when multiple > 0 -> float maxDuration / (float multiple * 7.)
-        | SemiMonthly _ -> float maxDuration / 15.
-        | Monthly(multiple, _, _, _) when multiple > 0 -> float maxDuration / (float multiple * 30.)
-        | _ -> 1.
-        |> int
+            | MaxDuration(_, days) -> $"<i>max duration</i> {days}"
 
     /// direction in which to generate the schedule: forward works forwards from a given date and reverse works backwards
     [<Struct; RequireQualifiedAccess>]
@@ -297,49 +287,173 @@ module UnitPeriod =
 
     /// generate a payment schedule based on a unit-period config
     let generatePaymentSchedule scheduleLength direction unitPeriodConfig =
-        let count =
+        let adjustMonthEnd monthEndTrackingDay (date: Date) =
+            if date.Day > 15 && monthEndTrackingDay > 28 then
+                TrackingDay.toDate date.Year date.Month monthEndTrackingDay
+            else
+                date
+
+        let initCount = 0
+
+        match unitPeriodConfig |> Config.constrain with
+        | Daily firstPaymentDate ->
             match scheduleLength with
-            | PaymentCount c -> c
-            | MaxDuration d -> maxPaymentCount d unitPeriodConfig
+            | PaymentCount count ->
+                match direction with
+                | Direction.Forward -> Array.init count (fun i -> firstPaymentDate.AddDays i)
+                | Direction.Reverse -> Array.init count (fun i -> firstPaymentDate.AddDays -i)
+            | MaxDuration(startDate, duration) ->
+                match direction with
+                | Direction.Forward ->
+                    Array.unfold
+                        (fun count ->
+                            let nextDate = firstPaymentDate.AddDays count
 
-        if count = 0 then
-            [||]
-        else
-            let adjustMonthEnd monthEndTrackingDay (d: Date) =
-                if d.Day > 15 && monthEndTrackingDay > 28 then
-                    TrackingDay.toDate d.Year d.Month monthEndTrackingDay
-                else
-                    d
+                            if nextDate <= startDate.AddDays +(int duration) then
+                                Some(nextDate, count + 1)
+                            else
+                                None
+                        )
+                        initCount
+                | Direction.Reverse ->
+                    Array.unfold
+                        (fun count ->
+                            let nextDate = firstPaymentDate.AddDays -count
 
-            let generate upc =
-                match upc |> Config.constrain with
-                | Daily startDate -> Array.map startDate.AddDays
-                | Weekly(multiple, startDate) -> Array.map (fun c -> startDate.AddDays(c * 7 * multiple))
-                | SemiMonthly(year, month, td1, td2) ->
-                    let startDate = TrackingDay.toDate year month td1
+                            if nextDate <= startDate.AddDays -(int duration) then
+                                Some(nextDate, count - 1)
+                            else
+                                None
+                        )
+                        initCount
+        | Weekly(multiple, firstPaymentDate) ->
+            match scheduleLength with
+            | PaymentCount count ->
+                match direction with
+                | Direction.Forward -> Array.init count (fun i -> firstPaymentDate.AddDays(i * 7 * multiple))
+                | Direction.Reverse -> Array.init count (fun i -> firstPaymentDate.AddDays -(i * 7 * multiple))
+            | MaxDuration(startDate, duration) ->
+                match direction with
+                | Direction.Forward ->
+                    Array.unfold
+                        (fun i ->
+                            let nextDate = firstPaymentDate.AddDays(i * 7 * multiple)
 
-                    let offset, monthEndTrackingDay =
-                        if td1 > td2 then 1, td1 else 0, td2
-                        |> fun (o, metd) ->
-                            match direction with
-                            | Direction.Forward -> o, metd
-                            | Direction.Reverse -> o - 1, metd
+                            if nextDate <= startDate.AddDays +(int duration) then
+                                Some(nextDate, i + 1)
+                            else
+                                None
+                        )
+                        initCount
+                | Direction.Reverse ->
+                    Array.unfold
+                        (fun i ->
+                            let nextDate = firstPaymentDate.AddDays -(i * 7 * multiple)
 
-                    Array.collect (fun c -> [|
-                        startDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
+                            if nextDate <= startDate.AddDays -(int duration) then
+                                Some(nextDate, i - 1)
+                            else
+                                None
+                        )
+                        initCount
+        | SemiMonthly(year, month, td1, td2) ->
+            let firstPaymentDate = TrackingDay.toDate year month td1
 
-                        startDate.AddMonths(c + offset)
-                        |> fun d -> TrackingDay.toDate d.Year d.Month td2
-                        |> adjustMonthEnd monthEndTrackingDay
-                    |])
-                    >> Array.take count
-                | Monthly(multiple, year, month, td) ->
-                    let startDate = TrackingDay.toDate year month td
-                    Array.map (fun c -> startDate.AddMonths(c * multiple) |> adjustMonthEnd td)
+            let offset, monthEndTrackingDay =
+                if td1 > td2 then 1, td1 else 0, td2
+                |> fun (o, metd) ->
+                    match direction with
+                    | Direction.Forward -> o, metd
+                    | Direction.Reverse -> o - 1, metd
 
-            match direction with
-            | Direction.Forward -> [| 0 .. (count - 1) |] |> generate unitPeriodConfig
-            | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |] |> generate unitPeriodConfig |> Array.sort
+            match scheduleLength with
+            | PaymentCount count ->
+                match direction with
+                | Direction.Forward -> [| 0 .. (count - 1) |]
+                | Direction.Reverse -> [| 0 .. -1 .. -(count - 1) |]
+                |> Array.collect (fun c -> [|
+                    firstPaymentDate.AddMonths c |> adjustMonthEnd monthEndTrackingDay
+
+                    firstPaymentDate.AddMonths(c + offset)
+                    |> fun d -> TrackingDay.toDate d.Year d.Month td2
+                    |> adjustMonthEnd monthEndTrackingDay
+                |])
+                |> Array.take count
+
+            | MaxDuration(startDate, duration) ->
+                Array.unfold
+                    (fun count ->
+                        let nextDate1 =
+                            firstPaymentDate.AddMonths count |> adjustMonthEnd monthEndTrackingDay
+
+                        let nextDate2 =
+                            firstPaymentDate.AddMonths(count + offset)
+                            |> fun d -> TrackingDay.toDate d.Year d.Month td2
+                            |> adjustMonthEnd monthEndTrackingDay
+
+                        match direction with
+                        | Direction.Forward ->
+                            let finalPaymentDate = startDate.AddDays(int duration)
+
+                            let output = [|
+                                if nextDate1 <= finalPaymentDate then
+                                    yield nextDate1
+                                if nextDate2 <= finalPaymentDate then
+                                    yield nextDate2
+                            |]
+
+                            if output.Length > 0 then Some(output, count + 1) else None
+                        | Direction.Reverse ->
+                            let finalPaymentDate = startDate.AddDays -(int duration)
+
+                            let output = [|
+                                if nextDate1 >= finalPaymentDate then
+                                    yield nextDate1
+                                if nextDate2 >= finalPaymentDate then
+                                    yield nextDate2
+                            |]
+
+                            if output.Length > 0 then Some(output, count - 1) else None
+                    )
+                    initCount
+                |> Array.collect id
+        | Monthly(multiple, year, month, trackingDay) ->
+            let firstPaymentDate = TrackingDay.toDate year month trackingDay
+
+            match scheduleLength with
+            | PaymentCount c ->
+                match direction with
+                | Direction.Forward ->
+                    Array.init c (fun i -> firstPaymentDate.AddMonths(i * multiple) |> adjustMonthEnd trackingDay)
+                | Direction.Reverse ->
+                    Array.init c (fun i -> firstPaymentDate.AddMonths(-i * multiple) |> adjustMonthEnd trackingDay)
+            | MaxDuration(startDate, duration) ->
+                match direction with
+                | Direction.Forward ->
+                    Array.unfold
+                        (fun count ->
+                            let nextDate =
+                                firstPaymentDate.AddMonths(count * multiple) |> adjustMonthEnd trackingDay
+
+                            if nextDate <= startDate.AddDays +(int duration) then
+                                Some(nextDate, count + 1)
+                            else
+                                None
+                        )
+                        initCount
+                | Direction.Reverse ->
+                    Array.unfold
+                        (fun count ->
+                            let nextDate =
+                                firstPaymentDate.AddMonths(-count * multiple) |> adjustMonthEnd trackingDay
+
+                            if nextDate <= startDate.AddDays -(int duration) then
+                                Some(nextDate, count - 1)
+                            else
+                                None
+                        )
+                        initCount
+        |> Array.sort
 
     /// for a given interval and array of dates, devise the unit-period config
     let detect direction interval transferDates =

@@ -101,12 +101,11 @@ module QuoteTests =
         let actual =
             let quote = getQuote parameters1 actualPayments
 
-            quote.RevisedSchedules
-            |> Schedule.outputHtmlToFile folder title description parameters1
+            quote.Schedules
+            |> Schedule.outputHtmlToFile folder title description parameters1 ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 57<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 57<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -125,6 +124,7 @@ module QuoteTests =
         let expected =
             paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = (Date(2024, 10, 1).AddDays -3)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 323_15L<Cent>) ValueNone
@@ -178,11 +178,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 60<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -200,6 +200,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -256,11 +257,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 60<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -278,6 +279,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -344,11 +346,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 3<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 3<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -366,6 +368,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -427,11 +430,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 4<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 4<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -449,6 +452,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -506,11 +510,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 60<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 60<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -528,6 +532,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 10, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -594,7 +599,7 @@ module QuoteTests =
 
         let actual =
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             schedules.AmortisationSchedule.ScheduleItems
             |> Map.values
@@ -604,6 +609,7 @@ module QuoteTests =
             )
 
         let expected = {
+            OffsetDayType = OffsetDayType.OffsetDay
             OffsetDate = startDate.AddDays 71
             Advances = [||]
             ScheduledPayment = ScheduledPayment.quick (ValueSome 323_15L<Cent>) ValueNone
@@ -666,7 +672,7 @@ module QuoteTests =
 
         let actual =
             let amortisationSchedule = amortise p actualPayments
-            amortisationSchedule |> Schedule.outputHtmlToFile folder title description p
+            amortisationSchedule |> Schedule.outputHtmlToFile folder title description p ""
             // let quoteResult =
             //     quote
             //     |> ValueOption.map(fun q ->
@@ -709,11 +715,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 181<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 181<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -731,10 +737,11 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 181
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 10
+                Window = 13
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = GeneratedValue 1311_67L<Cent>
@@ -801,11 +808,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 388<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 388<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -823,10 +830,11 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 388
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 11
+                Window = 27
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = GeneratedValue 1261_73L<Cent>
@@ -890,11 +898,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 72<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 72<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -912,6 +920,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 72
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -975,11 +984,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 30<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 30<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -997,6 +1006,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = startDate.AddDays 30
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 165_90L<Cent>) ValueNone
@@ -1052,11 +1062,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 133<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1074,6 +1084,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 14)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1131,11 +1142,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 134<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1153,6 +1164,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
@@ -1210,11 +1222,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 135<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1232,6 +1244,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 16)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1302,11 +1315,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 138<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 138<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1324,6 +1337,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 19)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1382,11 +1396,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 133<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 133<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1404,6 +1418,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 14)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1460,11 +1475,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 134<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 134<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1482,6 +1497,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 15)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 491_53L<Cent>) ValueNone
@@ -1543,11 +1559,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 135<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 135<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1565,6 +1581,7 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2023, 3, 16)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
@@ -1621,11 +1638,11 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
 
             let item =
-                quote.RevisedSchedules.AmortisationSchedule.ScheduleItems
-                |> Map.find 461<OffsetDay>
+                quote.Schedules.AmortisationSchedule.ScheduleItems |> Map.find 461<OffsetDay>
 
             quote.QuoteResult, item
 
@@ -1643,10 +1660,11 @@ module QuoteTests =
         let expected =
             PaymentQuote paymentQuote,
             {
+                OffsetDayType = OffsetDayType.SettlementDay
                 OffsetDate = Date(2024, 2, 5)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.zero
-                Window = 5
+                Window = 15
                 PaymentDue = 0L<Cent>
                 ActualPayments = [||]
                 GeneratedPayment = GeneratedValue -72_80L<Cent>
@@ -1696,7 +1714,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1751,7 +1771,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1819,7 +1841,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1869,7 +1893,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1916,7 +1942,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
@@ -1961,7 +1989,9 @@ module QuoteTests =
 
         let actual =
             let quote = getQuote p actualPayments
-            quote.RevisedSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            quote.Schedules |> Schedule.outputHtmlToFile folder title description p ""
+
             quote.QuoteResult
 
         let expected =
