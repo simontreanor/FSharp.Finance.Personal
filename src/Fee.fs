@@ -14,13 +14,13 @@ module Fee =
     [<Struct; StructuredFormatDisplay("{Html}")>]
     type FeeType =
         /// a fee enabling the provision of a financial product
-        | FacilitationFee of Amount
+        | FacilitationFee of FacilitationAmount: Amount
         /// a fee charged by a Credit Access Business (CAB) or Credit Services Organisation (CSO) assisting access to third-party financial products
-        | CabOrCsoFee of Amount
+        | CabOrCsoFee of CabOrCsoAmount: Amount
         /// a fee charged by a bank or building society for arranging a mortgage
-        | MortageFee of Amount
+        | MortageFee of MortgageAmount: Amount
         /// any other type of product fee
-        | CustomFee of string * Amount
+        | CustomFee of CustomDescription: string * CustomAmount: Amount
 
         /// HTML formatting to display the fee type in a readable format
         member ft.Html =

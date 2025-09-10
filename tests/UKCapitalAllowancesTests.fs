@@ -3,27 +3,24 @@ namespace FSharp.Finance.Personal.Tests
 open Xunit
 open FsUnit.Xunit
 
+open FSharp.Finance.Personal
+open FSharp.Finance.Personal.Calculation
 open FSharp.Finance.Personal.EquipmentFinance.Depreciation.UK_CapitalAllowances
+open FSharp.Finance.Personal.EquipmentFinance.Depreciation.UK_CapitalAllowances.Types
 
 module UKCapitalAllowancesTests =
 
     [<Fact>]
     let ``Default configuration has expected values`` () =
-        Types.Default.AnnualInvestmentAllowanceLimit |> should equal 1_000_000m
+        Types.Default.AnnualInvestmentAllowanceLimit |> should equal 1_000_000_00L<Cent>
         Types.Default.MainPoolRate |> should equal 0.18m
         Types.Default.SpecialRatePoolRate |> should equal 0.06m
         Types.Default.MaxYears |> should equal 10
 
     [<Fact>]
-    let ``Rounding function works correctly`` () =
-        Calculations.roundAwayFromZero 12.345m |> should equal 12.35m
-        Calculations.roundAwayFromZero 12.344m |> should equal 12.34m
-        Calculations.roundAwayFromZero 12.346m |> should equal 12.35m
-
-    [<Fact>]
     let ``Small asset fully claimed via AIA in year 1`` () =
         let expenditure = {
-            Amount = 5_000m
+            Amount = 5_000_00L<Cent>
             Pool = Types.Pool.Main
             Description = "Small equipment"
         }
@@ -36,22 +33,22 @@ module UKCapitalAllowancesTests =
         // First year should claim full amount via AIA
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
-        year1.AnnualInvestmentAllowance |> should equal 5_000m
-        year1.WritingDownAllowance |> should equal 0m
-        year1.TotalAllowances |> should equal 5_000m
-        year1.PoolValueEndOfYear |> should equal 0m
+        year1.AnnualInvestmentAllowance |> should equal 5_000_00L<Cent>
+        year1.WritingDownAllowance |> should equal 0L<Cent>
+        year1.TotalAllowances |> should equal 5_000_00L<Cent>
+        year1.PoolValueEndOfYear |> should equal 0L<Cent>
 
     [<Fact>]
     let ``Large asset partially claimed via AIA then WDA`` () =
         let expenditure = {
-            Amount = 50_000m
+            Amount = 50_000_00L<Cent>
             Pool = Types.Pool.Main
             Description = "Large equipment"
         }
         
         let customConfig = {
             Types.Default with
-                AnnualInvestmentAllowanceLimit = 10_000m
+                AnnualInvestmentAllowanceLimit = 10_000_00L<Cent>
                 MaxYears = 3
         }
         
@@ -63,22 +60,22 @@ module UKCapitalAllowancesTests =
         // First year: £10k AIA, £7.2k WDA (18% of remaining £40k)
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
-        year1.AnnualInvestmentAllowance |> should equal 10_000m
-        year1.WritingDownAllowance |> should equal 7_200m // 18% of 40k
-        year1.TotalAllowances |> should equal 17_200m
-        year1.PoolValueEndOfYear |> should equal 32_800m // 40k - 7.2k
+        year1.AnnualInvestmentAllowance |> should equal 10_000_00L<Cent>
+        year1.WritingDownAllowance |> should equal 7_200_00L<Cent> // 18% of 40k
+        year1.TotalAllowances |> should equal 17_200_00L<Cent>
+        year1.PoolValueEndOfYear |> should equal 32_800_00L<Cent> // 40k - 7.2k
 
     [<Fact>]
     let ``Special rate pool uses 6% WDA rate`` () =
         let expenditure = {
-            Amount = 30_000m
+            Amount = 30_000_00L<Cent>
             Pool = Types.Pool.SpecialRate
             Description = "Vehicle"
         }
         
         let customConfig = {
             Types.Default with
-                AnnualInvestmentAllowanceLimit = 20_000m
+                AnnualInvestmentAllowanceLimit = 20_000_00L<Cent>
                 MaxYears = 2
         }
         
@@ -86,9 +83,9 @@ module UKCapitalAllowancesTests =
         
         // First year: £20k AIA, £0.6k WDA (6% of remaining £10k)
         let year1 = schedule |> List.head
-        year1.AnnualInvestmentAllowance |> should equal 20_000m
-        year1.WritingDownAllowance |> should equal 600m // 6% of 10k
-        year1.PoolValueEndOfYear |> should equal 9_400m
+        year1.AnnualInvestmentAllowance |> should equal 20_000_00L<Cent>
+        year1.WritingDownAllowance |> should equal 600_00L<Cent> // 6% of 10k
+        year1.PoolValueEndOfYear |> should equal 9_400_00L<Cent>
 
     [<Fact>]
     let ``Example machinery schedule works`` () =
@@ -97,9 +94,9 @@ module UKCapitalAllowancesTests =
         schedule |> should not' (be Empty)
         
         let year1 = schedule |> List.head
-        year1.AnnualInvestmentAllowance |> should equal 50_000m // Full amount via AIA
-        year1.WritingDownAllowance |> should equal 0m
-        year1.TotalAllowances |> should equal 50_000m
+        year1.AnnualInvestmentAllowance |> should equal 50_000_00L<Cent> // Full amount via AIA
+        year1.WritingDownAllowance |> should equal 0_00L<Cent>
+        year1.TotalAllowances |> should equal 50_000_00L<Cent>
 
     [<Fact>]
     let ``Example vehicle schedule works`` () =
@@ -108,29 +105,29 @@ module UKCapitalAllowancesTests =
         schedule |> should not' (be Empty)
         
         let year1 = schedule |> List.head
-        year1.AnnualInvestmentAllowance |> should equal 30_000m // Full amount via AIA
-        year1.WritingDownAllowance |> should equal 0m
-        year1.TotalAllowances |> should equal 30_000m
+        year1.AnnualInvestmentAllowance |> should equal 30_000_00L<Cent> // Full amount via AIA
+        year1.WritingDownAllowance |> should equal 0_00L<Cent>
+        year1.TotalAllowances |> should equal 30_000_00L<Cent>
 
     [<Fact>]
     let ``Schedule continues until pool value is zero or max years reached`` () =
         let expenditure = {
-            Amount = 1_000m
+            Amount = 1_000_00L<Cent>
             Pool = Types.Pool.Main
             Description = "Small equipment"
         }
         
         let customConfig = {
             Types.Default with
-                AnnualInvestmentAllowanceLimit = 0m // No AIA
-                MaxYears = 20
+                AnnualInvestmentAllowanceLimit = 0_00L<Cent> // No AIA
+                MaxYears = 50
         }
         
         let schedule = Calculations.generateSchedule customConfig expenditure
         
         // Should continue for multiple years until pool depleted
-        schedule.Length |> should be (greaterThan 5)
+        schedule.Length |> should be (greaterThan 15)
         
         // Last year should have pool value of 0 or very small
         let lastYear = schedule |> List.last
-        lastYear.PoolValueEndOfYear |> should be (lessThanOrEqualTo 1m)
+        lastYear.PoolValueEndOfYear |> should be (lessThanOrEqualTo 1_00L<Cent>)

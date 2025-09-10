@@ -186,7 +186,7 @@ module Calculations =
         let desc = assetDescription.ToLowerInvariant()
         if desc.Contains("computer") || desc.Contains("car") || desc.Contains("truck") then
             AssetClass.FiveYear
-        elif desc.Contains("furniture") || desc.Contains("equipment") then
+        elif desc.Contains("furniture") || desc.Contains("manufacturing") then
             AssetClass.SevenYear
         elif desc.Contains("building") then
             AssetClass.FifteenYear
@@ -201,7 +201,7 @@ module Examples =
 
     /// Example: Computer equipment costing $10,000 (5-year property)
     let exampleComputer = {
-        CostBasis = 10000L<Cent>
+        CostBasis = 10000_00L<Cent>
         PlacedInServiceDate = DateDay.Date(2024, 1, 1)
         PropertyClass = AssetClass.FiveYear
         Convention = Convention.HalfYear
@@ -209,7 +209,7 @@ module Examples =
 
     /// Example: Office furniture costing $5,000 (7-year property)
     let exampleFurniture = {
-        CostBasis = 5000L<Cent>
+        CostBasis = 5000_00L<Cent>
         PlacedInServiceDate = DateDay.Date(2024, 1, 1)
         PropertyClass = AssetClass.SevenYear
         Convention = Convention.HalfYear
@@ -217,7 +217,7 @@ module Examples =
 
     /// Example: Manufacturing equipment costing $25,000 (7-year property)
     let exampleEquipment = {
-        CostBasis = 25000L<Cent>
+        CostBasis = 25000_00L<Cent>
         PlacedInServiceDate = DateDay.Date(2024, 1, 1)
         PropertyClass = AssetClass.SevenYear
         Convention = Convention.HalfYear

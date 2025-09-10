@@ -89,26 +89,49 @@ module Lease =
         RemainingLiability: int64<Cent>
     }
 
-    /// Calculate lease payment for given terms
+    /// Calculate level lease payment with optional residual (balloon)
+    /// Assumptions:
+    /// - All incoming monetary values are int64<Cent>
+    /// - UpfrontPayment reduces financed amount
+    /// - ResidualValue discounted over total periods
+    /// - Interest.Rate.Annual is nominal annual; divided by payments/year
     let calculateLeasePayment (terms: EquipmentLeaseTerms) : int64<Cent> =
         let periodsPerYear = terms.PaymentFrequency.PaymentsPerYear
         let totalPeriods = terms.TermMonths * periodsPerYear / 12
-        let periodRate = 
+        if totalPeriods <= 0 then invalidArg (nameof terms.TermMonths) "Computed total periods <= 0."
+
+        let periodRate =
             match terms.ImplicitRate with
             | Interest.Rate.Zero -> 0m
-            | Interest.Rate.Annual (Percent rate) -> rate / 100m / decimal periodsPerYear
-            | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / decimal periodsPerYear
-        
+            | Interest.Rate.Annual (Calculation.Percent p) ->
+                p / 100m / decimal periodsPerYear
+            | Interest.Rate.Daily (Calculation.Percent p) ->
+                // Interpret as nominal daily simple rate -> nominal annual -> per-period
+                (p / 100m) * 365m / decimal periodsPerYear
+
+        let fairValue = Cent.toDecimal terms.FairMarketValue
+        let upfront   = Cent.toDecimal terms.UpfrontPayment
+        let residual  = Cent.toDecimal terms.ResidualValue
+
+        let financedPrincipal = fairValue - upfront
+        if financedPrincipal <= 0m then invalidArg "terms.UpfrontPayment" "Upfront payment >= fair value."
+        if residual >= fairValue then invalidArg "terms.ResidualValue" "Residual must be < fair value."
+
         if periodRate = 0m then
-            // No interest, simple division
-            (terms.FairMarketValue - terms.ResidualValue) / int64 totalPeriods
+            // Zero-rate linear repayment less residual
+            let paymentDec = (financedPrincipal - residual) / decimal totalPeriods
+            if paymentDec <= 0m then invalidOp "Non-positive payment under zero-rate scenario."
+            Cent.fromDecimal paymentDec
         else
-            let leasableAmount = terms.FairMarketValue - terms.UpfrontPayment
-            let pvOfResidual = decimal terms.ResidualValue / pow (1m + periodRate) (decimal totalPeriods)
-            let amountToFinance = decimal leasableAmount - pvOfResidual
-            
-            let payment = amountToFinance * periodRate / (1m - pow (1m + periodRate) (decimal -totalPeriods))
-            payment * 1m<Cent> |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+            let growth = pow (1m + periodRate) (decimal totalPeriods)
+            let pvResidual = residual / growth
+            let baseAmount = financedPrincipal - pvResidual
+            if baseAmount <= 0m then invalidOp "Discounted residual >= financed principal."
+            let denom = 1m - 1m / growth
+            if denom = 0m then invalidOp "Denominator collapsed (rate too small / overflow)."
+            let paymentDec = baseAmount * periodRate / denom
+            if paymentDec <= 0m then invalidOp "Computed payment is non-positive."
+            Cent.fromDecimal paymentDec
 
     /// Calculate lease payment details
     let calculateLeaseDetails (terms: EquipmentLeaseTerms) : LeaseCalculation =

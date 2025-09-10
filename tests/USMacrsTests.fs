@@ -3,7 +3,9 @@ namespace FSharp.Finance.Personal.Tests
 open Xunit
 open FsUnit.Xunit
 
+open FSharp.Finance.Personal.Calculation
 open FSharp.Finance.Personal.EquipmentFinance.Depreciation.US_MACRS
+open FSharp.Finance.Personal.EquipmentFinance.Depreciation.US_MACRS.Types
 
 module USMacrsTests =
 
@@ -39,7 +41,7 @@ module USMacrsTests =
     [<Fact>]
     let ``Five-year asset depreciation schedule is correct`` () =
         let asset = {
-            CostBasis = 1000000L<FSharp.Finance.Personal.Calculation.Cent> // $10,000
+            CostBasis = 10000_00L<Cent> // $10,000
             PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
             PropertyClass = Types.AssetClass.FiveYear
             Convention = Types.Convention.HalfYear
@@ -53,22 +55,22 @@ module USMacrsTests =
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
         year1.DepreciationRate |> should equal 0.20m
-        year1.DepreciationAmount |> should equal 200000L<FSharp.Finance.Personal.Calculation.Cent> // $2,000
-        year1.AccumulatedDepreciation |> should equal 200000L<FSharp.Finance.Personal.Calculation.Cent>
-        year1.BookValue |> should equal 800000L<FSharp.Finance.Personal.Calculation.Cent>
+        year1.DepreciationAmount |> should equal 2000_00L<Cent> // $2,000
+        year1.AccumulatedDepreciation |> should equal 2000_00L<Cent>
+        year1.BookValue |> should equal 8000_00L<Cent>
         
         // Year 2: 32% of $10,000 = $3,200
         let year2 = schedule.[1]
         year2.Year |> should equal 2
         year2.DepreciationRate |> should equal 0.32m
-        year2.DepreciationAmount |> should equal 320000L<FSharp.Finance.Personal.Calculation.Cent> // $3,200
-        year2.AccumulatedDepreciation |> should equal 520000L<FSharp.Finance.Personal.Calculation.Cent>
-        year2.BookValue |> should equal 480000L<FSharp.Finance.Personal.Calculation.Cent>
+        year2.DepreciationAmount |> should equal 3200_00L<Cent> // $3,200
+        year2.AccumulatedDepreciation |> should equal 5200_00L<Cent>
+        year2.BookValue |> should equal 4800_00L<Cent>
 
     [<Fact>]
     let ``Three-year asset depreciation schedule is correct`` () =
         let asset = {
-            CostBasis = 300000L<FSharp.Finance.Personal.Calculation.Cent> // $3,000
+            CostBasis = 3000_00L<Cent> // $3,000
             PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
             PropertyClass = Types.AssetClass.ThreeYear
             Convention = Types.Convention.HalfYear
@@ -81,16 +83,16 @@ module USMacrsTests =
         // Year 1: 33.33% of $3,000 ≈ $999.90
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
-        year1.DepreciationAmount |> should (equalWithin 100L<FSharp.Finance.Personal.Calculation.Cent>) 99990L<FSharp.Finance.Personal.Calculation.Cent>
+        year1.DepreciationAmount |> should (equalWithin 100L<Cent>) 999_90L<Cent>
         
         // Final year should have minimal book value
         let lastYear = schedule |> List.last
-        lastYear.BookValue |> should be (lessThan 30000L<FSharp.Finance.Personal.Calculation.Cent>) // Most should be depreciated
+        lastYear.BookValue |> should be (lessThan 300_00L<Cent>) // Most should be depreciated
 
     [<Fact>]
     let ``Total depreciation equals original basis`` () =
         let asset = {
-            CostBasis = 500000L<FSharp.Finance.Personal.Calculation.Cent> // $5,000
+            CostBasis = 500000L<Cent> // $5,000
             PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
             PropertyClass = Types.AssetClass.SevenYear
             Convention = Types.Convention.HalfYear
@@ -103,7 +105,7 @@ module USMacrsTests =
             |> List.sumBy (fun year -> year.DepreciationAmount)
         
         // Total should equal original basis (within rounding tolerance)
-        totalDepreciation |> should (equalWithin 50L<FSharp.Finance.Personal.Calculation.Cent>) asset.CostBasis
+        totalDepreciation |> should (equalWithin 50L<Cent>) asset.CostBasis
 
     [<Fact>]
     let ``Example computer schedule works`` () =
@@ -114,7 +116,7 @@ module USMacrsTests =
         
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
-        year1.DepreciationAmount |> should equal 200000L<FSharp.Finance.Personal.Calculation.Cent> // 20% of $10,000
+        year1.DepreciationAmount |> should equal 2000_00L<Cent> // 20% of $10,000
 
     [<Fact>]
     let ``Example furniture schedule works`` () =
@@ -125,7 +127,7 @@ module USMacrsTests =
         
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
-        year1.DepreciationAmount |> should equal 71450L<FSharp.Finance.Personal.Calculation.Cent> // 14.29% of $5,000
+        year1.DepreciationAmount |> should equal 714_50L<Cent> // 14.29% of $5,000
 
     [<Fact>]
     let ``Example equipment schedule works`` () =
@@ -136,12 +138,12 @@ module USMacrsTests =
         
         let year1 = schedule |> List.head
         year1.Year |> should equal 1
-        year1.DepreciationAmount |> should equal 357250L<FSharp.Finance.Personal.Calculation.Cent> // 14.29% of $25,000
+        year1.DepreciationAmount |> should equal 3572_50L<Cent> // 14.29% of $25,000
 
     [<Fact>]
     let ``Book value decreases each year`` () =
         let asset = {
-            CostBasis = 1500000L<FSharp.Finance.Personal.Calculation.Cent> // $15,000
+            CostBasis = 15000_00L<Cent> // $15,000
             PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
             PropertyClass = Types.AssetClass.FiveYear
             Convention = Types.Convention.HalfYear
@@ -159,7 +161,7 @@ module USMacrsTests =
     [<Fact>]
     let ``Accumulated depreciation increases each year`` () =
         let asset = {
-            CostBasis = 800000L<FSharp.Finance.Personal.Calculation.Cent> // $8,000
+            CostBasis = 8000_00L<Cent> // $8,000
             PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
             PropertyClass = Types.AssetClass.ThreeYear
             Convention = Types.Convention.HalfYear

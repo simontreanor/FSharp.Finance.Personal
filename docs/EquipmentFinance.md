@@ -53,7 +53,7 @@ src/EquipmentFinance/
 open FSharp.Finance.Personal.EquipmentFinance.Depreciation.US_MACRS
 
 let computer = {
-    CostBasis = 1000000L<Cent> // $10,000
+    CostBasis = 10000_00L<Cent> // $10,000
     PlacedInServiceDate = Date(2024, 1, 1)
     PropertyClass = Types.AssetClass.FiveYear
     Convention = Types.Convention.HalfYear
@@ -114,14 +114,14 @@ let schedule = Calculations.scheduleDefault machinery
 open FSharp.Finance.Personal.EquipmentFinance
 
 let loanTerms = {
-    Principal = 1000000L<Cent> // $10,000
+    Principal = 10000_00L<Cent> // $10,000
     InterestRate = Interest.Rate.Annual (Percent 6.0m)
     TermMonths = 36
     MonthlyPayment = None
     EquipmentDescription = "Manufacturing Equipment"
-    EquipmentCost = 1000000L<Cent>
-    DownPayment = 200000L<Cent>
-    ResidualValue = 100000L<Cent>
+    EquipmentCost = 10000_00L<Cent>
+    DownPayment = 2000_00L<Cent>
+    ResidualValue = 1000_00L<Cent>
 }
 
 let analysis = Loan.analyzeLoan loanTerms startDate
@@ -143,14 +143,14 @@ open FSharp.Finance.Personal.EquipmentFinance
 
 let leaseTerms = {
     EquipmentDescription = "Manufacturing Equipment"
-    FairMarketValue = 1000000L<Cent>
+    FairMarketValue = 10000_00L<Cent>
     TermMonths = 36
     LeaseType = Lease.LeaseType.FinanceLease
     PaymentFrequency = Lease.PaymentFrequency.Monthly
-    LeasePayment = 30000L<Cent>
-    UpfrontPayment = 100000L<Cent>
-    ResidualValue = 200000L<Cent>
-    PurchaseOption = Some 200000L<Cent>
+    LeasePayment = 300_00L<Cent>
+    UpfrontPayment = 1000_00L<Cent>
+    ResidualValue = 2000_00L<Cent>
+    PurchaseOption = Some 2000_00L<Cent>
     ImplicitRate = Interest.Rate.Annual (Percent 5.0m)
 }
 
@@ -185,13 +185,6 @@ All modules integrate seamlessly with the existing FSharp.Finance.Personal libra
 - Uses `DateDay.Date` for date handling
 - Follows existing functional programming patterns
 
-## Superseded PRs
-
-This implementation consolidates and supersedes:
-
-- **PR #5**: "Implement initial Equipment Finance & Leasing scaffolding"
-- **PR #9**: "WIP depreciation restructuring adding UK Capital Allowances"
-
 The consolidated implementation provides:
 
 - Consistent namespacing as specified in requirements
@@ -220,6 +213,3 @@ Potential areas for expansion:
 - Support for partial-year conventions
 - Multiple asset management capabilities
 
----
-
-**Note**: This documentation describes the consolidated Equipment Finance implementation that supersedes PRs #5 and #9, providing a unified and comprehensive solution for equipment finance analysis.

@@ -30,7 +30,7 @@ printfn "=== US MACRS: Computer Equipment (5-Year) ==="
 open FSharp.Finance.Personal.EquipmentFinance.Depreciation.US_MACRS
 
 let computer = {
-    CostBasis = 1000000L<FSharp.Finance.Personal.Calculation.Cent> // $10,000
+    CostBasis = 10000_00L<FSharp.Finance.Personal.Calculation.Cent> // $10,000
     PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
     PropertyClass = Types.AssetClass.FiveYear
     Convention = Types.Convention.HalfYear

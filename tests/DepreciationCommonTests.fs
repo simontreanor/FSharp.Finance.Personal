@@ -8,23 +8,6 @@ open FSharp.Finance.Personal.EquipmentFinance.Depreciation.DepreciationCommon
 module DepreciationCommonTests =
 
     [<Fact>]
-    let ``Rounding currency works correctly`` () =
-        Rounding.roundCurrency 12.345m |> should equal 12.35m
-        Rounding.roundCurrency 12.344m |> should equal 12.34m
-        Rounding.roundCurrency 12.346m |> should equal 12.35m
-
-    [<Fact>]
-    let ``Rounding to places works correctly`` () =
-        Rounding.roundToPlaces 3 12.3456m |> should equal 12.346m
-        Rounding.roundToPlaces 1 12.34m |> should equal 12.3m
-        Rounding.roundToPlaces 0 12.7m |> should equal 13m
-
-    [<Fact>]
-    let ``Rounding percentage works correctly`` () =
-        Rounding.roundPercentage 0.123456m |> should equal 0.1235m
-        Rounding.roundPercentage 0.12m |> should equal 0.12m
-
-    [<Fact>]
     let ``Validate positive amount accepts positive values`` () =
         Validation.validatePositiveAmount 100L<FSharp.Finance.Personal.Calculation.Cent> "test" // Should not throw
 

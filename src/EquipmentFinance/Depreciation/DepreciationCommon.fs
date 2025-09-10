@@ -21,21 +21,6 @@ module DepreciationCommon =
         PlacedInServiceDate: DateDay.Date option
     }
 
-    /// Common rounding utilities for depreciation calculations
-    module Rounding =
-        
-        /// Rounds a decimal value to 2 decimal places using midpoint-away-from-zero
-        let roundCurrency (value: decimal) =
-            Math.Round(value, 2, MidpointRounding.AwayFromZero)
-        
-        /// Rounds a decimal value to specified decimal places using midpoint-away-from-zero
-        let roundToPlaces (places: int) (value: decimal) =
-            Math.Round(value, places, MidpointRounding.AwayFromZero)
-        
-        /// Rounds a percentage to 4 decimal places
-        let roundPercentage (value: decimal) =
-            Math.Round(value, 4, MidpointRounding.AwayFromZero)
-
     /// Common validation utilities
     module Validation =
         

@@ -2,8 +2,9 @@ namespace FSharp.Finance.Personal.Tests
 
 open Xunit
 open FsUnit.Xunit
-
+open FSharp.Finance.Personal.Calculation
 open FSharp.Finance.Personal.EquipmentFinance
+open FSharp.Finance.Personal.EquipmentFinance.Lease
 
 module EquipmentLeaseTests =
 
@@ -18,73 +19,93 @@ module EquipmentLeaseTests =
     let ``Lease payment calculation works for zero interest`` () =
         let terms = {
             EquipmentDescription = "Test equipment"
-            FairMarketValue = 120000L<FSharp.Finance.Personal.Calculation.Cent> // $1,200
+            FairMarketValue = 1200_00L<Cent> // $1,200
             TermMonths = 12
             LeaseType = Lease.LeaseType.OperatingLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 0L<FSharp.Finance.Personal.Calculation.Cent>
-            UpfrontPayment = 0L<FSharp.Finance.Personal.Calculation.Cent>
-            ResidualValue = 20000L<FSharp.Finance.Personal.Calculation.Cent> // $200
+            LeasePayment = 0L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 200_00L<Cent> // $200
             PurchaseOption = None
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Zero
         }
         
         let payment = Lease.calculateLeasePayment terms
         // ($1200 - $200) / 12 = $83.33
-        payment |> should equal 8333L<FSharp.Finance.Personal.Calculation.Cent>
+        payment |> should equal 83_33L<Cent>
 
-    [<Fact>]
+    [<Fact>] // this test still fails
     let ``Lease payment calculation works with interest`` () =
         let terms = {
             EquipmentDescription = "Manufacturing equipment"
-            FairMarketValue = 1000000L<FSharp.Finance.Personal.Calculation.Cent> // $10,000
+            FairMarketValue = 10000_00L<Cent>
             TermMonths = 36
             LeaseType = Lease.LeaseType.FinanceLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 0L<FSharp.Finance.Personal.Calculation.Cent>
-            UpfrontPayment = 100000L<FSharp.Finance.Personal.Calculation.Cent> // $1,000
-            ResidualValue = 200000L<FSharp.Finance.Personal.Calculation.Cent> // $2,000
-            PurchaseOption = Some 200000L<FSharp.Finance.Personal.Calculation.Cent>
+            LeasePayment = 0L<Cent>
+            UpfrontPayment = 1000_00L<Cent>
+            ResidualValue = 2000_00L<Cent>
+            PurchaseOption = Some 2000_00L<Cent>
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (FSharp.Finance.Personal.Calculation.Percent 5.0m)
         }
-        
+
         let payment = Lease.calculateLeasePayment terms
-        // Payment should be greater than simple division due to interest
-        payment |> should be (greaterThan 22222L<FSharp.Finance.Personal.Calculation.Cent>) // Simple calculation would be less
+
+        // Correct zero-interest baseline (uses upfront + residual)
+        let zeroInterestBaseline =
+            let initial = (terms.FairMarketValue - terms.UpfrontPayment - terms.ResidualValue) |> Cent.toDecimal
+            initial / (decimal (terms.TermMonths * terms.PaymentFrequency.PaymentsPerYear / 12)) 
+            |> Cent.fromDecimal
+
+        payment |> should be (greaterThan zeroInterestBaseline)
+
+        // Expected theoretical payment (recalculate in test for robustness)
+        let r = 0.05m / 12m
+        let n = 36
+        let principalNet = Cent.toDecimal terms.FairMarketValue - Cent.toDecimal terms.UpfrontPayment
+        let residual = Cent.toDecimal terms.ResidualValue
+        let growth = System.Math.Pow(float (1m + r), float n) |> decimal
+        let pvResidual = residual / growth
+        let baseAmt = principalNet - pvResidual
+        let annuityFactor = (1m - 1m / growth) / r
+        let expectedDec = baseAmt / annuityFactor
+        let expectedCents = Cent.fromDecimal expectedDec
+        // Allow 1 cent tolerance for rounding differences
+        abs (payment - expectedCents) |> should be (lessThanOrEqualTo 1L<Cent>)
 
     [<Fact>]
     let ``Lease details calculation includes total cost`` () =
         let terms = {
             EquipmentDescription = "Office equipment"
-            FairMarketValue = 500000L<FSharp.Finance.Personal.Calculation.Cent> // $5,000
+            FairMarketValue = 500000L<Cent> // $5,000
             TermMonths = 24
             LeaseType = Lease.LeaseType.OperatingLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 20000L<FSharp.Finance.Personal.Calculation.Cent> // $200/month
-            UpfrontPayment = 50000L<FSharp.Finance.Personal.Calculation.Cent> // $500
-            ResidualValue = 100000L<FSharp.Finance.Personal.Calculation.Cent> // $1,000
-            PurchaseOption = Some 100000L<FSharp.Finance.Personal.Calculation.Cent>
+            LeasePayment = 200_00L<Cent> // $200/month
+            UpfrontPayment = 500_00L<Cent> // $500
+            ResidualValue = 1000_00L<Cent> // $1,000
+            PurchaseOption = Some 1000_00L<Cent>
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (FSharp.Finance.Personal.Calculation.Percent 4.0m)
         }
         
         let details = Lease.calculateLeaseDetails terms
         
-        details.LeasePayment |> should equal 20000L<FSharp.Finance.Personal.Calculation.Cent>
-        details.TotalPayments |> should equal 530000L<FSharp.Finance.Personal.Calculation.Cent> // $200*24 + $500
-        details.TotalCost |> should equal 630000L<FSharp.Finance.Personal.Calculation.Cent> // Total payments + purchase option
-        details.PresentValue |> should be (greaterThan 0L<FSharp.Finance.Personal.Calculation.Cent>)
+        details.LeasePayment |> should equal 20000L<Cent>
+        details.TotalPayments |> should equal 530000L<Cent> // $200*24 + $500
+        details.TotalCost |> should equal 630000L<Cent> // Total payments + purchase option
+        details.PresentValue |> should be (greaterThan 0L<Cent>)
 
     [<Fact>]
     let ``Lease schedule has correct length`` () =
         let terms = {
             EquipmentDescription = "Computer"
-            FairMarketValue = 300000L<FSharp.Finance.Personal.Calculation.Cent> // $3,000
+            FairMarketValue = 3000_00L<Cent> // $3,000
             TermMonths = 12
             LeaseType = Lease.LeaseType.FinanceLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 25000L<FSharp.Finance.Personal.Calculation.Cent> // $250/month
-            UpfrontPayment = 0L<FSharp.Finance.Personal.Calculation.Cent>
-            ResidualValue = 50000L<FSharp.Finance.Personal.Calculation.Cent> // $500
+            LeasePayment = 250_00L<Cent> // $250/month
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 500_00L<Cent> // $500
             PurchaseOption = None
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (FSharp.Finance.Personal.Calculation.Percent 3.0m)
         }
@@ -102,19 +123,19 @@ module EquipmentLeaseTests =
         
         // All payments should have the same amount for operating lease
         schedule |> Array.iter (fun item -> 
-            item.PaymentAmount |> should equal 25000L<FSharp.Finance.Personal.Calculation.Cent>)
+            item.PaymentAmount |> should equal 250_00L<Cent>)
 
     [<Fact>]
     let ``Operating lease does not split principal and interest`` () =
         let terms = {
             EquipmentDescription = "Equipment"
-            FairMarketValue = 600000L<FSharp.Finance.Personal.Calculation.Cent> // $6,000
+            FairMarketValue = 6000_00L<Cent> // $6,000
             TermMonths = 24
             LeaseType = Lease.LeaseType.OperatingLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 25000L<FSharp.Finance.Personal.Calculation.Cent> // $250/month
-            UpfrontPayment = 0L<FSharp.Finance.Personal.Calculation.Cent>
-            ResidualValue = 100000L<FSharp.Finance.Personal.Calculation.Cent>
+            LeasePayment = 250_00L<Cent> // $250/month
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
             PurchaseOption = None
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (FSharp.Finance.Personal.Calculation.Percent 4.0m)
         }
@@ -124,20 +145,20 @@ module EquipmentLeaseTests =
         
         // Operating leases should not split principal/interest
         schedule |> Array.iter (fun item -> 
-            item.PrincipalPortion |> should equal 0L<FSharp.Finance.Personal.Calculation.Cent>
-            item.InterestPortion |> should equal 0L<FSharp.Finance.Personal.Calculation.Cent>)
+            item.PrincipalPortion |> should equal 0L<Cent>
+            item.InterestPortion |> should equal 0L<Cent>)
 
     [<Fact>]
     let ``Finance lease splits principal and interest`` () =
         let terms = {
             EquipmentDescription = "Equipment"
-            FairMarketValue = 600000L<FSharp.Finance.Personal.Calculation.Cent> // $6,000
+            FairMarketValue = 6000_00L<Cent> // $6,000
             TermMonths = 24
             LeaseType = Lease.LeaseType.FinanceLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 25000L<FSharp.Finance.Personal.Calculation.Cent> // $250/month
-            UpfrontPayment = 0L<FSharp.Finance.Personal.Calculation.Cent>
-            ResidualValue = 100000L<FSharp.Finance.Personal.Calculation.Cent>
+            LeasePayment = 250_00L<Cent> // $250/month
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
             PurchaseOption = None
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (FSharp.Finance.Personal.Calculation.Percent 4.0m)
         }
@@ -147,8 +168,8 @@ module EquipmentLeaseTests =
         
         // Finance leases should split principal and interest
         let firstPayment = schedule.[0]
-        firstPayment.PrincipalPortion |> should be (greaterThan 0L<FSharp.Finance.Personal.Calculation.Cent>)
-        firstPayment.InterestPortion |> should be (greaterThan 0L<FSharp.Finance.Personal.Calculation.Cent>)
+        firstPayment.PrincipalPortion |> should be (greaterThan 0L<Cent>)
+        firstPayment.InterestPortion |> should be (greaterThan 0L<Cent>)
         
         // Principal + interest should equal payment amount
         (firstPayment.PrincipalPortion + firstPayment.InterestPortion) |> should equal firstPayment.PaymentAmount
@@ -157,20 +178,20 @@ module EquipmentLeaseTests =
     let ``Lease vs buy analysis includes depreciation schedule`` () =
         let terms = {
             EquipmentDescription = "Manufacturing equipment"
-            FairMarketValue = 1000000L<FSharp.Finance.Personal.Calculation.Cent> // $10,000
+            FairMarketValue = 10000_00L<Cent> // $10,000
             TermMonths = 36
             LeaseType = Lease.LeaseType.FinanceLease
             PaymentFrequency = Lease.PaymentFrequency.Monthly
-            LeasePayment = 30000L<FSharp.Finance.Personal.Calculation.Cent> // $300/month
-            UpfrontPayment = 100000L<FSharp.Finance.Personal.Calculation.Cent>
-            ResidualValue = 200000L<FSharp.Finance.Personal.Calculation.Cent>
-            PurchaseOption = Some 200000L<FSharp.Finance.Personal.Calculation.Cent>
+            LeasePayment = 300_00L<Cent> // $300/month
+            UpfrontPayment = 1000_00L<Cent>
+            ResidualValue = 2000_00L<Cent>
+            PurchaseOption = Some 2000_00L<Cent>
             ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (FSharp.Finance.Personal.Calculation.Percent 5.0m)
         }
         
         let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
         let analysis = Lease.analyzeLeaseVsBuy terms startDate
         
-        analysis.LeaseDetails.LeasePayment |> should equal 30000L<FSharp.Finance.Personal.Calculation.Cent>
+        analysis.LeaseDetails.LeasePayment |> should equal 300_00L<Cent>
         analysis.PurchaseDepreciation |> should not' (be Empty)
         analysis.LeaseSchedule.Length |> should equal 36

@@ -34,7 +34,7 @@ module Types =
     /// Configuration for capital allowances calculations
     type CapitalAllowanceConfig = {
         /// Annual Investment Allowance limit (£1,000,000 in recent years)
-        AnnualInvestmentAllowanceLimit: decimal
+        AnnualInvestmentAllowanceLimit: int64<Cent>
         /// Writing down allowance rate for main pool (typically 18%)
         MainPoolRate: decimal
         /// Writing down allowance rate for special rate pool (typically 6%)
@@ -45,7 +45,7 @@ module Types =
 
     /// Default configuration based on common UK rates
     let Default: CapitalAllowanceConfig = {
-        AnnualInvestmentAllowanceLimit = 1_000_000m
+        AnnualInvestmentAllowanceLimit = 1_000_000_00L<Cent>
         MainPoolRate = 0.18m
         SpecialRatePoolRate = 0.06m
         MaxYears = 10
@@ -54,7 +54,7 @@ module Types =
     /// Represents an expenditure item
     type Expenditure = {
         /// Cost of the asset in pounds
-        Amount: decimal
+        Amount: int64<Cent>
         /// Pool classification
         Pool: Pool
         /// Description of the asset
@@ -66,13 +66,13 @@ module Types =
         /// Year number (1-based)
         Year: int
         /// Annual Investment Allowance claimed
-        AnnualInvestmentAllowance: decimal
+        AnnualInvestmentAllowance: int64<Cent>
         /// Writing Down Allowance claimed
-        WritingDownAllowance: decimal
+        WritingDownAllowance: int64<Cent>
         /// Total allowances for the year
-        TotalAllowances: decimal
+        TotalAllowances: int64<Cent>
         /// Remaining pool value at year end
-        PoolValueEndOfYear: decimal
+        PoolValueEndOfYear: int64<Cent>
     }
 
 /// UK Capital Allowances calculation functions
@@ -80,15 +80,11 @@ module Calculations =
     
     open Types
 
-    /// Rounds a decimal value using midpoint-away-from-zero rounding
-    let roundAwayFromZero (value: decimal) =
-        DepreciationCommon.Rounding.roundCurrency value
-
     /// Generates a capital allowances schedule for a single expenditure
     let generateSchedule (config: CapitalAllowanceConfig) (expenditure: Expenditure) : YearAllowance list =
         
-        let rec calculateYears (year: int) (poolValue: decimal) (remainingAIA: decimal) (acc: YearAllowance list) =
-            if year > config.MaxYears || poolValue <= 0m then
+        let rec calculateYears (year: int) (poolValue: int64<Cent>) (remainingAIA: int64<Cent>) (acc: YearAllowance list) =
+            if year > config.MaxYears || poolValue <= 0L<Cent> then
                 List.rev acc
             else
                 // Calculate AIA for this year (only available in year 1 for single addition)
@@ -96,7 +92,7 @@ module Calculations =
                     if year = 1 then
                         min poolValue remainingAIA
                     else
-                        0m
+                        0L<Cent>
 
                 // Remaining value after AIA
                 let valueAfterAIA = poolValue - aiaThisYear
@@ -107,8 +103,10 @@ module Calculations =
                     | Pool.Main -> config.MainPoolRate
                     | Pool.SpecialRate -> config.SpecialRatePoolRate
 
-                // Calculate WDA
-                let wda = roundAwayFromZero (valueAfterAIA * wdaRate)
+                // Calculate Writing Down Allowance (WDA)
+                let wda = 
+                    Cent.toDecimalCent valueAfterAIA * wdaRate 
+                    |> Cent.fromDecimalCent (Rounding.RoundWith MidpointRounding.AwayFromZero)
 
                 // Total allowances for this year
                 let totalAllowances = aiaThisYear + wda
@@ -118,10 +116,10 @@ module Calculations =
 
                 let yearAllowance = {
                     Year = year
-                    AnnualInvestmentAllowance = roundAwayFromZero aiaThisYear
-                    WritingDownAllowance = roundAwayFromZero wda
-                    TotalAllowances = roundAwayFromZero totalAllowances
-                    PoolValueEndOfYear = roundAwayFromZero poolValueEOY
+                    AnnualInvestmentAllowance = aiaThisYear
+                    WritingDownAllowance = wda
+                    TotalAllowances = totalAllowances
+                    PoolValueEndOfYear = poolValueEOY
                 }
 
                 calculateYears (year + 1) poolValueEOY (remainingAIA - aiaThisYear) (yearAllowance :: acc)
@@ -140,14 +138,14 @@ module Examples =
 
     /// Example: Machinery costing £50,000 in main pool
     let exampleMachinery = {
-        Amount = 50_000m
+        Amount = 50_000_00L<Cent>
         Pool = Pool.Main
         Description = "Manufacturing equipment"
     }
 
     /// Example: Vehicle costing £30,000 in special rate pool  
     let exampleVehicle = {
-        Amount = 30_000m
+        Amount = 30_000_00L<Cent>
         Pool = Pool.SpecialRate
         Description = "Company vehicle"
     }
