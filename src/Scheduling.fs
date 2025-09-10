@@ -1094,7 +1094,7 @@ module Scheduling =
                     |> Array.unfold (equaliseInterest bp paymentDays initialBasicItem paymentCount feeTotal paymentMap)
                     |> Array.last
                 | _ -> basicItems
-                |> adjustFinalPayment finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
+                |> adjustFinalPayment finalScheduledPaymentDay (match bp.ScheduleConfig with | AutoGenerateSchedule _ -> true | _ -> false)
             // calculate the total principal paid over the schedule
             let principalTotal = items |> Array.sumBy _.PrincipalPortion
             // calculate the total interest accrued over the schedule

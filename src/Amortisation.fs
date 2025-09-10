@@ -179,7 +179,7 @@ module Amortisation =
                     if p.Basic.FeeConfig.IsSome then
                         yield "", $"{formatCent scheduleItem.FeeBalance}"
                     yield "", $"{formatCent scheduleItem.PrincipalBalance}"
-                    if not settlementDay.IsNoSettlement then
+                    if settlementDay <> SettlementDay.NoSettlement then
                         yield "", $"{formatCent scheduleItem.SettlementFigure}"
                 |]
                 |> Array.mapi (fun i (style, content) ->
@@ -293,7 +293,7 @@ module Amortisation =
                     yield "Window"
                     yield "Payment due"
                     yield "Actual payments"
-                    if not p.Advanced.SettlementDay.IsNoSettlement then
+                    if p.Advanced.SettlementDay <> SettlementDay.NoSettlement then
                         yield "Generated payment"
                     yield "Net effect"
                     yield "Payment status"
@@ -318,7 +318,7 @@ module Amortisation =
                     if p.Basic.FeeConfig.IsSome then
                         yield "Fee balance"
                     yield "Principal balance"
-                    if not p.Advanced.SettlementDay.IsNoSettlement then
+                    if p.Advanced.SettlementDay <> SettlementDay.NoSettlement then
                         yield "Settlement figure"
                 |]
                 |> Array.mapi (fun i fh ->
@@ -878,7 +878,7 @@ module Amortisation =
                 // refine the fee portion and rebate if a rebate is actually applied on the day, i.e. if the net effect covers the settlement figure
                 let feePortion', feeRebate =
                     if
-                        ap.GeneratedPayment.IsToBeGenerated
+                        ap.GeneratedPayment = GeneratedPayment.ToBeGenerated
                         || feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect
                     then
                         let feeRebate' =
@@ -1155,7 +1155,7 @@ module Amortisation =
             items
             |> Map.filter (fun _ si ->
                 ScheduledPayment.isSome si.ScheduledPayment
-                && not si.PaymentStatus.IsNoLongerRequired
+                && si.PaymentStatus <> PaymentStatus.NoLongerRequired
             )
 
         let actualPaymentItems =
