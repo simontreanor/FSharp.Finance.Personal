@@ -82,7 +82,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description parameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -107,7 +107,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description parameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -131,7 +131,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description parameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -156,7 +156,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters1
 
-        Schedule.outputHtmlToFile folder title description parameters1 schedules
+        Schedule.outputHtmlToFile folder title description parameters1 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -230,7 +230,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters2
 
-        Schedule.outputHtmlToFile folder title description parameters2 schedules
+        Schedule.outputHtmlToFile folder title description parameters2 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -255,7 +255,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters2
 
-        Schedule.outputHtmlToFile folder title description parameters2 schedules
+        Schedule.outputHtmlToFile folder title description parameters2 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -280,7 +280,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters2
 
-        Schedule.outputHtmlToFile folder title description parameters2 schedules
+        Schedule.outputHtmlToFile folder title description parameters2 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -317,7 +317,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters3
 
-        Schedule.outputHtmlToFile folder title description parameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -342,7 +342,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters3
 
-        Schedule.outputHtmlToFile folder title description parameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -367,7 +367,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters3
 
-        Schedule.outputHtmlToFile folder title description parameters3 schedules
+        Schedule.outputHtmlToFile folder title description parameters3 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -397,7 +397,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters4
 
-        Schedule.outputHtmlToFile folder title description parameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -422,7 +422,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters4
 
-        Schedule.outputHtmlToFile folder title description parameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -447,7 +447,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters4
 
-        Schedule.outputHtmlToFile folder title description parameters4 schedules
+        Schedule.outputHtmlToFile folder title description parameters4 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -479,7 +479,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters5
 
-        Schedule.outputHtmlToFile folder title description parameters5 schedules
+        Schedule.outputHtmlToFile folder title description parameters5 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -506,7 +506,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters5
 
-        Schedule.outputHtmlToFile folder title description parameters5 schedules
+        Schedule.outputHtmlToFile folder title description parameters5 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -533,7 +533,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters5
 
-        Schedule.outputHtmlToFile folder title description parameters5 schedules
+        Schedule.outputHtmlToFile folder title description parameters5 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -572,7 +572,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters6
 
-        Schedule.outputHtmlToFile folder title description parameters6 schedules
+        Schedule.outputHtmlToFile folder title description parameters6 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -597,7 +597,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters6
 
-        Schedule.outputHtmlToFile folder title description parameters6 schedules
+        Schedule.outputHtmlToFile folder title description parameters6 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -622,7 +622,7 @@ module ComplianceTests =
 
         let schedules = actualPayments |> amortise parameters6
 
-        Schedule.outputHtmlToFile folder title description parameters6 schedules
+        Schedule.outputHtmlToFile folder title description parameters6 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -654,7 +654,7 @@ module ComplianceTests =
 
         let schedules = amortise parameters7 Map.empty
 
-        Schedule.outputHtmlToFile folder title description parameters7 schedules
+        Schedule.outputHtmlToFile folder title description parameters7 "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -678,7 +678,7 @@ module ComplianceTests =
 
         let schedules = amortise p Map.empty
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems
@@ -702,7 +702,7 @@ module ComplianceTests =
 
         let schedules = amortise p Map.empty
 
-        Schedule.outputHtmlToFile folder title description p schedules
+        Schedule.outputHtmlToFile folder title description p "" schedules
 
         let principalBalance =
             schedules.AmortisationSchedule.ScheduleItems

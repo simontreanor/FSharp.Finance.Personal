@@ -15,7 +15,7 @@ module ActualPaymentTestsExtra =
     open Calculation
     open DateDay
     open Scheduling
-    open Rescheduling
+    open Refinancing
     open UnitPeriod
 
     let interestCapExample: Interest.Cap = {
@@ -108,12 +108,13 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = amortise parameters actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description parameters
+            schedules |> Schedule.outputHtmlToFile folder title description parameters ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             131<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2023, 12, 1)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 407_64L<Cent>) ValueNone
@@ -170,12 +171,13 @@ module ActualPaymentTestsExtra =
                 Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
 
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             172<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2022, 8, 27)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 170_90L<Cent>) ValueNone
@@ -245,7 +247,7 @@ module ActualPaymentTestsExtra =
                 PaymentSchedule =
                     FixedSchedules [|
                         {
-                            UnitPeriodConfig = Config.Weekly(2, Date(2022, 9, 1))
+                            UnitPeriodConfig = Weekly(2, Date(2022, 9, 1))
                             PaymentCount = 155
                             PaymentValue = 20_00L<Cent>
                             ScheduleType = ScheduleType.Rescheduled rescheduleDay
@@ -257,12 +259,16 @@ module ActualPaymentTestsExtra =
             }
 
             let schedules = reschedule p rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            schedules.NewSchedules
+            |> Schedule.outputHtmlToFile folder title description p (RescheduleParameters.toHtmlTable rp)
+
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             1969<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
                 Advances = [||]
                 ScheduledPayment =
@@ -336,12 +342,13 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             1025<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.EvaluationDay
                 OffsetDate = Date(2026, 8, 27)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 137_36L<Cent>) ValueNone
@@ -418,33 +425,29 @@ module ActualPaymentTestsExtra =
             let scheduleItems = schedule.Items
             let actualPayments = scheduleItems |> allPaidOnTime
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
-            185<OffsetDay>,
+            456<OffsetDay>,
             {
-                OffsetDate = Date(2023, 3, 15)
+                OffsetDayType = OffsetDayType.EvaluationDay
+                OffsetDate = Date(2023, 12, 11)
                 Advances = [||]
-                ScheduledPayment = ScheduledPayment.quick (ValueSome 51_53L<Cent>) ValueNone
-                Window = 7
-                PaymentDue = 51_53L<Cent>
-                ActualPayments = [|
-                    {
-                        ActualPaymentStatus = ActualPaymentStatus.Confirmed 51_53L<Cent>
-                        Metadata = Map.empty
-                    }
-                |]
+                ScheduledPayment = ScheduledPayment.zero
+                Window = 15
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
                 GeneratedPayment = NoGeneratedPayment
-                NetEffect = 51_53L<Cent>
-                PaymentStatus = PaymentMade
+                NetEffect = 0L<Cent>
+                PaymentStatus = InformationOnly
                 BalanceStatus = ClosedBalance
-                ActuarialInterest = 9_43.040m<Cent>
-                NewInterest = 9_43.040m<Cent>
+                ActuarialInterest = 0m<Cent>
+                NewInterest = 0m<Cent>
                 NewCharges = [||]
-                PrincipalPortion = 42_10L<Cent>
+                PrincipalPortion = 0L<Cent>
                 FeePortion = 0L<Cent>
-                InterestPortion = 9_43L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>
@@ -482,10 +485,11 @@ module ActualPaymentTestsExtra =
                 Map [ 0<OffsetDay>, [| ActualPayment.quickConfirmed 166_60L<Cent> |] ]
 
             let schedules = amortise p actualPayments
-            schedules |> Schedule.outputHtmlToFile folder title description p
+            schedules |> Schedule.outputHtmlToFile folder title description p ""
             schedules.AmortisationSchedule.ScheduleItems |> Map.find 144<OffsetDay>
 
         let expected = {
+            OffsetDayType = OffsetDayType.OffsetDay
             OffsetDate = Date(2022, 7, 30)
             Advances = [||]
             ScheduledPayment = ScheduledPayment.quick (ValueSome 171_02L<Cent>) ValueNone
@@ -566,12 +570,16 @@ module ActualPaymentTestsExtra =
             }
 
             let schedules = rollOver p rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            schedules.NewSchedules
+            |> Schedule.outputHtmlToFile folder title description p (RolloverParameters.toHtmlTable rp)
+
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             1793<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
@@ -651,12 +659,16 @@ module ActualPaymentTestsExtra =
             }
 
             let schedules = rollOver p rp actualPayments
-            schedules.NewSchedules |> Schedule.outputHtmlToFile folder title description p
+
+            schedules.NewSchedules
+            |> Schedule.outputHtmlToFile folder title description p (RolloverParameters.toHtmlTable rp)
+
             schedules.NewSchedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
 
         let expected =
             1793<OffsetDay>,
             {
+                OffsetDayType = OffsetDayType.OffsetDay
                 OffsetDate = Date(2027, 7, 29)
                 Advances = [||]
                 ScheduledPayment = ScheduledPayment.quick (ValueSome 20_00L<Cent>) ValueNone
@@ -673,6 +685,207 @@ module ActualPaymentTestsExtra =
                 PrincipalPortion = 18_64L<Cent>
                 FeePortion = 0L<Cent>
                 InterestPortion = 7L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeeRebate = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
+                ChargesBalance = 0L<Cent>
+                SettlementFigure = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
+            }
+
+        actual |> should equal expected
+
+    [<Fact>]
+    let ActualPaymentTestExtra008 () =
+        let title = "ActualPaymentTestExtra008"
+
+        let description =
+            "Over-refund should not lead to large final interest adjustment; 6045bd12550f"
+
+        let parameters: Parameters = {
+            Basic = {
+                EvaluationDate = Date(2025, 6, 2)
+                StartDate = Date(2023, 11, 7)
+                Principal = 150_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2023, 11, 24)
+                        ScheduleLength = PaymentCount 4
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.AddOn
+                    StandardRate = Interest.Rate.Daily <| Percent 0.8m
+                    Cap = {
+                        TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+                        DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+                    }
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    Rounding = RoundDown
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 0<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
+                }
+                SettlementDay = SettlementDay.SettlementOnEvaluationDay
+                TrimEnd = false
+            }
+        }
+
+        let actual =
+            let actualPayments =
+                Map [
+                    17<OffsetDay>, [| ActualPayment.quickConfirmed 70_20L<Cent> |]
+                    47<OffsetDay>, [| ActualPayment.quickConfirmed 70_20L<Cent> |]
+                    56<OffsetDay>, [| ActualPayment.quickConfirmed 76_80L<Cent> |]
+                    338<OffsetDay>,
+                    [|
+                        ActualPayment.quickConfirmed -2_82L<Cent>
+                        ActualPayment.quickConfirmed -0_03L<Cent>
+                    |]
+                ]
+
+            let schedules = amortise parameters actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description parameters ""
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected =
+            573<OffsetDay>,
+            {
+                OffsetDayType = OffsetDayType.SettlementDay
+                OffsetDate = Date(2025, 6, 2)
+                Advances = [||]
+                ScheduledPayment = ScheduledPayment.zero
+                Window = 19
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = GeneratedValue 2L<Cent>
+                NetEffect = 2L<Cent>
+                PaymentStatus = Generated
+                BalanceStatus = ClosedBalance
+                ActuarialInterest = 0m<Cent>
+                NewInterest = 0m<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 2L<Cent>
+                FeePortion = 0L<Cent>
+                InterestPortion = 0L<Cent>
+                ChargesPortion = 0L<Cent>
+                FeeRebate = 0L<Cent>
+                PrincipalBalance = 0L<Cent>
+                FeeBalance = 0L<Cent>
+                InterestBalance = 0m<Cent>
+                ChargesBalance = 0L<Cent>
+                SettlementFigure = 0L<Cent>
+                FeeRebateIfSettled = 0L<Cent>
+            }
+
+        actual |> should equal expected
+
+    [<Fact>]
+    let ActualPaymentTestExtra009 () =
+        let title = "ActualPaymentTestExtra009"
+
+        let description =
+            "Over-refund should not lead to large final interest adjustment; 00224840cd8a"
+
+        let parameters: Parameters = {
+            Basic = {
+                EvaluationDate = Date(2025, 6, 2)
+                StartDate = Date(2023, 8, 29)
+                Principal = 250_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2023, 9, 23)
+                        ScheduleLength = PaymentCount 4
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.AddOn
+                    StandardRate = Interest.Rate.Daily <| Percent 0.8m
+                    Cap = {
+                        TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+                        DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+                    }
+                    Rounding = RoundDown
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 0<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
+                }
+                SettlementDay = SettlementDay.SettlementOnEvaluationDay
+                TrimEnd = false
+            }
+        }
+
+        let actual =
+            let actualPayments =
+                Map [
+                    25<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
+                    55<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
+                    86<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
+                    116<OffsetDay>, [| ActualPayment.quickConfirmed 120_50L<Cent> |]
+                    388<OffsetDay>,
+                    [|
+                        ActualPayment.quickConfirmed -0_63L<Cent>
+                        ActualPayment.quickConfirmed -56_42L<Cent>
+                    |]
+                ]
+
+            let schedules = amortise parameters actualPayments
+            schedules |> Schedule.outputHtmlToFile folder title description parameters ""
+            schedules.AmortisationSchedule.ScheduleItems |> Map.maxKeyValue
+
+        let expected =
+            643<OffsetDay>,
+            {
+                OffsetDayType = OffsetDayType.SettlementDay
+                OffsetDate = Date(2025, 6, 2)
+                Advances = [||]
+                ScheduledPayment = ScheduledPayment.zero
+                Window = 21
+                PaymentDue = 0L<Cent>
+                ActualPayments = [||]
+                GeneratedPayment = GeneratedValue 63L<Cent>
+                NetEffect = 63L<Cent>
+                PaymentStatus = Generated
+                BalanceStatus = ClosedBalance
+                ActuarialInterest = 0m<Cent>
+                NewInterest = 0m<Cent>
+                NewCharges = [||]
+                PrincipalPortion = 63L<Cent>
+                FeePortion = 0L<Cent>
+                InterestPortion = 0L<Cent>
                 ChargesPortion = 0L<Cent>
                 FeeRebate = 0L<Cent>
                 PrincipalBalance = 0L<Cent>

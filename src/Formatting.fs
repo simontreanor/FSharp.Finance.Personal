@@ -13,11 +13,9 @@ module Formatting =
     /// writes some content to a specific file path, creating the containing directory if it does not exist
     let outputToFile filePath append content =
         let fi = FileInfo filePath
+        Directory.CreateDirectory fi.DirectoryName |> ignore
 
-        if not fi.Directory.Exists then
-            fi.Directory.Create()
-            File.WriteAllText(filePath, content)
-        else if append then
+        if append then
             File.AppendAllText(filePath, content)
         else
             File.WriteAllText(filePath, content)

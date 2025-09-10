@@ -3,7 +3,6 @@ namespace FSharp.Finance.Personal
 /// functions for generating a regular payment schedule, with payment amounts, interest and APR
 module Scheduling =
 
-    open System
     open Calculation
     open DateDay
     open Formatting
@@ -48,7 +47,7 @@ module Scheduling =
 
             match x.Original, x.Rescheduled with
             | ValueSome o, ValueSome r when r.Value = 0L<Cent> ->
-                $"""<i><s>original</i> {formatCent o}</s>{if previous = "" then "" else $"&nbsp;{previous}"}"""
+                $"""<i><s>original</i> {formatCent o}</s>{if previous = "" then " cancelled" else $"&nbsp;{previous}"}"""
             | ValueSome o, ValueSome r -> $"<s><i>o</i> {formatCent o}</s>&nbsp;{previous}<i>r</i> {formatCent r.Value}"
             | ValueSome o, ValueNone -> $"<i>original</i> {formatCent o}"
             | ValueNone, ValueSome r ->
@@ -96,15 +95,15 @@ module Scheduling =
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type ActualPaymentStatus =
         /// a write-off payment has been applied
-        | WriteOff of WriteOff: int64<Cent>
+        | WriteOff of int64<Cent>
         /// the payment has been initiated but is not yet confirmed
-        | Pending of Pending: int64<Cent>
+        | Pending of int64<Cent>
         /// the payment had been initiated but was not confirmed within the timeout
-        | TimedOut of TimedOut: int64<Cent>
+        | TimedOut of int64<Cent>
         /// the payment has been confirmed
-        | Confirmed of Confirmed: int64<Cent>
+        | Confirmed of int64<Cent>
         /// the payment has been failed, with optional charges (e.g. due to insufficient-funds penalties)
-        | Failed of Failed: int64<Cent> * ChargeType: Charge.ChargeType voption
+        | Failed of int64<Cent> * Charge.ChargeType voption
 
         /// HTML formatting to display the actual payment status in a readable format
         member aps.Html =
@@ -334,9 +333,9 @@ module Scheduling =
         /// no minimum payment
         | NoMinimumPayment
         /// add the payment due to the next payment or close the balance if the final payment
-        | DeferOrWriteOff of DeferOrWriteOff: int64<Cent>
+        | DeferOrWriteOff of int64<Cent>
         /// take the minimum payment regardless
-        | ApplyMinimumPayment of ApplyMinimumPayment: int64<Cent>
+        | ApplyMinimumPayment of int64<Cent>
 
         /// HTML formatting to display the minimum payment in a readable format
         member mp.Html =
@@ -458,8 +457,6 @@ module Scheduling =
     /// the intended day on which to quote a settlement
     [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
     type SettlementDay =
-        /// quote a settlement figure on the specified day
-        | SettlementOn of SettlementDay: int<OffsetDay>
         /// quote a settlement figure on the evaluation day
         | SettlementOnEvaluationDay
         /// no settlement figure is required
@@ -467,7 +464,6 @@ module Scheduling =
 
         member x.Html =
             match x with
-            | SettlementOn day -> $"<i>on day {day}</i>"
             | SettlementOnEvaluationDay -> $"<i>on evaluation day</i>"
             | NoSettlement -> "<i>n/a</i>"
 
@@ -682,15 +678,9 @@ module Scheduling =
                 $"""
 <h4>Basic Parameters</h4>{BasicParameters.toHtmlTable bp}"""
 
-            let generateInfoFile = "GeneratedDate.html"
-
             let htmlDatestamp =
                 $"""
-<p>Generated: <i><a href="../{generateInfoFile}">see details</a></i></p>"""
-
-            let htmlDatestampInfo =
-                $"""
-<p>Generated: <i>{DateTimeOffset.Now:``yyyy-MM-dd HH:mm:ss zzzz``} using library version {Calculation.libraryVersion}</i></p>"""
+<p>Generated: <i><a href="../GeneratedDate.html">see details</a></i></p>"""
 
             let htmlFinalStats =
                 $"""
@@ -700,11 +690,6 @@ module Scheduling =
 
             $"""{htmlTitle}{htmlSchedule}{htmlDescription}{htmlDatestamp}{htmlParams}{htmlFinalStats}"""
             |> outputToFile' filename false
-
-            try
-                $"""{htmlDatestampInfo}""" |> outputToFile' $"out/{generateInfoFile}" false
-            with _ ->
-                ()
 
     /// convert an option to a value option
     let toValueOption =
@@ -773,7 +758,7 @@ module Scheduling =
         | AutoGenerateSchedule rs ->
             match rs.ScheduleLength with
             | PaymentCount 0
-            | MaxDuration 0<DurationDay> -> Map.empty
+            | MaxDuration(_, 0<DurationDay>) -> Map.empty
             | _ ->
                 let unitPeriodConfigStartDate = Config.startDate rs.UnitPeriodConfig
 

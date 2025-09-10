@@ -42,4 +42,4 @@ The library now includes optional B2B analytical extensions for business-to-busi
 
 NuGet package: https://www.nuget.org/packages/FSharp.Finance.Personal/
 
-Documentation: https://simontreanor.github.io/FSharp.Finance.Personal/
+Documentation: https://simontreanor.dev/FSharp.Finance.Personal/

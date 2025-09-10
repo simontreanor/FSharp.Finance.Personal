@@ -213,7 +213,7 @@ Let's again assume that it's day 35 and no payments have been made, so the payme
 
 let parameters3 = {
     parameters0 with
-        Basic.EvaluationDate = Date(2025, 5, 27) // evaluate the schedule on day 35
+        Basic.EvaluationDate = Date(2025, 5, 29) // evaluate the schedule on day 35
         Basic.InterestConfig.Method = Interest.Method.AddOn // use the add-on interest method
 }
 
@@ -530,7 +530,7 @@ Here, the customer has agreed to pay £50 per week from 1 October 2025.
 *)
 
 (*** hide ***)
-open Rescheduling
+open Refinancing
 (*** ***)
 let rescheduleParameters: RescheduleParameters = {
     FeeSettlementRebate = Fee.SettlementRebate.Zero // no fees, so irrelevant
@@ -691,8 +691,8 @@ You can see that the single-payment write-off has no effect on the remainder of 
 // first, run the amortisation with the existing actual payments to get the settlement figure
 let parameters8 = {
     parameters0 with
-        Basic.EvaluationDate = Date(2025, 7, 3) // evaluate the schedule on day 70
-        Advanced.SettlementDay = SettlementDay.SettlementOn 91<OffsetDay> // settlement quotation requested on day 91
+        Basic.EvaluationDate = Date(2025, 7, 24) // evaluate the schedule on day 91
+        Advanced.SettlementDay = SettlementDay.SettlementOnEvaluationDay // settlement quotation requested
 }
 
 let amortisation8 =
