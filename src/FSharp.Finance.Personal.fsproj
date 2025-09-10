@@ -52,7 +52,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.201" />
+    <PackageReference Update="FSharp.Core" Version="8.0.300" />
   </ItemGroup>
   <PropertyGroup>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
