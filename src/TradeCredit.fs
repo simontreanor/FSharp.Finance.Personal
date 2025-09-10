@@ -1,4 +1,6 @@
-namespace FSharp.Finance.Personal
+namespace FSharp.Finance.B2B
+
+open FSharp.Finance.Personal
 
 /// Trade credit early-payment discount analysis utilities
 module TradeCredit =

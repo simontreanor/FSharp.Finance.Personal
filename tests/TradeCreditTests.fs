@@ -4,7 +4,8 @@ open Xunit
 open FsUnit.Xunit
 
 open FSharp.Finance.Personal
-open FSharp.Finance.Personal.TradeCredit
+open FSharp.Finance.B2B
+open FSharp.Finance.B2B.TradeCredit
 
 module TradeCreditTests =
 

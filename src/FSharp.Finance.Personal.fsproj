@@ -54,15 +54,9 @@
       </PackagePath>
       <Visible>True</Visible>
     </None>
-    <None Include="../docs/exampleTradeCreditAndFactoring.fsx">
-      <Pack>true</Pack>
-      <PackagePath>
-      </PackagePath>
-      <Visible>True</Visible>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="8.0.400" />
+    <PackageReference Update="FSharp.Core" Version="9.0.201" />
   </ItemGroup>
   <PropertyGroup>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>

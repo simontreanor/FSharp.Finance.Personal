@@ -314,7 +314,7 @@ module Amortisation =
                     yield "Window"
                     yield "Payment due"
                     yield "Actual payments"
-                    if p.Advanced.SettlementDay <> SettlementDay.NoSettlement then
+                    if not p.Advanced.SettlementDay.IsNoSettlement then
                         yield "Generated payment"
                     yield "Net effect"
                     yield "Payment status"
@@ -1272,7 +1272,7 @@ module Amortisation =
             items
             |> Map.filter (fun _ si ->
                 ScheduledPayment.isSome si.ScheduledPayment
-                && si.PaymentStatus <> PaymentStatus.NoLongerRequired
+                && not si.PaymentStatus.IsNoLongerRequired
             )
 
         let actualPaymentItems =

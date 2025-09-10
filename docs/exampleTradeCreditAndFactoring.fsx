@@ -27,7 +27,8 @@ Trade credit terms like "2/10 net 30" offer early-payment discounts. Let's analy
 #r "nuget: FSharp.Finance.Personal"
 
 open FSharp.Finance.Personal
-open FSharp.Finance.Personal.TradeCredit
+open FSharp.Finance.B2B
+open FSharp.Finance.B2B.TradeCredit
 
 // Create standard "2/10 net 30" discount terms
 let terms2_10 = DiscountTerms.createTerms 2m 10 30

@@ -1,4 +1,5 @@
-namespace FSharp.Finance.Personal
+namespace FSharp.Finance.B2B
+open FSharp.Finance.Personal
 
 /// Invoice factoring parameter construction and modeling utilities
 module InvoiceFactoring =
