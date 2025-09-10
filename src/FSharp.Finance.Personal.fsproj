@@ -24,6 +24,11 @@
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />
     <Compile Include="Refinancing.fs" />
+    <Compile Include="EquipmentFinance/Depreciation/DepreciationCommon.fs" />
+    <Compile Include="EquipmentFinance/Depreciation/US_MACRS.fs" />
+    <Compile Include="EquipmentFinance/Depreciation/UK_CapitalAllowances.fs" />
+    <Compile Include="EquipmentFinance/Loan.fs" />
+    <Compile Include="EquipmentFinance/Lease.fs" />
     <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
