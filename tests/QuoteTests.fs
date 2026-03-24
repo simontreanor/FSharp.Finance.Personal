@@ -1918,7 +1918,7 @@ module QuoteTests =
 
         let actualPayments =
             Map [
-                5<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed -5_10L<Cent> ]
+                5<OffsetDay>, Map [ 0, ActualPayment.quickWriteOff 5_10L<Cent> ]
                 6<OffsetDay>, Map [ 0, ActualPayment.quickConfirmed 2_00L<Cent> ]
                 16<OffsetDay>,
                 Map [
