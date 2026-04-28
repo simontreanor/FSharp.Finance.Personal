@@ -393,17 +393,20 @@ module Apr =
 
     /// converts an APR solution to a percentage, if possible
     let toPercent aprMethod aprSolution =
-        let precision =
-            match aprMethod with
-            | CalculationMethod.EuropeanUnion precision
-            | CalculationMethod.UnitedKingdom precision
-            | CalculationMethod.UsActuarial precision -> precision
-            | _ -> 0
+        match aprMethod with
+        | CalculationMethod.Disabled -> Percent 0m
+        | _ ->
+            let precision =
+                match aprMethod with
+                | CalculationMethod.EuropeanUnion precision
+                | CalculationMethod.UnitedKingdom precision
+                | CalculationMethod.UsActuarial precision -> precision
+                | _ -> 0
 
-        match aprSolution with
-        | Solution.Found(apr, _, _)
-        | Solution.IterationLimitReached(apr, _, _) -> Decimal.Round(apr, precision) |> Percent.fromDecimal
-        | _ -> Percent 0m
+            match aprSolution with
+            | Solution.Found(apr, _, _)
+            | Solution.IterationLimitReached(apr, _, _) -> Decimal.Round(apr, precision) |> Percent.fromDecimal
+            | _ -> Percent 0m
 
     /// calculates the APR rate for the specified unit-period as per UK regulation
     let ukUnitPeriodRate unitPeriod apr =
