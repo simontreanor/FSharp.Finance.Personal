@@ -9,6 +9,7 @@ module Refinancing =
     open Amortisation
     open Calculation
     open DateDay
+    open UnitPeriod
 
     /// the parameters used for setting up additional items for an existing schedule or new items for a new schedule
     [<RequireQualifiedAccess>]
@@ -309,4 +310,398 @@ module Refinancing =
         {|
             OldSchedules = quote.Schedules
             NewSchedules = rolledOverSchedules
+        |}
+
+    /// given a unit-period config and a new start date, produce a new unit-period config with the same unit period type
+    let private unitPeriodConfigFromDate (startDate: Date) (unitPeriodConfig: Config) =
+        unitPeriodConfig |> Config.unitPeriod |> Config.from startDate
+
+    /// how to handle interest that accrues during a payment holiday
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
+    type DeferredInterestHandling =
+        /// add the accrued holiday interest to the outstanding balance and recalculate payments for the remaining term
+        | CapitaliseAsNewPrincipal
+        /// distribute the accrued holiday interest evenly over the remaining scheduled payments
+        | SpreadOverRemainingTerm
+
+        member x.Html =
+            match x with
+            | CapitaliseAsNewPrincipal -> "capitalise as new principal"
+            | SpreadOverRemainingTerm -> "spread over remaining term"
+
+    /// parameters for applying a scheduled payment holiday to an existing loan
+    [<RequireQualifiedAccess>]
+    type PaymentHolidayParameters = {
+        /// the first day of the payment holiday (inclusive), expressed as an offset from the loan start date
+        HolidayStartDay: int<OffsetDay>
+        /// the last day of the payment holiday (inclusive), expressed as an offset from the loan start date
+        HolidayEndDay: int<OffsetDay>
+        /// how to handle interest that accrues during the holiday period
+        InterestHandling: DeferredInterestHandling
+        /// whether and when to generate a settlement figure on the new schedule
+        SettlementDay: SettlementDay
+    }
+
+    /// how an overpayment is applied to the remaining schedule
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
+    type OverpaymentHandling =
+        /// keep the scheduled payment amount the same and shorten the term
+        | ReduceTerm
+        /// keep the same number of remaining payments and recalculate a lower payment amount
+        | ReducePayment
+
+        member x.Html =
+            match x with
+            | ReduceTerm -> "reduce term"
+            | ReducePayment -> "reduce payment"
+
+    /// parameters for applying an overpayment to an existing schedule
+    [<RequireQualifiedAccess>]
+    type OverpaymentParameters = {
+        /// how the overpayment should be applied to the remaining schedule
+        OverpaymentHandling: OverpaymentHandling
+        /// whether and when to generate a settlement figure on the new schedule
+        SettlementDay: SettlementDay
+    }
+
+    /// apply a scheduled payment holiday to an existing loan, modelling the impact on outstanding balance, term, and total interest;
+    /// the holiday period payments are deferred to zero and the subsequent schedule is adjusted according to the chosen interest handling
+    let paymentHoliday (p: Parameters) (php: PaymentHolidayParameters) actualPayments =
+
+        // get the original basic schedule
+        let basicSchedule = calculateBasicSchedule p.Basic
+
+        // extract all payment items from the basic schedule
+        let allPaymentItems =
+            basicSchedule.Items
+            |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
+
+        // partition into pre-holiday, holiday, and post-holiday items
+        let preHolidayItems =
+            allPaymentItems |> Array.filter (fun bi -> bi.Day < php.HolidayStartDay)
+
+        let holidayItems =
+            allPaymentItems
+            |> Array.filter (fun bi -> bi.Day >= php.HolidayStartDay && bi.Day <= php.HolidayEndDay)
+
+        let postHolidayItems =
+            allPaymentItems |> Array.filter (fun bi -> bi.Day > php.HolidayEndDay)
+
+        // pre-holiday payments are kept as-is
+        let preHolidayPaymentMap =
+            preHolidayItems |> Array.map (fun bi -> bi.Day, bi.ScheduledPayment)
+
+        // create zero-valued rescheduled payments for the holiday period
+        let holidayPaymentMap =
+            holidayItems
+            |> Array.map (fun bi ->
+                bi.Day,
+                {
+                    bi.ScheduledPayment with
+                        Rescheduled =
+                            ValueSome {
+                                Value = 0L<Cent>
+                                RescheduleDay = php.HolidayStartDay
+                            }
+                }
+            )
+
+        // simulate the schedule with zero holiday payments to determine the balance at the end of the holiday
+        let getHolidayEndScheduleItem () =
+            let tempScheduleConfig =
+                [| preHolidayPaymentMap; holidayPaymentMap |]
+                |> Array.concat
+                |> Map.ofArray
+                |> CustomSchedule
+
+            let tempParams = {
+                p with
+                    Basic.ScheduleConfig = tempScheduleConfig
+                    Basic.EvaluationDate = p.Basic.StartDate.AddDays(int php.HolidayEndDay)
+                    Advanced.SettlementDay = SettlementDay.NoSettlement
+                    Advanced.TrimEnd = false
+            }
+
+            amortise tempParams actualPayments
+            |> fun result ->
+                result.AmortisationSchedule.ScheduleItems
+                |> Map.toArray
+                |> Array.filter (fun (d, _) -> d <= php.HolidayEndDay)
+                |> Array.tryLast
+                |> Option.map snd
+
+        // derive the unit-period config for the post-holiday schedule, anchored to the given start date
+        let postHolidayUnitPeriodConfig (startDate: Date) =
+            match p.Basic.ScheduleConfig with
+            | AutoGenerateSchedule ags -> unitPeriodConfigFromDate startDate ags.UnitPeriodConfig
+            | _ -> Config.defaultMonthly 1 startDate
+
+        // calculate the post-holiday payment map based on the chosen interest handling method
+        let postHolidayPaymentMap =
+            if Array.isEmpty postHolidayItems || Array.isEmpty holidayItems then
+                // no payments were scheduled during the holiday window: nothing to capitalise or spread
+                postHolidayItems |> Array.map (fun bi -> bi.Day, bi.ScheduledPayment)
+            else
+                let remainingCount = Array.length postHolidayItems
+
+                match php.InterestHandling with
+
+                | DeferredInterestHandling.CapitaliseAsNewPrincipal ->
+                    // simulate to get the balance at the end of the holiday
+                    match getHolidayEndScheduleItem () with
+                    | None -> postHolidayItems |> Array.map (fun bi -> bi.Day, bi.ScheduledPayment)
+                    | Some si ->
+                        // capitalise outstanding principal and accrued interest into a new principal
+                        let capitalised =
+                            si.PrincipalBalance
+                            + Cent.fromDecimalCent p.Basic.InterestConfig.Rounding si.InterestBalance
+
+                        if capitalised <= 0L<Cent> then
+                            postHolidayItems |> Array.map (fun bi -> bi.Day, bi.ScheduledPayment)
+                        else
+                            let holidayEndDate = p.Basic.StartDate.AddDays(int php.HolidayEndDay)
+                            let firstPostHolidayDate =
+                                postHolidayItems |> Array.head |> _.Day |> OffsetDay.toDate p.Basic.StartDate
+
+                            // generate a new schedule from the capitalised balance to determine the new payment amounts
+                            let newBasicParams = {
+                                p.Basic with
+                                    StartDate = holidayEndDate
+                                    EvaluationDate = holidayEndDate
+                                    Principal = capitalised
+                                    FeeConfig = ValueNone
+                                    ScheduleConfig =
+                                        AutoGenerateSchedule {
+                                            UnitPeriodConfig =
+                                                postHolidayUnitPeriodConfig firstPostHolidayDate
+                                            ScheduleLength = PaymentCount remainingCount
+                                        }
+                            }
+
+                            let newBasicSchedule = calculateBasicSchedule newBasicParams
+
+                            let newPaymentValues =
+                                newBasicSchedule.Items
+                                |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
+                                |> Array.map (fun bi -> ScheduledPayment.total bi.ScheduledPayment)
+
+                            // map new payment values to the original post-holiday offset days
+                            let safeLength = min (Array.length postHolidayItems) (Array.length newPaymentValues)
+
+                            postHolidayItems.[..safeLength - 1]
+                            |> Array.mapi (fun i bi ->
+                                bi.Day,
+                                {
+                                    bi.ScheduledPayment with
+                                        Rescheduled =
+                                            ValueSome {
+                                                Value = newPaymentValues.[i]
+                                                RescheduleDay = php.HolidayStartDay
+                                            }
+                                }
+                            )
+
+                | DeferredInterestHandling.SpreadOverRemainingTerm ->
+                    // simulate to get the capitalised balance at the end of the holiday
+                    match getHolidayEndScheduleItem () with
+                    | None -> postHolidayItems |> Array.map (fun bi -> bi.Day, bi.ScheduledPayment)
+                    | Some si ->
+                        let capitalised =
+                            si.PrincipalBalance
+                            + Cent.fromDecimalCent p.Basic.InterestConfig.Rounding si.InterestBalance
+
+                        if capitalised <= 0L<Cent> then
+                            postHolidayItems |> Array.map (fun bi -> bi.Day, bi.ScheduledPayment)
+                        else
+                            let holidayEndDate = p.Basic.StartDate.AddDays(int php.HolidayEndDay)
+                            let firstPostHolidayDate =
+                                postHolidayItems |> Array.head |> _.Day |> OffsetDay.toDate p.Basic.StartDate
+
+                            // calculate the new level payment needed to clear the capitalised balance
+                            // over the remaining count (same calculation as CapitaliseAsNewPrincipal)
+                            let newBasicParams = {
+                                p.Basic with
+                                    StartDate = holidayEndDate
+                                    EvaluationDate = holidayEndDate
+                                    Principal = capitalised
+                                    FeeConfig = ValueNone
+                                    ScheduleConfig =
+                                        AutoGenerateSchedule {
+                                            UnitPeriodConfig =
+                                                postHolidayUnitPeriodConfig firstPostHolidayDate
+                                            ScheduleLength = PaymentCount remainingCount
+                                        }
+                            }
+
+                            let newBasicSchedule = calculateBasicSchedule newBasicParams
+
+                            let newPaymentValues =
+                                newBasicSchedule.Items
+                                |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
+                                |> Array.map (fun bi -> ScheduledPayment.total bi.ScheduledPayment)
+
+                            // the extra per payment is the difference between the new and original level payments;
+                            // distribute it evenly, adding any rounding remainder to the last payment
+                            let originalLevelPayment =
+                                postHolidayItems
+                                |> Array.head
+                                |> fun bi -> ScheduledPayment.total bi.ScheduledPayment
+
+                            let safeLength = min (Array.length postHolidayItems) (Array.length newPaymentValues)
+
+                            postHolidayItems.[..safeLength - 1]
+                            |> Array.mapi (fun i bi ->
+                                let extra = newPaymentValues.[i] - originalLevelPayment
+
+                                bi.Day,
+                                {
+                                    bi.ScheduledPayment with
+                                        Rescheduled =
+                                            ValueSome {
+                                                Value = ScheduledPayment.total bi.ScheduledPayment + (max 0L<Cent> extra)
+                                                RescheduleDay = php.HolidayStartDay
+                                            }
+                                }
+                            )
+
+        // merge all payment maps into a single custom schedule
+        let newScheduleConfig =
+            [| preHolidayPaymentMap; holidayPaymentMap; postHolidayPaymentMap |]
+            |> Array.concat
+            |> mergeScheduledPayments
+            |> CustomSchedule
+
+        // configure the new parameters
+        let pNew = {
+            p with
+                Basic.ScheduleConfig = newScheduleConfig
+                Advanced.InterestConfig.InitialGracePeriod = 0<DurationDay>
+                Advanced.SettlementDay = php.SettlementDay
+                Advanced.TrimEnd = true
+        }
+
+        // generate and return both the old and new schedules
+        let oldSchedules = amortise p actualPayments
+        let newSchedules = amortise pNew actualPayments
+
+        {|
+            OldSchedules = oldSchedules
+            NewSchedules = newSchedules
+        |}
+
+    /// apply an overpayment to an existing schedule, modelling the effect on either term length or payment amount;
+    /// the overpayment must already be included in actualPayments and the evaluation date must reflect when the overpayment was made
+    let applyOverpayment (p: Parameters) (op: OverpaymentParameters) actualPayments =
+
+        // get the original basic schedule
+        let basicSchedule = calculateBasicSchedule p.Basic
+
+        // get the settlement quote at the evaluation date (accounts for all actual payments including the overpayment)
+        let quote = getQuote p actualPayments
+
+        // get the outstanding principal balance after the overpayment
+        let outstandingPrincipal =
+            match quote.QuoteResult with
+            | PaymentQuote pq -> pq.Apportionment.PrincipalPortion
+            | _ -> 0L<Cent>
+
+        // get the evaluation day offset
+        let evaluationDay = OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
+
+        // get remaining payment items from the original schedule (those after the evaluation date)
+        let remainingItems =
+            basicSchedule.Items
+            |> Array.filter (fun bi -> bi.Day > evaluationDay && ScheduledPayment.isSome bi.ScheduledPayment)
+
+        // get the original payment schedule up to the evaluation date from the quote schedules
+        let oldPaymentSchedule =
+            quote.Schedules.AmortisationSchedule.ScheduleItems
+            |> Map.filter (fun _ si -> ScheduledPayment.isSome si.ScheduledPayment)
+            |> Map.map (fun _ si -> si.ScheduledPayment)
+            |> Map.toArray
+
+        // get the original level payment
+        let levelPayment = basicSchedule.Stats.LevelPayment
+
+        // create the new payment schedule based on the chosen overpayment handling
+        let newPaymentSchedule =
+            if Array.isEmpty remainingItems then
+                [||]
+            else
+                let remainingCount = Array.length remainingItems
+
+                match op.OverpaymentHandling with
+
+                | OverpaymentHandling.ReduceTerm ->
+                    // keep the same payment amount; the reduced balance means the loan pays off sooner
+                    remainingItems
+                    |> Array.map (fun bi ->
+                        bi.Day,
+                        {
+                            bi.ScheduledPayment with
+                                Rescheduled =
+                                    ValueSome {
+                                        Value = levelPayment
+                                        RescheduleDay = evaluationDay
+                                    }
+                        }
+                    )
+
+                | OverpaymentHandling.ReducePayment ->
+                    // calculate a lower payment amount based on the outstanding balance and the remaining payment count;
+                    // use the evaluation date as the StartDate so that the generated payment days align with
+                    // those in the original schedule (the first post-evaluation payment is one unit period later)
+                    let newBasicParams = {
+                        p.Basic with
+                            StartDate = p.Basic.EvaluationDate
+                            EvaluationDate = p.Basic.EvaluationDate
+                            Principal = outstandingPrincipal
+                            FeeConfig = ValueNone
+                            ScheduleConfig =
+                                AutoGenerateSchedule {
+                                    UnitPeriodConfig =
+                                        match p.Basic.ScheduleConfig with
+                                        | AutoGenerateSchedule ags -> unitPeriodConfigFromDate p.Basic.EvaluationDate ags.UnitPeriodConfig
+                                        | _ -> Config.defaultMonthly 1 p.Basic.EvaluationDate
+                                    ScheduleLength = PaymentCount remainingCount
+                                }
+                    }
+
+                    let newLevelPayment = (calculateBasicSchedule newBasicParams).Stats.LevelPayment
+
+                    remainingItems
+                    |> Array.map (fun bi ->
+                        bi.Day,
+                        {
+                            bi.ScheduledPayment with
+                                Rescheduled =
+                                    ValueSome {
+                                        Value = newLevelPayment
+                                        RescheduleDay = evaluationDay
+                                    }
+                        }
+                    )
+
+        // merge old and new payment schedules
+        let mergedScheduleConfig =
+            [| oldPaymentSchedule; newPaymentSchedule |]
+            |> Array.concat
+            |> mergeScheduledPayments
+            |> CustomSchedule
+
+        // configure the new parameters
+        let pNew = {
+            p with
+                Basic.ScheduleConfig = mergedScheduleConfig
+                Advanced.InterestConfig.InitialGracePeriod = 0<DurationDay>
+                Advanced.SettlementDay = op.SettlementDay
+                Advanced.TrimEnd = true
+        }
+
+        // generate and return both the old and new schedules
+        let newSchedules = amortise pNew actualPayments
+
+        {|
+            OldSchedules = quote.Schedules
+            NewSchedules = newSchedules
         |}
