@@ -126,6 +126,37 @@ module Apr =
         /// $$\sum_{k=1}^{m} \frac{C_k}{(1 + X)^{t_k}} = \sum_{l=1}^{m'} \frac{D_l}{(1 + X)^{s_l}}$$
         let calculateApr = calculateAprEuUk
 
+        /// calculates the representative APR for a UK Consumer Credit Act (CCA) product, as required
+        /// for FCA advertising under CONC 3.5, given a nominal annual interest rate, a loan amount,
+        /// a repayment term in months, and any upfront fee
+        ///
+        /// The borrower receives the principal amount; the fee is treated as a finance charge financed
+        /// over the term. Monthly payments are derived from the standard annuity formula applied to the
+        /// gross amount (principal + fee) at the nominal monthly rate. The representative APR is then
+        /// solved on the net advance to the borrower, consistent with FCA CONC App 1.2.6 and the
+        /// CCA 1974 methodology.
+        let representativeApr (startDate: Date) (nominalAnnualRate: Percent) (principal: int64<Cent>) (termMonths: int) (fee: int64<Cent>) =
+            if termMonths <= 0 || principal <= 0L<Cent> then
+                Solution.Impossible
+            else
+                let grossAmount = Cent.toDecimal (principal + fee)
+                let monthlyRate = Percent.toDecimal nominalAnnualRate / 12m
+                let monthlyPaymentDecimal =
+                    if monthlyRate = 0m then
+                        grossAmount / decimal termMonths
+                    else
+                        let discountFactor = decimal ((1m + monthlyRate) |> powm (-decimal termMonths))
+                        grossAmount * monthlyRate / (1m - discountFactor)
+                let monthlyPayment = Cent.fromDecimal monthlyPaymentDecimal
+                let payments =
+                    [| 1 .. termMonths |]
+                    |> Array.map (fun i -> {
+                        TransferType = Payment
+                        TransferDate = startDate.AddMonths i
+                        Value = monthlyPayment
+                    })
+                calculateAprEuUk startDate principal payments
+
     /// APR as in https://www.consumerfinance.gov/rules-policy/regulations/1026/j/
     module UsActuarial =
 
