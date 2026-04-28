@@ -320,3 +320,141 @@ module FeeAndChargesTests =
                 }
 
             actual |> should equal expected
+
+    module FeeDispositionTests =
+
+        [<Fact>]
+        let FeeDispositionTest000 () =
+            let actual = Fee.FeeDisposition.Capitalised.Html
+            actual |> should equal "capitalised"
+
+        [<Fact>]
+        let FeeDispositionTest001 () =
+            let actual = Fee.FeeDisposition.PaidUpfront.Html
+            actual |> should equal "paid upfront"
+
+    module TotalCostOfCreditTests =
+
+        let baseParameters: Parameters = {
+            Basic = {
+                EvaluationDate = Date(2023, 7, 28)
+                StartDate = Date(2023, 6, 1)
+                Principal = 1000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2023, 7, 1)
+                        ScheduleLength = PaymentCount 4
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Daily(Percent 0.8m)
+                    Cap = interestCapExample
+                    Rounding = RoundDown
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = DeferOrWriteOff 50L<Cent>
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 3<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Zero
+                }
+                SettlementDay = SettlementDay.NoSettlement
+                TrimEnd = false
+            }
+        }
+
+        /// creates a map of confirmed payments matching the scheduled amounts
+        let allPaidOnTime (basicItems: BasicItem array) =
+            basicItems
+            |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
+            |> Array.map (fun si ->
+                si.Day, [| ActualPayment.quickConfirmed <| ScheduledPayment.total si.ScheduledPayment |]
+            )
+            |> Map.ofArray
+
+        [<Fact>]
+        let TccTest000 () =
+            // no fee: TCC should equal total interest paid
+            let schedule = calculateBasicSchedule baseParameters.Basic
+            let actualPayments = schedule.Items |> allPaidOnTime
+            let schedules = amortise baseParameters actualPayments
+            let amortSchedule = schedules.AmortisationSchedule
+
+            let items = amortSchedule.ScheduleItems |> Map.toArray |> Array.map snd
+            let totalInterest = items |> Array.sumBy _.InterestPortion
+            let totalFee = items |> Array.sumBy _.FeePortion
+
+            let tcc = Schedule.totalCostOfCredit amortSchedule
+
+            tcc |> should equal (totalInterest + totalFee)
+
+        [<Fact>]
+        let TccTest001 () =
+            // TCC + advance = TAP
+            let schedule = calculateBasicSchedule baseParameters.Basic
+            let actualPayments = schedule.Items |> allPaidOnTime
+            let schedules = amortise baseParameters actualPayments
+            let amortSchedule = schedules.AmortisationSchedule
+
+            let items = amortSchedule.ScheduleItems |> Map.toArray |> Array.map snd
+            let totalAdvances = items |> Array.sumBy (_.Advances >> Array.sum)
+
+            let tcc = Schedule.totalCostOfCredit amortSchedule
+            let tap = Schedule.totalAmountPayable amortSchedule
+
+            tap |> should equal (totalAdvances + tcc)
+
+        [<Fact>]
+        let TccTest002 () =
+            // with fee: TCC should equal total interest + fee paid
+            let p = {
+                baseParameters with
+                    Basic.FeeConfig =
+                        ValueSome {
+                            FeeType = Fee.FeeType.FacilitationFee(Amount.Percentage(Percent 10m, Restriction.NoLimit))
+                            Rounding = RoundDown
+                            FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                        }
+                    Advanced.FeeConfig = ValueSome { SettlementRebate = Fee.SettlementRebate.Zero }
+            }
+
+            let schedule = calculateBasicSchedule p.Basic
+            let actualPayments = schedule.Items |> allPaidOnTime
+            let schedules = amortise p actualPayments
+            let amortSchedule = schedules.AmortisationSchedule
+
+            let items = amortSchedule.ScheduleItems |> Map.toArray |> Array.map snd
+            let totalInterest = items |> Array.sumBy _.InterestPortion
+            let totalFee = items |> Array.sumBy _.FeePortion
+
+            let tcc = Schedule.totalCostOfCredit amortSchedule
+
+            tcc |> should equal (totalInterest + totalFee)
+
+        [<Fact>]
+        let TccTest003 () =
+            // TAP for no-fee loan equals sum of all scheduled payments (fully settled on time)
+            let schedule = calculateBasicSchedule baseParameters.Basic
+            let actualPayments = schedule.Items |> allPaidOnTime
+            let schedules = amortise baseParameters actualPayments
+            let amortSchedule = schedules.AmortisationSchedule
+
+            let items = amortSchedule.ScheduleItems |> Map.toArray |> Array.map snd
+            let totalNetEffect = items |> Array.sumBy _.NetEffect
+
+            let tap = Schedule.totalAmountPayable amortSchedule
+
+            tap |> should equal totalNetEffect
