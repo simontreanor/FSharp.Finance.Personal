@@ -406,6 +406,172 @@ module Amortisation =
             $"{htmlTitle}{htmlSchedule}{htmlKey}{htmlFinalStats}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}"
             |> outputToFile' filename false
 
+    /// a single line of a month-by-month account statement derived from an amortisation schedule
+    type StatementLine = {
+        /// the date of this statement period
+        Date: Date
+        /// the opening balance at the start of this period (total of principal, fee and interest balances)
+        OpeningBalance: int64<Cent>
+        /// any advance (e.g. initial draw-down) made on this date
+        Advance: int64<Cent>
+        /// new interest charged during this period
+        InterestCharged: int64<Cent>
+        /// new penalty charges incurred during this period
+        ChargesIncurred: int64<Cent>
+        /// total payment received during this period
+        Payment: int64<Cent>
+        /// portion of the payment applied to principal
+        PrincipalPortion: int64<Cent>
+        /// portion of the payment applied to the product fee
+        FeePortion: int64<Cent>
+        /// portion of the payment applied to interest
+        InterestPortion: int64<Cent>
+        /// portion of the payment applied to penalty charges
+        ChargesPortion: int64<Cent>
+        /// the closing balance at the end of this period (total of principal, fee and interest balances)
+        ClosingBalance: int64<Cent>
+        /// running total of all interest paid up to and including this period
+        CumulativeInterestPaid: int64<Cent>
+    }
+
+    /// module for generating account statements from an amortisation schedule
+    module Statement =
+
+        let private toTotalBalance (interestRounding: Rounding) (si: ScheduleItem) =
+            si.PrincipalBalance
+            + si.FeeBalance
+            + (si.InterestBalance |> Cent.fromDecimalCent interestRounding)
+
+        let private formatAmount (c: int64<Cent>) =
+            Cent.toDecimal c |> fun d -> d.ToString("N2")
+
+        /// generates an array of statement lines from an amortisation schedule
+        let generate (interestRounding: Rounding) (schedule: Schedule) : StatementLine array =
+            schedule.ScheduleItems
+            |> Map.toArray
+            |> Array.mapFold
+                (fun (prevClosingBalance, cumulativeInterest) (_, si) ->
+                    let advance = si.Advances |> Array.sum
+                    let interestCharged = si.NewInterest |> Cent.fromDecimalCent interestRounding
+                    let chargesIncurred = si.NewCharges |> Array.sumBy _.Total
+                    let closingBalance = toTotalBalance interestRounding si
+                    let cumulativeInterest' = cumulativeInterest + si.InterestPortion
+                    let line = {
+                        Date = si.OffsetDate
+                        OpeningBalance = prevClosingBalance
+                        Advance = advance
+                        InterestCharged = interestCharged
+                        ChargesIncurred = chargesIncurred
+                        Payment = si.NetEffect
+                        PrincipalPortion = si.PrincipalPortion
+                        FeePortion = si.FeePortion
+                        InterestPortion = si.InterestPortion
+                        ChargesPortion = si.ChargesPortion
+                        ClosingBalance = closingBalance
+                        CumulativeInterestPaid = cumulativeInterest'
+                    }
+                    line, (closingBalance, cumulativeInterest'))
+                (0L<Cent>, 0L<Cent>)
+            |> fst
+
+        /// generates a plain-text tabular rendering of the statement suitable for inclusion in a letter or email
+        let toPlainText (lines: StatementLine array) : string =
+            let headers = [|
+                "Date"
+                "Opening Bal"
+                "Advance"
+                "Int. Charged"
+                "Chgs. Incurred"
+                "Payment"
+                "Principal"
+                "Fee"
+                "Int. Portion"
+                "Chgs. Portion"
+                "Closing Bal"
+                "Cum. Interest"
+            |]
+            let toRow (l: StatementLine) = [|
+                l.Date.Html
+                formatAmount l.OpeningBalance
+                formatAmount l.Advance
+                formatAmount l.InterestCharged
+                formatAmount l.ChargesIncurred
+                formatAmount l.Payment
+                formatAmount l.PrincipalPortion
+                formatAmount l.FeePortion
+                formatAmount l.InterestPortion
+                formatAmount l.ChargesPortion
+                formatAmount l.ClosingBalance
+                formatAmount l.CumulativeInterestPaid
+            |]
+            let rows = lines |> Array.map toRow
+            let colWidths =
+                headers
+                |> Array.mapi (fun i h ->
+                    rows
+                    |> Array.map (fun r -> r[i].Length)
+                    |> Array.append [| h.Length |]
+                    |> Array.max)
+            let formatRow (cells: string array) =
+                cells
+                |> Array.mapi (fun i c -> c.PadLeft colWidths[i])
+                |> String.concat " | "
+            let separator =
+                colWidths
+                |> Array.map (fun w -> String.replicate w "-")
+                |> String.concat "-+-"
+            [|
+                formatRow headers
+                separator
+                yield! rows |> Array.map formatRow
+            |]
+            |> String.concat "\n"
+
+        /// generates a CSV export of the statement lines
+        let toCsv (lines: StatementLine array) : string =
+            let escape (s: string) =
+                if s.Contains(",") || s.Contains("\"") || s.Contains("\n") then
+                    "\"" + s.Replace("\"", "\"\"") + "\""
+                else
+                    s
+            let headerRow =
+                [|
+                    "Date"
+                    "Opening Balance"
+                    "Advance"
+                    "Interest Charged"
+                    "Charges Incurred"
+                    "Payment"
+                    "Principal Portion"
+                    "Fee Portion"
+                    "Interest Portion"
+                    "Charges Portion"
+                    "Closing Balance"
+                    "Cumulative Interest Paid"
+                |]
+                |> Array.map escape
+                |> String.concat ","
+            let dataRows =
+                lines
+                |> Array.map (fun l ->
+                    [|
+                        l.Date.Html
+                        formatAmount l.OpeningBalance
+                        formatAmount l.Advance
+                        formatAmount l.InterestCharged
+                        formatAmount l.ChargesIncurred
+                        formatAmount l.Payment
+                        formatAmount l.PrincipalPortion
+                        formatAmount l.FeePortion
+                        formatAmount l.InterestPortion
+                        formatAmount l.ChargesPortion
+                        formatAmount l.ClosingBalance
+                        formatAmount l.CumulativeInterestPaid
+                    |]
+                    |> Array.map escape
+                    |> String.concat ",")
+            Array.append [| headerRow |] dataRows |> String.concat "\n"
+
     /// gets the window for the current day based on either the unit-period map or the previous window
     let getWindow unitPeriodMap currentDay currentScheduledPayment previousWindow =
         match unitPeriodMap with
