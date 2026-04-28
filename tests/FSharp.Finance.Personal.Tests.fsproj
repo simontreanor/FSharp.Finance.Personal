@@ -12,6 +12,7 @@
     <Compile Include="Util.fs" />
     <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
+    <Compile Include="AprDisabledTests.fs" />
     <Compile Include="AprEuropeanUnionTests.fs" />
     <Compile Include="AprUnitedKingdomTests.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
