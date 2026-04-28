@@ -19,6 +19,8 @@ module Apr =
         | UsActuarial of UsPrecision: int
         /// calculates the APR according to the United States rule (not yet implemented)
         | UnitedStatesRule
+        /// APR calculation is disabled; used for zero-interest products such as Buy Now Pay Later where a conventional APR is not applicable
+        | Disabled
 
         /// HTML formatting to display the calculation method in a readable format
         member cm.Html =
@@ -27,6 +29,7 @@ module Apr =
             | UnitedKingdom precision -> $"UK FCA to {precision - 2} d.p."
             | UsActuarial precision -> $"US CFPB actuarial to {precision - 2} d.p."
             | UnitedStatesRule -> "United States rule"
+            | Disabled -> "disabled"
 
     /// basic calculation to determine the APR
     let annualPercentageRate unitPeriodRate unitPeriodsPerYear = unitPeriodRate * unitPeriodsPerYear
@@ -386,6 +389,7 @@ module Apr =
                 transfers
             |> UsActuarial.generalEquation advanceDate advanceDate advances
         | CalculationMethod.UnitedStatesRule -> failwith "Not yet implemented"
+        | CalculationMethod.Disabled -> Solution.Impossible
 
     /// converts an APR solution to a percentage, if possible
     let toPercent aprMethod aprSolution =
