@@ -444,58 +444,92 @@ module Refinancing =
         (dcp: DebtConsolidationParameters)
         =
 
+        /// days in a year used to convert an annual rate to a daily rate
+        let daysPerYear = 365.0
+
         // compute the daily discount rate from the specified annual or daily rate
         let dailyDiscountRate =
             match dcp.DiscountRate with
             | Interest.Rate.Zero -> 0m
             | Interest.Rate.Annual(Percent air) ->
-                decimal (Math.Pow(double (1m + air / 100m), 1.0 / 365.0)) - 1m
+                decimal (Math.Pow(double (1m + air / 100m), 1.0 / daysPerYear)) - 1m
             | Interest.Rate.Daily(Percent dir) -> dir / 100m
-
-        // compute the discount factor for a payment made `days` days from now
-        let discountFactor (days: int) =
-            if dailyDiscountRate = 0m || days <= 0 then 1m
-            else 1m / decimal (Math.Pow(double (1m + dailyDiscountRate), double days))
 
         // the reference date for all NPV calculations is the evaluation date of the consolidated facility
         let referenceDate = dcp.ConsolidatedFacilityParameters.Basic.EvaluationDate
 
-        // NPV of all individual debt repayments
-        let individualNpv =
-            existingDebts
-            |> Array.sumBy (fun (p, actualPayments) ->
-                let quote = getQuote p actualPayments
-                let evaluationDay = OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
-
-                quote.Schedules.AmortisationSchedule.ScheduleItems
-                |> Map.toSeq
-                |> Seq.sumBy (fun (day, si) ->
-                    if day > evaluationDay && ScheduledPayment.isSome si.ScheduledPayment then
-                        let payment = ScheduledPayment.total si.ScheduledPayment
-                        let paymentDate = OffsetDay.toDate p.Basic.StartDate day
-                        let daysFromRef = max 0 (paymentDate - referenceDate).Days
-                        Cent.toDecimalCent payment * discountFactor daysFromRef
-                    else
-                        0m<Cent>
-                )
-            )
-
-        // NPV of consolidated facility repayments (all payments discounted to the reference date)
+        // NPV of consolidated facility repayments (compute first to collect all unique day counts)
         let consolidatedParams = dcp.ConsolidatedFacilityParameters
         let consolidatedBasicSchedule = calculateBasicSchedule consolidatedParams.Basic
         let consolidatedEvaluationDay =
             OffsetDay.fromDate consolidatedParams.Basic.StartDate consolidatedParams.Basic.EvaluationDate
 
-        let consolidatedPaymentsNpv =
+        // collect (paymentDate, amount) pairs for individual debts
+        let individualPaymentPairs =
+            existingDebts
+            |> Array.collect (fun (p, actualPayments) ->
+                let quote = getQuote p actualPayments
+                let evaluationDay = OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
+
+                quote.Schedules.AmortisationSchedule.ScheduleItems
+                |> Map.toArray
+                |> Array.choose (fun (day, si) ->
+                    if day > evaluationDay && ScheduledPayment.isSome si.ScheduledPayment then
+                        let payment = ScheduledPayment.total si.ScheduledPayment
+                        let paymentDate = OffsetDay.toDate p.Basic.StartDate day
+                        let daysFromRef = max 0 (paymentDate - referenceDate).Days
+                        Some(daysFromRef, payment)
+                    else
+                        None
+                )
+            )
+
+        // collect (daysFromRef, amount) pairs for consolidated facility
+        let consolidatedPaymentPairs =
             consolidatedBasicSchedule.Items
-            |> Array.sumBy (fun item ->
+            |> Array.choose (fun item ->
                 if item.Day > consolidatedEvaluationDay && ScheduledPayment.isSome item.ScheduledPayment then
                     let payment = ScheduledPayment.total item.ScheduledPayment
                     let paymentDate = OffsetDay.toDate consolidatedParams.Basic.StartDate item.Day
                     let daysFromRef = max 0 (paymentDate - referenceDate).Days
-                    Cent.toDecimalCent payment * discountFactor daysFromRef
+                    Some(daysFromRef, payment)
                 else
-                    0m<Cent>
+                    None
+            )
+
+        // build a memoised discount-factor lookup for all unique day counts across both strategies
+        let discountFactorCache =
+            if dailyDiscountRate = 0m then
+                Map.empty
+            else
+                [| individualPaymentPairs; consolidatedPaymentPairs |]
+                |> Array.concat
+                |> Array.map fst
+                |> Array.distinct
+                |> Array.map (fun days ->
+                    let factor =
+                        if days <= 0 then 1m
+                        else 1m / decimal (Math.Pow(double (1m + dailyDiscountRate), double days))
+                    days, factor
+                )
+                |> Map.ofArray
+
+        // look up a discount factor, defaulting to 1 when the rate is zero
+        let discountFactor days =
+            discountFactorCache |> Map.tryFind days |> Option.defaultValue 1m
+
+        // NPV of all individual debt repayments
+        let individualNpv =
+            individualPaymentPairs
+            |> Array.sumBy (fun (daysFromRef, payment) ->
+                Cent.toDecimalCent payment * discountFactor daysFromRef
+            )
+
+        // NPV of consolidated facility repayments
+        let consolidatedPaymentsNpv =
+            consolidatedPaymentPairs
+            |> Array.sumBy (fun (daysFromRef, payment) ->
+                Cent.toDecimalCent payment * discountFactor daysFromRef
             )
 
         // add any upfront consolidation fees (paid immediately at reference date, discount factor = 1)
