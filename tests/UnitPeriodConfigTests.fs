@@ -67,6 +67,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 5, 13))
                         ScheduleLength = PaymentCount 12
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -91,6 +92,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }
@@ -182,6 +184,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2023, 4, 20))
                         ScheduleLength = PaymentCount 12
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -206,6 +209,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }
@@ -270,6 +274,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2023, 2, 2))
                         ScheduleLength = PaymentCount 11
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -294,6 +299,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }
@@ -411,6 +417,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 10, 28))
                         ScheduleLength = PaymentCount 11
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -435,6 +442,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }
@@ -528,6 +536,7 @@ module UnitPeriodConfigTests =
                     PromotionalRates = [||]
                     RateOnNegativeBalance = Interest.Rate.Zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }

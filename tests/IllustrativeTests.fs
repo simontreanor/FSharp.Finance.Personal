@@ -79,6 +79,7 @@ module IllustrativeTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2025, 3, 31)
                     ScheduleLength = PaymentCount 4
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -91,6 +92,7 @@ module IllustrativeTests =
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RateSchedule = [||]
             }
         }
         Advanced = {

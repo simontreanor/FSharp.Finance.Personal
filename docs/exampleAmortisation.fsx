@@ -38,6 +38,7 @@ let parameters: Parameters = {
             AutoGenerateSchedule {
                 UnitPeriodConfig = Monthly(1, 2022, 11, 31)
                 ScheduleLength = PaymentCount 5
+                RepaymentType = RepaymentType.CapitalAndInterest
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -53,6 +54,7 @@ let parameters: Parameters = {
             }
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            RateSchedule = [||]
         }
     }
     Advanced = {

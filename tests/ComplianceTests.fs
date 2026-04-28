@@ -47,6 +47,7 @@ module ComplianceTests =
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RateSchedule = [||]
             }
         }
         Advanced = {
@@ -195,6 +196,7 @@ module ComplianceTests =
                 }
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RateSchedule = [||]
             }
         }
         Advanced = {
@@ -296,6 +298,7 @@ module ComplianceTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2021, 12, 31)
                     ScheduleLength = PaymentCount 4
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             Basic.PaymentConfig.Rounding = RoundUp
             Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 1.2m
@@ -641,6 +644,7 @@ module ComplianceTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2025, 4, 20)
                     ScheduleLength = PaymentCount 4
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
     }
@@ -720,6 +724,7 @@ module ComplianceTests =
             AutoGenerateSchedule {
                 UnitPeriodConfig = Monthly(1, 2025, 5, 22)
                 ScheduleLength = PaymentCount 4
+                RepaymentType = RepaymentType.CapitalAndInterest
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -735,6 +740,7 @@ module ComplianceTests =
             }
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            RateSchedule = [||]
         }
     }
 

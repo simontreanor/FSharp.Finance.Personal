@@ -79,6 +79,7 @@ module ActualPaymentTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2022, 11, 31)
                     ScheduleLength = PaymentCount 5
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -91,6 +92,7 @@ module ActualPaymentTests =
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RateSchedule = [||]
             }
         }
         Advanced = {
@@ -196,6 +198,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -234,6 +237,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -298,6 +302,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -362,6 +367,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -429,6 +435,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -493,6 +500,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays 14)
                         ScheduleLength = PaymentCount 11
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -556,6 +564,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 Advanced.InterestConfig.RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
         }
@@ -626,6 +635,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -689,6 +699,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -750,6 +761,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -816,6 +828,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 Advanced.ChargeConfig = None
         }
@@ -852,6 +865,7 @@ module ActualPaymentTests =
                     StandardRate = Interest.Rate.Annual <| Percent 9.95m
                     Cap = Interest.Cap.zero
                     AprMethod = Apr.CalculationMethod.UsActuarial 5
+                    RateSchedule = [||]
             }
             Advanced.FeeConfig =
                 ValueSome {
@@ -873,6 +887,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(1, Date(2022, 5, 6))
                         ScheduleLength = PaymentCount 24
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 Advanced.ChargeConfig = None
         }
@@ -926,6 +941,7 @@ module ActualPaymentTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Weekly(1, Date(2022, 5, 6))
                     ScheduleLength = PaymentCount 24
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             Advanced.ChargeConfig = None
     }
@@ -1010,6 +1026,7 @@ module ActualPaymentTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Weekly(1, Date(2024, 1, 14))
                     ScheduleLength = PaymentCount 24
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             Advanced.ChargeConfig = None
     }
@@ -1082,6 +1099,7 @@ module ActualPaymentTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 9, 5)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 Advanced.PaymentConfig.Timeout = 0<DurationDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment

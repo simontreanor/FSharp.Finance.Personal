@@ -594,12 +594,13 @@ module Amortisation =
             unitPeriod
             bp.PaymentConfig.Rounding
 
-    // gets an array of daily interest rates for a given date range, taking into account grace periods and promotional rates
+    // gets an array of daily interest rates for a given date range, taking into account grace periods, rate schedules and promotional rates
     let getDailyInterestRates (p: Parameters) fromDay toDay =
         Interest.dailyRates
             p.Basic.StartDate
             (isSettledWithinGracePeriod p)
             p.Basic.InterestConfig.StandardRate
+            p.Basic.InterestConfig.RateSchedule
             p.Advanced.InterestConfig.PromotionalRates
             fromDay
             toDay

@@ -34,6 +34,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays(int offset))
                         ScheduleLength = PaymentCount 11
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -51,6 +52,7 @@ module PaymentScheduleTests =
                     Cap = Interest.Cap.zero
                     Rounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UsActuarial 8
+                    RateSchedule = [||]
                 }
             }
 
@@ -147,6 +149,7 @@ module PaymentScheduleTests =
                         UnitPeriodConfig =
                             (startDate.AddDays(int offset) |> fun d -> Monthly(1, d.Year, d.Month, d.Day * 1))
                         ScheduleLength = PaymentCount paymentCount
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -159,6 +162,7 @@ module PaymentScheduleTests =
                     Cap = interestCapExample
                     Rounding = RoundWith MidpointRounding.AwayFromZero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RateSchedule = [||]
                 }
             }
 
@@ -2012,6 +2016,7 @@ module PaymentScheduleTests =
             AutoGenerateSchedule {
                 UnitPeriodConfig = Daily(Date(2023, 1, 3))
                 ScheduleLength = PaymentCount 1
+                RepaymentType = RepaymentType.CapitalAndInterest
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -2024,6 +2029,7 @@ module PaymentScheduleTests =
             Cap = interestCapExample
             Rounding = RoundDown
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            RateSchedule = [||]
         }
     }
 
@@ -2059,6 +2065,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 8)
                         ScheduleLength = MaxDuration(startDate, 183<DurationDay>)
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -2087,6 +2094,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 18)
                         ScheduleLength = MaxDuration(startDate, 184<DurationDay>)
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -2113,6 +2121,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 7, 4)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig.Rounding = RoundWith MidpointRounding.ToEven
                 InterestConfig.Rounding = RoundWith MidpointRounding.ToEven
@@ -2149,6 +2158,7 @@ module PaymentScheduleTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2024, 7, 4)
                     ScheduleLength = PaymentCount 4
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
 
             let paymentSchedule2 =

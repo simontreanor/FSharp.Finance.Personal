@@ -46,6 +46,7 @@ module EdgeCaseTests =
                 StandardRate = Interest.Rate.Annual <| Percent 9.95m
                 Cap = Interest.Cap.zero
                 AprMethod = Apr.CalculationMethod.UsActuarial 5
+                RateSchedule = [||]
                 Rounding = RoundDown
             }
         }
@@ -449,6 +450,7 @@ module EdgeCaseTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2022, 7, 15)
                     ScheduleLength = PaymentCount 6
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             Basic.FeeConfig = ValueNone
             Basic.InterestConfig = {
@@ -459,6 +461,7 @@ module EdgeCaseTests =
                     DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                 }
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RateSchedule = [||]
                 Rounding = RoundDown
             }
             Advanced.FeeConfig = ValueNone
@@ -588,6 +591,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 1, 7)
                         ScheduleLength = PaymentCount 6
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -648,6 +652,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -735,6 +740,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -822,6 +828,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 5, 10)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 Advanced.InterestConfig.RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
         }
