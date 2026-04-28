@@ -25,6 +25,7 @@
     <Compile Include="PaymentScheduleTests.fs" />
     <Compile Include="PromotionalRatesTests.fs" />
     <Compile Include="QuoteTests.fs" />
+    <Compile Include="RefinancingTests.fs" />
     <Compile Include="SettlementTests.fs" />
     <!-- <Compile Include="UnitPeriodConfigTests.fs" /> -->
   </ItemGroup>
