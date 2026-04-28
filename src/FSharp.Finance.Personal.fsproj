@@ -24,6 +24,7 @@
     <Compile Include="Amortisation.fs" />
     <Compile Include="Quotes.fs" />
     <Compile Include="Refinancing.fs" />
+    <Compile Include="RevolvingCredit.fs" />
     <None Include="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
