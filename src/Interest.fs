@@ -41,17 +41,19 @@ module Interest =
             | Rate.Daily(Percent dir) -> dir |> Percent
 
     /// a stepped-rate schedule: an array of (effectiveDate, rate) pairs where each rate applies from its effective date forward until the next effective date or the end of the schedule
-    /// > NB: the schedule must be sorted in ascending date order; the StandardRate is used before the first effective date in the schedule
+    /// > NB: the schedule should be sorted in ascending date order; if unsorted, the implementation sorts it internally
     type RateSchedule = (Date * Rate) array
 
     /// a stepped-rate schedule
     module RateSchedule =
-        /// gets the rate applicable on a given day, falling back to the standard rate if no schedule entry applies
+        /// gets the rate applicable on a given day, falling back to the standard rate if no schedule entry applies;
+        /// the most recent entry whose effectiveDate is on or before the current day is used
         let effectiveRate (startDate: Date) (rateSchedule: RateSchedule) (standardRate: Rate) (offsetDay: int<OffsetDay>) =
             let date = startDate.AddDays(int offsetDay)
 
             rateSchedule
             |> Array.filter (fun (effectiveDate, _) -> effectiveDate <= date)
+            |> Array.sortBy fst
             |> Array.tryLast
             |> Option.map snd
             |> Option.defaultValue standardRate

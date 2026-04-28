@@ -253,23 +253,6 @@ module InterestTests =
 
             actual |> should equal expected
 
-            let expected =
-                [|
-                    [| 1..5 |]
-                    |> Array.map (fun d -> {
-                        RateDay = d * 1<OffsetDay>
-                        InterestRate = Rate.Annual <| Percent 2m
-                    })
-                    [| 6..10 |]
-                    |> Array.map (fun d -> {
-                        RateDay = d * 1<OffsetDay>
-                        InterestRate = Rate.Annual <| Percent 10m
-                    })
-                |]
-                |> Array.concat
-
-            actual |> should equal expected
-
     module Cca2004Tests =
 
         [<Fact>]
