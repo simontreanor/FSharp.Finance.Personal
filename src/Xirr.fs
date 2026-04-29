@@ -7,8 +7,10 @@ open System
 [<RequireQualifiedAccess>]
 module Xirr =
 
+    open DateDay
+
     /// Validates that the cashflow list meets XIRR calculation requirements
-    let private validate (cashflows: (DateTime * decimal) list) =
+    let private validate (cashflows: (Date * decimal) list) =
         if cashflows.Length < 2 then
             invalidArg (nameof cashflows) "At least two cashflows are required for XIRR calculation"
         
@@ -27,8 +29,8 @@ module Xirr =
             invalidArg (nameof cashflows) "Cashflows cannot all have identical dates"
 
     /// Converts decimal cashflows to float sequences for ExcelFinancialFunctions library
-    let private convertToSequences (cashflows: (DateTime * decimal) list) =
-        let dates = cashflows |> List.map fst
+    let private convertToSequences (cashflows: (Date * decimal) list) =
+        let dates = cashflows |> List.map (fun (date, _) -> date.ToDateTime())
         let values = cashflows |> List.map (fun (_, value) -> float value)
         (values, dates)
 
@@ -36,18 +38,20 @@ module Xirr =
     /// Calculates the Extended Internal Rate of Return (XIRR) for a series of cashflows.
     /// Uses Excel-compatible calculation with default guess of 0.1 (10%).
     /// </summary>
-    /// <param name="cashflows">List of (date, cashflow) pairs. 
-    /// Negative values represent outflows (investments, payments from borrower perspective).
-    /// Positive values represent inflows (returns, receipts from borrower perspective).</param>
+    /// <param name="cashflows">List of (date, cashflow) pairs.
+    /// Negative values represent outflows from the borrower perspective
+    /// (for example, investments or loan payments made by the borrower).
+    /// Positive values represent inflows from the borrower perspective
+    /// (for example, returns or loan disbursements received by the borrower).</param>
     /// <returns>Annualized effective rate as decimal (e.g., 0.10 for 10%)</returns>
     /// <remarks>
-    /// Sign convention follows Excel standard:
-    /// - Negative cashflows: money going out (investments, loan disbursements)  
-    /// - Positive cashflows: money coming in (returns, loan payments)
+    /// Sign convention follows Excel standard, expressed from the borrower perspective:
+    /// - Negative cashflows: money going out (investments, loan payments)
+    /// - Positive cashflows: money coming in (returns, loan disbursements)
     /// Default guess of 0.1 ensures Excel compatibility.
     /// Precision may be limited by conversion from decimal to float for underlying calculation.
     /// </remarks>
-    let xirr (cashflows: (DateTime * decimal) list) : decimal =
+    let xirr (cashflows: (Date * decimal) list) : decimal =
         validate cashflows
         let (values, dates) = convertToSequences cashflows
         let result = Excel.FinancialFunctions.Financial.XIrr(values, dates, 0.1)
@@ -58,13 +62,13 @@ module Xirr =
     /// with a custom initial guess.
     /// </summary>
     /// <param name="guess">Initial guess for the XIRR calculation (e.g., 0.1 for 10%)</param>
-    /// <param name="cashflows">List of (date, cashflow) pairs</param>
+    /// <param name="cashflows">List of date-only cashflow pairs using `DateDay.Date`</param>
     /// <returns>Annualized effective rate as decimal</returns>
     /// <remarks>
     /// Same sign convention as xirr function. Custom guess may improve convergence
     /// for some cashflow patterns but should generally not be necessary.
     /// </remarks>
-    let xirrG (guess: decimal) (cashflows: (DateTime * decimal) list) : decimal =
+    let xirrG (guess: decimal) (cashflows: (Date * decimal) list) : decimal =
         validate cashflows
         let (values, dates) = convertToSequences cashflows
         let result = Excel.FinancialFunctions.Financial.XIrr(values, dates, float guess)
@@ -74,13 +78,13 @@ module Xirr =
     /// Attempts to calculate the Extended Internal Rate of Return (XIRR) for a series of cashflows,
     /// returning a Result type instead of throwing exceptions.
     /// </summary>
-    /// <param name="cashflows">List of (date, cashflow) pairs</param>
+    /// <param name="cashflows">List of date-only cashflow pairs using `DateDay.Date`</param>
     /// <returns>Result containing the XIRR rate on success, or error message on failure</returns>
     /// <remarks>
     /// Uses default guess of 0.1. Returns Result.Error for validation failures or
     /// convergence problems in the underlying calculation.
     /// </remarks>
-    let tryXirr (cashflows: (DateTime * decimal) list) : Result<decimal, string> =
+    let tryXirr (cashflows: (Date * decimal) list) : Result<decimal, string> =
         try
             let result = xirr cashflows
             Ok result

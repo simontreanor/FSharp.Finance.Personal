@@ -1,4 +1,13 @@
 (**
+---
+title: XIRR Example
+category: Examples
+categoryindex: 2
+index: 5
+description: Example of Excel-compatible XIRR calculation
+keywords: XIRR IRR cashflow
+---
+
 # XIRR (Extended Internal Rate of Return) Examples
 
 This example demonstrates the Excel-compatible XIRR functionality provided by the `FSharp.Finance.Personal` library.
@@ -8,13 +17,16 @@ This example demonstrates the Excel-compatible XIRR functionality provided by th
 Consider a simple investment scenario where you invest $10,000 and receive $11,000 one year later:
 *)
 
-open System
+#r "nuget: ExcelFinancialFunctions, 3.2.0"
+#r "../src/bin/Release/netstandard2.1/FSharp.Finance.Personal.dll"
+
 open FSharp.Finance.Personal
+open DateDay
 
 // Basic investment: -$10,000 invested today, +$11,000 received in one year
 let basicInvestment = [
-    DateTime(2024, 1, 1), -10000m   // Investment outflow
-    DateTime(2025, 1, 1), 11000m    // Return inflow
+    Date(2024, 1, 1), -10000m   // Investment outflow
+    Date(2025, 1, 1), 11000m    // Return inflow
 ]
 
 let basicRate = Xirr.xirr basicInvestment
@@ -29,8 +41,8 @@ A salary advance scenario where an employee receives $1,000 today and repays $1,
 
 // Salary advance: +$1,000 received today, -$1,030 repaid in 30 days
 let salaryAdvance = [
-    DateTime(2024, 1, 1), 1000m     // Advance received (inflow to borrower)
-    DateTime(2024, 1, 31), -1030m   // Repayment (outflow from borrower)
+    Date(2024, 1, 1), 1000m     // Advance received (inflow to borrower)
+    Date(2024, 1, 31), -1030m   // Repayment (outflow from borrower)
 ]
 
 let salaryAdvanceRate = Xirr.xirr salaryAdvance
@@ -45,9 +57,9 @@ A simple trade credit scenario with multiple payments:
 
 // Trade credit: Invoice factoring with advance and final settlement
 let tradeCreditCashflows = [
-    DateTime(2024, 1, 1), -100000m   // Invoice amount (outflow to factor)
-    DateTime(2024, 1, 2), 85000m    // Advance payment (inflow from factor)
-    DateTime(2024, 3, 1), 14000m    // Final settlement minus fees (inflow from factor)
+    Date(2024, 1, 1), -100000m   // Invoice amount (outflow to factor)
+    Date(2024, 1, 2), 85000m    // Advance payment (inflow from factor)
+    Date(2024, 3, 1), 14000m    // Final settlement minus fees (inflow from factor)
 ]
 
 let tradeCreditRate = Xirr.xirr tradeCreditCashflows
@@ -72,9 +84,9 @@ For production code, use `tryXirr` to handle potential calculation failures grac
 
 let safeCalculation cashflows =
     match Xirr.tryXirr cashflows with
-    | Ok rate -> 
+    | Ok rate ->
         printfn "XIRR: %.2f%%" (rate * 100m)
-    | Error message -> 
+    | Error message ->
         printfn "XIRR calculation failed: %s" message
 
 // Test with valid cashflows
@@ -82,8 +94,8 @@ safeCalculation basicInvestment
 
 // Test with invalid cashflows (all positive)
 let invalidCashflows = [
-    DateTime(2024, 1, 1), 1000m
-    DateTime(2024, 6, 1), 1100m
+    Date(2024, 1, 1), 1000m
+    Date(2024, 6, 1), 1100m
 ]
 safeCalculation invalidCashflows
 
@@ -92,8 +104,8 @@ safeCalculation invalidCashflows
 
 **Important**: The XIRR calculation follows Excel's sign convention:
 
-- **Negative values**: Money going out (investments, loan disbursements, payments made)
-- **Positive values**: Money coming in (returns, loan payments received, income)
+- **Negative values**: Money going out from the borrower's perspective (investments, loan payments)
+- **Positive values**: Money coming in from the borrower's perspective (returns, loan disbursements)
 
 From a **borrower's perspective**:
 - Loan disbursement: +1000m (money received)
@@ -109,7 +121,7 @@ This implementation uses the `ExcelFinancialFunctions` library to ensure complet
 
 - Default guess value of 0.1 (10%)
 - Same convergence algorithm
-- Identical precision and rounding behavior
+- Floating-point arithmetic matching Excel-style calculations
 
 The functions return annualized effective rates as decimal values (e.g., 0.10 for 10%).
 *)
