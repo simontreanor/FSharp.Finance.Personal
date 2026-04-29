@@ -378,3 +378,54 @@ module Calculation =
         function
         | Solution.Found(apr, _, _) -> apr
         | _ -> defaultValue
+
+    /// an ISO 4217 currency, specifying the number of minor units per major unit
+    [<Struct>]
+    type Currency = {
+        /// the ISO 4217 three-letter code, e.g. "GBP"
+        Code: string
+        /// the currency symbol, e.g. "£"
+        Symbol: string
+        /// the number of decimal places in the minor unit (e.g. 2 for GBP/USD/EUR, 0 for JPY, 3 for KWD)
+        MinorUnitPlaces: int
+    }
+
+    /// predefined currencies and conversion helpers following ISO 4217 rounding rules
+    module Currency =
+        /// the multiplicative factor between major and minor units (10^MinorUnitPlaces)
+        let minorUnitFactor (currency: Currency) =
+            powi currency.MinorUnitPlaces 10m
+
+        /// convert a major-unit amount (e.g. 12.34 GBP) to the internal minor-unit representation
+        let fromMajorUnit (currency: Currency) (amount: decimal) =
+            amount * minorUnitFactor currency
+            |> Rounding.round (RoundWith MidpointRounding.AwayFromZero)
+            |> int64
+            |> (*) 1L<Cent>
+
+        /// convert an internal minor-unit value to a major-unit amount (e.g. 1234¢ → 12.34 GBP)
+        let toMajorUnit (currency: Currency) (amount: int64<Cent>) =
+            decimal amount / minorUnitFactor currency
+
+        // ── ISO 4217 predefined currencies ────────────────────────────────────────
+
+        /// British Pound Sterling (GBP) – 2 decimal places
+        let GBP = { Code = "GBP"; Symbol = "£";  MinorUnitPlaces = 2 }
+        /// US Dollar (USD) – 2 decimal places
+        let USD = { Code = "USD"; Symbol = "$";  MinorUnitPlaces = 2 }
+        /// Euro (EUR) – 2 decimal places
+        let EUR = { Code = "EUR"; Symbol = "€";  MinorUnitPlaces = 2 }
+        /// Japanese Yen (JPY) – 0 decimal places
+        let JPY = { Code = "JPY"; Symbol = "¥";  MinorUnitPlaces = 0 }
+        /// Kuwaiti Dinar (KWD) – 3 decimal places
+        let KWD = { Code = "KWD"; Symbol = "KD"; MinorUnitPlaces = 3 }
+        /// Bahraini Dinar (BHD) – 3 decimal places
+        let BHD = { Code = "BHD"; Symbol = "BD"; MinorUnitPlaces = 3 }
+        /// Jordanian Dinar (JOD) – 3 decimal places
+        let JOD = { Code = "JOD"; Symbol = "JD"; MinorUnitPlaces = 3 }
+        /// Omani Rial (OMR) – 3 decimal places
+        let OMR = { Code = "OMR"; Symbol = "﷼";  MinorUnitPlaces = 3 }
+        /// Tunisian Dinar (TND) – 3 decimal places
+        let TND = { Code = "TND"; Symbol = "DT"; MinorUnitPlaces = 3 }
+        /// the default currency used throughout the library (GBP)
+        let defaultCurrency = GBP
