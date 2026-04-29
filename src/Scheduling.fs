@@ -867,7 +867,7 @@ module Scheduling =
 
             let balloonAmount =
                 match bp.ScheduleConfig with
-                | AutoGenerateSchedule ags -> ags.BalloonPayment
+                | AutoGenerateSchedule ags -> min ags.BalloonPayment bp.Principal |> max 0L<Cent>
                 | _ -> 0L<Cent>
 
             // for balloon schedules, only the non-balloon portion of principal is amortised over the regular payments
@@ -959,7 +959,7 @@ module Scheduling =
 
         let balloonAmount =
             match bp.ScheduleConfig with
-            | AutoGenerateSchedule ags -> ags.BalloonPayment
+            | AutoGenerateSchedule ags -> min ags.BalloonPayment bp.Principal |> max 0L<Cent>
             | _ -> 0L<Cent>
 
         // the bisection targets zero, so subtract the balloon from the balance so the solver converges when balance = balloon
@@ -1040,8 +1040,9 @@ module Scheduling =
         let basicItems =
             match bp.ScheduleConfig with
             | AutoGenerateSchedule ags ->
-                // the balloon amount is excluded from the amortisable principal when estimating the level payment
-                let balloonAmount = ags.BalloonPayment
+                // the balloon amount is excluded from the amortisable principal when estimating the level payment;
+                // clamp to [0, principal] to guard against invalid inputs (balloon > principal)
+                let balloonAmount = min ags.BalloonPayment bp.Principal |> max 0L<Cent>
                 let amortisablePrincipal = bp.Principal - balloonAmount
                 // calculate the estimated interest payable over the entire schedule
                 let roughInterest =
