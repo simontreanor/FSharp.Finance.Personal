@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal.Tests
 
+open System
 open Xunit
 open FsUnit.Xunit
 
@@ -82,15 +83,16 @@ module RevolvingCreditTests =
     [<Fact>]
     let ``InterestFree_PartialRepayment_InterestCharged`` () =
         // £500 purchase, only £400 repaid → interest-free condition not met
-        // Daily purchase balances: £500 for days 0–24 (25 days), £100 for days 25–29 (5 days)
-        // Interest = (25×50 000 + 5×10 000) × 20/(36 500) = 1 300 000 × 0.000547945… = 712.328… → 712¢
+        // Repayment is applied end-of-day on Jan 25, so:
+        //   end-of-day balances: 24 days at £500 (Jan 1–24), 6 days at £100 (Jan 25–30)
+        // Interest = (24×50 000 + 6×10 000) × 20/36 500 = 1 260 000 × 0.000547945… = 690.41… → 690¢
         let txs = [|
             mkTx periodStart         50_000L<Cent>  TransactionType.Purchase
             mkTx (Date(2024, 1, 25)) -40_000L<Cent> TransactionType.Repayment
         |]
         let stmt = generateStatement standardAccount periodStart periodEnd txs
-        stmt.InterestTotal  |> should equal 712L<Cent>
-        stmt.ClosingBalance |> should equal (10_000L<Cent> + 712L<Cent>)   // £107.12
+        stmt.InterestTotal  |> should equal 690L<Cent>
+        stmt.ClosingBalance |> should equal (10_000L<Cent> + 690L<Cent>)   // £106.90
 
     [<Fact>]
     let ``InterestFree_NoInterestFreeDays_InterestCharged`` () =
@@ -157,8 +159,9 @@ module RevolvingCreditTests =
     [<Fact>]
     let ``RevolvingBalance_CarryForwardPurchaseBalance`` () =
         // Opening balance £300 (from prior period purchase), new £200 purchase, £100 repayment on day 15
-        // Daily purchase balance: £500 for 15 days, £400 for 15 days
-        // Interest = (15×50 000 + 15×40 000) × 20/36 500 = 1 350 000 × 0.000547945… = 739.726… → 740¢
+        // Repayment applied end-of-day Jan 15, so:
+        //   14 days at £500 (Jan 1–14), 16 days at £400 (Jan 15–30)
+        // Interest = (14×50 000 + 16×40 000) × 20/36 500 = 1 340 000 × 0.000547945… = 734.24… → 734¢
         let priorPurchase = mkTx (Date(2023, 12, 15)) 30_000L<Cent> TransactionType.Purchase
         let txs = [|
             priorPurchase
@@ -169,8 +172,8 @@ module RevolvingCreditTests =
         stmt.OpeningBalance  |> should equal 30_000L<Cent>
         stmt.PurchasesTotal  |> should equal 20_000L<Cent>
         stmt.RepaymentsTotal |> should equal 10_000L<Cent>
-        stmt.InterestTotal   |> should equal 740L<Cent>
-        stmt.ClosingBalance  |> should equal (30_000L<Cent> + 20_000L<Cent> - 10_000L<Cent> + 740L<Cent>)
+        stmt.InterestTotal   |> should equal 734L<Cent>
+        stmt.ClosingBalance  |> should equal (30_000L<Cent> + 20_000L<Cent> - 10_000L<Cent> + 734L<Cent>)
 
     // ── generateStatement – minimum payment ──────────────────────────────────
 
