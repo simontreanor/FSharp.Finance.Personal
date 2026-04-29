@@ -406,6 +406,22 @@ module Amortisation =
             $"{htmlTitle}{htmlSchedule}{htmlKey}{htmlFinalStats}{htmlDescription}{htmlDatestamp}{htmlBasicParams}{htmlAdvancedParams}{htmlExtraInfo}{htmlInitialSchedule}{htmlInitialStats}"
             |> outputToFile' filename false
 
+        /// calculates the total cost of credit (TCC): the sum of all charges (interest, fees, compulsory insurance, etc.)
+        /// paid over the life of the loan, equivalent to the total of all cashflows minus the amount of credit advanced
+        /// > Required by UK CCA s.20 and FCA CONC rules for pre-contractual disclosure
+        let totalCostOfCredit (schedule: Schedule) =
+            let items = schedule.ScheduleItems |> Map.toArray |> Array.map snd
+            let totalNetEffect = items |> Array.sumBy _.NetEffect
+            let totalAdvances = items |> Array.sumBy (_.Advances >> Array.sum)
+            totalNetEffect - totalAdvances
+
+        /// calculates the total amount payable (TAP): the amount of credit advanced plus the total cost of credit
+        /// > Required by UK CCA s.20 and FCA CONC rules for pre-contractual disclosure
+        let totalAmountPayable (schedule: Schedule) =
+            let items = schedule.ScheduleItems |> Map.toArray |> Array.map snd
+            let totalAdvances = items |> Array.sumBy (_.Advances >> Array.sum)
+            totalAdvances + totalCostOfCredit schedule
+
     /// gets the window for the current day based on either the unit-period map or the previous window
     let getWindow unitPeriodMap currentDay currentScheduledPayment previousWindow =
         match unitPeriodMap with

@@ -64,6 +64,20 @@ module Fee =
             | ProRataRescheduled day -> $"pro rata rebate (based on day {day})"
             | Balance -> "balance rebate"
 
+    /// how an arrangement or origination fee is applied to the loan, affecting APR cashflow calculations
+    [<Struct; StructuredFormatDisplay("{Html}")>]
+    type FeeDisposition =
+        /// the fee is capitalised into the loan balance; the borrower repays it over the term with interest
+        | Capitalised
+        /// the fee is paid upfront; the borrower receives less than the face value of the loan (deducted from the advance)
+        | PaidUpfront
+
+        /// HTML formatting to display the fee disposition in a readable format
+        member fd.Html =
+            match fd with
+            | Capitalised -> "capitalised"
+            | PaidUpfront -> "paid upfront"
+
     /// how to handle any fee when rescheduling or rolling over
     [<Struct>]
     type FeeHandling =
