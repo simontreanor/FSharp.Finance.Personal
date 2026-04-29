@@ -16,6 +16,7 @@
     <Compile Include="AprUnitedKingdomTests.fs" />
     <Compile Include="AprUsActuarialTests.fs" />
     <Compile Include="AprUsActuarialTestsExtra.fs" />
+    <Compile Include="BuyNowPayLaterTests.fs" />
     <Compile Include="ComplianceTests.fs" />
     <Compile Include="EdgeCaseTests.fs" />
     <Compile Include="FeesAndChargesTests.fs" />
