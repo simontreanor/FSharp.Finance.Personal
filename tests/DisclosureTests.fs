@@ -178,10 +178,9 @@ module DisclosureTests =
 
         [<Fact>]
         let ``euSecci: repayment schedule has correct number of entries`` () =
-            let basicSchedule = calculateBasicSchedule basicParameters.Basic
             let result = generateWithAllPaymentsMade basicParameters
             let schedule = euSecciRepaymentSchedule result.AmortisationSchedule
-            let expectedCount = basicSchedule.Stats.ScheduledPaymentTotal |> ignore; 4 // 4 monthly payments
+            let expectedCount = 4 // 4 monthly payments as per basicParameters ScheduleLength
 
             schedule |> Array.length |> should equal expectedCount
 

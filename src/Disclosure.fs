@@ -2,7 +2,7 @@ namespace FSharp.Finance.Personal
 
 open System
 
-/// computing key regulatory metrics required for consumer credit documentation across UK, EU and US regimes
+/// Computing key regulatory metrics required for consumer credit documentation across UK, EU and US regimes.
 module Disclosure =
 
     open Amortisation
