@@ -1,5 +1,6 @@
 namespace FSharp.Finance.Personal
 
+open System
 open Scheduling
 open Quotes
 
@@ -310,3 +311,235 @@ module Refinancing =
             OldSchedules = quote.Schedules
             NewSchedules = rolledOverSchedules
         |}
+
+    /// parameters for comparing the cost of remaining on the current mortgage product against switching to a new one
+    [<RequireQualifiedAccess>]
+    type RemortgageComparisonParameters = {
+        /// any early repayment charge on the current product, expressed as an amount relative to the outstanding capital balance
+        EarlyRepaymentCharge: Amount
+        /// any upfront arrangement fee payable on the new product
+        ArrangementFee: int64<Cent>
+        /// any legal or other upfront costs associated with switching
+        LegalCosts: int64<Cent>
+        /// the parameters for the new product (the principal should be set to the current outstanding balance)
+        NewProductParameters: Parameters
+    }
+
+    /// the result of a remortgage cost comparison
+    [<Struct>]
+    type RemortgageComparisonResult = {
+        /// the outstanding capital balance at the point of comparison
+        OutstandingBalance: int64<Cent>
+        /// the early repayment charge payable if switching
+        EarlyRepaymentCharge: int64<Cent>
+        /// the total upfront switching costs (ERC + arrangement fee + legal costs)
+        UpfrontSwitchCosts: int64<Cent>
+        /// the total cost of remaining on the current product for the remaining scheduled term
+        StayTotalCost: int64<Cent>
+        /// the total cost of switching to the new product, including all upfront costs
+        SwitchTotalCost: int64<Cent>
+        /// the net benefit of switching (positive = switching saves money, negative = staying is cheaper)
+        NetBenefit: int64<Cent>
+        /// the number of payment periods after which the cumulative per-period savings recover the upfront switching costs;
+        /// ValueNone if the new product is not cheaper per period or break-even is not reached within the remaining term
+        BreakEvenPeriodCount: int voption
+    }
+
+    /// compares the total cost of remaining on the current mortgage product against switching to a new one,
+    /// accounting for any early repayment charges, arrangement fees and legal costs
+    let compareRemortgage p actualPayments (rcp: RemortgageComparisonParameters) =
+
+        // get a settlement quote to determine the current outstanding balance
+        let quote = getQuote p actualPayments
+
+        // extract the outstanding principal balance from the settlement quote
+        let outstandingBalance =
+            match quote.QuoteResult with
+            | PaymentQuote pq -> pq.Apportionment.PrincipalPortion
+            | _ -> failwith "Unable to obtain settlement quote for remortgage comparison"
+
+        // calculate the early repayment charge based on the outstanding capital balance
+        let ercAmount =
+            Amount.total outstandingBalance rcp.EarlyRepaymentCharge
+            |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+
+        let upfrontCosts = ercAmount + rcp.ArrangementFee + rcp.LegalCosts
+
+        // "stay" cost: sum of all remaining original scheduled payments after the evaluation day
+        let evaluationDay = OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
+
+        let stayScheduledPayments =
+            quote.Schedules.AmortisationSchedule.ScheduleItems
+            |> Map.toArray
+            |> Array.filter (fun (day, si) ->
+                day > evaluationDay
+                && ScheduledPayment.isSome si.ScheduledPayment)
+            |> Array.map (fun (_, si) -> ScheduledPayment.total si.ScheduledPayment)
+
+        let stayCost = stayScheduledPayments |> Array.sum
+        let stayPaymentCount = stayScheduledPayments.Length
+
+        // "switch" cost: total scheduled payments on the new product plus upfront costs
+        let newBasicSchedule = calculateBasicSchedule rcp.NewProductParameters.Basic
+        let switchPaymentsTotal = newBasicSchedule.Stats.ScheduledPaymentTotal
+        let switchCost = upfrontCosts + switchPaymentsTotal
+
+        let netBenefit = stayCost - switchCost
+
+        // break-even: number of payment periods until cumulative per-period savings exceed the upfront costs
+        let switchLevelPayment = newBasicSchedule.Stats.LevelPayment
+        let stayAveragePayment =
+            if stayPaymentCount > 0 then stayCost / int64 stayPaymentCount
+            else 0L<Cent>
+
+        let perPeriodSaving = stayAveragePayment - switchLevelPayment
+
+        let breakEvenPeriodCount =
+            if perPeriodSaving <= 0L<Cent> then
+                ValueNone
+            else
+                let periods = int (Math.Ceiling(decimal upfrontCosts / decimal perPeriodSaving))
+                if periods <= stayPaymentCount then ValueSome periods
+                else ValueNone
+
+        {
+            OutstandingBalance = outstandingBalance
+            EarlyRepaymentCharge = ercAmount
+            UpfrontSwitchCosts = upfrontCosts
+            StayTotalCost = stayCost
+            SwitchTotalCost = switchCost
+            NetBenefit = netBenefit
+            BreakEvenPeriodCount = breakEvenPeriodCount
+        }
+
+    /// parameters for comparing the cost of paying multiple debts individually against consolidating them into a single facility
+    [<RequireQualifiedAccess>]
+    type DebtConsolidationParameters = {
+        /// the discount rate used to calculate the present value of future cash flows
+        /// (typically the opportunity cost of capital or a risk-free rate)
+        DiscountRate: Interest.Rate
+        /// the parameters for the new consolidated facility
+        ConsolidatedFacilityParameters: Parameters
+        /// any upfront fees associated with setting up the consolidated facility
+        ConsolidationFees: int64<Cent>
+    }
+
+    /// the result of a debt consolidation NPV comparison
+    [<Struct>]
+    type DebtConsolidationResult = {
+        /// the net present value of continuing to pay each existing debt individually
+        IndividualPaymentsNpv: int64<Cent>
+        /// the net present value of replacing all debts with the consolidated facility (including any upfront fees)
+        ConsolidatedPaymentsNpv: int64<Cent>
+        /// the net saving from consolidation in present-value terms
+        /// (positive = consolidation is more economical, negative = paying individually is cheaper)
+        NetConsolidationSaving: int64<Cent>
+    }
+
+    /// compares the NPV of paying multiple existing debts individually against consolidating them into a single new
+    /// facility, using the specified discount rate to reflect the time value of money and the opportunity cost of
+    /// extending the overall repayment term
+    let compareDebtConsolidation
+        (existingDebts: (Parameters * Map<int<OffsetDay>, ActualPayment array>) array)
+        (dcp: DebtConsolidationParameters)
+        =
+
+        /// days in a year used to convert an annual rate to a daily rate
+        let daysPerYear = 365.0
+
+        // compute the daily discount rate from the specified annual or daily rate
+        let dailyDiscountRate =
+            match dcp.DiscountRate with
+            | Interest.Rate.Zero -> 0m
+            | Interest.Rate.Annual(Percent air) ->
+                decimal (Math.Pow(double (1m + air / 100m), 1.0 / daysPerYear)) - 1m
+            | Interest.Rate.Daily(Percent dir) -> dir / 100m
+
+        // the reference date for all NPV calculations is the evaluation date of the consolidated facility
+        let referenceDate = dcp.ConsolidatedFacilityParameters.Basic.EvaluationDate
+
+        // NPV of consolidated facility repayments (compute first to collect all unique day counts)
+        let consolidatedParams = dcp.ConsolidatedFacilityParameters
+        let consolidatedBasicSchedule = calculateBasicSchedule consolidatedParams.Basic
+        let consolidatedEvaluationDay =
+            OffsetDay.fromDate consolidatedParams.Basic.StartDate consolidatedParams.Basic.EvaluationDate
+
+        // collect (paymentDate, amount) pairs for individual debts
+        let individualPaymentPairs =
+            existingDebts
+            |> Array.collect (fun (p, actualPayments) ->
+                let quote = getQuote p actualPayments
+                let evaluationDay = OffsetDay.fromDate p.Basic.StartDate p.Basic.EvaluationDate
+
+                quote.Schedules.AmortisationSchedule.ScheduleItems
+                |> Map.toArray
+                |> Array.choose (fun (day, si) ->
+                    if day > evaluationDay && ScheduledPayment.isSome si.ScheduledPayment then
+                        let payment = ScheduledPayment.total si.ScheduledPayment
+                        let paymentDate = OffsetDay.toDate p.Basic.StartDate day
+                        let daysFromRef = max 0 (paymentDate - referenceDate).Days
+                        Some(daysFromRef, payment)
+                    else
+                        None
+                )
+            )
+
+        // collect (daysFromRef, amount) pairs for consolidated facility
+        let consolidatedPaymentPairs =
+            consolidatedBasicSchedule.Items
+            |> Array.choose (fun item ->
+                if item.Day > consolidatedEvaluationDay && ScheduledPayment.isSome item.ScheduledPayment then
+                    let payment = ScheduledPayment.total item.ScheduledPayment
+                    let paymentDate = OffsetDay.toDate consolidatedParams.Basic.StartDate item.Day
+                    let daysFromRef = max 0 (paymentDate - referenceDate).Days
+                    Some(daysFromRef, payment)
+                else
+                    None
+            )
+
+        // build a memoised discount-factor lookup for all unique day counts across both strategies
+        let discountFactorCache =
+            if dailyDiscountRate = 0m then
+                Map.empty
+            else
+                [| individualPaymentPairs; consolidatedPaymentPairs |]
+                |> Array.concat
+                |> Array.map fst
+                |> Array.distinct
+                |> Array.map (fun days ->
+                    let factor =
+                        if days <= 0 then 1m
+                        else 1m / decimal (Math.Pow(double (1m + dailyDiscountRate), double days))
+                    days, factor
+                )
+                |> Map.ofArray
+
+        // look up a discount factor, defaulting to 1 when the rate is zero
+        let discountFactor days =
+            discountFactorCache |> Map.tryFind days |> Option.defaultValue 1m
+
+        // NPV of all individual debt repayments
+        let individualNpv =
+            individualPaymentPairs
+            |> Array.sumBy (fun (daysFromRef, payment) ->
+                Cent.toDecimalCent payment * discountFactor daysFromRef
+            )
+
+        // NPV of consolidated facility repayments
+        let consolidatedPaymentsNpv =
+            consolidatedPaymentPairs
+            |> Array.sumBy (fun (daysFromRef, payment) ->
+                Cent.toDecimalCent payment * discountFactor daysFromRef
+            )
+
+        // add any upfront consolidation fees (paid immediately at reference date, discount factor = 1)
+        let consolidatedTotalNpv =
+            consolidatedPaymentsNpv + Cent.toDecimalCent dcp.ConsolidationFees
+
+        let netSaving = individualNpv - consolidatedTotalNpv
+
+        {
+            IndividualPaymentsNpv = Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero) individualNpv
+            ConsolidatedPaymentsNpv = Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero) consolidatedTotalNpv
+            NetConsolidationSaving = Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero) netSaving
+        }
