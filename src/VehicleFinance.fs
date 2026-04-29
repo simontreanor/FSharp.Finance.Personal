@@ -85,21 +85,20 @@ module VehicleFinance =
             let totalAmountPayable = p.Deposit + totalMonthlyPayments + gfv
             let totalCostOfCredit = totalAmountPayable - p.VehiclePrice
 
-            // APR cash flows: n monthly payments plus the GFV balloon on the final payment date
+            // APR cash flows: (n − 1) regular monthly payments plus a combined final payment (monthly + GFV balloon)
             let aprTransfers =
                 [|
-                    for i in 1 .. n do
+                    for i in 1 .. n - 1 do
                         yield {
                             Apr.TransferType = Apr.Payment
                             Apr.TransferDate = p.FirstPaymentDate.AddMonths(i - 1)
                             Apr.Value = monthlyPayment
                         }
-                    if gfv > 0L<Cent> then
-                        yield {
-                            Apr.TransferType = Apr.Payment
-                            Apr.TransferDate = p.FirstPaymentDate.AddMonths(n - 1)
-                            Apr.Value = gfv
-                        }
+                    yield {
+                        Apr.TransferType = Apr.Payment
+                        Apr.TransferDate = p.FirstPaymentDate.AddMonths(n - 1)
+                        Apr.Value = monthlyPayment + gfv
+                    }
                 |]
 
             let aprSolution = Apr.calculate p.AprMethod advance p.AgreementDate aprTransfers
@@ -185,29 +184,22 @@ module VehicleFinance =
             let totalAmountPayable = p.Deposit + totalMonthlyPayments + p.OptionToPurchaseFee
             let totalCostOfCredit = totalAmountPayable - p.VehiclePrice
 
-            // APR cash flows: n monthly payments; option-to-purchase fee on the final payment date
-            let regularTransfers =
+            // APR cash flows: (n − 1) regular monthly payments plus a combined final payment
+            // (final monthly payment + option-to-purchase fee, both due at the end of the term)
+            let aprTransfers =
                 [|
-                    for i in 1 .. n do
+                    for i in 1 .. n - 1 do
                         yield {
                             Apr.TransferType = Apr.Payment
                             Apr.TransferDate = p.FirstPaymentDate.AddMonths(i - 1)
                             Apr.Value = monthlyPayment
                         }
+                    yield {
+                        Apr.TransferType = Apr.Payment
+                        Apr.TransferDate = p.FirstPaymentDate.AddMonths(n - 1)
+                        Apr.Value = monthlyPayment + p.OptionToPurchaseFee
+                    }
                 |]
-
-            let aprTransfers =
-                if p.OptionToPurchaseFee = 0L<Cent> then
-                    regularTransfers
-                else
-                    [|
-                        yield! regularTransfers
-                        yield {
-                            Apr.TransferType = Apr.Payment
-                            Apr.TransferDate = p.FirstPaymentDate.AddMonths(n - 1)
-                            Apr.Value = p.OptionToPurchaseFee
-                        }
-                    |]
 
             let aprSolution = Apr.calculate p.AprMethod advance p.AgreementDate aprTransfers
             let apr = Apr.toPercent p.AprMethod aprSolution
@@ -295,7 +287,8 @@ module VehicleFinance =
             let totalRentals = p.InitialRental + monthlyRental * int64 n
             let totalAmountPayable = totalRentals + rv
 
-            // APR cash flows: the financed amount on day 0; regular rentals; residual on final payment date
+            // APR cash flows: n regular monthly rentals followed by the residual value as a separate
+            // cashflow one month after the final rental; this reflects the end-of-lease settlement
             let aprTransfers =
                 [|
                     for i in 1 .. n do
@@ -307,7 +300,7 @@ module VehicleFinance =
                     if rv > 0L<Cent> then
                         yield {
                             Apr.TransferType = Apr.Payment
-                            Apr.TransferDate = p.FirstPaymentDate.AddMonths(n - 1)
+                            Apr.TransferDate = p.FirstPaymentDate.AddMonths(n)
                             Apr.Value = rv
                         }
                 |]
