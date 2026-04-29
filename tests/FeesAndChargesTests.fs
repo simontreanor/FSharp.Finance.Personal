@@ -32,6 +32,7 @@ module FeeAndChargesTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 31)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment

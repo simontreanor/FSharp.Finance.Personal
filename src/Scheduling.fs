@@ -187,6 +187,9 @@ module Scheduling =
         UnitPeriodConfig: UnitPeriod.Config
         // the length of the schedule
         ScheduleLength: ScheduleLength
+        /// the balloon (or bullet) payment due at maturity, representing principal that is not amortised over the regular term
+        /// e.g. a PCP Guaranteed Future Value (GFV); defaults to zero for a fully amortising schedule
+        BalloonPayment: int64<Cent>
     }
 
     /// the type of the schedule; for scheduled payments, this affects how any payment due is calculated
@@ -235,6 +238,14 @@ module Scheduling =
         let toHtmlTable scheduleConfig =
             match scheduleConfig with
             | AutoGenerateSchedule ags ->
+                let balloonRow =
+                    if ags.BalloonPayment > 0L<Cent> then
+                        $"""
+                <tr>
+                    <td colspan="2">balloon payment: <i>{formatCent ags.BalloonPayment}</i></td>
+                </tr>"""
+                    else
+                        ""
                 $"""
             <table>
                 <tr>
@@ -243,7 +254,7 @@ module Scheduling =
                 </tr>
                 <tr>
                     <td colspan="2" style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>
-                </tr>
+                </tr>{balloonRow}
             </table>"""
             | FixedSchedules fsArray ->
                 let renderRow (fs: FixedSchedule) =
@@ -854,8 +865,14 @@ module Scheduling =
         else
             let state = state.Value
 
+            let balloonAmount =
+                match bp.ScheduleConfig with
+                | AutoGenerateSchedule ags -> ags.BalloonPayment
+                | _ -> 0L<Cent>
+
+            // for balloon schedules, only the non-balloon portion of principal is amortised over the regular payments
             let regularScheduledPayment =
-                calculateLevelPayment bp.Principal feeTotal state.InterestBalance paymentCount bp.PaymentConfig.Rounding
+                calculateLevelPayment (bp.Principal - balloonAmount) feeTotal state.InterestBalance paymentCount bp.PaymentConfig.Rounding
 
             let newSchedule =
                 paymentDays
@@ -882,7 +899,8 @@ module Scheduling =
                 |> max 0m<Cent> // interest must not go negative
                 |> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal 0m<Cent>
 
-            let principalBalance = newSchedule |> Array.last |> _.PrincipalBalance
+            // compare the remaining balance against the balloon amount: the schedule converges when balance ≈ balloon
+            let principalBalance = (newSchedule |> Array.last |> _.PrincipalBalance) - balloonAmount
             let tolerance = int64 paymentCount * 1L<Cent>
 
             let minBalance, maxBalance =
@@ -926,7 +944,7 @@ module Scheduling =
         | _ -> 0L<Cent>
 
     // generates a payment value based on an approximation, creates a schedule based on that payment value and returns the principal balance at the end of the schedule,
-    // the intention being to use this generator in an iteration by varying the payment value until the final principal balance is zero
+    // the intention being to use this generator in an iteration by varying the payment value until the final principal balance is zero (or the balloon amount for balloon schedules)
     let generatePaymentValue (bp: BasicParameters) paymentDays firstItem roughPayment =
         let scheduledPayment =
             roughPayment
@@ -939,7 +957,13 @@ module Scheduling =
                 (fun basicItem pd -> generateItem bp bp.InterestConfig.Method scheduledPayment basicItem pd)
                 firstItem
 
-        let principalBalance = decimal schedule.PrincipalBalance
+        let balloonAmount =
+            match bp.ScheduleConfig with
+            | AutoGenerateSchedule ags -> ags.BalloonPayment
+            | _ -> 0L<Cent>
+
+        // the bisection targets zero, so subtract the balloon from the balance so the solver converges when balance = balloon
+        let principalBalance = decimal (schedule.PrincipalBalance - balloonAmount)
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
     /// handle any principal balance overpayment (due to rounding) on the final payment of a schedule
@@ -1015,7 +1039,10 @@ module Scheduling =
         // generates a schedule based on the schedule configuration
         let basicItems =
             match bp.ScheduleConfig with
-            | AutoGenerateSchedule _ ->
+            | AutoGenerateSchedule ags ->
+                // the balloon amount is excluded from the amortisable principal when estimating the level payment
+                let balloonAmount = ags.BalloonPayment
+                let amortisablePrincipal = bp.Principal - balloonAmount
                 // calculate the estimated interest payable over the entire schedule
                 let roughInterest =
                     match bp.InterestConfig.Method with
@@ -1024,16 +1051,27 @@ module Scheduling =
                         let dailyInterestRate =
                             bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 
+                        // for a fully amortising schedule the effective average balance ≈ 2/3 of principal;
+                        // for a bullet loan the balance stays near the full principal throughout (factor = 1);
+                        // interpolate between the two factors based on the balloon-to-principal ratio
+                        let balloonFraction =
+                            if bp.Principal = 0L<Cent> then 0m
+                            else decimal balloonAmount / decimal bp.Principal
+
+                        let reductionFactor =
+                            let fullyAmortising = Fraction.toDecimal (Fraction.Simple(2, 3))
+                            fullyAmortising + balloonFraction * (1m - fullyAmortising)
+
                         Cent.toDecimalCent bp.Principal
                         * dailyInterestRate
                         * decimal finalScheduledPaymentDay
-                        * Fraction.toDecimal (Fraction.Simple(2, 3))
+                        * reductionFactor
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue bp paymentDays initialBasicItem
                 let iterationLimit = 100u
 
                 let roughPayment =
-                    calculateLevelPayment bp.Principal feeTotal roughInterest paymentCount bp.PaymentConfig.Rounding
+                    calculateLevelPayment amortisablePrincipal feeTotal roughInterest paymentCount bp.PaymentConfig.Rounding
                     |> Cent.toDecimalCent
                     |> decimal
 
@@ -1136,3 +1174,34 @@ module Scheduling =
                             |> Percent.round 2
                 }
             }
+
+    /// convenience constructor for PCP (Personal Contract Purchase) and other balloon repayment products,
+    /// deriving the regular monthly payments from the principal, Guaranteed Future Value (GFV), annual rate, and term
+    ///
+    /// the GFV is set as the balloon payment; `calculateBasicSchedule` will auto-calculate the lower regular monthly payments
+    /// and the final payment will be the last regular instalment plus the GFV; APR is correctly computed over all cash flows
+    let pcp
+        (evaluationDate: Date)
+        (startDate: Date)
+        (principal: int64<Cent>)
+        (guaranteedFutureValue: int64<Cent>)
+        (unitPeriodConfig: UnitPeriod.Config)
+        (termPayments: int)
+        (paymentConfig: Payment.BasicConfig)
+        (interestConfig: Interest.BasicConfig)
+        (feeConfig: Fee.BasicConfig voption)
+        : BasicParameters =
+        {
+            EvaluationDate = evaluationDate
+            StartDate = startDate
+            Principal = principal
+            ScheduleConfig =
+                AutoGenerateSchedule {
+                    UnitPeriodConfig = unitPeriodConfig
+                    ScheduleLength = PaymentCount termPayments
+                    BalloonPayment = guaranteedFutureValue
+                }
+            PaymentConfig = paymentConfig
+            FeeConfig = feeConfig
+            InterestConfig = interestConfig
+        }

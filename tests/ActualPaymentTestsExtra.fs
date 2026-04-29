@@ -41,6 +41,7 @@ module ActualPaymentTestsExtra =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2023, 8, 1)
                     ScheduleLength = PaymentCount 5
+                    BalloonPayment = 0L<Cent>
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -163,6 +164,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -221,6 +223,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -317,6 +320,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(8, Date(2023, 11, 23))
                         ScheduleLength = PaymentCount 19
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig =
                     ValueSome {
@@ -396,6 +400,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 9, 15)
                         ScheduleLength = PaymentCount 7
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig = ValueNone
                 Basic.InterestConfig = {
@@ -476,6 +481,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.PaymentConfig.Timeout = 7<DurationDay>
         }
@@ -534,6 +540,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -623,6 +630,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 3, 26))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -713,6 +721,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 11, 24)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -813,6 +822,7 @@ module ActualPaymentTestsExtra =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 9, 23)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment

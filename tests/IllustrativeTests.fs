@@ -79,6 +79,7 @@ module IllustrativeTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2025, 3, 31)
                     ScheduleLength = PaymentCount 4
+                    BalloonPayment = 0L<Cent>
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment

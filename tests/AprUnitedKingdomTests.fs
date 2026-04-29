@@ -85,6 +85,7 @@ module AprUnitedKingdomTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Config.defaultMonthly 1 firstPaymentDate
                         ScheduleLength = PaymentCount paymentCount
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment

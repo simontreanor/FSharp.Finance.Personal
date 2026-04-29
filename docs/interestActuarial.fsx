@@ -44,6 +44,7 @@ let bp: BasicParameters = {
         AutoGenerateSchedule {
             UnitPeriodConfig = Monthly(1, 2025, 5, 22)
             ScheduleLength = PaymentCount 4
+            BalloonPayment = 0L<Cent>
         }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
