@@ -30,7 +30,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>FSharp.Finance.Personal</PackageId>
     <Authors>Simon Treanor</Authors>
-    <PackageDescription>F# Personal Finance Library</PackageDescription>
+    <PackageDescription>F# library for personal-finance calculations: APR (EU/UK/US), amortisation schedules, interest, fees and charges for loans, mortgages, hire purchase, PCP and credit cards. Idiomatic F# types with UK regulatory accuracy.</PackageDescription>
+    <PackageTags>fsharp finance personal-finance apr amortisation mortgage loan hire-purchase pcp credit-card interest uk regulatory</PackageTags>
+    <PackageReleaseNotes>https://github.com/simontreanor/FSharp.Finance.Personal/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/simontreanor/FSharp.Finance.Personal</RepositoryUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadMeFile>README.md</PackageReadMeFile>

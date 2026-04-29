@@ -24,6 +24,18 @@ This library is able to generate amortisation schedules based on a highly custom
 
 [Amortisation examples](exampleAmortisation.fsx)
 
+## Product Examples
+
+Worked examples for common consumer-finance product types:
+
+[Personal Loan](examplePersonalLoan.fsx)
+
+[Mortgage](exampleMortgage.fsx)
+
+[PCP Car Finance](examplePcp.fsx)
+
+[Credit Card](exampleCreditCard.fsx)
+
 ## More about this library
 
 [General design considerations](generalDesign.md)
