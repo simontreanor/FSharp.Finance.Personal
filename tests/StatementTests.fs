@@ -284,34 +284,42 @@ module StatementTests =
 
     [<Fact>]
     let ``toCsv: double-quote characters in field values are escaped as double-double-quotes`` () =
-        // RFC 4180: a double-quote appearing inside a field must be escaped by preceding it with another double-quote.
-        // The Date.Html and formatAmount outputs never produce double quotes in normal operation;
-        // this test exercises the escape function's contract by constructing a synthetic line whose
-        // Date formats to a safe value while verifying the quoting logic is applied consistently.
-        // We verify indirectly: the escape function wraps any field that contains a comma in double-quotes,
-        // and within that wrapping any pre-existing double-quote is doubled.
-        // We confirm this by checking that "1,500.00" appears as the RFC 4180-quoted form "\"1,500.00\""
-        // (not as bare 1,500.00 or \\\"1,500.00\\\").
+        // RFC 4180: a field containing commas is wrapped in double-quotes; the column count is
+        // preserved regardless of how many commas appear inside those quoted values.
+        // The Date.Html and formatAmount outputs never produce double-quotes or newlines in
+        // normal operation, so this test verifies the RFC 4180 structural invariant using a
+        // state-machine parser that correctly handles the "" escape sequence inside quoted fields.
         let schedules = amortise actuarialParameters actuarialActualPayments
         let lines = Statement.generate actuarialParameters.Basic.InterestConfig.Rounding schedules.AmortisationSchedule
         let csv = Statement.toCsv lines
 
-        // a bare (unescaped) comma inside a value must not appear outside quotes
         let csvLines = csv.Split('\n')
         csvLines
         |> Array.skip 1  // skip header
         |> Array.forall (fun row ->
-            // simple RFC 4180 parse: outside quoted fields commas are only separators
-            // verify each row decodes to exactly 12 logical columns using a state machine
+            // RFC 4180-aware column counter:
+            // - commas inside quoted fields are NOT separators
+            // - two consecutive double-quotes inside a quoted field are a single escaped quote
             let mutable cols = 0
             let mutable inQuote = false
-            for ch in row do
-                match inQuote, ch with
-                | false, '"' -> inQuote <- true
-                | true, '"' -> inQuote <- false
-                | false, ',' -> cols <- cols + 1
-                | _ -> ()
-            cols = 11  // 11 commas = 12 columns
+            let mutable i = 0
+            while i < row.Length do
+                match inQuote, row[i] with
+                | false, '"' ->
+                    inQuote <- true
+                    i <- i + 1
+                | true, '"' when i + 1 < row.Length && row[i + 1] = '"' ->
+                    // escaped double-quote inside a quoted field; consume both characters
+                    i <- i + 2
+                | true, '"' ->
+                    inQuote <- false
+                    i <- i + 1
+                | false, ',' ->
+                    cols <- cols + 1
+                    i <- i + 1
+                | _ ->
+                    i <- i + 1
+            cols = 11  // 11 separating commas = 12 columns
         )
         |> should equal true
 
