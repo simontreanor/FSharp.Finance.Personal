@@ -17,6 +17,8 @@ This example demonstrates the Excel-compatible XIRR functionality provided by th
 Consider a simple investment scenario where you invest $10,000 and receive $11,000 one year later:
 *)
 
+// After the next package release, this can use:
+// #r "nuget:FSharp.Finance.Personal"
 #r "nuget: ExcelFinancialFunctions, 3.2.0"
 #r "../src/bin/Release/netstandard2.1/FSharp.Finance.Personal.dll"
 
