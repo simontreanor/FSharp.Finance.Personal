@@ -38,8 +38,8 @@ src/EquipmentFinance/
 
 ## Depreciation Common Module
 
-- `Depreciation.straightLine cost salvage life`
-- `Depreciation.decliningBalance cost salvage life rateFactor switchToStraightLine`
+- `DepreciationCommon.Calculations.straightLine cost salvage life`
+- `DepreciationCommon.Calculations.decliningBalance cost salvage life rateFactor switchToStraightLine`
 
 ## US MACRS Depreciation
 
@@ -55,11 +55,12 @@ src/EquipmentFinance/
 ### Example Usage
 
 ```fsharp
+open FSharp.Finance.Personal
 open FSharp.Finance.Personal.EquipmentFinance.Depreciation.US_MACRS
 
 let computer = {
     CostBasis = 10000_00L<Cent> // $10,000
-    PlacedInServiceDate = Date(2024, 1, 1)
+    PlacedInServiceDate = DateDay.Date(2024, 1, 1)
     PropertyClass = Types.AssetClass.FiveYear
     Convention = Types.Convention.HalfYear
 }
@@ -85,10 +86,11 @@ let schedule = Calculations.generateSchedule computer
 ### Example Usage
 
 ```fsharp
+open FSharp.Finance.Personal
 open FSharp.Finance.Personal.EquipmentFinance.Depreciation.UK_CapitalAllowances
 
 let machinery = {
-    Amount = 50_000m
+    Amount = 50_000_00L<Cent>
     Pool = Types.Pool.Main
     Description = "Manufacturing equipment"
 }
@@ -111,7 +113,7 @@ let schedule = Calculations.scheduleDefault machinery
 - Monthly payment calculation with various interest rates
 - Complete amortization schedule generation
 - Integration with MACRS depreciation analysis
-- Support for residual values and down payments
+- Support for residual values; `Principal` is the financed amount after any down payment
 
 ### Example Usage
 
@@ -217,4 +219,3 @@ Potential areas for expansion:
 - Integration with tax calculation modules
 - Support for partial-year conventions
 - Multiple asset management capabilities
-

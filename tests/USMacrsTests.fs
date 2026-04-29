@@ -108,6 +108,33 @@ module USMacrsTests =
         totalDepreciation |> should (equalWithin 50L<Cent>) asset.CostBasis
 
     [<Fact>]
+    let ``MACRS schedule is capped at full cost basis`` () =
+        let asset = {
+            CostBasis = 100_00L<Cent>
+            PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+            PropertyClass = Types.AssetClass.ThreeYear
+            Convention = Types.Convention.HalfYear
+        }
+
+        let schedule = Calculations.generateSchedule asset
+        let lastYear = schedule |> List.last
+
+        lastYear.AccumulatedDepreciation |> should equal asset.CostBasis
+        lastYear.BookValue |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Unsupported MACRS convention is rejected`` () =
+        let asset = {
+            CostBasis = 1000_00L<Cent>
+            PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+            PropertyClass = Types.AssetClass.FiveYear
+            Convention = Types.Convention.MidQuarter
+        }
+
+        (fun () -> Calculations.generateSchedule asset |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+    [<Fact>]
     let ``Example computer schedule works`` () =
         let schedule = Examples.exampleComputerSchedule ()
         

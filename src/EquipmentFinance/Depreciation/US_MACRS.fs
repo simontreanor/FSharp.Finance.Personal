@@ -119,6 +119,10 @@ module Calculations =
 
     /// Calculate the MACRS depreciation schedule for an asset
     let generateSchedule (asset: MacrsAsset) : DepreciationYear list =
+        if asset.CostBasis <= 0L<Cent> then invalidArg (nameof asset.CostBasis) "CostBasis must be > 0."
+        if asset.Convention <> Convention.HalfYear then
+            invalidArg (nameof asset.Convention) "Only HalfYear convention is currently supported."
+
         let percentages = getDepreciationPercentages asset.PropertyClass
         
         let rec calculateYears (year: int) (accumulatedDep: int64<Cent>) (acc: DepreciationYear list) =
@@ -126,9 +130,11 @@ module Calculations =
                 List.rev acc
             else
                 let rate = percentages.[year - 1] / 100m // Convert percentage to decimal
-                let depreciationAmount = 
+                let rawDepreciationAmount = 
                     decimal asset.CostBasis * rate * 1m<Cent>
                     |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+                let remainingBasis = asset.CostBasis - accumulatedDep
+                let depreciationAmount = min rawDepreciationAmount remainingBasis
                 let newAccumulated = accumulatedDep + depreciationAmount
                 let bookValue = asset.CostBasis - newAccumulated
 
@@ -156,30 +162,29 @@ module Calculations =
 
     /// Calculate MACRS depreciation for a specific year
     let calculateMacrsDepreciation (asset: MacrsAsset) (year: int) : DepreciationYear =
+        if asset.Convention <> Convention.HalfYear then
+            invalidArg (nameof asset.Convention) "Only HalfYear convention is currently supported."
+        if year <= 0 then invalidArg (nameof year) "Year must be > 0."
+
         let percentage = getMacrsPercentage asset.PropertyClass year
+        let schedule = generateSchedule asset
+        let matchedYear = schedule |> List.tryFind (fun depreciationYear -> depreciationYear.Year = year)
+
         let depreciationAmount = 
             decimal asset.CostBasis * (percentage / 100m) * 1m<Cent>
             |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
         
         // Calculate cumulative depreciation through this year
-        let cumulativeDepreciation = 
-            [1..year]
-            |> List.sumBy (fun y -> 
-                let pct = getMacrsPercentage asset.PropertyClass y
-                decimal asset.CostBasis * (pct / 100m))
-            |> (*) 1m<Cent>
-            |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
-            |> min asset.CostBasis
-        
-        let bookValue = asset.CostBasis - cumulativeDepreciation
-        
-        {
-            Year = year
-            DepreciationRate = percentage / 100m
-            DepreciationAmount = depreciationAmount
-            AccumulatedDepreciation = cumulativeDepreciation
-            BookValue = bookValue
-        }
+        match matchedYear with
+        | Some depreciationYear -> depreciationYear
+        | None ->
+            {
+                Year = year
+                DepreciationRate = percentage / 100m
+                DepreciationAmount = depreciationAmount
+                AccumulatedDepreciation = asset.CostBasis
+                BookValue = 0L<Cent>
+            }
 
     /// Determine the MACRS property class based on asset description
     let classifyAsset (assetDescription: string) : AssetClass =

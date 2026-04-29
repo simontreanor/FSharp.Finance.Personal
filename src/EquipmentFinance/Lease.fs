@@ -89,6 +89,108 @@ module Lease =
         RemainingLiability: int64<Cent>
     }
 
+    let private getScheduleShape (terms: EquipmentLeaseTerms) =
+        let periodsPerYear = terms.PaymentFrequency.PaymentsPerYear
+        if periodsPerYear <= 0 || 12 % periodsPerYear <> 0 then
+            invalidArg (nameof terms.PaymentFrequency) "Payment frequency must correspond to a whole number of months per payment period."
+
+        let monthsPerPeriod = 12 / periodsPerYear
+        if terms.TermMonths <= 0 then invalidArg (nameof terms.TermMonths) "TermMonths must be > 0."
+        if terms.TermMonths % monthsPerPeriod <> 0 then
+            invalidArg (nameof terms.TermMonths) "TermMonths must be an exact multiple of the selected payment interval."
+
+        periodsPerYear, monthsPerPeriod, terms.TermMonths / monthsPerPeriod
+
+    let private validateTerms (terms: EquipmentLeaseTerms) =
+        let _, _, _ = getScheduleShape terms
+        if terms.FairMarketValue <= 0L<Cent> then invalidArg (nameof terms.FairMarketValue) "FairMarketValue must be > 0."
+        if terms.UpfrontPayment < 0L<Cent> then invalidArg (nameof terms.UpfrontPayment) "UpfrontPayment must be >= 0."
+        if terms.UpfrontPayment >= terms.FairMarketValue then invalidArg (nameof terms.UpfrontPayment) "UpfrontPayment must be < FairMarketValue."
+        if terms.ResidualValue < 0L<Cent> then invalidArg (nameof terms.ResidualValue) "ResidualValue must be >= 0."
+        if terms.ResidualValue >= terms.FairMarketValue then invalidArg (nameof terms.ResidualValue) "ResidualValue must be < FairMarketValue."
+        if terms.LeasePayment < 0L<Cent> then invalidArg (nameof terms.LeasePayment) "LeasePayment must be >= 0."
+
+    let private periodRate (terms: EquipmentLeaseTerms) (periodsPerYear: int) =
+        match terms.ImplicitRate with
+        | Interest.Rate.Zero -> 0m
+        | Interest.Rate.Annual (Percent rate) -> rate / 100m / decimal periodsPerYear
+        | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / decimal periodsPerYear
+
+    let private buildScheduleCore (terms: EquipmentLeaseTerms) =
+        validateTerms terms
+
+        let periodsPerYear, monthsPerPeriod, totalPeriods = getScheduleShape terms
+        let rate = periodRate terms periodsPerYear
+
+        let leasePayment =
+            if terms.LeasePayment > 0L<Cent> then terms.LeasePayment
+            else
+                let fairValue = Cent.toDecimal terms.FairMarketValue
+                let upfront = Cent.toDecimal terms.UpfrontPayment
+                let residual = Cent.toDecimal terms.ResidualValue
+                let financedPrincipal = fairValue - upfront
+                if financedPrincipal <= 0m then invalidArg "terms.UpfrontPayment" "Upfront payment >= fair value."
+                if residual >= fairValue then invalidArg "terms.ResidualValue" "Residual must be < fair value."
+
+                if rate = 0m then
+                    let paymentDec = (financedPrincipal - residual) / decimal totalPeriods
+                    if paymentDec <= 0m then invalidOp "Non-positive payment under zero-rate scenario."
+                    Cent.fromDecimal paymentDec
+                else
+                    let growth = pow (1m + rate) (decimal totalPeriods)
+                    let pvResidual = residual / growth
+                    let baseAmount = financedPrincipal - pvResidual
+                    if baseAmount <= 0m then invalidOp "Discounted residual >= financed principal."
+                    let denom = 1m - 1m / growth
+                    if denom = 0m then invalidOp "Denominator collapsed (rate too small / overflow)."
+                    let paymentDec = baseAmount * rate / denom
+                    if paymentDec <= 0m then invalidOp "Computed payment is non-positive."
+                    Cent.fromDecimal paymentDec
+
+        let rec generateSchedule paymentNum liability acc =
+            if paymentNum > totalPeriods then
+                acc |> List.rev |> Array.ofList
+            else
+                let interestPortion, principalPortion, paymentAmount, newLiability =
+                    if terms.LeaseType = LeaseType.OperatingLease then
+                        0L<Cent>, 0L<Cent>, leasePayment, 0L<Cent>
+                    else
+                        let interest =
+                            decimal liability * rate * 1m<Cent>
+                            |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+
+                        let scheduledPrincipal = leasePayment - interest
+                        if scheduledPrincipal < 0L<Cent> then
+                            invalidArg (nameof terms.LeasePayment) "Lease payment must cover at least the period interest."
+                        let remainingPrincipalBeforeResidual = max 0L<Cent> (liability - terms.ResidualValue)
+                        let principal =
+                            if paymentNum = totalPeriods then
+                                remainingPrincipalBeforeResidual
+                            else
+                                min scheduledPrincipal remainingPrincipalBeforeResidual
+                        if terms.LeasePayment > 0L<Cent> && principal > scheduledPrincipal then
+                            invalidArg (nameof terms.LeasePayment) "LeasePayment is too low to amortize to the stated residual by maturity."
+                        let payment = interest + principal
+                        let remaining = liability - principal
+                        interest, principal, payment, remaining
+
+                let item = {
+                    PaymentNumber = paymentNum
+                    PaymentDate = DateDay.Date(2000, 1, 1).AddMonths(paymentNum * monthsPerPeriod)
+                    PaymentAmount = paymentAmount
+                    PrincipalPortion = principalPortion
+                    InterestPortion = interestPortion
+                    RemainingLiability = newLiability
+                }
+
+                generateSchedule (paymentNum + 1) newLiability (item :: acc)
+
+        let initialLiability =
+            if terms.LeaseType = LeaseType.OperatingLease then 0L<Cent>
+            else terms.FairMarketValue - terms.UpfrontPayment
+
+        leasePayment, periodsPerYear, monthsPerPeriod, totalPeriods, rate, generateSchedule 1 initialLiability []
+
     /// Calculate level lease payment with optional residual (balloon)
     /// Assumptions:
     /// - All incoming monetary values are int64<Cent>
@@ -96,52 +198,17 @@ module Lease =
     /// - ResidualValue discounted over total periods
     /// - Interest.Rate.Annual is nominal annual; divided by payments/year
     let calculateLeasePayment (terms: EquipmentLeaseTerms) : int64<Cent> =
-        let periodsPerYear = terms.PaymentFrequency.PaymentsPerYear
-        let totalPeriods = terms.TermMonths * periodsPerYear / 12
-        if totalPeriods <= 0 then invalidArg (nameof terms.TermMonths) "Computed total periods <= 0."
-
-        let periodRate =
-            match terms.ImplicitRate with
-            | Interest.Rate.Zero -> 0m
-            | Interest.Rate.Annual (Calculation.Percent p) ->
-                p / 100m / decimal periodsPerYear
-            | Interest.Rate.Daily (Calculation.Percent p) ->
-                // Interpret as nominal daily simple rate -> nominal annual -> per-period
-                (p / 100m) * 365m / decimal periodsPerYear
-
-        let fairValue = Cent.toDecimal terms.FairMarketValue
-        let upfront   = Cent.toDecimal terms.UpfrontPayment
-        let residual  = Cent.toDecimal terms.ResidualValue
-
-        let financedPrincipal = fairValue - upfront
-        if financedPrincipal <= 0m then invalidArg "terms.UpfrontPayment" "Upfront payment >= fair value."
-        if residual >= fairValue then invalidArg "terms.ResidualValue" "Residual must be < fair value."
-
-        if periodRate = 0m then
-            // Zero-rate linear repayment less residual
-            let paymentDec = (financedPrincipal - residual) / decimal totalPeriods
-            if paymentDec <= 0m then invalidOp "Non-positive payment under zero-rate scenario."
-            Cent.fromDecimal paymentDec
-        else
-            let growth = pow (1m + periodRate) (decimal totalPeriods)
-            let pvResidual = residual / growth
-            let baseAmount = financedPrincipal - pvResidual
-            if baseAmount <= 0m then invalidOp "Discounted residual >= financed principal."
-            let denom = 1m - 1m / growth
-            if denom = 0m then invalidOp "Denominator collapsed (rate too small / overflow)."
-            let paymentDec = baseAmount * periodRate / denom
-            if paymentDec <= 0m then invalidOp "Computed payment is non-positive."
-            Cent.fromDecimal paymentDec
+        buildScheduleCore terms |> fun (leasePayment, _, _, _, _, _) -> leasePayment
 
     /// Calculate lease payment details
     let calculateLeaseDetails (terms: EquipmentLeaseTerms) : LeaseCalculation =
+        validateTerms terms
         let leasePayment = 
             if terms.LeasePayment > 0L<Cent> then terms.LeasePayment 
             else calculateLeasePayment terms
-        
-        let periodsPerYear = terms.PaymentFrequency.PaymentsPerYear
-        let totalPeriods = terms.TermMonths * periodsPerYear / 12
-        let totalPayments = leasePayment * int64 totalPeriods + terms.UpfrontPayment
+
+        let _, periodsPerYear, _, _, rate, schedule = buildScheduleCore terms
+        let totalPayments = (schedule |> Array.sumBy (fun item -> item.PaymentAmount)) + terms.UpfrontPayment
         
         let totalCost = 
             match terms.PurchaseOption with
@@ -149,18 +216,12 @@ module Lease =
             | None -> totalPayments
         
         // Calculate present value of lease payments
-        let periodRate = 
-            match terms.ImplicitRate with
-            | Interest.Rate.Zero -> 0m
-            | Interest.Rate.Annual (Percent rate) -> rate / 100m / decimal periodsPerYear
-            | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / decimal periodsPerYear
-        
         let presentValue = 
-            if periodRate = 0m then
+            if rate = 0m then
                 totalPayments
             else
-                let pv = [1..totalPeriods]
-                         |> List.sumBy (fun period -> decimal leasePayment / pow (1m + periodRate) (decimal period))
+                let pv = schedule
+                         |> Array.sumBy (fun item -> decimal item.PaymentAmount / pow (1m + rate) (decimal item.PaymentNumber))
                          |> (+) (decimal terms.UpfrontPayment)
                          |> (*) 1m<Cent>
                 Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero) pv
@@ -181,63 +242,11 @@ module Lease =
 
     /// Generate lease payment schedule
     let generateLeaseSchedule (terms: EquipmentLeaseTerms) (startDate: DateDay.Date) : LeaseScheduleItem array =
-        let leasePayment = 
-            if terms.LeasePayment > 0L<Cent> then terms.LeasePayment 
-            else calculateLeasePayment terms
-        
-        let periodsPerYear = terms.PaymentFrequency.PaymentsPerYear
-        let totalPeriods = terms.TermMonths * periodsPerYear / 12
-        let periodRate = 
-            match terms.ImplicitRate with
-            | Interest.Rate.Zero -> 0m
-            | Interest.Rate.Annual (Percent rate) -> rate / 100m / decimal periodsPerYear
-            | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / decimal periodsPerYear
-        
-        let monthsPerPeriod = 12 / periodsPerYear
-        
-        let rec generateSchedule paymentNum currentDate liability acc =
-            if paymentNum > totalPeriods then
-                acc |> List.rev |> Array.ofList
-            else
-                let interestPortion = 
-                    if terms.LeaseType = LeaseType.OperatingLease then
-                        0L<Cent> // Operating leases don't split principal/interest
-                    else
-                        decimal liability * periodRate * 1m<Cent>
-                        |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
-                
-                let principalPortion = 
-                    if terms.LeaseType = LeaseType.OperatingLease then
-                        0L<Cent> // Operating leases don't split principal/interest
-                    else
-                        leasePayment - interestPortion
-                
-                let newLiability = 
-                    if terms.LeaseType = LeaseType.OperatingLease then
-                        liability // No liability reduction for operating leases
-                    else
-                        liability - principalPortion
-                
-                let paymentDate = startDate.AddMonths(paymentNum * monthsPerPeriod)
-                
-                let item = {
-                    PaymentNumber = paymentNum
-                    PaymentDate = paymentDate
-                    PaymentAmount = leasePayment
-                    PrincipalPortion = principalPortion
-                    InterestPortion = interestPortion
-                    RemainingLiability = newLiability
-                }
-                
-                generateSchedule (paymentNum + 1) paymentDate newLiability (item :: acc)
-        
-        let initialLiability = 
-            if terms.LeaseType = LeaseType.OperatingLease then
-                terms.FairMarketValue // For display purposes
-            else
-                terms.FairMarketValue - terms.UpfrontPayment
-        
-        generateSchedule 1 startDate initialLiability []
+        let _, _, monthsPerPeriod, _, _, schedule = buildScheduleCore terms
+
+        schedule
+        |> Array.map (fun item ->
+            { item with PaymentDate = startDate.AddMonths(item.PaymentNumber * monthsPerPeriod) })
 
     /// Analyze lease vs buy decision
     type LeaseVsBuyAnalysis = {

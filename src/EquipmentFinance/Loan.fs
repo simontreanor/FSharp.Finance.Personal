@@ -14,7 +14,7 @@ module Loan =
 
     /// Terms and conditions for an equipment loan
     type EquipmentLoanTerms = {
-        /// The principal amount of the loan
+        /// The financed principal amount of the loan, net of any down payment
         Principal: int64<Cent>
         /// The annual interest rate
         InterestRate: Interest.Rate
@@ -60,31 +60,77 @@ module Loan =
         RemainingBalance: int64<Cent>
     }
 
+    let private validateTerms (terms: EquipmentLoanTerms) =
+        if terms.Principal <= 0L<Cent> then invalidArg (nameof terms.Principal) "Principal must be > 0."
+        if terms.TermMonths <= 0 then invalidArg (nameof terms.TermMonths) "TermMonths must be > 0."
+        if terms.EquipmentCost <= 0L<Cent> then invalidArg (nameof terms.EquipmentCost) "EquipmentCost must be > 0."
+        if terms.DownPayment < 0L<Cent> then invalidArg (nameof terms.DownPayment) "DownPayment must be >= 0."
+        if terms.ResidualValue < 0L<Cent> then invalidArg (nameof terms.ResidualValue) "ResidualValue must be >= 0."
+        if terms.ResidualValue >= terms.Principal then invalidArg (nameof terms.ResidualValue) "ResidualValue must be less than Principal."
+
+        match terms.MonthlyPayment with
+        | Some payment when payment <= 0L<Cent> -> invalidArg (nameof terms.MonthlyPayment) "MonthlyPayment must be > 0 when provided."
+        | _ -> ()
+
+    let private monthlyRate (interestRate: Interest.Rate) =
+        match interestRate with
+        | Interest.Rate.Zero -> 0m
+        | Interest.Rate.Annual (Percent rate) -> rate / 100m / 12m
+        | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / 12m
+
+    let private buildScheduleCore (terms: EquipmentLoanTerms) =
+        validateTerms terms
+
+        let payment =
+            match terms.MonthlyPayment with
+            | Some monthlyPayment -> monthlyPayment
+            | None ->
+                let rate = monthlyRate terms.InterestRate
+                if rate = 0m then
+                    let amortizedPrincipal = Cent.toDecimal (terms.Principal - terms.ResidualValue)
+                    Cent.fromDecimal (amortizedPrincipal / decimal terms.TermMonths)
+                else
+                    let growthFactor = pow (1m + rate) (decimal terms.TermMonths)
+                    let residualPresentValue = decimal terms.ResidualValue / growthFactor
+                    let amortizedPrincipal = decimal terms.Principal - residualPresentValue
+                    let numerator = amortizedPrincipal * rate * growthFactor
+                    let denominator = growthFactor - 1m
+                    let installment = numerator / denominator
+                    installment * 1m<Cent> |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+
+        let rate = monthlyRate terms.InterestRate
+
+        let rec generateSchedule paymentNum balance acc =
+            if paymentNum > terms.TermMonths then
+                acc |> List.rev |> Array.ofList
+            else
+                let interestPayment = 
+                    decimal balance * rate * 1m<Cent>
+                    |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+
+                let paymentAmount, principalPayment =
+                    if paymentNum = terms.TermMonths then
+                        let finalPayment = balance + interestPayment
+                        finalPayment, balance
+                    else
+                        let principal = payment - interestPayment
+                        if principal <= 0L<Cent> then
+                            invalidArg (nameof terms.MonthlyPayment) "Monthly payment must exceed periodic interest."
+                        payment, principal
+
+                let newBalance = balance - principalPayment
+                generateSchedule (paymentNum + 1) newBalance ((paymentNum, paymentAmount, principalPayment, interestPayment, newBalance) :: acc)
+
+        payment, generateSchedule 1 terms.Principal []
+
     /// Calculate monthly payment for an equipment loan
     let calculateMonthlyPayment (terms: EquipmentLoanTerms) : int64<Cent> =
-        match terms.MonthlyPayment with
-        | Some payment -> payment
-        | None ->
-            let monthlyRate = 
-                match terms.InterestRate with
-                | Interest.Rate.Zero -> 0m
-                | Interest.Rate.Annual (Percent rate) -> rate / 100m / 12m
-                | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / 12m
-            
-            if monthlyRate = 0m then
-                // No interest, just divide principal by term
-                terms.Principal / int64 terms.TermMonths
-            else
-                let loanAmount = terms.Principal - terms.ResidualValue
-                let numerator = decimal loanAmount * monthlyRate * pow (1m + monthlyRate) (decimal terms.TermMonths)
-                let denominator = pow (1m + monthlyRate) (decimal terms.TermMonths) - 1m
-                let payment = numerator / denominator
-                payment * 1m<Cent> |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
+        buildScheduleCore terms |> fst
 
     /// Calculate payment details for an equipment loan
     let calculatePaymentDetails (terms: EquipmentLoanTerms) : PaymentCalculation =
-        let monthlyPayment = calculateMonthlyPayment terms
-        let totalPayments = monthlyPayment * int64 terms.TermMonths + terms.ResidualValue
+        let monthlyPayment, schedule = buildScheduleCore terms
+        let totalPayments = schedule |> Array.sumBy (fun (_, paymentAmount, _, _, _) -> paymentAmount)
         let totalInterest = totalPayments - terms.Principal
         
         // Simplified APR calculation (actual APR would require iterative calculation)
@@ -103,43 +149,18 @@ module Loan =
 
     /// Generate loan amortization schedule
     let generateAmortizationSchedule (terms: EquipmentLoanTerms) (startDate: DateDay.Date) : AmortizationItem array =
-        let monthlyPayment = calculateMonthlyPayment terms
-        let monthlyRate = 
-            match terms.InterestRate with
-            | Interest.Rate.Zero -> 0m
-            | Interest.Rate.Annual (Percent rate) -> rate / 100m / 12m
-            | Interest.Rate.Daily (Percent rate) -> rate / 100m * 365m / 12m
-        
-        let rec generateSchedule paymentNum currentDate balance acc =
-            if paymentNum > terms.TermMonths then
-                acc |> List.rev |> Array.ofList
-            else
-                let interestPayment = 
-                    decimal balance * monthlyRate * 1m<Cent>
-                    |> Cent.fromDecimalCent (RoundWith MidpointRounding.AwayFromZero)
-                
-                let principalPayment = 
-                    if paymentNum = terms.TermMonths then
-                        // Final payment: pay remaining balance minus residual
-                        balance - terms.ResidualValue
-                    else
-                        monthlyPayment - interestPayment
-                
-                let newBalance = balance - principalPayment
-                let paymentDate = startDate.AddMonths(paymentNum)
-                
-                let item = {
-                    PaymentNumber = paymentNum
-                    PaymentDate = paymentDate
-                    PaymentAmount = if paymentNum = terms.TermMonths then principalPayment + interestPayment else monthlyPayment
-                    PrincipalPayment = principalPayment
-                    InterestPayment = interestPayment
-                    RemainingBalance = newBalance
-                }
-                
-                generateSchedule (paymentNum + 1) paymentDate newBalance (item :: acc)
-        
-        generateSchedule 1 startDate terms.Principal []
+        let _, schedule = buildScheduleCore terms
+
+        schedule
+        |> Array.map (fun (paymentNum, paymentAmount, principalPayment, interestPayment, remainingBalance) ->
+            {
+                PaymentNumber = paymentNum
+                PaymentDate = startDate.AddMonths(paymentNum)
+                PaymentAmount = paymentAmount
+                PrincipalPayment = principalPayment
+                InterestPayment = interestPayment
+                RemainingBalance = remainingBalance
+            })
 
     /// Analyze equipment loan with depreciation considerations
     type LoanAnalysis = {

@@ -43,6 +43,29 @@ module EquipmentLoanTests =
         payment |> should be (greaterThan 27777L<Cent>) // $10000/36
 
     [<Fact>]
+    let ``Monthly payment discounts balloon residual at non-zero interest`` () =
+        let terms = {
+            Principal = 10000_00L<Cent>
+            InterestRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 6.0m)
+            TermMonths = 36
+            MonthlyPayment = None
+            EquipmentDescription = "Manufacturing equipment"
+            EquipmentCost = 10000_00L<Cent>
+            DownPayment = 0L<Cent>
+            ResidualValue = 2000_00L<Cent>
+        }
+
+        let payment = Loan.calculateMonthlyPayment terms
+        let r = 0.06m / 12m
+        let n = 36
+        let growth = System.Math.Pow(float (1m + r), float n) |> decimal
+        let pvResidual = 2000.00m / growth
+        let amortizedPrincipal = 10000.00m - pvResidual
+        let expected = amortizedPrincipal * r * growth / (growth - 1m) |> Cent.fromDecimal
+
+        abs (payment - expected) |> should be (lessThanOrEqualTo 1L<Cent>)
+
+    [<Fact>]
     let ``Payment details calculation includes total payments and interest`` () =
         let terms = {
             Principal = 5000_00L<Cent> // $5,000
@@ -88,6 +111,42 @@ module EquipmentLoanTests =
         
         // Final balance should be 0 (or residual value)
         schedule.[11].RemainingBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ``Amortization schedule clears balloon on final payment`` () =
+        let terms = {
+            Principal = 10000_00L<Cent>
+            InterestRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 6.0m)
+            TermMonths = 36
+            MonthlyPayment = None
+            EquipmentDescription = "Manufacturing equipment"
+            EquipmentCost = 10000_00L<Cent>
+            DownPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
+        }
+
+        let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+        let schedule = Loan.generateAmortizationSchedule terms startDate
+        let last = schedule |> Array.last
+
+        last.RemainingBalance |> should equal 0L<Cent>
+        last.PaymentAmount |> should be (greaterThan (Loan.calculateMonthlyPayment terms))
+
+    [<Fact>]
+    let ``Invalid loan terms are rejected`` () =
+        let invalidTerms = {
+            Principal = 1000_00L<Cent>
+            InterestRate = FSharp.Finance.Personal.Interest.Rate.Zero
+            TermMonths = 0
+            MonthlyPayment = None
+            EquipmentDescription = "Test equipment"
+            EquipmentCost = 1000_00L<Cent>
+            DownPayment = 0L<Cent>
+            ResidualValue = 0L<Cent>
+        }
+
+        (fun () -> Loan.calculateMonthlyPayment invalidTerms |> ignore)
+        |> should throw typeof<System.ArgumentException>
 
     [<Fact>]
     let ``Loan analysis includes depreciation schedule`` () =

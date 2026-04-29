@@ -34,7 +34,7 @@ module EquipmentLeaseTests =
         // ($1200 - $200) / 12 = $83.33
         payment |> should equal 83_33L<Cent>
 
-    [<Fact>] // this test still fails
+    [<Fact>]
     let ``Lease payment calculation works with interest`` () =
         let terms = {
             EquipmentDescription = "Manufacturing equipment"
@@ -120,10 +120,9 @@ module EquipmentLeaseTests =
         
         // Last payment should have payment number equal to term
         schedule.[11].PaymentNumber |> should equal 12
-        
-        // All payments should have the same amount for operating lease
-        schedule |> Array.iter (fun item -> 
-            item.PaymentAmount |> should equal 250_00L<Cent>)
+
+        schedule.[11].RemainingLiability |> should equal 500_00L<Cent>
+        schedule.[11].PaymentAmount |> should be (lessThanOrEqualTo 250_00L<Cent>)
 
     [<Fact>]
     let ``Operating lease does not split principal and interest`` () =
@@ -175,6 +174,127 @@ module EquipmentLeaseTests =
         (firstPayment.PrincipalPortion + firstPayment.InterestPortion) |> should equal firstPayment.PaymentAmount
 
     [<Fact>]
+    let ``Finance lease schedule amortizes to residual not zero`` () =
+        let terms = {
+            EquipmentDescription = "Equipment"
+            FairMarketValue = 6000_00L<Cent>
+            TermMonths = 24
+            LeaseType = Lease.LeaseType.FinanceLease
+            PaymentFrequency = Lease.PaymentFrequency.Monthly
+            LeasePayment = 250_00L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 4.0m)
+        }
+
+        let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+        let schedule = Lease.generateLeaseSchedule terms startDate
+        let last = schedule |> Array.last
+
+        last.RemainingLiability |> should equal 1000_00L<Cent>
+        last.PaymentAmount |> should be (lessThanOrEqualTo 250_00L<Cent>)
+
+    [<Fact>]
+    let ``Operating lease schedule carries no liability`` () =
+        let terms = {
+            EquipmentDescription = "Equipment"
+            FairMarketValue = 6000_00L<Cent>
+            TermMonths = 24
+            LeaseType = Lease.LeaseType.OperatingLease
+            PaymentFrequency = Lease.PaymentFrequency.Monthly
+            LeasePayment = 250_00L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 4.0m)
+        }
+
+        let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+        let schedule = Lease.generateLeaseSchedule terms startDate
+
+        schedule |> Array.iter (fun item -> item.RemainingLiability |> should equal 0L<Cent>)
+
+    [<Fact>]
+    let ``Lease details uses actual schedule totals and present value`` () =
+        let terms = {
+            EquipmentDescription = "Computer"
+            FairMarketValue = 3000_00L<Cent>
+            TermMonths = 12
+            LeaseType = Lease.LeaseType.FinanceLease
+            PaymentFrequency = Lease.PaymentFrequency.Monthly
+            LeasePayment = 250_00L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 500_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 3.0m)
+        }
+
+        let details = Lease.calculateLeaseDetails terms
+        let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+        let schedule = Lease.generateLeaseSchedule terms startDate
+        let scheduleTotal = schedule |> Array.sumBy (fun item -> item.PaymentAmount)
+
+        details.TotalPayments |> should equal scheduleTotal
+        details.PresentValue |> should be (lessThanOrEqualTo details.TotalPayments)
+
+    [<Fact>]
+    let ``Finance lease rejects rental below period interest`` () =
+        let terms = {
+            EquipmentDescription = "Equipment"
+            FairMarketValue = 10000_00L<Cent>
+            TermMonths = 24
+            LeaseType = Lease.LeaseType.FinanceLease
+            PaymentFrequency = Lease.PaymentFrequency.Monthly
+            LeasePayment = 1_00L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 12.0m)
+        }
+
+        let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+        (fun () -> Lease.generateLeaseSchedule terms startDate |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+    [<Fact>]
+    let ``Finance lease rejects rental that cannot reach residual by maturity`` () =
+        let terms = {
+            EquipmentDescription = "Equipment"
+            FairMarketValue = 6000_00L<Cent>
+            TermMonths = 24
+            LeaseType = Lease.LeaseType.FinanceLease
+            PaymentFrequency = Lease.PaymentFrequency.Monthly
+            LeasePayment = 50_00L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 4.0m)
+        }
+
+        let startDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+        (fun () -> Lease.generateLeaseSchedule terms startDate |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+    [<Fact>]
+    let ``Lease rejects upfront payment at or above fair value`` () =
+        let terms = {
+            EquipmentDescription = "Equipment"
+            FairMarketValue = 6000_00L<Cent>
+            TermMonths = 24
+            LeaseType = Lease.LeaseType.FinanceLease
+            PaymentFrequency = Lease.PaymentFrequency.Monthly
+            LeasePayment = 0L<Cent>
+            UpfrontPayment = 6000_00L<Cent>
+            ResidualValue = 1000_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 4.0m)
+        }
+
+        (fun () -> Lease.calculateLeasePayment terms |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+    [<Fact>]
     let ``Lease vs buy analysis includes depreciation schedule`` () =
         let terms = {
             EquipmentDescription = "Manufacturing equipment"
@@ -195,3 +315,21 @@ module EquipmentLeaseTests =
         analysis.LeaseDetails.LeasePayment |> should equal 300_00L<Cent>
         analysis.PurchaseDepreciation |> should not' (be Empty)
         analysis.LeaseSchedule.Length |> should equal 36
+
+    [<Fact>]
+    let ``Lease rejects term incompatible with payment frequency`` () =
+        let terms = {
+            EquipmentDescription = "Equipment"
+            FairMarketValue = 6000_00L<Cent>
+            TermMonths = 13
+            LeaseType = Lease.LeaseType.FinanceLease
+            PaymentFrequency = Lease.PaymentFrequency.Quarterly
+            LeasePayment = 0L<Cent>
+            UpfrontPayment = 0L<Cent>
+            ResidualValue = 1000_00L<Cent>
+            PurchaseOption = None
+            ImplicitRate = FSharp.Finance.Personal.Interest.Rate.Annual (Percent 4.0m)
+        }
+
+        (fun () -> Lease.calculateLeasePayment terms |> ignore)
+        |> should throw typeof<System.ArgumentException>

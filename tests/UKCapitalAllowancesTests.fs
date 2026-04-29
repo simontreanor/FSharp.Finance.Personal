@@ -131,3 +131,25 @@ module UKCapitalAllowancesTests =
         // Last year should have pool value of 0 or very small
         let lastYear = schedule |> List.last
         lastYear.PoolValueEndOfYear |> should be (lessThanOrEqualTo 1_00L<Cent>)
+
+    [<Fact>]
+    let ``Tiny residual pool is cleared instead of repeating zero WDA years`` () =
+        let expenditure = {
+            Amount = 0_03L<Cent>
+            Pool = Types.Pool.Main
+            Description = "Tiny asset"
+        }
+
+        let customConfig = {
+            Types.Default with
+                AnnualInvestmentAllowanceLimit = 0L<Cent>
+                MaxYears = 10
+        }
+
+        let schedule = Calculations.generateSchedule customConfig expenditure
+        let lastYear = schedule |> List.last
+
+        schedule.Length |> should be (lessThanOrEqualTo 2)
+        schedule |> List.exists (fun year -> year.WritingDownAllowance = 0L<Cent> && year.PoolValueEndOfYear > 0L<Cent>) |> should equal false
+        lastYear.WritingDownAllowance |> should be (greaterThan 0L<Cent>)
+        lastYear.PoolValueEndOfYear |> should equal 0L<Cent>

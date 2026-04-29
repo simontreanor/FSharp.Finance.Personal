@@ -82,6 +82,11 @@ module Calculations =
 
     /// Generates a capital allowances schedule for a single expenditure
     let generateSchedule (config: CapitalAllowanceConfig) (expenditure: Expenditure) : YearAllowance list =
+        if expenditure.Amount <= 0L<Cent> then invalidArg (nameof expenditure.Amount) "Amount must be > 0."
+        if config.MaxYears <= 0 then invalidArg (nameof config.MaxYears) "MaxYears must be > 0."
+        if config.AnnualInvestmentAllowanceLimit < 0L<Cent> then invalidArg (nameof config.AnnualInvestmentAllowanceLimit) "AnnualInvestmentAllowanceLimit must be >= 0."
+        if config.MainPoolRate < 0m then invalidArg (nameof config.MainPoolRate) "MainPoolRate must be >= 0."
+        if config.SpecialRatePoolRate < 0m then invalidArg (nameof config.SpecialRatePoolRate) "SpecialRatePoolRate must be >= 0."
         
         let rec calculateYears (year: int) (poolValue: int64<Cent>) (remainingAIA: int64<Cent>) (acc: YearAllowance list) =
             if year > config.MaxYears || poolValue <= 0L<Cent> then
@@ -104,9 +109,14 @@ module Calculations =
                     | Pool.SpecialRate -> config.SpecialRatePoolRate
 
                 // Calculate Writing Down Allowance (WDA)
-                let wda = 
+                let rawWda = 
                     Cent.toDecimalCent valueAfterAIA * wdaRate 
                     |> Cent.fromDecimalCent (Rounding.RoundWith MidpointRounding.AwayFromZero)
+                let wda =
+                    if valueAfterAIA > 0L<Cent> && rawWda = 0L<Cent> then
+                        valueAfterAIA
+                    else
+                        min rawWda valueAfterAIA
 
                 // Total allowances for this year
                 let totalAllowances = aiaThisYear + wda

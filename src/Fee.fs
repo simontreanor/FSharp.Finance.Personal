@@ -18,7 +18,7 @@ module Fee =
         /// a fee charged by a Credit Access Business (CAB) or Credit Services Organisation (CSO) assisting access to third-party financial products
         | CabOrCsoFee of CabOrCsoAmount: Amount
         /// a fee charged by a bank or building society for arranging a mortgage
-        | MortageFee of MortgageAmount: Amount
+        | MortageFee of MortageAmount: Amount
         /// any other type of product fee
         | CustomFee of CustomDescription: string * CustomAmount: Amount
 
