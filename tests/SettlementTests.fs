@@ -31,6 +31,7 @@ module SettlementTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2023, 12, 22)
                     ScheduleLength = PaymentCount 4
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -43,6 +44,7 @@ module SettlementTests =
                 Cap = interestCapExample
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom(3)
+                RateSchedule = [||]
             }
         }
         Advanced = {

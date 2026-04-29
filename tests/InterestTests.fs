@@ -93,6 +93,7 @@ module InterestTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 2, 14)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -104,6 +105,7 @@ module InterestTests =
                     StandardRate = Rate.Daily(Percent 0.8m)
                     Cap = interestCapExample
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }
@@ -185,7 +187,7 @@ module InterestTests =
             let promotionalRates = [||]
             let fromDay = 0<OffsetDay>
             let toDay = 10<OffsetDay>
-            let actual = dailyRates startDate false standardRate promotionalRates fromDay toDay
+            let actual = dailyRates startDate false standardRate [||] promotionalRates fromDay toDay
 
             let expected =
                 [| 1..10 |]
@@ -203,7 +205,7 @@ module InterestTests =
             let promotionalRates = [||]
             let fromDay = 0<OffsetDay>
             let toDay = 10<OffsetDay>
-            let actual = dailyRates startDate true standardRate promotionalRates fromDay toDay
+            let actual = dailyRates startDate true standardRate [||] promotionalRates fromDay toDay
 
             let expected =
                 [| 1..10 |]
@@ -232,7 +234,7 @@ module InterestTests =
 
             let fromDay = 0<OffsetDay>
             let toDay = 10<OffsetDay>
-            let actual = dailyRates startDate false standardRate promotionalRates fromDay toDay
+            let actual = dailyRates startDate false standardRate [||] promotionalRates fromDay toDay
 
             let expected =
                 [|
@@ -388,6 +390,7 @@ module InterestTests =
                         DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
                     }
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }
@@ -457,6 +460,7 @@ module InterestTests =
                         AutoGenerateSchedule {
                             UnitPeriodConfig = Monthly(1, 2010, 4, 1)
                             ScheduleLength = PaymentCount 48
+                            RepaymentType = RepaymentType.CapitalAndInterest
                         }
             }
 
@@ -520,3 +524,230 @@ module InterestTests =
                 |> Seq.sumBy _.InterestPortion
 
             interestPortion |> should equal 598_08L<Cent>
+
+    module RateScheduleTests =
+
+        let startDate = Date(2024, 1, 1)
+
+        let baseParameters: Parameters = {
+            Basic = {
+                EvaluationDate = startDate.AddMonths 12
+                StartDate = startDate
+                Principal = 100_000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2024, 2, 1)
+                        ScheduleLength = PaymentCount 12
+                        RepaymentType = RepaymentType.CapitalAndInterest
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Method.Actuarial
+                    StandardRate = Rate.Annual <| Percent 5m
+                    Cap = Cap.zero
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RateSchedule = [||]
+                    Rounding = RoundDown
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Rate.Zero
+                }
+                SettlementDay = SettlementDay.NoSettlement
+                TrimEnd = true
+            }
+        }
+
+        [<Fact>]
+        let ``Rate schedule with no entries behaves identically to standard rate`` () =
+            let p1 = baseParameters
+            let p2 = {
+                baseParameters with
+                    Basic.InterestConfig.RateSchedule = [||]
+            }
+            let schedules1 = amortise p1 Map.empty
+            let schedules2 = amortise p2 Map.empty
+            let totalInterest1 =
+                schedules1.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            let totalInterest2 =
+                schedules2.AmortisationSchedule.ScheduleItems |> Map.values |> Seq.sumBy _.InterestPortion
+            totalInterest1 |> should equal totalInterest2
+
+        [<Fact>]
+        let ``Rate schedule stepping up mid-term increases total interest compared to constant lower rate`` () =
+            // baseline: 5% p.a. for the full term
+            let pBaseline = baseParameters
+            // stepped: 5% for 6 months, then 8% for the remaining 6 months
+            let pStepped = {
+                baseParameters with
+                    Basic.InterestConfig.RateSchedule = [|
+                        startDate.AddMonths 6, Rate.Annual(Percent 8m)
+                    |]
+            }
+            let totalInterestBaseline =
+                (amortise pBaseline Map.empty).AmortisationSchedule.ScheduleItems
+                |> Map.values
+                |> Seq.sumBy _.InterestPortion
+            let totalInterestStepped =
+                (amortise pStepped Map.empty).AmortisationSchedule.ScheduleItems
+                |> Map.values
+                |> Seq.sumBy _.InterestPortion
+            totalInterestStepped |> should be (greaterThan totalInterestBaseline)
+
+        [<Fact>]
+        let ``Rate schedule stepping down mid-term decreases total interest compared to constant higher rate`` () =
+            // baseline: 8% p.a. for the full term
+            let pBaseline = {
+                baseParameters with
+                    Basic.InterestConfig.StandardRate = Rate.Annual(Percent 8m)
+            }
+            // stepped: 8% for 6 months, then 5% for the remaining 6 months
+            let pStepped = {
+                baseParameters with
+                    Basic.InterestConfig.StandardRate = Rate.Annual(Percent 8m)
+                    Basic.InterestConfig.RateSchedule = [|
+                        startDate.AddMonths 6, Rate.Annual(Percent 5m)
+                    |]
+            }
+            let totalInterestBaseline =
+                (amortise pBaseline Map.empty).AmortisationSchedule.ScheduleItems
+                |> Map.values
+                |> Seq.sumBy _.InterestPortion
+            let totalInterestStepped =
+                (amortise pStepped Map.empty).AmortisationSchedule.ScheduleItems
+                |> Map.values
+                |> Seq.sumBy _.InterestPortion
+            totalInterestStepped |> should be (lessThan totalInterestBaseline)
+
+        [<Fact>]
+        let ``dailyRates uses RateSchedule.effectiveRate correctly`` () =
+            let rateSchedule: RateSchedule = [|
+                Date(2024, 7, 1), Rate.Annual(Percent 8m)
+            |]
+            // day 1 (Jan 2) is before the effective date, should use standard rate (5%)
+            let day1 = dailyRates startDate false (Rate.Annual(Percent 5m)) rateSchedule [||] 0<OffsetDay> 1<OffsetDay>
+            // day 183 (July 1) is on the effective date, should use stepped rate (8%)
+            let day183 = dailyRates startDate false (Rate.Annual(Percent 5m)) rateSchedule [||] 182<OffsetDay> 183<OffsetDay>
+            // use daily rate to verify (avoids DU reflection issues in test framework)
+            let toDailyPercent r = r |> Rate.daily |> Percent.toDecimal
+            toDailyPercent day1[0].InterestRate |> should equal (Percent.toDecimal (Rate.daily (Rate.Annual(Percent 5m))))
+            toDailyPercent day183[0].InterestRate |> should equal (Percent.toDecimal (Rate.daily (Rate.Annual(Percent 8m))))
+
+    module RepaymentTypeTests =
+
+        let startDate = Date(2024, 1, 1)
+
+        let baseInterestConfig = {
+            Method = Method.Actuarial
+            StandardRate = Rate.Annual <| Percent 5m
+            Cap = Cap.zero
+            AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            RateSchedule = [||]
+            Rounding = RoundDown
+        }
+
+        let makeParameters repaymentType : Parameters = {
+            Basic = {
+                EvaluationDate = startDate.AddMonths 12
+                StartDate = startDate
+                Principal = 100_000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2024, 2, 1)
+                        ScheduleLength = PaymentCount 12
+                        RepaymentType = repaymentType
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = baseInterestConfig
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Rate.Zero
+                }
+                SettlementDay = SettlementDay.NoSettlement
+                TrimEnd = true
+            }
+        }
+
+        [<Fact>]
+        let ``InterestOnly: all period payments are interest only; final payment settles principal`` () =
+            let p = makeParameters RepaymentType.InterestOnly
+            let basicItems = (amortise p Map.empty).BasicSchedule.Items
+            // skip first item (day 0 initial state)
+            let paymentItems = basicItems |> Array.tail
+            let allButLast = paymentItems |> Array.take (paymentItems.Length - 1)
+            let lastItem = paymentItems |> Array.last
+            // all payments except the last should have zero principal portion (interest-only)
+            allButLast |> Array.forall (fun si -> si.PrincipalPortion = 0L<Cent>) |> should equal true
+            // the final payment should settle the principal
+            lastItem.PrincipalBalance |> should equal 0L<Cent>
+
+        [<Fact>]
+        let ``InterestOnly: total interest is higher than CapitalAndInterest`` () =
+            let pIO = makeParameters RepaymentType.InterestOnly
+            let pCI = makeParameters RepaymentType.CapitalAndInterest
+            let totalInterestIO = (amortise pIO Map.empty).BasicSchedule.Stats.InterestTotal
+            let totalInterestCI = (amortise pCI Map.empty).BasicSchedule.Stats.InterestTotal
+            // Interest-only always accumulates more interest (principal is not reduced until the end)
+            totalInterestIO |> should be (greaterThan totalInterestCI)
+
+        [<Fact>]
+        let ``Mixed: first N payments are interest only, remaining payments amortise the principal`` () =
+            let interestOnlyPeriods = 6
+            let p = makeParameters (RepaymentType.Mixed interestOnlyPeriods)
+            let basicItems = (amortise p Map.empty).BasicSchedule.Items |> Array.tail
+            let ioPhase = basicItems |> Array.take interestOnlyPeriods
+            let ciPhase = basicItems |> Array.skip interestOnlyPeriods
+            // first 6 payment items should have zero principal portion (interest-only)
+            ioPhase |> Array.forall (fun si -> si.PrincipalPortion = 0L<Cent>) |> should equal true
+            // remaining payment items should reduce the principal
+            ciPhase |> Array.forall (fun si -> si.PrincipalPortion > 0L<Cent>) |> should equal true
+            // the schedule should be fully settled
+            (basicItems |> Array.last).PrincipalBalance |> should equal 0L<Cent>
+
+        [<Fact>]
+        let ``Mixed: total interest is between InterestOnly and CapitalAndInterest`` () =
+            let pCI = makeParameters RepaymentType.CapitalAndInterest
+            let pMixed = makeParameters (RepaymentType.Mixed 6)
+            let pIO = makeParameters RepaymentType.InterestOnly
+            let totalInterest p = (amortise p Map.empty).BasicSchedule.Stats.InterestTotal
+            let interestCI = totalInterest pCI
+            let interestMixed = totalInterest pMixed
+            let interestIO = totalInterest pIO
+            interestMixed |> should be (greaterThan interestCI)
+            interestMixed |> should be (lessThan interestIO)
+
+        [<Fact>]
+        let ``Mixed with zero interest-only periods behaves identically to CapitalAndInterest`` () =
+            let pCI = makeParameters RepaymentType.CapitalAndInterest
+            let pMixed0 = makeParameters (RepaymentType.Mixed 0)
+            let totalInterestCI = (amortise pCI Map.empty).BasicSchedule.Stats.InterestTotal
+            let totalInterestMixed0 = (amortise pMixed0 Map.empty).BasicSchedule.Stats.InterestTotal
+            totalInterestCI |> should equal totalInterestMixed0

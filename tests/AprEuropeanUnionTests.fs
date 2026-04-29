@@ -84,6 +84,7 @@ module AprEuropeanUnionTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Config.defaultMonthly 1 firstPaymentDate
                         ScheduleLength = PaymentCount paymentCount
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -96,6 +97,7 @@ module AprEuropeanUnionTests =
                     Cap = interestCap
                     Rounding = RoundDown
                     AprMethod = CalculationMethod.EuropeanUnion 3
+                    RateSchedule = [||]
                 }
             }
             Advanced = {

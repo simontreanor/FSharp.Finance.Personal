@@ -32,6 +32,7 @@ module FeeAndChargesTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 31)
                         ScheduleLength = PaymentCount 5
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -44,6 +45,7 @@ module FeeAndChargesTests =
                     Cap = interestCapExample
                     Rounding = RoundDown
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RateSchedule = [||]
                 }
             }
             Advanced = {

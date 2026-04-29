@@ -25,6 +25,7 @@ module PaymentMapTests =
             AutoGenerateSchedule {
                 UnitPeriodConfig = unitPeriodConfig
                 ScheduleLength = PaymentCount paymentCount
+                RepaymentType = RepaymentType.CapitalAndInterest
             }
         PaymentOptions = { ScheduledPaymentOption = AsScheduled }
         FeeConfig = None
@@ -42,6 +43,7 @@ module PaymentMapTests =
         }
         Calculation = {
             AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            RateSchedule = [||]
             InterestRounding = RoundDown
             MinimumPayment = DeferOrWriteOff 50L<Cent>
             PaymentTimeout = 3<DurationDay>

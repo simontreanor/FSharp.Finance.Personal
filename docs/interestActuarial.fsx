@@ -44,6 +44,7 @@ let bp: BasicParameters = {
         AutoGenerateSchedule {
             UnitPeriodConfig = Monthly(1, 2025, 5, 22)
             ScheduleLength = PaymentCount 4
+            RepaymentType = RepaymentType.CapitalAndInterest
         }
     PaymentConfig = {
         LevelPaymentOption = LowerFinalPayment
@@ -59,6 +60,7 @@ let bp: BasicParameters = {
         }
         Rounding = RoundDown
         AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+        RateSchedule = [||]
     }
 }
 

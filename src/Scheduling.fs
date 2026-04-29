@@ -180,6 +180,23 @@ module Scheduling =
             Metadata = Map.empty
         }
 
+    /// the type of repayment structure for an auto-generated schedule
+    [<RequireQualifiedAccess; Struct; StructuredFormatDisplay("{Html}")>]
+    type RepaymentType =
+        /// all payments cover both interest and principal (standard amortisation)
+        | CapitalAndInterest
+        /// all payments cover interest only, with the full principal outstanding until the final payment
+        | InterestOnly
+        /// an initial phase of interest-only payments followed by a capital-and-interest amortisation phase
+        | Mixed of InterestOnlyPeriods: int
+
+        /// HTML formatting to display the repayment type in a readable format
+        member r.Html =
+            match r with
+            | CapitalAndInterest -> "capital and interest"
+            | InterestOnly -> "interest only"
+            | Mixed n -> $"mixed ({n} interest-only period(s))"
+
     /// a regular schedule based on a unit-period config with a specific number of payments with an auto-calculated amount
     [<RequireQualifiedAccess; Struct>]
     type AutoGenerateSchedule = {
@@ -187,6 +204,8 @@ module Scheduling =
         UnitPeriodConfig: UnitPeriod.Config
         // the length of the schedule
         ScheduleLength: ScheduleLength
+        // the repayment type: capital-and-interest, interest-only, or a mixed phase schedule
+        RepaymentType: RepaymentType
     }
 
     /// the type of the schedule; for scheduled payments, this affects how any payment due is calculated
@@ -243,6 +262,9 @@ module Scheduling =
                 </tr>
                 <tr>
                     <td colspan="2" style="white-space: nowrap;">unit-period config: <i>{ags.UnitPeriodConfig}</i></td>
+                </tr>
+                <tr>
+                    <td colspan="2">repayment type: <i>{ags.RepaymentType}</i></td>
                 </tr>
             </table>"""
             | FixedSchedules fsArray ->
@@ -785,7 +807,7 @@ module Scheduling =
     let calculateInterest bp interestMethod payment previousItem day =
         match interestMethod with
         | Interest.Method.Actuarial ->
-            Interest.dailyRates bp.StartDate false bp.InterestConfig.StandardRate [||] previousItem.Day day
+            Interest.dailyRates bp.StartDate false bp.InterestConfig.StandardRate bp.InterestConfig.RateSchedule [||] previousItem.Day day
             |> Interest.calculate
                 previousItem.PrincipalBalance
                 bp.InterestConfig.Cap.DailyAmount
@@ -981,6 +1003,25 @@ module Scheduling =
                 bi
         )
 
+    /// generates a series of interest-only schedule items: each payment covers only the capped interest accrued since the previous payment
+    let generateInterestOnlyItems (bp: BasicParameters) (paymentDays: int<OffsetDay> array) (startItem: BasicItem) =
+        paymentDays
+        |> Array.scan (fun prevItem currentDay ->
+            let uncappedInterest =
+                calculateInterest bp Interest.Method.Actuarial 0L<Cent> prevItem currentDay
+
+            let cappedInterest =
+                uncappedInterest
+                |> Interest.Cap.cappedAddedValue
+                    bp.InterestConfig.Cap.TotalAmount
+                    bp.Principal
+                    (Cent.toDecimalCent prevItem.TotalInterest)
+                |> Cent.fromDecimalCent bp.InterestConfig.Rounding
+
+            let scheduledPayment = ScheduledPayment.quick (ValueSome cappedInterest) ValueNone
+            generateItem bp Interest.Method.Actuarial scheduledPayment prevItem currentDay
+        ) startItem
+
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculateBasicSchedule bp =
         // create a map of scheduled payments for a given schedule configuration, using the payment day as the key (only one scheduled payment per day)
@@ -1012,49 +1053,160 @@ module Scheduling =
             |> Array.scan
                 (fun basicItem pd -> generateItem bp bp.InterestConfig.Method payments[pd] basicItem pd)
                 initialBasicItem
-        // generates a schedule based on the schedule configuration
-        let basicItems =
-            match bp.ScheduleConfig with
-            | AutoGenerateSchedule _ ->
-                // calculate the estimated interest payable over the entire schedule
-                let roughInterest =
+        // generates a capital-and-interest schedule using bisection on the given payment days, starting from the given initial item
+        let generateCapitalAndInterestItems (ciPaymentDays: int<OffsetDay> array) (startItem: BasicItem) =
+            if Array.isEmpty ciPaymentDays then
+                [| startItem |]
+            else
+                let ciPaymentCount = ciPaymentDays.Length
+                let ciRoughInterest =
                     match bp.InterestConfig.Method with
-                    | Interest.Method.AddOn -> initialInterestBalance |> Cent.toDecimalCent
+                    | Interest.Method.AddOn -> startItem.InterestBalance |> Cent.toDecimalCent
                     | Interest.Method.Actuarial ->
                         let dailyInterestRate =
                             bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
 
-                        Cent.toDecimalCent bp.Principal
+                        Cent.toDecimalCent startItem.PrincipalBalance
                         * dailyInterestRate
-                        * decimal finalScheduledPaymentDay
+                        * decimal (ciPaymentDays |> Array.last)
                         * Fraction.toDecimal (Fraction.Simple(2, 3))
-                // determines the payment value and generates the schedule iteratively based on that
-                let generator = generatePaymentValue bp paymentDays initialBasicItem
+
+                let ciGenerator = generatePaymentValue bp ciPaymentDays startItem
+                let ciToleranceSteps = ToleranceSteps.forPaymentValue ciPaymentCount
                 let iterationLimit = 100u
 
                 let roughPayment =
-                    calculateLevelPayment bp.Principal feeTotal roughInterest paymentCount bp.PaymentConfig.Rounding
+                    calculateLevelPayment startItem.PrincipalBalance 0L<Cent> ciRoughInterest ciPaymentCount bp.PaymentConfig.Rounding
                     |> Cent.toDecimalCent
                     |> decimal
 
                 match
                     Array.solveBisection
-                        generator
+                        ciGenerator
                         iterationLimit
                         roughPayment
                         (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption)
-                        toleranceSteps
+                        ciToleranceSteps
                 with
                 | Solution.Found(paymentValue, _, _) ->
-                    let paymentMap' =
-                        paymentMap
-                        |> Map.map (fun _ sp -> {
-                            sp with
-                                Original = sp.Original |> ValueOption.map (fun _ -> paymentValue |> Cent.fromDecimal)
-                        })
+                    let ciPaymentMap =
+                        ciPaymentDays
+                        |> Array.map (fun d ->
+                            d, ScheduledPayment.quick (ValueSome (paymentValue |> Cent.fromDecimal)) ValueNone
+                        )
+                        |> Map.ofArray
 
-                    generateItems paymentMap'
+                    ciPaymentDays
+                    |> Array.scan (fun item d -> generateItem bp bp.InterestConfig.Method ciPaymentMap[d] item d) startItem
                 | _ -> [||]
+        // generates a schedule based on the schedule configuration
+        let basicItems =
+            match bp.ScheduleConfig with
+            | AutoGenerateSchedule ags ->
+                match ags.RepaymentType with
+                | RepaymentType.CapitalAndInterest ->
+                    // calculate the estimated interest payable over the entire schedule
+                    let roughInterest =
+                        match bp.InterestConfig.Method with
+                        | Interest.Method.AddOn -> initialInterestBalance |> Cent.toDecimalCent
+                        | Interest.Method.Actuarial ->
+                            let dailyInterestRate =
+                                bp.InterestConfig.StandardRate |> Interest.Rate.daily |> Percent.toDecimal
+
+                            Cent.toDecimalCent bp.Principal
+                            * dailyInterestRate
+                            * decimal finalScheduledPaymentDay
+                            * Fraction.toDecimal (Fraction.Simple(2, 3))
+                    // determines the payment value and generates the schedule iteratively based on that
+                    let generator = generatePaymentValue bp paymentDays initialBasicItem
+                    let iterationLimit = 100u
+
+                    let roughPayment =
+                        calculateLevelPayment bp.Principal feeTotal roughInterest paymentCount bp.PaymentConfig.Rounding
+                        |> Cent.toDecimalCent
+                        |> decimal
+
+                    match
+                        Array.solveBisection
+                            generator
+                            iterationLimit
+                            roughPayment
+                            (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption)
+                            toleranceSteps
+                    with
+                    | Solution.Found(paymentValue, _, _) ->
+                        let paymentMap' =
+                            paymentMap
+                            |> Map.map (fun _ sp -> {
+                                sp with
+                                    Original = sp.Original |> ValueOption.map (fun _ -> paymentValue |> Cent.fromDecimal)
+                            })
+
+                        generateItems paymentMap'
+                    | _ -> [||]
+                | RepaymentType.InterestOnly ->
+                    // all payment days are interest-only; the final payment also repays the outstanding principal
+                    paymentDays
+                    |> Array.scan (fun prevItem currentDay ->
+                        let uncappedInterest =
+                            calculateInterest bp Interest.Method.Actuarial 0L<Cent> prevItem currentDay
+
+                        let cappedInterest =
+                            uncappedInterest
+                            |> Interest.Cap.cappedAddedValue
+                                bp.InterestConfig.Cap.TotalAmount
+                                bp.Principal
+                                (Cent.toDecimalCent prevItem.TotalInterest)
+                            |> Cent.fromDecimalCent bp.InterestConfig.Rounding
+
+                        let isLastDay = currentDay = finalScheduledPaymentDay
+
+                        let paymentAmount =
+                            if isLastDay then cappedInterest + prevItem.PrincipalBalance
+                            else cappedInterest
+
+                        let scheduledPayment = ScheduledPayment.quick (ValueSome paymentAmount) ValueNone
+                        generateItem bp Interest.Method.Actuarial scheduledPayment prevItem currentDay
+                    ) initialBasicItem
+                | RepaymentType.Mixed interestOnlyPeriods ->
+                    let ioCount = min interestOnlyPeriods paymentDays.Length
+                    let ioDays = paymentDays |> Array.take ioCount
+                    let ciDays = paymentDays |> Array.skip ioCount
+
+                    // compute interest-only phase
+                    let ioPhaseItems = generateInterestOnlyItems bp ioDays initialBasicItem
+                    let lastIoItem = Array.last ioPhaseItems
+
+                    if Array.isEmpty ciDays then
+                        // all periods are interest-only: adjust the last item to also repay the principal
+                        let lastIoItemWithPrincipal =
+                            let lastDay = ioDays |> Array.last
+                            let uncappedInterest =
+                                calculateInterest bp Interest.Method.Actuarial 0L<Cent> (ioPhaseItems |> Array.item (ioPhaseItems.Length - 2)) lastDay
+
+                            let cappedInterest =
+                                uncappedInterest
+                                |> Interest.Cap.cappedAddedValue
+                                    bp.InterestConfig.Cap.TotalAmount
+                                    bp.Principal
+                                    (Cent.toDecimalCent (ioPhaseItems |> Array.item (ioPhaseItems.Length - 2)).TotalInterest)
+                                |> Cent.fromDecimalCent bp.InterestConfig.Rounding
+
+                            let prevItem = ioPhaseItems |> Array.item (ioPhaseItems.Length - 2)
+                            let paymentAmount = cappedInterest + prevItem.PrincipalBalance
+                            let scheduledPayment = ScheduledPayment.quick (ValueSome paymentAmount) ValueNone
+                            generateItem bp Interest.Method.Actuarial scheduledPayment prevItem lastDay
+
+                        Array.append (ioPhaseItems |> Array.take (ioPhaseItems.Length - 1)) [| lastIoItemWithPrincipal |]
+                    else
+                        // compute capital-and-interest phase via bisection
+                        let ciPhaseItems = generateCapitalAndInterestItems ciDays lastIoItem
+
+                        if Array.isEmpty ciPhaseItems then
+                            [||]
+                        else
+                            // combine: ciPhaseItems starts with lastIoItem (duplicate), so skip it
+                            Array.append ioPhaseItems (Array.tail ciPhaseItems)
             | FixedSchedules _
             | CustomSchedule _ ->
                 // the days and payment values are known so the schedule can be generated directly

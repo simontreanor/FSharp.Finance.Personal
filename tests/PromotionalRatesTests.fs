@@ -32,6 +32,7 @@ module PromotionalRatesTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2024, 9, 2)
                     ScheduleLength = PaymentCount 4
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -47,6 +48,7 @@ module PromotionalRatesTests =
                 }
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RateSchedule = [||]
             }
         }
         Advanced = {
@@ -192,6 +194,7 @@ module PromotionalRatesTests =
                     StandardRate = Interest.Rate.Annual <| Percent 7.985m
                     Cap = Interest.Cap.zero
                     AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                    RateSchedule = [||]
                     Rounding = RoundDown
                 }
             }

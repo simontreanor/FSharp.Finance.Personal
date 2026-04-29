@@ -28,6 +28,7 @@ module InterestFirstTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2024, 8, 2)
                     ScheduleLength = PaymentCount 5
+                    RepaymentType = RepaymentType.CapitalAndInterest
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -43,6 +44,7 @@ module InterestFirstTests =
                 }
                 Rounding = RoundDown
                 AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                RateSchedule = [||]
             }
         }
         Advanced = {
@@ -211,6 +213,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 1, 28)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -252,6 +255,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 1, 28)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -403,6 +407,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 4, 1)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -451,6 +456,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 6, 10)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 
@@ -497,6 +503,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 6, 10)
                         ScheduleLength = PaymentCount 4
+                        RepaymentType = RepaymentType.CapitalAndInterest
                     }
         }
 

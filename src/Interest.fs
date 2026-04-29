@@ -40,6 +40,33 @@ module Interest =
             | Rate.Annual(Percent air) -> air / 365m |> Percent
             | Rate.Daily(Percent dir) -> dir |> Percent
 
+    /// a stepped-rate schedule: an array of (effectiveDate, rate) pairs where each rate applies from its effective date forward until the next effective date or the end of the schedule
+    /// > NB: the schedule should be sorted in ascending date order; if unsorted, the implementation sorts it internally
+    type RateSchedule = (Date * Rate) array
+
+    /// a stepped-rate schedule
+    module RateSchedule =
+        /// gets the rate applicable on a given day, falling back to the standard rate if no schedule entry applies;
+        /// the most recent entry whose effectiveDate is on or before the current day is used
+        let effectiveRate (startDate: Date) (rateSchedule: RateSchedule) (standardRate: Rate) (offsetDay: int<OffsetDay>) =
+            let date = startDate.AddDays(int offsetDay)
+
+            rateSchedule
+            |> Array.filter (fun (effectiveDate, _) -> effectiveDate <= date)
+            |> Array.sortBy fst
+            |> Array.tryLast
+            |> Option.map snd
+            |> Option.defaultValue standardRate
+
+        /// formats the rate schedule as a string for display
+        let toHtml (rateSchedule: RateSchedule) =
+            if Array.isEmpty rateSchedule then
+                "<i>n/a</i>"
+            else
+                rateSchedule
+                |> Array.map (fun (date, rate) -> $"%A{date}: {rate}")
+                |> String.concat "; "
+
     /// the daily interest rate
     [<Struct>]
     type DailyRate = {
@@ -123,7 +150,7 @@ module Interest =
     type BasicConfig = {
         /// the method for calculating interest
         Method: Method
-        /// the standard rate of interest
+        /// the standard rate of interest, used when no rate-schedule entry applies
         StandardRate: Rate
         /// any total or daily caps on interest
         Cap: Cap
@@ -131,6 +158,8 @@ module Interest =
         Rounding: Rounding
         /// which APR calculation method to use
         AprMethod: Apr.CalculationMethod
+        /// a stepped-rate schedule: the rate changes at each effective date; if empty the StandardRate applies for the full term
+        RateSchedule: RateSchedule
     }
 
     /// basic interest options
@@ -149,6 +178,9 @@ module Interest =
                 </tr>
                 <tr>
                     <td colspan="2">cap: <i>{basicConfig.Cap}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">rate schedule: <i>{RateSchedule.toHtml basicConfig.RateSchedule}</i></td>
                 </tr>
             </table>"""
 
@@ -179,7 +211,7 @@ module Interest =
             </table>"""
 
     /// calculates the interest chargeable on a range of days
-    let dailyRates startDate isSettledWithinGracePeriod standardRate promotionalRates fromDay toDay =
+    let dailyRates startDate isSettledWithinGracePeriod standardRate rateSchedule promotionalRates fromDay toDay =
         let promoRates = promotionalRates |> PromotionalRate.toMap startDate
 
         [| OffsetDay.toInt fromDay + 1 .. OffsetDay.toInt toDay |]
@@ -199,7 +231,7 @@ module Interest =
                   }
                 | None -> {
                     RateDay = offsetDay
-                    InterestRate = standardRate
+                    InterestRate = RateSchedule.effectiveRate startDate rateSchedule standardRate offsetDay
                   }
         )
 
