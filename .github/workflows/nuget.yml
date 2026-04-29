@@ -6,13 +6,16 @@ on:
       version:
         description: 'Version number'
         required: true
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 permissions:
   contents: write
   packages: write
 
 env:
-  VERSION: ${{ github.event.inputs.version }}
+  VERSION: ${{ github.event_name == 'push' && github.ref_name || github.event.inputs.version }}
 
 jobs:
   build:
@@ -35,6 +38,7 @@ jobs:
           sed -i "s/<Version>[0-9]\+\.[0-9]\+\.[0-9]\+<\/Version>/<Version>$VERSION<\/Version>/" ${{ env.PROJECT_FILE }}
 
       - name: Commit changes
+        if: github.event_name == 'workflow_dispatch'
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
@@ -49,6 +53,7 @@ jobs:
         run: dotnet nuget push src/bin/Release/FSharp.Finance.Personal.$VERSION.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json
 
       - name: Create Git tag
+        if: github.event_name == 'workflow_dispatch'
         run: |
           git tag $VERSION
           git push origin $VERSION
