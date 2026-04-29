@@ -21,7 +21,7 @@ module EarlySettlementTests =
 
     let baseParameters: Parameters = {
         Basic = {
-            EvaluationDate = Date(2024, 3, 22)   // after the 2nd payment date
+            EvaluationDate = Date(2023, 12, 10)   // before first payment (Dec 22); all 4 payments remain
             StartDate = Date(2023, 11, 28)
             Principal = 100000L<Cent>             // £1 000
             ScheduleConfig =
@@ -105,7 +105,7 @@ module EarlySettlementTests =
     let ``EarlySettlementTest_RuleOf78_settlement_less_than_remaining_payments`` () =
         let actualPayments = Map.empty
 
-        // settlement is between payments 2 and 3 – two payments remain
+        // all 4 payments remain; settlement should be less than the total of all remaining payments
         let result =
             getEarlySettlementQuote EarlySettlementMethod.RuleOf78 None baseParameters actualPayments
 
@@ -166,7 +166,7 @@ module EarlySettlementTests =
     let ``EarlySettlementTest_ERC_TieredPercentage_year1`` () =
         let actualPayments = Map.empty
 
-        // settlement is in year 1 (within the first 365 days) – expect 5 % ERC
+        // settlement is on day 12, which is in year 1 (first 365 days) – expect 5 % ERC
         let tiers = [| 1, Percent 5m; 2, Percent 3m; 3, Percent 1m |]
 
         let result =
