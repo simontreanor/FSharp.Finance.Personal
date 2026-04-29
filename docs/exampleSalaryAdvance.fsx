@@ -16,7 +16,7 @@ This module provides zero-interest salary advance / earned wage access modeling 
 - **RepaymentMode**: Discriminated union supporting multiple repayment strategies
 - **Schedule Construction**: Generate repayment schedules based on payroll dates
 - **Fee Handling**: Support for flat fees, percentage fees, or no fees
-- **Cashflow Export**: Export cashflows for analytical use (compatible with XIRR analysis)
+- **Cashflow Export**: Export provider or borrower cashflows for analytical use
 - **Self-contained**: No dependencies on B2B modules
 
 ## RepaymentMode Options
@@ -128,7 +128,7 @@ scheduleWithFlatFee |> Array.iter (fun item ->
 
 let configWithPctFee = 
     lumpSumConfig 
-    |> SalaryAdvance.ScheduleConfig.withFee (PercentageFee 2.0m) // 2% fee
+    |> SalaryAdvance.ScheduleConfig.withFee (PercentageFee 0.02m) // 2% fee
 
 let scheduleWithPctFee = SalaryAdvance.createSchedule configWithPctFee
 
@@ -144,16 +144,25 @@ scheduleWithPctFee |> Array.iter (fun item ->
 
 ## Cashflow Export for Analysis
 
-Export cashflows for use with analytical tools like XIRR:
+Export cashflows for use with analytical tools like XIRR. `exportCashflows`
+returns provider-perspective cashflows, and `borrowerCashflows` flips the signs.
 
 *)
 
 let cashflows = SalaryAdvance.exportCashflows configWithFlatFee
+let borrowerCashflows = SalaryAdvance.borrowerCashflows configWithFlatFee
 
-printfn "\nCashflows for Analysis:"
+printfn "\nProvider Cashflows for Analysis:"
 cashflows |> Array.iter (fun cf ->
     printfn "  %A: $%.2f - %s" 
         cf.Date 
+        (Cent.toDecimal cf.Amount)
+        cf.Description)
+
+printfn "\nBorrower Cashflows for Analysis:"
+borrowerCashflows |> Array.iter (fun cf ->
+    printfn "  %A: $%.2f - %s"
+        cf.Date
         (Cent.toDecimal cf.Amount)
         cf.Description)
 
@@ -197,7 +206,7 @@ else
 
 1. **Zero Interest**: This module is specifically designed for zero-interest salary advances
 2. **Self-contained**: No dependencies on B2B modules, making it suitable for independent use
-3. **Analytical Ready**: Cashflows can be exported for use with XIRR or other analytical functions
+3. **Analytical Ready**: Cashflows are available from provider and borrower perspectives
 4. **Flexible Fees**: Support for various fee structures (flat, percentage, or none)
 5. **Validation**: Built-in configuration validation to prevent errors
 
