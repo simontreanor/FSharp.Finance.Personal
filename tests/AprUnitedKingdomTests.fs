@@ -342,3 +342,61 @@ module AprUnitedKingdomTests =
         let p = getParameters startDate 6 24 interestMethod applyInterestCap
         let schedules = amortise p Map.empty
         Amortisation.Schedule.outputHtmlToFile folder title description p "" schedules
+
+    module RepresentativeApr =
+
+        /// Worked example: £1,000 loan, 12 monthly payments, 20% nominal annual rate, no fee.
+        /// Monthly repayment is derived from the annuity formula: £1,000 × (20%/12) / (1 − (1 + 20%/12)^−12) ≈ £92.63.
+        /// The representative APR is solved via the UK actuarial method
+        /// on the actual day counts from 2025-01-01 to each calendar-month payment date.
+        /// Expected representative APR ≈ 22.0% (confirms the nominal-rate-to-APR chain).
+        [<Fact>]
+        let ``representative APR without fee`` () =
+            UnitedKingdom.representativeApr
+                (Date(2025, 1, 1))
+                (Percent 20m)
+                100_000L<Cent>
+                12
+                0L<Cent>
+            |> getAprOr 0m
+            |> should (equalWithin 0.001) (Percent 22.0298m |> Percent.toDecimal)
+
+        /// The representative APR when an upfront arrangement fee is included must be higher than the
+        /// no-fee APR for the same nominal rate, because the fee is an additional cost of credit.
+        [<Fact>]
+        let ``representative APR with fee is higher than without fee`` () =
+            let startDate = Date(2025, 1, 1)
+            let nominalRate = Percent 20m
+            let principal = 100_000L<Cent>
+            let term = 12
+            let aprNoFee = UnitedKingdom.representativeApr startDate nominalRate principal term 0L<Cent> |> getAprOr 0m
+            let aprWithFee = UnitedKingdom.representativeApr startDate nominalRate principal term 5_000L<Cent> |> getAprOr 0m
+            aprWithFee |> should be (greaterThan aprNoFee)
+
+        /// FCA CCA worked example: borrowing £1,000 over 12 months at a fixed annual interest rate
+        /// of 20%, with a £50 arrangement fee financed over the term.
+        /// Gross amount financed: £1,050. Monthly repayment: £97.27.
+        /// The representative APR is solved on the net advance (£1,000) per FCA CONC App 1.2.6.
+        /// Expected representative APR ≈ 34.1%.
+        [<Fact>]
+        let ``representative APR conforms to FCA CCA actuarial method - worked example`` () =
+            UnitedKingdom.representativeApr
+                (Date(2025, 1, 1))
+                (Percent 20m)
+                100_000L<Cent>
+                12
+                5_000L<Cent>
+            |> getAprOr 0m
+            |> should (equalWithin 0.001) (Percent 34.0792m |> Percent.toDecimal)
+
+        /// Edge case: zero term returns Impossible.
+        [<Fact>]
+        let ``representative APR with zero term returns Impossible`` () =
+            UnitedKingdom.representativeApr (Date(2025, 1, 1)) (Percent 20m) 100_000L<Cent> 0 0L<Cent>
+            |> should equal Solution.Impossible
+
+        /// Edge case: zero principal returns Impossible.
+        [<Fact>]
+        let ``representative APR with zero principal returns Impossible`` () =
+            UnitedKingdom.representativeApr (Date(2025, 1, 1)) (Percent 20m) 0L<Cent> 12 0L<Cent>
+            |> should equal Solution.Impossible
