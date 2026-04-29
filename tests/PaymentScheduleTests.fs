@@ -34,6 +34,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays(int offset))
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -147,6 +148,7 @@ module PaymentScheduleTests =
                         UnitPeriodConfig =
                             (startDate.AddDays(int offset) |> fun d -> Monthly(1, d.Year, d.Month, d.Day * 1))
                         ScheduleLength = PaymentCount paymentCount
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -2012,6 +2014,7 @@ module PaymentScheduleTests =
             AutoGenerateSchedule {
                 UnitPeriodConfig = Daily(Date(2023, 1, 3))
                 ScheduleLength = PaymentCount 1
+                BalloonPayment = 0L<Cent>
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -2059,6 +2062,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 8)
                         ScheduleLength = MaxDuration(startDate, 183<DurationDay>)
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -2087,6 +2091,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 5, 18)
                         ScheduleLength = MaxDuration(startDate, 184<DurationDay>)
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -2113,6 +2118,7 @@ module PaymentScheduleTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 7, 4)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig.Rounding = RoundWith MidpointRounding.ToEven
                 InterestConfig.Rounding = RoundWith MidpointRounding.ToEven
@@ -2149,6 +2155,7 @@ module PaymentScheduleTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2024, 7, 4)
                     ScheduleLength = PaymentCount 4
+                    BalloonPayment = 0L<Cent>
                 }
 
             let paymentSchedule2 =
@@ -2190,3 +2197,130 @@ module PaymentScheduleTests =
             schedule1 = schedule2 && schedule2 = schedule3
 
         actual |> should equal true
+
+
+    /// tests for balloon and bullet repayment schedules (PCP GFV, interest-only, bullet loans)
+    module Balloon =
+
+        [<Fact>]
+        let BalloonTest_Pcp_20000_gfv8000_7pct_36m () =
+            /// PCP loan: £20,000 principal, £8,000 GFV (balloon), 7% annual rate, 36 monthly payments
+            /// Regular payments cover interest + amortisation of (principal - GFV); final payment = last regular + GFV
+            let startDate = Date(2024, 1, 7)
+
+            let p = {
+                EvaluationDate = startDate
+                StartDate = startDate
+                Principal = 20000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2024, 2, 7)
+                        ScheduleLength = PaymentCount 36
+                        BalloonPayment = 8000_00L<Cent>
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundWith MidpointRounding.AwayFromZero
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Annual(Percent 7m)
+                    Cap = Interest.Cap.zero
+                    Rounding = RoundWith MidpointRounding.AwayFromZero
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                }
+            }
+
+            let actual = calculateBasicSchedule p
+
+            let expectedStats = {
+                InitialInterestBalance = 0L<Cent>
+                LastScheduledPaymentDay = 1096<OffsetDay>
+                LevelPayment = 41725L<Cent>
+                FinalPayment = 841698L<Cent>
+                ScheduledPaymentTotal = 2302073L<Cent>
+                PrincipalTotal = 20000_00L<Cent>
+                InterestTotal = 302073L<Cent>
+                InitialApr = Percent 7.2m
+                InitialCostToBorrowingRatio = Percent 15.10m
+            }
+
+            actual.Stats |> should equal expectedStats
+
+
+        [<Fact>]
+        let BalloonTest_Bullet_10000_5pct_12m () =
+            /// Bullet / interest-only loan: £10,000 principal = balloon (no amortisation),
+            /// 5% annual rate, 12 monthly interest payments + full principal at maturity
+            let startDate = Date(2024, 3, 15)
+
+            let p = {
+                EvaluationDate = startDate
+                StartDate = startDate
+                Principal = 10000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2024, 4, 15)
+                        ScheduleLength = PaymentCount 12
+                        BalloonPayment = 10000_00L<Cent>
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundWith MidpointRounding.AwayFromZero
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Annual(Percent 5m)
+                    Cap = Interest.Cap.zero
+                    Rounding = RoundWith MidpointRounding.AwayFromZero
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                }
+            }
+
+            let actual = calculateBasicSchedule p
+
+            let expectedStats = {
+                InitialInterestBalance = 0L<Cent>
+                LastScheduledPaymentDay = 365<OffsetDay>
+                LevelPayment = 4168L<Cent>
+                FinalPayment = 1004159L<Cent>
+                ScheduledPaymentTotal = 1050007L<Cent>
+                PrincipalTotal = 10000_00L<Cent>
+                InterestTotal = 50007L<Cent>
+                InitialApr = Percent 5.1m
+                InitialCostToBorrowingRatio = Percent 5.00m
+            }
+
+            actual.Stats |> should equal expectedStats
+
+
+        [<Fact>]
+        let BalloonTest_Pcp_Convenience_25000_gfv10000_6p9pct_36m () =
+            /// PCP via `pcp` convenience constructor: £25,000 principal, £10,000 GFV, 6.9% annual rate, 36 months
+            let startDate = Date(2024, 1, 7)
+
+            let p =
+                pcp startDate startDate
+                    25000_00L<Cent> 10000_00L<Cent>
+                    (Monthly(1, 2024, 2, 7)) 36
+                    { LevelPaymentOption = LowerFinalPayment; Rounding = RoundWith MidpointRounding.AwayFromZero }
+                    { Method = Interest.Method.Actuarial; StandardRate = Interest.Rate.Annual(Percent 6.9m); Cap = Interest.Cap.zero; Rounding = RoundWith MidpointRounding.AwayFromZero; AprMethod = Apr.CalculationMethod.UnitedKingdom 3 }
+                    ValueNone
+
+            let actual = calculateBasicSchedule p
+
+            let expectedStats = {
+                InitialInterestBalance = 0L<Cent>
+                LastScheduledPaymentDay = 1096<OffsetDay>
+                LevelPayment = 52004L<Cent>
+                FinalPayment = 1051984L<Cent>
+                ScheduledPaymentTotal = 2872124L<Cent>
+                PrincipalTotal = 25000_00L<Cent>
+                InterestTotal = 372124L<Cent>
+                InitialApr = Percent 7.1m
+                InitialCostToBorrowingRatio = Percent 14.88m
+            }
+
+            actual.Stats |> should equal expectedStats

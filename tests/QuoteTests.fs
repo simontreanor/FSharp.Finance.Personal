@@ -31,6 +31,7 @@ module QuoteTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Weekly(2, Date(2024, 8, 17))
                     ScheduleLength = PaymentCount 11
+                    BalloonPayment = 0L<Cent>
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -168,6 +169,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -247,6 +249,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -331,6 +334,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> Monthly(1, sd.Year, sd.Month, sd.Day * 1))
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig = ValueNone
                 Basic.InterestConfig.StandardRate = Interest.Rate.Daily(Percent 0.8m)
@@ -415,6 +419,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = (startDate.AddDays 15 |> fun sd -> Monthly(1, sd.Year, sd.Month, sd.Day * 1))
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig = ValueNone
                 Basic.InterestConfig.StandardRate = Interest.Rate.Daily(Percent 0.8m)
@@ -496,6 +501,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.FeeConfig =
                     ValueSome {
@@ -576,6 +582,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.FeeConfig =
                     ValueSome {
@@ -653,6 +660,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, startDate.AddDays 15)
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.PaymentConfig.Rounding = RoundDown
         }
@@ -700,6 +708,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2023, 6, 30))
                         ScheduleLength = PaymentCount 10
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig =
                     ValueSome {
@@ -781,6 +790,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 12, 12))
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig =
                     ValueSome {
@@ -877,6 +887,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 12, 12))
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.FeeConfig =
                     ValueSome {
@@ -975,6 +986,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 28)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 Basic.InterestConfig.StandardRate = Interest.Rate.Daily <| Percent 0.798m
                 Advanced.InterestConfig.InitialGracePeriod = 1<DurationDay>
@@ -1049,6 +1061,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1129,6 +1142,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1209,6 +1223,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1289,6 +1304,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.ChargeConfig =
                     Some {
@@ -1382,6 +1398,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1461,6 +1478,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1545,6 +1563,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1624,6 +1643,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 11, 15)
                         ScheduleLength = PaymentCount 5
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -1705,6 +1725,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 1, 20)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.InterestConfig.InitialGracePeriod = 0<DurationDay>
         }
@@ -1747,6 +1768,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2018, 2, 28)
                         ScheduleLength = PaymentCount 3
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.PaymentConfig.Timeout = 0<DurationDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
@@ -1806,6 +1828,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2018, 2, 28)
                         ScheduleLength = PaymentCount 3
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.PaymentConfig.Timeout = 0<DurationDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
@@ -1874,6 +1897,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.PaymentConfig.Timeout = 0<DurationDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
@@ -1928,6 +1952,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 9, 22)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.PaymentConfig.Timeout = 0<DurationDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment
@@ -1975,6 +2000,7 @@ module QuoteTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 5, 10)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.PaymentConfig.Timeout = 0<DurationDay>
                 Advanced.PaymentConfig.Minimum = NoMinimumPayment

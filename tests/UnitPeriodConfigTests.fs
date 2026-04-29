@@ -67,6 +67,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 5, 13))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -182,6 +183,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2023, 4, 20))
                         ScheduleLength = PaymentCount 12
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -270,6 +272,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2023, 2, 2))
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -411,6 +414,7 @@ module UnitPeriodConfigTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Weekly(2, Date(2022, 10, 28))
                         ScheduleLength = PaymentCount 11
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment

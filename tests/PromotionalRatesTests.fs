@@ -32,6 +32,7 @@ module PromotionalRatesTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2024, 9, 2)
                     ScheduleLength = PaymentCount 4
+                    BalloonPayment = 0L<Cent>
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment

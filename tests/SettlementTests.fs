@@ -31,6 +31,7 @@ module SettlementTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2023, 12, 22)
                     ScheduleLength = PaymentCount 4
+                    BalloonPayment = 0L<Cent>
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment

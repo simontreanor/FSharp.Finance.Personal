@@ -62,6 +62,7 @@ let parameters0: Parameters = {
             AutoGenerateSchedule {
                 UnitPeriodConfig = Monthly(1, 2025, 5, 24)
                 ScheduleLength = PaymentCount 4
+                BalloonPayment = 0L<Cent>
             }
         PaymentConfig = {
             LevelPaymentOption = LowerFinalPayment
@@ -593,6 +594,7 @@ let rolloverParameters: RolloverParameters = {
         AutoGenerateSchedule {
             UnitPeriodConfig = Monthly(1, 2025, 10, 1) // monthly payments starting on 1 October 2025
             ScheduleLength = PaymentCount 8 // 8 payments
+            BalloonPayment = 0L<Cent>
         }
     InterestConfig = refinanceExampleParameters.Basic.InterestConfig // use the same interest config as the original schedule
     PaymentConfig = refinanceExampleParameters.Basic.PaymentConfig // use the same payment config as the original schedule

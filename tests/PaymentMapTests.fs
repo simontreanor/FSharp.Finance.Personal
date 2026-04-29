@@ -25,6 +25,7 @@ module PaymentMapTests =
             AutoGenerateSchedule {
                 UnitPeriodConfig = unitPeriodConfig
                 ScheduleLength = PaymentCount paymentCount
+                BalloonPayment = 0L<Cent>
             }
         PaymentOptions = { ScheduledPaymentOption = AsScheduled }
         FeeConfig = None

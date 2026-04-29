@@ -449,6 +449,7 @@ module EdgeCaseTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2022, 7, 15)
                     ScheduleLength = PaymentCount 6
+                    BalloonPayment = 0L<Cent>
                 }
             Basic.FeeConfig = ValueNone
             Basic.InterestConfig = {
@@ -588,6 +589,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 1, 7)
                         ScheduleLength = PaymentCount 6
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -648,6 +650,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -735,6 +738,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2024, 2, 22)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -822,6 +826,7 @@ module EdgeCaseTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 5, 10)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 Advanced.InterestConfig.RateOnNegativeBalance = Interest.Rate.Annual <| Percent 8m
         }

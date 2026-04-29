@@ -93,6 +93,7 @@ module InterestTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 2, 14)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
                 PaymentConfig = {
                     LevelPaymentOption = LowerFinalPayment
@@ -457,6 +458,7 @@ module InterestTests =
                         AutoGenerateSchedule {
                             UnitPeriodConfig = Monthly(1, 2010, 4, 1)
                             ScheduleLength = PaymentCount 48
+                            BalloonPayment = 0L<Cent>
                         }
             }
 

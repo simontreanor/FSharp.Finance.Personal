@@ -28,6 +28,7 @@ module InterestFirstTests =
                 AutoGenerateSchedule {
                     UnitPeriodConfig = Monthly(1, 2024, 8, 2)
                     ScheduleLength = PaymentCount 5
+                    BalloonPayment = 0L<Cent>
                 }
             PaymentConfig = {
                 LevelPaymentOption = LowerFinalPayment
@@ -211,6 +212,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 1, 28)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -252,6 +254,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 1, 28)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -403,6 +406,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2022, 4, 1)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -451,6 +455,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 6, 10)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
@@ -497,6 +502,7 @@ module InterestFirstTests =
                     AutoGenerateSchedule {
                         UnitPeriodConfig = Monthly(1, 2023, 6, 10)
                         ScheduleLength = PaymentCount 4
+                        BalloonPayment = 0L<Cent>
                     }
         }
 
