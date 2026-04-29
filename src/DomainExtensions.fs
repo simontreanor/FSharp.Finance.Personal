@@ -1,4 +1,6 @@
-namespace FSharp.Finance.Personal
+namespace FSharp.Finance.B2B
+
+open FSharp.Finance.Personal
 
 /// Domain extensions for business product classification and metadata
 module DomainExtensions =
@@ -40,6 +42,14 @@ module DomainExtensions =
                 Name = name
                 Tags = tags
             }
+
+        /// Create trade credit product metadata
+        let tradeCredit (name: string option) =
+            businessToBusiness name [| "trade-credit" |]
+
+        /// Create invoice factoring product metadata
+        let invoiceFactoring (name: string option) =
+            businessToBusiness name [| "invoice-factoring" |]
 
         /// Create unspecified product metadata
         let unspecified (name: string option) (tags: string array) =

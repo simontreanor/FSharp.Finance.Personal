@@ -27,6 +27,7 @@
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
     <Compile Include="TradeCreditTests.fs" />
+    <Compile Include="InvoiceFactoringTests.fs" />
     <!-- <Compile Include="UnitPeriodConfigTests.fs" /> -->
   </ItemGroup>
   <ItemGroup>

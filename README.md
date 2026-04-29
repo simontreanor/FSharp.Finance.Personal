@@ -24,6 +24,8 @@ none of which are conferred by the use of this library.
 
 The library now includes optional B2B analytical extensions for business-to-business finance scenarios:
 
+All new business analytics live under the `FSharp.Finance.B2B` namespace.
+
 ### Trade Credit Analysis
 - **Early-payment discount calculations**: Analyze terms like "2/10 net 30" to determine the implied annual cost of not taking discounts
 - **Simple and compounded rate calculations**: Understand the true cost of extending payment terms
@@ -36,6 +38,7 @@ The library now includes optional B2B analytical extensions for business-to-busi
 
 ### Product Classification
 - **Metadata support**: Classify financial products for organizational and analytical purposes
+- **Specialized helpers**: `ProductMetadata.tradeCredit` and `ProductMetadata.invoiceFactoring`
 - **Future-ready cashflow modeling**: Extensible types for advanced cashflow analysis
 
 **Important**: These B2B extensions are for analytical purposes only and do NOT determine regulatory status. They complement the core personal finance calculations while providing specialized business analytical capabilities.

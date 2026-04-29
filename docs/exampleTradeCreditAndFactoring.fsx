@@ -24,7 +24,7 @@ Trade credit terms like "2/10 net 30" offer early-payment discounts. Let's analy
 
 *)
 
-#r "nuget: FSharp.Finance.Personal"
+#r "../src/bin/Debug/netstandard2.1/FSharp.Finance.Personal.dll"
 
 open FSharp.Finance.Personal
 open FSharp.Finance.B2B
@@ -62,7 +62,7 @@ Now let's model an invoice factoring scenario where a business sells invoices to
 
 *)
 
-open FSharp.Finance.Personal.InvoiceFactoring
+open FSharp.Finance.B2B.InvoiceFactoring
 open FSharp.Finance.Personal.DateDay
 open FSharp.Finance.Personal.Calculation
 

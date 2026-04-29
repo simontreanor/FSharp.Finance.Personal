@@ -1,4 +1,6 @@
-namespace FSharp.Finance.Personal
+namespace FSharp.Finance.B2B
+
+open FSharp.Finance.Personal
 
 /// Future-facing cashflow modeling types for potential integration
 module CashflowModel =

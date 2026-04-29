@@ -24,8 +24,8 @@ module TradeCredit =
         /// Create discount terms from common "X/Y net Z" notation
         /// Example: createTerms 2m 10 30 creates "2/10 net 30" terms
         let createTerms (discountPercentage: decimal) (discountDays: int) (netDays: int) =
-            if discountPercentage < 0m || discountPercentage > 100m then
-                invalidArg (nameof discountPercentage) "Discount percentage must be between 0 and 100"
+            if discountPercentage < 0m || discountPercentage >= 100m then
+                invalidArg (nameof discountPercentage) "Discount percentage must be between 0 and less than 100"
             if discountDays < 0 then
                 invalidArg (nameof discountDays) "Discount days must be non-negative"
             if netDays <= discountDays then

@@ -110,9 +110,13 @@ module InvoiceFactoring =
             // Create scheduled payments - one per invoice at its due date for full face value
             let scheduledPaymentMap =
                 advances
-                |> Array.map (fun advance ->
-                    let offsetDay = OffsetDay.fromDate startDate advance.Invoice.DueDate
-                    let scheduledPayment = ScheduledPayment.quick (ValueSome advance.Invoice.FaceValue) ValueNone
+                |> Array.groupBy (fun advance -> OffsetDay.fromDate startDate advance.Invoice.DueDate)
+                |> Array.map (fun (offsetDay, sameDayAdvances) ->
+                    let totalFaceValue =
+                        sameDayAdvances
+                        |> Array.sumBy (fun advance -> advance.Invoice.FaceValue)
+
+                    let scheduledPayment = ScheduledPayment.quick (ValueSome totalFaceValue) ValueNone
                     offsetDay, scheduledPayment
                 )
                 |> Map.ofArray

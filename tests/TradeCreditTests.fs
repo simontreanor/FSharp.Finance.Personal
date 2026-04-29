@@ -71,6 +71,10 @@ module TradeCreditTests =
         (fun () -> DiscountTerms.createTerms -1m 10 30 |> ignore)
         |> should throw typeof<System.ArgumentException>
 
+        // Test invalid discount percentage (100%)
+        (fun () -> DiscountTerms.createTerms 100m 10 30 |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
         // Test invalid discount percentage (over 100%)
         (fun () -> DiscountTerms.createTerms 101m 10 30 |> ignore)
         |> should throw typeof<System.ArgumentException>
