@@ -649,8 +649,12 @@ module Refinancing =
 
                 | OverpaymentHandling.ReducePayment ->
                     // calculate a lower payment amount based on the outstanding balance and the remaining payment count;
-                    // use the evaluation date as the StartDate so that the generated payment days align with
-                    // those in the original schedule (the first post-evaluation payment is one unit period later)
+                    // StartDate is the evaluation date (so interest accrues from that date), while the
+                    // unit-period config is anchored to the first remaining payment date so that the generated
+                    // payment schedule matches the original post-overpayment payment days exactly
+                    let firstRemainingDate =
+                        remainingItems |> Array.head |> _.Day |> OffsetDay.toDate p.Basic.StartDate
+
                     let newBasicParams = {
                         p.Basic with
                             StartDate = p.Basic.EvaluationDate
@@ -661,8 +665,8 @@ module Refinancing =
                                 AutoGenerateSchedule {
                                     UnitPeriodConfig =
                                         match p.Basic.ScheduleConfig with
-                                        | AutoGenerateSchedule ags -> unitPeriodConfigFromDate p.Basic.EvaluationDate ags.UnitPeriodConfig
-                                        | _ -> Config.defaultMonthly 1 p.Basic.EvaluationDate
+                                        | AutoGenerateSchedule ags -> unitPeriodConfigFromDate firstRemainingDate ags.UnitPeriodConfig
+                                        | _ -> Config.defaultMonthly 1 firstRemainingDate
                                     ScheduleLength = PaymentCount remainingCount
                                 }
                     }
