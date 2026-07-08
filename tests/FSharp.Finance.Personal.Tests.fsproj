@@ -8,7 +8,6 @@
     <ProjectReference Include="..\src\FSharp.Finance.Personal.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    
     <Compile Include="Util.fs" />
     <Compile Include="ActualPaymentTests.fs" />
     <Compile Include="ActualPaymentTestsExtra.fs" />
@@ -26,6 +25,7 @@
     <Compile Include="PromotionalRatesTests.fs" />
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
+    <Compile Include="SalaryAdvanceTests.fs" />
     <!-- <Compile Include="UnitPeriodConfigTests.fs" /> -->
   </ItemGroup>
   <ItemGroup>
