@@ -86,8 +86,8 @@ module Tables =
         [| 10.00m; 18.00m; 14.40m; 11.52m; 9.22m; 7.37m; 6.55m; 6.55m; 6.56m; 6.55m; 3.28m |]
         // 15-year
         [| 5.00m; 9.50m; 8.55m; 7.70m; 6.93m; 6.23m; 5.90m; 5.90m; 5.91m; 5.90m; 5.91m; 5.90m; 5.91m; 5.90m; 5.91m; 2.95m |]
-        // 20-year
-        [| 3.75m; 7.22m; 6.68m; 6.18m; 5.71m; 5.29m; 4.89m; 4.52m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 4.46m; 2.25m |]
+        // 20-year (IRS Table A-1, three-decimal percentages summing to exactly 100.000)
+        [| 3.750m; 7.219m; 6.677m; 6.177m; 5.713m; 5.285m; 4.888m; 4.522m; 4.462m; 4.461m; 4.462m; 4.461m; 4.462m; 4.461m; 4.462m; 4.461m; 4.462m; 4.461m; 4.462m; 4.461m; 2.231m |]
     |]
 
     /// Get the depreciation percentages for a given asset class
@@ -186,17 +186,34 @@ module Calculations =
                 BookValue = 0L<Cent>
             }
 
-    /// Determine the MACRS property class based on asset description
-    let classifyAsset (assetDescription: string) : AssetClass =
+    /// Attempt to determine the MACRS property class from an asset description.
+    /// Returns None when no keyword matches, so callers can surface the fact that an
+    /// asset class was assumed rather than recognized.
+    /// Real-property descriptions (buildings etc.) are rejected: under MACRS, buildings are
+    /// 27.5-year (residential) / 39-year (nonresidential) straight-line REAL property, which
+    /// this simplified module does not model.
+    let tryClassifyAsset (assetDescription: string) : AssetClass option =
         let desc = assetDescription.ToLowerInvariant()
-        if desc.Contains("computer") || desc.Contains("car") || desc.Contains("truck") then
-            AssetClass.FiveYear
-        elif desc.Contains("furniture") || desc.Contains("manufacturing") then
-            AssetClass.SevenYear
-        elif desc.Contains("building") then
-            AssetClass.FifteenYear
+        let realPropertyKeywords = [ "building"; "warehouse"; "real property"; "real estate"; "residential"; "nonresidential"; "apartment"; "office block" ]
+        if realPropertyKeywords |> List.exists desc.Contains then
+            invalidArg (nameof assetDescription)
+                "Real property (27.5-year residential / 39-year nonresidential straight-line) is not supported by this simplified MACRS module."
+        elif desc.Contains "computer" || desc.Contains "car" || desc.Contains "truck" || desc.Contains "vehicle" then
+            Some AssetClass.FiveYear
+        elif desc.Contains "furniture" || desc.Contains "manufacturing" then
+            Some AssetClass.SevenYear
+        elif desc.Contains "boat" || desc.Contains "barge" then
+            Some AssetClass.TenYear
+        elif desc.Contains "land improvement" || desc.Contains "parking lot" || desc.Contains "fence" || desc.Contains "landscaping" || desc.Contains "gas station" || desc.Contains "billboard" then
+            Some AssetClass.FifteenYear
         else
-            AssetClass.FiveYear // default to 5-year for most business equipment
+            None
+
+    /// Determine the MACRS property class based on asset description, defaulting to
+    /// FiveYear (most business equipment) when no keyword matches.
+    /// Use tryClassifyAsset to detect whether the default assumption was applied.
+    let classifyAsset (assetDescription: string) : AssetClass =
+        tryClassifyAsset assetDescription |> Option.defaultValue AssetClass.FiveYear
 
 /// Example configurations and usage
 module Examples =

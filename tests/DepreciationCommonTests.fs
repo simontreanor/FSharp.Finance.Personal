@@ -99,8 +99,12 @@ module DepreciationCommonTests =
         // Never below salvage
         schedule |> Array.iter (fun p -> p.BookValue |> should be (greaterThanOrEqualTo salvage))
 
-        // Methods should be only "DB"
-        schedule |> Array.iter (fun p -> p.Method |> should equal "DB")
+        // Rate-based periods are labelled "DB"; the final period is a plug to land exactly
+        // on salvage and is labelled distinctly
+        schedule
+        |> Array.take (schedule.Length - 1)
+        |> Array.iter (fun p -> p.Method |> should equal "DB")
+        (schedule |> Array.last).Method |> should equal "DB (final adjustment)"
 
         // Sum depreciation = cost - salvage
         let totalDep = schedule |> Array.sumBy (fun p -> p.Depreciation)

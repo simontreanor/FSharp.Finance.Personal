@@ -39,8 +39,12 @@ module Types =
         MainPoolRate: decimal
         /// Writing down allowance rate for special rate pool (typically 6%)
         SpecialRatePoolRate: decimal
-        /// Maximum number of years to calculate
+        /// Maximum number of years to calculate. Any pool value left after this many years
+        /// is reported as UnclaimedPool on the schedule rather than silently dropped.
         MaxYears: int
+        /// HMRC small pools allowance threshold: when the pool balance is at or below this
+        /// value, the whole pool may be written off in that year (£1,000 under current rules)
+        SmallPoolThreshold: int64<Cent>
     }
 
     /// Default configuration based on common UK rates
@@ -49,6 +53,7 @@ module Types =
         MainPoolRate = 0.18m
         SpecialRatePoolRate = 0.06m
         MaxYears = 10
+        SmallPoolThreshold = 1_000_00L<Cent>
     }
 
     /// Represents an expenditure item
@@ -75,25 +80,38 @@ module Types =
         PoolValueEndOfYear: int64<Cent>
     }
 
+    /// A capital allowances schedule with any unclaimed residual made explicit
+    type AllowanceSchedule = {
+        /// Year-by-year allowances
+        Years: YearAllowance list
+        /// Pool value remaining unclaimed when the calculation stops at MaxYears.
+        /// Zero when the pool is fully written off within the calculated years.
+        UnclaimedPool: int64<Cent>
+    }
+
 /// UK Capital Allowances calculation functions
 module Calculations =
     
     open Types
 
-    /// Generates a capital allowances schedule for a single expenditure
-    let generateSchedule (config: CapitalAllowanceConfig) (expenditure: Expenditure) : YearAllowance list =
+    /// Generates a capital allowances schedule for a single expenditure.
+    /// Applies the HMRC small pools allowance: when the pool balance is at or below
+    /// config.SmallPoolThreshold, the whole pool is written off in that year.
+    /// Any pool value remaining after MaxYears is reported as UnclaimedPool.
+    let generateSchedule (config: CapitalAllowanceConfig) (expenditure: Expenditure) : AllowanceSchedule =
         if expenditure.Amount <= 0L<Cent> then invalidArg (nameof expenditure.Amount) "Amount must be > 0."
         if config.MaxYears <= 0 then invalidArg (nameof config.MaxYears) "MaxYears must be > 0."
         if config.AnnualInvestmentAllowanceLimit < 0L<Cent> then invalidArg (nameof config.AnnualInvestmentAllowanceLimit) "AnnualInvestmentAllowanceLimit must be >= 0."
         if config.MainPoolRate < 0m then invalidArg (nameof config.MainPoolRate) "MainPoolRate must be >= 0."
         if config.SpecialRatePoolRate < 0m then invalidArg (nameof config.SpecialRatePoolRate) "SpecialRatePoolRate must be >= 0."
-        
+        if config.SmallPoolThreshold < 0L<Cent> then invalidArg (nameof config.SmallPoolThreshold) "SmallPoolThreshold must be >= 0."
+
         let rec calculateYears (year: int) (poolValue: int64<Cent>) (remainingAIA: int64<Cent>) (acc: YearAllowance list) =
             if year > config.MaxYears || poolValue <= 0L<Cent> then
-                List.rev acc
+                { Years = List.rev acc; UnclaimedPool = poolValue }
             else
                 // Calculate AIA for this year (only available in year 1 for single addition)
-                let aiaThisYear = 
+                let aiaThisYear =
                     if year = 1 then
                         min poolValue remainingAIA
                     else
@@ -103,19 +121,20 @@ module Calculations =
                 let valueAfterAIA = poolValue - aiaThisYear
 
                 // Calculate WDA rate based on pool type
-                let wdaRate = 
+                let wdaRate =
                     match expenditure.Pool with
                     | Pool.Main -> config.MainPoolRate
                     | Pool.SpecialRate -> config.SpecialRatePoolRate
 
-                // Calculate Writing Down Allowance (WDA)
-                let rawWda = 
-                    Cent.toDecimalCent valueAfterAIA * wdaRate 
-                    |> Cent.fromDecimalCent (Rounding.RoundWith MidpointRounding.AwayFromZero)
+                // Calculate Writing Down Allowance (WDA), applying the small pools allowance:
+                // a pool at or below the threshold may be written off in full
                 let wda =
-                    if valueAfterAIA > 0L<Cent> && rawWda = 0L<Cent> then
+                    if valueAfterAIA > 0L<Cent> && valueAfterAIA <= config.SmallPoolThreshold then
                         valueAfterAIA
                     else
+                        let rawWda =
+                            Cent.toDecimalCent valueAfterAIA * wdaRate
+                            |> Cent.fromDecimalCent (Rounding.RoundWith MidpointRounding.AwayFromZero)
                         min rawWda valueAfterAIA
 
                 // Total allowances for this year
@@ -137,7 +156,7 @@ module Calculations =
         calculateYears 1 expenditure.Amount config.AnnualInvestmentAllowanceLimit []
 
     /// Generates a schedule using default configuration
-    let scheduleDefault (expenditure: Expenditure) : YearAllowance list =
+    let scheduleDefault (expenditure: Expenditure) : AllowanceSchedule =
         generateSchedule Default expenditure
 
 /// Example configurations and usage

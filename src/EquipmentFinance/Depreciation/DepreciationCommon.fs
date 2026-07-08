@@ -27,7 +27,11 @@ module DepreciationCommon =
         Depreciation: int64<Cent>
         Accumulated: int64<Cent>
         BookValue: int64<Cent>
-        Method: string   // "SL", "DB", or "DB->SL"
+        /// "SL", "DB", "DB (final adjustment)", or "DB->SL".
+        /// Pure declining balance never reaches the salvage value by itself, so its final
+        /// period is a plug that lands exactly on salvage; that period is labelled
+        /// "DB (final adjustment)" to distinguish it from rate-based periods.
+        Method: string
     }
 
     /// Common validation utilities
@@ -171,6 +175,10 @@ module DepreciationCommon =
         /// switchToStraightLine: if true, permanently switches to SL once advantageous
         ///
         /// Rounding: Per-period depreciation is rounded to cents; final period adjusted for exact salvage.
+        ///
+        /// Note: without the straight-line switch, a declining balance never reaches the salvage
+        /// value by itself, so the final period is a plug (book value minus salvage) rather than a
+        /// rate-based amount; it is labelled "DB (final adjustment)" to make this explicit.
         let decliningBalance
             (cost: int64<Cent>)
             (salvage: int64<Cent>)
@@ -209,6 +217,10 @@ module DepreciationCommon =
                             (straightLineRemainderDec, true, "DB->SL")
                         elif switchToStraightLine && straightLineRemainderDec > decliningDec then
                             (straightLineRemainderDec, true, "DB->SL")
+                        elif isLast then
+                            // pure DB never lands on salvage by itself: the final period is a
+                            // plug to exactly reach the salvage value, labelled distinctly
+                            (decliningDec, false, "DB (final adjustment)")
                         else
                             (decliningDec, false, "DB")
 

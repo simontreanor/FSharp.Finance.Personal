@@ -52,6 +52,13 @@ src/EquipmentFinance/
 - **15-Year Property**: Land improvements, gas stations
 - **20-Year Property**: Farm buildings, utility property
 
+Real property (buildings, warehouses, etc.) is **not** supported: under MACRS, buildings are
+27.5-year (residential) / 39-year (nonresidential) straight-line property, so
+`classifyAsset`/`tryClassifyAsset` reject building descriptions with a descriptive error
+instead of misclassifying them. `tryClassifyAsset` returns `None` for unrecognized
+descriptions; `classifyAsset` defaults those to 5-year property, and the analysis functions
+surface that assumption via the `AssetClassAssumed` flag.
+
 ### Example Usage
 
 ```fsharp
@@ -72,9 +79,10 @@ let schedule = Calculations.generateSchedule computer
 ### Key Features
 
 - Half-year convention implementation
-- Educational percentage tables for all asset classes
+- IRS Table A-1 percentage tables for all supported asset classes (each table sums to
+  exactly 100% of basis)
 - Complete year-by-year depreciation calculations
-- Asset classification helper function
+- Asset classification helper functions (`classifyAsset` / `tryClassifyAsset`)
 
 ## UK Capital Allowances
 
@@ -96,15 +104,19 @@ let machinery = {
 }
 
 let schedule = Calculations.scheduleDefault machinery
-// Returns schedule with AIA in year 1, then WDA in subsequent years
+// Returns an AllowanceSchedule: schedule.Years has AIA in year 1 then WDA in subsequent
+// years; schedule.UnclaimedPool reports any pool value left when MaxYears is reached
 ```
 
 ### Key Features
 
 - Annual Investment Allowance (AIA) application
 - Writing Down Allowances with proper rates
+- HMRC small pools allowance: a pool balance at or below `SmallPoolThreshold`
+  (default £1,000) is written off in full that year
+- Explicit `UnclaimedPool` reporting when the schedule is truncated at `MaxYears`
 - Midpoint-away-from-zero rounding
-- Configurable AIA limits and maximum years
+- Configurable AIA limits, small-pool threshold and maximum years
 
 ## Equipment Loans
 
@@ -113,7 +125,17 @@ let schedule = Calculations.scheduleDefault machinery
 - Monthly payment calculation with various interest rates
 - Complete amortization schedule generation
 - Integration with MACRS depreciation analysis
-- Support for residual values; `Principal` is the financed amount after any down payment
+- Support for residual values; `Principal` is the financed amount after any down payment.
+  The balance amortizes down to the residual and the final payment settles it as a
+  balloon, reported separately in the schedule's `BalloonAmount` column.
+  `ResidualValue = Principal` models an interest-only balloon loan.
+- Optional recurring `MonthlyFee`, shown as its own `FeePayment` column
+  (payment = principal + interest + fee) and included in `TotalPayments`/`TotalFees`
+- With a supplied `MonthlyPayment`, payments that would not cover the first period's
+  interest are rejected, and an overpaying schedule terminates early once the balance is
+  repaid instead of producing negative rows
+- `PaymentCalculation.NominalAnnualRate` is the nominal input rate used for the schedule;
+  no effective APR is computed
 
 ### Example Usage
 
@@ -125,14 +147,16 @@ let loanTerms = {
     InterestRate = Interest.Rate.Annual (Percent 6.0m)
     TermMonths = 36
     MonthlyPayment = None
+    MonthlyFee = None
     EquipmentDescription = "Manufacturing Equipment"
     EquipmentCost = 10000_00L<Cent>
     DownPayment = 2000_00L<Cent>
     ResidualValue = 1000_00L<Cent>
 }
 
-let analysis = Loan.analyzeLoan loanTerms startDate
-// Returns comprehensive loan analysis including depreciation
+let analysis = Loan.analyzeLoan loanTerms startDate (Percent 8.0m)
+// Returns comprehensive loan analysis including depreciation and the NPV of the loan
+// cash flows discounted at the supplied annual rate
 ```
 
 ## Equipment Leases
@@ -154,22 +178,33 @@ let leaseTerms = {
     TermMonths = 36
     LeaseType = Lease.LeaseType.FinanceLease
     PaymentFrequency = Lease.PaymentFrequency.Monthly
-    LeasePayment = 300_00L<Cent>
+    PaymentTiming = Lease.PaymentTiming.InAdvance
+    LeasePayment = 0L<Cent> // 0 = calculate the level rental from the other terms
+    PeriodicFee = None
     UpfrontPayment = 1000_00L<Cent>
     ResidualValue = 2000_00L<Cent>
     PurchaseOption = Some 2000_00L<Cent>
     ImplicitRate = Interest.Rate.Annual (Percent 5.0m)
 }
 
-let analysis = Lease.analyzeLeaseVsBuy leaseTerms startDate
-// Returns lease vs buy analysis with depreciation comparison
+let analysis = Lease.analyzeLeaseVsBuy leaseTerms startDate (Percent 8.0m)
+// Returns lease vs buy analysis with depreciation comparison and the net advantage to
+// leasing (NPV of buying minus NPV of leasing at the supplied discount rate)
 ```
 
 ### Key Features
 
 - Multiple payment frequencies (monthly, quarterly, etc.)
+- Payments in advance (annuity-due, the usual convention for equipment leases) or in
+  arrears via `PaymentTiming`
+- The contractual rental is honoured every period; the final period is a plug that lands
+  exactly on the residual. Stated rentals that cannot land on the residual (too high or
+  too low) are rejected with an error quoting the consistent level rental.
+- Optional recurring `PeriodicFee`, shown as its own `FeePortion` column and included in
+  the totals
 - Present value calculations
-- Lease vs. buy analysis with depreciation integration
+- Lease vs. buy analysis with depreciation integration and a computed
+  `NetAdvantageToLeasing` (simple pre-tax NPV comparison)
 - Support for purchase options
 
 ## Common Features
@@ -214,8 +249,9 @@ Comprehensive test suites are provided for all modules:
 
 Potential areas for expansion:
 
-- Additional depreciation methods (e.g., declining balance)
-- More sophisticated lease vs. buy NPV analysis
+- More sophisticated lease vs. buy NPV analysis (tax effects, after-tax discount rates)
+- Effective APR calculation for loans and leases (the current
+  `NominalAnnualRate` fields report the nominal input rate only)
 - Integration with tax calculation modules
 - Support for partial-year conventions
 - Multiple asset management capabilities

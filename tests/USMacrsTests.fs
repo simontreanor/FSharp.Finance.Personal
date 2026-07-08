@@ -209,5 +209,54 @@ module USMacrsTests =
         Calculations.classifyAsset "car" |> should equal Types.AssetClass.FiveYear
         Calculations.classifyAsset "office furniture" |> should equal Types.AssetClass.SevenYear
         Calculations.classifyAsset "manufacturing equipment" |> should equal Types.AssetClass.SevenYear
-        Calculations.classifyAsset "building" |> should equal Types.AssetClass.FifteenYear
+        Calculations.classifyAsset "land improvement" |> should equal Types.AssetClass.FifteenYear
+        Calculations.classifyAsset "parking lot" |> should equal Types.AssetClass.FifteenYear
         Calculations.classifyAsset "general equipment" |> should equal Types.AssetClass.FiveYear // default
+
+    [<Fact>]
+    let ``Asset classification surfaces unrecognized descriptions`` () =
+        Calculations.tryClassifyAsset "computer equipment" |> should equal (Some Types.AssetClass.FiveYear)
+        Calculations.tryClassifyAsset "general equipment" |> should equal None
+
+    [<Fact>]
+    let ``Asset classification rejects real property`` () =
+        // buildings are 27.5/39-year straight-line real property under MACRS, not 15-year
+        (fun () -> Calculations.classifyAsset "building" |> ignore)
+        |> should throw typeof<System.ArgumentException>
+        (fun () -> Calculations.classifyAsset "warehouse" |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+    [<Fact>]
+    let ``Twenty-year table matches IRS Table A-1 and sums to exactly 100 percent`` () =
+        let percentages = Tables.getDepreciationPercentages Types.AssetClass.TwentyYear
+
+        percentages.Length |> should equal 21
+        percentages.[0] |> should equal 3.750m
+        percentages.[1] |> should equal 7.219m
+        percentages.[20] |> should equal 2.231m
+
+        // the IRS three-decimal values sum to exactly 100.000 (the previous two-decimal
+        // roundings summed to 100.01)
+        percentages |> Array.sum |> should equal 100.000m
+
+    [<Fact>]
+    let ``Twenty-year schedule on one million dollars sums exactly to basis`` () =
+        let asset = {
+            CostBasis = 1_000_000_00L<Cent> // $1,000,000
+            PlacedInServiceDate = FSharp.Finance.Personal.DateDay.Date(2024, 1, 1)
+            PropertyClass = Types.AssetClass.TwentyYear
+            Convention = Types.Convention.HalfYear
+        }
+
+        let schedule = Calculations.generateSchedule asset
+
+        schedule |> List.sumBy (fun year -> year.DepreciationAmount) |> should equal asset.CostBasis
+        (schedule |> List.last).BookValue |> should equal 0L<Cent>
+
+        // every year matches the table exactly - the basis cap safety net never distorts a year
+        schedule
+        |> List.iter (fun year ->
+            let expected =
+                decimal asset.CostBasis * year.DepreciationRate * 1m<Cent>
+                |> Cent.fromDecimalCent (RoundWith System.MidpointRounding.AwayFromZero)
+            year.DepreciationAmount |> should equal expected)
