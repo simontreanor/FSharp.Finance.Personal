@@ -57,9 +57,10 @@ module CashflowModel =
                 RelatedEvents = [||]
             }
 
-        /// Create an advance cashflow event
-        let advance id date amount description =
-            create id date Advance amount description
+        /// Create an advance cashflow event from a positive advance amount: since an advance is an inflow
+        /// to the customer, the amount is recorded as negative per the module's sign convention
+        let advance id date (amount: int64<Cent>) description =
+            create id date Advance (-amount) description
 
         /// Create a scheduled payment cashflow event
         let scheduledPayment id date amount description =
@@ -71,4 +72,5 @@ module CashflowModel =
 
     // TODO: Future enhancement - integrate with core engine for comprehensive cashflow modeling
     // This module is intentionally not yet wired into the core calculation engine
-    // but provides a foundation for future cashflow-based analytics
+    // but provides a foundation for future cashflow-based analytics;
+    // see docs/exampleTradeCreditAndFactoring.fsx for a usage demonstration

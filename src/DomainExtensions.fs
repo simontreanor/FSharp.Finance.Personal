@@ -1,7 +1,5 @@
 namespace FSharp.Finance.B2B
 
-open FSharp.Finance.Personal
-
 /// Domain extensions for business product classification and metadata
 module DomainExtensions =
 

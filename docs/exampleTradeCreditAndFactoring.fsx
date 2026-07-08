@@ -66,25 +66,36 @@ open FSharp.Finance.B2B.InvoiceFactoring
 open FSharp.Finance.Personal.DateDay
 open FSharp.Finance.Personal.Calculation
 
+// Classify the product for analytical purposes
+open FSharp.Finance.B2B.DomainExtensions
+
+let productMetadata = ProductMetadata.invoiceFactoring (Some "Example factoring facility")
+printfn "\n=== Product Classification ==="
+printfn "Product type: %A, Name: %A, Tags: %A" productMetadata.ProductType productMetadata.Name productMetadata.Tags
+
 // Create sample invoices
 let invoice1 = Invoice.create "INV-001" 10000_00L<Cent> (Date(2024, 1, 15)) (Date(2024, 2, 14)) "Customer-A"
 let invoice2 = Invoice.create "INV-002" 15000_00L<Cent> (Date(2024, 1, 20)) (Date(2024, 2, 19)) "Customer-B"
 
 // Create invoice advances with 80% advance rate and 2% factoring fee
+// The gross advance is 80% of the face value, the 2% fee is deducted from the gross advance,
+// and the remaining 20% is held in reserve, so net advance + fee + reserve = face value exactly
 let advance1 = InvoiceAdvance.derive invoice1 0.80m 0.02m
 let advance2 = InvoiceAdvance.derive invoice2 0.80m 0.02m
 
 printfn "\n=== Invoice Factoring Analysis ==="
-printfn "Invoice 1: Face Value $%.2f, Net Advance $%.2f, Fee $%.2f, Reserve $%.2f" 
-    (Cent.toDecimal invoice1.FaceValue) 
-    (Cent.toDecimal advance1.NetAdvance) 
-    (Cent.toDecimal advance1.UpfrontFee) 
+printfn "Invoice 1: Face Value $%.2f, Gross Advance $%.2f, Fee $%.2f, Net Advance $%.2f, Reserve $%.2f"
+    (Cent.toDecimal invoice1.FaceValue)
+    (Cent.toDecimal advance1.GrossAdvance)
+    (Cent.toDecimal advance1.UpfrontFee)
+    (Cent.toDecimal advance1.NetAdvance)
     (Cent.toDecimal advance1.ReserveAmount)
 
-printfn "Invoice 2: Face Value $%.2f, Net Advance $%.2f, Fee $%.2f, Reserve $%.2f" 
-    (Cent.toDecimal invoice2.FaceValue) 
-    (Cent.toDecimal advance2.NetAdvance) 
-    (Cent.toDecimal advance2.UpfrontFee) 
+printfn "Invoice 2: Face Value $%.2f, Gross Advance $%.2f, Fee $%.2f, Net Advance $%.2f, Reserve $%.2f"
+    (Cent.toDecimal invoice2.FaceValue)
+    (Cent.toDecimal advance2.GrossAdvance)
+    (Cent.toDecimal advance2.UpfrontFee)
+    (Cent.toDecimal advance2.NetAdvance)
     (Cent.toDecimal advance2.ReserveAmount)
 
 // Calculate aggregate statistics
@@ -98,18 +109,44 @@ printfn "Total Fees: $%.2f" (Cent.toDecimal stats.TotalUpfrontFees)
 printfn "Total Reserve: $%.2f" (Cent.toDecimal stats.TotalReserve)
 printfn "Weighted Average Advance Rate: %.1f%%" (stats.WeightedAverageAdvanceRate * 100m)
 printfn "Weighted Average Fee Rate: %.1f%%" (stats.WeightedAverageFeeRate * 100m)
-printfn "Average Credit Period: %d days" stats.AverageCreditPeriodDays
+printfn "Average Credit Period: %.1f days" (float stats.AverageCreditPeriodDays)
 
 // Build amortization parameters for the factoring arrangement
 let factoringParams = FactoringParameters.build advances None
 
 printfn "\n=== Factoring Parameters Built ==="
-printfn "Start Date: %s" (factoringParams.Basic.StartDate.ToString())
+printfn "Start Date: %A" factoringParams.Basic.StartDate
 printfn "Principal (Total Net Advance): $%.2f" (Cent.toDecimal factoringParams.Basic.Principal)
-printfn "Number of Scheduled Payments: %d" 
-    (match factoringParams.Basic.ScheduleConfig with 
-     | Scheduling.CustomSchedule payments -> Map.count payments 
+printfn "Number of Scheduled Payments: %d"
+    (match factoringParams.Basic.ScheduleConfig with
+     | Scheduling.CustomSchedule payments -> Map.count payments
      | _ -> 0)
+
+// Run the parameters through the core scheduling engine: the opening balance is the total gross advance
+// (net advances plus fees) and the scheduled payments are the gross advances due on each due date,
+// so the schedule closes with a zero principal balance
+let basicSchedule = Scheduling.calculateBasicSchedule factoringParams.Basic
+let closingBalance = basicSchedule.Items |> Array.last |> _.PrincipalBalance
+
+printfn "\n=== Core Engine Schedule ==="
+printfn "Total Scheduled Payments: $%.2f" (Cent.toDecimal basicSchedule.Stats.ScheduledPaymentTotal)
+printfn "Closing Principal Balance: $%.2f" (Cent.toDecimal closingBalance)
+
+// The cashflow modeling types can describe the same arrangement as individual cashflow events
+// (by convention, outflows from the customer are positive and inflows to the customer are negative)
+open FSharp.Finance.B2B.CashflowModel
+
+let cashflowEvents = [|
+    CashflowEvent.advance "CF-001" invoice1.IssueDate advance1.NetAdvance (Some "Net advance for INV-001")
+    CashflowEvent.advance "CF-002" invoice2.IssueDate advance2.NetAdvance (Some "Net advance for INV-002")
+    CashflowEvent.scheduledPayment "CF-003" invoice1.DueDate advance1.GrossAdvance (Some "Collection for INV-001")
+    CashflowEvent.scheduledPayment "CF-004" invoice2.DueDate advance2.GrossAdvance (Some "Collection for INV-002")
+|]
+
+printfn "\n=== Cashflow Events ==="
+cashflowEvents
+|> Array.iter (fun ev ->
+    printfn "%A %s %A: $%.2f" ev.Date ev.Id ev.CashflowType (Cent.toDecimal ev.Amount))
 
 (**
 
@@ -120,19 +157,17 @@ printfn "Number of Scheduled Payments: %d"
 - Businesses should compare this rate to their borrowing costs to make optimal decisions
 - If you can borrow at less than 37.24%, take the discount and pay early
 
-### Invoice Factoring Analysis  
+### Invoice Factoring Analysis
 - Factoring provides immediate cash flow at the cost of fees and reduced collections
-- The 80% advance rate means immediate access to 80% of invoice value
-- The 2% fee is charged upfront, reducing the net advance
-- The remaining 18% is held as reserve until customer payment
+- The 80% advance rate means a gross advance of 80% of the invoice value
+- The 2% fee is deducted from the gross advance, so the net advance paid out is 78% of the invoice value
+- The remaining 20% is held as reserve and rebated when the customer pays, so net advance + fee + reserve
+  always equals the face value exactly (e.g. for invoice 1: $7,800 + $200 + $2,000 = $10,000)
 
 ### Integration with Core Library
-The factoring parameters can be used with the main amortization engine:
-
-```fsharp
-// This would run a full amortization schedule (if no existing build issues)
-// let schedule = Amortisation.generate factoringParams Map.empty
-```
+The factoring parameters plug straight into the core scheduling engine, as shown above: the schedule
+closes with a zero principal balance, since the gross advances repaid on the due dates exactly cover
+the net advances (principal) plus the upfront fees (carried via the engine's fee configuration).
 
 ## Additional Trade Credit Scenarios
 

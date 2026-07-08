@@ -88,6 +88,37 @@ module TradeCreditTests =
         |> should throw typeof<System.ArgumentException>
 
     [<Fact>]
+    let ``Trade credit compounded rate throws a descriptive exception instead of overflowing`` () =
+        // 50% discount with a 1-day extension implies 2^365, which is far beyond the range of decimal
+        let terms = DiscountTerms.createTerms 50m 1 2
+
+        let ex =
+            Assert.Throws<System.ArgumentException>(fun () ->
+                DiscountTerms.impliedAnnualRateCompounded terms |> ignore)
+
+        ex.Message |> should haveSubstring "too large to represent as a decimal"
+
+    [<Fact>]
+    let ``Trade credit rate functions re-validate directly constructed terms`` () =
+        // DiscountTerms is a plain record, so createTerms validation can be bypassed;
+        // the rate functions must guard against division by zero themselves
+        let fullDiscount = { DiscountRate = 1m; DiscountPeriodDays = 10; NetPeriodDays = 30 }
+
+        (fun () -> DiscountTerms.impliedAnnualRateSimple fullDiscount |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+        (fun () -> DiscountTerms.impliedAnnualRateCompounded fullDiscount |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+        let zeroExtension = { DiscountRate = 0.02m; DiscountPeriodDays = 30; NetPeriodDays = 30 }
+
+        (fun () -> DiscountTerms.impliedAnnualRateSimple zeroExtension |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+        (fun () -> DiscountTerms.impliedAnnualRateCompounded zeroExtension |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+    [<Fact>]
     let ``Trade credit standard terms creation test`` () =
         // Test standard 2/10 net 30 terms
         let standard2_10 = DiscountTerms.standard2_10Net30

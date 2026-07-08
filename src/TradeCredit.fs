@@ -1,12 +1,9 @@
 namespace FSharp.Finance.B2B
 
-open FSharp.Finance.Personal
-
 /// Trade credit early-payment discount analysis utilities
 module TradeCredit =
 
     open System
-    open Calculation
 
     /// Trade credit discount terms (e.g., "2/10 net 30")
     type DiscountTerms = {
@@ -37,11 +34,22 @@ module TradeCredit =
                 NetPeriodDays = netDays
             }
 
+        /// Validate discount terms, guarding against invalid values in directly constructed records
+        /// (DiscountTerms is a plain record, so createTerms validation can be bypassed)
+        let private validate (terms: DiscountTerms) =
+            if terms.DiscountRate < 0m || terms.DiscountRate >= 1m then
+                invalidArg (nameof terms) "Discount rate must be at least 0 and less than 1"
+
+            if terms.NetPeriodDays <= terms.DiscountPeriodDays then
+                invalidArg (nameof terms) "Net period days must be greater than discount period days"
+
         /// Calculate the simple annual rate equivalent of the early payment discount
         /// Formula: (Discount% / (100% - Discount%)) * (365 / (Net Days - Discount Days))
         /// This represents the effective annual interest rate for forgoing the discount
         let impliedAnnualRateSimple (terms: DiscountTerms) =
-            if terms.DiscountRate <= 0m then
+            validate terms
+
+            if terms.DiscountRate = 0m then
                 0m
             else
                 let effectiveDiscountRate = terms.DiscountRate / (1m - terms.DiscountRate)
@@ -52,15 +60,28 @@ module TradeCredit =
         /// Calculate the compounded annual rate equivalent of the early payment discount
         /// Formula: ((100% / (100% - Discount%))^(365/(Net Days - Discount Days))) - 1
         /// This represents the compounded annual rate when discount opportunities occur multiple times per year
+        /// Throws an ArgumentException if the compounded rate is too large to represent as a decimal
+        /// (e.g. a large discount rate over a very short extension period)
         let impliedAnnualRateCompounded (terms: DiscountTerms) =
-            if terms.DiscountRate <= 0m then
+            validate terms
+
+            if terms.DiscountRate = 0m then
                 0m
             else
-                let baseRate = 1m / (1m - terms.DiscountRate)
-                let daysExtension = decimal (terms.NetPeriodDays - terms.DiscountPeriodDays)
-                let exponent = 365m / daysExtension
-                let compoundedRate = powm exponent baseRate |> decimal
-                compoundedRate - 1m
+                let baseRate = 1.0 / (1.0 - float terms.DiscountRate)
+                let exponent = 365.0 / float (terms.NetPeriodDays - terms.DiscountPeriodDays)
+                let compoundedRate = Math.Pow(baseRate, exponent)
+
+                if Double.IsNaN compoundedRate || compoundedRate >= 7.9e28 then
+                    raise (
+                        ArgumentException(
+                            $"The implied compounded annual rate for a {terms.DiscountRate * 100m}%% discount over a "
+                            + $"{terms.NetPeriodDays - terms.DiscountPeriodDays}-day extension is too large to represent as a decimal",
+                            nameof terms
+                        )
+                    )
+
+                decimal compoundedRate - 1m
 
         /// Create standard "2/10 net 30" discount terms
         let standard2_10Net30 = createTerms 2m 10 30

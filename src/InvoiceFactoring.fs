@@ -25,6 +25,8 @@ module InvoiceFactoring =
     }
 
     /// An invoice advance from a factoring arrangement
+    ///
+    /// The face value decomposes exactly: NetAdvance + UpfrontFee + ReserveAmount = FaceValue
     type InvoiceAdvance = {
         /// Reference to the original invoice
         Invoice: Invoice
@@ -32,13 +34,15 @@ module InvoiceFactoring =
         AdvanceRate: decimal
         /// Factoring fee rate as a percentage of face value (e.g., 2% = 0.02m)
         FeeRate: decimal
-        /// Reserve rate as a percentage of face value (remaining after advance and fee)
+        /// Reserve rate as a percentage of face value (1 - advance rate)
         ReserveRate: decimal
-        /// Net advance amount (face value * advance rate - upfront fees)
+        /// Gross advance amount (face value * advance rate) before the upfront fee is deducted
+        GrossAdvance: int64<Cent>
+        /// Net advance amount paid out to the seller (gross advance - upfront fee)
         NetAdvance: int64<Cent>
-        /// Upfront fee amount
+        /// Upfront fee amount, deducted from the gross advance
         UpfrontFee: int64<Cent>
-        /// Reserve amount held back
+        /// Reserve amount held back (face value - gross advance), rebated when the debtor pays
         ReserveAmount: int64<Cent>
     }
 
@@ -46,7 +50,13 @@ module InvoiceFactoring =
     module Invoice =
         
         /// Create a new invoice
-        let create id faceValue issueDate dueDate debtorId =
+        let create id (faceValue: int64<Cent>) (issueDate: Date) (dueDate: Date) debtorId =
+            if faceValue <= 0L<Cent> then
+                invalidArg (nameof faceValue) "Face value must be positive"
+
+            if dueDate < issueDate then
+                invalidArg (nameof dueDate) "Due date must not be before the issue date"
+
             {
                 Id = id
                 FaceValue = faceValue
@@ -63,60 +73,96 @@ module InvoiceFactoring =
     module InvoiceAdvance =
         
         /// Derive an invoice advance from an invoice and factoring terms
+        ///
+        /// The gross advance is the advance rate applied to the face value, the upfront fee is deducted from the
+        /// gross advance to give the net advance paid out, and the remainder of the face value is held in reserve,
+        /// so NetAdvance + UpfrontFee + ReserveAmount = FaceValue exactly
         let derive (invoice: Invoice) (advanceRate: decimal) (feeRate: decimal) =
             if advanceRate < 0m || advanceRate > 1m then
                 invalidArg (nameof advanceRate) "Advance rate must be between 0 and 1"
             if feeRate < 0m || feeRate > 1m then
                 invalidArg (nameof feeRate) "Fee rate must be between 0 and 1"
-            if advanceRate + feeRate > 1m then
-                invalidArg "rates" "Advance rate plus fee rate cannot exceed 100%"
+            if feeRate > advanceRate then
+                invalidArg (nameof feeRate) "Fee rate cannot exceed advance rate, otherwise the net advance would be negative"
 
-            let faceValueDecimal = Cent.toDecimal invoice.FaceValue
-            let reserveRate = 1m - advanceRate - feeRate
-            let upfrontFee = Cent.fromDecimal (faceValueDecimal * feeRate)
-            let grossAdvance = Cent.fromDecimal (faceValueDecimal * advanceRate)
+            // round the gross advance and fee once each, then derive the net advance and reserve by subtraction
+            // so that the face-value decomposition holds exactly to the cent
+            let faceValueDecimalCent = Cent.toDecimalCent invoice.FaceValue
+            let rounding = RoundWith System.MidpointRounding.AwayFromZero
+            let grossAdvance = faceValueDecimalCent * advanceRate |> Cent.fromDecimalCent rounding
+            let upfrontFee = faceValueDecimalCent * feeRate |> Cent.fromDecimalCent rounding
             let netAdvance = grossAdvance - upfrontFee
-            let reserveAmount = Cent.fromDecimal (faceValueDecimal * reserveRate)
+            let reserveAmount = invoice.FaceValue - grossAdvance
 
             {
                 Invoice = invoice
                 AdvanceRate = advanceRate
                 FeeRate = feeRate
-                ReserveRate = reserveRate
+                ReserveRate = 1m - advanceRate
+                GrossAdvance = grossAdvance
                 NetAdvance = netAdvance
                 UpfrontFee = upfrontFee
                 ReserveAmount = reserveAmount
             }
 
+    /// Aggregate statistics for a set of invoice advances
+    type FactoringStatistics = {
+        /// Total face value of all invoices
+        TotalFaceValue: int64<Cent>
+        /// Total net advance paid out across all advances
+        TotalNetAdvance: int64<Cent>
+        /// Total upfront fees across all advances
+        TotalUpfrontFees: int64<Cent>
+        /// Total reserve held back across all advances
+        TotalReserve: int64<Cent>
+        /// Advance rate weighted by invoice face value
+        WeightedAverageAdvanceRate: decimal
+        /// Fee rate weighted by invoice face value
+        WeightedAverageFeeRate: decimal
+        /// Average credit period across the invoices, in days
+        AverageCreditPeriodDays: decimal
+    }
+
     /// Factoring parameters builder for creating amortization parameters
     module FactoringParameters =
         
         /// Build Parameters for a set of invoice advances using the library's core types
+        ///
+        /// The parameters model the seller's position in the factoring facility: the principal is the total net
+        /// advance paid out, the upfront fees are carried as a fixed fee (so the opening balance is the total gross
+        /// advance), and each due date schedules a payment of the gross advances due that day (the debtor pays the
+        /// face value to the factor, who retains the gross advance plus fee and rebates the reserve to the seller);
+        /// with the default zero interest rate the schedule closes with a zero principal balance
         let build (advances: InvoiceAdvance array) (interestConfig: Interest.BasicConfig option) : Parameters =
             if Array.isEmpty advances then
                 invalidArg (nameof advances) "At least one invoice advance is required"
 
             // Find the earliest issue date as the start date
-            let startDate = 
-                advances 
+            let startDate =
+                advances
                 |> Array.map (fun a -> a.Invoice.IssueDate)
                 |> Array.min
 
             // Calculate total principal as sum of net advances
-            let principal = 
+            let principal =
                 advances
                 |> Array.sumBy (_.NetAdvance)
 
-            // Create scheduled payments - one per invoice at its due date for full face value
+            // Total upfront fees, carried via the engine's fee config so they amortise alongside the principal
+            let feeTotal =
+                advances
+                |> Array.sumBy (_.UpfrontFee)
+
+            // Create scheduled payments - one per due date for the gross advances (net advances plus fees) due that day
             let scheduledPaymentMap =
                 advances
                 |> Array.groupBy (fun advance -> OffsetDay.fromDate startDate advance.Invoice.DueDate)
                 |> Array.map (fun (offsetDay, sameDayAdvances) ->
-                    let totalFaceValue =
+                    let totalGrossAdvance =
                         sameDayAdvances
-                        |> Array.sumBy (fun advance -> advance.Invoice.FaceValue)
+                        |> Array.sumBy (_.GrossAdvance)
 
-                    let scheduledPayment = ScheduledPayment.quick (ValueSome totalFaceValue) ValueNone
+                    let scheduledPayment = ScheduledPayment.quick (ValueSome totalGrossAdvance) ValueNone
                     offsetDay, scheduledPayment
                 )
                 |> Map.ofArray
@@ -131,13 +177,21 @@ module InvoiceFactoring =
                     LevelPaymentOption = LowerFinalPayment // Use lowest option as default
                     Rounding = RoundDown
                 }
-                FeeConfig = ValueNone // Fees are handled as upfront deductions in net advance calculation
+                FeeConfig =
+                    if feeTotal = 0L<Cent> then
+                        ValueNone
+                    else
+                        ValueSome {
+                            Fee.FeeType = Fee.CustomFee("factoring fee", Amount.Simple feeTotal)
+                            Fee.Rounding = RoundDown
+                            Fee.FeeAmortisation = Fee.AmortiseProportionately
+                        }
                 InterestConfig = {
                     Method = Interest.Method.Actuarial
                     StandardRate = Interest.Rate.Zero // Default to zero, can be overridden
                     Cap = Interest.Cap.zero
                     Rounding = RoundDown
-                    AprMethod = Apr.CalculationMethod.UnitedKingdom 2 // Placeholder APR method
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3 // UK FCA method to 1 d.p., consistent with the rest of the library; indicative only for factoring
                 } |> fun defaultConfig ->
                     interestConfig |> Option.defaultValue defaultConfig
             }
@@ -149,7 +203,11 @@ module InvoiceFactoring =
                     Minimum = NoMinimumPayment
                     Timeout = 3<DurationDay>
                 }
-                FeeConfig = ValueNone
+                FeeConfig =
+                    if feeTotal = 0L<Cent> then
+                        ValueNone
+                    else
+                        ValueSome { Fee.SettlementRebate = Fee.SettlementRebate.Zero }
                 ChargeConfig = None
                 InterestConfig = {
                     InitialGracePeriod = 0<DurationDay>
@@ -167,41 +225,37 @@ module InvoiceFactoring =
             }
 
         /// Calculate aggregate factoring statistics for a set of advances
-        let calculateStatistics (advances: InvoiceAdvance array) =
+        let calculateStatistics (advances: InvoiceAdvance array) : FactoringStatistics =
             if Array.isEmpty advances then
-                {| 
+                {
                     TotalFaceValue = 0L<Cent>
                     TotalNetAdvance = 0L<Cent>
                     TotalUpfrontFees = 0L<Cent>
                     TotalReserve = 0L<Cent>
                     WeightedAverageAdvanceRate = 0m
                     WeightedAverageFeeRate = 0m
-                    AverageCreditPeriodDays = 0
-                |}
+                    AverageCreditPeriodDays = 0m
+                }
             else
                 let totalFaceValue = advances |> Array.sumBy (fun a -> a.Invoice.FaceValue)
                 let totalNetAdvance = advances |> Array.sumBy (_.NetAdvance)
                 let totalUpfrontFees = advances |> Array.sumBy (_.UpfrontFee)
                 let totalReserve = advances |> Array.sumBy (_.ReserveAmount)
-                
+
                 let totalFaceValueDecimal = Cent.toDecimal totalFaceValue
-                let weightedAvgAdvanceRate = 
+                let weightedAvgAdvanceRate =
                     if totalFaceValueDecimal = 0m then 0m
                     else (advances |> Array.sumBy (fun a -> Cent.toDecimal a.Invoice.FaceValue * a.AdvanceRate)) / totalFaceValueDecimal
-                
-                let weightedAvgFeeRate = 
+
+                let weightedAvgFeeRate =
                     if totalFaceValueDecimal = 0m then 0m
                     else (advances |> Array.sumBy (fun a -> Cent.toDecimal a.Invoice.FaceValue * a.FeeRate)) / totalFaceValueDecimal
-                
-                let avgCreditPeriod = 
-                    if Array.isEmpty advances then 0
-                    else 
-                        advances 
-                        |> Array.map (fun a -> Invoice.creditPeriodDays a.Invoice)
-                        |> Array.averageBy float
-                        |> int
 
-                {| 
+                let avgCreditPeriod =
+                    advances
+                    |> Array.averageBy (fun a -> decimal (Invoice.creditPeriodDays a.Invoice))
+
+                {
                     TotalFaceValue = totalFaceValue
                     TotalNetAdvance = totalNetAdvance
                     TotalUpfrontFees = totalUpfrontFees
@@ -209,4 +263,4 @@ module InvoiceFactoring =
                     WeightedAverageAdvanceRate = weightedAvgAdvanceRate
                     WeightedAverageFeeRate = weightedAvgFeeRate
                     AverageCreditPeriodDays = avgCreditPeriod
-                |}
+                }
