@@ -291,6 +291,43 @@ module Calculation =
         let solveBisection generator (iterationLimit: uint) initialGuess targetTolerance toleranceSteps =
             let initialLowerBound, initialUpperBound =
                 initialGuess * 0.75m, initialGuess * 1.25m
+            // determine the target range for a given tolerance
+            let toleranceRange tolerance =
+                match targetTolerance with
+                | BelowZero -> -tolerance, 0m
+                | AroundZero -> -tolerance, tolerance
+                | AboveZero -> 0m, tolerance
+            // the initial guess is only an estimate, so the root may well lie outside the initial bounds: as the generator function is
+            // expected to be decreasing, the root is only guaranteed to be bracketed when the generated value at the lower bound is above
+            // the target range and the generated value at the upper bound is below it; if not, expand the bounds geometrically (doubling
+            // the width each round, with the bounds limited to zero below and four times the initial guess above) for a few rounds
+            let maxUpperBound = initialGuess * 4m
+
+            let rec expandBounds expansionRounds lowerBound upperBound =
+                if expansionRounds = 0 then
+                    lowerBound, upperBound
+                else
+                    let lowerTolerance, upperTolerance = toleranceRange toleranceSteps.MinTolerance
+                    let expandLower = (generator lowerBound |> fst) < lowerTolerance && lowerBound > 0m
+
+                    let expandUpper =
+                        (generator upperBound |> fst) > upperTolerance && upperBound < maxUpperBound
+
+                    if not expandLower && not expandUpper then
+                        lowerBound, upperBound
+                    else
+                        let width = upperBound - lowerBound
+
+                        let newLowerBound =
+                            if expandLower then max 0m (lowerBound - width) else lowerBound
+
+                        let newUpperBound =
+                            if expandUpper then
+                                min maxUpperBound (upperBound + width)
+                            else
+                                upperBound
+
+                        expandBounds (expansionRounds - 1) newLowerBound newUpperBound
             // recursively iterate through possible solutions
             let rec loop iteration lowerBound upperBound tolerance =
                 // find the midpoint of the bounds
@@ -300,11 +337,7 @@ module Calculation =
                     // generate a result using the new figure
                     let candidate, relevantValue = generator midpoint
                     // determine the target range
-                    let lowerTolerance, upperTolerance =
-                        match targetTolerance with
-                        | BelowZero -> -tolerance, 0m
-                        | AroundZero -> -tolerance, tolerance
-                        | AboveZero -> 0m, tolerance
+                    let lowerTolerance, upperTolerance = toleranceRange tolerance
                     // if the solution is within target range, return the value
                     if candidate >= lowerTolerance && candidate <= upperTolerance then
                         Solution.Found(relevantValue, iteration, tolerance)
@@ -324,8 +357,10 @@ module Calculation =
 
                     let newLowerBound, newUpperBound = midpoint - newTolerance, midpoint + newTolerance
                     loop 0 newLowerBound newUpperBound newTolerance
+            // ensure the root is bracketed by the bounds where possible
+            let lowerBound, upperBound = expandBounds 8 initialLowerBound initialUpperBound
             // start the first iteration
-            loop 0 initialLowerBound initialUpperBound toleranceSteps.MinTolerance
+            loop 0 lowerBound upperBound toleranceSteps.MinTolerance
 
         /// use the Newton-Raphson method to find the solution (particularly suitable for calculating the APR)
         let solveNewtonRaphson f (iterationLimit: uint) initialGuess tolerance =

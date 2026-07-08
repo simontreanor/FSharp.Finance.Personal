@@ -1058,6 +1058,9 @@ module Scheduling =
                         * dailyInterestRate
                         * decimal finalScheduledPaymentDay
                         * Fraction.toDecimal (Fraction.Simple(2, 3))
+                        // the schedule itself caps the accruing interest, so cap the estimate in the same way,
+                        // otherwise the estimated payment value could be far higher than the true value
+                        |> Interest.Cap.cappedAddedValue bp.InterestConfig.Cap.TotalAmount bp.Principal 0m<Cent>
                 // determines the payment value and generates the schedule iteratively based on that
                 let generator = generatePaymentValue bp paymentDays initialBasicItem
                 let iterationLimit = 100u
@@ -1067,31 +1070,68 @@ module Scheduling =
                     |> Cent.toDecimalCent
                     |> decimal
 
-                match
+                let solution =
                     Array.solveBisection
                         generator
                         iterationLimit
                         roughPayment
                         (LevelPaymentOption.toTargetTolerance bp.PaymentConfig.LevelPaymentOption)
                         toleranceSteps
-                with
-                | Solution.Found(paymentValue, _, _) ->
-                    let paymentMap' =
-                        paymentMap
-                        |> Map.map (fun _ sp -> {
-                            sp with
-                                Original = sp.Original |> ValueOption.map (fun _ -> paymentValue |> Cent.fromDecimal)
-                        })
 
-                    generateItems paymentMap'
-                | _ -> [||]
+                let paymentValue =
+                    match solution with
+                    | Solution.Found(paymentValue, _, _) -> paymentValue
+                    | Solution.IterationLimitReached(partialSolution, iterations, maxTolerance) ->
+                        // when interest rates are high and schedules are long, a one-cent change in the payment value can change
+                        // the final principal balance by more than the maximum solver tolerance, meaning that no payment value at
+                        // all satisfies the tolerance; the partial solution is the solver's best approximation of the root, so
+                        // test the rounded payment values just around it and accept the best one consistent with the level-payment
+                        // option (any overpayment is absorbed later by adjusting the final payment, which may shorten the schedule)
+                        let candidates =
+                            [| -4m .. 4m |]
+                            |> Array.map (fun offset -> generator (System.Decimal.Round partialSolution + offset))
+                            |> Array.distinctBy snd
+
+                        let fallback =
+                            match bp.PaymentConfig.LevelPaymentOption with
+                            | LowerFinalPayment ->
+                                candidates
+                                |> Array.filter (fun (balance, _) -> balance <= 0m)
+                                |> Array.sortBy snd
+                                |> Array.tryHead
+                            | HigherFinalPayment ->
+                                candidates
+                                |> Array.filter (fun (balance, _) -> balance >= 0m)
+                                |> Array.sortByDescending snd
+                                |> Array.tryHead
+                            | SimilarFinalPayment ->
+                                candidates |> Array.sortBy (fun (balance, _) -> abs balance) |> Array.tryHead
+
+                        match fallback with
+                        | Some(_, paymentValue) -> paymentValue
+                        | None ->
+                            failwith
+                                $"Unable to calculate basic schedule: the payment solver hit its iteration limit before finding a solution (iterations: {iterations}, max tolerance: {maxTolerance}, best approximation: {partialSolution}) for principal {bp.Principal}, payment count {paymentCount}, rough payment {roughPayment}, final payment day {finalScheduledPaymentDay}"
+                    | Solution.Impossible ->
+                        failwith
+                            $"Unable to calculate basic schedule: the payment solver could not find a solution for principal {bp.Principal}, payment count {paymentCount}, rough payment {roughPayment}, final payment day {finalScheduledPaymentDay}"
+
+                let paymentMap' =
+                    paymentMap
+                    |> Map.map (fun _ sp -> {
+                        sp with
+                            Original = sp.Original |> ValueOption.map (fun _ -> paymentValue |> Cent.fromDecimal)
+                    })
+
+                generateItems paymentMap'
             | FixedSchedules _
             | CustomSchedule _ ->
                 // the days and payment values are known so the schedule can be generated directly
                 generateItems paymentMap
         // fail if the schedule is empty
         if Array.isEmpty basicItems then
-            failwith "Unable to calculate basic schedule"
+            failwith
+                $"Unable to calculate basic schedule: generating the schedule items produced an empty schedule for principal {bp.Principal}, payment count {paymentCount}, final payment day {finalScheduledPaymentDay}"
         else
             // for the add-on interest method, now the schedule days and payment values are known, iterate through the schedule until the final principal balance is zero
             // note: this step is required because the initial interest balance is non-zero, meaning that any payments are apportioned to interest first, meaning that
