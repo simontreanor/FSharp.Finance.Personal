@@ -2390,3 +2390,97 @@ module PaymentScheduleTests =
         schedule.Stats.PrincipalTotal |> should equal 1000_00L<Cent>
         schedule.Stats.FinalPayment |> should equal 1000_00L<Cent>
         (schedule.Items |> Array.last).PrincipalBalance |> should equal 0L<Cent>
+    /// regression tests for unit-period detection and unit-period config handling
+    /// (these would ideally live in UnitPeriodConfigTests.fs, but that file is currently excluded from the test project)
+    module UnitPeriodDetection =
+
+        [<Fact>]
+        let ``Nearest unit-period for a single payment 15 days after the advance is a semi-month`` () =
+            let term =
+                transactionTerm (Date(2024, 1, 1)) (Date(2024, 1, 1)) (Date(2024, 1, 16)) (Date(2024, 1, 1))
+
+            let actual = nearest term [| Date(2024, 1, 1) |] [| Date(2024, 1, 16) |]
+            let expected = SemiMonth
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Nearest unit-period with no repeated interval is the average of the interval lengths`` () =
+            // intervals of 20 and 45 days normalise to 15 and 30 days, averaging 22.5 -> 22 days, nearest to 4 weeks
+            let term =
+                transactionTerm (Date(2024, 1, 1)) (Date(2024, 1, 1)) (Date(2024, 3, 6)) (Date(2024, 1, 1))
+
+            let actual = nearest term [| Date(2024, 1, 1) |] [| Date(2024, 1, 21); Date(2024, 3, 6) |]
+            let expected = Week 4
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Nearest unit-period with no intervals at all falls back to a day`` () =
+            let term =
+                transactionTerm (Date(2024, 1, 1)) (Date(2024, 1, 1)) (Date(2024, 1, 1)) (Date(2024, 1, 1))
+
+            let actual = nearest term [| Date(2024, 1, 1) |] [| Date(2024, 1, 1) |]
+            let expected = Day
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Detect semi-monthly config from a single transfer date`` () =
+            let actual = detect Direction.Forward SemiMonth [| Date(2024, 1, 15) |]
+            let expected = SemiMonthly(2024, 1, 15, 31)
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Constrain repairs a monthly config with an out-of-range month`` () =
+            let actual = Config.constrain (Monthly(1, 2024, 13, 15))
+            let expected = Monthly(1, 2024, 12, 15)
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Constrain repairs a semi-monthly config with an out-of-range month`` () =
+            let actual =
+                generatePaymentSchedule (PaymentCount 3) Direction.Forward (SemiMonthly(2024, 13, 15, 31))
+
+            let expected = [| Date(2024, 12, 15); Date(2024, 12, 31); Date(2025, 1, 15) |]
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Constrain rejects a non-positive weekly multiple`` () =
+            (fun () -> Config.constrain (Weekly(0, Date(2024, 1, 1))) |> ignore)
+            |> should throw typeof<exn>
+
+        [<Fact>]
+        let ``Constrain rejects a non-positive monthly multiple`` () =
+            (fun () -> Config.constrain (Monthly(0, 2024, 1, 15)) |> ignore)
+            |> should throw typeof<exn>
+
+        [<Fact>]
+        let ``Reverse daily schedule with max duration generates all dates within the window`` () =
+            let actual =
+                generatePaymentSchedule
+                    (MaxDuration(Date(2024, 6, 1), 30<DurationDay>))
+                    Direction.Reverse
+                    (Daily(Date(2024, 6, 1)))
+
+            let expected = [| 0..30 |] |> Array.map (Date(2024, 5, 2).AddDays)
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Reverse weekly schedule with max duration generates all dates within the window`` () =
+            let actual =
+                generatePaymentSchedule
+                    (MaxDuration(Date(2024, 6, 1), 28<DurationDay>))
+                    Direction.Reverse
+                    (Weekly(1, Date(2024, 6, 1)))
+
+            let expected = [| 0..4 |] |> Array.map (fun i -> Date(2024, 5, 4).AddDays(i * 7))
+            actual |> should equal expected
+
+        [<Fact>]
+        let ``Reverse monthly schedule with max duration generates all dates within the window`` () =
+            let actual =
+                generatePaymentSchedule
+                    (MaxDuration(Date(2024, 6, 30), 92<DurationDay>))
+                    Direction.Reverse
+                    (Monthly(1, 2024, 6, 30))
+
+            let expected = [| Date(2024, 3, 30); Date(2024, 4, 30); Date(2024, 5, 30); Date(2024, 6, 30) |]
+            actual |> should equal expected
