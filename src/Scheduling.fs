@@ -942,44 +942,69 @@ module Scheduling =
         let principalBalance = decimal schedule.PrincipalBalance
         principalBalance, ScheduledPayment.total schedule.ScheduledPayment |> Cent.toDecimal
 
-    /// handle any principal balance overpayment (due to rounding) on the final payment of a schedule
-    let adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule basicItems =
-        basicItems
-        |> Array.map (fun bi ->
-            if bi.Day = finalScheduledPaymentDay && isAutoGenerateSchedule then
-                let adjustedPayment =
-                    bi.ScheduledPayment
-                    |> fun sp -> {
-                        bi.ScheduledPayment with
-                            Original =
-                                if sp.Rescheduled.IsNone then
-                                    sp.Original |> ValueOption.map (fun o -> o + bi.PrincipalBalance)
-                                else
-                                    sp.Original
-                            Rescheduled =
-                                if sp.Rescheduled.IsSome then
-                                    sp.Rescheduled
-                                    |> ValueOption.map (fun r -> {
-                                        r with
-                                            Value = r.Value + bi.PrincipalBalance
-                                    })
-                                else
-                                    sp.Rescheduled
-                    }
+    /// handle any principal balance underpayment or overpayment (due to rounding) on the final payment of a schedule
+    let adjustFinalPayment bp finalScheduledPaymentDay isAutoGenerateSchedule (basicItems: BasicItem array) =
+        if not isAutoGenerateSchedule || Array.length basicItems < 2 then
+            basicItems
+        else
+            // apply an adjustment to the original or rescheduled value of a scheduled payment as appropriate
+            let adjustPayment adjustment sp = {
+                sp with
+                    Original =
+                        if sp.Rescheduled.IsNone then
+                            sp.Original |> ValueOption.map (fun o -> o + adjustment)
+                        else
+                            sp.Original
+                    Rescheduled =
+                        sp.Rescheduled
+                        |> ValueOption.map (fun r -> { r with Value = r.Value + adjustment })
+            }
+            // regenerate the schedule from the seed item (the first item produced by `Array.scan`, which has no scheduled
+            // payment and is therefore left untouched, even when it shares day 0 with a payment), adjusting the payments so
+            // that the principal balance cannot go negative and no scheduled payment can be negative: the final payment is
+            // adjusted to close the balance exactly, while any earlier payment that would overpay the remaining balance
+            // (possible when the solver tolerance had to be relaxed) is capped at the amount owed; any later payments are
+            // thereby reduced to zero and dropped from the schedule, effectively shortening it
+            let regenerated =
+                basicItems[1..]
+                |> Array.scan
+                    (fun previousItem bi ->
+                        let tentative =
+                            generateItem bp bp.InterestConfig.Method bi.ScheduledPayment previousItem bi.Day
 
-                let adjustedPrincipal = bi.PrincipalPortion + bi.PrincipalBalance
-                let adjustedTotalPrincipal = bi.TotalPrincipal + bi.PrincipalBalance
+                        let adjustment =
+                            if bi.Day = finalScheduledPaymentDay then
+                                // close the balance exactly, whether underpaid or overpaid, without making the payment negative
+                                max tentative.PrincipalBalance (-(ScheduledPayment.total bi.ScheduledPayment))
+                            elif tentative.PrincipalBalance < 0L<Cent> then
+                                // cap the payment at the amount owed, without making the payment negative
+                                max tentative.PrincipalBalance (-(ScheduledPayment.total bi.ScheduledPayment))
+                            else
+                                0L<Cent>
 
-                {
-                    bi with
-                        ScheduledPayment = adjustedPayment
-                        PrincipalPortion = adjustedPrincipal
-                        PrincipalBalance = 0L<Cent>
-                        TotalPrincipal = adjustedTotalPrincipal
-                }
-            else
-                bi
-        )
+                        if adjustment = 0L<Cent> then
+                            tentative
+                        else
+                            generateItem
+                                bp
+                                bp.InterestConfig.Method
+                                (adjustPayment adjustment bi.ScheduledPayment)
+                                previousItem
+                                bi.Day
+                    )
+                    basicItems[0]
+            // drop any trailing payments that the adjustment reduced to zero, effectively shortening the schedule
+            let rec trimmedLength length =
+                if
+                    length > 1
+                    && ScheduledPayment.total regenerated[length - 1].ScheduledPayment = 0L<Cent>
+                    && ScheduledPayment.total basicItems[length - 1].ScheduledPayment <> 0L<Cent>
+                then
+                    trimmedLength (length - 1)
+                else
+                    length
+
+            regenerated[.. (trimmedLength regenerated.Length) - 1]
 
     /// calculates the number of days between two offset days on which interest is chargeable
     let calculateBasicSchedule bp =
@@ -1079,7 +1104,13 @@ module Scheduling =
                     |> Array.unfold (equaliseInterest bp paymentDays initialBasicItem paymentCount feeTotal paymentMap)
                     |> Array.last
                 | _ -> basicItems
-                |> adjustFinalPayment finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
+                |> adjustFinalPayment bp finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
+            // the final scheduled payment day may have moved earlier if adjusting the final payment shortened the schedule
+            let finalScheduledPaymentDay =
+                items
+                |> Array.tryFindBack (_.ScheduledPayment >> ScheduledPayment.isSome)
+                |> Option.map _.Day
+                |> Option.defaultValue finalScheduledPaymentDay
             // calculate the total principal paid over the schedule
             let principalTotal = items |> Array.sumBy _.PrincipalPortion
             // calculate the total interest accrued over the schedule
