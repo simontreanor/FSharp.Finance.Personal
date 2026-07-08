@@ -831,6 +831,10 @@ module Amortisation =
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate (p: Parameters) initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
 
+        // guard against empty maps (e.g. a custom schedule with no payments), as no meaningful schedule can be generated
+        if Map.isEmpty appliedPayments then
+            failwith "Cannot amortise an empty payment schedule"
+
         let evaluationDay = (p.Basic.EvaluationDate - p.Basic.StartDate).Days * 1<OffsetDay>
 
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
