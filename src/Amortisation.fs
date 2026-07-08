@@ -559,6 +559,12 @@ module Amortisation =
                 OriginalScheduledPaymentValue = ap.ScheduledPayment.Original.Value
             |})
 
+        // if there are no original scheduled payments (e.g. the schedule consists entirely of rescheduled payments),
+        // there is no original-schedule basis on which to calculate a statutory rebate
+        if Array.isEmpty originalScheduledPayments then
+            0L<Cent>
+        else
+
         let unitPeriod =
             match bp.ScheduleConfig with
             | AutoGenerateSchedule ags -> UnitPeriod.Config.unitPeriod ags.UnitPeriodConfig
@@ -579,8 +585,13 @@ module Amortisation =
         let previousScheduledPaymentDate =
             originalScheduledPayments
             |> Array.filter (fun osp -> osp.OffsetDay <= appliedPaymentDay)
-            |> Array.last
-            |> _.OffsetDay
+            |> Array.tryLast
+            |> Option.map _.OffsetDay
+            // if settlement occurs before the first scheduled payment day, the first settlement period runs from the
+            // date of the agreement itself: the CCA 2004 regulation 4(1) formula measures periods between repayment
+            // dates, with the part-period at the point of settlement measured from the latest repayment date or, where
+            // none has yet fallen due, from the start of the agreement, so fall back to day 0 (the advance date)
+            |> Option.defaultValue 0<OffsetDay>
 
         let numerator = appliedPaymentDay - previousScheduledPaymentDate |> int
         let denominator = UnitPeriod.roughLength unitPeriod
@@ -820,6 +831,10 @@ module Amortisation =
     /// calculates an amortisation schedule detailing how elements (principal, fee, interest and charges) are paid off over time
     let internal calculate (p: Parameters) initialStats (appliedPayments: Map<int<OffsetDay>, AppliedPayment>) =
 
+        // guard against empty maps (e.g. a custom schedule with no payments), as no meaningful schedule can be generated
+        if Map.isEmpty appliedPayments then
+            failwith "Cannot amortise an empty payment schedule"
+
         let evaluationDay = (p.Basic.EvaluationDate - p.Basic.StartDate).Days * 1<OffsetDay>
 
         // get the decimal initial interest balance (interest is generally calculated as a decimal until concretised as an interest portion, at which point it is rounded to an integer)
@@ -916,7 +931,22 @@ module Amortisation =
 
             let newChargesTotal, incurredCharges =
                 if paymentDue = 0L<Cent> then
-                    0L<Cent>, [||]
+                    // when nothing is due on the day, charges relating to non-payment of an amount due (e.g. late-payment
+                    // charges) are suppressed, but charges incurred by failed payments (e.g. insufficient-funds charges
+                    // on a failed retry on a non-schedule day) still apply
+                    let failedPaymentChargeTypes =
+                        current.ActualPayments
+                        |> Array.choose (fun ap ->
+                            match ap.ActualPaymentStatus with
+                            | ActualPaymentStatus.Failed(_, ValueSome chargeType) -> Some chargeType
+                            | _ -> None
+                        )
+
+                    let failedPaymentCharges =
+                        current.AppliedCharges
+                        |> Array.filter (fun ac -> failedPaymentChargeTypes |> Array.contains ac.ChargeType)
+
+                    failedPaymentCharges |> Array.sumBy _.Total, failedPaymentCharges
                 else
                     current.AppliedCharges |> Array.sumBy _.Total, current.AppliedCharges
 
@@ -980,14 +1010,40 @@ module Amortisation =
                     (Cent.toDecimalCent totals.CumulativeInterestPortions)
                 |> Cent.fromDecimalCent interestRounding
 
-            // determine how much of the net effect can be apportioned and whether any immediate adjustments need to be made to the scheduled payment due to charges and interest, depending on settings
-            let assignable, scheduledPaymentAdjustment =
-                if netEffect = 0L<Cent> then
-                    0L<Cent>, 0L<Cent>
+            // determine whether any immediate adjustments need to be made to the scheduled payment due to charges and interest, depending on settings:
+            // under AddChargesAndInterest, any charges and interest are added to the scheduled payment itself, increasing the amount due
+            // (and collected, for payments not yet made) on the day rather than being amortised later, so that the balance can close at
+            // the end of the schedule
+            let scheduledPaymentAdjustment =
+                match p.Advanced.PaymentConfig.ScheduledPaymentOption with
+                | AddChargesAndInterest when netEffect > 0L<Cent> && paymentDue > 0L<Cent> ->
+                    // the adjusted payment due should still never exceed the total outstanding (balances plus accrued interest and charges)
+                    let cappedPaymentDue =
+                        paymentDue + chargesPortion + interestPortionL'
+                        |> min (
+                            previous.PrincipalBalance + previous.FeeBalance
+                            + interestPortionL'
+                            + chargesPortion
+                        )
+
+                    max 0L<Cent> (cappedPaymentDue - paymentDue)
+                | _ -> 0L<Cent>
+
+            // the adjustment increases the payment due and, for payments not yet due (which are assumed to be paid in full), the net effect
+            let paymentDue = paymentDue + scheduledPaymentAdjustment
+
+            let netEffect =
+                if currentDay > evaluationDay then
+                    netEffect + scheduledPaymentAdjustment
                 else
-                    match p.Advanced.PaymentConfig.ScheduledPaymentOption with
-                    | AsScheduled -> sign netEffect - sign chargesPortion - sign interestPortionL', 0L<Cent>
-                    | AddChargesAndInterest -> sign netEffect, sign chargesPortion - sign interestPortionL'
+                    netEffect
+
+            // determine how much of the net effect can be apportioned to the fee and principal balances
+            let assignable =
+                if netEffect = 0L<Cent> then
+                    0L<Cent>
+                else
+                    sign netEffect - sign chargesPortion - sign interestPortionL'
 
             let scheduledPayment = {
                 current.ScheduledPayment with
@@ -1007,12 +1063,24 @@ module Amortisation =
                     currentDay
                     totals'.CumulativeFee
 
+            // determine the rebate that would actually be applied on settlement: for UK FCA-regulated agreements, if the
+            // statutory rebate is higher than the fee rebate calculated above, the statutory rebate applies; this must be
+            // determined before the settlement figure is composed so that the figure and the fee apportionment are based
+            // on the same rebate
+            let applicableFeeRebate =
+                match p.Basic.InterestConfig.AprMethod with
+                | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
+                    calculateStatutoryFeeRebate p.Basic appliedPayments initialStats currentDay window
+                    |> max feeRebateIfSettled
+                    |> min feeTotal
+                | _ -> feeRebateIfSettled
+
             // refine the settlement figure depending on the interest method
             let generatedSettlementPayment' =
                 match p.Basic.InterestConfig.Method with
                 | Interest.Method.AddOn -> generatedSettlementPayment
                 | _ ->
-                    previous.PrincipalBalance + previous.FeeBalance - feeRebateIfSettled
+                    previous.PrincipalBalance + previous.FeeBalance - applicableFeeRebate
                     + interestPortionL'
                     + chargesPortion
 
@@ -1022,16 +1090,7 @@ module Amortisation =
                     current.GeneratedPayment.IsToBeGenerated
                     || feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect
                 then
-                    let feeRebate' =
-                        match p.Basic.InterestConfig.AprMethod with
-                        | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
-                            // if the statutory rebate is higher than the fee rebate calculated above, use the higher figure
-                            calculateStatutoryFeeRebate p.Basic appliedPayments initialStats currentDay window
-                            |> max feeRebateIfSettled
-                            |> min feeTotal
-                        | _ -> feeRebateIfSettled
-
-                    max 0L<Cent> (previous.FeeBalance - feeRebate'), feeRebate'
+                    max 0L<Cent> (previous.FeeBalance - applicableFeeRebate), applicableFeeRebate
                 else
                     sign feePortion, 0L<Cent>
 
@@ -1175,14 +1234,17 @@ module Amortisation =
                     ActuarialInterest = cappedActuarialInterestM
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
+                    // where the fee rebate exceeds the fee balance (possible e.g. for UK statutory rebates), the fee
+                    // portion is floored at zero and the excess rebate reduces the principal portion instead, so the
+                    // portions still sum to the settlement figure without any negative fee portion
                     PrincipalPortion =
                         if isSettlement then
-                            previous.PrincipalBalance
+                            previous.PrincipalBalance - max 0L<Cent> (feeRebate - previous.FeeBalance)
                         else
                             principalPortion'
                     FeePortion =
                         if isSettlement then
-                            previous.FeeBalance - feeRebate
+                            max 0L<Cent> (previous.FeeBalance - feeRebate)
                         else
                             feePortion'
                     InterestPortion = interestPortionL'

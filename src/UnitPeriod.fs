@@ -103,13 +103,12 @@ module UnitPeriod =
             else
                 commonLengths periodLengths
 
-        if Array.isEmpty commonPeriodLengths then
-            periodLengths
-            |> Array.countBy id
-            |> Array.sortBy snd
-            |> Array.averageBy (snd >> decimal)
-            |> roundMidpointTowardsZero
-            |> int
+        if Array.isEmpty periodLengths then
+            // degenerate case, e.g. a same-day advance and payment: there are no intervals to measure, so default to a day
+            1
+        elif Array.isEmpty commonPeriodLengths then
+            // no interval occurs more than once, so use the average of the normalised interval lengths
+            periodLengths |> Array.averageBy decimal |> roundMidpointTowardsZero |> int
         else
             commonPeriodLengths |> Array.sortBy snd |> Array.maxBy snd |> fst
         |> normalise
@@ -245,25 +244,34 @@ module UnitPeriod =
         /// constrains the freqencies to valid values
         let constrain unitPeriodConfig =
             match unitPeriodConfig with
+            // a non-positive multiple cannot be repaired sensibly and would generate empty or unbounded schedules,
+            // so fail with a descriptive message rather than silently clamping
+            | Weekly(multiple, _)
+            | Monthly(multiple, _, _, _) when multiple < 1 ->
+                failwith $"Unit-period multiple must be a positive number: %A{unitPeriodConfig}"
             | Daily _
             | Weekly _ as c -> c
-            | SemiMonthly(_, _, day1, day2) as c when
-                day1 >= 1
+            | SemiMonthly(_, month, day1, day2) as c when
+                month >= 1
+                && month <= 12
+                && day1 >= 1
                 && day1 <= 15
                 && day2 >= 16
                 && day2 <= 31
                 && (day2 < 31 && day2 - day1 = 15 || day2 = 31 && day1 = 15)
                 ->
                 c
-            | SemiMonthly(_, _, day1, day2) as c when
-                day2 >= 1
+            | SemiMonthly(_, month, day1, day2) as c when
+                month >= 1
+                && month <= 12
+                && day2 >= 1
                 && day2 <= 15
                 && day1 >= 16
                 && day1 <= 31
                 && (day1 < 31 && day1 - day2 = 15 || day1 = 31 && day2 = 15)
                 ->
                 c
-            | Monthly(_, _, _, day) as c when day >= 1 && day <= 31 -> c
+            | Monthly(_, _, month, day) as c when month >= 1 && month <= 12 && day >= 1 && day <= 31 -> c
             | invalidConfig -> fix invalidConfig
 
     /// defines the length of a payment schedule, either by the number of payments or by the maximum duration
@@ -318,9 +326,9 @@ module UnitPeriod =
                 | Direction.Reverse ->
                     Array.unfold
                         (fun count ->
-                            let nextDate = firstPaymentDate.AddDays -count
+                            let nextDate = firstPaymentDate.AddDays count
 
-                            if nextDate <= startDate.AddDays -(int duration) then
+                            if nextDate >= startDate.AddDays -(int duration) then
                                 Some(nextDate, count - 1)
                             else
                                 None
@@ -348,9 +356,9 @@ module UnitPeriod =
                 | Direction.Reverse ->
                     Array.unfold
                         (fun i ->
-                            let nextDate = firstPaymentDate.AddDays -(i * 7 * multiple)
+                            let nextDate = firstPaymentDate.AddDays(i * 7 * multiple)
 
-                            if nextDate <= startDate.AddDays -(int duration) then
+                            if nextDate >= startDate.AddDays -(int duration) then
                                 Some(nextDate, i - 1)
                             else
                                 None
@@ -445,9 +453,9 @@ module UnitPeriod =
                     Array.unfold
                         (fun count ->
                             let nextDate =
-                                firstPaymentDate.AddMonths(-count * multiple) |> adjustMonthEnd trackingDay
+                                firstPaymentDate.AddMonths(count * multiple) |> adjustMonthEnd trackingDay
 
-                            if nextDate <= startDate.AddDays -(int duration) then
+                            if nextDate >= startDate.AddDays -(int duration) then
                                 Some(nextDate, count - 1)
                             else
                                 None
@@ -471,6 +479,9 @@ module UnitPeriod =
             match interval with
             | Day -> Daily firstTransferDate
             | Week multiple -> Weekly(multiple, firstTransferDate)
+            | SemiMonth when Array.length transferDates = 1 ->
+                // a single transfer date cannot supply both semi-monthly tracking days, so derive the second day from the first
+                Config.defaultSemiMonthly firstTransferDate
             | SemiMonth ->
                 if Array.length transferDates % 2 = 1 then // deal with odd numbers of transfer dates
                     transferDates

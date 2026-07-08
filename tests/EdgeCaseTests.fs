@@ -869,3 +869,19 @@ module EdgeCaseTests =
             }
 
         actual |> should equal expected
+
+    // regression test: an empty payment schedule previously caused an unhelpful empty-sequence exception deep inside
+    // the amortisation calculation; it now fails fast with a descriptive message (the basic-schedule calculation
+    // rejects configs yielding no payment days before the amortisation-level guard is reached)
+    [<Fact>]
+    let EdgeCaseTest010 () =
+        let p = {
+            parameters2 with
+                Basic.EvaluationDate = Date(2024, 4, 5)
+                Basic.StartDate = Date(2023, 5, 5)
+                Basic.Principal = 25000L<Cent>
+                Basic.ScheduleConfig = CustomSchedule Map.empty
+        }
+
+        let ex = Assert.Throws<System.Exception>(fun () -> amortise p Map.empty |> ignore)
+        ex.Message |> should haveSubstring "no payment days"

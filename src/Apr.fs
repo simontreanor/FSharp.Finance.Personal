@@ -50,12 +50,13 @@ module Apr =
         Value: int64<Cent>
     }
 
-    /// an approximation of the unit-period equivalent of the APR
+    /// an approximation of the unit-period equivalent of the APR, expressed as a decimal rate (not a percentage),
+    /// used as the initial guess for the solver
     let roughUnitPeriodRate principal interestTotal paymentCount =
         if principal = 0m then
             0m
         else
-            2m * interestTotal / (principal * (paymentCount + 1m)) * 100m
+            2m * interestTotal / (principal * (paymentCount + 1m))
 
 
     /// calculates the APR (note that as of 2025-05-08 the EU and UK calculation methods are aligned)
@@ -88,12 +89,15 @@ module Apr =
                 let calc transfers unitPeriodRate =
                     transfers
                     |> Array.sumBy (fun (amount, years) ->
-                        let divisor = 1m + unitPeriodRate |> powm years
+                        try // rates near -1 with long-dated payments produce tiny divisors whose quotients overflow decimal, so treat these as zero (as in the US calculation)
+                            let divisor = 1m + unitPeriodRate |> powm years
 
-                        if Double.IsNaN divisor || divisor = 0. then
+                            if Double.IsNaN divisor || divisor = 0. then
+                                0m
+                            else
+                                amount |> Cent.toDecimal |> (fun a -> double a / divisor |> decimal)
+                        with _ ->
                             0m
-                        else
-                            amount |> Cent.toDecimal |> (fun a -> double a / divisor |> decimal)
                     )
 
                 let generator unitPeriodRate =
@@ -137,14 +141,13 @@ module Apr =
         /// shall be determined by dividing the number of days between the 2 given dates by the number of days per unit-period. If the
         /// unit-period is a day, the number of unit-periods per year shall be 365. [...]
         let dailyUnitPeriods termStart transfers =
-            let transferDates = transfers |> Array.map _.TransferDate
-            let offset = daysBetween termStart (transferDates |> Array.head)
-
             transfers
-            |> Array.mapi (fun i t ->
+            |> Array.map (fun t ->
                 t,
                 {
-                    Quotient = i + offset
+                    // the number of unit-periods is the actual number of days from the start of the term to the transfer date,
+                    // rather than an index-based count that would assume consecutive daily transfers
+                    Quotient = daysBetween termStart t.TransferDate
                     Remainder = 0m
                 }
             )
@@ -254,18 +257,19 @@ module Apr =
         /// 52 divided by the number of weeks per unit-period.
         let weeklyUnitPeriods multiple termStart transfers =
             let multiple = Math.Max(1, multiple)
-            let transferDates = transfers |> Array.map _.TransferDate
-
-            let dr =
-                decimal (daysBetween termStart (transferDates |> Array.head))
-                / (7m * decimal multiple)
-                |> fun d -> divRem d 1m
+            let daysPerUnitPeriod = 7m * decimal multiple
 
             transfers
-            |> Array.mapi (fun i t ->
+            |> Array.map (fun t ->
+                // divide the actual number of days from the start of the term to the transfer date by the number of days
+                // per unit-period, rather than assuming transfers fall on consecutive unit-period boundaries
+                let dr =
+                    decimal (daysBetween termStart t.TransferDate) / daysPerUnitPeriod
+                    |> fun d -> divRem d 1m
+
                 t,
                 {
-                    Quotient = dr.Quotient + i
+                    Quotient = dr.Quotient
                     Remainder = dr.Remainder
                 }
             )
@@ -302,21 +306,38 @@ module Apr =
                 else
                     let paymentTotal = payments |> Array.sumBy (_.Value >> Cent.toDecimal)
 
+                    let advanceDates = advances |> Array.map _.TransferDate
+                    let paymentDates = payments |> Array.map _.TransferDate
+
+                    let term =
+                        UnitPeriod.transactionTerm
+                            consummationDate
+                            firstFinanceChargeEarnedDate
+                            (paymentDates |> Array.last)
+                            (advanceDates |> Array.last)
+
                     if advanceTotal = paymentTotal then
                         Solution.Found(0m, 0, 0m)
+                    elif term.Duration = 0<DurationDay> then
+                        // all transfers fall on the term start date, so there is no time dimension over which to compute a rate
+                        Solution.Impossible
                     else
-                        let advanceDates = advances |> Array.map _.TransferDate
-                        let paymentDates = payments |> Array.map _.TransferDate
+                        let unitPeriodsPerYear, unitPeriodMap =
+                            // (b)(5)(vi)/(vii): in a single advance, single payment transaction in which the term is less than
+                            // a year, the unit-period is the term itself, so the number of unit-periods in the term is 1, and
+                            // the number of unit-periods per year is 12 divided by the number of months in the term if the term
+                            // is equal to a whole number of months, or 365 divided by the number of days in the term otherwise
+                            if Array.length advances = 1 && Array.length payments = 1 && int term.Duration < 365 then
+                                let unitPeriodsPerYear =
+                                    match [| 1..11 |] |> Array.tryFind (fun m -> term.Start.AddMonths m = term.End) with
+                                    | Some months -> 12m / decimal months
+                                    | None -> 365m / decimal (int term.Duration)
 
-                        let term =
-                            UnitPeriod.transactionTerm
-                                consummationDate
-                                firstFinanceChargeEarnedDate
-                                (paymentDates |> Array.last)
-                                (advanceDates |> Array.last)
+                                unitPeriodsPerYear, singleUnitPeriod
+                            else
+                                let unitPeriod = UnitPeriod.nearest term advanceDates paymentDates
+                                UnitPeriod.numberPerYear unitPeriod, mapUnitPeriods unitPeriod
 
-                        let unitPeriod = UnitPeriod.nearest term advanceDates paymentDates
-                        let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
                         let paymentCount = payments |> Array.length |> decimal
                         let interestTotal = paymentTotal - advanceTotal
 
@@ -327,7 +348,7 @@ module Apr =
                             let eq = [| advances[0].Value, 0m, 0 |]
 
                             let ft =
-                                mapUnitPeriods unitPeriod term.Start payments
+                                unitPeriodMap term.Start payments
                                 |> Array.map (fun (tr, dr) ->
                                     let f = dr.Remainder //The fraction of a unit-period in the time interval from the beginning of the term of the transaction to the jth payment.
                                     let t = dr.Quotient //The number of full unit-periods from the beginning of the term of the transaction to the jth payment.
@@ -397,15 +418,19 @@ module Apr =
             | _ -> 0
 
         match aprSolution with
-        | Solution.Found(apr, _, _)
-        | Solution.IterationLimitReached(apr, _, _) -> Decimal.Round(apr, precision) |> Percent.fromDecimal
+        | Solution.Found(apr, _, _) -> Decimal.Round(apr, precision) |> Percent.fromDecimal
+        // the Newton-Raphson solver only reports the iteration limit when the residual is still outside the tolerance,
+        // so the partial solution is unreliable and must not be reported as if it were a valid APR
         | _ -> Percent 0m
 
     /// calculates the APR rate for the specified unit-period as per UK regulation
     let ukUnitPeriodRate unitPeriod apr =
+        let unitPeriodsPerYear = UnitPeriod.numberPerYear unitPeriod
+
+        if unitPeriodsPerYear = 0m then
+            failwith $"Invalid unit period {unitPeriod}: it has zero unit-periods per year"
+
         apr
         |> Percent.toDecimal
-        |> fun m ->
-            (((1m + m) |> powm (1m / UnitPeriod.numberPerYear unitPeriod) |> decimal) - 1m)
-            * 100m
+        |> fun m -> (((1m + m) |> powm (1m / unitPeriodsPerYear) |> decimal) - 1m) * 100m
         |> Percent

@@ -147,13 +147,39 @@ module Refinancing =
         let newPaymentSchedule =
             match rp.PaymentSchedule with
             | AutoGenerateSchedule _ ->
+                // the reschedule day is the evaluation day, i.e. the day on which the rescheduling takes place
+                let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
+                // determine the balance outstanding on the reschedule day, including the full fee balance, as the fee is rescheduled rather than settled
+                let outstandingBalance =
+                    match quote.QuoteResult with
+                    | PaymentQuote pq ->
+                        pq.Apportionment.PrincipalPortion
+                        + pq.Apportionment.FeePortion
+                        + pq.FeeRebateIfSettled
+                        + pq.Apportionment.InterestPortion
+                        + pq.Apportionment.ChargesPortion
+                    | _ -> failwith "Unable to obtain quote for rescheduling"
+                // generate the new payment plan against the outstanding balance, starting on the reschedule day, then
+                // re-base the plan onto the original schedule's day axis as rescheduled payments so that any original
+                // payments due on or after the reschedule day are cancelled when the schedules are merged
                 calculateBasicSchedule {
                     p.Basic with
+                        StartDate = p.Basic.EvaluationDate
+                        Principal = outstandingBalance
+                        FeeConfig = ValueNone
                         ScheduleConfig = rp.PaymentSchedule
                 }
                 |> _.Items
                 |> Array.filter (_.ScheduledPayment >> ScheduledPayment.isSome)
-                |> Array.map (fun si -> si.Day, si.ScheduledPayment)
+                |> Array.map (fun si ->
+                    si.Day + rescheduleDay,
+                    ScheduledPayment.quick
+                        ValueNone
+                        (ValueSome {
+                            Value = ScheduledPayment.total si.ScheduledPayment
+                            RescheduleDay = rescheduleDay
+                        })
+                )
             | FixedSchedules fixedSchedules ->
                 fixedSchedules
                 |> Array.collect (fun fs ->
@@ -295,7 +321,18 @@ module Refinancing =
                                     match fc.SettlementRebate with
                                     | Fee.SettlementRebate.ProRata
                                     | Fee.SettlementRebate.ProRataRescheduled _ ->
-                                        Fee.SettlementRebate.ProRataRescheduled rp.OriginalFinalPaymentDay
+                                        // re-base the original final payment day onto the new schedule's day axis, whose
+                                        // day 0 is the rollover day rather than the original start date
+                                        let rolloverDay =
+                                            p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
+
+                                        let remainingRebateDays = rp.OriginalFinalPaymentDay - rolloverDay
+
+                                        if remainingRebateDays <= 0<OffsetDay> then
+                                            // the original rebate window has already expired, so no rebate is due
+                                            Fee.SettlementRebate.Zero
+                                        else
+                                            Fee.SettlementRebate.ProRataRescheduled remainingRebateDays
                                     | _ as fsr -> fsr
                     })
                 Advanced.SettlementDay = SettlementDay.NoSettlement
