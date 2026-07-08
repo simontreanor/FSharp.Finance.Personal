@@ -337,17 +337,24 @@ module Calculation =
             let rec loop x iteration =
                 // until the iteration limit is reached
                 if iteration <= int iterationLimit then
-                    // get the function value of `x`
-                    let fx = f x
+                    // get the function value of `x`, guarding against decimal overflow at extreme guess values
+                    match (try ValueSome(f x) with :? OverflowException -> ValueNone) with
                     // if the function value is within the tolerance, return the solution
-                    if abs fx < tolerance then
-                        Solution.Found(x, iteration, tolerance)
+                    | ValueSome fx when abs fx < tolerance -> Solution.Found(x, iteration, tolerance)
                     // otherwise, iterate again using an improved guess
-                    else
-                        // get the derivative of the function value of `x`
-                        let f'x = derivative f x 1e-5m
-                        // loop by using the derivative to generate a better guess value
-                        loop (if f'x = 0m then 0m else x - fx / f'x) (iteration + 1)
+                    | ValueSome fx ->
+                        let x' =
+                            try
+                                // get the derivative of the function value of `x` and use it to generate a better guess value
+                                let f'x = derivative f x (max 1e-5m (abs x * 1e-5m))
+                                if f'x = 0m then 0m else x - fx / f'x
+                            with :? OverflowException ->
+                                // treat an overflow as a failed step and dampen the guess instead
+                                x / 2m
+
+                        loop x' (iteration + 1)
+                    // if the function value cannot even be evaluated, dampen the guess and try again
+                    | ValueNone -> loop (x / 2m) (iteration + 1)
                 // if the iteration limit is reached without a solution, return the latest value with a warning
                 else
                     Solution.IterationLimitReached(x, iteration, tolerance)
