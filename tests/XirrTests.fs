@@ -6,6 +6,7 @@ open FSharp.Finance.Personal
 
 module XirrTests =
 
+    open Calculation
     open DateDay
 
     [<Fact>]
@@ -52,18 +53,36 @@ module XirrTests =
         | Ok _ -> failwith "Expected Error for all negative cashflows"
 
     [<Fact>]
-    let ``XIRR_guess_consistency should produce similar results`` () =
+    let ``XIRR_guess_consistency should converge to the same root from different guesses`` () =
         let cashflows = [
             Date(2024, 1, 1), -10000m
             Date(2024, 6, 1), 5000m
             Date(2025, 1, 1), 6000m
         ]
-        
-        let resultDefault = Xirr.xirr cashflows
-        let resultGuess = Xirr.xirrG 0.1m cashflows
-        
-        let difference = abs (resultDefault - resultGuess)
-        difference |> should be (lessThan 1e-10m)
+
+        let resultLowGuess = Xirr.xirrG 0.05m cashflows
+        let resultHighGuess = Xirr.xirrG 0.3m cashflows
+
+        let difference = abs (resultLowGuess - resultHighGuess)
+        difference |> should be (lessThan 1e-6m)
+
+    [<Fact>]
+    let ``XIRR_unsorted_input should compute the same rate as sorted input`` () =
+        let sorted = [
+            Date(2024, 1, 1), -10000m
+            Date(2024, 6, 1), 5000m
+            Date(2025, 1, 1), 6000m
+        ]
+        let unsorted = [
+            Date(2025, 1, 1), 6000m
+            Date(2024, 1, 1), -10000m
+            Date(2024, 6, 1), 5000m
+        ]
+
+        let resultSorted = Xirr.xirr sorted
+        let resultUnsorted = Xirr.xirr unsorted
+
+        resultUnsorted |> should equal resultSorted
 
     [<Fact>]
     let ``XIRR should fail with insufficient cashflows`` () =
@@ -98,11 +117,44 @@ module XirrTests =
         | Error msg -> failwith $"Expected Ok result but got Error: {msg}"
 
     [<Fact>]
-    let ``XIRR accepts date-only values used elsewhere in the library`` () =
+    let ``tryXirrG should return Ok for valid cashflows and match xirrG`` () =
         let cashflows = [
+            Date(2024, 1, 1), -1000m
+            Date(2025, 1, 1), 1100m
+        ]
+
+        match Xirr.tryXirrG 0.05m cashflows with
+        | Ok rate -> rate |> should equal (Xirr.xirrG 0.05m cashflows)
+        | Error msg -> failwith $"Expected Ok result but got Error: {msg}"
+
+    [<Fact>]
+    let ``xirrG should fail with out-of-domain guess`` () =
+        let cashflows = [
+            Date(2024, 1, 1), -1000m
+            Date(2025, 1, 1), 1100m
+        ]
+
+        (fun () -> Xirr.xirrG (-1m) cashflows |> ignore)
+        |> should throw typeof<System.ArgumentException>
+
+        match Xirr.tryXirrG (-1.5m) cashflows with
+        | Error _ -> () // Expected
+        | Ok _ -> failwith "Expected Error for out-of-domain guess"
+
+    [<Fact>]
+    let ``xirrCents should compute the same rate as decimal cashflows`` () =
+        let centCashflows = [
+            Date(2024, 1, 1), -1_000_000L<Cent>  // -10,000.00
+            Date(2025, 1, 1), 1_100_000L<Cent>   //  11,000.00
+        ]
+        let decimalCashflows = [
             Date(2024, 1, 1), -10000m
             Date(2025, 1, 1), 11000m
         ]
 
-        Xirr.xirr cashflows
-        |> should be (greaterThan 0.095m)
+        let centResult = Xirr.xirrCents centCashflows
+        centResult |> should equal (Xirr.xirr decimalCashflows)
+
+        match Xirr.tryXirrCents centCashflows with
+        | Ok rate -> rate |> should equal centResult
+        | Error msg -> failwith $"Expected Ok result but got Error: {msg}"

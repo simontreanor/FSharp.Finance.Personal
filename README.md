@@ -15,7 +15,7 @@ Initial features:
 
 ## XIRR (Excel-Compatible)
 
-Calculate the Extended Internal Rate of Return (XIRR) for irregular cash flows with Excel compatibility.
+Calculate the Extended Internal Rate of Return (XIRR) for irregular cash flows with Excel-compatible function semantics.
 
 ```fsharp
 open FSharp.Finance.Personal
@@ -28,10 +28,10 @@ printfn "XIRR = %.4f%%" (r * 100m)
 ```
 
 Features:
-- **Excel compatibility**: Uses ExcelFinancialFunctions library with default guess=0.1
-- **Multiple functions**: `xirr`, `xirrG` (custom guess), `tryXirr` (safe Result type)
-- **Input validation**: Ensures mixed signs, sufficient data points, and non-identical dates
-- **Decimal return type**: Returns rates as `decimal` values, while the underlying XIRR calculation uses floating-point arithmetic for Excel compatibility
+- **Excel-compatible semantics**: Uses the ExcelFinancialFunctions library with Excel's default guess of 0.1; results typically match Excel to high precision, though the underlying convergence implementation differs from Excel's, so small differences are possible
+- **Multiple functions**: `xirr`, `xirrG` (custom guess), `tryXirr`/`tryXirrG` (safe Result type), and `xirrCents`/`tryXirrCents` for cashflows expressed in the library's `int64<Cent>` money representation
+- **Input validation**: Ensures mixed signs, sufficient data points, non-identical dates and an in-domain guess; cashflows are sorted by date internally, so input order does not matter
+- **Decimal return type**: Returns rates as `decimal` values, while the underlying XIRR calculation uses floating-point arithmetic
 
 The XIRR functions follow Excel's sign convention from the borrower's perspective: negative values represent outflows such as investments or loan payments, and positive values represent inflows such as returns or loan disbursements.
 

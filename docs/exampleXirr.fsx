@@ -54,19 +54,21 @@ printfn "Salary advance XIRR: %.2f%%" (salaryAdvanceRate * 100m)
 (**
 ## Trade Credit Cashflow Example
 
-A simple trade credit scenario with multiple payments:
+An invoice factoring scenario from the factor's perspective: the factor advances $85,000
+against a $100,000 invoice, later collects the invoice from the debtor, and remits the
+remainder to the seller minus a $3,000 fee. The factor earns $3,000 on $85,000 over 60 days:
 *)
 
-// Trade credit: Invoice factoring with advance and final settlement
+// Invoice factoring from the factor's perspective
 let tradeCreditCashflows = [
-    Date(2024, 1, 1), -100000m   // Invoice amount (outflow to factor)
-    Date(2024, 1, 2), 85000m    // Advance payment (inflow from factor)
-    Date(2024, 3, 1), 14000m    // Final settlement minus fees (inflow from factor)
+    Date(2024, 1, 1), -85000m   // Advance paid to the seller (outflow from factor)
+    Date(2024, 3, 1), 100000m   // Invoice amount collected from the debtor (inflow to factor)
+    Date(2024, 3, 1), -12000m   // Remainder remitted to the seller minus the fee (outflow from factor)
 ]
 
 let tradeCreditRate = Xirr.xirr tradeCreditCashflows
 printfn "Trade credit XIRR: %.2f%%" (tradeCreditRate * 100m)
-// Output: effective rate for the factoring arrangement
+// Output: approximately 23.49% (a $3,000 fee on an $85,000 advance over 60 days, annualized)
 
 (**
 ## Using Custom Guess
@@ -77,6 +79,26 @@ When the default guess of 0.1 (10%) might not converge well, you can provide a c
 // Using a custom guess of 5% instead of the default 10%
 let customGuessRate = Xirr.xirrG 0.05m basicInvestment
 printfn "Custom guess XIRR: %.2f%%" (customGuessRate * 100m)
+
+(**
+## Working with Cent Values
+
+The rest of the library represents money in the base currency unit as `int64<Cent>`
+(see `Calculation.Cent`). The `xirrCents` and `tryXirrCents` functions accept such
+cashflows directly:
+*)
+
+open Calculation
+
+// The same basic investment expressed in cents
+let basicInvestmentCents = [
+    Date(2024, 1, 1), -1_000_000L<Cent>   // -$10,000.00
+    Date(2025, 1, 1), 1_100_000L<Cent>    // +$11,000.00
+]
+
+let basicRateFromCents = Xirr.xirrCents basicInvestmentCents
+printfn "Basic investment XIRR from cents: %.2f%%" (basicRateFromCents * 100m)
+// Output: approximately 10.00%
 
 (**
 ## Safe Error Handling
@@ -119,11 +141,18 @@ From an **investor's perspective**:
 
 ## Excel Compatibility
 
-This implementation uses the `ExcelFinancialFunctions` library to ensure complete compatibility with Excel's XIRR function, including:
+This implementation uses the `ExcelFinancialFunctions` library, which provides Excel-compatible
+function semantics for XIRR:
 
-- Default guess value of 0.1 (10%)
-- Same convergence algorithm
-- Floating-point arithmetic matching Excel-style calculations
+- Same default guess value of 0.1 (10%)
+- Same sign convention and day-count treatment as Excel's XIRR
+- Results typically match Excel to high precision
+
+Note that the underlying library uses a different convergence implementation than Excel,
+so results may occasionally differ from Excel in the last decimal places. Cashflows are
+sorted by date internally, so they may be supplied in any order. If the calculation fails
+to converge, `xirr` and `xirrG` surface this as a raw `System.Exception`; the `tryXirr`,
+`tryXirrG` and `tryXirrCents` variants catch it and return a `Result.Error` instead.
 
 The functions return annualized effective rates as decimal values (e.g., 0.10 for 10%).
 *)
