@@ -1239,6 +1239,72 @@ module ActualPaymentTests =
 
         actual |> should equal expected
 
+    // regression test: a charge attached to a failed payment (e.g. an insufficient-funds charge on a failed retry) was
+    // previously dropped entirely when it fell on a day where no payment was due
+    [<Fact>]
+    let ActualPaymentTest023 () =
+        let description =
+            "Failed payment with an insufficient-funds charge on a non-schedule day: the charge still applies"
+
+        let p = {
+            parameters1 with
+                Advanced.ChargeConfig =
+                    Some {
+                        ChargeTypes =
+                            Map [
+                                Charge.LatePayment,
+                                {
+                                    Value = 10_00L<Cent>
+                                    ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                                    ChargeHolidays = [||]
+                                }
+                                Charge.InsufficientFunds,
+                                {
+                                    Value = 7_50L<Cent>
+                                    ChargeGrouping = Charge.ChargeGrouping.OneChargeTypePerDay
+                                    ChargeHolidays = [||]
+                                }
+                            ]
+                    }
+        }
+
+        // first instalment paid on time, then a failed retry (with an insufficient-funds charge) on a non-schedule day
+        let actualPayments =
+            Map [
+                4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                14<OffsetDay>,
+                [|
+                    ActualPayment.quickFailed 456_88L<Cent> (ValueSome Charge.InsufficientFunds)
+                |]
+            ]
+
+        let schedules = amortise p actualPayments
+
+        let item14 = schedules.AmortisationSchedule.ScheduleItems |> Map.find 14<OffsetDay>
+        let item35 = schedules.AmortisationSchedule.ScheduleItems |> Map.find 35<OffsetDay>
+
+        let actual =
+            item14.NewCharges, item14.ChargesBalance, item35.NewCharges, item35.ChargesBalance
+
+        // the insufficient-funds charge applies on day 14 even though nothing is due that day, and the late-payment
+        // charge for the missed day-35 payment is carried on top of it
+        let expected =
+            [|
+                {
+                    ChargeType = Charge.InsufficientFunds
+                    Total = 7_50L<Cent>
+                }
+            |],
+            7_50L<Cent>,
+            [|
+                {
+                    ChargeType = Charge.LatePayment
+                    Total = 10_00L<Cent>
+                }
+            |],
+            17_50L<Cent>
+
+        actual |> should equal expected
 
     // regression test: a refund issued on a scheduled-payment day was previously classified as an underpayment,
     // incurring a late-payment charge and later being mislabelled as paid-later-owing

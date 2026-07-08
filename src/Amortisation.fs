@@ -931,7 +931,22 @@ module Amortisation =
 
             let newChargesTotal, incurredCharges =
                 if paymentDue = 0L<Cent> then
-                    0L<Cent>, [||]
+                    // when nothing is due on the day, charges relating to non-payment of an amount due (e.g. late-payment
+                    // charges) are suppressed, but charges incurred by failed payments (e.g. insufficient-funds charges
+                    // on a failed retry on a non-schedule day) still apply
+                    let failedPaymentChargeTypes =
+                        current.ActualPayments
+                        |> Array.choose (fun ap ->
+                            match ap.ActualPaymentStatus with
+                            | ActualPaymentStatus.Failed(_, ValueSome chargeType) -> Some chargeType
+                            | _ -> None
+                        )
+
+                    let failedPaymentCharges =
+                        current.AppliedCharges
+                        |> Array.filter (fun ac -> failedPaymentChargeTypes |> Array.contains ac.ChargeType)
+
+                    failedPaymentCharges |> Array.sumBy _.Total, failedPaymentCharges
                 else
                     current.AppliedCharges |> Array.sumBy _.Total, current.AppliedCharges
 
