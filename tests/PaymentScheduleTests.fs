@@ -2190,3 +2190,203 @@ module PaymentScheduleTests =
             schedule1 = schedule2 && schedule2 = schedule3
 
         actual |> should equal true
+
+    // regression test: the payment solver previously failed ("Unable to calculate basic schedule") for the standard
+    // test fixture (£1000, 0.798% daily rate, 100% total interest cap) with 11 or more monthly payments, because the
+    // rough interest estimate ignored the interest cap and the bisection bounds were never expanded
+    [<Fact>]
+    let ``Level payment solver works under a binding total interest cap for terms of 5 to 60 months`` () =
+        let actual =
+            [| 5..60 |]
+            |> Array.forall (fun paymentCount ->
+                let schedule =
+                    Monthly.monthlyParameters 1000_00L<Cent> 8<DurationDay> paymentCount
+                    |> calculateBasicSchedule
+
+                let lastItem = schedule.Items |> Array.last
+
+                lastItem.PrincipalBalance = 0L<Cent>
+                && schedule.Stats.PrincipalTotal = 1000_00L<Cent>
+                && schedule.Stats.FinalPayment >= 0L<Cent>
+            )
+
+        actual |> should equal true
+
+    // regression test: at very high daily rates over long terms, a one-cent change in the level payment changes the
+    // final balance by more than the maximum solver tolerance, which previously made the solver fail; the solver now
+    // falls back to the nearest viable payment value and the final-payment adjustment closes the schedule
+    [<Fact>]
+    let ``Level payment solver works at a very high daily rate for terms of 4 to 24 months`` () =
+        let highRateParameters paymentCount : BasicParameters =
+            let startDate = Date(2025, 1, 1)
+
+            {
+                EvaluationDate = startDate
+                StartDate = startDate
+                Principal = 1000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2025, 2, 1)
+                        ScheduleLength = PaymentCount paymentCount
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundWith MidpointRounding.AwayFromZero
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Daily(Percent 1.4m)
+                    Cap = Interest.Cap.zero
+                    Rounding = RoundWith MidpointRounding.AwayFromZero
+                    AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+                }
+            }
+
+        let actual =
+            [| 4..24 |]
+            |> Array.forall (fun paymentCount ->
+                let schedule = highRateParameters paymentCount |> calculateBasicSchedule
+                let lastItem = schedule.Items |> Array.last
+
+                lastItem.PrincipalBalance = 0L<Cent>
+                && schedule.Stats.PrincipalTotal = 1000_00L<Cent>
+                && schedule.Items
+                   |> Array.forall (fun bi -> ScheduledPayment.total bi.ScheduledPayment >= 0L<Cent>)
+            )
+
+        actual |> should equal true
+
+    // regression test: a schedule config yielding no payment days previously crashed with an uncontrolled
+    // "The input array was empty" exception (add-on interest method) or returned a degenerate schedule (actuarial)
+    [<Fact>]
+    let ``Schedule config yielding no payment days fails with a descriptive message`` () =
+        let p interestMethod scheduleConfig : BasicParameters = {
+            EvaluationDate = Date(2025, 1, 1)
+            StartDate = Date(2025, 1, 1)
+            Principal = 1000_00L<Cent>
+            ScheduleConfig = scheduleConfig
+            PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
+                Rounding = RoundWith MidpointRounding.AwayFromZero
+            }
+            FeeConfig = ValueNone
+            InterestConfig = {
+                Method = interestMethod
+                StandardRate = Interest.Rate.Daily(Percent 0.798m)
+                Cap = interestCapExample
+                Rounding = RoundWith MidpointRounding.AwayFromZero
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            }
+        }
+
+        // a fixed schedule whose unit-period config starts before the loan start date yields no payment days
+        let fixedSchedulesPredatingStartDate =
+            FixedSchedules [|
+                {
+                    UnitPeriodConfig = Monthly(1, 2024, 12, 15)
+                    PaymentCount = 4
+                    PaymentValue = 300_00L<Cent>
+                    ScheduleType = ScheduleType.Original
+                }
+            |]
+
+        let errorMessage bp =
+            try
+                calculateBasicSchedule bp |> ignore
+                "no exception raised"
+            with ex ->
+                ex.Message
+
+        p Interest.Method.AddOn (CustomSchedule Map.empty)
+        |> errorMessage
+        |> should haveSubstring "yields no payment days"
+
+        p Interest.Method.Actuarial (CustomSchedule Map.empty)
+        |> errorMessage
+        |> should haveSubstring "yields no payment days"
+
+        p Interest.Method.AddOn fixedSchedulesPredatingStartDate
+        |> errorMessage
+        |> should haveSubstring "start date"
+
+    // regression test: the final-payment adjustment previously dumped the whole rounding overpayment onto the final
+    // payment with no floor, producing a negative final scheduled payment (here: level 20p, final -60p); the payments
+    // are now floored at zero and the schedule is shortened instead
+    [<Fact>]
+    let ``Final payment is never negative and overpayment shortens the schedule`` () =
+        let startDate = Date(2025, 1, 1)
+
+        let p: BasicParameters = {
+            EvaluationDate = startDate
+            StartDate = startDate
+            Principal = 20_00L<Cent>
+            ScheduleConfig =
+                AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(1, startDate.AddDays 7)
+                    ScheduleLength = PaymentCount 104
+                }
+            PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
+                Rounding = RoundUp
+            }
+            FeeConfig = ValueNone
+            InterestConfig = {
+                Method = Interest.Method.Actuarial
+                StandardRate = Interest.Rate.Zero
+                Cap = Interest.Cap.zero
+                Rounding = RoundWith MidpointRounding.AwayFromZero
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            }
+        }
+
+        let schedule = calculateBasicSchedule p
+
+        schedule.Stats.LevelPayment |> should equal 20L<Cent>
+        schedule.Stats.FinalPayment |> should equal 20L<Cent>
+        schedule.Stats.ScheduledPaymentTotal |> should equal 20_00L<Cent>
+        schedule.Stats.PrincipalTotal |> should equal 20_00L<Cent>
+        // 100 payments of 20p repay the £20 principal exactly, so the schedule is shortened from 104 to 100 payments
+        schedule.Stats.LastScheduledPaymentDay |> should equal 700<OffsetDay>
+
+        (schedule.Items |> Array.last).PrincipalBalance |> should equal 0L<Cent>
+
+        schedule.Items
+        |> Array.forall (fun bi -> ScheduledPayment.total bi.ScheduledPayment >= 0L<Cent>)
+        |> should equal true
+
+    // regression test: a single payment scheduled on day 0 previously doubled the principal total, as the final-payment
+    // adjustment also matched the day-0 seed item generated by Array.scan and folded its full principal balance into
+    // the principal portion
+    [<Fact>]
+    let ``Single payment on day 0 does not double the principal total`` () =
+        let startDate = Date(2025, 1, 1)
+
+        let p: BasicParameters = {
+            EvaluationDate = startDate
+            StartDate = startDate
+            Principal = 1000_00L<Cent>
+            ScheduleConfig =
+                AutoGenerateSchedule {
+                    UnitPeriodConfig = Daily startDate
+                    ScheduleLength = PaymentCount 1
+                }
+            PaymentConfig = {
+                LevelPaymentOption = LowerFinalPayment
+                Rounding = RoundWith MidpointRounding.AwayFromZero
+            }
+            FeeConfig = ValueNone
+            InterestConfig = {
+                Method = Interest.Method.Actuarial
+                StandardRate = Interest.Rate.Daily(Percent 0.798m)
+                Cap = interestCapExample
+                Rounding = RoundWith MidpointRounding.AwayFromZero
+                AprMethod = Apr.CalculationMethod.UnitedKingdom 3
+            }
+        }
+
+        let schedule = calculateBasicSchedule p
+
+        schedule.Stats.PrincipalTotal |> should equal 1000_00L<Cent>
+        schedule.Stats.FinalPayment |> should equal 1000_00L<Cent>
+        (schedule.Items |> Array.last).PrincipalBalance |> should equal 0L<Cent>

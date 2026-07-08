@@ -238,7 +238,7 @@ let isAutoGenerateSchedule = bp.ScheduleConfig.IsAutoGenerateSchedule
 
 let items =
     basicItems'
-    |> adjustFinalPayment finalScheduledPaymentDay isAutoGenerateSchedule
+    |> adjustFinalPayment bp finalScheduledPaymentDay isAutoGenerateSchedule
 
 (*** hide ***)
 {

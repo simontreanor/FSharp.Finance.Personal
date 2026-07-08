@@ -234,7 +234,7 @@ The final payment is adjusted (`cref:M:FSharp.Finance.Personal.Scheduling.adjust
 
 let items =
     basicItems
-    |> adjustFinalPayment finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
+    |> adjustFinalPayment bp finalScheduledPaymentDay bp.ScheduleConfig.IsAutoGenerateSchedule
 
 (*** hide ***)
 {
