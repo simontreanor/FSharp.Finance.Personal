@@ -2007,3 +2007,105 @@ module QuoteTests =
             }
 
         actual |> should equal expected
+
+    // regression test: this scenario previously crashed with an empty-array exception in calculateStatutoryFeeRebate,
+    // because no original scheduled payment day precedes the quote day (the settlement part-period now runs from the
+    // start date instead)
+    [<Fact>]
+    let QuoteTest026 () =
+        let description =
+            "Quote on a day before the first scheduled payment day, UK APR method with pro-rata fee rebate"
+
+        let p = {
+            parameters2 with
+                Basic.EvaluationDate = Date(2022, 12, 1) // day 5, first scheduled payment on day 35
+                Basic.StartDate = Date(2022, 11, 26)
+                Basic.Principal = 1500_00L<Cent>
+                Basic.ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                        ScheduleLength = PaymentCount 5
+                    }
+                Basic.FeeConfig =
+                    ValueSome {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 150m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                    }
+                Advanced.FeeConfig =
+                    ValueSome {
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
+        }
+
+        let actual = getQuote p Map.empty |> _.QuoteResult
+
+        let expected =
+            PaymentQuote {
+                PaymentValue = 1740_00L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1500_00L<Cent>
+                    FeePortion = 90_00L<Cent>
+                    InterestPortion = 150_00L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeeRebateIfSettled = 2160_00L<Cent>
+            }
+
+        actual |> should equal expected
+
+    // regression test: the settlement figure was previously composed using the pro-rata fee rebate even when the higher
+    // UK statutory rebate was applied, over-quoting the customer (1604.45 instead of 1253.13) and producing apportionment
+    // portions that included a negative fee portion and did not sum to the payment value
+    [<Fact>]
+    let QuoteTest027 () =
+        let description =
+            "Quote where the statutory rebate exceeds the pro-rata rebate: settlement figure and apportionment use the same rebate"
+
+        let p = {
+            parameters2 with
+                Basic.EvaluationDate = Date(2023, 1, 20) // day 55, mid-schedule
+                Basic.StartDate = Date(2022, 11, 26)
+                Basic.Principal = 1500_00L<Cent>
+                Basic.ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                        ScheduleLength = PaymentCount 5
+                    }
+                Basic.FeeConfig =
+                    ValueSome {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 150m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                    }
+                Advanced.FeeConfig =
+                    ValueSome {
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
+        }
+
+        let actualPayments =
+            Map [
+                4<OffsetDay>, [| ActualPayment.quickConfirmed 1050_00L<Cent> |]
+                35<OffsetDay>, [| ActualPayment.quickConfirmed 1050_00L<Cent> |]
+            ]
+
+        let actual = getQuote p actualPayments |> _.QuoteResult
+
+        // the payment value equals principal balance + fee balance - statutory rebate + interest, the portions sum to the
+        // payment value, and the excess of the rebate over the fee balance reduces the principal portion rather than
+        // producing a negative fee portion
+        let expected =
+            PaymentQuote {
+                PaymentValue = 1253_13L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 858_04L<Cent>
+                    FeePortion = 0L<Cent>
+                    InterestPortion = 395_09L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeeRebateIfSettled = 1260_00L<Cent>
+            }
+
+        actual |> should equal expected
+

@@ -559,6 +559,12 @@ module Amortisation =
                 OriginalScheduledPaymentValue = ap.ScheduledPayment.Original.Value
             |})
 
+        // if there are no original scheduled payments (e.g. the schedule consists entirely of rescheduled payments),
+        // there is no original-schedule basis on which to calculate a statutory rebate
+        if Array.isEmpty originalScheduledPayments then
+            0L<Cent>
+        else
+
         let unitPeriod =
             match bp.ScheduleConfig with
             | AutoGenerateSchedule ags -> UnitPeriod.Config.unitPeriod ags.UnitPeriodConfig
@@ -579,8 +585,13 @@ module Amortisation =
         let previousScheduledPaymentDate =
             originalScheduledPayments
             |> Array.filter (fun osp -> osp.OffsetDay <= appliedPaymentDay)
-            |> Array.last
-            |> _.OffsetDay
+            |> Array.tryLast
+            |> Option.map _.OffsetDay
+            // if settlement occurs before the first scheduled payment day, the first settlement period runs from the
+            // date of the agreement itself: the CCA 2004 regulation 4(1) formula measures periods between repayment
+            // dates, with the part-period at the point of settlement measured from the latest repayment date or, where
+            // none has yet fallen due, from the start of the agreement, so fall back to day 0 (the advance date)
+            |> Option.defaultValue 0<OffsetDay>
 
         let numerator = appliedPaymentDay - previousScheduledPaymentDate |> int
         let denominator = UnitPeriod.roughLength unitPeriod
@@ -1007,12 +1018,24 @@ module Amortisation =
                     currentDay
                     totals'.CumulativeFee
 
+            // determine the rebate that would actually be applied on settlement: for UK FCA-regulated agreements, if the
+            // statutory rebate is higher than the fee rebate calculated above, the statutory rebate applies; this must be
+            // determined before the settlement figure is composed so that the figure and the fee apportionment are based
+            // on the same rebate
+            let applicableFeeRebate =
+                match p.Basic.InterestConfig.AprMethod with
+                | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
+                    calculateStatutoryFeeRebate p.Basic appliedPayments initialStats currentDay window
+                    |> max feeRebateIfSettled
+                    |> min feeTotal
+                | _ -> feeRebateIfSettled
+
             // refine the settlement figure depending on the interest method
             let generatedSettlementPayment' =
                 match p.Basic.InterestConfig.Method with
                 | Interest.Method.AddOn -> generatedSettlementPayment
                 | _ ->
-                    previous.PrincipalBalance + previous.FeeBalance - feeRebateIfSettled
+                    previous.PrincipalBalance + previous.FeeBalance - applicableFeeRebate
                     + interestPortionL'
                     + chargesPortion
 
@@ -1022,16 +1045,7 @@ module Amortisation =
                     current.GeneratedPayment.IsToBeGenerated
                     || feePortion > 0L<Cent> && generatedSettlementPayment' <= netEffect
                 then
-                    let feeRebate' =
-                        match p.Basic.InterestConfig.AprMethod with
-                        | Apr.CalculationMethod.UnitedKingdom _ when feeRebateIfSettled > 0L<Cent> ->
-                            // if the statutory rebate is higher than the fee rebate calculated above, use the higher figure
-                            calculateStatutoryFeeRebate p.Basic appliedPayments initialStats currentDay window
-                            |> max feeRebateIfSettled
-                            |> min feeTotal
-                        | _ -> feeRebateIfSettled
-
-                    max 0L<Cent> (previous.FeeBalance - feeRebate'), feeRebate'
+                    max 0L<Cent> (previous.FeeBalance - applicableFeeRebate), applicableFeeRebate
                 else
                     sign feePortion, 0L<Cent>
 
@@ -1175,14 +1189,17 @@ module Amortisation =
                     ActuarialInterest = cappedActuarialInterestM
                     NewInterest = cappedNewInterestM'
                     NewCharges = incurredCharges
+                    // where the fee rebate exceeds the fee balance (possible e.g. for UK statutory rebates), the fee
+                    // portion is floored at zero and the excess rebate reduces the principal portion instead, so the
+                    // portions still sum to the settlement figure without any negative fee portion
                     PrincipalPortion =
                         if isSettlement then
-                            previous.PrincipalBalance
+                            previous.PrincipalBalance - max 0L<Cent> (feeRebate - previous.FeeBalance)
                         else
                             principalPortion'
                     FeePortion =
                         if isSettlement then
-                            previous.FeeBalance - feeRebate
+                            max 0L<Cent> (previous.FeeBalance - feeRebate)
                         else
                             feePortion'
                     InterestPortion = interestPortionL'
