@@ -1017,6 +1017,11 @@ module Scheduling =
             paymentDays |> Array.tryLast |> Option.defaultValue 0<OffsetDay>
         // get the payment count for use in further calculations
         let paymentCount = paymentDays |> Array.length
+        // fail early with a descriptive message if the schedule config yields no payment days at all, as no meaningful schedule
+        // can be generated (and the add-on interest method would otherwise fail while equalising the interest)
+        if paymentCount = 0 then
+            failwith
+                $"Unable to calculate basic schedule: the schedule config yields no payment days. Note that fixed and auto-generated schedules whose unit-period config starts before the loan start date ({bp.StartDate.Html}) are silently ignored, so check that the unit-period config start date is not earlier than the loan start date."
         // calculate the total fee value for the entire schedule
         let feeTotal = Fee.total bp.FeeConfig bp.Principal
         // get the initial interest balance
