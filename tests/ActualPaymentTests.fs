@@ -1150,6 +1150,96 @@ module ActualPaymentTests =
         let expected = true
         actual |> should equal expected
 
+    // regression test: under the AddChargesAndInterest option, the portions previously summed to more than the amount
+    // collected (interest and charges were double-counted) and the scheduled-payment adjustment had a sign error; the
+    // adjustment now increases the payment due (and the amount collected, for payments not yet due) by the charges and
+    // interest, so the portions sum exactly to the net effect
+    [<Fact>]
+    let ActualPaymentTest021 () =
+        let description =
+            "Schedule with a missed payment under the add-charges-and-interest option: charges and interest are added to the payment due and genuinely collected"
+
+        let p = {
+            parameters1 with
+                Advanced.PaymentConfig.ScheduledPaymentOption = AddChargesAndInterest
+        }
+
+        // miss day 35 (incurring a late-payment charge), pay double on day 66
+        let actualPayments =
+            Map [
+                4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                66<OffsetDay>, [| ActualPayment.quickConfirmed 913_76L<Cent> |]
+                94<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                125<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+            ]
+
+        let schedules = amortise p actualPayments
+
+        // on every day, the portions must sum exactly to the net effect (nothing is written off or double-counted)
+        let conservationViolationCount =
+            schedules.AmortisationSchedule.ScheduleItems
+            |> Map.filter (fun _ si ->
+                si.ChargesPortion + si.InterestPortion + si.FeePortion + si.PrincipalPortion
+                <> si.NetEffect
+            )
+            |> Map.count
+
+        // on day 66, the late-payment charge and accrued interest are added to the scheduled payment as an adjustment
+        let item66 = schedules.AmortisationSchedule.ScheduleItems |> Map.find 66<OffsetDay>
+
+        // the sum of the scheduled payment totals reflects the upward adjustments
+        let scheduledPaymentTotal =
+            schedules.AmortisationSchedule.ScheduleItems
+            |> Map.toArray
+            |> Array.sumBy (snd >> _.ScheduledPayment >> ScheduledPayment.total)
+
+        let actual =
+            conservationViolationCount,
+            item66.ScheduledPayment.Adjustment,
+            item66.PaymentDue,
+            item66.ChargesPortion,
+            item66.InterestPortion,
+            item66.PrincipalPortion,
+            scheduledPaymentTotal
+
+        let expected =
+            0, 551_19L<Cent>, 1008_07L<Cent>, 10_00L<Cent>, 541_19L<Cent>, 362_57L<Cent>, 3132_60L<Cent>
+
+        actual |> should equal expected
+
+    // regression test: under the AddChargesAndInterest option, a projected schedule assumes future payments are made
+    // including the interest adjustments, so the balance closes by the end of the schedule
+    [<Fact>]
+    let ActualPaymentTest022 () =
+        let description =
+            "Projected schedule under the add-charges-and-interest option: interest is added to each payment due and the balance closes"
+
+        let p = {
+            parameters1 with
+                Basic.EvaluationDate = Date(2022, 11, 26) // evaluated on the start date, so the whole schedule is projected
+                Advanced.PaymentConfig.ScheduledPaymentOption = AddChargesAndInterest
+        }
+
+        let schedules = amortise p Map.empty
+
+        let item4 = schedules.AmortisationSchedule.ScheduleItems |> Map.find 4<OffsetDay>
+
+        let actual =
+            schedules.AmortisationSchedule.FinalStats.FinalBalanceStatus,
+            item4.ScheduledPayment.Adjustment,
+            item4.PaymentDue,
+            item4.NetEffect,
+            item4.InterestPortion,
+            item4.PrincipalPortion
+
+        // the first payment due is the scheduled 456.88 plus the 48.00 interest accrued to date, so the full 456.88 is
+        // apportioned to principal and the balance amortises ahead of the as-scheduled case, closing early
+        let expected =
+            ClosedBalance, 48_00L<Cent>, 504_88L<Cent>, 504_88L<Cent>, 48_00L<Cent>, 456_88L<Cent>
+
+        actual |> should equal expected
+
+
     // regression test: a refund issued on a scheduled-payment day was previously classified as an underpayment,
     // incurring a late-payment charge and later being mislabelled as paid-later-owing
     [<Fact>]

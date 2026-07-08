@@ -995,14 +995,40 @@ module Amortisation =
                     (Cent.toDecimalCent totals.CumulativeInterestPortions)
                 |> Cent.fromDecimalCent interestRounding
 
-            // determine how much of the net effect can be apportioned and whether any immediate adjustments need to be made to the scheduled payment due to charges and interest, depending on settings
-            let assignable, scheduledPaymentAdjustment =
-                if netEffect = 0L<Cent> then
-                    0L<Cent>, 0L<Cent>
+            // determine whether any immediate adjustments need to be made to the scheduled payment due to charges and interest, depending on settings:
+            // under AddChargesAndInterest, any charges and interest are added to the scheduled payment itself, increasing the amount due
+            // (and collected, for payments not yet made) on the day rather than being amortised later, so that the balance can close at
+            // the end of the schedule
+            let scheduledPaymentAdjustment =
+                match p.Advanced.PaymentConfig.ScheduledPaymentOption with
+                | AddChargesAndInterest when netEffect > 0L<Cent> && paymentDue > 0L<Cent> ->
+                    // the adjusted payment due should still never exceed the total outstanding (balances plus accrued interest and charges)
+                    let cappedPaymentDue =
+                        paymentDue + chargesPortion + interestPortionL'
+                        |> min (
+                            previous.PrincipalBalance + previous.FeeBalance
+                            + interestPortionL'
+                            + chargesPortion
+                        )
+
+                    max 0L<Cent> (cappedPaymentDue - paymentDue)
+                | _ -> 0L<Cent>
+
+            // the adjustment increases the payment due and, for payments not yet due (which are assumed to be paid in full), the net effect
+            let paymentDue = paymentDue + scheduledPaymentAdjustment
+
+            let netEffect =
+                if currentDay > evaluationDay then
+                    netEffect + scheduledPaymentAdjustment
                 else
-                    match p.Advanced.PaymentConfig.ScheduledPaymentOption with
-                    | AsScheduled -> sign netEffect - sign chargesPortion - sign interestPortionL', 0L<Cent>
-                    | AddChargesAndInterest -> sign netEffect, sign chargesPortion - sign interestPortionL'
+                    netEffect
+
+            // determine how much of the net effect can be apportioned to the fee and principal balances
+            let assignable =
+                if netEffect = 0L<Cent> then
+                    0L<Cent>
+                else
+                    sign netEffect - sign chargesPortion - sign interestPortionL'
 
             let scheduledPayment = {
                 current.ScheduledPayment with
