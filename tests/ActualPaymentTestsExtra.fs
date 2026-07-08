@@ -897,3 +897,208 @@ module ActualPaymentTestsExtra =
             }
 
         actual |> should equal expected
+
+    [<Fact>]
+    let ActualPaymentTestExtra010 () =
+        // regression test: rescheduling with an auto-generated payment plan must cancel the original payments
+        // falling on or after the reschedule day and size the new level payment against the outstanding balance
+        // rather than the full original principal
+        let p: Parameters = {
+            Basic = {
+                EvaluationDate = Date(2024, 2, 15) // day 45
+                StartDate = Date(2024, 1, 1)
+                Principal = 1000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2024, 2, 1) // payments on days 31, 60, 91 and 121
+                        ScheduleLength = PaymentCount 4
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig = ValueNone
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Daily <| Percent 0.8m
+                    Cap = {
+                        TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+                        DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+                    }
+                    Rounding = RoundDown
+                    AprMethod = Apr.CalculationMethod.UsActuarial 8
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig = ValueNone
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Zero
+                }
+                SettlementDay = SettlementDay.NoSettlement
+                TrimEnd = true
+            }
+        }
+
+        // only the first scheduled payment has been made, and only partially
+        let actualPayments =
+            Map [ 31<OffsetDay>, [| ActualPayment.quickConfirmed 350_00L<Cent> |] ]
+
+        let rescheduleDay = p.Basic.EvaluationDate |> OffsetDay.fromDate p.Basic.StartDate
+
+        let rp: RescheduleParameters = {
+            FeeSettlementRebate = Fee.SettlementRebate.Zero
+            PaymentSchedule =
+                AutoGenerateSchedule {
+                    UnitPeriodConfig = Weekly(2, Date(2024, 2, 20)) // new plan: fortnightly payments from day 50
+                    ScheduleLength = PaymentCount 6
+                }
+            RateOnNegativeBalance = Interest.Rate.Zero
+            PromotionalInterestRates = [||]
+            SettlementDay = SettlementDay.NoSettlement
+        }
+
+        let schedules = reschedule p rp actualPayments
+        let items = schedules.NewSchedules.AmortisationSchedule.ScheduleItems
+
+        // the original payments falling on or after the reschedule day must be zeroed by the new plan
+        // (the day-121 payment is trimmed from the schedule as the balance is already closed by day 120)
+        let actualCancelledOriginals =
+            items
+            |> Map.filter (fun day si -> day >= rescheduleDay && si.ScheduledPayment.Original.IsSome)
+            |> Map.map (fun _ si -> ScheduledPayment.total si.ScheduledPayment, si.PaymentDue)
+
+        let expectedCancelledOriginals =
+            Map [
+                60<OffsetDay>, (0L<Cent>, 0L<Cent>)
+                91<OffsetDay>, (0L<Cent>, 0L<Cent>)
+            ]
+
+        actualCancelledOriginals |> should equal expectedCancelledOriginals
+
+        // from the reschedule day onwards, only the new plan is due, as rescheduled payments carrying the
+        // reschedule day, with the level payment sized against the outstanding balance on the reschedule day
+        let actualNewPlan =
+            items
+            |> Map.filter (fun day si ->
+                day >= rescheduleDay && ScheduledPayment.total si.ScheduledPayment > 0L<Cent>
+            )
+            |> Map.map (fun _ si -> si.ScheduledPayment.Original, si.ScheduledPayment.Rescheduled)
+
+        let expectedNewPlan =
+            [ 50, 222_03L; 64, 222_03L; 78, 222_03L; 92, 222_03L; 106, 222_03L; 120, 221_97L ]
+            |> List.map (fun (day, value) ->
+                day * 1<OffsetDay>,
+                ((ValueNone: int64<Cent> voption),
+                 ValueSome {
+                     Value = value * 1L<Cent>
+                     RescheduleDay = rescheduleDay
+                 })
+            )
+            |> Map.ofList
+
+        actualNewPlan |> should equal expectedNewPlan
+
+        // the new plan retires the outstanding balance in full
+        schedules.NewSchedules.AmortisationSchedule.FinalStats.FinalBalanceStatus
+        |> should equal ClosedBalance
+
+        let finalDay, finalItem = items |> Map.maxKeyValue
+        finalDay |> should equal 120<OffsetDay>
+        finalItem.BalanceStatus |> should equal ClosedBalance
+        finalItem.PrincipalBalance |> should equal 0L<Cent>
+
+    [<Fact>]
+    let ActualPaymentTestExtra011 () =
+        // regression test: rolling over a loan must re-base the pro-rata fee rebate day onto the new schedule's
+        // day axis (day 0 = rollover day) so that no rebate remains once the original final payment date has passed
+        let p: Parameters = {
+            Basic = {
+                EvaluationDate = Date(2024, 2, 15) // rollover on day 45
+                StartDate = Date(2024, 1, 1)
+                Principal = 1000_00L<Cent>
+                ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2024, 2, 1) // payments on days 31, 60, 91 and 121
+                        ScheduleLength = PaymentCount 4
+                    }
+                PaymentConfig = {
+                    LevelPaymentOption = LowerFinalPayment
+                    Rounding = RoundUp
+                }
+                FeeConfig =
+                    ValueSome {
+                        FeeType = Fee.FeeType.CabOrCsoFee(Amount.Percentage(Percent 100m, Restriction.NoLimit))
+                        Rounding = RoundDown
+                        FeeAmortisation = Fee.FeeAmortisation.AmortiseProportionately
+                    }
+                InterestConfig = {
+                    Method = Interest.Method.Actuarial
+                    StandardRate = Interest.Rate.Daily <| Percent 0.8m
+                    Cap = {
+                        TotalAmount = Amount.Percentage(Percent 100m, Restriction.NoLimit)
+                        DailyAmount = Amount.Percentage(Percent 0.8m, Restriction.NoLimit)
+                    }
+                    Rounding = RoundDown
+                    AprMethod = Apr.CalculationMethod.UsActuarial 8
+                }
+            }
+            Advanced = {
+                PaymentConfig = {
+                    ScheduledPaymentOption = AsScheduled
+                    Minimum = NoMinimumPayment
+                    Timeout = 3<DurationDay>
+                }
+                FeeConfig =
+                    ValueSome {
+                        SettlementRebate = Fee.SettlementRebate.ProRata
+                    }
+                ChargeConfig = None
+                InterestConfig = {
+                    InitialGracePeriod = 0<DurationDay>
+                    PromotionalRates = [||]
+                    RateOnNegativeBalance = Interest.Rate.Zero
+                }
+                SettlementDay = SettlementDay.NoSettlement
+                TrimEnd = true
+            }
+        }
+
+        let rp: RolloverParameters = {
+            OriginalFinalPaymentDay = 121<OffsetDay>
+            PaymentSchedule =
+                AutoGenerateSchedule {
+                    UnitPeriodConfig = Monthly(1, 2024, 3, 15) // new monthly payments from new-schedule day 29
+                    ScheduleLength = PaymentCount 4
+                }
+            InterestConfig = p.Basic.InterestConfig
+            PaymentConfig = p.Basic.PaymentConfig
+            FeeHandling = Fee.FeeHandling.CarryOverAsIs
+        }
+
+        let schedules = rollOver p rp Map.empty
+
+        // the original final payment day (121) re-based onto the new schedule's day axis is day 76 (= 121 - 45),
+        // so the carried-over fee of 371.90 is pro-rated against day 76: on day 29 the rebate is
+        // 371.90 * (76 - 29) / 76 = 230.00 (rounded up), and at or after day 76 no rebate remains
+        let actual =
+            schedules.NewSchedules.AmortisationSchedule.ScheduleItems
+            |> Map.map (fun _ si -> si.FeeBalance, si.FeeRebateIfSettled)
+
+        let expected =
+            Map [
+                0<OffsetDay>, (371_90L<Cent>, 371_90L<Cent>)
+                29<OffsetDay>, (303_66L<Cent>, 230_00L<Cent>)
+                60<OffsetDay>, (224_45L<Cent>, 78_30L<Cent>)
+                90<OffsetDay>, (123_80L<Cent>, 0L<Cent>)
+                121<OffsetDay>, (0L<Cent>, 0L<Cent>)
+            ]
+
+        actual |> should equal expected
