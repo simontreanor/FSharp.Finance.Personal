@@ -82,14 +82,18 @@ proratedSchedule |> Array.iter (fun item ->
 
 ### 3. Custom
 
-Custom repayment over specified number of days.
+Custom repayment amounts, one per payroll date. The amounts must all be positive
+and must sum to the total repayable (advance plus any fee added on top).
 
 *)
 
-let customConfig = { lumpSumConfig with RepaymentMode = Custom 30L }
+let customConfig =
+    { lumpSumConfig with
+        RepaymentMode = Custom [ 25000L<Cent>; 15000L<Cent>; 10000L<Cent> ] }
+
 let customSchedule = SalaryAdvance.createSchedule customConfig
 
-printfn "\nCustom 30-day Schedule:"
+printfn "\nCustom Amounts Schedule:"
 customSchedule |> Array.iter (fun item ->
     printfn "  Date: %A, Amount: $%.2f, Remaining: $%.2f" 
         item.PaymentDate 
@@ -124,11 +128,15 @@ scheduleWithFlatFee |> Array.iter (fun item ->
 
 ### Percentage Fee
 
+Percentage fees use the library's `Percent` type (`Percent 2m` = 2%). How the fee is rounded
+to whole cents is configurable via the library's `Rounding` type (`FeeRounding`, defaulting to
+midpoint-away-from-zero).
+
 *)
 
-let configWithPctFee = 
-    lumpSumConfig 
-    |> SalaryAdvance.ScheduleConfig.withFee (PercentageFee 0.02m) // 2% fee
+let configWithPctFee =
+    lumpSumConfig
+    |> SalaryAdvance.ScheduleConfig.withFee (PercentageFee (Percent 2m)) // 2% fee
 
 let scheduleWithPctFee = SalaryAdvance.createSchedule configWithPctFee
 
@@ -139,6 +147,41 @@ scheduleWithPctFee |> Array.iter (fun item ->
         (Cent.toDecimal item.RepaymentAmount)
         (Cent.toDecimal (item.RepaymentAmount - item.FeeAmount))
         (Cent.toDecimal item.FeeAmount))
+
+(**
+
+## Fee Treatment
+
+The fee can either be added on top of the amount repayable (the default) or netted from the
+disbursed proceeds:
+
+- **AddedOnTop**: the borrower receives the full advance and repays advance + fee
+- **NettedFromProceeds**: the borrower receives advance − fee and repays the advance alone
+
+In both treatments the sum of the scheduled repayments equals the principal (total repayable).
+
+*)
+
+let nettedConfig =
+    configWithFlatFee
+    |> SalaryAdvance.ScheduleConfig.withFeeTreatment NettedFromProceeds
+
+printfn "\nFee Added On Top:    disbursed $%.2f, total repayable $%.2f"
+    (Cent.toDecimal (SalaryAdvance.netDisbursedAmount configWithFlatFee))
+    (Cent.toDecimal (SalaryAdvance.totalRepayable configWithFlatFee))
+
+printfn "Fee Netted From Proceeds: disbursed $%.2f, total repayable $%.2f"
+    (Cent.toDecimal (SalaryAdvance.netDisbursedAmount nettedConfig))
+    (Cent.toDecimal (SalaryAdvance.totalRepayable nettedConfig))
+
+let nettedCashflows = SalaryAdvance.exportCashflows nettedConfig
+
+printfn "\nProvider Cashflows (fee netted from proceeds):"
+nettedCashflows |> Array.iter (fun cf ->
+    printfn "  %A: $%.2f - %s"
+        cf.Date
+        (Cent.toDecimal cf.Amount)
+        cf.Description)
 
 (**
 
@@ -176,13 +219,23 @@ Generate summary statistics for the salary advance:
 
 let summary = SalaryAdvance.calculateSummary configWithFlatFee
 
+let (Percent effectiveFeeRate) = summary.EffectiveFeeRate
+
 printfn "\nSummary Statistics:"
 printfn "  Advance Amount: $%.2f" (Cent.toDecimal summary.AdvanceAmount)
+printfn "  Net Disbursed: $%.2f" (Cent.toDecimal summary.NetDisbursedAmount)
 printfn "  Total Fee: $%.2f" (Cent.toDecimal summary.TotalFeeAmount)
 printfn "  Total Repayment: $%.2f" (Cent.toDecimal summary.TotalRepaymentAmount)
 printfn "  Term: %d days" summary.TermInDays
 printfn "  Number of Payments: %d" summary.NumberOfPayments
-printfn "  Effective Fee Rate: %.2f%%" summary.EffectiveFeeRate
+// the effective fee rate is a flat rate over the term, with no time dimension
+printfn "  Effective Fee Rate: %.2f%%" effectiveFeeRate
+
+// the annualized companion (fee rate x 365 / term in days) makes advances of different terms
+// comparable, but it is a simple annualization, not a compounded rate nor a regulatory APR
+match summary.AnnualizedEffectiveFeeRate with
+| Some(Percent annualizedRate) -> printfn "  Annualized Effective Fee Rate (simple): %.2f%%" annualizedRate
+| None -> printfn "  Annualized Effective Fee Rate (simple): n/a (zero-day term)"
 
 (**
 
