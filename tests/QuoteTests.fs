@@ -2109,3 +2109,59 @@ module QuoteTests =
 
         actual |> should equal expected
 
+    // regression test: a confirmed partial payment made on the quote day itself was previously ignored when generating
+    // the settlement figure, so the customer was quoted the full figure again despite having already paid
+    [<Fact>]
+    let QuoteTest028 () =
+        let description =
+            "Quote on a day with a confirmed partial payment: the payment reduces the settlement figure"
+
+        let p = {
+            parameters2 with
+                Basic.EvaluationDate = Date(2022, 12, 31) // day 35, the second scheduled payment day
+                Basic.StartDate = Date(2022, 11, 26)
+                Basic.Principal = 1500_00L<Cent>
+                Basic.ScheduleConfig =
+                    AutoGenerateSchedule {
+                        UnitPeriodConfig = Monthly(1, 2022, 11, 31)
+                        ScheduleLength = PaymentCount 5
+                    }
+                Basic.InterestConfig.AprMethod = Apr.CalculationMethod.UsActuarial 8
+        }
+
+        let paymentsWithoutSameDay =
+            Map [ 4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |] ]
+
+        let paymentsWithSameDay =
+            paymentsWithoutSameDay
+            |> Map.add 35<OffsetDay> [| ActualPayment.quickConfirmed 100_00L<Cent> |]
+
+        let quoteWithout = getQuote p paymentsWithoutSameDay |> _.QuoteResult
+        let quoteWith = getQuote p paymentsWithSameDay |> _.QuoteResult
+
+        let expectedWithout =
+            PaymentQuote {
+                PaymentValue = 1361_71L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1091_12L<Cent>
+                    FeePortion = 0L<Cent>
+                    InterestPortion = 270_59L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeeRebateIfSettled = 0L<Cent>
+            }
+
+        // the settlement figure is reduced by exactly the confirmed same-day payment, which is apportioned to interest first
+        let expectedWith =
+            PaymentQuote {
+                PaymentValue = 1261_71L<Cent>
+                Apportionment = {
+                    PrincipalPortion = 1091_12L<Cent>
+                    FeePortion = 0L<Cent>
+                    InterestPortion = 170_59L<Cent>
+                    ChargesPortion = 0L<Cent>
+                }
+                FeeRebateIfSettled = 0L<Cent>
+            }
+
+        (quoteWithout, quoteWith) |> should equal (expectedWithout, expectedWith)

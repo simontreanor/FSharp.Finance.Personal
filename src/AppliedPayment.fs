@@ -209,6 +209,9 @@ module AppliedPayment =
                                 | 0L<Cent>, cpt when cpt < 0L<Cent> -> cpt, Refunded
                                 // no payment due, but a payment made
                                 | 0L<Cent>, cpt -> cpt, ExtraPayment
+                                // a payment due (now or previously), but a refund issued
+                                | spt, cpt when spt > 0L<Cent> && cpt < 0L<Cent> && offsetDay <= evaluationDay ->
+                                    cpt, Refunded
                                 // a payment due on or before the day
                                 | spt, cpt when
                                     cpt < spt
@@ -220,9 +223,11 @@ module AppliedPayment =
                                     // settlement requested on a future day
                                     | SettlementDay.SettlementOnEvaluationDay when evaluationDay > offsetDay ->
                                         0L<Cent>, PaymentDue
-                                    // settlement requested on the day, requiring a generated payment to be calculated (calculation deferred until amortisation schedule is generated)
+                                    // settlement requested on the day: any confirmed partial payment takes net effect so
+                                    // that it is deducted from the generated settlement figure (calculation of the generated
+                                    // payment itself is deferred until the amortisation schedule is generated)
                                     | SettlementDay.SettlementOnEvaluationDay when evaluationDay = offsetDay ->
-                                        0L<Cent>, Generated
+                                        cpt, Generated
                                     // no settlement on day, or statement requested
                                     | _ -> spt, PaymentDue
                                 // a payment due on a future day

@@ -1149,3 +1149,27 @@ module ActualPaymentTests =
 
         let expected = true
         actual |> should equal expected
+
+    // regression test: a refund issued on a scheduled-payment day was previously classified as an underpayment,
+    // incurring a late-payment charge and later being mislabelled as paid-later-owing
+    [<Fact>]
+    let ActualPaymentTest024 () =
+        let description = "Refund on a scheduled-payment day is classified as a refund"
+
+        let actualPayments =
+            Map [
+                4<OffsetDay>, [| ActualPayment.quickConfirmed 456_88L<Cent> |]
+                35<OffsetDay>, [| ActualPayment.quickConfirmed (-50_00L<Cent>) |]
+            ]
+
+        let schedules = amortise parameters1 actualPayments
+
+        let item35 = schedules.AmortisationSchedule.ScheduleItems |> Map.find 35<OffsetDay>
+
+        let actual =
+            item35.PaymentStatus, item35.NetEffect, item35.NewCharges, item35.PrincipalPortion
+
+        let expected =
+            Refunded, -50_00L<Cent>, Array.empty<AppliedCharge>, -50_00L<Cent>
+
+        actual |> should equal expected
