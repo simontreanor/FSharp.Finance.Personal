@@ -26,6 +26,11 @@
     <Compile Include="PromotionalRatesTests.fs" />
     <Compile Include="QuoteTests.fs" />
     <Compile Include="SettlementTests.fs" />
+    <Compile Include="DepreciationCommonTests.fs" />
+    <Compile Include="UKCapitalAllowancesTests.fs" />
+    <Compile Include="USMacrsTests.fs" />
+    <Compile Include="EquipmentLoanTests.fs" />
+    <Compile Include="EquipmentLeaseTests.fs" />
     <!-- <Compile Include="UnitPeriodConfigTests.fs" /> -->
   </ItemGroup>
   <ItemGroup>

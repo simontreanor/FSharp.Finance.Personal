@@ -17,7 +17,6 @@ module Amortisation =
         | SettlementDay
 
     /// the day of the amortisation schedule, which can be a normal day, evaluation day or settlement day
-    [<Struct>]
     module OffsetDayType =
         /// HTML formatting to display the amortisation day in a readable format
         let toHtml (offsetDay: int<OffsetDay>) offsetDayType =
