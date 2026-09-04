@@ -342,7 +342,7 @@ module Apr =
                                             (1m + remainder * unitPeriodRate) * (1m + unitPeriodRate |> powi quotient)
 
                                         if divisor = 0m then 0m else Cent.toDecimal amount / divisor
-                                    with _ ->
+                                    with :? System.OverflowException | :? System.DivideByZeroException ->
                                         0m
                                 )
 
